@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
@@ -39,12 +40,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   news: any[] = [];
   resources: any[] = [];
-  leftTileContent: 'description' | 'news';
   isRoot = true;
   visits: any = {};
   leader: string;
   planetCode: string;
   deleteDialog: any;
+  leaveDialog: any;
 
   constructor(
     private couchService: CouchService,
@@ -113,11 +114,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    this.leftTileContent = this.userStatus === 'member' ? 'news' : 'description';
   }
 
   toggleMembership(team, leaveTeam) {
-    this.teamsService.toggleTeamMembership(
+    return this.teamsService.toggleTeamMembership(
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
@@ -125,12 +125,27 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.team = newTeam;
         return this.getMembers();
       })
-    ).subscribe(() => {
-      const msg = leaveTeam ? 'left' : 'joined';
-      if (this.team.status === 'archived') {
-        this.router.navigate([ '/teams' ]);
+    );
+  }
+
+  openLeaveDialog(team) {
+    this.leaveDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.toggleMembership(team, true),
+          onNext: () => {
+            this.leaveDialog.close();
+            const msg = 'left';
+            if (this.team.status === 'archived') {
+              this.router.navigate([ '/teams' ]);
+            }
+            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
+          },
+        },
+        changeType: 'leave',
+        type: 'team',
+        displayName: team.name
       }
-      this.planetMessageService.showMessage('You have ' + msg + ' team');
     });
   }
 
@@ -274,16 +289,17 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     .pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
   }
 
-  changeLeftTile() {
-    this.leftTileContent = this.leftTileContent === 'news' ? 'description' : 'news';
-  }
-
   openResourcesDialog(resource?) {
     const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
       data: {
-        okClick: (resources: any[]) => this.teamsService.linkResourcesToTeam(resources, this.team)
-          .pipe(switchMap(() => this.getMembers())).subscribe(() => dialogRef.close()),
+        okClick: (resources: any[]) => {
+          this.teamsService.linkResourcesToTeam(resources, this.team)
+          .pipe(switchMap(() => this.getMembers())).subscribe(() => {
+            dialogRef.close();
+            this.dialogsLoadingService.stop();
+          });
+        },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: 'teams', linkId: this.teamId, resource
       }

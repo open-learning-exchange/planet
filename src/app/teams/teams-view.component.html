@@ -5,7 +5,6 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{team?.name}}</h3>
-    <button class="margin-lr-5" mat-stroked-button i18n (click)="changeLeftTile()" *ngIf="userStatus === 'member'">Show { leftTileContent, select, description {Messages} news {Description}}</button>
     <span class="toolbar-fill"></span>
     <div>
       <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
@@ -20,10 +19,10 @@
             Add Resources
           </button>
           <ng-container *planetAuthorizedRoles>
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="archiveTeam(team)" i18n> Delete</button>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="archiveTeam(team)" i18n>Delete</button>
           </ng-container>
           <ng-container *ngIf="currentUserId !== leader">
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="toggleMembership(team, true)" i18n> Leave</button>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openLeaveDialog(team)" i18n>Leave</button>
           </ng-container>
         </ng-container>
         <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
@@ -34,79 +33,95 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="left-tile" [ngSwitch]="leftTileContent">
-      <ng-container *ngSwitchCase="'description'">
-        <td-markdown *ngIf="team?.description; else emptyText">{{ team?.description }}</td-markdown>
-        <p><ng-container i18n>Created</ng-container> {{ team.createdDate | date:'medium' }}</p>
-        <ng-template #emptyText>
-          <p i18n>The team has no description.</p>
-          <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Description</button>
-        </ng-template>
-      </ng-container>
-      <ng-container *ngSwitchCase="'news'">
+    <mat-tab-group>
+      <mat-tab i18n-label label="Messages" *ngIf="userStatus === 'member'">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
-      </ng-container>
-    </div>
-    <div class="right-tile">
-      <p i18n><b>Joined Members: ({{members.length}})</b></p>
-      <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
-      <ng-template #memberList>
-        <div class="members-grid">
-          <mat-card *ngFor="let member of members">
-            <mat-card-header>
-              <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
-                {{member.name}}
-              </a>
-              <mat-card-subtitle>
-                <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-actions>
-              <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="warn">Remove</button>
-              <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-raised-button color="primary">Make Leader</button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-      </ng-template>
+      </mat-tab>
+      <mat-tab i18n-label label="Plan">
+        <td-markdown *ngIf="team?.description; else emptyText">{{ team?.description }}</td-markdown>
+        <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
+        <ng-template #emptyText>
+          <p i18n>The team has no plan.</p>
+          <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Plan</button>
+        </ng-template>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <ng-container i18n>Members</ng-container> ({{members.length}})
+        </ng-template>
+        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
+        <ng-template #memberList>
+          <div class="members-grid">
+            <mat-card *ngFor="let member of members">
+              <mat-card-header>
+                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
+                  {{member.userDoc.firstName}}
+                </a>
+                <mat-card-subtitle>
+                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-actions>
+                <button *ngIf="member.userId !== currentUserId && currentUserId === leader" (click)="changeMembership('removed', member)" mat-raised-button color="warn">Remove</button>
+                <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-raised-button color="primary">Make Leader</button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </ng-template>
+      </mat-tab>
       <ng-container *ngIf="userStatus === 'member'">
-        <p i18n><b>Requested Members: ({{requests.length}})</b></p>
-        <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
-        <ng-template #requestedList>
-          <mat-card *ngFor="let request of requests">
-            <mat-card-header>
-              <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.name}}</a>
-            </mat-card-header>
-            <mat-card-actions>
-              <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-              <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
-            </mat-card-actions>
-          </mat-card>
-        </ng-template>
-        <p i18n><b>Courses: ({{team?.courses?.length || 0}})</b></p>
-        <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
-        <ng-template #courseList>
-          <mat-card *ngFor="let course of team?.courses">
-            <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
-          </mat-card>
-        </ng-template>
-        <p i18n><b>Resources: ({{resources?.length || 0}})</b></p>
-        <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
-        <ng-template #resourceList>
-          <ul class="request-list">
-            <li *ngFor="let resource of resources">
-              <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">{{resource.resource.title}}</a>
-              <span *ngIf="resource.resource===undefined" i18n-matTooltip matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">{{resource.linkDoc.title}}</span>
-              <button type="button" mat-icon-button (click)="openRemoveResourceDialog(resource)" color="warn" class="mini-icon-button" matSuffix>
-                <mat-icon>remove_circle</mat-icon>
-              </button>
-              <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" class="mini-icon-button" *ngIf="resource.resource?.private===true" matSuffix>
-                <mat-icon>edit</mat-icon>
-              </button>
-            </li>
-          </ul>
-        </ng-template>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <ng-container i18n>Join Requests</ng-container> ({{requests.length}})
+          </ng-template>
+          <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
+          <ng-template #requestedList>
+            <div class="members-grid">
+              <mat-card *ngFor="let request of requests">
+                <mat-card-header>
+                  <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName}}</a>
+                </mat-card-header>
+                <mat-card-actions>
+                  <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
+                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Courses">
+          <ng-template mat-tab-label>
+            <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
+          </ng-template>
+          <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
+          <ng-template #courseList>
+            <mat-card *ngFor="let course of team?.courses">
+              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
+            </mat-card>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Resources">
+          <ng-template mat-tab-label>
+            <ng-container i18n>Resources</ng-container> ({{resources?.length || 0}})
+          </ng-template>
+          <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
+          <ng-template #resourceList>
+            <ul class="request-list">
+              <li *ngFor="let resource of resources">
+                <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">{{resource.resource.title}}</a>
+                <span *ngIf="resource.resource===undefined" i18n-matTooltip matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">{{resource.linkDoc.title}}</span>
+                <button type="button" mat-icon-button (click)="openRemoveResourceDialog(resource)" color="warn" class="mini-icon-button" matSuffix>
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
+                <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" class="mini-icon-button" *ngIf="resource.resource?.private===true" matSuffix>
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </li>
+            </ul>
+          </ng-template>
+        </mat-tab>
       </ng-container>
-    </div>
+    </mat-tab-group>
   </div>
 </div>
