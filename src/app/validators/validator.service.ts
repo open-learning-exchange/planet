@@ -34,7 +34,7 @@ export class ValidatorService {
     if (exceptions.findIndex(exception => ac.value === exception) > -1) {
       return of(null);
     }
-    selectors = { [fieldName]: { '$regex': `(?i)^${ac.value}$` }, ...selectors };
+    selectors = { [fieldName]: { '$regex': `(?i)^${this.replaceSpecialChar(ac.value)}$` }, ...selectors };
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => this.checkUnique$(dbName, selectors, opts)),
@@ -45,6 +45,14 @@ export class ValidatorService {
         return null;
       })
     ).pipe(debug('Checking uniqueness of ' + fieldName + ' in ' + dbName));
+  }
+
+  /**
+   * Used in isUnique() to replace special characters inputted in fields
+   * @param fieldInput inputted field values
+   */
+  private replaceSpecialChar(fieldInput) {
+    return fieldInput.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   public isNameAvailible$(
