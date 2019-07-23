@@ -10,7 +10,6 @@
       <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
         Add Members
       </button>
-      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>
       <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
         <ng-container *ngSwitchCase="'member'">
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
@@ -28,6 +27,7 @@
         </button>
         <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
       </ng-container>
+      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
