@@ -128,7 +128,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       .findIndex((route) => url.indexOf(route) > -1) > -1;
     const isRoute = routesWithBackground
       .findIndex((route) => url.indexOf(route) > -1) > -1;
-    return url === '/' && this.userService.isBetaEnabled() || isRoute && !isException;
+    return url === '/' || isRoute && !isException;
   }
 
   onUserUpdate() {
