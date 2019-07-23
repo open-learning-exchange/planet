@@ -56,7 +56,7 @@
             <mat-card *ngFor="let member of members">
               <mat-card-header>
                 <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
-                  {{member.userDoc.firstName}}
+                  {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>
                   <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
