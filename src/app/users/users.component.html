@@ -34,7 +34,7 @@
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search username...">
   </mat-form-field>
-  <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()"><span>Clear</span></button>
+  <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
 </mat-toolbar>
 
 <div class="space-container" *ngIf="displayTable">
