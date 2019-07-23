@@ -45,7 +45,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   deleteDialog: any;
   leaveDialog: any;
   message = '';
-  deleteDialog: any;
 
   constructor(
     private couchService: CouchService,

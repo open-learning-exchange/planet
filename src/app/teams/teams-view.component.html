@@ -43,7 +43,7 @@
         <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
           <p i18n>The team has no plan.</p>
-          <button mat-raised-button color="accent" *ngIf="userStatus === 'member'" (click)="updateTeam()" i18n>Add Plan</button>
+          <button mat-raised-button color="accent" *ngIf="currentUserId === leader" (click)="updateTeam()" i18n>Add Plan</button>
         </ng-template>
       </mat-tab>
       <mat-tab>
