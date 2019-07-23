@@ -2,57 +2,7 @@
 
 $card-width: calc(106px + 2rem);
 
-.vertical-container {
-  height: $dashboard-height;
-  padding: 2rem;
-  display: grid;
-  grid-template-areas: "card" "card" "card" "card";
-  grid-template-columns: $card-width;
-  grid-auto-columns: 1fr;
-  grid-auto-rows: $dashboard-tile-height;
-  grid-auto-flow: column;
-  grid-gap: 1rem;
-
-  mat-card {
-    grid-area: card;
-    max-width: $card-width;
-    padding: 0;
-    display: grid;
-    grid-template-rows: min-content;
-    grid-auto-rows: 1fr;
-    grid-auto-columns: 1fr;
-    position: relative;
-
-    img {
-      width: 100px;
-      display: block;
-      position: absolute;
-      left: 1rem;
-      top: 1rem;
-      border: white 3px solid;
-    }
-
-    .lower-list {
-      overflow: auto;
-    }
-
-    .dashboard-name {
-      padding: calc(100px + 2rem) 1rem 0.5rem 1rem;
-
-      h1, h2, h3 {
-        margin: 0;
-      }
-
-      p {
-        margin: 0;
-      }
-    }
-
-  }
-
-}
-
-.horizontal-container {
+:host {
   height: calc(#{$dashboard-height} + 32px);
   padding: 1rem;
   display: grid;
