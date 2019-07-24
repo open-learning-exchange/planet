@@ -1,0 +1,15 @@
+@import '../variables';
+
+:host {
+  .form-spacing {
+    width: 100%;
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .view-container.view-full-height {
+    height: $view-container-height-no-toolbar
+  }
+}
