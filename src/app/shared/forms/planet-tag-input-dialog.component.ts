@@ -90,6 +90,10 @@ export class PlanetTagInputDialogComponent {
     this.newTagId = undefined;
   }
 
+  reset() {
+    this.selected.clear();
+  }
+
   tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
     const newState = !this.selected.get(tags[0]);
     const setAllTags = newState !== deselectSubs;

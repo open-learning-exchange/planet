@@ -73,4 +73,5 @@
 </mat-dialog-content>
 <mat-dialog-actions *ngIf="selectMany">
   <button type="button" [mat-dialog-close]="okClickValue" i18n mat-raised-button color="primary">OK</button>
+  <button type="button" mat-raised-button i18n color="primary" (click)="reset()">Reset</button>
 </mat-dialog-actions>
