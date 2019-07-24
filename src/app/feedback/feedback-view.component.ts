@@ -5,9 +5,7 @@ import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -31,7 +29,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private feedbackServive: FeedbackService,
     private router: Router,
