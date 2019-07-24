@@ -50,8 +50,8 @@
       </mat-form-field>
 
       <!-- Textarea -->
-      <mat-form-field *ngIf="field.type === 'markdown'" class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}"></planet-markdown-textbox>
+      <mat-form-field *ngIf="field.type === 'markdown'" class="full-width mat-form-field-type-no-underline" [hideRequiredMarker]="!field.required">
+        <planet-markdown-textbox matInput placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
