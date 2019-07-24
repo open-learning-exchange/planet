@@ -362,4 +362,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
   }
 
+  removeCourse(item){
+    let index = this.team.courses.indexOf(item);
+    this.team.courses.splice(index, 1);
+    this.couchService.updateDocument('teams/', this.team).subscribe(() => { 
+      this.planetMessageService.showMessage('course was removed')
+    });
+  }
 }
