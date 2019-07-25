@@ -78,7 +78,7 @@
             <div class="members-grid">
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
-                  <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName}}</a>
+                  <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName || request.name}}</a>
                 </mat-card-header>
                 <mat-card-actions>
                   <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
