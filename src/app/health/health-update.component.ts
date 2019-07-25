@@ -48,11 +48,9 @@ export class HealthUpdateComponent {
   }
 
   ngOnInit() {
-    const userDetail = this.healthService.userDetail.name === this.userService.get().name ?
-      this.healthService.userDetail :
-      this.userService.get();
-    this.profileForm.patchValue(userDetail);
-    this.healthForm.patchValue(this.healthService.healthDetail || {});
+    const serviceMatchesUser = this.healthService.userDetail.name === this.userService.get().name;
+    this.profileForm.patchValue(serviceMatchesUser ? this.healthService.userDetail : this.userService.get());
+    this.healthForm.patchValue(serviceMatchesUser ? this.healthService.healthDetail : {});
   }
 
   onSubmit() {
