@@ -26,7 +26,7 @@ import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-reso
 export class TeamsViewComponent implements OnInit, OnDestroy {
 
   team: any;
-  teamId: any;
+  teamId: string;
   members = [];
   requests = [];
   disableAddingMembers = false;
