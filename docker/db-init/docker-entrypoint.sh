@@ -11,7 +11,7 @@ export COUCHDB_PORT=$(echo $COUCHDB_HOST | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*
 #WAIT_TIME
 echo  "Waiting for couchdb to start"
 WAIT_TIME=0
-until curl $COUCHDB_HOST || [ $WAIT_TIME -eq 180 ]; do
+until curl $COUCHDB_HOST || [ $WAIT_TIME -eq 600 ]; do
     echo "..."
     sleep 5
     WAIT_TIME=$(expr $WAIT_TIME + 5)
