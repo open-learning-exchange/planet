@@ -62,7 +62,6 @@
             </button>
             <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>Request pending</button>
           </ng-container>
-          <button mat-raised-button color="primary" [routerLink]="['view', element.doc._id]" i18n><mat-icon>forum</mat-icon>{element.userStatus, select, member { Manage Team} other {View Team}}</button>
           <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n><mat-icon>feedback</mat-icon> Feedback</button>
         </mat-cell>
       </ng-container>
