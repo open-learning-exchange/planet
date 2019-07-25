@@ -7,20 +7,17 @@
     <h3 class="margin-lr-3 ellipsis-title">{{team?.name}}</h3>
     <span class="toolbar-fill"></span>
     <div>
-      <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
-        Add Members
-      </button>
       <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
         <ng-container *ngSwitchCase="'member'">
+          <button mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+            Add Members
+          </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
             Manage Courses
           </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
             Add Resources
           </button>
-          <ng-container *planetAuthorizedRoles>
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>
-          </ng-container>
           <ng-container *ngIf="currentUserId !== leader">
             <button mat-raised-button color="accent" class="margin-lr-3" (click)="openLeaveDialog(team)" i18n>Leave</button>
           </ng-container>
@@ -30,6 +27,7 @@
         </button>
         <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
       </ng-container>
+      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
