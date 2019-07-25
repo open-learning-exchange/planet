@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
@@ -10,7 +10,7 @@ import { HealthService } from './health.service';
   templateUrl: './health-update.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthUpdateComponent {
+export class HealthUpdateComponent implements OnInit {
 
   profileForm: FormGroup;
   healthForm: FormGroup;

@@ -34,7 +34,6 @@ export class HealthComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    debugger;
     if (this.userDetail.name !== this.userService.get().name) {
       this.router.navigate([ 'update' ], { relativeTo: this.route });
     }
