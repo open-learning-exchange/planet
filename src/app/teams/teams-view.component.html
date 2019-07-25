@@ -7,11 +7,11 @@
     <h3 class="margin-lr-3 ellipsis-title">{{team?.name}}</h3>
     <span class="toolbar-fill"></span>
     <div>
-      <button mat-stroked-button *ngIf="userStatus === 'member'" mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
-        Add Members
-      </button>
       <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
         <ng-container *ngSwitchCase="'member'">
+          <button mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+            Add Members
+          </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
             Manage Courses
           </button>
