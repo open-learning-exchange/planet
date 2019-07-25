@@ -39,4 +39,8 @@ export class HealthComponent implements OnInit {
     }
   }
 
+  goBack() {
+    this.router.navigate([ '..' ], { relativeTo: this.route });
+  }
+
 }
