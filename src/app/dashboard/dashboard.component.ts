@@ -32,8 +32,7 @@ export class DashboardComponent implements OnInit {
     { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
     { firstLine: 'my', title: 'Achievements', link: '/myAchievements' },
     { firstLine: 'our', title: 'News', link: '/news' },
-    { firstLine: 'my', title: 'Surveys', link: '/mySurveys', badge: this.surveysCount },
-    { firstLine: 'my', title: 'Health', tooltip: 'This section is under construction' }
+    { firstLine: 'my', title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
   ];
 
   constructor(
@@ -66,6 +65,10 @@ export class DashboardComponent implements OnInit {
       ).subscribe((res: any) => {
         this.visits = res.docs.length;
       });
+
+    if (this.userService.isBetaEnabled() && this.myLifeItems.findIndex(item => item.title === 'Health') === -1) {
+      this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: '/myHealth' });
+    }
 
   }
 

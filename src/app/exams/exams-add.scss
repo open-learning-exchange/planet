@@ -1,7 +1,5 @@
 @import '../variables';
 
-$exam-view-height: calc(#{$view-container-height} + 64px);
-
 :host {
 
   .view-container {
@@ -9,7 +7,7 @@ $exam-view-height: calc(#{$view-container-height} + 64px);
     grid-auto-rows: 1fr;
 
     &.view-container.view-full-height {
-      height: $exam-view-height;
+      height: $view-container-height-no-toolbar;
     }
 
   }
@@ -17,12 +15,12 @@ $exam-view-height: calc(#{$view-container-height} + 64px);
   form {
     display: grid;
     grid-template-areas: "buttons" "questions";
-    grid-template-rows: 48px calc(#{$exam-view-height} - 48px - 2rem);
+    grid-template-rows: 48px calc(#{$view-container-height-no-toolbar} - 48px - 2rem);
   }
 
   form.survey-form {
     grid-template-areas: "buttons" "inputs" "questions";
-    grid-template-rows: 48px 72px calc(#{$exam-view-height} - 120px - 2rem);
+    grid-template-rows: 48px 72px calc(#{$view-container-height-no-toolbar} - 120px - 2rem);
   }
 
   .exam-buttons {

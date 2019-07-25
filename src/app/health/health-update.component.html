@@ -1,0 +1,67 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>myHealth</span>
+</mat-toolbar>
+
+<div class="space-container">
+  <div class="view-container view-full-height">
+    <h2 i18n>NOTE: This feature is a work in progress.  No information is saved.</h2>
+    <div class="form-container">
+      <form class="form-spacing" [formGroup]="profileForm">
+        <mat-form-field>
+          <input matInput required i18n-placeholder placeholder="First Name" formControlName="firstName">
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.firstName"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput required i18n-placeholder placeholder="Last Name" formControlName="lastName">
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.lastName"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput required i18n-placeholder placeholder="Email" formControlName="email">
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.email"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput required i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber">
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput required i18n-placeholder placeholder="Language" formControlName="language">
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.language"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput required i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
+          <mat-error><planet-form-error-messages [control]="profileForm.controls.birthDate"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Birthplace" formControlName="birthplace">
+        </mat-form-field>
+      </form>
+      <form class="form-spacing" [formGroup]="healthForm">
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Emergency Contact" formControlName="emergencyContactName">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select i18n-placeholder placeholder="Contact Type" formControlName="emergencyContactType">
+            <mat-option i18n>Phone</mat-option>
+            <mat-option i18n>Email</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput i18n-placeholder placeholder="Contact" formControlName="emergencyContact">
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox i18n-placeholder placeholder="Special Needs" [formControl]="healthForm.controls.specialNeeds"></planet-markdown-textbox>
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox i18n-placeholder placeholder="Other Notes" [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
+        </mat-form-field>
+      </form>
+    </div>
+    <div class="actions-container inner-gaps by-column">
+      <button mat-raised-button type="button" color="primary" (click)="onSubmit()" i18n>Submit</button>
+    </div>
+  </div>
+</div>
