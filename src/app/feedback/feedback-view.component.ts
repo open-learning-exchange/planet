@@ -1,16 +1,15 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { HttpRequest } from '@angular/common/http';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -30,11 +29,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
     private feedbackServive: FeedbackService,
     private router: Router,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
@@ -72,14 +71,43 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
     newFeedback.messages = [].concat(
       this.feedback.messages,
-      { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder }
+      { message: this.newMessage, user: this.user.name, time: this.couchService.datePlaceholder, userPlanetCode: this.user.planetCode }
     );
     this.couchService.updateDocument(this.dbName, newFeedback)
       .pipe(switchMap((res) => {
         this.newMessage = '';
-        return this.getFeedback(res.id);
-      }))
-      .subscribe(this.setFeedback.bind(this), error => this.planetMessageService.showAlert('There was an error adding your message'));
+        return forkJoin([ this.getFeedback(res.id), this.sendNotifications() ]);
+      })
+      ).subscribe(
+        ([ feedback, notificationRes ]) => { this.setFeedback(feedback); },
+        error => this.planetMessageService.showAlert('There was an error adding your message')
+      );
+  }
+
+  sendNotifications() {
+    const link = '/feedback/view/' + this.feedback._id;
+    const users: any[] = this.feedback.messages.filter((message, index, messages) =>
+      messages.findIndex(m => m.user === message.user) === index && message.user !== this.user.name
+    ).map(message => (
+      { user: `org.couchdb.user:${message.user}`, userPlanetCode: message.userPlanetCode || this.stateService.configuration.code }
+    ));
+    const notificationDoc = ({ user, userPlanetCode }) => ({
+      user,
+      'message': 'You have unread messages in feedback',
+      link,
+      'type': 'feedbackReply',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode
+    });
+    return this.couchService.findAll('notifications', findDocuments({ link, type: 'feedbackReply', status: 'unread' })).pipe(
+      switchMap((notifications: any[]) => {
+        const newNotifications = users.filter(user => notifications.findIndex(notification => notification.user === user.user) === -1)
+          .map(user => notificationDoc(user));
+        return newNotifications.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', newNotifications);
+      })
+    );
   }
 
   editTitle(mode) {
