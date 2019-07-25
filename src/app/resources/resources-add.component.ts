@@ -129,7 +129,7 @@ export class ResourcesAddComponent implements OnInit {
       resideOn: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
       updatedDate: this.couchService.datePlaceholder,
-      private: this.isDialog
+      private: this.privateFor !== undefined
     });
     this.resourceForm.patchValue(this.existingResource.doc || {});
   }
