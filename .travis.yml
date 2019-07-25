@@ -33,11 +33,8 @@ dist: xenial
 branches:
   except:
   - l10n_master
-addons:
-  apt:
-    update: true
-    packages:
-      - docker-ce
+services:
+  - docker
 env:
   global:
     # DOCKER_USER
