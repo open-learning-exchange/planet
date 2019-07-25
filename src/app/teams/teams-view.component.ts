@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -26,7 +26,7 @@ import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-reso
 export class TeamsViewComponent implements OnInit, OnDestroy {
 
   team: any;
-  teamId = this.route.snapshot.paramMap.get('teamId');
+  teamId: any;
   members = [];
   requests = [];
   disableAddingMembers = false;
@@ -63,6 +63,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.teamId = params.get('teamId');
+    });
     this.couchService.get('teams/' + this.teamId).pipe(
       switchMap(data => {
         this.planetCode = this.stateService.configuration.code;
