@@ -54,6 +54,7 @@ export class MeetupsAddComponent implements OnInit {
         data.startDate = new Date(data.startDate);
         data.endDate = data.endDate ? new Date(data.endDate) : '';
         this.meetupForm.patchValue(data);
+        this.meetupForm.controls.day.patchValue(data.day);
       }, (error) => {
         console.log(error);
       });
