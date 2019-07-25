@@ -90,7 +90,8 @@ export class PlanetTagInputDialogComponent {
     this.newTagId = undefined;
   }
 
-  reset() {
+  resetSelection() {
+    this.data.tagUpdate('', false, true);
     this.selected.clear();
   }
 
