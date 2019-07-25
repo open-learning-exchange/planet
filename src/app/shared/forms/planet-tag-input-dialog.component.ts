@@ -90,6 +90,12 @@ export class PlanetTagInputDialogComponent {
     this.newTagId = undefined;
   }
 
+  resetSelection() {
+    this.data.tagUpdate('', false, true);
+    this.selected.clear();
+    this.data.reset(this._selectMany);
+  }
+
   tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
     const newState = !this.selected.get(tags[0]);
     const setAllTags = newState !== deselectSubs;
@@ -229,6 +235,17 @@ export class PlanetTagInputDialogComponent {
     const newState = !this.subcollectionIsOpen.get(tagId);
     this.subcollectionIsOpen.clear();
     this.subcollectionIsOpen.set(tagId, newState);
+  }
+
+  emptySelection() {
+    const checkValue = (iterator) => {
+      const { value, done } = iterator.next();
+      if (value === true) {
+        return false;
+      }
+      return done || checkValue(iterator);
+    };
+    return checkValue(this.selected.values());
   }
 
 }
