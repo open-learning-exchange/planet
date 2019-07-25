@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
+import { HealthService } from './health.service';
 
 @Component({
   templateUrl: './health.component.html',
@@ -21,10 +23,21 @@ import { UserService } from '../shared/user.service';
 })
 export class HealthComponent implements OnInit {
 
-  userDetail = this.userService.get();
+  userDetail = this.healthService.userDetail || this.userService.get();
+  healthDetail = this.healthService.healthDetail;
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private healthService: HealthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    debugger;
+    if (this.userDetail.name !== this.userService.get().name) {
+      this.router.navigate([ 'update' ], { relativeTo: this.route });
+    }
+  }
 
 }

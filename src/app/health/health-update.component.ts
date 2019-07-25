@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
+import { HealthService } from './health.service';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -17,10 +18,13 @@ export class HealthUpdateComponent {
   constructor(
     private fb: FormBuilder,
     private validatorService: ValidatorService,
-    private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private healthService: HealthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.profileForm = this.fb.group({
+      name: '',
       firstName: [ '', CustomValidators.required ],
       middleName: '',
       lastName: [ '', CustomValidators.required ],
@@ -44,7 +48,21 @@ export class HealthUpdateComponent {
   }
 
   ngOnInit() {
-    this.profileForm.patchValue(this.userService.get());
+    const userDetail = this.healthService.userDetail.name === this.userService.get().name ?
+      this.healthService.userDetail :
+      this.userService.get();
+    this.profileForm.patchValue(userDetail);
+    this.healthForm.patchValue(this.healthService.healthDetail || {});
+  }
+
+  onSubmit() {
+    this.healthService.userDetail = this.profileForm.value;
+    this.healthService.healthDetail = this.healthForm.value;
+    this.goBack();
+  }
+
+  goBack() {
+    this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
 }

@@ -1,11 +1,24 @@
 @import '../variables';
 
 :host {
-  .form-spacing {
+  .view-container {
+    display: grid;
+    grid-template-rows: auto auto 42px;
+    > * {
+      overflow-y: auto;
+    }
+    grid-row-gap: 0.25rem;
+  }
+
+  .form-container {
     width: 100%;
 
-    .full-width {
-      grid-column: 1 / -1;
+    .form-spacing {
+      width: 100%;
+
+      .full-width {
+        grid-column: 1 / -1;
+      }
     }
   }
 
