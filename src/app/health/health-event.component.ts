@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
-import { ValidatorService } from '../validators/validator.service';
-import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 
 @Component({
@@ -16,8 +14,6 @@ export class HealthEventComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private validatorService: ValidatorService,
-    private userService: UserService,
     private healthService: HealthService,
     private router: Router,
     private route: ActivatedRoute
