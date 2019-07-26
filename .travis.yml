@@ -29,6 +29,7 @@ _use_nodejs: &_use_nodejs
     - "8"
 
 sudo: required
+dist: xenial
 branches:
   except:
   - l10n_master
