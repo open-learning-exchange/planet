@@ -3,7 +3,7 @@
 :host {
   .view-container {
     display: grid;
-    grid-template-rows: auto auto 42px;
+    grid-template-rows: min-content auto 42px;
     > * {
       overflow-y: auto;
     }
