@@ -65,7 +65,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId');
+      this.configure();
     });
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  configure() {
     this.couchService.get('teams/' + this.teamId).pipe(
       switchMap(data => {
         this.planetCode = this.stateService.configuration.code;
@@ -82,11 +91,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   getMembers() {
