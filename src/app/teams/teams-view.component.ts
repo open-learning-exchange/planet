@@ -368,5 +368,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.couchService.updateDocument('teams/', this.team).subscribe(() => {
       this.planetMessageService.showMessage('Course was removed');
     });
+    this.router.navigate([ '/teams' ]);
   }
 }
