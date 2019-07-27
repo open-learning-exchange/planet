@@ -67,6 +67,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       switchMap(data => {
         this.planetCode = this.stateService.configuration.code;
         this.team = data;
+        if (this.team.status === 'archived') {
+          this.router.navigate([ '/teams' ]);
+          this.planetMessageService.showMessage('This team no longer exists');
+        }
         return this.getMembers();
       }),
       switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
@@ -135,9 +139,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           onNext: () => {
             this.leaveDialog.close();
             const msg = 'left';
-            if (this.team.status === 'archived') {
-              this.router.navigate([ '/teams' ]);
-            }
             this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
           },
         },
