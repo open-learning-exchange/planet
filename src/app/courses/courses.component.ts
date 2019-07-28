@@ -12,7 +12,7 @@ import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
   dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter
+  selectedOutOfFilter, filterShelf
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -78,6 +78,12 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.removeFilteredFromSelection();
   }
+  private _myCoursesFilter: { value: 'on' | 'off' } = { value: 'off' };
+  get myCoursesFilter(): 'on' | 'off' { return this._myCoursesFilter.value; }
+  set myCoursesFilter(value: 'on' | 'off') {
+    this._myCoursesFilter.value = value;
+    this.titleSearch = this.titleSearch;
+  }
   user = this.userService.get();
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
@@ -88,7 +94,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterPredicate = composeFilterFunctions([
     filterDropdowns(this.filter),
     filterTags(this.tagFilter),
-    filterSpecificFieldsByWord([ 'doc.courseTitle' ])
+    filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
+    filterShelf(this._myCoursesFilter, 'coursesInfo')
   ]);
 
   @ViewChild(PlanetTagInputComponent)
@@ -117,6 +124,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.myCoursesFilter = this.route.snapshot.data.myCourses === true ? 'on' : 'off';
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
@@ -158,7 +166,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       course.canManage = this.user.isUserAdmin ||
         (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
       course.admission = myCourseIndex > -1;
-      return course;
+      return { ...course, coursesInfo: myCourseIndex > -1 };
     });
   }
 
@@ -310,7 +318,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return dropdownsFill({ ...this.filter, tags: this.tagFilter });
+    return this.tagFilter.value.length > 0 ||
+      Object.entries(this.filter).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
+      this.myCoursesFilter === 'on' ?
+      ' ' : '';
   }
 
   updateShelf(newShelf, message: string) {
@@ -390,6 +401,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTag(tag: string) {
     this.tagInputComponent.addTag(tag);
+  }
+
+  toggleMyCourses() {
+    this.myCoursesFilter = this.myCoursesFilter === 'on' ? 'off' : 'on';
+    this.removeFilteredFromSelection();
   }
 
 }

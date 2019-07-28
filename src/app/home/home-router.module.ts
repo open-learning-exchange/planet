@@ -17,6 +17,7 @@ const routes: Routes = [
       { path: 'users', loadChildren: '../users/users.module#UsersModule' },
       { path: 'manager', loadChildren: '../manager-dashboard/manager-dashboard.module#ManagerDashboardModule' },
       { path: 'courses', loadChildren: '../courses/courses.module#CoursesModule' },
+      { path: 'myCourses', loadChildren: '../courses/courses.module#CoursesModule', data: { myCourses: true } },
       { path: 'requests', component: CommunityComponent },
       { path: 'feedback', loadChildren: '../feedback/feedback.module#FeedbackModule' },
       { path: 'resources', loadChildren: '../resources/resources.module#ResourcesModule' },
