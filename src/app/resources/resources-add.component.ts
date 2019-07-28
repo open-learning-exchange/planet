@@ -171,9 +171,11 @@ export class ResourcesAddComponent implements OnInit {
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title +
           (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-        this.updateResource(newResource, file).subscribe(([ resourceRes ]) => {
+        this.updateResource(newResource, file)
+        .pipe(switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`)))
+        .subscribe((resourceRes) => {
           if (this.isDialog) {
-            this.afterSubmit.next(resourceRes);
+            this.afterSubmit.next({ doc: resourceRes });
           } else {
             this.router.navigate([ '/resources' ]);
           }
