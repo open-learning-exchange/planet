@@ -106,7 +106,7 @@
             <ng-container i18n>Resources</ng-container> ({{resources?.length || 0}})
           </ng-template>
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
-          
+
           <ng-template #memberList>
               <div class="members-grid">
                 <mat-card *ngFor="let member of members">
@@ -125,25 +125,33 @@
                 </mat-card>
               </div>
             </ng-template>
-          
+
           <ng-template #resourceList>
+            <div class="members-grid">
               <mat-card *ngFor="let resource of resources">
-                <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">
-                  {{resource.resource.title}}
-                </a>
-                <span *ngIf="resource.resource===undefined" i18n-matTooltip 
-                  matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
-                  {{resource.linkDoc.title}}
-                </span>
-                <button type="button"
-                  mat-icon-button 
-                  class="button-float-right mini-icon-button"
-                  (click)="openRemoveResourceDialog(resource)" 
-                  color="warn"
-                  matSuffix>
-                    <mat-icon>remove_circle</mat-icon>
-                </button>
+                <div class="mat-subheading-2">
+                  <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">
+                    {{resource.resource.title}}
+                  </a>
+                  <span *ngIf="resource.resource===undefined" i18n-matTooltip
+                    matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
+                    {{resource.linkDoc.title}}
+                  </span>
+                </div>
+                <mat-card-actions>
+                  <button type="button"
+                    mat-icon-button
+                    (click)="openRemoveResourceDialog(resource)"
+                    color="warn"
+                    matSuffix>
+                      <mat-icon>remove_circle</mat-icon>
+                  </button>
+                  <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true" matSuffix>
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </mat-card-actions>
               </mat-card>
+            </div>
           </ng-template>
         </mat-tab>
       </ng-container>
