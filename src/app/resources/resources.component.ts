@@ -64,7 +64,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.removeFilteredFromSelection();
   }
-  private myLibraryFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
+  readonly myLibraryFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
