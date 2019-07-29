@@ -65,7 +65,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId');
-      this.configure();
+      this.initTeam(this.teamId);
     });
   }
 
@@ -74,22 +74,22 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  configure() {
-    this.couchService.get('teams/' + this.teamId).pipe(
+  initTeam(teamId: string) {
+    this.couchService.get('teams/' + teamId).pipe(
       switchMap(data => {
         this.planetCode = this.stateService.configuration.code;
         this.team = data;
         return this.getMembers();
       }),
       switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
-      switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId: this.team._id })))
+      switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
     ).subscribe((activities) => {
       this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
         this.visits[visit.user] = visit.count;
       });
-      this.setStatus(this.team, this.userService.get());
+      this.setStatus(teamId, this.userService.get());
     });
-    this.newsService.requestNews({ viewableBy: 'teams', viewableId: this.teamId });
+    this.newsService.requestNews({ viewableBy: 'teams', viewableId: teamId });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
   }
 
