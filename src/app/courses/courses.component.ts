@@ -70,6 +70,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
+  private myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
@@ -77,12 +78,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
     this.removeFilteredFromSelection();
-  }
-  private _myCoursesFilter: { value: 'on' | 'off' } = { value: 'off' };
-  get myCoursesFilter(): 'on' | 'off' { return this._myCoursesFilter.value; }
-  set myCoursesFilter(value: 'on' | 'off') {
-    this._myCoursesFilter.value = value;
-    this.titleSearch = this.titleSearch;
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -95,7 +90,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     filterDropdowns(this.filter),
     filterTags(this.tagFilter),
     filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
-    filterShelf(this._myCoursesFilter, 'admission')
+    filterShelf(this.myCoursesFilter, 'admission')
   ]);
 
   @ViewChild(PlanetTagInputComponent)
@@ -124,7 +119,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.myCoursesFilter = this.route.snapshot.data.myCourses === true ? 'on' : 'off';
+    this.titleSearch = this.dropdownsFill();
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
@@ -320,7 +315,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
       Object.entries(this.filter).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
-      this.myCoursesFilter === 'on' ?
+      this.myCoursesFilter.value === 'on' ?
       ' ' : '';
   }
 
