@@ -40,7 +40,6 @@ $card-width: calc(106px + 2rem);
     .dashboard-name {
       grid-area: info;
       display: flex;
-      justify-content: space-between;
       flex-direction: column;
       h1 {
         display: flex;
