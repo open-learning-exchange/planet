@@ -158,7 +158,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onlyManagerSelected() {
-    return this.selection.selected.every((user) => findByIdInArray(this.allUsers.data, user).isUserAdmin === true);
+    return this.selection.selected.every((user) => findByIdInArray(this.allUsers.data, user).doc.isUserAdmin === true);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -194,6 +194,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       }).concat(childUsers)
       .map((user: any) => {
         const userInfo = {
+          _id: user._id,
           doc: user,
           imageSrc: '',
           visitCount: this.userLoginCount(user, loginActivities),
