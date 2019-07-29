@@ -1,5 +1,5 @@
 <mat-table #table [dataSource]="logs" matSort>
-  <ng-container matColumnDef="planetName">
+  <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element"><a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a></mat-cell>
   </ng-container>
@@ -8,23 +8,23 @@
     <mat-cell *matCellDef="let element">{{element?.resource_downloads?.value}}</mat-cell>
   </ng-container> -->
   <ng-container matColumnDef="views">
-    <mat-header-cell *matHeaderCellDef i18n>Resource Views</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Resource Views</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.resourceViews}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="logins">
-    <mat-header-cell *matHeaderCellDef i18n>Member Visits</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Member Visits</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.userVisits}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastAdminLogin">
-    <mat-header-cell *matHeaderCellDef i18n>Last Admin Login</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Admin Login</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.lastAdminLogin?.max?.loginTime | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastUpgrade">
-    <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Upgrade</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSync">
-    <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Sync</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

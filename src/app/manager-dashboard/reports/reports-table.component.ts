@@ -11,7 +11,7 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
   @Input() planets = [];
   logs = new MatTableDataSource();
   displayedColumns = [
-    'planetName',
+    'name',
     // 'downloads',
     'views',
     'logins',
@@ -26,7 +26,13 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges() {
     this.logs.data = this.planets;
-    this.logs.sortingDataAccessor = commonSortingDataAccessor;
+    this.logs.sortingDataAccessor = (item: any, property: string) =>
+      commonSortingDataAccessor(
+        property === 'name' ?
+          item.nameDoc || item.doc :
+          item,
+        property
+      );
   }
 
   ngAfterViewInit() {
