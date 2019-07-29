@@ -51,7 +51,7 @@
             <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
+        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0 || isOnlyManagerSelected"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
       </form>
     </div>
   </mat-toolbar>

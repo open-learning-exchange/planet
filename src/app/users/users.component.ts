@@ -14,7 +14,7 @@ import {
 } from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
-import { dedupeShelfReduce } from '../shared/utils';
+import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
@@ -61,6 +61,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   private onDestroy$ = new Subject<void>();
   emptyData = false;
   private searchChange = new Subject<string>();
+  isOnlyManagerSelected = false;
 
   constructor(
     private dialog: MatDialog,
@@ -92,6 +93,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       return sortNumberOrString(item.doc, property);
     };
+    this.selection.changed.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.isOnlyManagerSelected = this.onlyManagerSelected();
+    });
   }
 
   ngOnDestroy() {
@@ -153,6 +157,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.selection.selected.length === itemsShown;
   }
 
+  onlyManagerSelected() {
+    return this.selection.selected.every((user) => findByIdInArray(this.allUsers.data, user).doc.isUserAdmin === true);
+  }
+
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
@@ -186,6 +194,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       }).concat(childUsers)
       .map((user: any) => {
         const userInfo = {
+          _id: user._id,
           doc: user,
           imageSrc: '',
           visitCount: this.userLoginCount(user, loginActivities),
@@ -198,10 +207,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       this.emptyData = !this.allUsers.data.length;
       this.dialogsLoadingService.stop();
-    }, (error) => {
-      // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
-      console.log('Error initializing data!');
-      console.log(error);
+    }, () => {
+      this.planetMessageService.showAlert('There was an error retrieving user data');
     });
   }
 
