@@ -403,9 +403,4 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagInputComponent.addTag(tag);
   }
 
-  toggleMyCourses() {
-    this.myCoursesFilter = this.myCoursesFilter === 'on' ? 'off' : 'on';
-    this.removeFilteredFromSelection();
-  }
-
 }
