@@ -95,7 +95,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     filterDropdowns(this.filter),
     filterTags(this.tagFilter),
     filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
-    filterShelf(this._myCoursesFilter, 'coursesInfo')
+    filterShelf(this._myCoursesFilter, 'admission')
   ]);
 
   @ViewChild(PlanetTagInputComponent)
@@ -166,7 +166,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       course.canManage = this.user.isUserAdmin ||
         (course.doc.creator === this.user.name + '@' + this.planetConfiguration.code);
       course.admission = myCourseIndex > -1;
-      return { ...course, coursesInfo: myCourseIndex > -1 };
+      return course;
     });
   }
 
