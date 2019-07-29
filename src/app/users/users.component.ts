@@ -207,10 +207,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       this.emptyData = !this.allUsers.data.length;
       this.dialogsLoadingService.stop();
-    }, (error) => {
-      // A bit of a placeholder for error handling.  Request will return error if the logged in user is not an admin.
-      console.log('Error initializing data!');
-      console.log(error);
+    }, () => {
+      this.planetMessageService.showAlert('There was an error retrieving user data');
     });
   }
 
