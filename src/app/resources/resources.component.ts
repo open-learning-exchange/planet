@@ -64,12 +64,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.removeFilteredFromSelection();
   }
-  private _myLibraryFilter: { value: 'on' | 'off' } = { value: 'off' };
-  get myLibraryFilter(): 'on' | 'off' { return this._myLibraryFilter.value; }
-  set myLibraryFilter(value: 'on' | 'off') {
-    this._myLibraryFilter.value = value;
-    this.titleSearch = this.titleSearch;
-  }
+  readonly myLibraryFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
@@ -82,7 +77,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
       filterSpecificFieldsByWord([ 'doc.title' ]),
-      filterShelf(this._myLibraryFilter, 'libraryInfo')
+      filterShelf(this.myLibraryFilter, 'libraryInfo')
     ]
   );
 
@@ -106,7 +101,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.myLibraryFilter = this.route.snapshot.data.myLibrary === true ? 'on' : 'off';
+    this.titleSearch = this.dropdownsFill();
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
@@ -296,7 +291,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
       Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
-      this.myLibraryFilter === 'on' ?
+      this.myLibraryFilter.value === 'on' ?
       ' ' : '';
   }
 
@@ -342,11 +337,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
-  }
-
-  toggleMyLibrary() {
-    this.myLibraryFilter = this.myLibraryFilter === 'on' ? 'off' : 'on';
-    this.removeFilteredFromSelection();
   }
 
 }

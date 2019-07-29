@@ -12,7 +12,7 @@ import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
   dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter
+  selectedOutOfFilter, filterShelf
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -70,6 +70,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
+  readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
@@ -88,7 +89,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterPredicate = composeFilterFunctions([
     filterDropdowns(this.filter),
     filterTags(this.tagFilter),
-    filterSpecificFieldsByWord([ 'doc.courseTitle' ])
+    filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
+    filterShelf(this.myCoursesFilter, 'admission')
   ]);
 
   @ViewChild(PlanetTagInputComponent)
@@ -117,6 +119,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.titleSearch = this.dropdownsFill();
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
@@ -310,7 +313,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
-    return dropdownsFill({ ...this.filter, tags: this.tagFilter });
+    return this.tagFilter.value.length > 0 ||
+      Object.entries(this.filter).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
+      this.myCoursesFilter.value === 'on' ?
+      ' ' : '';
   }
 
   updateShelf(newShelf, message: string) {
