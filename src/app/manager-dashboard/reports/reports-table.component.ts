@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { commonSortingDataAccessor } from '../../shared/table-helpers';
 
 @Component({
   selector: 'planet-reports-table',
@@ -25,6 +26,13 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges() {
     this.logs.data = this.planets;
+    this.logs.sortingDataAccessor = (item: any, property: string) =>
+      commonSortingDataAccessor(
+        property === 'name' ?
+          item.nameDoc || item.doc :
+          item,
+        property
+      );
   }
 
   ngAfterViewInit() {
