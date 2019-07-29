@@ -21,6 +21,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { languages } from '../shared/languages';
 import { ResourcesService } from './resources.service';
 import { TagsService } from '../shared/forms/tags.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-resources-add',
@@ -65,7 +66,8 @@ export class ResourcesAddComponent implements OnInit {
     private route: ActivatedRoute,
     private stateService: StateService,
     private resourcesService: ResourcesService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -181,6 +183,7 @@ export class ResourcesAddComponent implements OnInit {
         }, (err) => this.planetMessageService.showAlert('There was an error with this resource'));
       });
     } else {
+      this.dialogsLoadingService.stop();
       Object.keys(this.resourceForm.controls).forEach(field => {
         const control = this.resourceForm.get(field);
         control.markAsTouched({ onlySelf: true });
