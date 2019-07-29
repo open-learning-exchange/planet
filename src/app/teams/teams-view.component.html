@@ -52,7 +52,7 @@
         </ng-template>
         <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
         <ng-template #memberList>
-          <div class="members-grid">
+          <div class="card-grid">
             <mat-card *ngFor="let member of members">
               <mat-card-header>
                 <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
@@ -77,7 +77,7 @@
           </ng-template>
           <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
           <ng-template #requestedList>
-            <div class="members-grid">
+            <div class="card-grid">
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
                   <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName}}</a>
@@ -107,7 +107,7 @@
           </ng-template>
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
           <ng-template #resourceList>
-            <div class="members-grid">
+            <div class="card-grid">
               <mat-card *ngFor="let resource of resources">
                 <div class="mat-subheading-2">
                   <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">
