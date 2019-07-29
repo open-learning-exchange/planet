@@ -171,9 +171,7 @@ export class ResourcesAddComponent implements OnInit {
         const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
         const message = newResource.title +
           (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-        this.updateResource(newResource, file)
-        .pipe(switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`)))
-        .subscribe((resourceRes) => {
+        this.updateResource(newResource, file).subscribe((resourceRes) => {
           if (this.isDialog) {
             this.afterSubmit.next({ doc: resourceRes });
           } else {
@@ -207,22 +205,24 @@ export class ResourcesAddComponent implements OnInit {
   updateResource(resourceInfo, file) {
     return this.couchService.updateDocument(
       this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: this.privateFor }
-    )
-    .pipe(switchMap((resourceRes) =>
-      forkJoin([
-        of(resourceRes),
-        file ?
-          this.couchService.putAttachment(
-            this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
-            { headers: { 'Content-Type': file.type } }
-          ) :
-          of({}),
-        this.couchService.bulkDocs(
-          'tags',
-          this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, this.tags.value, this.existingResource.tags)
-        )
-      ])
-    ));
+    ).pipe(
+      switchMap((resourceRes) =>
+        forkJoin([
+          of(resourceRes),
+          file ?
+            this.couchService.putAttachment(
+              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
+              { headers: { 'Content-Type': file.type } }
+            ) :
+            of({}),
+          this.couchService.bulkDocs(
+            'tags',
+            this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, this.tags.value, this.existingResource.tags)
+          )
+        ])
+      ),
+      switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`))
+    );
   }
 
   deleteAttachmentToggle(event) {
