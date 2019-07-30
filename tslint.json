@@ -113,7 +113,6 @@
         "variable-declaration": "nospace"
       }
     ],
-    "typeof-compare": true,
     "unified-signatures": true,
     "variable-name": [ true, "check-format", "allow-leading-underscore" ],
     "whitespace": [
@@ -144,9 +143,6 @@
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
     "directive-class-suffix": true,
-    "no-access-missing-member": true,
-    "templates-use-public": true,
-    "invoke-injectable": true,
     "no-multi-spaces": true
   }
 }
