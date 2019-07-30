@@ -244,7 +244,7 @@ export class PlanetTagInputDialogComponent {
           return false;
         }
         return done || checkValue(iterator);
-      };
+    };
     return checkValue(this.selected.values()) || !checkValue(this.indeterminate.values());
   }
 }
