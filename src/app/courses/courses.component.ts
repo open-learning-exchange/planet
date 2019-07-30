@@ -70,7 +70,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
-  readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
+  readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
   set titleSearch(value: string) {
