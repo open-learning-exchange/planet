@@ -240,14 +240,13 @@ export class PlanetTagInputDialogComponent {
   emptySelection() {
     const checkValue = (iterator) => {
       const { value, done } = iterator.next();
-      if (value === true) {
-        return false;
-      }
-      return done || checkValue(iterator);
-    };
-    return checkValue(this.selected.values());
+        if (value === true) {
+          return false;
+        }
+        return done || checkValue(iterator);
+      };
+    return checkValue(this.selected.values()) || !checkValue(this.indeterminate.values());
   }
-
 }
 
 @Component({
