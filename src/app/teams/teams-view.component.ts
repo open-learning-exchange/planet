@@ -365,9 +365,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   removeCourse(item) {
     const index = this.team.courses.indexOf(item);
     this.team.courses.splice(index, 1);
-    this.couchService.updateDocument('teams/', this.team).subscribe(() => {
+    this.teamsService.updateTeam({ ...this.team}).subscribe((updatedTeam) => {
+      this.team = updatedTeam;
       this.planetMessageService.showMessage('Course was removed');
     });
-    this.router.navigate([ '/teams' ]);
   }
 }
