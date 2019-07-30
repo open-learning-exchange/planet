@@ -1,6 +1,5 @@
 import { LoginPage } from './login.po';
-import { browser, by, element } from 'protractor';
-import fs = require('fs');
+import { browser } from 'protractor';
 
 describe('Login', () => {
   let page: LoginPage;
@@ -22,7 +21,7 @@ describe('Login', () => {
     passInput.sendKeys('e2e');
     page.clickSignin();
     browser.getCurrentUrl().then((url) => {
-      expect(url).toEqual('http://localhost:4200/');
+      expect(url).toEqual('http://localhost:3000/');
     });
   });
 
