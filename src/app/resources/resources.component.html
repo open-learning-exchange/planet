@@ -1,7 +1,7 @@
 <mat-toolbar>
   <mat-toolbar-row>
     <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-    <span i18n>{myLibraryFilter, select, on {myLibrary} off {Library}}</span>
+    <span i18n>{myLibraryFilter.value, select, on {myLibrary} off {Library}}</span>
     <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr">
       <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false"></planet-tag-input>
     </mat-form-field>
