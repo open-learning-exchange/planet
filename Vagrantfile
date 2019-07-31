@@ -120,7 +120,7 @@ Vagrant.configure(2) do |config|
 
     # Run binding on each startup make sure the mount is available on VM restart
     dev.vm.provision "shell", run: "always", inline: <<-SHELL
-      if [ ! $(docker inspect -f '{{.State.Running}}' planet) ]; then
+      if [ $(docker inspect -f '{{.State.Running}}' planet) = "false" ]; then
         docker start planet
         while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do sleep 1; done
         cd /vagrant
