@@ -7,14 +7,14 @@ upsert_doc() {
   DOC_LOC=$3
   # Default method is PUT, fourth argument overrides
   METHOD=${4:-"PUT"}
-  DOC=$(curl $COUCHURL/$DB/$DOC_NAME)
+  DOC=$(curl $COUCHURL/$DB/$DOC_NAME $PROXYHEADER)
   # If DOC includes a rev then it exists so we need to update
   # Otherwise we simply insert
   if [[ $DOC == *rev* ]]; then
     DOC_REV=$(echo $DOC | jq -r '. | ._rev')
-    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC $PROXYHEADER
   else
-    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC $PROXYHEADER
   fi
 }
 
@@ -22,17 +22,27 @@ upsert_doc() {
 insert_docs() {
   DB=$1
   DOC_LOC=$2
-  curl -H 'Content-Type: application/json' -X POST $COUCHURL/$DB/_bulk_docs  -d @$DOC_LOC
+  curl -H 'Content-Type: application/json' -X POST $COUCHURL/$DB/_bulk_docs -d @$DOC_LOC $PROXYHEADER
+}
+
+# Function to add databases
+insert_dbs() {
+  DBS=$1
+  for DB in "${DBS[@]}"
+  do
+    curl -X PUT $COUCHURL/$DB $PROXYHEADER
+  done
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:i" option; do
+while getopts "u:w:p:h:i:x" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
     i) INSTALLFLAG=1;;
+    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username"
   esac
 done
 
@@ -66,8 +76,8 @@ insert_attachments() {
     FILE_NAME=$(echo $i | jq -r '.file_name')
     FILE_LOCATION=$(echo $i | jq -r '.file_location')
     FILE_TYPE=$(echo $i | jq -r '.file_type')
-    REV=$(curl $COUCHURL/$DB/$ID | jq -r '._rev')
-    curl -X PUT $COUCHURL/$DB/$ID/$FILE_NAME?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE
+    REV=$(curl $COUCHURL/$DB/$ID | jq -r '._rev' $PROXYHEADER)
+    curl -X PUT $COUCHURL/$DB/$ID/$FILE_NAME?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE $PROXYHEADER
   done
 }
 
@@ -93,44 +103,47 @@ add_security_admin_roles() {
   echo $NEW_DOCS | jq -c '.'
 }
 
-# Add CouchDB standard databases
-curl -X PUT $COUCHURL/_users
-curl -X PUT $COUCHURL/_replicator
-curl -X PUT $COUCHURL/_global_changes
 
-# Add planet app databases
-curl -X PUT $COUCHURL/meetups
-curl -X PUT $COUCHURL/resources
-curl -X PUT $COUCHURL/courses
-curl -X PUT $COUCHURL/exams
-curl -X PUT $COUCHURL/nations
-curl -X PUT $COUCHURL/communityregistrationrequests
-curl -X PUT $COUCHURL/feedback
-curl -X PUT $COUCHURL/resource_activities
-curl -X PUT $COUCHURL/configurations
-curl -X PUT $COUCHURL/login_activities
-curl -X PUT $COUCHURL/notifications
-curl -X PUT $COUCHURL/ratings
-curl -X PUT $COUCHURL/shelf
-curl -X PUT $COUCHURL/submissions
-curl -X PUT $COUCHURL/courses_progress
-curl -X PUT $COUCHURL/attachments
-curl -X PUT $COUCHURL/send_items
-curl -X PUT $COUCHURL/teams
-curl -X PUT $COUCHURL/tablet_users
-curl -X PUT $COUCHURL/child_users
-curl -X PUT $COUCHURL/replicator_users
-curl -X PUT $COUCHURL/admin_activities
-curl -X PUT $COUCHURL/child_statistics
-curl -X PUT $COUCHURL/tags
-curl -X PUT $COUCHURL/apk_logs
-curl -X PUT $COUCHURL/hubs
-curl -X PUT $COUCHURL/achievements
-curl -X PUT $COUCHURL/myplanet_activities
-curl -X PUT $COUCHURL/news
-curl -X PUT $COUCHURL/parent_users
-curl -X PUT $COUCHURL/team_activities
+DBS=(
+  # CouchDB standard databases
+  "_users"
+  "_replicator"
+  "_global_changes"
+  # Planet app databases
+  "meetups"
+  "resources"
+  "courses"
+  "exams"
+  "nations"
+  "communityregistrationrequests"
+  "feedback"
+  "resource_activities"
+  "configurations"
+  "login_activities"
+  "notifications"
+  "ratings"
+  "shelf"
+  "submissions"
+  "courses_progress"
+  "attachments"
+  "send_items"
+  "teams"
+  "tablet_users"
+  "child_users"
+  "replicator_users"
+  "admin_activities"
+  "child_statistics"
+  "tags"
+  "apk_logs"
+  "hubs"
+  "achievements"
+  "myplanet_activities"
+  "news"
+  "parent_users"
+  "team_activities"
+)
 
+insert_dbs $DBS
 # Create design documents
 node ./design/create-design-docs.js
 # Add or update design docs

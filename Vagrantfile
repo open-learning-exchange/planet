@@ -101,6 +101,9 @@ Vagrant.configure(2) do |config|
 
       curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/file -d '"/opt/couchdb/var/log/couch.log"'
       curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/writer -d '"file"'
+      curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/chttpd/authentication_handlers -d '"{chttpd_auth, cookie_authentication_handler}, {couch_httpd_auth, proxy_authentication_handler}, {chttpd_auth, default_authentication_handler}"'
+
+      docker restart planet
 
       # node_modules folder breaks when setting up in Windows, so use binding to fix
       #echo "Preparing local node_modules folder…"
@@ -120,7 +123,12 @@ Vagrant.configure(2) do |config|
 
     # Run binding on each startup make sure the mount is available on VM restart
     dev.vm.provision "shell", run: "always", inline: <<-SHELL
-      docker start planet
+      if [ $(docker inspect -f '{{.State.Running}}' planet) = "false" ]; then
+        docker start planet
+        while ! curl -X GET http://127.0.0.1:5984/_all_dbs ; do sleep 1; done
+        cd /vagrant
+        . couchdb-setup.sh -p 5984 -x
+      fi
       mount --bind /vagrant_node_modules /vagrant/node_modules
       # Starts the app in a screen (virtual terminal)
       sudo -u vagrant screen -dmS build bash -c 'cd /vagrant; ng serve'

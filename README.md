@@ -75,6 +75,14 @@ sudo npm install --unsafe-perm
 
 The trailing `/*` will remove all files & sub-directories of node_modules.  You won't be able to remove node_modules because of the link between the vagrant VM and your host.
 
+### Cannot create new members in development environment or database missing
+
+Sometimes our custom setup for the `_users` database is overwritten by the default or new databases were added in other commits that have not been created in your local environment.  If you are seeing errors with lack of authorization or missing databases, you can run the following command to run our database setup script again:
+
+```
+./v-couchdb-setup.sh -u <your admin username> -w <your admin password>
+```
+
 ### Cannot GET /
 
 There are two things you can try for this.  First involves the node-sass module which can be problematic.  You will need to rebuild it from the VM:
