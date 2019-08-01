@@ -1,4 +1,5 @@
 @import '../mixins';
+@import '../variables';
 
 :host {
 
@@ -31,8 +32,9 @@
     display: inline-flex;
   }
 
-  .member-name {
-    color: red;
+  mat-card-subtitle p {
+    color: $primary;
+    margin: 0;
   }
 
 }
