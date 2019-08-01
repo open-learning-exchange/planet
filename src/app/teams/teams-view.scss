@@ -1,4 +1,5 @@
 @import '../mixins';
+@import '../variables';
 
 :host {
 
@@ -35,4 +36,10 @@
   mat-toolbar mat-chip-list {
     display: inline-flex;
   }
+
+  mat-card-subtitle p {
+    color: $primary;
+    margin: 0;
+  }
+
 }

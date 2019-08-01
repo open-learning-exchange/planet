@@ -60,6 +60,7 @@
                   <mat-icon [inline]="true">clear</mat-icon>
                 </button>
                 <mat-card-subtitle>
+                  <p *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
                   <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
                 </mat-card-subtitle>
               </mat-card-header>
