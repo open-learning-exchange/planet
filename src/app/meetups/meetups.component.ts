@@ -65,7 +65,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
-  toggleMeetups(){
+  toggleMeetups() {
     this.showOutdated = !this.showOutdated;
     this.ngOnInit();
   }
@@ -76,15 +76,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
-      if(this.showOutdated){
+      if (this.showOutdated) {
         this.meetups.data = meetups;
-      }else{
+      } else {
         this.meetups.data = meetups.filter((meetup) => {
-          if(meetup.endDate > this.dateNow || meetup.startDate > this.dateNow) {
-            return meetup
-          }
+          if (meetup.endDate > this.dateNow || meetup.startDate > this.dateNow) { return meetup; }
         });
-      };
+      }
       this.emptyData = !this.meetups.data.length;
       this.dialogsLoadingService.stop();
     });
