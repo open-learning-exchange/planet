@@ -239,13 +239,17 @@ export class PlanetTagInputDialogComponent {
 
   emptySelection() {
     const checkValue = (iterator) => {
-      const { value, done } = iterator.next();
-      if (value === true) {
+      const { value: entry, done } = iterator.next();
+      if (done) {
+        return true;
+      }
+      const [ key, value ] = entry;
+      if (value === true && this.indeterminate.get(key) !== true) {
         return false;
       }
-      return done || checkValue(iterator);
+      return checkValue(iterator);
     };
-    return checkValue(this.selected.values());
+    return checkValue(this.selected.entries());
   }
 
 }
