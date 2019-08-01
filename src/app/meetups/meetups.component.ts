@@ -48,6 +48,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedJoined = 0;
   isAuthorized = false;
   dateNow: any;
+  showOutdated = true;
 
   constructor(
     private couchService: CouchService,
@@ -64,12 +65,26 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
+  toggleMeetups(){
+    this.showOutdated = !this.showOutdated;
+    this.ngOnInit();
+  }
+
   ngOnInit() {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((meetups) => {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
+      if(this.showOutdated){
+        this.meetups.data = meetups;
+      }else{
+        this.meetups.data = meetups.filter((meetup) => {
+          if(meetup.endDate > this.dateNow || meetup.startDate > this.dateNow) {
+            return meetup
+          }
+        });
+      };
       this.emptyData = !this.meetups.data.length;
       this.dialogsLoadingService.stop();
     });
