@@ -3,9 +3,9 @@
 </ng-container>
 
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
-  <ng-container [ngSwitch]="labelType">
-    <span i18n *ngSwitchCase="'filter'">Collections</span>
-    <span i18n *ngSwitchCase="'add'">Add Collections</span>
-    <span i18n *ngSwitchCase="'change'">Change Collections</span>
-  </ng-container>
+  <span [ngSwitch]="labelType" [ngClass]="{'mat-subheading-2': largeFont}">
+    <ng-container i18n *ngSwitchCase="'filter'" >Collections</ng-container>
+    <ng-container i18n *ngSwitchCase="'add'">Add Collections</ng-container>
+    <ng-container i18n *ngSwitchCase="'change'">Change Collections</ng-container>
+  </span>
 </button>

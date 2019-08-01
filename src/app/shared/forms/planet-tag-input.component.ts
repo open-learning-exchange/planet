@@ -63,6 +63,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() selectedIds;
   @Input() labelType = this.mode;
   @Input() db;
+  @Input() largeFont = false;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
