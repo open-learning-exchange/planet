@@ -50,7 +50,7 @@ ISINSTALL=${INSTALLFLAG:-0}
 
 if [ -z "$HOST" ]
 then
-  HOST=localhost
+  HOST=127.0.0.1
 fi
 
 # Default port for CouchDB accessed from host machine is 2200
