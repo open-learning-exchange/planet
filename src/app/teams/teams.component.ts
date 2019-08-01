@@ -24,6 +24,9 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
       max-width: 180px;
       padding-right: 0.5rem;
     }
+    mat-row {
+      cursor: pointer;
+    }
   ` ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
