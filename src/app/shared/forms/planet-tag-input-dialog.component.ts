@@ -67,7 +67,8 @@ export class PlanetTagInputDialogComponent {
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
-    // this.selectMany = this.mode === 'add' || this.data.initSelectMany;
+    // August 2, 2019: We are not readding the toggle, but for filter mode we allow select many to be turned off
+    this.selectMany = this.mode === 'add' || this.data.selectMany;
     this.data.startingTags
       .filter((tag: any) => tag)
       .forEach(tag => {
