@@ -137,7 +137,7 @@ export class TagsService {
   }
 
   /**
-   * Reroutes to new URL on filtering so that the back button of a particular result go to the previous filtered results 
+   * Reroutes to new URL on filtering so that the back button of a particular result go to the previous filtered results
    */
   filterReroute(tag) {
     this.router.navigate([ '..', tag ? { tag: tag } : {} ], { relativeTo: this.route });
