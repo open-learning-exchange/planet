@@ -120,6 +120,15 @@
             <label i18n>Meetups</label>
           </a>
         </li>
+        <li>
+          <a mat-button routerLink="/surveys"
+            routerLinkActive="active"
+            planetPulsateIcon
+            i18n-title title="Surveys">
+            <mat-icon svgIcon="surveys"></mat-icon>
+            <label i18n>Surveys</label>
+          </a>
+        </li>
       </ul>
       <!--Bottom part-->
       <ul class="bottom-nav">
@@ -127,12 +136,6 @@
           <a mat-button planetFeedback i18n-title title="Feedback">
             <mat-icon>help_outline</mat-icon>
             <label i18n>Feedback</label>
-          </a>
-        </li>
-        <li>
-          <a mat-button routerLink="/surveys" i18n-title title="Surveys">
-            <mat-icon svgIcon="surveys"></mat-icon>
-            <label i18n>Surveys</label>
           </a>
         </li>
         <ng-container *planetAuthorizedRoles>
