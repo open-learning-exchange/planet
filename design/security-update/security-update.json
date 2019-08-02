@@ -195,19 +195,6 @@
     }
   },
   {
-    "dbName": "activity_logs",
-    "json": {
-      "admins": {
-        "names": [],
-        "roles": []
-      },
-      "members": {
-        "names": [],
-        "roles": []
-      }
-    }
-  },
-  {
   "dbName": "courses_progress",
     "json": {
       "admins": {
