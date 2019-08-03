@@ -29,7 +29,7 @@ export class ValidatorService {
     dbName: string,
     fieldName: string,
     ac: AbstractControl,
-    { exceptions = [], opts = {}, selectors = {} } = { exceptions: [], opts: {}, selectors: {} }
+    { exceptions = [], opts = {}, selectors = {}, errorType = 'duplicate' } = { exceptions: [], opts: {}, selectors: {} }
   ): Observable<ValidationErrors | null> {
     if (exceptions.findIndex(exception => ac.value === exception) > -1) {
       return of(null);
@@ -40,7 +40,7 @@ export class ValidatorService {
       switchMap(() => this.checkUnique$(dbName, selectors, opts)),
       map(exists => {
         if (exists) {
-          return { duplicate: true };
+          return { [errorType]: true };
         }
         return null;
       })
