@@ -216,6 +216,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     if (tagOne) {
       this.value = [];
     }
+    this.tagsService.filterReroute(tag);
     if (isSelected) {
       this.addTag(tag);
     } else {

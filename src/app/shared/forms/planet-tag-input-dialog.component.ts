@@ -105,7 +105,6 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(tag, false);
 
         this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
-        this.tagsService.filterReroute(tag);
       }
     });
   }
