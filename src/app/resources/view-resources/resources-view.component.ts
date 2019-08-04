@@ -92,7 +92,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns routing to previous parent page on Resources
+   * Returns routing to previous parent page
    */
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
