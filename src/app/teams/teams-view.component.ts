@@ -44,6 +44,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   planetCode: string;
   deleteDialog: any;
   leaveDialog: any;
+  readonly dbName = 'resources';
 
   constructor(
     private couchService: CouchService,
@@ -350,7 +351,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   removeResource(resource) {
-    return this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }).pipe(switchMap(() => this.getMembers()));
+    let obs = [ this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }) ];
+    if (resource.resource.private === true) {
+      const { _id: resId, _rev: resRev } = resource.resource;
+      obs.push(this.couchService.delete(this.dbName + '/' + resId + '?rev=' + resRev));
+    }
+    return forkJoin(obs).pipe(switchMap(() => this.getMembers()));
   }
 
   makeLeader(member) {
