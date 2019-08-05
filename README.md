@@ -85,7 +85,7 @@ Sometimes our custom setup for the `_users` database is overwritten by the defau
 
 ### Cannot GET /
 
-There are two things you can try for this.  First involves installing node packages which can be problematic.
+There are two things you can try for this.  First is to reinstall the node packages with:
 
 ```
 vagrant ssh dev
