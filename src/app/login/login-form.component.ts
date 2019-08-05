@@ -55,7 +55,7 @@ export class LoginFormComponent {
       Validators.required,
       CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
       Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ],
-      ac => this.validatorService.isUnique$('_users', 'name', ac)
+      ac => this.validatorService.isUnique$('_users', 'name', ac, { errorType: 'duplicateUser' })
     ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
