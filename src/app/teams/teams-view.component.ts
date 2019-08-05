@@ -351,7 +351,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   removeResource(resource) {
-    let obs = [ this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }) ];
+    const obs = [ this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }) ];
     if (resource.resource.private === true) {
       const { _id: resId, _rev: resRev } = resource.resource;
       obs.push(this.couchService.delete(this.dbName + '/' + resId + '?rev=' + resRev));
