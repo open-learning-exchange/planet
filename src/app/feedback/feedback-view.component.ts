@@ -23,7 +23,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   newMessage = '';
   isActive = true;
   editTitleMode = false;
-  @ViewChild('chatList') chatListElement: ElementRef;
+  @ViewChild('chatList', { static: false }) chatListElement: ElementRef;
 
   constructor(
     private couchService: CouchService,

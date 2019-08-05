@@ -11,8 +11,8 @@ export class MyPlanetTableComponent implements OnChanges, AfterViewInit {
   myPlanets = new MatTableDataSource();
   displayedColumns = [ 'id', 'name', 'lastSynced', 'version', 'count' ];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   ngOnChanges() {
     this.myPlanets.data = this.data;

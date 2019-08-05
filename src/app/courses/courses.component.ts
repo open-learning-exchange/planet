@@ -52,8 +52,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedEnrolled = 0;
   selectedLocal = 0;
   courses = new MatTableDataSource();
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
@@ -93,7 +93,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     filterShelf(this.myCoursesFilter, 'admission')
   ]);
 
-  @ViewChild(PlanetTagInputComponent)
+  @ViewChild(PlanetTagInputComponent, { static: false })
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(

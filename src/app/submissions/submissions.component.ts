@@ -22,8 +22,8 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
   statusOptions: any = [
     { text: 'Pending', value: 'pending' },

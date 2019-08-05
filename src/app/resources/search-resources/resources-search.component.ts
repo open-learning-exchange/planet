@@ -38,7 +38,7 @@ export class ResourcesSearchListComponent {
   @Input() items;
   @Input() selected: string[] = [];
   @Output() selectChange = new EventEmitter<any>();
-  @ViewChild(MatSelectionList) selectionList: MatSelectionList;
+  @ViewChild(MatSelectionList, { static: false }) selectionList: MatSelectionList;
 
   selectionChange(event) {
     this.emitChange(event.source.selectedOptions.selected.map(option => option.value));

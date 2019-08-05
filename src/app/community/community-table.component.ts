@@ -42,8 +42,8 @@ export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDest
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
     private couchService: CouchService,

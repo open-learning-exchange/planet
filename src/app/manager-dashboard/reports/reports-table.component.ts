@@ -19,8 +19,8 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
     'lastUpgrade',
     'lastSync'
   ];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor() {}
 

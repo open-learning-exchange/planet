@@ -9,8 +9,8 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 })
 export class DialogsAddResourcesComponent {
 
-  @ViewChild(ResourcesComponent) resourcesComponent: ResourcesComponent;
-  @ViewChild(ResourcesAddComponent) resourcesAddComponent: ResourcesAddComponent;
+  @ViewChild(ResourcesComponent, { static: false }) resourcesComponent: ResourcesComponent;
+  @ViewChild(ResourcesAddComponent, { static: false }) resourcesAddComponent: ResourcesAddComponent;
   view: 'resources' | 'resourcesAdd' = 'resources';
   linkInfo: any;
   updateResource = false;

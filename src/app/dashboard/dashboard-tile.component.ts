@@ -19,7 +19,7 @@ export class DashboardTileComponent implements OnInit {
   @Input() emptyLink = '/';
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
-  @ViewChild('items') itemDiv: ElementRef;
+  @ViewChild('items', { static: false }) itemDiv: ElementRef;
 
   constructor(
     private planetMessageService: PlanetMessageService,

@@ -79,7 +79,7 @@ export class UserService {
         if (!environment.test) {
           return this.couchService.findAll('shelf', { 'selector': { '_id': this.user._id } });
         }
-        return of({});
+        return of([ [] ]);
       }),
       switchMap(([ shelf ]: any[]) => {
         // Combine with empty shelf in case all fields are not present

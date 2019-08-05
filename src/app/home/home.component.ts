@@ -35,8 +35,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   forceModern: boolean;
   sidenavState = 'closed';
   classicToolbarWidth = 0;
-  @ViewChild('content') private mainContent;
-  @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
+  @ViewChild('content', { static: false }) private mainContent;
+  @ViewChild('toolbar', { read: ElementRef, static: false }) private toolbar: ElementRef;
   planetName;
 
   // Sets the margin for the main content to match the sidenav width
@@ -97,7 +97,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         toolbarElement.querySelector('.navbar-right').offsetWidth +
         parseInt(toolbarStyle.paddingLeft, 10) +
         parseInt(toolbarStyle.paddingRight, 10);
-      this.mainContent._updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     }
   }

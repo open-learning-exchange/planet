@@ -13,7 +13,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   templateUrl: './notifications.component.html',
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();

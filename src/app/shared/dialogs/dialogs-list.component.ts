@@ -36,7 +36,7 @@ export class DialogsListComponent implements AfterViewInit {
   selectedElements: any[];
   selectedNames: string[] = [];
   tooltipText = '';
-  @ViewChild('paginator') paginator: MatPaginator;
+  @ViewChild('paginator', { static: false }) paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[],
