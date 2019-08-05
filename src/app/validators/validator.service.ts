@@ -55,34 +55,6 @@ export class ValidatorService {
     return fieldInput.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
-  public isNameAvailible$(
-    dbName: string,
-    fieldName: string,
-    ac: AbstractControl,
-    id: string
-  ): Observable<ValidationErrors | null> {
-    return timer(500).pipe(
-      switchMap(() => this.couchService.post(
-        `${dbName}/_find`,
-        findDocuments(
-          { [fieldName] : ac.value },
-          [ '_id', fieldName ]
-        )
-      )),
-      map(exists => {
-        if (exists.docs.length > 0) {
-          return exists.docs.reduce((isMatch, c) => {
-            if (id === c._id) {
-              return null;
-            }
-            return isMatch;
-          }, { duplicate: true });
-        }
-      })
-
-    ).pipe(debug('Checking availibility of ' + fieldName + ' in ' + dbName));
-  }
-
   public checkPassword$(ac: AbstractControl): Observable<boolean> {
     return this.couchService.post('_session', { 'name': this.userService.get().name, 'password': ac.value }, { withCredentials: false })
     .pipe(
