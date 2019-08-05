@@ -85,12 +85,14 @@ Sometimes our custom setup for the `_users` database is overwritten by the defau
 
 ### Cannot GET /
 
-There are two things you can try for this.  First involves the node-sass module which can be problematic.  You will need to rebuild it from the VM:
+There are two things you can try for this.  First is to reinstall the node packages with:
 
 ```
 vagrant ssh dev
 cd /vagrant
-npm rebuild node-sass
+sudo rm -rf node_modules/*
+rm package-lock.json
+sudo npm install --unsafe-perm
 ```
 
 The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `screen -dmS build bash -c 'cd /vagrant; ng serve'`.
