@@ -22,6 +22,7 @@ import { languages } from '../shared/languages';
 import { ResourcesService } from './resources.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-resources-add',
@@ -32,6 +33,8 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 export class ResourcesAddComponent implements OnInit {
   constants = constants;
   file: any;
+  attachedZipFiles: string[] = [];
+  filteredZipFiles: Observable<string[]>;
   deleteAttachment = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
@@ -94,6 +97,12 @@ export class ResourcesAddComponent implements OnInit {
           console.log(error);
         });
     }
+
+    this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
+    .pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    );
   }
 
   createForm() {
@@ -125,7 +134,7 @@ export class ResourcesAddComponent implements OnInit {
       medium: '',
       resourceType: '',
       addedBy: '',
-      openWhichFile: '',
+      openWhichFile: { value: '', disabled: true },
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
@@ -141,9 +150,19 @@ export class ResourcesAddComponent implements OnInit {
     // If the resource does not have an attachment, disable file downloadable toggle
     this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
-    this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments)[0] : '';
+    this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments).join(', ') : '';
+    if (Object.keys(resource.doc._attachments).length > 1) {
+      this.resourceForm.controls.openWhichFile.enable();
+      this.attachedZipFiles = Object.keys(resource.doc._attachments);
+    }
     this.resourceForm.patchValue(resource.doc);
     this.tags.setValue(resource.tags.map((tag: any) => tag._id));
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.attachedZipFiles.filter(option => option.toLowerCase().includes(filterValue));
   }
 
   // Function which takes a MIME Type as a string and returns whether the file is an
@@ -256,18 +275,24 @@ export class ResourcesAddComponent implements OnInit {
     };
   }
 
+  private getFileNames(data) {
+    // Add file names to array for mapping
+    const fileNames = [];
+    for (const path in data.files) {
+      if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
+        fileNames.push(path);
+      }
+    }
+    return fileNames;
+  }
+
   zipObs(zipFile) {
     const zip = new JSZip();
     return Observable.create((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
       zip.loadAsync(zipFile).then((data) => {
-        const fileNames = [];
-        // Add file names to array for mapping
-        for (const path in data.files) {
-          if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
-            fileNames.push(path);
-          }
-        }
+        const fileNames = this.getFileNames(data);
+
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
         forkJoin(fileNames.map(this.processZip(zip))).pipe(debug('Unpacking zip file')).subscribe((filesArray) => {
           // Create object in format for multiple attachment upload to CouchDB
@@ -297,6 +322,22 @@ export class ResourcesAddComponent implements OnInit {
     this.disableDownload = false;
     this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
+
+    if ( this.simpleMediaType(this.file.type) === 'zip') {
+      // If the uploaded file is a zip, update attachedZipFiles to show options in openWhichFile
+      this.resourceForm.controls.openWhichFile.enable();
+      const zip = new JSZip();
+
+      zip.loadAsync(this.file).then((data) => {
+          this.attachedZipFiles = this.getFileNames(data);
+        },
+        err => {
+          console.log('error', err.message);
+      });
+    } else {
+      // a non-zip file is uploaded
+      this.resourceForm.controls.openWhichFile.disable();
+    }
   }
 
 }
