@@ -44,7 +44,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   planetCode: string;
   deleteDialog: any;
   leaveDialog: any;
-  readonly dbName = 'resources';
+  readonly dbName = 'teams';
 
   constructor(
     private couchService: CouchService,
@@ -75,7 +75,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   initTeam(teamId: string) {
-    this.couchService.get('teams/' + teamId).pipe(
+    this.couchService.get(`${this.dbName}/${teamId}`).pipe(
       switchMap(data => {
         this.planetCode = this.stateService.configuration.code;
         this.team = data;
@@ -254,7 +254,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    this.couchService.bulkDocs('teams', newMembershipDocs).pipe(
+    this.couchService.bulkDocs(this.dbName, newMembershipDocs).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
@@ -327,7 +327,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           });
         },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
-        canAdd: true, db: 'teams', linkId: this.teamId, resource
+        canAdd: true, db: this.dbName, linkId: this.teamId, resource
       }
     });
   }
@@ -351,10 +351,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   removeResource(resource) {
-    const obs = [ this.couchService.post('teams', { ...resource.linkDoc, _deleted: true }) ];
+    const obs = [ this.couchService.post(this.dbName, { ...resource.linkDoc, _deleted: true }) ];
     if (resource.resource.private === true) {
       const { _id: resId, _rev: resRev } = resource.resource;
-      obs.push(this.couchService.delete(this.dbName + '/' + resId + '?rev=' + resRev));
+      obs.push(this.couchService.delete(`resources/${resId}?rev=${resRev}`));
     }
     return forkJoin(obs).pipe(switchMap(() => this.getMembers()));
   }
