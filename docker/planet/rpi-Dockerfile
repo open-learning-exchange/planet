@@ -15,7 +15,7 @@ RUN apk add \
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/    
 COPY docker/planet/scripts/docker-entrypoint.sh ./
-COPY docker/planet/nginx/ /usr/share/nginx/html
 COPY ./ng-app/dist/usr/share/nginx/html /usr/share/nginx/html
+COPY docker/planet/nginx/ /usr/share/nginx/html
 
 CMD ./docker-entrypoint.sh
