@@ -16,6 +16,7 @@
         <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
+        <button class="margin-tb" mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
       </ng-container>
       <ng-template #editTitleBlock>
         <mat-form-field color="accent" class="margin-lr-3 title-edit">
@@ -43,7 +44,6 @@
     <div *ngIf="showParams==='on'">
       <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
     </div>
-    <button class="margin-tb" mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
     <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
         <div class="chat-list-user">
