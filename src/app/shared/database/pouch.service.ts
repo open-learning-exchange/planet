@@ -9,14 +9,12 @@ import { environment } from '../../../environments/environment';
 PouchDB.plugin(PouchDBAuth);
 PouchDB.plugin(PouchDBFind);
 
-type RemoteDatabases = 'feedback';
-
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
-  private localDBs = new Map<RemoteDatabases, PouchDB.Database>();
+  private localDBs = new Map<string, PouchDB.Database>();
   private authDB: PouchDB.Database;
-  private databases = new Set<RemoteDatabases>([ 'feedback' ]);
+  private databases = new Set<string>([ 'feedback' ]);
 
   constructor() {
     // test is a placeholder temp databases
@@ -54,11 +52,11 @@ export class PouchService {
     return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicateToRemoteDB(dbName, pouchDB));
   }
 
-  replicateFromRemoteDB(dbName: RemoteDatabases, pouchDB: PouchDB.Database) {
+  replicateFromRemoteDB(dbName: string, pouchDB: PouchDB.Database) {
     return this.replicate(pouchDB.replicate.from(this.baseUrl + dbName));
   }
 
-  replicateToRemoteDB(dbName: RemoteDatabases, pouchDB: PouchDB.Database) {
+  replicateToRemoteDB(dbName: string, pouchDB: PouchDB.Database) {
     return this.replicate(pouchDB.replicate.to(this.baseUrl + dbName));
   }
 
@@ -66,7 +64,7 @@ export class PouchService {
     return from(replicateFn).pipe(catchError(this.handleError));
   }
 
-  getLocalPouchDB(db: RemoteDatabases): PouchDB.Database {
+  getLocalPouchDB(db: string): PouchDB.Database {
     return this.localDBs.get(db);
   }
 
