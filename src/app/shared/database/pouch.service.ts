@@ -45,22 +45,15 @@ export class PouchService {
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicateFromRemoteDB(dbName, pouchDB));
+    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicate(dbName, pouchDB, 'from'));
   }
 
   replicateToRemoteDBs() {
-    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicateToRemoteDB(dbName, pouchDB));
+    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicate(dbName, pouchDB, 'to'));
   }
 
-  replicateFromRemoteDB(dbName: string, pouchDB: PouchDB.Database) {
-    return this.replicate(pouchDB.replicate.from(this.baseUrl + dbName));
-  }
-
-  replicateToRemoteDB(dbName: string, pouchDB: PouchDB.Database) {
-    return this.replicate(pouchDB.replicate.to(this.baseUrl + dbName));
-  }
-
-  replicate(replicateFn) {
+  replicate(dbName: string, pouchDB: PouchDB.Database, direction: 'from' | 'to') {
+    const replicateFn = direction === 'from' ? pouchDB.replicate.from(this.baseUrl + dbName) : pouchDB.replicate.to(this.baseUrl + dbName);
     return from(replicateFn).pipe(catchError(this.handleError));
   }
 
