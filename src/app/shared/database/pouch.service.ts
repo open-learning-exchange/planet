@@ -12,68 +12,56 @@ PouchDB.plugin(PouchDBFind);
 @Injectable()
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
-  private localDBs = {};
-  private authDB;
-  private databases = [];
+  private localDBs = new Map<string, PouchDB.Database>();
+  private authDB: PouchDB.Database;
+  private databases = new Set<string>([ 'feedback' ]);
 
   constructor() {
-    this.databases.forEach(db => {
-      const pouchDB = new PouchDB(`local-${db}`);
-
-      // indexes the field for faster lookup
-      pouchDB.createIndex({
-        index: {
-          fields: [ 'kind', 'createdAt' ]
-        }
-      });
-      this.localDBs[db] = pouchDB;
-    });
-
-    // test is a placeholder temp database
+    // test is a placeholder temp databases
     // we need a central remote database
-    // since we will have different levels of authentication (manager, intern)
+    // since we will have different levels of authentication (manager, intersn)
     // we will have to create corresponding documents in couchdb and we can sync
     // we can decide that when the user is being created for the first time?
     this.authDB = new PouchDB(this.baseUrl + 'test', {
-      skip_setup: true
+      fetch(url, opts) {
+        opts.credentials = 'include';
+        return (PouchDB as any).fetch(url, opts);
+      }
+    } as PouchDB.Configuration.RemoteDatabaseConfiguration);
+
+    this.configureDBs();
+  }
+
+  configureDBs() {
+    this.databases.forEach(db => {
+      this.localDBs.set(db, new PouchDB(`local-${db}`));
     });
+  }
+
+  deconfigureDBs() {
+    return Array.from(this.localDBs.values(), pouchDB => pouchDB.destroy());
   }
 
   // @TODO: handle edge cases like offline, duplicate, duplications
   // handle repliction errors or make use of navigator online?
   replicateFromRemoteDBs() {
-    this.databases.forEach(db => {
-      this.localDBs[db].replicate.from(this.baseUrl + db);
-    });
+    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicate(dbName, pouchDB, 'from'));
   }
 
   replicateToRemoteDBs() {
-    this.databases.forEach(db => {
-      this.localDBs[db].replicate.to(this.baseUrl + db, {
-        filter(doc) {
-          return doc.pouchIndex === db;
-        }
-      });
-    });
+    return Array.from(this.localDBs.entries(), ([ dbName, pouchDB ]) => this.replicate(dbName, pouchDB, 'to'));
   }
 
-  replicateFromRemoteDB(db) {
-    return this.replicate(this.localDBs[db].replicate.from(this.baseUrl + db));
-  }
-
-  replicateToRemoteDB(db) {
-    return this.replicate(this.localDBs[db].replicate.to(this.baseUrl + db));
-  }
-
-  replicate(replicateFn) {
+  replicate(dbName: string, pouchDB: PouchDB.Database, direction: 'from' | 'to') {
+    const replicateFn = direction === 'from' ? pouchDB.replicate.from(this.baseUrl + dbName) : pouchDB.replicate.to(this.baseUrl + dbName);
     return from(replicateFn).pipe(catchError(this.handleError));
   }
 
-  getLocalPouchDB(db) {
-    return this.localDBs[db];
+  getLocalPouchDB(db: string): PouchDB.Database {
+    return this.localDBs.get(db);
   }
 
-  getAuthDB() {
+  getAuthDB(): PouchDB.Database {
     return this.authDB;
   }
 
@@ -84,7 +72,7 @@ export class PouchService {
 
   private docEditingDB(db, id) {
     const name = `${db}_${id}`;
-    return this.localDBs[name] !== undefined ? this.localDBs[name] : new PouchDB(name);
+    return this.localDBs.get(name) !== undefined ? this.localDBs.get(name) : new PouchDB(name);
   }
 
   getDocEditing(db, id = 'new') {
