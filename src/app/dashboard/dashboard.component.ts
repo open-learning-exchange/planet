@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
           return of([]);
         }),
         map(docs => {
-          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : ''), 
+          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id: ''), 
             canRemove: this.leaderIds.find(id => item._id === id) }));
         })
       );
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit {
     return this.couchService.findAll(
       'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.userService.get()._id, docType: 'membership' })
     ).pipe(map(docs => docs.map((doc: any) => {
-      if(doc.isLeader) {
+      if (doc.isLeader) {
         this.leaderIds.push(doc.teamId);
       }
       return doc.teamId;
