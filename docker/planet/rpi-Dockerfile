@@ -1,6 +1,6 @@
 FROM tobi312/rpi-nginx@sha256:b375cd9a4511f5d7763397c5a4faa1f5c3605507db97075b12582aad2a6871b0
 RUN rm -rf /usr/share/nginx/html/*
-RUN apk add \
+RUN apk add --no-cache \
       fcgi=2.4.0-r8 \
     fcgiwrap=1.1.0-r3 \
     spawn-fcgi=1.6.4-r3 \
