@@ -24,7 +24,7 @@ RUN ./create_version_json.sh
 FROM nginx:1.16.0-alpine
 
 RUN rm -rf /usr/share/nginx/html/*
-RUN apk add \
+RUN apk add --no-cache \
       fcgi=2.4.0-r8 \
     fcgiwrap=1.1.0-r3 \
     spawn-fcgi=1.6.4-r3 \
