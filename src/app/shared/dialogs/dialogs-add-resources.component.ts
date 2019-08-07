@@ -53,7 +53,7 @@ export class DialogsAddResourcesComponent {
   }
 
   addNewResource(resource) {
-    this.data.okClick(this.existingResource.doc ? [] : [ resource ]);
+    this.data.okClick(this.existingResource.doc || resource === undefined ? [] : [ resource ]);
   }
 
   toggleNewOrExisting() {
