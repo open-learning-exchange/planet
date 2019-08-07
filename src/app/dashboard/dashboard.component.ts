@@ -86,13 +86,12 @@ export class DashboardComponent implements OnInit {
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
       this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }),
       this.getTeamMembership().pipe(
-        switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true}))
+        switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }))
         )
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
-      
       this.data.myTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ]
         .filter(team => team.status !== 'archived');
     });
@@ -105,7 +104,8 @@ export class DashboardComponent implements OnInit {
           return of([]);
         }),
         map(docs => {
-          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : ''), canRemove: this.leaderIds.find(id => item._id === id) }));
+          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : ''), 
+            canRemove: this.leaderIds.find(id => item._id === id) }));
         })
       );
   }
@@ -115,7 +115,9 @@ export class DashboardComponent implements OnInit {
     return this.couchService.findAll(
       'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.userService.get()._id, docType: 'membership' })
     ).pipe(map(docs => docs.map((doc: any) => {
-      if(doc.isLeader) this.leaderIds.push(doc.teamId);
+      if(doc.isLeader) {
+        this.leaderIds.push(doc.teamId);
+      }
       return doc.teamId;
     })));
   }
