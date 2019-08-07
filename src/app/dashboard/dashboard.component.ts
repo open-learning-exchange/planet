@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
           return of([]);
         }),
         map(docs => {
-          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id: ''), 
+          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id: ''),
             canRemove: this.leaderIds.find(id => item._id === id) }));
         })
       );
