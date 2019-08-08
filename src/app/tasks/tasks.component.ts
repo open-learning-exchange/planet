@@ -24,8 +24,10 @@ export class TasksComponent {
   }
 
   addTask() {
-    this.tasksService.openAddDialog({ link: this.link }, ({ task, res }) => {
-      this.tasks = [ { ...task, ...res }, ...this.tasks ];
+    this.tasksService.openAddDialog({ link: this.link }, (newTask) => {
+      let newTaskIndex = this.tasks.findIndex((task) => new Date(newTask.deadline) < new Date(task.deadline) || task.completed);
+      newTaskIndex = newTaskIndex < 0 ? this.tasks.length : newTaskIndex;
+      this.tasks = [ ...this.tasks.slice(0, newTaskIndex), newTask, ...this.tasks.slice(newTaskIndex, this.tasks.length) ];
       this.planetMessageService.showMessage('New task has been added');
     });
   }

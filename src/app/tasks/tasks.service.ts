@@ -40,7 +40,7 @@ export class TasksService {
       onSubmit: (task) => {
         if (task) {
           this.addTask({ ...task, ...additionalFields }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
-            onSuccess({ task, res });
+            onSuccess(res.doc);
             this.dialogsFormService.closeDialogsForm();
           });
         }
