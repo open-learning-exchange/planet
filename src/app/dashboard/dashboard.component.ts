@@ -27,6 +27,7 @@ export class DashboardComponent implements OnInit {
   visits = 0;
   surveysCount = 0;
   examsCount = 0;
+  leaderIds = [];
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
@@ -84,9 +85,7 @@ export class DashboardComponent implements OnInit {
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
       this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }),
-      this.getTeamMembership().pipe(
-        switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }))
-      )
+      this.getTeamMembership()
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
@@ -112,7 +111,17 @@ export class DashboardComponent implements OnInit {
     const configuration = this.stateService.configuration;
     return this.couchService.findAll(
       'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.userService.get()._id, docType: 'membership' })
-    ).pipe(map(docs => docs.map((doc: any) => doc.teamId)));
+    ).pipe(
+      switchMap((memberships) => forkJoin([
+        of(memberships),
+        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: 'teams/view/', addId: true })
+      ])),
+      map(([ memberships, teams ]: any[]) =>
+        teams.map(team => ({
+          ...team, canRemove: memberships.some(membership => membership.teamId === team._id && membership.isLeader)
+        }))
+      )
+    );
   }
 
   get profileImg() {

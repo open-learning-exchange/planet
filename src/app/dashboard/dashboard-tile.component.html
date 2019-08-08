@@ -19,7 +19,7 @@
           >
             <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
             <p>{{item.title}}</p>
-            <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife'">
+            <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife' && !item?.canRemove">
               <mat-icon [inline]="true">clear</mat-icon>
             </button>
           </div>
