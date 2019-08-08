@@ -157,7 +157,6 @@ upsert_doc notifications _index '{"index":{"fields":[{"time":"desc"}]},"name":"t
 upsert_doc ratings _index '{"index":{"fields":[{"item":"desc"}]},"name":"parent-index"}' POST
 upsert_doc feedback _index '{"index":{"fields":[{"openTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc communityregistrationrequests _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"time-index"}' POST
-upsert_doc activity_logs _index '{"index":{"fields":[{"createdTime":"desc"}]},"name":"time-index"}' POST
 upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-index"}' POST
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
