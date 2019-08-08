@@ -79,6 +79,12 @@
         </ng-template>
       </mat-tab>
       <ng-container *ngIf="userStatus === 'member'">
+        <mat-tab *planetBeta>
+          <ng-template mat-tab-label>
+            <ng-container i18n>Tasks</ng-container>
+          </ng-template>
+          <button i18n mat-stroked-button (click)="addTask()">Add a task</button>
+        </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>
             <ng-container i18n>Join Requests</ng-container> ({{requests.length}})
