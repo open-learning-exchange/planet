@@ -58,13 +58,13 @@ export class DashboardComponent implements OnInit {
     this.getExams();
     this.initDashboard();
 
-    this.couchService.post('login_activities/_find', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
+    this.couchService.findAll('login_activities', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
-          return of({ docs: [] });
+          return of([]);
         })
       ).subscribe((res: any) => {
-        this.visits = res.docs.length;
+        this.visits = res.length;
       });
 
     if (this.userService.isBetaEnabled() && this.myLifeItems.findIndex(item => item.title === 'Health') === -1) {
