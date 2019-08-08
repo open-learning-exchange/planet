@@ -318,31 +318,34 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   bindFile(event) {
-    if (event.target.files.length) {
-      this.file = event.target.files[0];
-      this.disableDownload = false;
-      this.disableDelete = false;
-      this.resourceForm.updateValueAndValidity();
-
-      if ( this.simpleMediaType(this.file.type) === 'zip') {
-        // If the uploaded file is a zip, update attachedZipFiles to show options in openWhichFile
-        this.resourceForm.controls.openWhichFile.enable();
-        const zip = new JSZip();
-
-        zip.loadAsync(this.file).then((data) => {
-            this.attachedZipFiles = this.getFileNames(data);
-          },
-          err => {
-            console.log('error', err.message);
-        });
-      } else {
-        // a non-zip file is uploaded
-        this.resourceForm.controls.openWhichFile.disable();
-      }
-    } else {
-      // No file selected
+    const disableOpenWhichFile = () => {
+      this.resourceForm.controls.openWhichFile.setValue('');
       this.resourceForm.controls.openWhichFile.disable();
+    };
+    if (event.target.files.length === 0) {
+      disableOpenWhichFile();
+      return;
     }
+    this.file = event.target.files[0];
+    this.disableDownload = false;
+    this.disableDelete = false;
+    this.resourceForm.updateValueAndValidity();
+
+    if (this.simpleMediaType(this.file.type) !== 'zip') {
+      disableOpenWhichFile();
+      return;
+    }
+
+    // If the uploaded file is a zip, update attachedZipFiles to show options in openWhichFile
+    this.resourceForm.controls.openWhichFile.enable();
+    const zip = new JSZip();
+
+    zip.loadAsync(this.file).then((data) => {
+        this.attachedZipFiles = this.getFileNames(data);
+      },
+      err => {
+        console.log('error', err.message);
+    });
   }
 
 }
