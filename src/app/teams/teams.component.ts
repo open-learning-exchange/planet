@@ -109,7 +109,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addTeam(team?, e) {
+  addTeam(e, team?) {
     e.stopPropagation();
     this.teamsService.addTeamDialog(this.user._id, team).subscribe(() => {
       this.getTeams();
