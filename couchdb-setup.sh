@@ -141,6 +141,7 @@ DBS=(
   "news"
   "parent_users"
   "team_activities"
+  "tasks"
 )
 
 insert_dbs $DBS
