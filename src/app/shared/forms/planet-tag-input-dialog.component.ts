@@ -257,11 +257,14 @@ export class PlanetTagInputDialogComponent {
 @Component({
   'selector': 'planet-tag-input-toggle-icon',
   'template': `
-    <button mat-icon-button>
-      <mat-icon *ngIf="!isOpen">expand_more</mat-icon>
-      <mat-icon *ngIf="isOpen">expand_less</mat-icon>
-    </button>
-  `
+    <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
+    <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
+  `,
+  'styles': [ `
+    mat-icon {
+      vertical-align: middle;
+    }
+  ` ]
 })
 export class PlanetTagInputToggleIconComponent {
 
