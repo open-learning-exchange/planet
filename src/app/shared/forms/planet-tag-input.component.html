@@ -3,7 +3,7 @@
 </ng-container>
 
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
-  <span [ngSwitch]="labelType" [ngClass]="{'mat-subheading-2': largeFont}">
+  <span [ngSwitch]="labelType" [ngClass]="{'mat-title': largeFont}">
     <ng-container i18n *ngSwitchCase="'filter'" >Collections</ng-container>
     <ng-container i18n *ngSwitchCase="'add'">Add Collections</ng-container>
     <ng-container i18n *ngSwitchCase="'change'">Change Collections</ng-container>
