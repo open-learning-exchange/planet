@@ -88,9 +88,11 @@ export class UpgradeComponent {
       return;
     }
 
-    this.message = 'Success';
-    this.error = false;
-    this.done = true;
+    if (!this.error && this.working) {
+      this.message = 'Success';
+      this.error = false;
+      this.done = true;
+    }
   }
 
   getDateTime() {
