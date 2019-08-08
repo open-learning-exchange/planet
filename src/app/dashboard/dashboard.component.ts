@@ -85,9 +85,7 @@ export class DashboardComponent implements OnInit {
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
       this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }),
-      this.getTeamMembership().pipe(
-        switchMap((myTeamIds) => this.getData('teams', myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }))
-      )
+      this.getTeamMembership()
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
@@ -104,9 +102,7 @@ export class DashboardComponent implements OnInit {
           return of([]);
         }),
         map(docs => {
-          return docs.map((item) => ({
-            ...item, title: item[titleField], link: linkPrefix + ( addId ? item._id : '' ),
-            canRemove: this.leaderIds.find(id => item._id === id) }));
+          return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
         })
       );
   }
@@ -115,12 +111,17 @@ export class DashboardComponent implements OnInit {
     const configuration = this.stateService.configuration;
     return this.couchService.findAll(
       'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.userService.get()._id, docType: 'membership' })
-    ).pipe(map(docs => docs.map((doc: any) => {
-      if (doc.isLeader) {
-        this.leaderIds.push(doc.teamId);
-      }
-      return doc.teamId;
-    })));
+    ).pipe(
+      switchMap((memberships) => forkJoin([
+        of(memberships),
+        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: 'teams/view/', addId: true })
+      ])),
+      map(([ memberships, teams ]: any[]) =>
+        teams.map(team => ({
+          ...team, canRemove: memberships.some(membership => membership.teamId === team._id && membership.isLeader)
+        }))
+      )
+    );
   }
 
   get profileImg() {
