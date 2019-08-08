@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
@@ -7,7 +7,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   selector: 'planet-tasks',
   templateUrl: './tasks.component.html'
 })
-export class TasksComponent {
+export class TasksComponent implements OnInit {
 
   @Input() link: any;
   tasks: any[] = [];
@@ -44,6 +44,13 @@ export class TasksComponent {
         1 :
         0
     );
+  }
+
+  toggleTaskComplete({ option }) {
+    const task = option.value;
+    this.tasksService.addTask({ ...task, completed: !task.completed }).subscribe((res) => {
+      this.tasks = this.tasks.map((t) => t._id === res.doc._id ? res.doc : t);
+    });
   }
 
 }

@@ -35,7 +35,7 @@ export class TasksService {
       title: [ '', CustomValidators.required ],
       deadline: [ '', CustomValidators.required, (ac) => this.validatorService.notDateInPast$(ac) ],
       description: ''
-    }
+    };
     this.dialogsFormService.openDialogsForm('Add Task', fields, formGroup, {
       onSubmit: (task) => {
         if (task) {
@@ -50,7 +50,7 @@ export class TasksService {
   }
 
   addTask(task) {
-    return this.couchService.updateDocument(this.dbName, { ...task, completed: false })
+    return this.couchService.updateDocument(this.dbName, { ...task, completed: task.completed || false });
   }
 
 }

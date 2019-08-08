@@ -1,6 +1,6 @@
 <button i18n mat-stroked-button (click)="addTask()">Add a task</button>
-<mat-selection-list>
-  <mat-list-option *ngFor="let task of tasks" checkboxPosition="before">
+<mat-selection-list (selectionChange)="toggleTaskComplete($event)">
+  <mat-list-option *ngFor="let task of tasks" checkboxPosition="before" [selected]="task.completed" [value]="task">
     <p matLine>{{task.title}}</p>
     <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}}</p>
   </mat-list-option>
