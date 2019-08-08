@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from './couchdb.service';
+import { CouchService } from '../shared/couchdb.service';
 import { finalize } from 'rxjs/operators';
-import { DialogsFormService } from './dialogs/dialogs-form.service';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
-import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,11 @@ export class TasksService {
     private validatorService: ValidatorService
   ) {}
 
-  openAddDialog(onSuccess) {
+  getTasks(link = {}) {
+    return this.couchService.findAll(this.dbName, findDocuments({ link }));
+  }
+
+  openAddDialog(additionalFields, onSuccess) {
     const fields = [
       { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
       { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
@@ -34,7 +39,7 @@ export class TasksService {
     this.dialogsFormService.openDialogsForm('Add Task', fields, formGroup, {
       onSubmit: (task) => {
         if (task) {
-          this.addTask(task).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
+          this.addTask({ ...task, ...additionalFields }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
             onSuccess({ task, res });
             this.dialogsFormService.closeDialogsForm();
           });
@@ -45,7 +50,7 @@ export class TasksService {
   }
 
   addTask(task) {
-    return this.couchService.updateDocument(this.dbName, task)
+    return this.couchService.updateDocument(this.dbName, { ...task, completed: false })
   }
 
 }

@@ -18,7 +18,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
-import { TasksService } from '../shared/tasks.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -60,8 +59,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
     private reportsService: ReportsService,
-    private stateService: StateService,
-    private tasksService: TasksService
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
@@ -376,12 +374,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.team = newTeam;
       this.planetMessageService.showMessage('Course was removed');
     }, () => this.planetMessageService.showAlert('There was an error updating the team'));
-  }
-
-  addTask() {
-    this.tasksService.openAddDialog(({ task, res }) => {
-      this.planetMessageService.showMessage('New task has been added');
-    });
   }
 
 }
