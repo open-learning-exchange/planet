@@ -63,8 +63,8 @@ export class MeetupsAddComponent implements OnInit {
 
   createForm() {
     this.meetupForm = this.fb.group({
-      title: [ 
-        '', 
+      title: [
+        '',
         CustomValidators.required,
         ac => this.validatorService.isUnique$(this.dbName, 'title', ac)
       ],
