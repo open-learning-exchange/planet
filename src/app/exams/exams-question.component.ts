@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChild, AfterContentInit } from '@angular/core';
 import {
   FormGroup,
   FormArray
@@ -14,7 +14,7 @@ import { CustomValidators } from '../validators/custom-validators';
   templateUrl: 'exams-question.component.html',
   styleUrls: [ 'exams-question.scss' ]
 })
-export class ExamsQuestionComponent implements OnInit, OnChanges {
+export class ExamsQuestionComponent implements OnInit, OnChanges, AfterContentInit {
 
   @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
@@ -29,9 +29,17 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
   }
 
   constructor(
-    private examsService: ExamsService
+    private examsService: ExamsService,
+    private el: ElementRef
   ) {}
 
+
+  @ViewChild('choiceFocus') choiceFocus:ElementRef;
+  
+  public ngAfterContentInit() {
+    this.el.nativeElement.focus();
+  }
+  
   ngOnInit() {
     this.questionForm.controls.correctChoice.setValidators(CustomValidators.choiceSelected(this.examType === 'courses'));
     const onFormChange = () => {
