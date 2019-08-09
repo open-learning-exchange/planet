@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChild, AfterContentInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import {
   FormGroup,
   FormArray
@@ -14,7 +14,7 @@ import { CustomValidators } from '../validators/custom-validators';
   templateUrl: 'exams-question.component.html',
   styleUrls: [ 'exams-question.scss' ]
 })
-export class ExamsQuestionComponent implements OnInit, OnChanges, AfterContentInit {
+export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
@@ -35,8 +35,8 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterContentIn
 
 
   @ViewChild('choiceFocus') choiceFocus:ElementRef;
-  
-  public ngAfterContentInit() {
+
+  public ngAfterViewChecked(){
     this.el.nativeElement.focus();
   }
   
