@@ -109,8 +109,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addTeam(e, team?) {
-    e.stopPropagation();
+  addTeam(team?) {
     this.teamsService.addTeamDialog(this.user._id, team).subscribe(() => {
       this.getTeams();
       const msg = team ? 'Team updated successfully' : 'Team created successfully';
@@ -161,8 +160,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     };
   }
 
-  archiveClick(team, e) {
-    e.stopPropagation();
+  archiveClick(team) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.archiveTeam(team),
