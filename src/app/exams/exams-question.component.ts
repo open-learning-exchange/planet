@@ -33,13 +33,12 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     private el: ElementRef
   ) {}
 
+  @ViewChild('choiceFocus') choiceFocus: ElementRef;
 
-  @ViewChild('choiceFocus') choiceFocus:ElementRef;
-
-  public ngAfterViewChecked(){
+  public ngAfterViewChecked() {
     this.el.nativeElement.focus();
   }
-  
+
   ngOnInit() {
     this.questionForm.controls.correctChoice.setValidators(CustomValidators.choiceSelected(this.examType === 'courses'));
     const onFormChange = () => {
