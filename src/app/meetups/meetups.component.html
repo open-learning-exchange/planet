@@ -5,6 +5,9 @@
   </button>
   <span i18n>Meetups</span>
   <span class="toolbar-fill"></span>
+  <button mat-button class="showMeetupsButton" (click)="toggleMeetups()">
+    <span i18n>{{ showOutdated ? 'Hide outdated meetups' : 'Show outdated meetups' }}</span>
+  </button>
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type title to search...">
@@ -18,7 +21,6 @@
         <mat-icon>add</mat-icon>
       </button>
       <span class="toolbar-fill"></span>
-      <mat-slide-toggle (click)="toggleMeetups()" checked="checked">Show outdated meetups</mat-slide-toggle>
       <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
         <span *ngIf="selectedNotJoined > 0"> ({{selectedNotJoined}})</span>

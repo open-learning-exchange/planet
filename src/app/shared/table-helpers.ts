@@ -40,6 +40,13 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
   };
 };
 
+export const filterOldMeetups = (filterFields: string[]): any => {
+  const currentDate = Date.now();
+  return (data: any) => {
+      if (data.endDate > currentDate || data.startDate > currentDate) { return true }
+  };
+};
+
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
 function getProperty(data: any, fields: string) {
@@ -100,9 +107,17 @@ export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: s
 // Takes an array of the above filtering functions and returns true if all match
 export const composeFilterFunctions = (filterFunctions: any[]) => {
   return (data: any, filter: any) => {
-    return filterFunctions.reduce((isMatch, filterFunction) => {
-      return isMatch && filterFunction(data, filter);
-    }, true);
+    if(filter === 'showOutdated'){
+      return filterFunctions[0](data, filter);
+    } else {
+      return filterFunctions.reduce((isMatch, filterFunction, index) => {
+        if(index > 0) {
+          return isMatch && filterFunction(data, filter);
+        } else {
+          return true;
+        }
+      }, true);
+    }
   };
 };
 
