@@ -68,7 +68,7 @@
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters==='on'}" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="resources" matSort [matSortDisableClear]="true">
+    <mat-table #table [dataSource]="resources" matSort matSortStart="desc" [matSortDisableClear]="true">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -141,7 +141,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header matSortStart="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
