@@ -91,4 +91,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '/resources/update/' + this.resourceId ]);
   }
 
+  /**
+   * Returns routing to previous parent page
+   */
+  goBack() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
 }

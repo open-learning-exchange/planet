@@ -64,6 +64,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() labelType = this.mode;
   @Input() db;
   @Input() largeFont = false;
+  @Input() compId;
+  @Input() initToService = false;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
@@ -211,16 +213,18 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
-  dialogTagUpdate(tag, isSelected, tagOne = false) {
+  dialogTagUpdate(tag, isSelected, tagOne = false, selectedTags) {
     this.selectMany = !tagOne;
     if (tagOne) {
       this.value = [];
     }
     if (isSelected) {
       this.addTag(tag);
+      selectedTags.push(tag);
     } else {
       this.removeTag(tag);
+      const index = selectedTags.indexOf(tag);
+      if (index !== -1) selectedTags.splice(index, 1);
     }
   }
-
 }

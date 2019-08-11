@@ -124,6 +124,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    
+    //TODO: find tag ID by tag name
+    const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split("`");
+    urlSelectedTags.forEach(tag => 
+      this.addTag(tag)
+    );
   }
 
   setupList(resourcesRes, myLibrarys) {

@@ -5,13 +5,16 @@ import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
 import { createDeleteArray } from '../table-helpers';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Injectable()
 export class TagsService {
 
   constructor(
     private couchService: CouchService,
-    private stateService: StateService
+    private stateService: StateService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   getTags(db: string, parent: boolean) {
@@ -133,4 +136,11 @@ export class TagsService {
     return tag.attachedTo === undefined || tag.attachedTo.length === 0;
   }
 
+  /**
+   * Reroutes to new URL on filtering so that the back button of a particular result go to the previous filtered results
+   */
+  filterReroute(tags) {
+    let allTags = tags.join("`");
+    this.router.navigate([ '..', tags ? { tags: allTags } : {} ], { relativeTo: this.route });
+  }
 }
