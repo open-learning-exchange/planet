@@ -52,6 +52,7 @@ export class PlanetTagInputDialogComponent {
   get okClickValue() {
     return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
   }
+  selectedTags = [];
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -104,9 +105,11 @@ export class PlanetTagInputDialogComponent {
         this.selected.set(tag, newState || this.indeterminate.get(tag));
         this.indeterminate.set(tag, false);
 
-        this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
+        this.data.tagUpdate(tag, this.selected.get(tag), tagOne, this.selectedTags);
       }
     });
+    
+    this.tagsService.filterReroute(this.selectedTags);
   }
 
   subTagIds(subTags: any[]) {
