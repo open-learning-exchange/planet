@@ -224,7 +224,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     } else {
       this.removeTag(tag);
       const index = selectedTags.indexOf(tag);
-      if (index !== -1) selectedTags.splice(index, 1);
+      if (index !== -1) {
+        selectedTags.splice(index, 1);
+      }
     }
   }
 }

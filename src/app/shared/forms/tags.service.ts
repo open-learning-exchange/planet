@@ -143,7 +143,7 @@ export class TagsService {
     if (tags.length === 0) {
       this.router.navigate([ '/resources' ]);
     } else {
-      let allTags = tags.join("`");
+      const allTags = tags.join('`');
       this.router.navigate([ '..', tags ? { tags: allTags } : {} ], { relativeTo: this.route });
     }
   }
