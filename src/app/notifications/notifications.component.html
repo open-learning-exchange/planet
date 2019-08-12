@@ -21,7 +21,6 @@
               </a>
             </ng-container>
             <ng-template #noLink>
-              <span [routerLink]="'/notifications'"></span>
               <span [innerHTML]="element.message"></span>
               <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'mediumDate'}}</span>
             </ng-template>
