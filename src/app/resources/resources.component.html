@@ -93,11 +93,16 @@
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
-          <p class="content">
+          <!-- <p class="content">
             {{element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
             '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
             element.doc.description}}
-          </p>
+          </p> -->
+          <td-markdown class="content"
+            [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
+              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+              element.doc.description">
+          </td-markdown>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
               <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
@@ -109,9 +114,11 @@
             </ng-container>
           </mat-chip-list>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
-          <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
+          <div class="menu">
+            <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
           <mat-menu #resourceMenu="matMenu">
             <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
               <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
