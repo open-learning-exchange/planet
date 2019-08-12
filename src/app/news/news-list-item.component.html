@@ -13,10 +13,10 @@
       <ng-container *ngIf="item.updatedDate !== item.time && item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'medium'}}</ng-container>
     </mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content [ngClass]="{'show-less': showLess}" #content>
-    <td-markdown [content]="item.message"></td-markdown>
-  </mat-card-content>
   <mat-card-content>
+    <div [ngClass]="{'show-less': showLess}" #content>
+      <td-markdown [content]="item.message"></td-markdown>
+    </div>
     <span class="primary-text-color cursor-pointer" *ngIf="contentHeight > content.clientHeight || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? "Show More" : "Show Less" }}</span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
