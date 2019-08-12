@@ -93,11 +93,6 @@
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
-          <!-- <p class="content">
-            {{element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
-            '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-            element.doc.description}}
-          </p> -->
           <td-markdown class="content"
             [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
               '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
