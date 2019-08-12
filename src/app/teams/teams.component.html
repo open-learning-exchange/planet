@@ -66,7 +66,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row [routerLink]="['view', element.doc._id]" *matRowDef="let element; let row; columns: displayedColumns;"></mat-row>
+      <mat-row [routerLink]="['view', row.doc._id]" *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
