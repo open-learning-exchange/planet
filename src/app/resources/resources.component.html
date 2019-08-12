@@ -93,11 +93,13 @@
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
-          <td-markdown class="content"
-            [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
-              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-              element.doc.description">
-          </td-markdown>
+          <div class="content">
+            <td-markdown
+              [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
+                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                element.doc.description">
+            </td-markdown>
+          </div>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
               <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
