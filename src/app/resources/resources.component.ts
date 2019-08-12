@@ -115,6 +115,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
+      
+      const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
+      urlSelectedTags.forEach(tagName => 
+        this.addTag(tagName)
+      );
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
@@ -126,12 +131,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-
-    const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
-    urlSelectedTags.forEach(tagName => {
-      //const tagId = this.tagsService.findTagByName(tagName)._id;
-      return this.addTag(tagName)
-    });
   }
 
   setupList(resourcesRes, myLibrarys) {
