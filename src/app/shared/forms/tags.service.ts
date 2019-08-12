@@ -85,11 +85,6 @@ export class TagsService {
     return { ...(fullTag ? fullTag : { _id: tagKey, name: tagKey, attachedTo: [] }) };
   }
 
-  findTagByName(tagKey: any, fullTags: any[]) {
-    const fullTag = fullTags.find((dbTag: any) => dbTag.name === tagKey);
-    return { ...(fullTag ? fullTag : { name: tagKey, attachedTo: [] }) };
-  }
-
   fillSubTags(tag: any, index: number, tags: any[]) {
     return { ...tag, subTags: tags.filter(({ attachedTo }) => (attachedTo || []).indexOf(tag._id) > -1) };
   }
