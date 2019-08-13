@@ -115,6 +115,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
+    this.emptyData = !this.submissions.filteredData;
   }
 
   dropdownsFill() {
