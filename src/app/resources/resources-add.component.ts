@@ -92,6 +92,7 @@ export class ResourcesAddComponent implements OnInit {
         .subscribe((resources: any[]) => {
           this.pageType = 'Update';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
+          console.log(resource);
           this.existingResource = resource;
         }, (error) => {
           console.log(error);
@@ -151,7 +152,7 @@ export class ResourcesAddComponent implements OnInit {
     this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
     this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments).join(', ') : '';
-    if (Object.keys(resource.doc._attachments).length > 1) {
+    if (resource.doc._attachments && Object.keys(resource.doc._attachments).length > 1) {
       this.resourceForm.controls.openWhichFile.enable();
       this.attachedZipFiles = Object.keys(resource.doc._attachments);
     }
