@@ -92,7 +92,6 @@ export class ResourcesAddComponent implements OnInit {
         .subscribe((resources: any[]) => {
           this.pageType = 'Update';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
-          console.log(resource);
           this.existingResource = resource;
         }, (error) => {
           console.log(error);
