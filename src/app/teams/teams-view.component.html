@@ -56,17 +56,25 @@
                 <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
-                <button mat-icon-button class="delete-item" (click)="changeMembership('removed', member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
-                  <mat-icon [inline]="true">clear</mat-icon>
-                </button>
                 <mat-card-subtitle>
                   <p *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
                   <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
                 </mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-actions>
-                <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-raised-button color="primary">Make Leader</button>
-              </mat-card-actions>
+                <button *ngIf="(member.userId !== currentUserId && currentUserId === leader) || (member.userId !== leader && (user.isUserAdmin || currentUserId === leader))"
+                  class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #resourceMenu="matMenu">
+                  <button mat-menu-item class="delete-item" (click)="changeMembership('removed', member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
+                    <mat-icon>clear</mat-icon>
+                    <span i18n>Delete</span>
+                  </button>
+                  <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-menu-item color="primary">
+                    <mat-icon>person</mat-icon>
+                    <span i18n>Make Leader</span>
+                  </button>
+                </mat-menu>
+              </mat-card-header></div>
             </mat-card>
           </div>
         </ng-template>
