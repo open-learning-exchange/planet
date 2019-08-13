@@ -24,7 +24,7 @@ import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { TagsService} from '../shared/forms/tags.service'
+import { TagsService } from '../shared/forms/tags.service';
 
 @Component({
   selector: 'planet-resources',
@@ -115,9 +115,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
-      
+
       const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
-      urlSelectedTags.forEach(tagName => 
+      urlSelectedTags.forEach(tagName =>
         this.addTag(tagName)
       );
     });
