@@ -45,7 +45,7 @@ export class PlanetTagInputDialogComponent {
     this.data.reset(value);
   }
   addTagForm: FormGroup;
-  newTagId: string;
+  newTagInfo: { id: string, parentId?: string };
   isUserAdmin = false;
   isInMap = isInMap;
   subcollectionIsOpen = new Map();
@@ -84,10 +84,12 @@ export class PlanetTagInputDialogComponent {
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
-    if (this.newTagId !== undefined && this.mode === 'add') {
-      this.tagChange(this.newTagId);
+    if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
+      const { parentId, id } = this.newTagInfo;
+      const parentTag = parentId.length > 0 ? this.data.tags.find(tag => tag._id === parentId) : undefined;
+      this.tagChange(id, { parentTag });
     }
-    this.newTagId = undefined;
+    this.newTagInfo = undefined;
   }
 
   resetSelection() {
@@ -138,7 +140,7 @@ export class PlanetTagInputDialogComponent {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
       this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
-        this.newTagId = res[0].id;
+        this.newTagInfo = { id: res[0].id, parentId: this.addTagForm.controls.attachedTo.value };
         this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
