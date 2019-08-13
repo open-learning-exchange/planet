@@ -71,7 +71,7 @@ export class PlanetTagInputDialogComponent {
     this.data.startingTags
       .filter((tag: any) => tag)
       .forEach(tag => {
-        this.tagChange([ tag.tagId || tag ], { tagOne: !this.selectMany });
+        this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
@@ -85,7 +85,7 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagId !== undefined && this.mode === 'add') {
-      this.tagChange([ this.newTagId ]);
+      this.tagChange(this.newTagId);
     }
     this.newTagId = undefined;
   }
@@ -96,17 +96,17 @@ export class PlanetTagInputDialogComponent {
     this.data.reset(this._selectMany);
   }
 
-  tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
-    const newState = !this.selected.get(tags[0]);
-    const setAllTags = newState !== deselectSubs;
-    tags.forEach((tag, index) => {
-      if (index === 0 || setAllTags) {
-        this.selected.set(tag, newState || this.indeterminate.get(tag));
-        this.indeterminate.set(tag, false);
-
-        this.data.tagUpdate(tag, this.selected.get(tag), tagOne);
-      }
-    });
+  tagChange(tagId, { tagOne = false, parentTag }: { tagOne?, parentTag? } = {}) {
+    const newState = !this.selected.get(tagId);
+    const updateTag = (id) => {
+      this.selected.set(id, newState || this.indeterminate.get(id));
+      this.indeterminate.set(id, false);
+      this.data.tagUpdate(id, this.selected.get(id), tagOne);
+    };
+    updateTag(tagId);
+    if (parentTag && (newState || parentTag.subTags.every(sub => !this.selected.get(sub._id)))) {
+      updateTag(parentTag._id);
+    }
   }
 
   subTagIds(subTags: any[]) {
