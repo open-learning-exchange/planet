@@ -44,8 +44,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   visits: any = {};
   leader: string;
   planetCode: string;
-  deleteDialog: any;
-  leaveDialog: any;
+  dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   readonly dbName = 'teams';
 
   constructor(
@@ -159,46 +158,28 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  openLeaveDialog(team) {
-    this.leaveDialog = this.dialog.open(DialogsPromptComponent, {
+  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource', dialogParams: { changeType, type }) {
+    const config = {
+      leave: { request: this.toggleMembership(item, true), successMsg: 'left', errorMsg: 'leaving' },
+      archive: { request: this.teamsService.archiveTeam(item), successMsg: 'deleted', errorMsg: 'deleting' },
+      resource: { request: this.removeResource(item), name: item.resource.title, successMsg: 'removed', errorMsg: 'removing' }
+    }[change];
+    const displayName = config.name || item.name;
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.toggleMembership(team, true),
+          request: config.request,
           onNext: () => {
-            this.leaveDialog.close();
-            const msg = 'left';
+            this.dialogPrompt.close();
+            this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
             if (this.team.status === 'archived') {
               this.router.navigate([ '/teams' ]);
             }
-            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
           },
+          onError: () => this.planetMessageService.showAlert(`There was a problem ${config.errorMsg} ${displayName}`)
         },
-        changeType: 'leave',
-        type: 'team',
-        displayName: team.name
-      }
-    });
-  }
-
-  archiveTeam(team) {
-    return {
-      request: this.teamsService.archiveTeam(team),
-      onNext: () => {
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted a team.');
-        this.router.navigate([ '/teams' ]);
-      },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
-    };
-  }
-
-  archiveClick(team) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.archiveTeam(team),
-        changeType: 'delete',
-        type: 'team',
-        displayName: team.name
+        displayName,
+        ...dialogParams
       }
     });
   }
@@ -364,24 +345,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: this.dbName, linkId: this.teamId, resource
-      }
-    });
-  }
-
-  openRemoveResourceDialog(resource) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.removeResource(resource),
-          onNext: () => {
-            this.deleteDialog.close();
-            this.planetMessageService.showMessage(`${resource.resource.title} removed`);
-          },
-          onError: () => this.planetMessageService.showAlert('There was a problem deleting this resource.')
-        },
-        changeType: 'remove',
-        type: 'resource',
-        displayName: resource.resource.title
       }
     });
   }

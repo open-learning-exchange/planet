@@ -19,7 +19,7 @@
             Add Resources
           </button>
           <ng-container *ngIf="currentUserId !== leader">
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openLeaveDialog(team)" i18n>Leave</button>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
           </ng-container>
         </ng-container>
         <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
@@ -27,7 +27,7 @@
         </button>
         <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
       </ng-container>
-      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>
+      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
@@ -147,7 +147,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openRemoveResourceDialog(resource)">
+                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'resource' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
