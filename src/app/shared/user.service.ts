@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
-import { catchError, switchMap, map } from 'rxjs/operators';
-import { of, Observable, Subject, BehaviorSubject } from 'rxjs';
+import { catchError, switchMap, map, takeWhile } from 'rxjs/operators';
+import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
@@ -226,6 +226,33 @@ export class UserService {
     const configuration = this.stateService.configuration;
     return configuration.betaEnabled === 'on' ||
       configuration.betaEnabled === 'user' && this.user.betaEnabled === true;
+  }
+
+  addImageForReplication(addNew = false, user = this.user) {
+    return this.couchService.get(`attachments/${user._id}@${user.planetCode}`).pipe(
+      catchError((err) => err.error.error === 'not_found' && addNew ? of({ _attachments: {} }) : of({})),
+      takeWhile((res: any) => res._attachments),
+      switchMap((attachmentDoc: any) => {
+        const key = user._attachments && Object.keys(user._attachments)[0];
+        if (key && user._attachments[key].digest !== (attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest)) {
+          return forkJoin([
+            this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { 'Accept': 'application/json' } }),
+            of(attachmentDoc)
+          ])
+        }
+        return forkJoin([]);
+      }),
+      takeWhile(res => res.length > 0),
+      switchMap(([ userDoc, attachmentDoc ]: any[]) => this.updateProfileImageForReplication(userDoc, attachmentDoc))
+    );
+  }
+
+  private updateProfileImageForReplication(userDoc: any, attachmentDoc: any = {}) {
+    return this.couchService.post('attachments', {
+      _id: `${userDoc._id}@${userDoc.planetCode}`,
+      _rev: attachmentDoc._rev,
+      _attachments: userDoc._attachments
+    });
   }
 
 }
