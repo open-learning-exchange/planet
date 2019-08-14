@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { StateService } from '../shared/state.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,16 +15,31 @@ import { findDocuments } from '../shared/mangoQueries';
 export class TasksService {
 
   private dbName = 'tasks';
+  private tasksUpdated = new Subject<any>();
 
   constructor(
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private validatorService: ValidatorService
-  ) {}
+    private validatorService: ValidatorService,
+    private stateService: StateService
+  ) {
+    this.stateService.couchStateListener(this.dbName).subscribe(res => {
+      if (res) {
+        this.tasksUpdated.next(res);
+      }
+    });
+  }
 
-  getTasks(link = {}) {
-    return this.couchService.findAll(this.dbName, findDocuments({ link }));
+  getTasks(planetField = 'local') {
+    this.stateService.requestData(this.dbName, planetField);
+  }
+
+  tasksListener(link = {}, planetField = 'local') {
+    return this.tasksUpdated.pipe(map((res: any) => res.planetField === planetField ?
+      res.newData.filter(task => task.link && Object.entries(task.link).every(([ key, value ]) => value === link[key])) :
+      []
+    ));
   }
 
   openAddDialog(additionalFields, onSuccess) {
@@ -51,6 +68,20 @@ export class TasksService {
 
   addTask(task) {
     return this.couchService.updateDocument(this.dbName, { ...task, completed: task.completed || false });
+  }
+
+  sortedTasks(tasks, tasksInOrder = []) {
+    const compare = (a, b) => a > b ?
+      1 :
+      a < b ?
+      -1 :
+      false;
+    return tasks.sort((a, b) =>
+      compare(tasksInOrder.findIndex(t => t._id === a._id), tasksInOrder.findIndex(t => t._id === b._id)) ||
+      compare(a.completed, b.completed) ||
+      compare(new Date(a.deadline), new Date(b.deadline)) ||
+      0
+    );
   }
 
 }
