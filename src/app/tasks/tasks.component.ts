@@ -1,16 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'planet-tasks',
-  templateUrl: './tasks.component.html'
+  templateUrl: './tasks.component.html',
+  styleUrls: [ './tasks.scss' ]
 })
 export class TasksComponent implements OnInit {
 
   @Input() link: any;
+  @Input() assignees: any[] = [];
   tasks: any[] = [];
+  imgUrlPrefix = environment.couchAddress;
 
   constructor(
     private tasksService: TasksService,
@@ -46,9 +49,20 @@ export class TasksComponent implements OnInit {
     );
   }
 
-  toggleTaskComplete({ option }) {
-    const task = option.value;
+  toggleTaskComplete(task) {
     this.tasksService.addTask({ ...task, completed: !task.completed }).subscribe((res) => {
+      this.tasks = this.tasks.map((t) => t._id === res.doc._id ? res.doc : t);
+    });
+  }
+
+  openAssigneeMenu(event) {
+    event.stopPropagation();
+  }
+
+  addAssignee(task, assignee) {
+    const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
+    assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
+    this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasks = this.tasks.map((t) => t._id === res.doc._id ? res.doc : t);
     });
   }
