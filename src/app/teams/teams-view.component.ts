@@ -198,7 +198,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'request':
         return ({
-          obs: this.teamsService.requestToJoinTeam(this.team, this.user._id),
+          obs: this.teamsService.requestToJoinTeam(this.team, this.user),
           message: 'Request to join team sent'
         });
       case 'removed':
