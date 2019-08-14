@@ -156,7 +156,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} }</target>
+        <target state="translated">{VAR_SELECT, चुने, स्वीकार {accept} अस्वीकार {reject} हटाना {delete} }</target>
       </trans-unit>
       <trans-unit id="accb261603c29b70b5380f4fd698476e5cf2d7b8" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
