@@ -166,8 +166,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
-      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} }?
+        <target state="translated">{VAR_SELECT_2, चुने, एक {निम्नलिखित {VAR_SELECT, चुने, समुदाय {community} राष्ट्र {nation} कार्यप्रणाली {course} संसाधन {resource} मिलना {meetup} उपभोक्ता {user} }?
+      } अनेक {चुने हुए <x आईडी="प्रक्षेप" समतुल्य-पाठ="{{data.count}}"/> {VAR_SELECT_1, चुने, समुदाय {communities} राष्ट्र {nations} कार्यप्रणाली {courses} संसाधन {resources} मिलना {meetups} }?
       } }</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
@@ -199,7 +199,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
+        <target state="translated">{VAR_SELECT, चूने, हाँ {Deselect} नहीं {Select} }</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
