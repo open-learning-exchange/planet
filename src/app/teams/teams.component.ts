@@ -71,7 +71,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]) => {
       this.teams.data = this.teamList(teams);
-      if (this.teams.data.some(team => team.userStatus === 'member' || team.userStatus === 'requesting')) {
+      if (this.teams.data.some(
+        ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
+      )) {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
       this.emptyData = !this.teams.data.length;
