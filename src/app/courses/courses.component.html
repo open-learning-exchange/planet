@@ -2,7 +2,7 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
   <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
-    <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true"></planet-tag-input>
+    <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
   <span class="toolbar-fill"></span>
   <mat-form-field class="font-size-1 margin-lr-3">
@@ -98,7 +98,11 @@
             </ng-container>
           </h3>
           <div class="content">
-            <td-markdown>{{ element.doc.description }}</td-markdown>
+            <td-markdown
+              [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
+                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                element.doc.description">
+            </td-markdown>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
