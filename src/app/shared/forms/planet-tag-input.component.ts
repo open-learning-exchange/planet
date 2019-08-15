@@ -64,6 +64,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() labelType = this.mode;
   @Input() db;
   @Input() largeFont = false;
+  @Input() selectMany = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
@@ -73,7 +74,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   inputControl = new FormControl();
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
-  selectMany = false;
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -174,7 +174,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       startingTags,
       tags: this.addTagCount(this.tags.filter(this.tagsService.filterOutSubTags), this.selectMany),
       mode: this.mode,
-      initSelectMany: this.selectMany,
+      selectMany: this.selectMany,
       db: this.db
     });
   }
@@ -212,7 +212,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   dialogTagUpdate(tag, isSelected, tagOne = false) {
-    this.selectMany = !tagOne;
     if (tagOne) {
       this.value = [];
     }
