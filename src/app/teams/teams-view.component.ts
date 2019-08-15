@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatTableDataSource } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -48,6 +48,15 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
 
+  finances = new MatTableDataSource();
+  financesData = [
+    { date: '7/16/2019', description: 'Initial funding', credit: 1000, balance: 1000 },
+    { date: '8/1/2019', description: 'Delivery to Galkayo', credit: 100, balance: 1100 },
+    { date: '8/4/2019', description: 'Engine repair', debit: 200, balance: 900 },
+    { date: '8/7/2019', description: 'Parade rental', credit: 250, balance: 1150 },
+    { date: '8/20/2019', description: 'Cleaning', debit: 50, balance: 1100 }
+  ]
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -76,6 +85,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
       }));
     });
+    this.finances.data = this.financesData;
   }
 
   ngOnDestroy() {

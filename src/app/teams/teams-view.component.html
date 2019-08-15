@@ -1,6 +1,6 @@
 <mat-toolbar>
   <a mat-icon-button routerLink="/teams"><mat-icon>arrow_back</mat-icon></a>
-  <span i18n>Teams</span>
+  <span i18n>Enterprises</span>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
@@ -12,11 +12,8 @@
           <button mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
             Add Members
           </button>
-          <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
-            Manage Courses
-          </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
-            Add Resources
+            Add Documents
           </button>
           <ng-container *ngIf="currentUserId !== leader">
             <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
@@ -36,7 +33,7 @@
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
       </mat-tab>
-      <mat-tab i18n-label label="Plan">
+      <mat-tab i18n-label label="Mission & Services">
         <td-markdown *ngIf="team?.description; else emptyText">{{ team?.description }}</td-markdown>
         <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
@@ -46,7 +43,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <ng-container i18n>Members</ng-container> ({{members.length}})
+          <ng-container i18n>Staff</ng-container> ({{members.length}})
         </ng-template>
         <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
         <ng-template #memberList>
@@ -94,7 +91,7 @@
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>
-            <ng-container i18n>Join Requests</ng-container> ({{requests.length}})
+            <ng-container i18n>Staff Applicants</ng-container> ({{requests.length}})
           </ng-template>
           <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
           <ng-template #requestedList>
@@ -112,23 +109,38 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Courses">
+        <mat-tab>
           <ng-template mat-tab-label>
-            <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
+            <ng-container i18n>Finances</ng-container>
           </ng-template>
-          <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
-          <ng-template #courseList>
-            <mat-card *ngFor="let course of team?.courses">
-              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
-              <mat-card-actions>
-                <button mat-raised-button color="warn" (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })" i18n>Remove</button>
-              </mat-card-actions>
-            </mat-card>
-          </ng-template>
+          <mat-table [dataSource]="finances">
+            <ng-container matColumnDef="date">
+              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Date</mat-header-cell>
+              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">{{ element.date | date }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="description">
+              <mat-header-cell *matHeaderCellDef >Note</mat-header-cell>
+              <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="credit">
+              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Credits</mat-header-cell>
+              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'green'">{{ element.credit ? '$' + element.credit : '' }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="debit">
+              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Debits</mat-header-cell>
+              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'red'">{{ element.debit ? '$' + element.debit : '' }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="balance">
+              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Balance</mat-header-cell>
+              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">${{ element.balance }}</mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="[ 'date', 'credit', 'debit', 'balance', 'description' ]"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: [ 'date', 'credit', 'debit', 'balance', 'description' ];"></mat-row>
+          </mat-table>
         </mat-tab>
         <mat-tab label="Resources">
           <ng-template mat-tab-label>
-            <ng-container i18n>Resources</ng-container> ({{resources?.length || 0}})
+            <ng-container i18n>Documents</ng-container> ({{resources?.length || 0}})
           </ng-template>
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
           <ng-template #resourceList>
