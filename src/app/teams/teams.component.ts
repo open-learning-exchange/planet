@@ -175,14 +175,19 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
 
-  requestToJoin(team) {
-    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
+  requestToJoin(team, type = 'request') {
+    const obs = type === 'request' ? this.teamsService.requestToJoinTeam(team, this.userService.get()._id) :
+      this.teamsService.toggleTeamMembership(
+        team, false,
+        { userId: this.user._id, userPlanetCode: this.user.planetCode }
+      );
+    obs.pipe(
       switchMap(() => this.teamsService.getTeamMembers(team)),
-      switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
+      switchMap((docs) => this.teamsService.sendNotifications(type, docs, { team, url: this.router.url + '/view/' + team._id })),
       switchMap(() => this.getMembershipStatus())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      this.planetMessageService.showMessage('Request to join team sent');
+      this.planetMessageService.showMessage(type === 'request' ? 'Request to join team sent' : 'You have joined team');
     });
   }
 

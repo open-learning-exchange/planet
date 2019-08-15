@@ -22,9 +22,16 @@
             <button mat-raised-button color="accent" class="margin-lr-3" (click)="openLeaveDialog(team)" i18n>Leave</button>
           </ng-container>
         </ng-container>
-        <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
-          <ng-container i18n>Request to Join</ng-container>
-        </button>
+        <ng-container *ngSwitchCase="'unrelated'">
+          <button *ngIf="team?.isOpen === 'Open'; else requestJoin" mat-raised-button color="accent" class="margin-lr-3" (click)="changeMembership('join')">
+            <ng-container i18n>Join</ng-container>
+          </button>
+          <ng-template #requestJoin>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="changeMembership('request')">
+              <ng-container i18n>Request to Join</ng-container>
+            </button>
+          </ng-template>
+        </ng-container>
         <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
       </ng-container>
       <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>

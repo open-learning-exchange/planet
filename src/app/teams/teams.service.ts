@@ -20,6 +20,11 @@ const addTeamDialogFields = [ {
   'name': 'description',
   'placeholder': 'Description',
   'required': false
+}, {
+  'type': 'radio',
+  'name': 'isOpen',
+  'placeholder': 'Open Team',
+  'options': [ 'Closed', 'Open' ]
 } ];
 
 @Injectable()
@@ -45,7 +50,8 @@ export class TeamsService {
       ],
       description: team.description || '',
       requests: [ team.requests || [] ],
-      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
+      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ],
+      isOpen: team.isOpen || 'Closed'
     };
     return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup, true)
       .pipe(
@@ -187,6 +193,8 @@ export class TeamsService {
         return `You have not been accepted to <b>"${team.name}"</b> team.`;
       case 'removed':
         return `You have been removed from <b>"${team.name}"</b> team.`;
+      case 'join':
+        return `<b>${this.userService.get().name}</b> has joined <b>"${team.name}"</b> team.`;
       default:
         return `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`;
     }

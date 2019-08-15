@@ -78,7 +78,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.couchService.get(`${this.dbName}/${teamId}`).pipe(
       switchMap(data => {
         this.planetCode = this.stateService.configuration.code;
-        this.team = data;
+        this.team = { isOpen: 'Closed', ...data };
         if (this.team.status === 'archived') {
           this.router.navigate([ '/teams' ]);
           this.planetMessageService.showMessage('This team no longer exists');
@@ -132,7 +132,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
       switchMap((newTeam) => {
-        this.team = newTeam;
+        this.team = { isOpen: 'Closed', ...newTeam };
         return this.getMembers();
       })
     );
@@ -187,7 +187,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     changeObject.obs.pipe(
       switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
       switchMap(() => this.getMembers()),
-      switchMap(() => this.sendNotifications('added'))
+      switchMap(() => this.sendNotifications(type))
     ).subscribe(() => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(changeObject.message);
@@ -215,6 +215,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
           message: memberDoc.name + ' rejected'
+        });
+      case 'join':
+        return ({
+          obs: this.teamsService.toggleTeamMembership(this.team, false, { userId: this.user._id, userPlanetCode: this.user.planetCode }),
+          message: 'You have joined team'
         });
     }
   }
