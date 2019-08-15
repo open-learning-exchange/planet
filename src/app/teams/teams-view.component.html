@@ -53,6 +53,7 @@
           <div class="card-grid">
             <mat-card *ngFor="let member of members">
               <mat-card-header>
+                <img mat-card-avatar [src]="member.avatar">
                 <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
@@ -81,6 +82,7 @@
             <div class="card-grid">
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
+                  <img mat-card-avatar [src]="request.avatar">
                   <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName || request.name}}</a>
                 </mat-card-header>
                 <mat-card-actions>

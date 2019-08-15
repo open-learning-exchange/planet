@@ -145,9 +145,14 @@ export class TeamsService {
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
-      this.couchService.findAll('_users')
-    ]).pipe(map(([ membershipDocs, shelves, users ]: any[]) => [
-      ...membershipDocs.map(doc => ({ ...doc, userDoc: users.find(user => user._id === doc.userId) })),
+      this.couchService.findAll('_users'),
+      this.couchService.findAll('attachments')
+    ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
+      ...membershipDocs.map(doc => ({
+        ...doc,
+        userDoc: users.find(user => user._id === doc.userId),
+        attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
+      })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));
   }
