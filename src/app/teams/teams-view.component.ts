@@ -18,6 +18,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
+import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 
 @Component({
@@ -110,7 +111,19 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       return [];
     }
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
-      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1] }));
+      const src = (member) => {
+        const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
+        if (member.attachmentDoc) {
+          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
+        }
+        if (member.userDoc && member.userDoc._attachments) {
+          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc._attachments)[0]}`;
+        }
+        return 'assets/image.png';
+      };
+      const docsWithName = docs.map(mem => ({
+        ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem)
+      }));
       this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
         .sort((a, b) => a.userId === this.leader ? -1 : 0);
@@ -206,7 +219,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'request':
         return ({
-          obs: this.teamsService.requestToJoinTeam(this.team, this.user._id),
+          obs: this.teamsService.requestToJoinTeam(this.team, this.user),
           message: 'Request to join team sent'
         });
       case 'removed':

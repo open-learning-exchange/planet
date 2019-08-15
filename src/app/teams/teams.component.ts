@@ -31,7 +31,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
-  teams = new MatTableDataSource();
+  teams = new MatTableDataSource<any>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   userMembership: any[] = [];
@@ -71,6 +71,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]) => {
       this.teams.data = this.teamList(teams);
+      if (this.teams.data.some(
+        ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
+      )) {
+        this.userService.addImageForReplication(true).subscribe(() => {});
+      }
       this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
     }, (error) => console.log(error));
@@ -176,7 +181,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   requestToJoin(team) {
-    this.teamsService.requestToJoinTeam(team, this.userService.get()._id).pipe(
+    this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
       switchMap(() => this.teamsService.getTeamMembers(team)),
       switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
       switchMap(() => this.getMembershipStatus())
