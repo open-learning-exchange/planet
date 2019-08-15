@@ -91,14 +91,16 @@ export class SyncDirective {
       { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
       { db: 'apk_logs' },
       { db: 'myplanet_activities' },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } }
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.code } }
     ];
   }
 
   pullList() {
     return [
       { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } }
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode } }
     ];
   }
 

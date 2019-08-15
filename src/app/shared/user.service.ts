@@ -258,7 +258,8 @@ export class UserService {
     return this.couchService.bulkDocs('attachments', userDocs.map(userDoc => ({
       _id: `${userDoc._id}@${userDoc.planetCode}`,
       userId: userDoc._id,
-      userPlanetCode: userDoc.planetCode,
+      planetCode: userDoc.planetCode,
+      parentCode: userDoc.parentCode,
       _rev: userDoc.attachmentDoc._rev,
       _attachments: userDoc._attachments
     })));
