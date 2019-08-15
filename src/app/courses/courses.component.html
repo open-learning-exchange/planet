@@ -102,7 +102,6 @@
               '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
               element.doc.description">
           </td-markdown>
-          <!--<td-markdown class="content">{{ element.doc.description }}</td-markdown>-->
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
