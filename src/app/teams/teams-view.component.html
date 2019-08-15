@@ -60,16 +60,15 @@
                   <p *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
                   <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
                 </mat-card-subtitle>
-                <button *ngIf="(member.userId !== currentUserId && currentUserId === leader) || (member.userId !== leader && (user.isUserAdmin || currentUserId === leader))"
-                  class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                <button *ngIf="member.userId !== leader && (currentUserId === leader || user.isUserAdmin)" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item class="delete-item" (click)="changeMembership('removed', member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
+                  <button mat-menu-item (click)="changeMembership('removed', member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
                     <mat-icon>clear</mat-icon>
-                    <span i18n>Delete</span>
+                    <span i18n>Remove</span>
                   </button>
-                  <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-menu-item color="primary">
+                  <button *ngIf="member.userId !== leader && (user.isUserAdmin || currentUserId === leader)" (click)="makeLeader(member)" mat-menu-item>
                     <mat-icon>person</mat-icon>
                     <span i18n>Make Leader</span>
                   </button>
@@ -130,7 +129,7 @@
                     {{resource.linkDoc.title}}
                   </span>
                 </div>
-                <button mat-icon-button class="delete-item" (click)="openRemoveResourceDialog(resource)">
+                <button mat-icon-button class="top-right-icon" (click)="openRemoveResourceDialog(resource)">
                   <mat-icon [inline]="true">clear</mat-icon>
                 </button>
                 <mat-card-actions>
