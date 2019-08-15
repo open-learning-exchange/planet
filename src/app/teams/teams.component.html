@@ -53,11 +53,11 @@
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <ng-container *ngIf="!element.isLeader">
-                <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
+                <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()"><mat-icon>remove_circle</mat-icon> Leave</button>
               </ng-container>
               <button *ngIf="element.isLeader" mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()" i18n><mat-icon>edit</mat-icon> Edit</button>
             </ng-container>
-            <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
+            <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc); $event.stopPropagation()">
               <ng-container i18n>Request to Join</ng-container>
             </button>
             <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>Request pending</button>
