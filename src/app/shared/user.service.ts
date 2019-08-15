@@ -228,31 +228,40 @@ export class UserService {
       configuration.betaEnabled === 'user' && this.user.betaEnabled === true;
   }
 
-  addImageForReplication(addNew = false, user = this.user) {
-    return this.couchService.get(`attachments/${user._id}@${user.planetCode}`).pipe(
-      catchError((err) => err.error.error === 'not_found' && addNew ? of({ _attachments: {} }) : of({})),
-      takeWhile((res: any) => res._attachments),
-      switchMap((attachmentDoc: any) => {
-        const key = user._attachments && Object.keys(user._attachments)[0];
-        if (key && user._attachments[key].digest !== (attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest)) {
-          return forkJoin([
-            this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { 'Accept': 'application/json' } }),
-            of(attachmentDoc)
-          ])
-        }
-        return forkJoin([]);
+  addImageForReplication(addNew = false, users: any[] = [ this.user ]) {
+    const query = findDocuments({ '_id': { '$in': users.map(user => `${user._id}@${user.planetCode}`) } });
+    return this.couchService.findAll('attachments', query).pipe(
+      switchMap((attachmentDocs: any[]) => {
+        const obs = users.reduce((obsArr, user) => {
+          const key = user._attachments && Object.keys(user._attachments)[0];
+          const attachmentDoc = attachmentDocs.find(attachmentDoc => attachmentDoc.userId === user._id);
+          const aDocDigest = attachmentDoc && attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest;
+          if ((attachmentDoc === undefined && addNew) || (key && user._attachments[key].digest !== aDocDigest)) {
+            return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ]
+          }
+          return obsArr;
+        }, []);
+        return forkJoin(obs);
       }),
       takeWhile(res => res.length > 0),
-      switchMap(([ userDoc, attachmentDoc ]: any[]) => this.updateProfileImageForReplication(userDoc, attachmentDoc))
+      switchMap((res: any[]) => this.updateProfileImagesForReplication(res))
     );
   }
 
-  private updateProfileImageForReplication(userDoc: any, attachmentDoc: any = {}) {
-    return this.couchService.post('attachments', {
+  private getProfileImage(user, attachmentDoc = {}) {
+    return this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { 'Accept': 'application/json' } }).pipe(
+      map(user => ({ ...user, attachmentDoc }))
+    );
+  }
+
+  private updateProfileImagesForReplication(userDocs: any[]) {
+    return this.couchService.bulkDocs('attachments', userDocs.map(userDoc => ({
       _id: `${userDoc._id}@${userDoc.planetCode}`,
-      _rev: attachmentDoc._rev,
+      userId: userDoc._id,
+      userPlanetCode: userDoc.planetCode,
+      _rev: userDoc.attachmentDoc._rev,
       _attachments: userDoc._attachments
-    });
+    })));
   }
 
 }

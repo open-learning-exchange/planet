@@ -84,7 +84,7 @@ export class TeamsService {
   requestToJoinTeam(team, user) {
     const userPlanetCode = this.stateService.configuration.code;
     return this.couchService.post(this.dbName, this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')).pipe(
-      switchMap(() => this.userService.addImageForReplication(true, user))
+      switchMap(() => this.userService.addImageForReplication(true, [ user ]))
     );
   }
 
