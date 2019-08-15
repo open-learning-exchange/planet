@@ -23,10 +23,14 @@
 
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
-    grid-template-rows: auto;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-rows: repeat(auto-fill, 250px);
     grid-column-gap: 0.25rem;
-    .delete-item {
+    mat-card-content {
+      max-height: 149px;
+      overflow-y: auto;
+    }
+    .top-right-icon {
       position: absolute;
       top: -0.25rem;
       right: -0.25rem;

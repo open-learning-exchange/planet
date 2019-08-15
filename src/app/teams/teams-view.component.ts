@@ -19,6 +19,7 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
 import { environment } from '../../environments/environment';
+import { TasksService } from '../tasks/tasks.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -60,13 +61,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
     private reportsService: ReportsService,
-    private stateService: StateService
+    private stateService: StateService,
+    private tasksService: TasksService
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId');
       this.initTeam(this.teamId);
+    });
+    this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
+      this.members = this.members.map(member => ({
+        ...member,
+        tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+      }));
     });
   }
 
@@ -388,4 +396,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.planetMessageService.showMessage('Course was removed');
     }, () => this.planetMessageService.showAlert('There was an error updating the team'));
   }
+
+  toggleTask({ option }) {
+    this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
+      this.tasksService.getTasks();
+    });
+  }
+
 }
