@@ -143,6 +143,7 @@ DBS=(
   "team_activities"
   "tasks"
   "health"
+  "messages"
 )
 
 insert_dbs $DBS
