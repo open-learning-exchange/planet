@@ -234,10 +234,10 @@ export class UserService {
       switchMap((attachmentDocs: any[]) => {
         const obs = users.reduce((obsArr, user) => {
           const key = user._attachments && Object.keys(user._attachments)[0];
-          const attachmentDoc = attachmentDocs.find(attachmentDoc => attachmentDoc.userId === user._id);
+          const attachmentDoc = attachmentDocs.find(aDoc => aDoc.userId === user._id);
           const aDocDigest = attachmentDoc && attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest;
           if ((attachmentDoc === undefined && addNew) || (key && user._attachments[key].digest !== aDocDigest)) {
-            return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ]
+            return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ];
           }
           return obsArr;
         }, []);
@@ -250,7 +250,7 @@ export class UserService {
 
   private getProfileImage(user, attachmentDoc = {}) {
     return this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { 'Accept': 'application/json' } }).pipe(
-      map(user => ({ ...user, attachmentDoc }))
+      map(u => ({ ...u, attachmentDoc }))
     );
   }
 
