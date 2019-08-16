@@ -244,7 +244,7 @@ export class UserService {
         return forkJoin(obs);
       }),
       takeWhile(res => res.length > 0),
-      switchMap((res: any[]) => this.updateProfileImagesForReplication(res))
+      switchMap((res: any[]) => this.updateProfileImagesForReplication(res.filter(doc => doc._attachments)))
     );
   }
 
