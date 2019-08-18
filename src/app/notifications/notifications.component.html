@@ -14,10 +14,16 @@
       <ng-container matColumnDef="message">
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
           <p [ngClass]="{'primary-text-color':element.status==='unread'}">
-            <a [routerLink]="element.link ? [ element.link, element.linkParams || {} ] : '/notifications'">
+            <ng-container *ngIf="element.link; else noLink">
+              <a [routerLink]="[ element.link, element.linkParams || {} ]">
+                <span [innerHTML]="element.message"></span>
+                <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'mediumDate'}}</span>
+              </a>
+            </ng-container>
+            <ng-template #noLink>
               <span [innerHTML]="element.message"></span>
               <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'mediumDate'}}</span>
-            </a>
+            </ng-template>
           </p>
         </mat-cell>
       </ng-container>

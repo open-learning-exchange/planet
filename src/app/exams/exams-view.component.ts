@@ -137,6 +137,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
+    this.checkboxState = {};
     this.isNewQuestion = true;
     this.spinnerOn = false;
   }

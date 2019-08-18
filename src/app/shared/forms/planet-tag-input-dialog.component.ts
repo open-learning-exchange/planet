@@ -45,7 +45,7 @@ export class PlanetTagInputDialogComponent {
     this.data.reset(value);
   }
   addTagForm: FormGroup;
-  newTagId: string;
+  newTagInfo: { id: string, parentId?: string };
   isUserAdmin = false;
   isInMap = isInMap;
   subcollectionIsOpen = new Map();
@@ -68,11 +68,12 @@ export class PlanetTagInputDialogComponent {
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
-    // this.selectMany = this.mode === 'add' || this.data.initSelectMany;
+    // August 2, 2019: We are not readding the toggle, but for filter mode we allow select many to be turned off
+    this.selectMany = this.mode === 'add' || this.data.selectMany;
     this.data.startingTags
       .filter((tag: any) => tag)
       .forEach(tag => {
-        this.tagChange([ tag.tagId || tag ], { tagOne: !this.selectMany });
+        this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
@@ -85,10 +86,12 @@ export class PlanetTagInputDialogComponent {
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
-    if (this.newTagId !== undefined && this.mode === 'add') {
-      this.tagChange([ this.newTagId ]);
+    if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
+      const { parentId, id } = this.newTagInfo;
+      const parentTag = parentId.length > 0 ? this.data.tags.find(tag => tag._id === parentId) : undefined;
+      this.tagChange(id, { parentTag });
     }
-    this.newTagId = undefined;
+    this.newTagInfo = undefined;
   }
 
   resetSelection() {
@@ -96,19 +99,18 @@ export class PlanetTagInputDialogComponent {
     this.selected.clear();
     this.data.reset(this._selectMany);
   }
-
-  tagChange(tags, { tagOne = false, deselectSubs = false }: { tagOne?, deselectSubs? } = {}) {
-    const newState = !this.selected.get(tags[0]);
-    const setAllTags = newState !== deselectSubs;
-    tags.forEach((tag, index) => {
-      if (index === 0 || setAllTags) {
-        this.selected.set(tag, newState || this.indeterminate.get(tag));
-        this.indeterminate.set(tag, false);
-
-        this.data.tagUpdate(tag, this.selected.get(tag), tagOne, this.selectedTags);
-      }
-    });
-    this.tagsService.filterReroute(this.selectedTags);
+  
+  tagChange(tagId, { tagOne = false, parentTag }: { tagOne?, parentTag? } = {}) {
+    const newState = !this.selected.get(tagId);
+    const updateTag = (id) => {
+      this.selected.set(id, newState || this.indeterminate.get(id));
+      this.indeterminate.set(id, false);
+      this.data.tagUpdate(id, this.selected.get(id), tagOne);
+    };
+    updateTag(tagId);
+    if (parentTag && (newState || parentTag.subTags.every(sub => !this.selected.get(sub._id)))) {
+      updateTag(parentTag._id);
+    }
   }
 
   subTagIds(subTags: any[]) {
@@ -140,7 +142,7 @@ export class PlanetTagInputDialogComponent {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
       this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
-        this.newTagId = res[0].id;
+        this.newTagInfo = { id: res[0].id, parentId: this.addTagForm.controls.attachedTo.value };
         this.planetMessageService.showMessage('New collection added');
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();

@@ -1,0 +1,20 @@
+mat-action-list {
+
+  mat-checkbox {
+    order: -1;
+    margin-right: 0.5rem;
+  }
+
+  img {
+    order: 2;
+  }
+
+  button {
+    order: 3;
+  }
+
+  .mat-list-item.mat-list-item-with-avatar p[matLine] {
+    margin-left: -16px;
+  }
+
+}

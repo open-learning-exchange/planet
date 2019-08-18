@@ -26,7 +26,7 @@
   </mat-expansion-panel>
   <mat-action-list *ngIf="selectMany">
     <ng-container *ngFor="let tag of tags">
-      <mat-list-item (click)="tag.subTags.length === 0 ? tagChange([ tag._id || tag.name ].concat(subTagIds(tag.subTags)), { deselectSubs: true }) : toggleSubcollection($event,tag._id)" class="cursor-pointer">
+      <mat-list-item (click)="tag.subTags.length === 0 ? tagChange(tag._id || tag.name) : toggleSubcollection($event,tag._id)" class="cursor-pointer">
         <p matLine>
           <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
           <mat-checkbox *ngIf="tag.subTags.length === 0" (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)"></mat-checkbox>
@@ -38,7 +38,7 @@
         </p>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
-        <mat-list-item *ngFor="let subTag of tag.subTags" (click)="tagChange([ subTag._id || subTag.name ])" class="cursor-pointer">
+        <mat-list-item *ngFor="let subTag of tag.subTags" (click)="tagChange(subTag._id || subTag.name, { parentTag: tag })" class="cursor-pointer">
           <mat-icon mat-list-icon>subdirectory_arrow_right</mat-icon>
           <p matLine>
             <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)"></mat-checkbox>

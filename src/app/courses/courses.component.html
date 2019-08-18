@@ -2,7 +2,7 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
   <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
-    <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true"></planet-tag-input>
+    <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
   <span class="toolbar-fill"></span>
   <mat-form-field class="font-size-1 margin-lr-3">
@@ -97,7 +97,13 @@
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
-          <td-markdown class="content">{{ element.doc.description }}</td-markdown>
+          <div class="content">
+            <td-markdown
+              [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
+                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                element.doc.description">
+            </td-markdown>
+          </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
@@ -158,7 +164,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Rating</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'"></planet-rating>
         </mat-cell>

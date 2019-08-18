@@ -25,7 +25,7 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3>
-            <a [routerLink]="['view', element.doc._id]">{{element.doc.name}}</a>
+            {{element.doc.name}}
             <mat-icon class="margin-lr-3" i18n-title title="Joined Team" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
           </h3>
         </mat-cell>
@@ -49,24 +49,24 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button *planetAuthorizedRoles mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc)"><mat-icon>delete_forever</mat-icon> Delete</button>
+          <button *planetAuthorizedRoles mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc); $event.stopPropagation()"><mat-icon>delete_forever</mat-icon> Delete</button>
           <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
             <ng-container *ngSwitchCase="'member'">
               <ng-container *ngIf="!element.isLeader">
-                <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc)"><mat-icon>remove_circle</mat-icon> Leave</button>
+                <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()"><mat-icon>remove_circle</mat-icon> Leave</button>
               </ng-container>
-              <button *ngIf="element.isLeader" mat-raised-button color="primary" (click)="addTeam(element.doc)" i18n><mat-icon>edit</mat-icon> Edit</button>
+              <button *ngIf="element.isLeader" mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()" i18n><mat-icon>edit</mat-icon> Edit</button>
             </ng-container>
-            <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc)">
+            <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc); $event.stopPropagation()">
               <ng-container i18n>Request to Join</ng-container>
             </button>
             <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>Request pending</button>
           </ng-container>
-          <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" i18n><mat-icon>feedback</mat-icon> Feedback</button>
+          <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" (click)="$event.stopPropagation()" i18n><mat-icon>feedback</mat-icon> Feedback</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row [routerLink]="['view', row.doc._id]" *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"

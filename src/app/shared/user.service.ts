@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
-import { catchError, switchMap, map } from 'rxjs/operators';
-import { of, Observable, Subject, BehaviorSubject } from 'rxjs';
+import { catchError, switchMap, map, takeWhile } from 'rxjs/operators';
+import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
@@ -226,6 +226,43 @@ export class UserService {
     const configuration = this.stateService.configuration;
     return configuration.betaEnabled === 'on' ||
       configuration.betaEnabled === 'user' && this.user.betaEnabled === true;
+  }
+
+  addImageForReplication(addNew = false, users: any[] = [ this.user ]) {
+    const query = findDocuments({ '_id': { '$in': users.map(user => `${user._id}@${user.planetCode}`) } });
+    return this.couchService.findAll('attachments', query).pipe(
+      switchMap((attachmentDocs: any[]) => {
+        const obs = users.reduce((obsArr, user) => {
+          const key = user._attachments && Object.keys(user._attachments)[0];
+          const attachmentDoc = attachmentDocs.find(aDoc => aDoc.userId === user._id);
+          const aDocDigest = attachmentDoc && attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest;
+          if ((attachmentDoc === undefined && addNew) || (key && user._attachments[key].digest !== aDocDigest)) {
+            return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ];
+          }
+          return obsArr;
+        }, []);
+        return forkJoin(obs);
+      }),
+      takeWhile(res => res.length > 0),
+      switchMap((res: any[]) => this.updateProfileImagesForReplication(res))
+    );
+  }
+
+  private getProfileImage(user, attachmentDoc = {}) {
+    return this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { 'Accept': 'application/json' } }).pipe(
+      map(u => ({ ...u, attachmentDoc }))
+    );
+  }
+
+  private updateProfileImagesForReplication(userDocs: any[]) {
+    return this.couchService.bulkDocs('attachments', userDocs.map(userDoc => ({
+      _id: `${userDoc._id}@${userDoc.planetCode}`,
+      userId: userDoc._id,
+      planetCode: userDoc.planetCode,
+      parentCode: userDoc.parentCode,
+      _rev: userDoc.attachmentDoc._rev,
+      _attachments: userDoc._attachments
+    })));
   }
 
 }
