@@ -5,7 +5,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
 import { createDeleteArray } from '../table-helpers';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, UrlTree, UrlSegmentGroup, UrlSegment, PRIMARY_OUTLET } from '@angular/router';
 
 @Injectable()
 export class TagsService {
@@ -141,7 +141,10 @@ export class TagsService {
    */
   filterReroute(tags) {
     if (tags.length === 0) {
-      this.router.navigate([ '/resources' ]);
+      const tree: UrlTree = this.router.parseUrl(this.router.url);
+      const g: UrlSegmentGroup = tree.root.children[PRIMARY_OUTLET];
+      const s: UrlSegment[] = g.segments;
+      this.router.navigate([ s[0].path ]);
     } else {
       const allTags = tags.join('`');
       this.router.navigate([ '..', tags ? { tags: allTags } : {} ], { relativeTo: this.route });
