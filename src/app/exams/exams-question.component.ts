@@ -1,4 +1,6 @@
-import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
+import {
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef
+} from '@angular/core';
 import {
   FormGroup,
   FormArray
@@ -14,22 +16,25 @@ import { CustomValidators } from '../validators/custom-validators';
   templateUrl: 'exams-question.component.html',
   styleUrls: [ 'exams-question.scss' ]
 })
-export class ExamsQuestionComponent implements OnInit, OnChanges {
+export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
+  @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};
   questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
+  choiceAdded = false;
   private onDestroy$ = new Subject<void>();
   get choices(): FormArray {
     return (<FormArray>this.questionForm.controls.choices);
   }
 
   constructor(
-    private examsService: ExamsService
+    private examsService: ExamsService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -48,10 +53,19 @@ export class ExamsQuestionComponent implements OnInit, OnChanges {
     this.updateQuestion(this.question);
   }
 
+  ngAfterViewChecked() {
+    if (this.choiceAdded) {
+      this.choiceInputs.last.nativeElement.focus();
+      this.choiceAdded = false;
+      this.cdRef.detectChanges();
+    }
+  }
+
   addChoice() {
     const newId = uniqueId();
     this.correctCheckboxes[newId] = false;
     this.choices.push(this.examsService.newQuestionChoice(newId));
+    this.choiceAdded = true;
   }
 
   removeChoice(index: number) {
