@@ -1,6 +1,6 @@
 <mat-toolbar>
   <button mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>Teams</span>
+  <span i18n>{{myTeamsFilter? 'myTeams' : 'Teams'}}</span>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
