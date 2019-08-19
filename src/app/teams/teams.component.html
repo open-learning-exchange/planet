@@ -40,15 +40,13 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container [ngSwitch]="element.doc.teamType">
-            <ng-container *ngSwitchCase="'local'">
-              <ng-container i18n>Local</ng-container>
-            </ng-container>
+            <ng-container *ngSwitchCase="'local'" i18n>Local</ng-container>
             <ng-container *ngSwitchCase="'sync'">
-              <ng-container *ngIf="parentCode == element.doc.teamPlanetCode">
-                <ng-container i18n>Connected to Earth/Nation</ng-container>
+              <ng-container *ngIf="planetCode === element.doc.teamPlanetCode" i18n>
+                {planetType, select, community {Connected with Nation} nation {Connected with Earth}}
               </ng-container>
-              <ng-container *ngIf="parentCode != element.doc.teamPlanetCode">
-                <ng-container i18n>Connected to {{element.doc.teamPlanetCode}}</ng-container>
+              <ng-container *ngIf="planetCode !== element.doc.teamPlanetCode">
+                <ng-container i18n>Connected with</ng-container> {{element.doc.teamPlanetCode}}
               </ng-container>
             </ng-container>
           </ng-container>
