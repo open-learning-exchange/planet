@@ -30,7 +30,7 @@
         *ngIf="examType === 'exam'">
       </mat-checkbox>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text" #choiceFocus>
+        <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text" #choiceInput>
         <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
       </mat-form-field>
     </div>
