@@ -58,6 +58,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
+        if (this.resource === undefined) {
+          this.router.navigate([ 'resources' ]);
+        }
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = this.currentUser.isUserAdmin ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
