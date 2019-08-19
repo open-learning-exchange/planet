@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { filterSpecificFieldsByWord, sortNumberOrString } from '../shared/table-helpers';
+import { filterSpecificFieldsByWord, sortNumberOrString, composeFilterFunctions, filterSpecificFields } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -62,7 +62,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getTeams();
-    this.teams.filterPredicate = filterSpecificFieldsByWord([ 'doc.name' ]);
+    this.teams.filterPredicate = composeFilterFunctions([
+      filterSpecificFieldsByWord([ 'doc.name' ]),
+      (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter ? 'member' : '')
+    ]);
     this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
@@ -72,10 +75,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
       this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]) => {
+      this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams);
-      if (this.myTeamsFilter) {
-        this.teams.data = this.teams.data.filter((t: any) => t.isLeader === true);
-      }
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
       )) {
@@ -197,7 +198,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
-    this.teams.filter = filterValue;
+    this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
   }
 
 }
