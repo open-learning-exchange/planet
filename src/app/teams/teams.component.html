@@ -39,11 +39,19 @@
       <ng-container matColumnDef="teamType">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {
-            element.doc.teamType, select, local {Local} sync {
-              {planetType, select, community {Connected with Nation} nation {Connected with Earth}}
-            }
-          }
+          <ng-container [ngSwitch]="element.doc.teamType">
+            <ng-container *ngSwitchCase="'local'">
+              <ng-container i18n>Local</ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="'sync'">
+              <ng-container *ngIf="parentCode == element.doc.teamPlanetCode">
+                <ng-container i18n>Connected to Earth/Nation</ng-container>
+              </ng-container>
+              <ng-container *ngIf="parentCode != element.doc.teamPlanetCode">
+                <ng-container i18n>Connected to {{element.doc.teamPlanetCode}}</ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">

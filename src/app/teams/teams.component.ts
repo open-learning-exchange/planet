@@ -40,7 +40,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   emptyData = false;
   user = this.userService.get();
   isAuthorized = false;
-  planetType = this.stateService.configuration.planetType;
+  parentCode = this.stateService.configuration.parentCode;
   leaveDialog: any;
   message = '';
   deleteDialog: any;
