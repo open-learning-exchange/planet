@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -44,6 +44,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
+  readonly myTeamsFilter = this.route.snapshot.data.myTeams;
 
   constructor(
     private userService: UserService,
@@ -53,7 +54,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
-    private stateService: StateService
+    private stateService: StateService,
+    private route: ActivatedRoute
   ) {
     this.dialogsLoadingService.start();
   }
@@ -71,6 +73,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]) => {
       this.teams.data = this.teamList(teams);
+      if (this.myTeamsFilter) {
+        this.teams.data = this.teams.data.filter((t: any) => t.isLeader === true);
+      }
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
       )) {
