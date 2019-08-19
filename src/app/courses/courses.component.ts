@@ -139,6 +139,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.courses.data = this.setupList(courses, this.userShelf.courseIds);
       this.emptyData = !this.courses.data.length;
       this.dialogsLoadingService.stop();
+
+      const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
+      urlSelectedTags.forEach(tagName =>
+        this.addTag(tagName)
+      );
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
