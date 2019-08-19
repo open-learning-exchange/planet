@@ -99,7 +99,7 @@ export class PlanetTagInputDialogComponent {
     this.selected.clear();
     this.data.reset(this._selectMany);
   }
-  
+
   tagChange(tagId, { tagOne = false, parentTag }: { tagOne?, parentTag? } = {}) {
     this.tagsService.filterReroute(this.selectedTags);
     const newState = !this.selected.get(tagId);
@@ -112,7 +112,7 @@ export class PlanetTagInputDialogComponent {
     if (parentTag && (newState || parentTag.subTags.every(sub => !this.selected.get(sub._id)))) {
       updateTag(parentTag._id);
     }
-      this.tagsService.filterReroute(this.selectedTags);
+    this.tagsService.filterReroute(this.selectedTags);
   }
 
   subTagIds(subTags: any[]) {
