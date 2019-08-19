@@ -117,11 +117,10 @@
                   <a *ngIf="resource.resource!==undefined" [routerLink]="'/resources/view/' + resource.resource._id">
                     {{resource.resource.title}}
                   </a>
-                  <a *ngIf="resource.resource===undefined" i18n-matTooltip
-                    matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet."
-                    href="/resources">
+                  <span *ngIf="resource.resource===undefined" i18n-matTooltip
+                    matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
                     {{resource.linkDoc.title}}
-                </a>
+                  </span>
                 </div>
                 <button mat-icon-button class="delete-item" (click)="openRemoveResourceDialog(resource)">
                   <mat-icon [inline]="true">clear</mat-icon>
