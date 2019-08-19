@@ -34,7 +34,7 @@ const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
   ` ]
 })
 export class MigrationComponent implements OnInit {
-  @ViewChild('stepper') stepper: MatStepper;
+  @ViewChild('stepper', { static: false }) stepper: MatStepper;
   message = '';
   loginForm: FormGroup;
   configurationFormGroup: FormGroup;
@@ -76,31 +76,38 @@ export class MigrationComponent implements OnInit {
   }
 
   clonePlanet() {
+    let adminConfig;
     this.couchService.get('_node/nonode@nohost/_config', { domain: this.parentDomain, protocol: this.parentProtocol }).pipe(
-    switchMap(configs => {
-      const obsArr = [];
-      Object.keys(configs).forEach(section => {
-        Object.keys(configs[section]).forEach(key => {
-          obsArr.push(this.couchService.put('_node/nonode@nohost/_config/' + section + '/' + key, configs[section][key]));
+      switchMap(configs => {
+        const obsArr = [];
+        Object.keys(configs).forEach(section => {
+          if (section !== 'admins') {
+            Object.keys(configs[section]).forEach(key => {
+              obsArr.push(this.couchService.put('_node/nonode@nohost/_config/' + section + '/' + key, configs[section][key]));
+            });
+          } else {
+            Object.keys(configs[section]).forEach(key => {
+              adminConfig = this.couchService.put('_node/nonode@nohost/_config/' + section + '/' + key, configs[section][key]);
+            });
+          }
         });
-      });
-      return forkJoin(obsArr);
-    }),
-    switchMap(() => this.couchService.put('_node/nonode@nohost/_config/admins/' + this.credential.name, this.credential.password)),
-    switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
-    switchMap(() => {
-      const replicators = [
-        '_users', 'achievements', 'admin_activities', 'apk_logs', 'attachments',
-        'child_statistics', 'child_users', 'communityregistrationrequests', 'configurations',
-        'courses', 'courses_progress', 'exams', 'feedback', 'hubs', 'login_activities',
-        'meetups', 'myplanet_activities', 'nations', 'news', 'notifications',
-        'parent_users', 'ratings', 'replicator_users	', 'resource_activities', 'resources',
-        'send_items', 'shelf', 'submissions', 'tablet_users', 'tags', 'team_activities', 'teams'
-      ];
-      return forkJoin(replicators.map(replicator => this.syncService.sync(
-        { db: replicator, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
-      )));
-    })).subscribe(() => {
+        return forkJoin(obsArr);
+      }),
+      switchMap(() => {
+        const replicators = [
+          '_users', 'achievements', 'admin_activities', 'apk_logs', 'attachments',
+          'child_statistics', 'child_users', 'communityregistrationrequests', 'configurations',
+          'courses', 'courses_progress', 'exams', 'feedback', 'hubs', 'login_activities',
+          'meetups', 'myplanet_activities', 'nations', 'news', 'notifications',
+          'parent_users', 'ratings', 'replicator_users	', 'resource_activities', 'resources',
+          'send_items', 'shelf', 'submissions', 'tablet_users', 'tags', 'team_activities', 'teams'
+        ];
+        return forkJoin(replicators.map(replicator => this.syncService.sync(
+          { db: replicator, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
+        )));
+      }),
+      switchMap(() => adminConfig)
+    ).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.parentDomain}". Please hold on.`);
     });
   }
