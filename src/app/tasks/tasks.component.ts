@@ -51,10 +51,11 @@ export class TasksComponent implements OnInit {
     assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasksService.getTasks();
-    })
+    });
   }
 
   filterAssignee(task) {
-    return task.assignee === undefined ? this.assignees : this.assignees.filter(assignees => assignees.userDoc._id !== task.assignee.userDoc._id);
+    return task.assignee === undefined ? this.assignees : this.assignees
+      .filter(assignees => assignees.userDoc._id !== task.assignee.userDoc._id);
   }
 }
