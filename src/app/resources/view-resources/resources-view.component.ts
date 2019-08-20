@@ -8,6 +8,7 @@ import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -21,7 +22,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private userService: UserService,
     private stateService: StateService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   private dbName = 'resources';
@@ -59,7 +61,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         if (this.resource === undefined) {
-          this.router.navigate([ 'resources' ]);
+          this.planetMessageService.showAlert('Resource does not exist in Library');
+          this.router.navigate([ '/resources' ]);
         }
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = this.currentUser.isUserAdmin ||
