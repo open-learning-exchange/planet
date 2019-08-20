@@ -216,7 +216,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.setStatus(this.team, this.userService.get());
         this.planetMessageService.showMessage(changeObject.message);
       }
-    }
+    };
   }
 
   openRemoveDialog(type, memberDoc) {
