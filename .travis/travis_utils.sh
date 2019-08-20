@@ -181,7 +181,8 @@ deploy_docker(){
   # $1: directory
   # $2: tag
   # $3: tag latest
-  # $4: language
+  # $4: language 3 letter code
+  # $5: language 2 letter code
     login_docker
     package_docker $1 $2 $3 $4 $5
     push_docker $2 $3 $4
