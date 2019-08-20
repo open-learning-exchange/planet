@@ -211,11 +211,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       switchMap(() => this.getMembers()),
       switchMap(() => this.sendNotifications('added'))
     ),
-    onNext: () => {
-      this.deleteDialog.close();
-      this.setStatus(this.team, this.userService.get());
-      this.planetMessageService.showMessage(changeObject.message);
-    }
+      onNext: () => {
+        this.deleteDialog.close();
+        this.setStatus(this.team, this.userService.get());
+        this.planetMessageService.showMessage(changeObject.message);
+      }
     }
   }
 
