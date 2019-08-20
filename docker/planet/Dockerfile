@@ -3,6 +3,10 @@ LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 ARG LANGUAGE_MODE="single"
 ENV I18N ${LANGUAGE_MODE}
+ARG LANGUAGE=""
+ENV LANG ${LANGUAGE}
+ARG LANGAUGE2=""
+ENV LANG2 ${LANGAUGE2}
 
 WORKDIR /ng-app
 

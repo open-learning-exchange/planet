@@ -66,6 +66,13 @@ jobs:
         - set -e
         - source ./.travis/travis_utils.sh
         - prepare_ci
+        - prepare_planet_test
+        - deploy_docker './docker/planet/Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST 'ara' 'ar'
+    - stage: docker-creation
+      script:
+        - set -e
+        - source ./.travis/travis_utils.sh
+        - prepare_ci
         - prepare_db_init_test
         - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TEST_LATEST
     - stage: automated-test
