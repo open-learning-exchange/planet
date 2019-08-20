@@ -162,7 +162,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const config = {
       leave: { request: this.toggleMembership(item, true), successMsg: 'left', errorMsg: 'leaving' },
       archive: { request: this.teamsService.archiveTeam(item), successMsg: 'deleted', errorMsg: 'deleting' },
-      resource: { request: this.removeResource(item), name: item.resource.title, successMsg: 'removed', errorMsg: 'removing' }
+      resource: {
+        request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
+      }
     }[change];
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
@@ -351,7 +353,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   removeResource(resource) {
     const obs = [ this.couchService.post(this.dbName, { ...resource.linkDoc, _deleted: true }) ];
-    if (resource.resource.private === true) {
+    if (resource.resource && resource.resource.private === true) {
       const { _id: resId, _rev: resRev } = resource.resource;
       obs.push(this.couchService.delete(`resources/${resId}?rev=${resRev}`));
     }
