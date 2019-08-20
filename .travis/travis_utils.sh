@@ -118,7 +118,7 @@ package_docker(){
   if [ ! -z "$gtag" ] || [ ! -z "$TRAVIS_TAG" ]; then
     docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=multi .
   else
-    docker build -f $1 -t $2-$4 --build-arg LANGUAGE_MODE=single LANGUAGE=$4 LANGUAGE2=$5 .
+    docker build -f $1 -t $2-$4 --build-arg LANGUAGE_MODE=single --build-arg LANGUAGE=$4 --build-arg LANGUAGE2=$5 .
   fi
   if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
