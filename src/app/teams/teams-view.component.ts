@@ -205,13 +205,28 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   changeMembership(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
-    changeObject.obs.pipe(
+    return {
+      request: changeObject.obs.pipe(
       switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
       switchMap(() => this.getMembers()),
       switchMap(() => this.sendNotifications('added'))
-    ).subscribe(() => {
+    ),
+    onNext: () => {
+      this.deleteDialog.close();
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(changeObject.message);
+    }
+    }
+  }
+
+  openRemoveDialog(type, memberDoc) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.changeMembership(type, memberDoc),
+        changeType: 'remove',
+        type: 'user',
+        displayName: memberDoc.name
+      }
     });
   }
 
