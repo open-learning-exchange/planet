@@ -55,7 +55,7 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  removeAssignee(task, assignee){
+  removeAssignee(task, assignee) {
     assignee = '';
     this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasksService.getTasks();
