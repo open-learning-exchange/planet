@@ -87,7 +87,7 @@ Vagrant.configure(2) do |config|
         -v /srv/planet/conf:/opt/couchdb/etc/local.d \
         -v /srv/planet/data:/opt/couchdb/data \
         -v /srv/planet/log:/opt/couchdb/var/log/ \
-        treehouses/couchdb:2.3.0
+        treehouses/couchdb:2.3.1
 
       # Add CORS to CouchDB so app has access to databases
       #git clone https://github.com/pouchdb/add-cors-to-couchdb.git
