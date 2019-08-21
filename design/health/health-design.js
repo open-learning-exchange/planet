@@ -457,13 +457,16 @@ module.exports = {
 
       var request = JSON.parse(req.body);
       var newDoc = Object.keys(request).reduce(function(b, k) {
-        if (k !== 'id' && k !== 'key') {
+        if (k !== '_id' && k !== 'key' && k !== '_rev') {
           b[k] = request[k];
         }
         return b;
       }, {});
       // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
       var key = request.key;
+      if (key === undefined) {
+        return [ null, 'Must supply a key' ]
+      }
 
       // Convert text to bytes
       var textBytes = convertUtf8.toBytes(JSON.stringify(newDoc));
@@ -474,7 +477,7 @@ module.exports = {
 
       // To print or store the binary data, you may convert it to hex
       var encryptedHex = convertHex.fromBytes(encryptedBytes);
-      return [ { '_id': request.id, 'data': encryptedHex }, req ];
+      return [ { '_id': request._id, '_rev': request._rev, 'data': encryptedHex }, 'Document updated' ];
 
     }
   }
