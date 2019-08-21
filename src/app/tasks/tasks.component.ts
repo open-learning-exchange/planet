@@ -11,6 +11,7 @@ import { environment } from '../../environments/environment';
 export class TasksComponent implements OnInit {
 
   @Input() link: any;
+  @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() assignees: any[] = [];
   tasks: any[] = [];
   imgUrlPrefix = environment.couchAddress;
@@ -28,7 +29,7 @@ export class TasksComponent implements OnInit {
   }
 
   addTask() {
-    this.tasksService.openAddDialog({ link: this.link }, (newTask) => {
+    this.tasksService.openAddDialog({ link: this.link, sync: this.sync }, (newTask) => {
       let newTaskIndex = this.tasks.findIndex((task) => new Date(newTask.deadline) < new Date(task.deadline) || task.completed);
       newTaskIndex = newTaskIndex < 0 ? this.tasks.length : newTaskIndex;
       this.tasksService.getTasks();

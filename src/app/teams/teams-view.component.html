@@ -90,7 +90,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>
           </ng-template>
-          <planet-tasks [link]="{ teams: teamId }" [assignees]="members"></planet-tasks>
+          <planet-tasks [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>
