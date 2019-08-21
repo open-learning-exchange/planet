@@ -2,6 +2,7 @@ module.exports = {
   "updates": {
     "encrypt": function (doc, req) {
       /*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
+      // Modified from https://github.com/ricmoo/aes-js
       function checkInt(value) {
           return (parseInt(value) === value);
       }
