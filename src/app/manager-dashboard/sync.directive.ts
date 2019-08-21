@@ -199,7 +199,9 @@ export class SyncDirective {
   teamTaskReplicator() {
     return this.couchService.findAll(
       'teams', findDocuments({ docType: { '$exists': false }, teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
-    ).switchMap(syncTeams => ([ { db: 'tasks', selector: { '$or': syncTeams.map(team => ({ 'links': { '$eq': { 'teams': team._id } } })) } } ]));
+    ).pipe(switchMap(
+      syncTeams => ([ { db: 'tasks', selector: { '$or': syncTeams.map((team: any) => ({ 'links': { '$eq': { 'teams': team._id } } })) } } ])
+    ));
   }
 
   teamResourcesReplicator(teamResources: any[]) {
