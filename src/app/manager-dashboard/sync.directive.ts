@@ -53,7 +53,6 @@ export class SyncDirective {
       switchMap(([ achievements, teamResources ]: any[]) =>
         forkJoin(this.achievementResourceReplicator(achievements), this.teamResourcesReplicator(teamResources))
       ),
-      switchMap((replicators: any) => this.teamTaskReplicator().concat(replicators.flat())),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat()));
@@ -70,7 +69,8 @@ export class SyncDirective {
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
       { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } },
-      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } }
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
+      { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } }
     ];
     const pushList = [ ...this.pushList(), ...bothList ];
     const pullList = [ ...this.pullList(), ...bothList ];
@@ -194,14 +194,6 @@ export class SyncDirective {
         'teams', findDocuments({ docType: 'resourceLink', teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
       )
     ]);
-  }
-
-  teamTaskReplicator() {
-    return this.couchService.findAll(
-      'teams', findDocuments({ docType: { '$exists': false }, teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
-    ).pipe(switchMap(
-      syncTeams => ([ { db: 'tasks', selector: { '$or': syncTeams.map((team: any) => ({ 'links': { '$eq': { 'teams': team._id } } })) } } ])
-    ));
   }
 
   teamResourcesReplicator(teamResources: any[]) {
