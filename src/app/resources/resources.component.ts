@@ -116,10 +116,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
 
-      const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
-      urlSelectedTags.forEach(tagName =>
-        this.addTag(tagName)
-      );
+      const tagParam = this.route.snapshot.paramMap.get('tags');
+      if (tagParam !== null) {
+        const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
+        urlSelectedTags.forEach(tagName =>
+          this.addTag(tagName)
+        );
+      }
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
