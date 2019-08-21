@@ -46,6 +46,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   planetCode: string;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   readonly dbName = 'teams';
+  leaderDialog: any;
 
   constructor(
     private couchService: CouchService,
@@ -360,10 +361,26 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   makeLeader(member) {
     const currentLeader = this.members.find(mem => mem.userId === this.leader);
-    this.teamsService.changeTeamLeadership(currentLeader, member)
-    .pipe(
-      switchMap(() => this.getMembers())
-    ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
+    return {
+      request: this.teamsService.changeTeamLeadership(currentLeader, member)
+      .pipe(
+        switchMap(() => this.getMembers())
+      ),
+      onNext: () => {
+        this.planetMessageService.showMessage(`${member.name} has been made Leader`);
+        this.leaderDialog.close();
+      }
+    }
+  }
+
+  openMakeLeaderDialog(member){
+    this.leaderDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.makeLeader(member),
+        changeType: 'accept',
+        type: 'change'
+      }
+    });
   }
 
   removeCourse(course) {
