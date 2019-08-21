@@ -142,6 +142,7 @@ DBS=(
   "parent_users"
   "team_activities"
   "tasks"
+  "health"
 )
 
 insert_dbs $DBS
