@@ -306,3 +306,10 @@ push_multiarch_manifests(){
          build_message No tag present so no need to Push Versioned Multiarch Manifests to cloud
     fi
 }
+
+compose_languages() {
+  build_message Composing language containers into one
+  LANGUAGES=("$@")
+  for LANGUAGE in "${LANGUAGES[@]}"; do
+    docker pull
+}

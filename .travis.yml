@@ -48,7 +48,7 @@ cache:
 
 stages:
   - docker-creation
-  - automated-test
+  - automated-test-and-compose-languages
   - docker-release
   - multiarch-release
 
@@ -75,7 +75,7 @@ jobs:
         - prepare_ci
         - prepare_db_init_test
         - deploy_docker './docker/db-init/Dockerfile' $DOCKER_DB_INIT_TEST $DOCKER_DB_INIT_TEST_LATEST
-    - stage: automated-test
+    - stage: automated-test-and-compose-languages
       <<: *_use_chrome
       <<: *_use_nodejs
       services:
@@ -102,6 +102,14 @@ jobs:
         - echo  "Waiting for couchdb to start"; WAIT_TIME=0; until curl http://127.0.0.1:5984/_all_dbs || [ $WAIT_TIME -eq 600 ]; do echo "..."; sleep 5; WAIT_TIME=$(expr $WAIT_TIME + 5); done
         - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 37 ]; then exit 1; fi
         - ng e2e
+    - stage: automated-test-and-compose-languages
+      script:
+        - set -e
+        - source ./.travis/travis_utils.sh
+        - prepare_ci
+        - prepare_planet_test
+        - LANGUAGES=('ara')
+        - compose_languages "${LANGUAGES[@]}"
     - stage: docker-release
       <<: *_prepare_deploy
       script: #x86 tagging
