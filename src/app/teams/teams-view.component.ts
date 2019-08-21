@@ -171,10 +171,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       data: {
         okClick: {
           request: config.request,
-          onNext: () => {
+          onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
-            if (this.team.status === 'archived') {
+            if (res.status === 'archived') {
               this.router.navigate([ '/teams' ]);
             }
           },
