@@ -47,9 +47,11 @@ export class TasksComponent implements OnInit {
     event.stopPropagation();
   }
 
-  addAssignee(task, assignee) {
-    const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
-    assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
+  addAssignee(task, assignee: any = '') {
+    if (assignee !== '') {
+      const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
+      assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
+    }
     this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasksService.getTasks();
     });
