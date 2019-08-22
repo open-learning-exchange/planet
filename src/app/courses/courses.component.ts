@@ -12,7 +12,7 @@ import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
   dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf
+  selectedOutOfFilter, filterShelf, trackById
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -92,6 +92,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
     filterShelf(this.myCoursesFilter, 'admission')
   ]);
+  trackById = trackById;
 
   @ViewChild(PlanetTagInputComponent, { static: false })
   private tagInputComponent: PlanetTagInputComponent;

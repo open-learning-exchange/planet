@@ -19,7 +19,7 @@
             Add Resources
           </button>
           <ng-container *ngIf="currentUserId !== leader">
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openLeaveDialog(team)" i18n>Leave</button>
+            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
           </ng-container>
         </ng-container>
         <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
@@ -27,7 +27,7 @@
         </button>
         <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
       </ng-container>
-      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="archiveClick(team)" i18n>Delete</button>
+      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
@@ -65,7 +65,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="changeMembership('removed', member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
+                  <button mat-menu-item (click)="openDialogPrompt(member, 'remove', { changeType: 'remove', type: 'user' })" *ngIf="member.userId !== currentUserId && currentUserId === leader">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
@@ -90,7 +90,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>
           </ng-template>
-          <planet-tasks [link]="{ teams: teamId }" [assignees]="members"></planet-tasks>
+          <planet-tasks [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>
@@ -143,14 +143,19 @@
                     {{resource.linkDoc.title}}
                   </span>
                 </div>
-                <button mat-icon-button class="top-right-icon" (click)="openRemoveResourceDialog(resource)">
-                  <mat-icon [inline]="true">clear</mat-icon>
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                  <mat-icon>more_vert</mat-icon>
                 </button>
-                <mat-card-actions>
-                  <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true" matSuffix>
-                    <mat-icon>edit</mat-icon>
+                <mat-menu #resourceMenu="matMenu">
+                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'resource' })">
+                    <mat-icon>clear</mat-icon>
+                    <span i18n>Remove</span>
                   </button>
-                </mat-card-actions>
+                  <button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true" mat-menu-item>
+                    <mat-icon>edit</mat-icon>
+                    <span i18n>Edit</span>
+                  </button>
+                </mat-menu>
               </mat-card>
             </div>
           </ng-template>

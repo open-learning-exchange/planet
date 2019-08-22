@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
-import { catchError, switchMap, map, takeWhile } from 'rxjs/operators';
+import { catchError, switchMap, map } from 'rxjs/operators';
 import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
@@ -236,15 +236,14 @@ export class UserService {
           const key = user._attachments && Object.keys(user._attachments)[0];
           const attachmentDoc = attachmentDocs.find(aDoc => aDoc.userId === user._id);
           const aDocDigest = attachmentDoc && attachmentDoc._attachments[key] && attachmentDoc._attachments[key].digest;
-          if ((attachmentDoc === undefined && addNew) || (key && user._attachments[key].digest !== aDocDigest)) {
+          if (key && ((attachmentDoc === undefined && addNew) || user._attachments[key].digest !== aDocDigest)) {
             return [ ...obsArr, this.getProfileImage(user, attachmentDoc) ];
           }
           return obsArr;
         }, []);
-        return forkJoin(obs);
+        return obs.length > 0 ? forkJoin(obs) : of(obs);
       }),
-      takeWhile(res => res.length > 0),
-      switchMap((res: any[]) => this.updateProfileImagesForReplication(res))
+      switchMap((res: any[]) => res.length > 0 ? this.updateProfileImagesForReplication(res) : of([]))
     );
   }
 

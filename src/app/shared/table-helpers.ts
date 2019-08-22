@@ -143,3 +143,5 @@ export const commonSortingDataAccessor = (item: any, property: string) => {
       return item[property] ? sortNumberOrString(item, property) : sortNumberOrString(item.doc, property);
   }
 };
+
+export const trackById = (index, item) => item._id;

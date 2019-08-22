@@ -9,7 +9,7 @@ import { ResourcesMenuComponent } from '../resources/view-resources/resources-me
 import { AuthorizedRolesDirective } from './authorized-roles.directive';
 import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
-import { TasksComponent } from '../tasks/tasks.component';
+import { TasksComponent, FilterAssigneePipe } from '../tasks/tasks.component';
 
 @NgModule({
   imports: [
@@ -24,7 +24,8 @@ import { TasksComponent } from '../tasks/tasks.component';
     AuthorizedRolesDirective,
     PlanetBetaDirective,
     FilteredAmountComponent,
-    TasksComponent
+    TasksComponent,
+    FilterAssigneePipe
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -35,7 +36,8 @@ import { TasksComponent } from '../tasks/tasks.component';
     AuthorizedRolesDirective,
     PlanetBetaDirective,
     FilteredAmountComponent,
-    TasksComponent
+    TasksComponent,
+    FilterAssigneePipe
   ]
 })
 export class SharedComponentsModule {}
