@@ -166,7 +166,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
       },
       remove: {
-        request: this.changeMembership('removed', item), name: (item.userDoc || {}).firstName || item.name,
+        request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).firstName || item.name,
         successMsg: 'removed', errorMsg: 'removing'
       }
     }[change];
@@ -194,19 +194,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  changeMembershipRequest(changeObject, type, memberDoc?) {
+  changeMembershipRequest(type, memberDoc?) {
+    const changeObject = this.changeObject(type, memberDoc);
     return changeObject.obs.pipe(
       switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
       switchMap(() => this.getMembers()),
-      switchMap(() => this.sendNotifications('added'))
+      switchMap(() => this.sendNotifications('added')),
+      map(() => changeObject.message)
     );
   }
 
   changeMembership(type, memberDoc?) {
-    const changeObject = this.changeObject(type, memberDoc);
-    this.changeMembershipRequest(changeObject, type, memberDoc).subscribe(() => {
+    this.changeMembershipRequest(type, memberDoc).subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
-      this.planetMessageService.showMessage(changeObject.message);
+      this.planetMessageService.showMessage(message);
     });
   }
 
