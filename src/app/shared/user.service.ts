@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
-import { catchError, switchMap, map, takeWhile } from 'rxjs/operators';
+import { catchError, switchMap, map } from 'rxjs/operators';
 import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
@@ -241,10 +241,9 @@ export class UserService {
           }
           return obsArr;
         }, []);
-        return forkJoin(obs);
+        return obs.length > 0 ? forkJoin(obs) : of(obs);
       }),
-      takeWhile(res => res.length > 0),
-      switchMap((res: any[]) => this.updateProfileImagesForReplication(res))
+      switchMap((res: any[]) => res.length > 0 ? this.updateProfileImagesForReplication(res) : of([]))
     );
   }
 
