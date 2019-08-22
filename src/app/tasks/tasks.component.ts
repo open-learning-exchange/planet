@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -55,4 +55,13 @@ export class TasksComponent implements OnInit {
     });
   }
 
+}
+
+@Pipe({
+  name: 'filterAssignee'
+})
+export class FilterAssigneePipe implements PipeTransform {
+  transform(assignees: any[], assignee: any) {
+    return assignees.filter(a => a.userId !== assignee.userId);
+  }
 }
