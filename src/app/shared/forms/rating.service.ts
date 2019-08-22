@@ -38,16 +38,12 @@ export class RatingService {
   getRatings({ itemIds, type }: {itemIds: string[], type: string}, opts: any) {
     const itemSelector = itemIds.length > 0 ?
       { '$in': itemIds } : { '$gt': null };
-    return this.couchService.post(this.dbName + '/_find', findDocuments({
+    return this.couchService.findAll(this.dbName, findDocuments({
       // Selector
       type,
       // Must have sorted property in selector to sort correctly
       'item': itemSelector
-    }, 0, [ { 'item': 'desc' } ], 1000), opts).pipe(catchError(err => {
-      // If there's an error, return a fake couchDB empty response
-      // so resources can be displayed.
-      return of({ docs: [] });
-    }));
+    }, 0, [ { 'item': 'desc' } ]), opts);
   }
 
   createItemList(itemsRes, ratings) {
