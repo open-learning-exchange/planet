@@ -48,7 +48,7 @@ export class TasksComponent implements OnInit {
   }
 
   addAssignee(task, assignee: any = '') {
-    if (assignee !== '') {
+    if (assignee !== '' && assignee.userDoc) {
       const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     }
