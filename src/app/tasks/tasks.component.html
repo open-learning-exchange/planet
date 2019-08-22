@@ -6,9 +6,9 @@
     <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}}</p>
     <img *ngIf="task.assignee" matListAvatar [src]="task.assignee.avatar ? imgUrlPrefix + task.assignee.avatar : 'assets/image.png'">
     <button mat-icon-button [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
-    <button *ngIf="task.assignee" (click)="addAssignee($event, task)" mat-icon-button><mat-icon>remove</mat-icon></button>
     <mat-menu #assigneeMenu="matMenu">
-      <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee($event, task, assignee)">{{assignee.name}}</button>
+      <button *ngIf="task.assignee" (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee.name}}</button>
+      <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee(task, assignee)">{{assignee.name}}</button>
     </mat-menu>
   </button>
 </mat-action-list>

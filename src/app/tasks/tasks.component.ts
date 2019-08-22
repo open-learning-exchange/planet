@@ -47,8 +47,7 @@ export class TasksComponent implements OnInit {
     event.stopPropagation();
   }
 
-  addAssignee(event, task, assignee: any = '') {
-    event.stopPropagation();
+  addAssignee(task, assignee: any = '') {
     if (assignee !== '') {
       const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
