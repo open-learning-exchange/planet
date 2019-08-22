@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -54,8 +54,13 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  filterAssignee(task) {
-    return task.assignee === undefined ? this.assignees : this.assignees
-      .filter(assignees => assignees.userDoc._id !== task.assignee.userDoc._id);
+}
+
+@Pipe({
+  name: 'filterAssignee'
+})
+export class FilterAssigneePipe implements PipeTransform {
+  transform(assignees: any[], assignee: any) {
+    return assignees.filter(a => a.userId !== assignee.userId);
   }
 }
