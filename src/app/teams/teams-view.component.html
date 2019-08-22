@@ -143,14 +143,19 @@
                     {{resource.linkDoc.title}}
                   </span>
                 </div>
-                <button mat-icon-button class="top-right-icon" (click)="openRemoveResourceDialog(resource)">
-                  <mat-icon [inline]="true">clear</mat-icon>
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                  <mat-icon>more_vert</mat-icon>
                 </button>
-                <mat-card-actions>
-                  <button type="button" mat-icon-button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true" matSuffix>
-                    <mat-icon>edit</mat-icon>
+                <mat-menu #resourceMenu="matMenu">
+                  <button mat-menu-item (click)="openRemoveResourceDialog(resource)">
+                    <mat-icon>clear</mat-icon>
+                    <span i18n>Remove</span>
                   </button>
-                </mat-card-actions>
+                  <button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true" mat-menu-item>
+                    <mat-icon>edit</mat-icon>
+                    <span i18n>Edit</span>
+                  </button>
+                </mat-menu>
               </mat-card>
             </div>
           </ng-template>
