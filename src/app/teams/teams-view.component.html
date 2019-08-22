@@ -65,7 +65,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="changeMembership('removed', member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
+                  <button mat-menu-item (click)="openRemoveDialog(member)" *ngIf="member.userId !== currentUserId && currentUserId === leader">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
