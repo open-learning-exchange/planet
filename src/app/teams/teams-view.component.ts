@@ -370,10 +370,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         this.planetMessageService.showMessage(`${member.name} has been made Leader`);
         this.leaderDialog.close();
       }
-    }
+    };
   }
 
-  openMakeLeaderDialog(member){
+  openMakeLeaderDialog(member) {
     this.leaderDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.makeLeader(member),
