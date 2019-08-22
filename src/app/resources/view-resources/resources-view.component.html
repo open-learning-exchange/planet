@@ -47,6 +47,7 @@
       <p *ngIf="resource?.doc?.linkToLicense"><b i18n>to License:</b><a href={{resource?.doc?.linkToLicense}} target="_blank">{{' ' + resource?.doc?.linkToLicense}}</a></p>
       <p *ngIf="resource?.doc?.resourceFor"><b i18n>Resource:</b>{{' ' + resource?.doc?.resourceFor?.join(', ')}}</p>
       <p *ngIf="resource?.doc?.resourceType"><b i18n>Type:</b>{{' ' + resource?.doc?.resourceType}}</p>
+      <p *ngIf="resource.doc.sourcePlanet !== stateService.configuration.code && resource.doc.sourcePlanet"><b i18n>Source:</b>{{' ' + resource.doc.sourcePlanet}}</p>
     </div>
     <div>
       <planet-resources-viewer
