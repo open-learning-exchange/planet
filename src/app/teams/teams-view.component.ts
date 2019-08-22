@@ -219,10 +219,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     };
   }
 
-  openRemoveDialog(type, memberDoc) {
+  openRemoveDialog(memberDoc) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: this.changeMembership(type, memberDoc),
+        okClick: this.changeMembership('removed', memberDoc),
         changeType: 'remove',
         type: 'user',
         displayName: (memberDoc.userDoc || {}).firstName || memberDoc.name
