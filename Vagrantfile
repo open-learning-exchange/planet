@@ -101,7 +101,7 @@ Vagrant.configure(2) do |config|
 
       curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/file -d '"/opt/couchdb/var/log/couch.log"'
       curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/log/writer -d '"file"'
-      curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/chttpd/authentication_handlers -d '"{chttpd_auth, cookie_authentication_handler}, {couch_httpd_auth, proxy_authentication_handler}, {chttpd_auth, default_authentication_handler}"'
+      curl -X PUT http://localhost:5984/_node/nonode@nohost/_config/chttpd/authentication_handlers -d '"{chttpd_auth, cookie_authentication_handler}, {chttpd_auth, proxy_authentication_handler}, {chttpd_auth, default_authentication_handler}"'
 
       docker restart planet
 
