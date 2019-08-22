@@ -158,14 +158,22 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource', dialogParams: { changeType, type }) {
-    const config = {
+  dialogPromptConfig(item, change) {
+    return {
       leave: { request: this.toggleMembership(item, true), successMsg: 'left', errorMsg: 'leaving' },
       archive: { request: this.teamsService.archiveTeam(item), successMsg: 'deleted', errorMsg: 'deleting' },
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
+      },
+      remove: {
+        request: this.changeMembership('removed', item), name: (item.userDoc || {}).firstName || item.name,
+        successMsg: 'removed', errorMsg: 'removing'
       }
     }[change];
+  }
+
+  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove', dialogParams: { changeType, type }) {
+    const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
@@ -186,30 +194,19 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  changeMembership(type, memberDoc?) {
-    const changeObject = this.changeObject(type, memberDoc);
-    return {
-      request: changeObject.obs.pipe(
-        switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-        switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications('added'))
-      ),
-      onNext: () => {
-        this.deleteDialog.close();
-        this.setStatus(this.team, this.userService.get());
-        this.planetMessageService.showMessage(changeObject.message);
-      }
-    };
+  changeMembershipRequest(changeObject, type, memberDoc?) {
+    return changeObject.obs.pipe(
+      switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
+      switchMap(() => this.getMembers()),
+      switchMap(() => this.sendNotifications('added'))
+    );
   }
 
-  openRemoveDialog(memberDoc) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.changeMembership('removed', memberDoc),
-        changeType: 'remove',
-        type: 'user',
-        displayName: (memberDoc.userDoc || {}).firstName || memberDoc.name
-      }
+  changeMembership(type, memberDoc?) {
+    const changeObject = this.changeObject(type, memberDoc);
+    this.changeMembershipRequest(changeObject, type, memberDoc).subscribe(() => {
+      this.setStatus(this.team, this.userService.get());
+      this.planetMessageService.showMessage(changeObject.message);
     });
   }
 
