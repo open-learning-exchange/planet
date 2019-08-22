@@ -140,10 +140,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.emptyData = !this.courses.data.length;
       this.dialogsLoadingService.stop();
 
-      const urlSelectedTags = this.route.snapshot.paramMap.get('tags').split('`');
-      urlSelectedTags.forEach(tagName =>
-        this.addTag(tagName)
-      );
+      const tagParam = this.route.snapshot.paramMap.get('tag');
+      if (tagParam) {
+        this.addTag(tagParam);
+      }
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
@@ -401,6 +401,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTag(tag: string) {
     this.tagInputComponent.addTag(tag);
+    this.tagsService.filterReroute(tag);
   }
-
 }

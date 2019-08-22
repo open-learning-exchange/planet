@@ -139,15 +139,14 @@ export class TagsService {
   /**
    * Reroutes to new URL on filtering so that the back button of a particular result go to the previous filtered results
    */
-  filterReroute(tags) {
-    if (tags.length === 0) {
+  filterReroute(tag) {
+    if (!tag) {
       const tree: UrlTree = this.router.parseUrl(this.router.url);
       const g: UrlSegmentGroup = tree.root.children[PRIMARY_OUTLET];
       const s: UrlSegment[] = g.segments;
       this.router.navigate([ s[0].path ]);
     } else {
-      const allTags = tags.join('`');
-      this.router.navigate([ '..', tags ? { tags: allTags } : {} ], { relativeTo: this.route });
+      this.router.navigate([ '..', tag ? { tag: tag } : {} ], { relativeTo: this.route });
     }
   }
 }
