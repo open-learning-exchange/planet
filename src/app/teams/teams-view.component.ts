@@ -45,6 +45,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   leader: string;
   planetCode: string;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
 

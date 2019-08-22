@@ -1,6 +1,6 @@
 <mat-toolbar>
   <a mat-icon-button routerLink="/teams"><mat-icon>arrow_back</mat-icon></a>
-  <span i18n>Enterprises</span>
+  <span i18n>{ mode, select, team {Teams} enterprise {Enterprises} }</span>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
@@ -13,7 +13,7 @@
             Add Members
           </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
-            Add Documents
+            { mode, select, team {Add Resources} enterprise {Add Documents} }
           </button>
           <ng-container *ngIf="currentUserId !== leader">
             <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
@@ -33,19 +33,24 @@
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
       </mat-tab>
-      <mat-tab i18n-label label="Mission & Services">
+      <mat-tab>
+        <ng-template mat-tab-label i18n>
+          { mode, select, team {Plan} enterprise {Mission & Services} }
+        </ng-template>
         <td-markdown *ngIf="team?.description; else emptyText">{{ team?.description }}</td-markdown>
         <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
-          <p i18n>The team has no plan.</p>
-          <button mat-raised-button color="accent" *ngIf="currentUserId === leader" (click)="updateTeam()" i18n>Add Plan</button>
+          <p i18n>The { mode, select, team {team} enterprise {enterprise} } has no { mode, select, team {plan} enterprise {mission & services} }.</p>
+          <button mat-raised-button color="accent" *ngIf="currentUserId === leader" (click)="updateTeam()" i18n>
+            { mode, select, team {Add Plan} enterprise {Add Mission & Services} }
+          </button>
         </ng-template>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <ng-container i18n>Staff</ng-container> ({{members.length}})
+          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} }</ng-container> ({{members.length}})
         </ng-template>
-        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this team.</p>
+        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
         <ng-template #memberList>
           <div class="card-grid">
             <mat-card *ngFor="let member of members">
@@ -91,9 +96,9 @@
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>
-            <ng-container i18n>Staff Applicants</ng-container> ({{requests.length}})
+            <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} }</ng-container> ({{requests.length}})
           </ng-template>
-          <p *ngIf="requests.length === 0; else requestedList" i18n>There are no requests to join this team.</p>
+          <p *ngIf="requests.length === 0; else requestedList" i18n>There are no { mode, select, team {requests} enterprise {applications} } to join this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #requestedList>
             <div class="card-grid">
               <mat-card *ngFor="let request of requests">
@@ -109,7 +114,7 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab>
+        <mat-tab *ngIf="mode==='enterprise'">
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container>
           </ng-template>
@@ -138,9 +143,23 @@
             <mat-row *matRowDef="let row; columns: [ 'date', 'credit', 'debit', 'balance', 'description' ];"></mat-row>
           </mat-table>
         </mat-tab>
+        <mat-tab label="Courses" *ngIf="mode==='team'">
+          <ng-template mat-tab-label>
+            <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
+          </ng-template>
+          <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
+          <ng-template #courseList>
+            <mat-card *ngFor="let course of team?.courses">
+              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
+              <mat-card-actions>
+                <button mat-raised-button color="warn" (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })" i18n>Remove</button>
+              </mat-card-actions>
+            </mat-card>
+          </ng-template>
+        </mat-tab>
         <mat-tab label="Resources">
           <ng-template mat-tab-label>
-            <ng-container i18n>Documents</ng-container> ({{resources?.length || 0}})
+            <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} }</ng-container> ({{resources?.length || 0}})
           </ng-template>
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
           <ng-template #resourceList>
