@@ -225,7 +225,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         okClick: this.changeMembership(type, memberDoc),
         changeType: 'remove',
         type: 'user',
-        displayName: memberDoc.name
+        displayName: (memberDoc.userDoc || {}).firstName || memberDoc.name
       }
     });
   }
