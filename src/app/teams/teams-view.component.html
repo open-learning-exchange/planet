@@ -162,7 +162,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} }</ng-container> ({{resources?.length || 0}})
           </ng-template>
-          <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no resources associated with this team.</p>
+          <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no { mode, select, team {resources} enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #resourceList>
             <div class="card-grid">
               <mat-card *ngFor="let resource of resources">
