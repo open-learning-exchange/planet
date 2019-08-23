@@ -1,6 +1,9 @@
 <mat-toolbar>
   <button mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>{{myTeamsFilter? 'myTeams' : 'Teams'}}</span>
+  <span i18n>{ mode, select,
+    team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
+    enterprise {Enterprises}
+  }</span>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
@@ -80,6 +83,6 @@
     </mat-paginator>
   </div>
   <ng-template #notFoundMessage>
-    <div class="view-container">No Team Found</div>
+    <div class="view-container">No { mode, select, team {Teams} enterprise {Enterprises} } Found</div>
   </ng-template>
 </div>
