@@ -69,7 +69,7 @@ export class ReportsService {
       this.couchService.findAll('_users') :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
     return obs.pipe(map((users: any) => {
-      users = users.filter(user => user.name !== 'satellite');
+      users = users.filter(user => user.name !== 'satellite' && user.roles.length);
       this.users = users;
       return ({
         count: users.length,
@@ -85,6 +85,7 @@ export class ReportsService {
   getLoginActivities({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
     return this.couchService.findAll('login_activities', this.selector(planetCode, { tillDate, dateField: 'loginTime', fromMyPlanet }))
     .pipe(map((loginActivities: any) => {
+      loginActivities = this.filterAdmin(loginActivities);
       return ({
         byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
           .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
@@ -96,6 +97,7 @@ export class ReportsService {
   getRatingInfo({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
     return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
     .pipe(map((ratings: any) => {
+      ratings = this.filterAdmin(ratings);
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .filter(rating => rating.title !== '' && rating.title !== undefined)
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
@@ -106,6 +108,7 @@ export class ReportsService {
   getResourceVisits({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
     .pipe(map((resourceActivites) => {
+      resourceActivites = this.filterAdmin(resourceActivites);
       return ({
         byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
           .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
@@ -174,6 +177,10 @@ export class ReportsService {
         (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.doc.code) > -1) === undefined
       )
     });
+  }
+
+  filterAdmin(records) {
+    return records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1);
   }
 
 }
