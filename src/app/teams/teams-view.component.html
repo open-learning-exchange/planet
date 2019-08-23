@@ -118,6 +118,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container>
           </ng-template>
+          <button mat-raised-button color="primary" i18n (click)="openTransactionDialog()">Add Transaction</button>
           <mat-table [dataSource]="finances">
             <ng-container matColumnDef="date">
               <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Date</mat-header-cell>
