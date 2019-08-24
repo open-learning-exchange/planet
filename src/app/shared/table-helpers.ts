@@ -25,8 +25,7 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
-    let showOutdatedIndex = filter.indexOf('showOutdated');
-    filter = showOutdatedIndex !== -1 ? filter.slice(0, showOutdatedIndex) : filter;
+    filter = filter.indexOf('showOutdated') !== -1 ? filter.slice(0, filter.indexOf('showOutdated')) : filter;
     for (let i = 0; i < filterFields.length; i++) {
       if (getProperty(data, filterFields[i]).toLowerCase().indexOf(filter.trim().toLowerCase()) > -1) {
         return true;
@@ -37,8 +36,7 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 
 export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
     return (data: any, filter: string) => {
-      let showOutdatedIndex = filter.indexOf('showOutdated');
-      filter = showOutdatedIndex !== -1 ? filter.slice(0, showOutdatedIndex) : filter;
+      filter = filter.indexOf('showOutdated') !== -1 ? filter.slice(0, filter.indexOf('showOutdated')) : filter;
       const words = filter.split(' ').map(value => value.toLowerCase());
       return words.filter(word => word).find(word => !filterSpecificFields(filterFields)(data, word)) === undefined;
     };
