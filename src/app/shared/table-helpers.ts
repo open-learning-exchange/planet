@@ -25,6 +25,7 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
+    filter = filter.indexOf('showOutdated') !== -1 ? filter.slice(0,filter.indexOf('showOutdated')) : filter;
     for (let i = 0; i < filterFields.length; i++) {
       if (getProperty(data, filterFields[i]).toLowerCase().indexOf(filter.trim().toLowerCase()) > -1) {
         return true;
@@ -34,9 +35,18 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 };
 
 export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
+    return (data: any, filter: string) => {
+      filter = filter.indexOf('showOutdated') !== -1 ? filter.slice(0,filter.indexOf('showOutdated')) : filter;
+      const words = filter.split(' ').map(value => value.toLowerCase());
+      return words.filter(word => word).find(word => !filterSpecificFields(filterFields)(data, word)) === undefined;
+    };
+};
+
+export const filterOldMeetups = (filterFields: string[]): any => {
+  const currentDate = Date.now();
   return (data: any, filter: string) => {
-    const words = filter.split(' ').map(value => value.toLowerCase());
-    return words.filter(word => word).find(word => !filterSpecificFields(filterFields)(data, word)) === undefined;
+      if(filter.indexOf('showOutdated') === -1) return true;
+      if (data.endDate > currentDate || data.startDate > currentDate) { return true }
   };
 };
 

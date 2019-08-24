@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
+import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord, filterOldMeetups } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -19,6 +19,10 @@ import { findByIdInArray } from '../shared/utils';
   templateUrl: './meetups.component.html',
   styles: [ `
     /* Column Widths */
+    .showMeetupsButton{
+      margin-right: 1em;
+      border: 1px solid gray;
+    }
     .mat-column-select {
       max-width: 44px;
     }
@@ -48,6 +52,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedJoined = 0;
   isAuthorized = false;
   dateNow: any;
+  showOutdated = false;
 
   constructor(
     private couchService: CouchService,
@@ -64,6 +69,12 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
+  toggleMeetups() {
+    this.showOutdated = !this.showOutdated;
+    this.meetups.filter = this.meetups.filter.indexOf('showOutdated') === -1 ?
+      this.meetups.filter+'showOutdated' : this.meetups.filter.slice(0,this.meetups.filter.indexOf('showOutdated'));
+  }
+
   ngOnInit() {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((meetups) => {
@@ -75,9 +86,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.meetupService.updateMeetups({ opts: this.getOpts });
     this.meetups.filterPredicate = composeFilterFunctions([
+      filterOldMeetups([ 'showOutdated' ]),
       filterSpecificFieldsByWord([ 'title' ]),
       filterSpecificFields([ 'description' ])
     ]);
+    this.meetups.filter = 'showOutdated';
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
     this.selection.onChange.subscribe(({ source }) => {
       this.countSelectedShelf(source.selected);
@@ -108,7 +121,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
-    this.meetups.filter = filterValue;
+    this.meetups.filter = this.meetups.filter.indexOf('showOutdated') === -1 ? filterValue : filterValue + 'showOutdated';
     this.selection.deselect(...selectedOutOfFilter(this.meetups.filteredData, this.selection, this.paginator));
   }
 
