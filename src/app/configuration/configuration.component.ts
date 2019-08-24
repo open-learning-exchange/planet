@@ -48,6 +48,7 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
+  spinnerOn = true;
   configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 

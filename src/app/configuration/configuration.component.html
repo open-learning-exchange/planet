@@ -114,7 +114,7 @@
       </mat-form-field>
       <div class="full-width">
         <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
-        <button mat-raised-button type="submit" color="primary" i18n>{ configurationType, select, new {Submit} update {Update}}</button>
+        <button [planetSubmit]="spinnerOn" mat-raised-button type="submit" color="primary" i18n>{ configurationType, select, new {Submit} update {Update}}</button>
       </div>
     </form>
   </mat-step>
