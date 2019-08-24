@@ -3,7 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord, filterOldMeetups } from '../shared/table-helpers';
+import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord,
+  filterOldMeetups } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -72,7 +73,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleMeetups() {
     this.showOutdated = !this.showOutdated;
     this.meetups.filter = this.meetups.filter.indexOf('showOutdated') === -1 ?
-      this.meetups.filter+'showOutdated' : this.meetups.filter.slice(0,this.meetups.filter.indexOf('showOutdated'));
+      this.meetups.filter+'showOutdated' : this.meetups.filter.slice(0, this.meetups.filter.indexOf('showOutdated'));
   }
 
   ngOnInit() {
