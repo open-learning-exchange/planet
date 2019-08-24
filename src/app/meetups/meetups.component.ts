@@ -73,7 +73,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleMeetups() {
     this.showOutdated = !this.showOutdated;
     this.meetups.filter = this.meetups.filter.indexOf('showOutdated') === -1 ?
-      this.meetups.filter+'showOutdated' : this.meetups.filter.slice(0, this.meetups.filter.indexOf('showOutdated'));
+      this.meetups.filter + 'showOutdated' : this.meetups.filter.slice(0, this.meetups.filter.indexOf('showOutdated'));
   }
 
   ngOnInit() {
