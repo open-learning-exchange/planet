@@ -169,7 +169,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       remove: {
         request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).firstName || item.name,
         successMsg: 'removed', errorMsg: 'removing'
-      }
+      },
+      leader: { request: this.makeLeader(item), successMsg: 'given leadership to', errorMsg: 'giving leadership to' }
     }[change];
   }
 
@@ -361,26 +362,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   makeLeader(member) {
     const currentLeader = this.members.find(mem => mem.userId === this.leader);
-    return {
-      request: this.teamsService.changeTeamLeadership(currentLeader, member)
-      .pipe(
-        switchMap(() => this.getMembers())
-      ),
-      onNext: () => {
-        this.planetMessageService.showMessage(`${member.name} has been made Leader`);
-        this.leaderDialog.close();
-      }
-    };
-  }
-
-  openMakeLeaderDialog(member) {
-    this.leaderDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.makeLeader(member),
-        changeType: 'accept',
-        type: 'change'
-      }
-    });
+    return this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
   removeCourse(course) {
