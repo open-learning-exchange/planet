@@ -35,18 +35,24 @@ export class DashboardTileComponent implements OnInit {
 
   removeFromShelf(event, item: any) {
     event.stopPropagation();
-    const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
+    if (this.shelfName === 'myTeamIds') {
+      this.removeTeam(item, userId, userPlanetCode);
+    } else {
+      const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
+      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
+    }
+  }
+
+  removeTeam(item, userId, userPlanetCode) {
     const teamDoc = { userId, userPlanetCode, teamId: item._id, fromShelf: item.fromShelf };
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.shelfName === 'myTeamIds' ?
-            this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))) :
-            this.userService.updateShelf(newIds, this.shelfName),
+          request: this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))),
           onNext: () => {
             this.dialogPrompt.close();
-            this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+            this.removeMessage(item);
           },
           onError: () => this.planetMessageService.showMessage('There was an error removing ' + item.title)
         },
@@ -55,6 +61,10 @@ export class DashboardTileComponent implements OnInit {
         displayName: item.title
       }
     });
+  }
+
+  removeMessage(item) {
+    this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
   }
 
   drop(event: CdkDragDrop<string[]>) {
