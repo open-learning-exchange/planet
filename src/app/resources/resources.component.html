@@ -95,7 +95,7 @@
           </h3>
           <div class="content">
             <td-markdown
-              [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
+              [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
                 '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
                 element.doc.description">
             </td-markdown>
