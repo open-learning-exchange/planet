@@ -4,6 +4,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -20,11 +22,13 @@ export class DashboardTileComponent implements OnInit {
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items', { static: false }) itemDiv: ElementRef;
+  dialogPrompt: MatDialogRef<DialogsPromptComponent>;
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {}
@@ -34,14 +38,25 @@ export class DashboardTileComponent implements OnInit {
     const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     const teamDoc = { userId, userPlanetCode, teamId: item._id, fromShelf: item.fromShelf };
-    const obs = this.shelfName === 'myTeamIds' ?
-      this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))) :
-      this.userService.updateShelf(newIds, this.shelfName);
-    obs.subscribe(() => {
-      this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.shelfName === 'myTeamIds' ?
+            this.teamsService.toggleTeamMembership(item, true, teamDoc).pipe(tap(() => this.teamRemoved.emit(item))) :
+            this.userService.updateShelf(newIds, this.shelfName),
+          onNext: () => {
+            this.dialogPrompt.close();
+            this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+          },
+          onError: () => this.planetMessageService.showMessage('there was a error removing ' + item.title)
+        },
+        changeType: 'remove',
+        type: 'team',
+        displayName: item.title
+      }
     });
   }
-
+  
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
     const ids = [ ...this.userService.shelf[this.shelfName] ];
