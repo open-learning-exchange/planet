@@ -369,10 +369,22 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   removeCourse(course) {
     const index = this.team.courses.indexOf(course);
     const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    this.teamsService.updateTeam({ ...this.team, courses: newCourses }).subscribe((newTeam) => {
-      this.team = newTeam;
-      this.planetMessageService.showMessage('Course was removed');
-    }, () => this.planetMessageService.showAlert('There was an error updating the team'));
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+    data: {
+      okClick: {
+        request: this.teamsService.updateTeam({ ...this.team, courses: newCourses }),
+        onNext: (newTeam) => {
+          this.dialogPrompt.close();
+          this.team = newTeam;
+          this.planetMessageService.showMessage('Course was removed');
+        },
+        onError: () => this.planetMessageService.showAlert('There was an error removing the course')
+        },
+        displayName: course.courseTitle,
+        changeType: 'remove',
+        type: 'course',
+      }
+    });
   }
 
   toggleTask({ option }) {
