@@ -450,7 +450,7 @@ module.exports = {
 
       // To print or store the binary data, you may convert it to hex
       var encryptedHex = convertHex.fromBytes(encryptedBytes);
-      return [ { '_id': request._id, '_rev': request._rev, 'data': encryptedHex, }, '{"message":"Document updated"}' ];
+      return [ { '_id': request._id, '_rev': request._rev, 'data': encryptedHex }, '{"message":"Document updated"}' ];
 
     }
   },
