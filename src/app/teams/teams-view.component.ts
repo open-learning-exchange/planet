@@ -165,6 +165,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
       },
+      course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: 'removed', errorMsg: 'removing' },
       remove: {
         request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).firstName || item.name,
         successMsg: 'removed', errorMsg: 'removing'
@@ -172,7 +173,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }[change];
   }
 
-  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove', dialogParams: { changeType, type }) {
+  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove' | 'course', dialogParams: { changeType, type }) {
     const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
@@ -182,6 +183,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
+            this.team = change === 'course' ? res : this.team;
             if (res.status === 'archived') {
               this.router.navigate([ '/teams' ]);
             }
@@ -369,22 +371,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   removeCourse(course) {
     const index = this.team.courses.indexOf(course);
     const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-    data: {
-      okClick: {
-        request: this.teamsService.updateTeam({ ...this.team, courses: newCourses }),
-        onNext: (newTeam) => {
-          this.dialogPrompt.close();
-          this.team = newTeam;
-          this.planetMessageService.showMessage('Course was removed');
-        },
-        onError: () => this.planetMessageService.showAlert('There was an error removing the course')
-        },
-        displayName: course.courseTitle,
-        changeType: 'remove',
-        type: 'course',
-      }
-    });
+    return this.teamsService.updateTeam({ ...this.team, courses: newCourses });
   }
 
   toggleTask({ option }) {
