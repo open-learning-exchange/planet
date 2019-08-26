@@ -2,6 +2,7 @@ import { Component, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'planet-tasks',
@@ -21,18 +22,23 @@ export class TasksComponent implements OnInit {
     this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
   tasks: any[] = [];
+  filteredTasks: any[] = [];
   imgUrlPrefix = environment.couchAddress;
+  filter = 'self';
 
   constructor(
     private tasksService: TasksService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
+      this.onTaskFilter();
     });
     this.tasksService.getTasks();
+    this.onTaskFilter();
   }
 
   addTask() {
@@ -62,6 +68,15 @@ export class TasksComponent implements OnInit {
     this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasksService.getTasks();
     });
+  }
+
+  onTaskFilter(filterValue = 'self') {
+    this.filter = filterValue;
+    if (this.filter === 'self') {
+      this.filteredTasks = this.tasks.filter(task => task.assignee && task.assigee.id === this.userService.get()._id);
+    } else {
+      this.filteredTasks = this.tasks;
+    }
   }
 
 }
