@@ -48,7 +48,7 @@ export class DashboardTileComponent implements OnInit {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
           },
-          onError: () => this.planetMessageService.showMessage('there was a error removing ' + item.title)
+          onError: () => this.planetMessageService.showMessage('There was an error removing ' + item.title)
         },
         changeType: 'remove',
         type: 'team',
@@ -56,7 +56,7 @@ export class DashboardTileComponent implements OnInit {
       }
     });
   }
-  
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
     const ids = [ ...this.userService.shelf[this.shelfName] ];
