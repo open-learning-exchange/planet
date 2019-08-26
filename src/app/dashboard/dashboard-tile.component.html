@@ -16,6 +16,7 @@
             [routerLink]="item.link"
             [matTooltip]="item.tooltip"
             cdkDrag
+            [cdkDragDisabled]="cardTitle==='myLife'"
           >
             <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
             <p>{{item.title}}</p>
