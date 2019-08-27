@@ -1,5 +1,7 @@
 @import './app/variables';
 @import './planet-mat-theme.scss';
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
 
 body {
   font-family: $font-family;
