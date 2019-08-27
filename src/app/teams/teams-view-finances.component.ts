@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -6,7 +6,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -17,7 +16,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
   @Input() finances: any[] = [];
   @Input() team: any = {};
   @Input() getMembers;
+  @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource();
+  displayedColumns = [ 'date', 'credit', 'debit', 'balance', 'description' ];
 
   constructor(
     private teamsService: TeamsService,
@@ -65,6 +66,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     return this.teamsService.updateTeam(
       { ...transaction, amount, [transaction.type]: amount, docType: 'transaction', teamId, teamType, teamPlanetCode }
     ).subscribe(() => {
+      this.financesChanged.emit();
       this.planetMessageService.showMessage('Transaction added');
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();

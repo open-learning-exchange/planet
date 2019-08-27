@@ -20,6 +20,6 @@
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Balance</mat-header-cell>
     <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">${{ element.balance }}</mat-cell>
   </ng-container>
-  <mat-header-row *matHeaderRowDef="[ 'date', 'credit', 'debit', 'balance', 'description' ]"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: [ 'date', 'credit', 'debit', 'balance', 'description' ];"></mat-row>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>

@@ -111,7 +111,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   getMembers() {
     if (this.team === undefined) {
-      return [];
+      return of([]);
     }
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
@@ -136,6 +136,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.setStatus(this.team, this.userService.get());
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  resetData() {
+    this.getMembers().subscribe();
   }
 
   toggleAdd(data) {

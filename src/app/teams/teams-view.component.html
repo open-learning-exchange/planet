@@ -118,7 +118,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container>
           </ng-template>
-          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()"></planet-teams-view-finances>
         </mat-tab>
         <mat-tab label="Courses" *ngIf="mode==='team'">
           <ng-template mat-tab-label>
