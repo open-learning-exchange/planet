@@ -118,31 +118,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container>
           </ng-template>
-          <button mat-raised-button color="primary" i18n (click)="openTransactionDialog()">Add Transaction</button>
-          <mat-table [dataSource]="finances">
-            <ng-container matColumnDef="date">
-              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Date</mat-header-cell>
-              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">{{ element.date | date }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="description">
-              <mat-header-cell *matHeaderCellDef >Note</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="credit">
-              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Credits</mat-header-cell>
-              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'green'">{{ element.credit ? '$' + element.credit : '' }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="debit">
-              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Debits</mat-header-cell>
-              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'red'">{{ element.debit ? '$' + element.debit : '' }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="balance">
-              <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Balance</mat-header-cell>
-              <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">${{ element.balance }}</mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="[ 'date', 'credit', 'debit', 'balance', 'description' ]"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: [ 'date', 'credit', 'debit', 'balance', 'description' ];"></mat-row>
-          </mat-table>
+          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers"></planet-teams-view-finances>
         </mat-tab>
         <mat-tab label="Courses" *ngIf="mode==='team'">
           <ng-template mat-tab-label>

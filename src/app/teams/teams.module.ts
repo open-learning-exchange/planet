@@ -9,6 +9,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
   ],
   declarations: [
     TeamsComponent,
-    TeamsViewComponent
+    TeamsViewComponent,
+    TeamsViewFinancesComponent
   ]
 })
 export class TeamsModule {}

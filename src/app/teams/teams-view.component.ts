@@ -49,8 +49,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
-
-  finances = new MatTableDataSource();
+  finances: any[];
 
   constructor(
     private couchService: CouchService,
@@ -133,11 +132,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         .sort((a, b) => a.userId === this.leader ? -1 : 0);
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
-      this.finances.data = docs.filter(doc => doc.docType === 'transaction').sort((a, b) => a.time > b.time ? 1 : a.time < b.time ? -1 : 0)
-        .reduce((newArray: any[], t: any, index) => [
-          ...newArray,
-          { ...t, balance: (index !== 0 ? newArray[index - 1].balance : 0) + (t.credit || 0) - (t.debit || 0) }
-        ], []);
+      this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
@@ -385,44 +380,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   toggleTask({ option }) {
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
-    });
-  }
-
-  openTransactionDialog() {
-    this.couchService.currentTime().subscribe((time: number) => {
-      this.dialogsFormService.openDialogsForm(
-        'Add Transaction',
-        [
-          {
-            name: 'type', placeholder: 'Type', type: 'selectbox',
-            options: [ { value: 'credit', name: 'Credit' }, { value: 'debit', name: 'Debit' } ], required: true
-          },
-          { name: 'description', placeholder: 'Note', type: 'textbox', required: true },
-          { name: 'amount', placeholder: 'Amount', type: 'textbox', inputType: 'number', required: true },
-          { name: 'date', placeholder: 'Date', type: 'date', required: true }
-        ],
-        {
-          type: [ 'credit', CustomValidators.required ],
-          description: [ '', CustomValidators.required ],
-          amount: [ '', CustomValidators.required ],
-          date: [ new Date(time), CustomValidators.required ]
-        },
-        { onSubmit: this.submitTransaction.bind(this) }
-      );
-    });
-  }
-
-  submitTransaction(transaction) {
-    return this.teamsService.updateTeam(
-      {
-        ...transaction,
-        [transaction.type]: transaction.amount,
-        docType: 'transaction', teamId: this.teamId, teamType: this.team.teamType, teamPlanetCode: this.team.teamPlanetCode
-      }
-    ).pipe(switchMap(() => this.getMembers())).subscribe(() => {
-      this.planetMessageService.showMessage('Transaction added');
-      this.dialogsFormService.closeDialogsForm();
-      this.dialogsLoadingService.stop();
     });
   }
 
