@@ -18,7 +18,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
   @Input() getMembers;
   @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource();
-  displayedColumns = [ 'date', 'credit', 'debit', 'balance', 'description' ];
+  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
 
   constructor(
     private teamsService: TeamsService,
