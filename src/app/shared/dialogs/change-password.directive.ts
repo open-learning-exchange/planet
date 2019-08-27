@@ -54,6 +54,21 @@ export class ChangePasswordDirective {
         CustomValidators.matchPassword('password', false, false)
       ]),
       ac => this.validatorService.checkPassword$(ac)
+    ],
+    password: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('oldPassword', true, false),
+        CustomValidators.matchPassword('confirmPassword', false)
+      ])
+    ],
+    confirmPassword: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('password', true)
+      ])
     ]
   };
   resetPasswordFormGroup = {
@@ -61,7 +76,6 @@ export class ChangePasswordDirective {
       '',
       Validators.compose([
         Validators.required,
-        this.ownAccount() ? CustomValidators.matchPassword('oldPassword', true, false) : true,
         CustomValidators.matchPassword('confirmPassword', false)
       ])
     ],
@@ -88,12 +102,12 @@ export class ChangePasswordDirective {
 
   @HostListener('click')
   openChangePasswordForm() {
-    const formFields = this.ownAccount() ? changePasswordFields : [];
-    const formGroups = this.ownAccount() ? this.changePasswordFormGroup : {};
+    const formFields = this.ownAccount() ? changePasswordFields : [ ...changePasswordFields, ...resetPasswordFields ];
+    const formGroups = this.ownAccount() ? this.changePasswordFormGroup : this.resetPasswordFormGroup;
     this.dialogsFormService.openDialogsForm(
       'Change Password',
-      [ ...formFields, ...resetPasswordFields ],
-      { ...formGroups, ...this.resetPasswordFormGroup },
+      formFields,
+      formGroups,
       { onSubmit: this.onPasswordSubmit.bind(this) }
     );
   }
