@@ -65,9 +65,6 @@
           {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
           <span class="toolbar-fill"></span>
           <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
-          <span matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
-            <button mat-stroked-button *ngIf="isUserAdmin" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event,tag)">Delete</button>
-          </span>
         </a>
       </ng-container>
       <mat-divider></mat-divider>
