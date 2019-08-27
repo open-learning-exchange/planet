@@ -29,7 +29,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.table.data = this.finances.sort((a, b) => a.time > b.time ? 1 : a.time < b.time ? -1 : 0)
+    this.table.data = this.finances.sort((a, b) => a.date > b.date ? 1 : a.date < b.date ? -1 : 0)
       .reduce((newArray: any[], t: any, index) => [
         ...newArray,
         { ...t, balance: (index !== 0 ? newArray[index - 1].balance : 0) + (t.credit || 0) - (t.debit || 0) }
@@ -63,8 +63,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
   submitTransaction(transaction) {
     const { _id: teamId, teamType, teamPlanetCode } = this.team;
     const amount = +(transaction.amount);
+    const date = new Date(transaction.date).getTime();
     return this.teamsService.updateTeam(
-      { ...transaction, amount, [transaction.type]: amount, docType: 'transaction', teamId, teamType, teamPlanetCode }
+      { ...transaction, date, amount, [transaction.type]: amount, docType: 'transaction', teamId, teamType, teamPlanetCode }
     ).subscribe(() => {
       this.financesChanged.emit();
       this.planetMessageService.showMessage('Transaction added');
