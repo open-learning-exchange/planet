@@ -17,6 +17,41 @@ const removeProtocol = (str: string) => {
 
 const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 
+const cloneDatabases = [
+  '_users',
+  'achievements',
+  'admin_activities',
+  'apk_logs',
+  'attachments',
+  'child_statistics',
+  'child_users',
+  'communityregistrationrequests',
+  'configurations',
+  'courses',
+  'courses_progress',
+  'exams',
+  'feedback',
+  'hubs',
+  'login_activities',
+  'meetups',
+  'myplanet_activities',
+  'nations',
+  'news',
+  'notifications',
+  'parent_users',
+  'ratings',
+  'replicator_users',
+  'resource_activities',
+  'resources',
+  'send_items',
+  'shelf',
+  'submissions',
+  'tablet_users',
+  'tags',
+  'team_activities',
+  'teams'
+];
+
 @Component({
   selector: 'planet-migration',
   templateUrl: './migration.component.html',
@@ -89,16 +124,8 @@ export class MigrationComponent implements OnInit {
     switchMap(() => this.couchService.put('_node/nonode@nohost/_config/admins/' + this.credential.name, this.credential.password)),
     switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
     switchMap(() => {
-      const replicators = [
-        '_users', 'achievements', 'admin_activities', 'apk_logs', 'attachments',
-        'child_statistics', 'child_users', 'communityregistrationrequests', 'configurations',
-        'courses', 'courses_progress', 'exams', 'feedback', 'hubs', 'login_activities',
-        'meetups', 'myplanet_activities', 'nations', 'news', 'notifications',
-        'parent_users', 'ratings', 'replicator_users', 'resource_activities', 'resources',
-        'send_items', 'shelf', 'submissions', 'tablet_users', 'tags', 'team_activities', 'teams'
-      ];
-      return forkJoin(replicators.map(replicator => this.syncService.sync(
-        { db: replicator, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
+      return forkJoin(cloneDatabases.map(db => this.syncService.sync(
+        { db, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
       )));
     })).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.parentDomain}". Please hold on.`);
