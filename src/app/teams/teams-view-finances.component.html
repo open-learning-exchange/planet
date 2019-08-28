@@ -2,7 +2,7 @@
 <mat-table [dataSource]="table">
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Date</mat-header-cell>
-    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">{{ (element.date | date) || element.date }}</mat-cell>
+    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">{{ element.date === 'Total' ? element.date : (element.date | date) }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="description">
     <mat-header-cell *matHeaderCellDef >Note</mat-header-cell>

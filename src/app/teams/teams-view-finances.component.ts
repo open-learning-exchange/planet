@@ -29,6 +29,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
+    if (this.finances.length === 0) {
+      return;
+    }
     const financeData = this.finances.sort((a, b) => a.date > b.date ? 1 : a.date < b.date ? -1 : 0)
       .reduce((newArray: any[], t: any, index) => [
         ...newArray,
