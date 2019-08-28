@@ -69,7 +69,8 @@ const cloneDatabases = [
   ` ]
 })
 export class MigrationComponent implements OnInit {
-  @ViewChild('stepper') stepper: MatStepper;
+
+  @ViewChild('stepper', { static: false }) stepper: MatStepper;
   message = '';
   loginForm: FormGroup;
   configurationFormGroup: FormGroup;
