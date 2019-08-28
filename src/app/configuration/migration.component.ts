@@ -37,10 +37,7 @@ const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 export class MigrationComponent implements OnInit {
 
   @ViewChild('stepper', { static: false }) stepper: MatStepper;
-  message = '';
-  loginForm: FormGroup;
-  configurationFormGroup: FormGroup;
-  contactFormGroup: FormGroup;
+  cloneForm: FormGroup;
   cloneDomain = '';
   cloneProtocol = '';
 
@@ -56,7 +53,7 @@ export class MigrationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loginForm = this.formBuilder.group({
+    this.cloneForm = this.formBuilder.group({
       url: [ '', Validators.required ],
       name: [ '', [
         Validators.required,
@@ -68,10 +65,10 @@ export class MigrationComponent implements OnInit {
   }
 
   verifyAdmin() {
-    const url = this.loginForm.controls.url.value;
+    const url = this.cloneForm.controls.url.value;
     this.cloneProtocol = url.indexOf('http') > -1 ? getProtocol(url) : '';
     this.cloneDomain = url.indexOf('http') > -1 ? removeProtocol(url) : url;
-    this.credential = { password: this.loginForm.controls.password.value, name: this.loginForm.controls.name.value };
+    this.credential = { password: this.cloneForm.controls.password.value, name: this.cloneForm.controls.name.value };
     this.couchService.post('_session', this.credential, { withCredentials: true, domain: this.cloneDomain, protocol: this.cloneProtocol })
     .subscribe(() => {
       this.stepper.selected.completed = true;

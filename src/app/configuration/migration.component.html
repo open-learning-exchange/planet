@@ -1,7 +1,7 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
   <mat-step completed="false">
-    <ng-template matStepLabel i18n>Planet Detail</ng-template>
-    <b i18n>Please provide PLANET detail to clone from</b>
+    <ng-template matStepLabel i18n>Planet Details</ng-template>
+    <b i18n>Please provide PLANET details to clone from</b>
     <form class="form-spacing" [formGroup]="loginForm">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Server URL" formControlName="url" required>
@@ -19,11 +19,10 @@
         <button mat-raised-button color="primary" matStepperNext i18n (click)="verifyAdmin()">Next</button>
       </div>
     </form>
-    <div id="login-status">{{message}}</div>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel i18n>Planet Cloning</ng-template>
-    <b i18n>Configuration is valid. Do you like to continue cloning.</b>
+    <b i18n>Configuration is valid. Click "Next" to clone Planet.</b>
     <div>
       <button mat-raised-button type="button" color="primary" matStepperPrevious i18n>Back</button>
       <button mat-raised-button color="primary" (click)="clonePlanet()" i18n>Next</button>
