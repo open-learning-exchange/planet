@@ -5,7 +5,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
 import { forkJoin, interval } from 'rxjs';
-import { switchMap, takeWhile } from 'rxjs/operators';
+import { switchMap, takeWhile, map } from 'rxjs/operators';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -81,21 +81,10 @@ export class MigrationComponent implements OnInit {
 
   clonePlanet() {
     this.couchService.get('_node/nonode@nohost/_config', { domain: this.cloneDomain, protocol: this.cloneProtocol }).pipe(
-      switchMap(configuration => forkJoin(Object.entries(configuration)
-        .sort(( [ sectionA ], [ sectionB ]) => sectionA === 'admins' ? 1 : sectionB === 'admins' ? -1 : 0)
-        .map(([ section, sectionValue ]) => Object.entries(sectionValue).map(([ key, value ]) =>
-          this.couchService.put(`_node/nonode@nohost/_config/${section}/${key}`, value)
-        ))
-        .flat()
-      )),
+      switchMap(configuration => this.copyConfiguration(configuration)),
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
-      switchMap(() => forkJoin(
-        this.couchService.get('_all_dbs', { domain: this.cloneDomain, protocol: this.cloneProtocol }),
-        this.couchService.get('_all_dbs')
-      )),
-      switchMap(([ cloneDatabases, localDatabases ]: [ string[], string[] ] ) => {
-        const syncDatabases = cloneDatabases
-          .filter(db => db !== '_replicator' && db !== '_global_changes' && localDatabases.indexOf(db) > -1);
+      switchMap(() => this.getDatabaseNames()),
+      switchMap((syncDatabases: string[]) => {
         return forkJoin(syncDatabases.map(db => this.syncService.sync(
           { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' }, this.credential
         )))
@@ -116,6 +105,28 @@ export class MigrationComponent implements OnInit {
       this.dialogsLoadingService.stop();
       this.planetMessageService.showMessage(`Cloning "${this.cloneDomain}" complete.`);
     });
+  }
+
+  copyConfiguration(configuration) {
+    return forkJoin(
+      Object.entries(configuration)
+        .sort(( [ sectionA ], [ sectionB ]) => sectionA === 'admins' ? 1 : sectionB === 'admins' ? -1 : 0)
+        .map(([ section, sectionValue ]) =>
+          Object.entries(sectionValue).map(([ key, value ]) =>
+            this.couchService.put(`_node/nonode@nohost/_config/${section}/${key}`, value)
+          )
+        )
+        .flat()
+    )
+  }
+
+  getDatabaseNames() {
+    return forkJoin(
+      this.couchService.get('_all_dbs', { domain: this.cloneDomain, protocol: this.cloneProtocol }),
+      this.couchService.get('_all_dbs')
+    ).pipe(map(([ cloneDatabases, localDatabases ]: [ string[], string[] ]) =>
+      cloneDatabases.filter(db => db !== '_replicator' && db !== '_global_changes' && localDatabases.indexOf(db) > -1)
+    ));
   }
 
 }
