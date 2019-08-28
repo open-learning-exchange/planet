@@ -29,13 +29,13 @@ RUN apk add --no-cache \
     fcgiwrap=1.1.0-r3 \
     spawn-fcgi=1.6.4-r3 \
       ca-certificates=20190108-r0 \
-      nghttp2-libs=1.35.1-r0 \
+      nghttp2-libs=1.35.1-r1 \
       libssh2=1.8.2-r0 \
       libcurl=7.64.0-r2 \
     curl=7.64.0-r2 \
       oniguruma=6.9.1-r0 \
     jq=1.6-r0
-    
+
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY --from=builder /ng-app/dist /usr/share/nginx/html
