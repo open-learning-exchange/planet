@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material';
-import { environment } from '../../environments/environment';
-import { forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, interval } from 'rxjs';
+import { switchMap, takeWhile } from 'rxjs/operators';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and last character
@@ -81,10 +82,12 @@ export class MigrationComponent implements OnInit {
   credential: any = {};
 
   constructor(
+    private router: Router,
     private formBuilder: FormBuilder,
     private couchService: CouchService,
     private syncService: SyncService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) { }
 
   ngOnInit() {
@@ -124,11 +127,25 @@ export class MigrationComponent implements OnInit {
       switchMap(() =>
         forkJoin(cloneDatabases.map(db => this.syncService.sync(
           { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' }, this.credential
-        ))
+        )))
       )
-    )).subscribe(() => {
+    ).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
+      this.dialogsLoadingService.start();
+      this.replicationCompletionCheck();
     });
   }
+
+  replicationCompletionCheck() {
+    interval(1000).pipe(
+      switchMap(() => this.couchService.findAll('_replicator')),
+      takeWhile((res: any[]) => res.some(r => r._replication_state !== 'completed'))
+    ).subscribe(() => {}, () => {}, () => {
+      this.router.navigate([ '/' ]);
+      this.dialogsLoadingService.stop();
+      this.planetMessageService.showMessage(`Cloning "${this.cloneDomain}" complete.`);
+    });
+  }
+
 
 }
