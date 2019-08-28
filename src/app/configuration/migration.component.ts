@@ -75,8 +75,8 @@ export class MigrationComponent implements OnInit {
   loginForm: FormGroup;
   configurationFormGroup: FormGroup;
   contactFormGroup: FormGroup;
-  parentDomain = '';
-  parentProtocol = '';
+  cloneDomain = '';
+  cloneProtocol = '';
 
   credential: any = {};
 
@@ -101,10 +101,10 @@ export class MigrationComponent implements OnInit {
 
   verifyAdmin() {
     const url = this.loginForm.controls.url.value;
-    this.parentProtocol = url.indexOf('http') > -1 ? getProtocol(url) : '';
-    this.parentDomain = url.indexOf('http') > -1 ? removeProtocol(url) : url;
+    this.cloneProtocol = url.indexOf('http') > -1 ? getProtocol(url) : '';
+    this.cloneDomain = url.indexOf('http') > -1 ? removeProtocol(url) : url;
     this.credential = { password: this.loginForm.controls.password.value, name: this.loginForm.controls.name.value };
-    this.couchService.post('_session', this.credential, { withCredentials: true, domain: this.parentDomain, protocol: this.parentProtocol })
+    this.couchService.post('_session', this.credential, { withCredentials: true, domain: this.cloneDomain, protocol: this.cloneProtocol })
     .subscribe(() => {
       this.stepper.selected.completed = true;
       this.stepper.next();
@@ -112,7 +112,7 @@ export class MigrationComponent implements OnInit {
   }
 
   clonePlanet() {
-    this.couchService.get('_node/nonode@nohost/_config', { domain: this.parentDomain, protocol: this.parentProtocol }).pipe(
+    this.couchService.get('_node/nonode@nohost/_config', { domain: this.cloneDomain, protocol: this.cloneProtocol }).pipe(
       switchMap(configuration => forkJoin(Object.entries(configuration)
         .sort(( [ sectionA ], [ sectionB ]) => sectionA === 'admins' ? 1 : sectionB === 'admins' ? -1 : 0)
         .map(([ section, sectionValue ]) => Object.entries(sectionValue).map(([ key, value ]) =>
@@ -123,11 +123,11 @@ export class MigrationComponent implements OnInit {
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
       switchMap(() =>
         forkJoin(cloneDatabases.map(db => this.syncService.sync(
-          { db, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
+          { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' }, this.credential
         ))
       )
     )).subscribe(() => {
-      this.planetMessageService.showMessage(`Planet is being synced with domain "${this.parentDomain}". Please hold on.`);
+      this.planetMessageService.showMessage(`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
     });
   }
 
