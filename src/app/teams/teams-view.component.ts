@@ -386,4 +386,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  goBack() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
 }

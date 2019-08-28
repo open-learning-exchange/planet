@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button routerLink="/teams"><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>{ mode, select, team {Teams} enterprise {Enterprises} }</span>
 </mat-toolbar>
 <div class="space-container">
