@@ -29,11 +29,21 @@ export class TeamsViewFinancesComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.table.data = this.finances.sort((a, b) => a.date > b.date ? 1 : a.date < b.date ? -1 : 0)
+    const financeData = this.finances.sort((a, b) => a.date > b.date ? 1 : a.date < b.date ? -1 : 0)
       .reduce((newArray: any[], t: any, index) => [
         ...newArray,
-        { ...t, balance: (index !== 0 ? newArray[index - 1].balance : 0) + (t.credit || 0) - (t.debit || 0) }
+        {
+          ...t,
+          balance: (index !== 0 ? newArray[index - 1].balance : 0) + (t.credit || 0) - (t.debit || 0),
+          totalCredits: (index !== 0 ? newArray[index - 1].totalCredits : 0) + (t.credit || 0),
+          totalDebits: (index !== 0 ? newArray[index - 1].totalDebits : 0) + (t.debit || 0),
+        }
       ], []);
+    const { totalCredits: credit, totalDebits: debit, balance } = financeData[financeData.length - 1];
+    this.table.data = [
+      { date: 'Total', credit, debit, balance },
+      ...financeData
+    ];
   }
 
   openTransactionDialog() {
