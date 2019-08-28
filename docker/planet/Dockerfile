@@ -23,6 +23,7 @@ RUN ./create_version_json.sh
 
 FROM nginx:1.16.0-alpine
 
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 RUN rm -rf /usr/share/nginx/html/*
 RUN apk add --no-cache \
       fcgi=2.4.0-r8 \
@@ -35,7 +36,7 @@ RUN apk add --no-cache \
     curl=7.64.0-r2 \
       oniguruma=6.9.1-r0 \
     jq=1.6-r0
-    
+
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY --from=builder /ng-app/dist /usr/share/nginx/html
