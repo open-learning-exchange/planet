@@ -94,7 +94,7 @@ export class MigrationComponent implements OnInit {
         'child_statistics', 'child_users', 'communityregistrationrequests', 'configurations',
         'courses', 'courses_progress', 'exams', 'feedback', 'hubs', 'login_activities',
         'meetups', 'myplanet_activities', 'nations', 'news', 'notifications',
-        'parent_users', 'ratings', 'replicator_users	', 'resource_activities', 'resources',
+        'parent_users', 'ratings', 'replicator_users', 'resource_activities', 'resources',
         'send_items', 'shelf', 'submissions', 'tablet_users', 'tags', 'team_activities', 'teams'
       ];
       return forkJoin(replicators.map(replicator => this.syncService.sync(
