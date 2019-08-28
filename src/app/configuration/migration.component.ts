@@ -18,41 +18,6 @@ const removeProtocol = (str: string) => {
 
 const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 
-const cloneDatabases = [
-  '_users',
-  'achievements',
-  'admin_activities',
-  'apk_logs',
-  'attachments',
-  'child_statistics',
-  'child_users',
-  'communityregistrationrequests',
-  'configurations',
-  'courses',
-  'courses_progress',
-  'exams',
-  'feedback',
-  'hubs',
-  'login_activities',
-  'meetups',
-  'myplanet_activities',
-  'nations',
-  'news',
-  'notifications',
-  'parent_users',
-  'ratings',
-  'replicator_users',
-  'resource_activities',
-  'resources',
-  'send_items',
-  'shelf',
-  'submissions',
-  'tablet_users',
-  'tags',
-  'team_activities',
-  'teams'
-];
-
 @Component({
   selector: 'planet-migration',
   templateUrl: './migration.component.html',
@@ -124,11 +89,17 @@ export class MigrationComponent implements OnInit {
         .flat()
       )),
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
-      switchMap(() =>
-        forkJoin(cloneDatabases.map(db => this.syncService.sync(
+      switchMap(() => forkJoin(
+        this.couchService.get('_all_dbs', { domain: this.cloneDomain, protocol: this.cloneProtocol }),
+        this.couchService.get('_all_dbs')
+      )),
+      switchMap(([ cloneDatabases, localDatabases ]: [ string[], string[] ] ) => {
+        const syncDatabases = cloneDatabases
+          .filter(db => db !== '_replicator' && db !== '_global_changes' && localDatabases.indexOf(db) > -1);
+        return forkJoin(syncDatabases.map(db => this.syncService.sync(
           { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' }, this.credential
         )))
-      )
+      })
     ).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
       this.dialogsLoadingService.start();
@@ -146,6 +117,5 @@ export class MigrationComponent implements OnInit {
       this.planetMessageService.showMessage(`Cloning "${this.cloneDomain}" complete.`);
     });
   }
-
 
 }
