@@ -2,18 +2,18 @@
   <mat-step completed="false">
     <ng-template matStepLabel i18n>Planet Details</ng-template>
     <b i18n>Please provide PLANET details to clone from</b>
-    <form class="form-spacing" [formGroup]="loginForm">
+    <form class="form-spacing" [formGroup]="cloneForm">
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Server URL" formControlName="url" required>
-        <mat-error><planet-form-error-messages [control]="loginForm.controls.url"></planet-form-error-messages></mat-error>
+        <mat-error><planet-form-error-messages [control]="cloneForm.controls.url"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase>
-        <mat-error><planet-form-error-messages [control]="loginForm.controls.name"></planet-form-error-messages></mat-error>
+        <mat-error><planet-form-error-messages [control]="cloneForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
-        <mat-error><planet-form-error-messages [control]="loginForm.controls.password"></planet-form-error-messages></mat-error>
+        <mat-error><planet-form-error-messages [control]="cloneForm.controls.password"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div class="full-width">
         <button mat-raised-button color="primary" matStepperNext i18n (click)="verifyAdmin()">Next</button>
