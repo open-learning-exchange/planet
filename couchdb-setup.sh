@@ -142,6 +142,7 @@ DBS=(
   "parent_users"
   "team_activities"
   "tasks"
+  "health"
 )
 
 insert_dbs $DBS
@@ -150,6 +151,7 @@ node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 upsert_doc resources _design/resources @./design/resources/resources-design.json
+upsert_doc health _design/health @./design/health/health-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
