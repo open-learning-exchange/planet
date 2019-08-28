@@ -73,10 +73,6 @@
                 <mat-icon>folder</mat-icon>
                 <span i18n>Manage</span>
               </a>
-              <a mat-menu-item [routerLink]="['/meetups/view', element._id]">
-                <mat-icon>visibility</mat-icon>
-                <span i18n>View</span>
-              </a>
               <ng-container *ngIf="currentUser.name === element.createdBy || currentUser.isUserAdmin">
                 <button mat-menu-item (click)="deleteClick(element)">
                   <mat-icon>delete_forever</mat-icon>
