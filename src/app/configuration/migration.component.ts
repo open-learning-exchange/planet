@@ -113,22 +113,20 @@ export class MigrationComponent implements OnInit {
 
   clonePlanet() {
     this.couchService.get('_node/nonode@nohost/_config', { domain: this.parentDomain, protocol: this.parentProtocol }).pipe(
-    switchMap(configs => {
-      const obsArr = [];
-      Object.keys(configs).forEach(section => {
-        Object.keys(configs[section]).forEach(key => {
-          obsArr.push(this.couchService.put('_node/nonode@nohost/_config/' + section + '/' + key, configs[section][key]));
-        });
-      });
-      return forkJoin(obsArr);
-    }),
-    switchMap(() => this.couchService.put('_node/nonode@nohost/_config/admins/' + this.credential.name, this.credential.password)),
-    switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
-    switchMap(() => {
-      return forkJoin(cloneDatabases.map(db => this.syncService.sync(
-        { db, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
-      )));
-    })).subscribe(() => {
+      switchMap(configuration => forkJoin(Object.entries(configuration)
+        .sort(( [ sectionA ], [ sectionB ]) => sectionA === 'admins' ? 1 : sectionB === 'admins' ? -1 : 0)
+        .map(([ section, sectionValue ]) => Object.entries(sectionValue).map(([ key, value ]) =>
+          this.couchService.put(`_node/nonode@nohost/_config/${section}/${key}`, value)
+        ))
+        .flat()
+      )),
+      switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
+      switchMap(() =>
+        forkJoin(cloneDatabases.map(db => this.syncService.sync(
+          { db, parentDomain: this.parentDomain, code: '', parentProtocol: this.parentProtocol, type: 'pull' }, this.credential
+        ))
+      )
+    )).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.parentDomain}". Please hold on.`);
     });
   }
