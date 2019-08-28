@@ -35,14 +35,14 @@ insert_dbs() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:i:x" option; do
+while getopts "u:w:p:h:ix" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
     i) INSTALLFLAG=1;;
-    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username"
+    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username";;
   esac
 done
 
