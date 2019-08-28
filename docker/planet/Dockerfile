@@ -23,14 +23,13 @@ RUN ./create_version_json.sh
 
 FROM nginx:1.16.0-alpine
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 RUN rm -rf /usr/share/nginx/html/*
 RUN apk add --no-cache \
       fcgi=2.4.0-r8 \
     fcgiwrap=1.1.0-r3 \
     spawn-fcgi=1.6.4-r3 \
       ca-certificates=20190108-r0 \
-      nghttp2-libs=1.35.1-r0 \
+      nghttp2-libs=1.35.1-r1 \
       libssh2=1.8.2-r0 \
       libcurl=7.64.0-r2 \
     curl=7.64.0-r2 \
