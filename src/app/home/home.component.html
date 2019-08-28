@@ -28,7 +28,7 @@
       i18n-title title="Surveys" i18n>Surveys</a>
   </span>
   <span class="navbar-right">
-    <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon>help_outline</mat-icon></button>
+    <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon>feedback_outline</mat-icon></button>
     <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
     <ng-container *planetAuthorizedRoles>
       <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted' && layout === 'classic' && !forceModern"><mat-icon svgIcon="feedback"></mat-icon></button>
@@ -134,7 +134,7 @@
       <ul class="bottom-nav">
         <li>
           <a mat-button planetFeedback i18n-title title="Feedback">
-            <mat-icon>help_outline</mat-icon>
+            <mat-icon>feedback_outline</mat-icon>
             <label i18n>Feedback</label>
           </a>
         </li>
