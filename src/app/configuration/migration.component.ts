@@ -84,7 +84,7 @@ export class MigrationComponent implements OnInit {
       switchMap((syncDatabases: string[]) => {
         return forkJoin(syncDatabases.map(db => this.syncService.sync(
           { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' }, this.credential
-        )))
+        )));
       })
     ).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
@@ -114,7 +114,7 @@ export class MigrationComponent implements OnInit {
           )
         )
         .flat()
-    )
+    );
   }
 
   getDatabaseNames() {
