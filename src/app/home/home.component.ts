@@ -10,6 +10,7 @@ import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -58,7 +59,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private router: Router,
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
-    private stateService: StateService
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -188,6 +190,18 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       this.userService.setNotificationStateChange();
     }, (err) => console.log(err));
+  }
+
+  /**
+   * Used for marking all notifications as read from navigation bar
+   */
+  readAllNotification() {
+    const unreadArray = this.notifications.filter(notification => notification.status === 'unread')
+      .map(notification => ({ ...notification, status: 'read' }));
+    this.couchService.bulkDocs('notifications', unreadArray)
+    .subscribe(() => {
+      this.userService.setNotificationStateChange();
+    }, (err) => this.planetMessageService.showAlert('There was a problem marking all as read'));
   }
 
   sizeChange(forceModern: boolean) {

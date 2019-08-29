@@ -57,6 +57,7 @@
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
+        <a mat-menu-item (click)="readAllNotification()">Mark all as Read</a>
         <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
           class="menu-item-notification"
           [ngClass]="{'primary-text-color':notification.status==='unread'}"
