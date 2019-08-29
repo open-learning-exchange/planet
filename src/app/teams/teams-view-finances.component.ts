@@ -32,13 +32,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
     if (this.finances.length === 0) {
       return;
     }
-    const financeData = this.finances.sort((a, b) => a.date - b.date)
-      .reduce(this.combineTransactionData, []);
+    const financeData = this.finances.sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []);
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[financeData.length - 1];
-    this.table.data = [
-      { date: 'Total', credit, debit, balance },
-      ...financeData
-    ];
+    this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
