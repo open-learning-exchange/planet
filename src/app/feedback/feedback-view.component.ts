@@ -111,7 +111,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   editTitle(mode) {
-    this.editTitleMode = mode;
+    this.couchService.put(this.dbName + '/' + this.feedback._rev, this.feedback).subscribe(
+      this.editTitleMode = mode);
   }
 
   setTitle() {
@@ -119,7 +120,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       () => {
         this.editTitleMode = false;
       },
-      error => this.planetMessageService.showAlert('There was an error changing title')
+      () => this.planetMessageService.showAlert('There was an error changing title')
     );
   }
 
