@@ -5,6 +5,7 @@ import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { ConfigurationComponent } from './configuration.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { MigrationComponent } from './migration.component';
 
 @NgModule({
     imports: [
@@ -16,10 +17,12 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
         SharedComponentsModule
     ],
     declarations: [
-        ConfigurationComponent
+        ConfigurationComponent,
+        MigrationComponent
     ],
     exports: [
-        ConfigurationComponent
+        ConfigurationComponent,
+        MigrationComponent
     ]
 })
 export class ConfigurationModule {}
