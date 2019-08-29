@@ -26,7 +26,7 @@
    </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length">
-      <span i18n>Your progress:</span>
+      <span i18n>My Progress:</span>
       <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
