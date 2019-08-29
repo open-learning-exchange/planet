@@ -123,9 +123,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         }
         return 'assets/image.png';
       };
-      const docsWithName = docs.map(mem => ({
-        ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem)
-      }));
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
       this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
         .sort((a, b) => a.userId === this.leader ? -1 : 0);

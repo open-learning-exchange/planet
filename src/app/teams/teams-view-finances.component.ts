@@ -32,24 +32,26 @@ export class TeamsViewFinancesComponent implements OnChanges {
     if (this.finances.length === 0) {
       return;
     }
-    const undefinedToNumber = (value: number | undefined) => value || 0;
     const financeData = this.finances.sort((a, b) => a.date > b.date ? 1 : a.date < b.date ? -1 : 0)
-      .reduce((newArray: any[], t: any, index) => {
-        const previousValue = index !== 0 ? newArray[index - 1] : { balance: 0, totalCredits: 0, totalDebits: 0 };
-        return [
-          ...newArray,
-          {
-            ...t,
-            balance: previousValue.balance + undefinedToNumber(t.credit) - undefinedToNumber(t.debit),
-            totalCredits: previousValue.totalCredits + undefinedToNumber(t.credit),
-            totalDebits: previousValue.totalDebits + undefinedToNumber(t.debit),
-          }
-        ];
-      }, []);
+      .reduce(this.combineTransactionData, []);
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[financeData.length - 1];
     this.table.data = [
       { date: 'Total', credit, debit, balance },
       ...financeData
+    ];
+  }
+
+  private combineTransactionData(newArray: any[], transaction: any, index: number) {
+    const undefinedToNumber = (value: number | undefined) => value || 0;
+    const previousValue = index !== 0 ? newArray[index - 1] : { balance: 0, totalCredits: 0, totalDebits: 0 };
+    return [
+      ...newArray,
+      {
+        ...transaction,
+        balance: previousValue.balance + undefinedToNumber(transaction.credit) - undefinedToNumber(transaction.debit),
+        totalCredits: previousValue.totalCredits + undefinedToNumber(transaction.credit),
+        totalDebits: previousValue.totalDebits + undefinedToNumber(transaction.debit),
+      }
     ];
   }
 
