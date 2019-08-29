@@ -20,9 +20,12 @@
     <a mat-button routerLink="/teams"
       routerLinkActive="active"
       i18n-title title="Teams" i18n>Teams</a>
-    <a mat-button routerLink="/meetups"
+    <a mat-button routerLink="/meetups" *planetBeta="false"
       routerLinkActive="active"
       i18n-title title="Meetups" i18n>Meetups</a>
+    <a mat-button routerLink="/enterprises" *planetBeta
+      routerLinkActive="active"
+      i18n-title title="Enterprises" i18n>Enterprises</a>
     <a mat-button routerLink="/surveys"
       routerLinkActive="active"
       i18n-title title="Surveys" i18n>Surveys</a>

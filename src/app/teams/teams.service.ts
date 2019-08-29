@@ -35,7 +35,7 @@ export class TeamsService {
     private validatorService: ValidatorService
   ) {}
 
-  addTeamDialog(userId: string, team: any = {}) {
+  addTeamDialog(userId: string, type: 'team' | 'enterprise', team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = team._id ? 'Update Team' : 'Create Team';
     const formGroup = {
@@ -52,7 +52,7 @@ export class TeamsService {
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
             { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response }
+              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
           ) :
           empty()
         ),

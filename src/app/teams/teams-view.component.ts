@@ -45,8 +45,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   leader: string;
   planetCode: string;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
+  finances: any[];
 
   constructor(
     private couchService: CouchService,
@@ -108,7 +110,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   getMembers() {
     if (this.team === undefined) {
-      return [];
+      return of([]);
     }
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
@@ -121,17 +123,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         }
         return 'assets/image.png';
       };
-      const docsWithName = docs.map(mem => ({
-        ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem)
-      }));
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
       this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
         .sort((a, b) => a.userId === this.leader ? -1 : 0);
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
+      this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  resetData() {
+    this.getMembers().subscribe();
   }
 
   toggleAdd(data) {
@@ -377,6 +382,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
     });
+  }
+
+  goBack() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
 }
