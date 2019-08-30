@@ -9,6 +9,7 @@ interface ActivityRequestObject {
   planetCode?: string;
   tillDate?: number;
   fromMyPlanet?: boolean;
+  filterAdmin?: boolean;
 }
 
 @Injectable({
@@ -55,6 +56,11 @@ export class ReportsService {
   }
 
   selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
+    console.log(findDocuments({
+      ...{ [field]: planetCode },
+      ...this.timeFilter(dateField, tillDate),
+      ...(fromMyPlanet !== undefined ? { androidId: { '$exists': fromMyPlanet } } : {})
+    }));
     return planetCode ?
       findDocuments({
         ...{ [field]: planetCode },
@@ -82,10 +88,10 @@ export class ReportsService {
     }));
   }
 
-  getLoginActivities({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
+  getLoginActivities({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
     return this.couchService.findAll('login_activities', this.selector(planetCode, { tillDate, dateField: 'loginTime', fromMyPlanet }))
     .pipe(map((loginActivities: any) => {
-      loginActivities = this.filterAdmin(loginActivities);
+      loginActivities = this.filterAdmin(loginActivities, filterAdmin);
       return ({
         byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
           .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
@@ -94,10 +100,10 @@ export class ReportsService {
     }));
   }
 
-  getRatingInfo({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
+  getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
     return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
     .pipe(map((ratings: any) => {
-      ratings = this.filterAdmin(ratings);
+      ratings = this.filterAdmin(ratings, filterAdmin);
       return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
         .filter(rating => rating.title !== '' && rating.title !== undefined)
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
@@ -105,10 +111,10 @@ export class ReportsService {
     }));
   }
 
-  getResourceVisits({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
+  getResourceVisits({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
     .pipe(map((resourceActivites) => {
-      resourceActivites = this.filterAdmin(resourceActivites);
+      resourceActivites = this.filterAdmin(resourceActivites, filterAdmin);
       return ({
         byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
           .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
@@ -179,8 +185,8 @@ export class ReportsService {
     });
   }
 
-  filterAdmin(records) {
-    return records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1);
+  filterAdmin(records, filter) {
+    return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
   }
 
 }

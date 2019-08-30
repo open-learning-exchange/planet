@@ -12,7 +12,6 @@ import { debug } from '../debug-operator';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { SyncService } from '../shared/sync.service';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
@@ -47,7 +46,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private syncService: SyncService,
     private configurationService: ConfigurationService,
     private stateService: StateService,
     private managerService: ManagerService
