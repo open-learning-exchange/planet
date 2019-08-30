@@ -30,7 +30,6 @@ import { RatingService } from './shared/forms/rating.service';
 import { TagsService } from './shared/forms/tags.service';
 import { ManagerService } from './manager-dashboard/manager.service';
 import { NotificationsService } from './notifications/notifications.service';
-import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   imports: [
@@ -41,7 +40,6 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     MaterialModule,
     PlanetDialogsModule,
     NgxImgModule.forRoot(),
-    FullCalendarModule,
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []

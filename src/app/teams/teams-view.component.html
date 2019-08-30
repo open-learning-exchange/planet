@@ -93,6 +93,12 @@
       <ng-container *ngIf="userStatus === 'member'">
         <mat-tab *planetBeta>
           <ng-template mat-tab-label>
+            <ng-container i18n>Calendar</ng-container>
+          </ng-template>
+          <planet-calendar></planet-calendar>
+        </mat-tab>
+        <mat-tab *planetBeta>
+          <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>
           </ng-template>
           <planet-tasks [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
