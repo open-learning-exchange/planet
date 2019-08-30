@@ -12,6 +12,9 @@
           <button mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
             Add Members
           </button>
+          <button *ngIf="mode!=='enterprise'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+            Add Courses
+          </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
             { mode, select, team {Add Resources} enterprise {Add Documents} }
           </button>
@@ -56,7 +59,7 @@
             <mat-card *ngFor="let member of members">
               <mat-card-header>
                 <img mat-card-avatar [src]="member.avatar">
-                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
+                <a mat-card-title             >
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>
