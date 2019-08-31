@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FullCalendarModule } from '@fullcalendar/angular';
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
@@ -11,11 +10,10 @@ import { AuthorizedRolesDirective } from './authorized-roles.directive';
 import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
 import { TasksComponent, FilterAssigneePipe } from '../tasks/tasks.component';
-import { PlanetCalendarComponent } from './calendar.component';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, FullCalendarModule
+    CommonModule, MaterialModule
   ],
   exports: [
     PlanetLocalStatusComponent,
@@ -27,8 +25,7 @@ import { PlanetCalendarComponent } from './calendar.component';
     PlanetBetaDirective,
     FilteredAmountComponent,
     TasksComponent,
-    FilterAssigneePipe,
-    PlanetCalendarComponent
+    FilterAssigneePipe
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -40,8 +37,7 @@ import { PlanetCalendarComponent } from './calendar.component';
     PlanetBetaDirective,
     FilteredAmountComponent,
     TasksComponent,
-    FilterAssigneePipe,
-    PlanetCalendarComponent
+    FilterAssigneePipe
   ]
 })
 export class SharedComponentsModule {}

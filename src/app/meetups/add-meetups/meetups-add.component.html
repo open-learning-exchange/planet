@@ -1,10 +1,10 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!isDialog">
   <a mat-icon-button routerLink="/meetups">
     <mat-icon>arrow_back</mat-icon>
   </a>
 </mat-toolbar>
 
-<div class="space-container">
+<div [ngClass]="{'space-container':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
   <div class="view-container">
     <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
@@ -72,8 +72,10 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <button mat-raised-button type="submit" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" i18n>Save</button>
-      <button class="margin-lr-2" mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      <ng-container>
+        <button mat-raised-button type="submit" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" i18n>Save</button>
+        <button class="margin-lr-2" mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      </ng-container>
     </form>
   </div>
 </div>
