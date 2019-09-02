@@ -16,11 +16,11 @@ import { MigrationComponent } from './migration.component';
     MaterialModule,
     SharedComponentsModule
   ],
-    declarations: [
+  declarations: [
     ConfigurationComponent,
     MigrationComponent
   ],
-    exports: [
+  exports: [
     ConfigurationComponent,
     MigrationComponent
   ]
