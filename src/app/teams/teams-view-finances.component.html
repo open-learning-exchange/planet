@@ -10,15 +10,15 @@
   </ng-container>
   <ng-container matColumnDef="credit">
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Credits</mat-header-cell>
-    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'green'">{{ element.credit ? '$' + element.credit : '' }}</mat-cell>
+    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'green'">{{ element.credit ? (element.credit | currency) : '' }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="debit">
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Debits</mat-header-cell>
-    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'red'">{{ element.debit ? '$' + element.debit : '' }}</mat-cell>
+    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'red'">{{ element.debit ? (element.debit | currency) : '' }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="balance">
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Balance</mat-header-cell>
-    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">${{ element.balance }}</mat-cell>
+    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'">{{ element.balance | currency }}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
