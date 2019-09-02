@@ -74,7 +74,8 @@
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
-                  <button *ngIf="member.userId !== leader && ((user.isUserAdmin  && team.teamPlanetCode === member.userPlanetCode) || currentUserId === leader)" (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
+                  <button *ngIf="member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === member.userPlanetCode) || currentUserId === leader)"
+                    (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
                     <mat-icon>person</mat-icon>
                     <span i18n>Make Leader</span>
                   </button>
