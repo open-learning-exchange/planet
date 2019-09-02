@@ -8,21 +8,21 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { MigrationComponent } from './migration.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        MaterialModule,
-        SharedComponentsModule
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    MaterialModule,
+    SharedComponentsModule
+  ],
     declarations: [
-        ConfigurationComponent,
-        MigrationComponent
-    ],
+    ConfigurationComponent,
+    MigrationComponent
+  ],
     exports: [
-        ConfigurationComponent,
-        MigrationComponent
-    ]
+    ConfigurationComponent,
+    MigrationComponent
+  ]
 })
 export class ConfigurationModule {}
