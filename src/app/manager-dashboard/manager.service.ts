@@ -81,7 +81,7 @@ export class ManagerService {
 
   getLogs(tillDate?: number) {
     const configuration = this.configuration;
-    return this.activityService.getTotalUsers(configuration.code, true).pipe(switchMap(() => 
+    return this.activityService.getTotalUsers(configuration.code, true).pipe(switchMap(() =>
       forkJoin([
         this.activityService.getLoginActivities({ planetCode: configuration.code, tillDate }),
         this.activityService.getAdminActivities(configuration.code, tillDate),

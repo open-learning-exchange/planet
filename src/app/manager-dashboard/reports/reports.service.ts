@@ -56,11 +56,6 @@ export class ReportsService {
   }
 
   selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
-    console.log(findDocuments({
-      ...{ [field]: planetCode },
-      ...this.timeFilter(dateField, tillDate),
-      ...(fromMyPlanet !== undefined ? { androidId: { '$exists': fromMyPlanet } } : {})
-    }));
     return planetCode ?
       findDocuments({
         ...{ [field]: planetCode },
