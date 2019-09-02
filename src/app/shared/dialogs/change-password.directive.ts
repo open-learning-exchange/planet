@@ -1,5 +1,5 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { forkJoin, of, empty } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { switchMap, catchError, finalize } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -102,7 +102,7 @@ export class ChangePasswordDirective {
 
   @HostListener('click')
   openChangePasswordForm() {
-    const formFields = this.ownAccount() ? changePasswordFields : [ ...changePasswordFields, ...resetPasswordFields ];
+    const formFields = this.ownAccount() ? [ ...changePasswordFields, ...resetPasswordFields ] : resetPasswordFields;
     const formGroups = this.ownAccount() ? this.changePasswordFormGroup : this.resetPasswordFormGroup;
     this.dialogsFormService.openDialogsForm(
       'Change Password',
@@ -116,7 +116,7 @@ export class ChangePasswordDirective {
     const user = this.userDetail || this.loggedUser;
     const obs = this.ownAccount(user)
       ? this.couchService.post('_session', { 'name': user.name, 'password': credentialData.oldPassword })
-      : empty();
+      : of(true);
     obs.pipe(
       switchMap(() => this.changePassword(credentialData, user)),
       finalize(() => this.dialogsLoadingService.stop())
