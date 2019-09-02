@@ -14,7 +14,7 @@
   </ng-container>
   <ng-container matColumnDef="debit">
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Debits</mat-header-cell>
-    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'red'">{{ element.debit ? (element.debit | currency): '' }}</mat-cell>
+    <mat-cell *matCellDef="let element" [style.maxWidth]="'100px'" [style.color]="'red'">{{ element.debit ? (element.debit | currency) : '' }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="balance">
     <mat-header-cell *matHeaderCellDef [style.maxWidth]="'100px'">Balance</mat-header-cell>
