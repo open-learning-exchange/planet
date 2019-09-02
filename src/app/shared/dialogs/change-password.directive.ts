@@ -49,7 +49,24 @@ export class ChangePasswordDirective implements OnChanges {
   }
   isLoggedInUser: boolean;
   dbName = '_users';
+  resetPasswordFormGroup = {
+    password: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('confirmPassword', false)
+      ])
+    ],
+    confirmPassword: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('password', true)
+      ])
+    ]
+  };
   changePasswordFormGroup = {
+    ...this.resetPasswordFormGroup,
     oldPassword: [
       '',
       Validators.compose([
@@ -64,29 +81,6 @@ export class ChangePasswordDirective implements OnChanges {
         Validators.required,
         CustomValidators.matchPassword('oldPassword', true, false),
         CustomValidators.matchPassword('confirmPassword', false)
-      ])
-    ],
-    confirmPassword: [
-      '',
-      Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('password', true)
-      ])
-    ]
-  };
-  resetPasswordFormGroup = {
-    password: [
-      '',
-      Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('confirmPassword', false)
-      ])
-    ],
-    confirmPassword: [
-      '',
-      Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('password', true)
       ])
     ]
   };
