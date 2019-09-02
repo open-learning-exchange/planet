@@ -59,7 +59,7 @@
             <mat-card *ngFor="let member of members">
               <mat-card-header>
                 <img mat-card-avatar [src]="member.avatar">
-                <a mat-card-title             >
+                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>
