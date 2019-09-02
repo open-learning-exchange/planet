@@ -46,7 +46,7 @@
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Set roles of selected">
             <mat-option disabled="disabled" class="hide-checkbox">
               <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
-              <button mat-raised-button i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
+              <button mat-raised-button class="margin-lr-3" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
             </mat-option>
             <mat-option *ngFor="let role of roleList" [value]="role">{{role}}</mat-option>
           </mat-select>
