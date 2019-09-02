@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input } from '@angular/core';
+import { Directive, HostListener, Input, OnChanges } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, catchError, finalize } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -19,7 +19,9 @@ const changePasswordFields = [
     'name': 'oldPassword',
     'placeholder': 'Old Password',
     'required': true
-  },
+  }
+];
+const resetPasswordFields = [
   {
     'label': 'Password',
     'type': 'password',
@@ -39,11 +41,32 @@ const changePasswordFields = [
 @Directive({
   selector: '[planetChangePassword]'
 })
-export class ChangePasswordDirective {
+export class ChangePasswordDirective implements OnChanges {
 
-  @Input('planetChangePassword') userDetail: any;
+  _userDetail: any = undefined;
+  @Input('planetChangePassword') set userDetail(value: any) {
+    this._userDetail = value._id === undefined ? undefined : value;
+  }
+  isLoggedInUser: boolean;
   dbName = '_users';
+  resetPasswordFormGroup = {
+    password: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('confirmPassword', false)
+      ])
+    ],
+    confirmPassword: [
+      '',
+      Validators.compose([
+        Validators.required,
+        CustomValidators.matchPassword('password', true)
+      ])
+    ]
+  };
   changePasswordFormGroup = {
+    ...this.resetPasswordFormGroup,
     oldPassword: [
       '',
       Validators.compose([
@@ -58,13 +81,6 @@ export class ChangePasswordDirective {
         Validators.required,
         CustomValidators.matchPassword('oldPassword', true, false),
         CustomValidators.matchPassword('confirmPassword', false)
-      ])
-    ],
-    confirmPassword: [
-      '',
-      Validators.compose([
-        Validators.required,
-        CustomValidators.matchPassword('password', true)
       ])
     ]
   };
@@ -81,16 +97,28 @@ export class ChangePasswordDirective {
     private managerService: ManagerService
   ) {}
 
+  ngOnChanges() {
+    this.isLoggedInUser = this._userDetail === undefined || this._userDetail._id === this.userService.get()._id;
+  }
+
   @HostListener('click')
   openChangePasswordForm() {
+    const formFields = this.isLoggedInUser ? [ ...changePasswordFields, ...resetPasswordFields ] : resetPasswordFields;
+    const formGroups = this.isLoggedInUser ? this.changePasswordFormGroup : this.resetPasswordFormGroup;
     this.dialogsFormService.openDialogsForm(
-      'Change Password', changePasswordFields, this.changePasswordFormGroup, { onSubmit: this.onPasswordSubmit.bind(this) }
+      'Change Password',
+      formFields,
+      formGroups,
+      { onSubmit: this.onPasswordSubmit.bind(this) }
     );
   }
 
   onPasswordSubmit(credentialData) {
-    const user = this.userDetail || this.userService.get();
-    this.couchService.post('_session', { 'name': user.name, 'password': credentialData.oldPassword }).pipe(
+    const user = this._userDetail || this.userService.get();
+    const obs = this.isLoggedInUser
+      ? this.couchService.post('_session', { 'name': user.name, 'password': credentialData.oldPassword })
+      : of(true);
+    obs.pipe(
       switchMap(() => this.changePassword(credentialData, user)),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((responses) => {
@@ -112,13 +140,17 @@ export class ChangePasswordDirective {
   changePassword(credentialData, userDetail) {
     const updateDoc = Object.assign({ password: credentialData.password }, userDetail);
     return this.changePasswordRequest(updateDoc).pipe(switchMap((responses) => {
-      return forkJoin([ ...responses.map(r => of(r)), this.reinitSession(userDetail.name, credentialData.password) ]);
+      const obs = [ ...responses.map(r => of(r)) ];
+      if (this.isLoggedInUser) {
+        obs.push(this.reinitSession(userDetail.name, credentialData.password));
+      }
+      return forkJoin(obs);
     }));
   }
 
   changePasswordRequest(userData) {
     return this.userService.updateUser(userData).pipe(switchMap((res) => {
-      if (this.userService.get().roles.indexOf('_admin') > -1) {
+      if (this.isLoggedInUser && this.userService.get().roles.indexOf('_admin') > -1) {
         return forkJoin([
           of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData),
           this.managerService.updateCredentialsYml(userData)
@@ -154,8 +186,7 @@ export class ChangePasswordDirective {
           return of(data);
         }
         const { derived_key, iterations, password_scheme, salt, ...profile } = data;
-        profile.password = userData.password;
-        return this.couchService.put(this.dbName + '/' + profile._id, profile,
+        return this.couchService.put(this.dbName + '/' + profile._id, { ...profile, password: userData.password, type: 'user' },
           { domain: this.planetConfiguration.parentDomain });
       }));
   }
