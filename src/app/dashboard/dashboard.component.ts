@@ -117,7 +117,7 @@ export class DashboardComponent implements OnInit {
         this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: 'teams/view/', addId: true })
       ])),
       map(([ memberships, teams ]: any[]) =>
-        teams.map(team => ({
+        teams.filter(team => team.type === undefined || team.type === 'team').map(team => ({
           ...team, canRemove: memberships.some(membership => membership.teamId === team._id && membership.isLeader)
         }))
       )
