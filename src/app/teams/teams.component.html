@@ -16,7 +16,7 @@
     <ng-container *ngIf="isAuthorized">
       <button mat-mini-fab (click)="addTeam()"><mat-icon>add</mat-icon></button>
       <span class="toolbar-fill"></span>
-      <div class="margin-lr-3">
+      <div class="margin-lr-3" *ngIf="mode==='team'">
         <button mat-stroked-button routerLink='/teams/users' i18n>All Members</button>
       </div>
     </ng-container>
