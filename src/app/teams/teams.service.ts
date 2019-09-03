@@ -42,9 +42,9 @@ export class TeamsService {
   addTeamDialog(userId: string, type: 'team' | 'enterprise', team: any = {}) {
     const configuration = this.stateService.configuration;
     let title = '';
-    if (type==='team') {
+    if (type === 'team') {
       title = team._id ? 'Update team' : 'Create team';
-    }else {
+    } else {
       title = team._id ? 'Update Eterprise' : 'Create Enterprise';
     }
     const formGroup = {
