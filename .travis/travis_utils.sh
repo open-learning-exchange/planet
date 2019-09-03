@@ -309,7 +309,7 @@ push_multiarch_manifests(){
 
 pull_language() {
   # $1: language 3 letter code
-  docker create --name $1 $PLANET-$1
+  docker create --name $1 $PLANET_TEST-$1
   docker export $1 > $1.tar
   tar -xf $1.tar -C ./ng-app/dist/$1
 }
