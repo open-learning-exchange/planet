@@ -373,6 +373,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   removeCourse(course) {
+    if (!this.team.courses) {
+      return of(true);
+    }
     const index = this.team.courses.indexOf(course);
     const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
     return this.teamsService.updateTeam({ ...this.team, courses: newCourses });
