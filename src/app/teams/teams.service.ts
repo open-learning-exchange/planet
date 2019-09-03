@@ -45,9 +45,12 @@ export class TeamsService {
       ],
       description: team.description || '',
       requests: [ team.requests || [] ],
-      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
+      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : type === 'enterprise' ? 'sync' : 'local' ]
     };
-    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup, true)
+    return this.dialogsFormService.confirm(title, [
+        ...addTeamDialogFields,
+        type === 'enterprise' ? {} : this.typeFormField(configuration)
+      ], formGroup, true)
       .pipe(
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
