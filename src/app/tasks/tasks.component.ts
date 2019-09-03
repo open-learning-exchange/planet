@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, Pipe, PipeTransform } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   templateUrl: './tasks.component.html',
   styleUrls: [ './tasks.scss' ]
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnChanges {
 
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
@@ -28,7 +28,7 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
-  ngOnChanges(){
+  ngOnChanges() {
     this.assignees.sort((a, b) => a.name.localeCompare(b.name));
   }
 
@@ -68,17 +68,6 @@ export class TasksComponent implements OnInit {
 })
 export class FilterAssigneePipe implements PipeTransform {
   transform(assignees: any[], assignee: any) {
-    console.info(assignees);
-    console.info('asssssssss');
     return assignees.filter(a => a.userId !== assignee.userId);
   }
-}
-
-@Pipe({
-  name: 'orderBy'
-})
-export class OrderBy implements PipeTransform {
- transform(assignees: any[], args:string[]): any {
-   return assignees.sort((a, b) => a.name - b.name);
- }
 }
