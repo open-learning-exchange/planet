@@ -73,12 +73,16 @@ export class UsersUpdateComponent implements OnInit {
         }
         this.editForm.patchValue(data);
         if (data['_attachments']) {
+          console.log(data['_attachments']);
+          console.log('data[_attachments]');
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
+          console.log(this.currentProfileImg);
           this.uploadImage = true;
         }
         this.previewSrc = this.currentProfileImg;
+        console.log(this.previewSrc);
         console.log('data: ' + data);
       }, (error) => {
         console.log(error);
@@ -124,7 +128,10 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).subscribe(() => {
+      console.log(attachment);
+      console.log("atttttttttt");
+
+      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, {})).subscribe(() => {
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -148,7 +155,8 @@ export class UsersUpdateComponent implements OnInit {
       'content_type': contentType,
       'data': data
     };
-
+    console.info(attachments);
+    console.info('attachment');
     return { '_attachments': attachments };
   }
 
@@ -157,6 +165,8 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   onImageSelect(img) {
+    console.info(img);
+    console.info('img');
     this.file = img;
     this.previewSrc = img;
     this.uploadImage = true;
@@ -166,6 +176,13 @@ export class UsersUpdateComponent implements OnInit {
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
+  }
+
+  resetImageFile() {
+    console.info("resetImageFile");
+    this.previewSrc = 'assets/image.png';
+    this.file = null;
+    this.uploadImage = true;
   }
 
   appendToSurvey(user) {

@@ -28,6 +28,10 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
+  ngOnChanges(){
+    this.assignees.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   addTask() {
     this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, (newTask) => {
       let newTaskIndex = this.tasks.findIndex((task) => new Date(newTask.deadline) < new Date(task.deadline) || task.completed);
@@ -64,6 +68,17 @@ export class TasksComponent implements OnInit {
 })
 export class FilterAssigneePipe implements PipeTransform {
   transform(assignees: any[], assignee: any) {
+    console.info(assignees);
+    console.info('asssssssss');
     return assignees.filter(a => a.userId !== assignee.userId);
   }
+}
+
+@Pipe({
+  name: 'orderBy'
+})
+export class OrderBy implements PipeTransform {
+ transform(assignees: any[], args:string[]): any {
+   return assignees.sort((a, b) => a.name - b.name);
+ }
 }
