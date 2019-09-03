@@ -191,7 +191,7 @@ deploy_docker(){
 render_compose_travis(){
   COMPOSE_LOC=$(pwd)/.travis/planet-travis.yml
   sed -i -e "s#\${DOCKER_DB_INIT}#$DOCKER_DB_INIT_TEST#g" "$COMPOSE_LOC"
-  sed -i -e "s#\${PLANET}#$PLANET_TEST#g" "$COMPOSE_LOC"
+  sed -i -e "s#\${PLANET}#$PLANET_TEST-eng#g" "$COMPOSE_LOC"
   cat "$COMPOSE_LOC"
 }
 
@@ -319,6 +319,7 @@ compose_languages() {
   LANGUAGES=("$@")
   mkdir -p ./ng-app/dist
   for LANGUAGE in "${LANGUAGES[@]}"; do
+    mkdir -p ./ng-app/dist/$LANGUAGE
     pull_language $LANGUAGE
   done
 }
