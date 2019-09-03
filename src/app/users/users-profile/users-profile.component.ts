@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
@@ -18,7 +20,7 @@ import { StateService } from '../../shared/state.service';
     }
   ` ]
 })
-export class UsersProfileComponent implements OnInit {
+export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
   userDetail: any = {};
   user: any = {};
@@ -30,6 +32,7 @@ export class UsersProfileComponent implements OnInit {
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -48,6 +51,12 @@ export class UsersProfileComponent implements OnInit {
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe((user) => this.userDetail = user);
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   getLoginInfo(name) {
