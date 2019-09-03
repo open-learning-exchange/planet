@@ -110,6 +110,7 @@ jobs:
         - prepare_planet_test
         - LANGUAGES=('eng' 'ara')
         - compose_languages "${LANGUAGES[@]}"
+        - deploy_docker './docker/planet/Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST
     - stage: docker-release
       <<: *_prepare_deploy
       script: #x86 tagging
