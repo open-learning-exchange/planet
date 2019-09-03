@@ -1,20 +1,23 @@
-FROM node:10.16.0-alpine as builder
-LABEL maintainer="sahil@ole.org,mappuji@ole.org"
+# FROM node:10.16.0-alpine as builder
+# LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
-ARG LANGUAGE_MODE="single"
-ENV I18N ${LANGUAGE_MODE}
-ARG LANGUAGE=""
-ENV LANG ${LANGUAGE}
-ARG LANGUAGE2=""
-ENV LANG2 ${LANGUAGE2}
+# ARG LANGUAGE_MODE="single"
+# ENV I18N ${LANGUAGE_MODE}
 
-COPY package.json ./
-COPY docker/planet/scripts/ ./
-COPY . .
+# WORKDIR /ng-app
 
-COPY ./ng-app/dist/usr/share/nginx/html /usr/share/nginx/html
-RUN cat package.json | jq -r .version > dist/version
-RUN ./create_version_json.sh
+# COPY package.json ./
+# COPY docker/planet/scripts/ ./
+# COPY . .
+
+# RUN apk add --update \
+#     python \
+#     build-base \
+#     jq
+# RUN npm i --silent
+# RUN ./compile_planet.sh
+# RUN cat package.json | jq -r .version > dist/version
+# RUN ./create_version_json.sh
 
 #####
 
@@ -34,8 +37,12 @@ RUN apk add --no-cache \
     jq=1.6-r0
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
-COPY docker/planet/scripts/docker-entrypoint.sh ./
+COPY docker/planet/scripts/ ./
+COPY ./ng-app/dist/usr/share/nginx/html /usr/share/nginx/html
 COPY --from=builder /ng-app/dist /usr/share/nginx/html
 COPY docker/planet/nginx/ /usr/share/nginx/html
+
+RUN cat package.json | jq -r .version > dist/version
+RUN ./create_version_json.sh
 
 CMD ./docker-entrypoint.sh
