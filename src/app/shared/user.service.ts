@@ -193,12 +193,14 @@ export class UserService {
     .pipe(
       switchMap(res => {
         newUserInfo._rev = res.rev;
+        const { derived_key, iterations, password_scheme, salt, password, ...profile } = newUserInfo;
         if (newUserInfo.name === this.get().name) {
-          const { derived_key, iterations, password_scheme, salt, password, ...profile } = newUserInfo;
           if (this.user.roles.indexOf('_admin') !== -1) {
             profile.roles.push('_admin');
           }
           this.set(profile);
+        } else {
+          this.userChange.next(profile);
         }
         if (planetConfiguration.adminName === newUserInfo.name + '@' + planetConfiguration.code) {
           return this.updateConfigurationContact(newUserInfo, planetConfiguration);

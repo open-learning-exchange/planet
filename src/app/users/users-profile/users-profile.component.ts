@@ -51,7 +51,11 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
-    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe((user) => this.userDetail = user);
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe((user) => {
+      if (user._id === this.userDetail._id && user.planetCode === this.userDetail.planetCode) {
+        this.userDetail = user;
+      }
+    });
   }
 
   ngOnDestroy() {
