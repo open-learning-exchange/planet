@@ -11,6 +11,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { NotificationsService } from '../shared/notifications.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -60,7 +61,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private notificationsService: NotificationsService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -198,10 +200,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   readAllNotification() {
     const unreadArray = this.notifications.filter(notification => notification.status === 'unread')
       .map(notification => ({ ...notification, status: 'read' }));
-    this.couchService.bulkDocs('notifications', unreadArray)
-    .subscribe(() => {
-      this.userService.setNotificationStateChange();
-    }, (err) => this.planetMessageService.showAlert('There was a problem marking all as read'));
+    this.notificationsService.setNotificationsAsRead(unreadArray);
   }
 
   sizeChange(forceModern: boolean) {
