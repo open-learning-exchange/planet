@@ -114,13 +114,22 @@
             <label i18n>Teams</label>
           </a>
         </li>
-        <li>
+        <li *planetBeta="false">
           <a mat-button routerLink="/meetups"
             routerLinkActive="active"
             planetPulsateIcon
             i18n-title title="Meetups">
             <mat-icon svgIcon="myMeetups"></mat-icon>
             <label i18n>Meetups</label>
+          </a>
+        </li>
+        <li *planetBeta>
+            <a mat-button routerLink="/enterprises"
+            routerLinkActive="active"
+            planetPulsateIcon
+            i18n-title title="Enterprises">
+            <mat-icon>business</mat-icon>
+            <label i18n>Enterprises</label>
           </a>
         </li>
         <li>
