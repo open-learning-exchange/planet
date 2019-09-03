@@ -8,18 +8,11 @@ ENV LANG ${LANGUAGE}
 ARG LANGUAGE2=""
 ENV LANG2 ${LANGUAGE2}
 
-WORKDIR /ng-app
-
 COPY package.json ./
 COPY docker/planet/scripts/ ./
 COPY . .
 
-RUN apk add --update \
-    python \
-    build-base \
-    jq
-RUN npm i --silent
-RUN ./compile_planet.sh
+COPY ./ng-app/dist/usr/share/nginx/html /usr/share/nginx/html
 RUN cat package.json | jq -r .version > dist/version
 RUN ./create_version_json.sh
 

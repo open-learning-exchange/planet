@@ -1,0 +1,22 @@
+FROM node:10.16.0-alpine as builder
+LABEL maintainer="sahil@ole.org,mappuji@ole.org"
+
+ARG LANGUAGE_MODE="single"
+ENV I18N ${LANGUAGE_MODE}
+ARG LANGUAGE=""
+ENV LANG ${LANGUAGE}
+ARG LANGUAGE2=""
+ENV LANG2 ${LANGUAGE2}
+
+WORKDIR /ng-app
+
+COPY package.json ./
+COPY docker/planet/scripts/ ./
+COPY . .
+
+RUN apk add --update \
+    python \
+    build-base \
+    jq
+RUN npm i --silent
+RUN ./compile_planet.sh

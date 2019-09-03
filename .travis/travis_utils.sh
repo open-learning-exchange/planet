@@ -307,9 +307,18 @@ push_multiarch_manifests(){
     fi
 }
 
+pull_language() {
+  # $1: language 3 letter code
+  docker create --name $1 $PLANET-$1
+  docker export $1 > $1.tar
+  tar -xf $1.tar -C ./ng-app/dist/$1
+}
+
 compose_languages() {
   build_message Composing language containers into one
   LANGUAGES=("$@")
+  mkdir -p ./ng-app/dist
   for LANGUAGE in "${LANGUAGES[@]}"; do
-    docker pull
+    pull_language $LANGUAGE
+  done
 }
