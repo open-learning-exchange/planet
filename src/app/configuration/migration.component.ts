@@ -40,6 +40,7 @@ export class MigrationComponent implements OnInit {
   cloneForm: FormGroup;
   cloneDomain = '';
   cloneProtocol = '';
+  admins: any = {};
 
   credential: any = {};
 
@@ -79,6 +80,10 @@ export class MigrationComponent implements OnInit {
   clonePlanet() {
     this.couchService.get('_node/nonode@nohost/_config', { domain: this.cloneDomain, protocol: this.cloneProtocol }).pipe(
       switchMap(configuration => this.copyConfiguration(configuration)),
+      switchMap(() => {
+        const [ name, password ] = Object.entries(this.admins)[0];
+        return this.couchService.put(`_node/nonode@nohost/_config/admins/${name}`, password);
+      }),
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
       switchMap(() => this.getDatabaseNames()),
       switchMap((syncDatabases: string[]) => {
@@ -105,9 +110,10 @@ export class MigrationComponent implements OnInit {
   }
 
   copyConfiguration(configuration) {
+    this.admins = configuration.admins;
     return forkJoin(
       Object.entries(configuration)
-        .sort(( [ sectionA ], [ sectionB ]) => sectionA === 'admins' ? 1 : sectionB === 'admins' ? -1 : 0)
+        .filter(( [ section ]) => section !== 'admins')
         .map(([ section, sectionValue ]) =>
           Object.entries(sectionValue).map(([ key, value ]) =>
             this.couchService.put(`_node/nonode@nohost/_config/${section}/${key}`, value)
