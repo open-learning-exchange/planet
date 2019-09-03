@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, Pipe, PipeTransform } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   templateUrl: './tasks.component.html',
   styleUrls: [ './tasks.scss' ]
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnChanges {
 
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
@@ -26,6 +26,10 @@ export class TasksComponent implements OnInit {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
     });
     this.tasksService.getTasks();
+  }
+
+  ngOnChanges() {
+    this.assignees.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   addTask() {
