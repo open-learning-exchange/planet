@@ -49,6 +49,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
+  spinnerOn = true;
 
   constructor(
     private couchService: CouchService,
@@ -277,6 +278,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   addMembers(selected: any[]) {
+    this.dialogsLoadingService.start();
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
@@ -293,6 +295,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
+      this.dialogsLoadingService.stop();
     });
   }
 
