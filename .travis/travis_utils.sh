@@ -320,7 +320,7 @@ compose_languages() {
   LANGUAGES=("$@")
   mkdir -p ./ng-app/dist
   for LANGUAGE in "${LANGUAGES[@]}"; do
-    mkdir -p ./ng-app/dist/$LANGUAGE
+    mkdir -p ./ng-app/$LANGUAGE
     pull_language $LANGUAGE
   done
 }
