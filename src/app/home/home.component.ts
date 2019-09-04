@@ -11,7 +11,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { NotificationsService } from '../shared/notifications.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   templateUrl: './home.component.html',

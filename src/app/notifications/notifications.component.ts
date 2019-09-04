@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 
 import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { NotificationsService } from '../shared/notifications.service';
+import { NotificationsService } from './notifications.service';
 
 @Component({
   templateUrl: './notifications.component.html',
