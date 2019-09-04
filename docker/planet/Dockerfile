@@ -38,7 +38,7 @@ RUN apk add --no-cache \
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 COPY docker/planet/scripts/ ./
-COPY ./ng-app/dist/usr/share/nginx/html /usr/share/nginx/html
+COPY ./ng-app/dist /usr/share/nginx/html
 COPY docker/planet/nginx/ /usr/share/nginx/html
 
 RUN cat package.json | jq -r .version > dist/version
