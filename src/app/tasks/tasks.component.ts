@@ -73,7 +73,7 @@ export class TasksComponent implements OnInit {
   onTaskFilter(filterValue = 'self') {
     this.filter = filterValue;
     if (this.filter === 'self') {
-      this.filteredTasks = this.tasks.filter(task => task.assignee && task.assigee.id === this.userService.get()._id);
+      this.filteredTasks = this.tasks.filter(task => task.assignee && task.assignee.userId === this.userService.get()._id);
     } else {
       this.filteredTasks = this.tasks;
     }
