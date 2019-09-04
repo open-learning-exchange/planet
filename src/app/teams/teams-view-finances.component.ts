@@ -6,6 +6,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { Validators} from '@angular/forms';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -67,7 +68,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
         {
           type: [ 'credit', CustomValidators.required ],
           description: [ '', CustomValidators.required ],
-          amount: [ '', CustomValidators.required ],
+          amount: [ '', [CustomValidators.required, Validators.min(0)] ],
           date: [ new Date(time), CustomValidators.required ]
         },
         { onSubmit: this.submitTransaction.bind(this) }
