@@ -198,9 +198,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
    * Used for marking all notifications as read from navigation bar
    */
   readAllNotification() {
-    const unreadArray = this.notifications.filter(notification => notification.status === 'unread')
-      .map(notification => ({ ...notification, status: 'read' }));
-    this.notificationsService.setNotificationsAsRead(unreadArray);
+    this.notificationsService.setNotificationsAsRead(this.notifications);
   }
 
   sizeChange(forceModern: boolean) {

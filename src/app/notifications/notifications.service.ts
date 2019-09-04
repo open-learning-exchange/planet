@@ -12,7 +12,9 @@ export class NotificationsService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  setNotificationsAsRead(unreadArray) {
+  setNotificationsAsRead(notifications: any) {
+    const unreadArray = notifications.filter(notification => notification.status === 'unread')
+      .map(notification => ({ ...notification, status: 'read' }));
     this.couchService.bulkDocs('notifications', unreadArray).subscribe(() => {
       this.userService.setNotificationStateChange();
     }, (err) => this.planetMessageService.showAlert('There was a problem marking all as read'));

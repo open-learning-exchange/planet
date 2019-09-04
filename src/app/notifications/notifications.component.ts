@@ -84,8 +84,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readAllNotification() {
-    const unreadArray = this.notifications.data.filter(notification => notification.status === 'unread')
-      .map(notification => ({ ...notification, status: 'read' }));
-    this.notificationsService.setNotificationsAsRead(unreadArray);
+    this.notificationsService.setNotificationsAsRead(this.notifications.data);
   }
 }
