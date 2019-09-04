@@ -38,10 +38,10 @@ RUN apk add --no-cache \
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 COPY docker/planet/scripts/ ./
+RUN cat package.json | jq -r .version > ./ng-app/dist/version
 COPY ./ng-app/dist /usr/share/nginx/html
 COPY docker/planet/nginx/ /usr/share/nginx/html
 
-RUN cat package.json | jq -r .version > dist/version
 RUN ./create_version_json.sh
 
 CMD ./docker-entrypoint.sh
