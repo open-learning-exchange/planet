@@ -312,7 +312,7 @@ pull_language() {
   docker create --name $1 $PLANET_TEST-$1
   docker export $1 > $1.tar
   tar -xf $1.tar -C ./ng-app/$1
-  cp -ar ./ng-app/$1/dist/$1/ ./ng-app/dist/
+  cp -ar ./ng-app/$1/ng-app/dist/$1/ ./ng-app/dist/
 }
 
 compose_languages() {
