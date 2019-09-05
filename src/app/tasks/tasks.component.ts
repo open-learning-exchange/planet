@@ -12,7 +12,14 @@ export class TasksComponent implements OnInit {
 
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
-  @Input() assignees: any[] = [];
+  private _assigness: any[];
+  @Input()
+  get assignees() {
+    return this._assigness;
+  }
+  set assignees(newAssignees: any[]) {
+    this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
+  }
   tasks: any[] = [];
   imgUrlPrefix = environment.couchAddress;
 
