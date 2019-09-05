@@ -193,8 +193,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       .filter((month: number) => month > planetLaunchDate);
   }
 
-  activityParams(): { planetCode, fromMyPlanet? } {
-    return { planetCode: this.planetCode, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
+  activityParams(): { planetCode, filterAdmin?, fromMyPlanet? } {
+    return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
 }

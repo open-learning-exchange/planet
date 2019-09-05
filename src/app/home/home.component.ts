@@ -10,6 +10,8 @@ import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database';
 import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -58,7 +60,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private router: Router,
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
-    private stateService: StateService
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService,
+    private notificationsService: NotificationsService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -119,7 +123,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     const url = this.router.url;
     const routesWithBackground = [
       'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams', 'surveys', 'news',
-      'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams'
+      'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises'
     ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
@@ -188,6 +192,13 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       this.userService.setNotificationStateChange();
     }, (err) => console.log(err));
+  }
+
+  /**
+   * Used for marking all notifications as read from navigation bar
+   */
+  readAllNotification() {
+    this.notificationsService.setNotificationsAsRead(this.notifications);
   }
 
   sizeChange(forceModern: boolean) {

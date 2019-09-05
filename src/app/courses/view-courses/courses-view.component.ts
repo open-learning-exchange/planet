@@ -6,6 +6,7 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -23,13 +24,15 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   courseId: string;
   canManage: boolean;
   currentUser = this.userService.get();
+  planetConfiguration = this.stateService.configuration;
 
   constructor(
     private router: Router,
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private stateService: StateService
   ) { }
 
   ngOnInit() {

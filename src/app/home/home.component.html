@@ -20,15 +20,18 @@
     <a mat-button routerLink="/teams"
       routerLinkActive="active"
       i18n-title title="Teams" i18n>Teams</a>
-    <a mat-button routerLink="/meetups"
+    <a mat-button routerLink="/meetups" *planetBeta="false"
       routerLinkActive="active"
       i18n-title title="Meetups" i18n>Meetups</a>
+    <a mat-button routerLink="/enterprises" *planetBeta
+      routerLinkActive="active"
+      i18n-title title="Enterprises" i18n>Enterprises</a>
     <a mat-button routerLink="/surveys"
       routerLinkActive="active"
       i18n-title title="Surveys" i18n>Surveys</a>
   </span>
   <span class="navbar-right">
-    <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon>help_outline</mat-icon></button>
+    <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon>feedback_outline</mat-icon></button>
     <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
     <ng-container *planetAuthorizedRoles>
       <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted' && layout === 'classic' && !forceModern"><mat-icon svgIcon="feedback"></mat-icon></button>
@@ -54,6 +57,7 @@
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
+        <a mat-menu-item (click)="readAllNotification()">Mark all as Read</a>
         <a [routerLink]="notification.link ? [ notification.link, notification.linkParams || {} ] : '/notifications'"
           class="menu-item-notification"
           [ngClass]="{'primary-text-color':notification.status==='unread'}"
@@ -111,13 +115,22 @@
             <label i18n>Teams</label>
           </a>
         </li>
-        <li>
+        <li *planetBeta="false">
           <a mat-button routerLink="/meetups"
             routerLinkActive="active"
             planetPulsateIcon
             i18n-title title="Meetups">
             <mat-icon svgIcon="myMeetups"></mat-icon>
             <label i18n>Meetups</label>
+          </a>
+        </li>
+        <li *planetBeta>
+            <a mat-button routerLink="/enterprises"
+            routerLinkActive="active"
+            planetPulsateIcon
+            i18n-title title="Enterprises">
+            <mat-icon>business</mat-icon>
+            <label i18n>Enterprises</label>
           </a>
         </li>
         <li>
@@ -134,7 +147,7 @@
       <ul class="bottom-nav">
         <li>
           <a mat-button planetFeedback i18n-title title="Feedback">
-            <mat-icon>help_outline</mat-icon>
+            <mat-icon>feedback_outline</mat-icon>
             <label i18n>Feedback</label>
           </a>
         </li>

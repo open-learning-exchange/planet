@@ -10,6 +10,7 @@ import { TagsService } from './forms/tags.service';
 @Injectable()
 export class SyncService {
 
+  private parentProtocol: string;
   private parentDomain: string;
   private code: string;
 
@@ -32,6 +33,7 @@ export class SyncService {
   }
 
   sync(replicator, credentials) {
+    this.parentProtocol = replicator.parentProtocol || environment.parentProtocol;
     this.parentDomain = this.stateService.configuration.parentDomain || replicator.parentDomain;
     this.code = this.stateService.configuration.code || replicator.code;
     return this.couchService.post('_replicator', this.syncParams(replicator, credentials, replicator.type));
@@ -49,11 +51,11 @@ export class SyncService {
     }
     return {
       // Name the id always after the local database
-      '_id': (type === 'push' ? dbSource : dbTarget) + '_' + type + (replicator.date ? '_' + Date.now() : ''),
+      '_id': (type === 'push' ? dbSource : dbTarget).replace('_', '') + '_' + type + (replicator.date ? '_' + Date.now() : ''),
       'source': this.dbObj(dbSource, credentials, type === 'pull' && type !== 'internal'),
       'target': this.dbObj(dbTarget, credentials, type !== 'pull' && type !== 'internal'),
       'selector': replicator.selector,
-      'create_target':  false,
+      'create_target': false,
       'owner': credentials.name,
       'continuous': replicator.continuous
     };
@@ -64,9 +66,9 @@ export class SyncService {
   }
 
   private dbObj(dbName, credentials, parent: boolean) {
-    const username = credentials.name + (parent ? '@' + this.code : '');
+    const username = credentials.name + ((parent && this.code) ? '@' + this.code : '');
     const domain = parent ? this.parentDomain + '/' : environment.syncAddress + '/';
-    const protocol = parent ? environment.parentProtocol + '://' : '';
+    const protocol = parent ? this.parentProtocol + '://' : '';
     return {
       'headers': {
         'Authorization': 'Basic ' + btoa(username + ':' + credentials.password)

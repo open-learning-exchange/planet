@@ -28,7 +28,9 @@ export class LoginComponent implements OnInit {
         switchMap(noAdmin => {
           // false means there is admin
           if (noAdmin) {
-            this.router.navigate([ '/login/configuration' ]);
+            if (this.router.url !== '/login/migration') {
+              this.router.navigate([ '/login/configuration' ]);
+            }
             return of([]);
           }
           return this.couchService.findAll('configurations');

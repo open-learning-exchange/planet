@@ -37,6 +37,7 @@ const routes: Routes = [
       { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
       { path: 'myTeams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { myTeams: true } },
+      { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
       { path: 'surveys', loadChildren: () => import('../surveys/surveys.module').then(m => m.SurveysModule) },
       { path: 'myAchievements', component: UsersAchievementsComponent },
       { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent },

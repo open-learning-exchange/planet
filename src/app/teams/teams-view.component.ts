@@ -45,7 +45,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   leader: string;
   planetCode: string;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
+  leaderDialog: any;
+  finances: any[];
 
   constructor(
     private couchService: CouchService,
@@ -107,7 +110,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   getMembers() {
     if (this.team === undefined) {
-      return [];
+      return of([]);
     }
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
@@ -120,17 +123,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         }
         return 'assets/image.png';
       };
-      const docsWithName = docs.map(mem => ({
-        ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem)
-      }));
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
       this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
         .sort((a, b) => a.userId === this.leader ? -1 : 0);
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
+      this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  resetData() {
+    this.getMembers().subscribe();
   }
 
   toggleAdd(data) {
@@ -165,14 +171,16 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
       },
+      course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: 'removed', errorMsg: 'removing' },
       remove: {
         request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).firstName || item.name,
         successMsg: 'removed', errorMsg: 'removing'
-      }
+      },
+      leader: { request: this.makeLeader(item), successMsg: 'given leadership to', errorMsg: 'giving leadership to' }
     }[change];
   }
 
-  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove', dialogParams: { changeType, type }) {
+  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove' | 'course', dialogParams: { changeType, type }) {
     const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
@@ -182,6 +190,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
+            this.team = change === 'course' ? res : this.team;
             if (res.status === 'archived') {
               this.router.navigate([ '/teams' ]);
             }
@@ -246,7 +255,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   updateTeam() {
-    this.teamsService.addTeamDialog(this.user._id, this.team).subscribe((updatedTeam) => {
+    this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
       this.planetMessageService.showMessage(this.team.name + ' updated successfully');
     });
@@ -268,6 +277,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   addMembers(selected: any[]) {
+    this.dialogsLoadingService.start();
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
@@ -280,7 +290,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
           this.sendNotifications('addMember', { newMembersLength: selected.length })
         ]);
       }),
-      switchMap(() => this.getMembers())
+      switchMap(() => this.getMembers()),
+      finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
@@ -360,25 +371,26 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   makeLeader(member) {
     const currentLeader = this.members.find(mem => mem.userId === this.leader);
-    this.teamsService.changeTeamLeadership(currentLeader, member)
-    .pipe(
-      switchMap(() => this.getMembers())
-    ).subscribe(() => this.planetMessageService.showMessage(`${member.name} has been made Leader`));
+    return this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
   removeCourse(course) {
+    if (!this.team.courses) {
+      return of(true);
+    }
     const index = this.team.courses.indexOf(course);
     const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    this.teamsService.updateTeam({ ...this.team, courses: newCourses }).subscribe((newTeam) => {
-      this.team = newTeam;
-      this.planetMessageService.showMessage('Course was removed');
-    }, () => this.planetMessageService.showAlert('There was an error updating the team'));
+    return this.teamsService.updateTeam({ ...this.team, courses: newCourses });
   }
 
   toggleTask({ option }) {
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
     });
+  }
+
+  goBack() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
 }

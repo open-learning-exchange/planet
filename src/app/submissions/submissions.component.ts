@@ -53,6 +53,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
     if (this.mode === 'survey') {
       this.filter['type'] = 'survey';
+      this.filter['status'] = '';
       query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
     }

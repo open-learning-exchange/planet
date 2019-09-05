@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 
 import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { NotificationsService } from './notifications.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -24,7 +25,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private notificationsService: NotificationsService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -82,11 +84,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readAllNotification() {
-    const unreadArray = this.notifications.data.filter(notification => notification.status === 'unread')
-      .map(notification => ({ ...notification, status: 'read' }));
-    this.couchService.bulkDocs('notifications', unreadArray)
-    .subscribe(() => {
-      this.userService.setNotificationStateChange();
-    }, (err) => this.planetMessageService.showAlert('There was a problem marking all as read'));
+    this.notificationsService.setNotificationsAsRead(this.notifications.data);
   }
 }

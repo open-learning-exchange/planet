@@ -50,7 +50,7 @@ export class TasksService {
     ];
     const formGroup = {
       title: [ '', CustomValidators.required ],
-      deadline: [ '', CustomValidators.required, (ac) => this.validatorService.notDateInPast$(ac) ],
+      deadline: [ '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
       description: ''
     };
     this.dialogsFormService.openDialogsForm('Add Task', fields, formGroup, {

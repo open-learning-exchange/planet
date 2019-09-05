@@ -1,10 +1,21 @@
 <button i18n mat-stroked-button (click)="addTask()">Add a task</button>
+<mat-button-toggle-group
+  class="margin-lr-5"
+  (change)="setFilter($event.value)"
+  #filterGroup="matButtonToggleGroup">
+  <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
+    myTasks
+  </mat-button-toggle>
+  <mat-button-toggle value="all" [checked]="filter === 'all'" i18n>
+    All Tasks
+  </mat-button-toggle>
+</mat-button-toggle-group>
 <mat-action-list>
-  <button mat-list-item *ngFor="let task of tasks" (click)="toggleTaskComplete(task)">
+  <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="toggleTaskComplete(task)">
     <mat-checkbox [checked]="task.completed"></mat-checkbox>
     <p matLine>{{task.title}}</p>
     <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}}</p>
-    <img *ngIf="task.assignee" matListAvatar [src]="
+    <img matTooltip="{{task.assignee.name}}" *ngIf="task.assignee" matListAvatar [src]="
       task.assignee.attachmentDoc ?
         imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
         task.assignee.avatar ?

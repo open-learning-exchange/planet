@@ -48,6 +48,7 @@ export class ConfigurationComponent implements OnInit {
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
+  spinnerOn = true;
   configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
@@ -241,6 +242,7 @@ export class ConfigurationComponent implements OnInit {
     if (!this.allValid()) {
       return;
     }
+    this.spinnerOn = true;
     const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
       this.configurationService.updateConfiguration(configuration).subscribe(
@@ -257,7 +259,10 @@ export class ConfigurationComponent implements OnInit {
       this.configurationService.createPlanet(admin, configuration, credentials).subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + credentials.name);
         this.router.navigate([ '/login' ]);
-      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+      }, (error) => {
+        this.planetMessageService.showAlert('There was an error creating planet');
+        this.spinnerOn = false;
+      });
     }
   }
 

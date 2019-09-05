@@ -10,17 +10,21 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 
-const addTeamDialogFields = [ {
-  'type': 'textbox',
-  'name': 'name',
-  'placeholder': 'Name',
-  'required': true
-}, {
-  'type': 'markdown',
-  'name': 'description',
-  'placeholder': 'Description',
-  'required': false
-} ];
+const addTeamDialogFields = [
+  {
+    'type': 'textbox',
+    'name': 'name',
+    'placeholder': 'Name',
+    'required': true
+  },
+  {
+    'type': 'markdown',
+    'name': 'description',
+    'placeholder': 'Description',
+    'required': false
+  }
+];
+
 
 @Injectable()
 export class TeamsService {
@@ -35,7 +39,7 @@ export class TeamsService {
     private validatorService: ValidatorService
   ) {}
 
-  addTeamDialog(userId: string, team: any = {}) {
+  addTeamDialog(userId: string, type: 'team' | 'enterprise', team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = team._id ? 'Update Team' : 'Create Team';
     const formGroup = {
@@ -45,14 +49,14 @@ export class TeamsService {
       ],
       description: team.description || '',
       requests: [ team.requests || [] ],
-      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : 'local' ]
+      teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ]
     };
-    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration) ], formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
       .pipe(
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
             { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response }
+              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
           ) :
           empty()
         ),
@@ -63,8 +67,8 @@ export class TeamsService {
       );
   }
 
-  typeFormField(configuration) {
-    return {
+  addTeamFields(configuration, type) {
+    const typeField = {
       'type': 'selectbox',
       'name': 'teamType',
       'placeholder': 'Team Type',
@@ -73,6 +77,7 @@ export class TeamsService {
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
+    return [ ...addTeamDialogFields, type === 'team' ? typeField : [] ].flat();
   }
 
   updateTeam(team: any) {

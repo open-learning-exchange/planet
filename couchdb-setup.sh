@@ -35,14 +35,14 @@ insert_dbs() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:i:x" option; do
+while getopts "u:w:p:h:ix" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
     i) INSTALLFLAG=1;;
-    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username"
+    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username";;
   esac
 done
 
@@ -142,6 +142,8 @@ DBS=(
   "parent_users"
   "team_activities"
   "tasks"
+  "health"
+  "messages"
 )
 
 insert_dbs $DBS
@@ -150,6 +152,7 @@ node ./design/create-design-docs.js
 # Add or update design docs
 upsert_doc nations _design/nation-validators @./design/nations/nation-validators.json
 upsert_doc resources _design/resources @./design/resources/resources-design.json
+upsert_doc health _design/health @./design/health/health-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing

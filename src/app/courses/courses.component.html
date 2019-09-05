@@ -97,17 +97,10 @@
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
-          <div class="content">
-            <td-markdown
-              [content]="element.doc.sourcePlanet !== stateService.configuration.code && element.doc.sourcePlanet ?
-                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-                element.doc.description">
-            </td-markdown>
+          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
+            <span i18n>Your progress:</span>
+            <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
-          <planet-local-status [status]="element.localStatus"></planet-local-status>
-          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
               <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
@@ -118,10 +111,17 @@
               </mat-chip>
             </ng-container>
           </mat-chip-list>
-          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
-            <span i18n>Your progress:</span>
-            <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
+          <div class="content">
+            <td-markdown
+              [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
+              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+              element.doc.description">
+            </td-markdown>
           </div>
+          <planet-local-status [status]="element.localStatus"></planet-local-status>
+          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
           <mat-menu #resourceMenu="matMenu">
             <a mat-menu-item *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">
               <mat-icon>school</mat-icon>

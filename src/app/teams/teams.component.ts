@@ -45,7 +45,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
-  readonly myTeamsFilter = this.route.snapshot.data.myTeams;
+  readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
+  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
 
   constructor(
     private userService: UserService,
@@ -65,7 +66,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.getTeams();
     this.teams.filterPredicate = composeFilterFunctions([
       filterSpecificFieldsByWord([ 'doc.name' ]),
-      (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter ? 'member' : '')
+      (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
     this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
@@ -75,9 +76,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
       this.getMembershipStatus()
-    ]).subscribe(([ teams, requests ]) => {
+    ]).subscribe(([ teams, requests ]: any[]) => {
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
-      this.teams.data = this.teamList(teams);
+      this.teams.data = this.teamList(teams.filter(team => team.type === this.mode || (team.type === undefined && this.mode === 'team')));
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
       )) {
@@ -121,8 +122,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addTeam(team?) {
-    this.teamsService.addTeamDialog(this.user._id, team).subscribe(() => {
+  addTeam(team: any = {}) {
+    const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
+    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
       const msg = team ? 'Team updated successfully' : 'Team created successfully';
       this.planetMessageService.showMessage(msg);
