@@ -1,20 +1,30 @@
-mat-action-list {
+planet-tasks {
+  mat-action-list {
 
-  mat-checkbox {
-    order: -1;
-    margin-right: 0.5rem;
+    mat-checkbox {
+      order: -1;
+      margin-right: 0.5rem;
+    }
+
+    img {
+      order: 2;
+    }
+
+    button {
+      order: 3;
+    }
+
+    .mat-list-item.mat-list-item-with-avatar p[matLine] {
+      margin-left: -16px;
+    }
   }
 
-  img {
-    order: 2;
-  }
+  mat-button-toggle-group {
+    font-size: 14px;
 
-  button {
-    order: 3;
-  }
-
-  .mat-list-item.mat-list-item-with-avatar p[matLine] {
-    margin-left: -16px;
+    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+      line-height: 34px;
+    }
   }
 
 }

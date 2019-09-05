@@ -1,6 +1,6 @@
 <button i18n mat-stroked-button (click)="addTask()">Add a task</button>
 <mat-button-toggle-group
-  class="margin-lr-5 font-size-1"
+  class="margin-lr-5"
   (change)="onTaskFilter($event.value)"
   #filterGroup="matButtonToggleGroup">
   <mat-button-toggle value="self" [checked]="this.filter === 'self'" i18n>

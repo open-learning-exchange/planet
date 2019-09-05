@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -7,7 +7,8 @@ import { UserService } from '../shared/user.service';
 @Component({
   selector: 'planet-tasks',
   templateUrl: './tasks.component.html',
-  styleUrls: [ './tasks.scss' ]
+  styleUrls: [ './tasks.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class TasksComponent implements OnInit {
 
