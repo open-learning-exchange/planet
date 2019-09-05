@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../shared/couchdb.service';achievement
 
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit {
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
-    { firstLine: 'my', title: 'Achievements', link: '/myAchievements' },
+    { firstLine: 'my', title: 'Accomplishments', link: '/myAchievements' },
     { firstLine: 'our', title: 'News', link: '/news' },
     { firstLine: 'my', title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
   ];
