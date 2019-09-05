@@ -10,17 +10,21 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 
-const addTeamDialogFields = [ {
-  'type': 'textbox',
-  'name': 'name',
-  'placeholder': 'Name',
-  'required': true
-}, {
-  'type': 'markdown',
-  'name': 'description',
-  'placeholder': 'Description',
-  'required': false
-} ];
+const addTeamDialogFields = [
+  {
+    'type': 'textbox',
+    'name': 'name',
+    'placeholder': 'Name',
+    'required': true
+  },
+  {
+    'type': 'markdown',
+    'name': 'description',
+    'placeholder': 'Description',
+    'required': false
+  }
+];
+
 
 @Injectable()
 export class TeamsService {
@@ -45,9 +49,9 @@ export class TeamsService {
       ],
       description: team.description || '',
       requests: [ team.requests || [] ],
-      teamType: [ team._id ? { value: team.teamType || 'local', disabled: true } : type === 'enterprise' ? 'sync' : 'local' ]
+      teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ]
     };
-    return this.dialogsFormService.confirm(title, [ ...addTeamDialogFields, this.typeFormField(configuration, type) ], formGroup, true)
+    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
       .pipe(
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
@@ -63,17 +67,17 @@ export class TeamsService {
       );
   }
 
-  typeFormField(configuration, type) {
-    return type === 'enterprise' ? {} :
-      {
-        'type': 'selectbox',
-        'name': 'teamType',
-        'placeholder': 'Team Type',
-        'options': [
-          { 'value': 'sync', 'name': configuration.planetType === 'community' ? 'Connect with nation' : 'Connect with earth' },
-          { 'value': 'local', 'name': 'Local team' }
-        ]
-      };
+  addTeamFields(configuration, type) {
+    const typeField = {
+      'type': 'selectbox',
+      'name': 'teamType',
+      'placeholder': 'Team Type',
+      'options': [
+        { 'value': 'sync', 'name': configuration.planetType === 'community' ? 'Connect with nation' : 'Connect with earth' },
+        { 'value': 'local', 'name': 'Local team' }
+      ]
+    };
+    return [ ...addTeamDialogFields, type === 'team' ? typeField : [] ].flat();
   }
 
   updateTeam(team: any) {
