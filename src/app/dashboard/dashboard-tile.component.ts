@@ -56,7 +56,7 @@ export class DashboardTileComponent implements OnInit {
           },
           onError: () => this.planetMessageService.showMessage('There was an error removing ' + item.title)
         },
-        changeType: 'remove',
+        changeType: 'leave',
         type: 'team',
         displayName: item.title
       }
