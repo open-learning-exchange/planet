@@ -1,6 +1,7 @@
 import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -9,7 +10,6 @@ import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
-import { UserService } from '../user.service';
 
 @Component({
   'selector': 'planet-tag-input',
@@ -32,6 +32,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set value(tags: string[]) {
     this._value = tags || [];
+    if (this.mode === 'filter') {
+      this.filterReroute(tags);
+    }
     this.onChange(tags);
     this.stateChanges.next();
   }
@@ -56,12 +59,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this._disabled = coerceBooleanProperty(dis);
     this.stateChanges.next();
   }
-  @Input() mode = 'filter';
+  @Input() mode;
   @Input() parent = false;
   @Input() filteredData = [];
   @Input() helperText = true;
   @Input() selectedIds;
-  @Input() labelType = this.mode;
+  @Input() labelType;
   @Input() db;
   @Input() largeFont = false;
   @Input() selectMany = true;
@@ -81,7 +84,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     private elementRef: ElementRef,
     private tagsService: TagsService,
     private dialog: MatDialog,
-    private userService: UserService
+    private router: Router
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -93,6 +96,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   ngOnChanges() {
+    this.labelType = this.labelType || this.mode;
     if (this.selectMany) {
       this.resetDialogData();
     }
@@ -220,6 +224,14 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     } else {
       this.removeTag(tag);
     }
+  }
+
+  /**
+   * Adds parameter to url with currently selected tags to maintain selection after navigation (filter mode only)
+   */
+  filterReroute(tags: string[]) {
+    const collections = tags.join('_,_');
+    this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
 }

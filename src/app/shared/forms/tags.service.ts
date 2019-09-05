@@ -5,13 +5,16 @@ import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
 import { createDeleteArray } from '../table-helpers';
+import { Router, ActivatedRoute, UrlTree, UrlSegmentGroup, UrlSegment, PRIMARY_OUTLET } from '@angular/router';
 
 @Injectable()
 export class TagsService {
 
   constructor(
     private couchService: CouchService,
-    private stateService: StateService
+    private stateService: StateService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   getTags(db: string, parent: boolean) {
