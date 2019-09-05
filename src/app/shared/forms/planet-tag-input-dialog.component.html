@@ -53,7 +53,7 @@
   </mat-action-list>
   <mat-nav-list *ngIf="!selectMany">
     <ng-container *ngFor="let tag of tags">
-      <a mat-list-item (click)="toggleSubcollection($event,tag._id)" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }" mat-dialog-close>
+      <a mat-list-item (click)="tag.subTags.length === 0 ? selectOne(tag._id || tag.name) : toggleSubcollection($event,tag._id)" [ngClass]="{ 'mat-body-2': tag.subTags.length > 0 }" mat-dialog-close>
         {{tag.name + ' (' + (tag.count || 0) + ')'}}
         <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
         <span class="toolbar-fill"></span>
