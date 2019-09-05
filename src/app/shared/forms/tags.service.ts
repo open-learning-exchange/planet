@@ -136,17 +136,4 @@ export class TagsService {
     return tag.attachedTo === undefined || tag.attachedTo.length === 0;
   }
 
-  /**
-   * Reroutes to new URL on filtering so that the back button of a particular result go to the previous filtered results
-   */
-  filterReroute(tag) {
-    if (!tag) {
-      const tree: UrlTree = this.router.parseUrl(this.router.url);
-      const g: UrlSegmentGroup = tree.root.children[PRIMARY_OUTLET];
-      const s: UrlSegment[] = g.segments;
-      this.router.navigate([ s[0].path ]);
-    } else {
-      this.router.navigate([ '..', tag ? { tag: tag } : {} ], { relativeTo: this.route });
-    }
-  }
 }
