@@ -152,7 +152,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.paginator = this.paginator;
     const tagParam = this.route.snapshot.paramMap.get('collections');
     if (tagParam) {
-      tagParam.split(',').forEach(tag => this.addTag(tag));
+      tagParam.split('_,_').forEach(tag => this.addTag(tag));
     }
   }
 

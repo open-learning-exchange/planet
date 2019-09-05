@@ -228,10 +228,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   /**
    * Adds parameter to url with currently selected tags to maintain selection after navigation (filter mode only)
-   * Note this uses the in app name 'collections' instead of 'tags'
    */
-  filterReroute(collections) {
-    this.router.navigate([ this.router.url.split(';')[0], { ...(collections.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
+  filterReroute(tags: string[]) {
+    const collections = tags.join('_,_');
+    this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
 }
