@@ -3,7 +3,7 @@
   class="margin-lr-5"
   (change)="setFilter($event.value)"
   #filterGroup="matButtonToggleGroup">
-  <mat-button-toggle value="self" [checked]="filter === 'self'" i18n>
+  <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
     myTasks
   </mat-button-toggle>
   <mat-button-toggle value="all" [checked]="filter === 'all'" i18n>
