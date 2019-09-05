@@ -34,7 +34,7 @@ export class UserService {
   emptyShelf = { meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] };
 
   // Create an observable for components that need to react to user changes can subscribe to
-  private userChange = new Subject<void>();
+  private userChange = new Subject<any>();
   userChange$ = this.userChange.asObservable();
   private shelfChange = new BehaviorSubject<any>(this.emptyShelf);
   shelfChange$ = this.shelfChange.asObservable();
@@ -48,7 +48,7 @@ export class UserService {
 
   set(user: any): any {
     this.user = user;
-    this.userChange.next();
+    this.userChange.next(user);
   }
 
   setNotificationStateChange() {
@@ -189,16 +189,18 @@ export class UserService {
     const planetConfiguration = this.stateService.configuration;
     const newUserInfo = { ...userInfo, roles: userInfo.roles.filter(role => role.indexOf('_') === -1) };
     // ...is the rest syntax for object destructuring
-    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo })
+    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo, type: 'user' })
     .pipe(
       switchMap(res => {
         newUserInfo._rev = res.rev;
+        const { derived_key, iterations, password_scheme, salt, password, ...profile } = newUserInfo;
         if (newUserInfo.name === this.get().name) {
-          const { derived_key, iterations, password_scheme, salt, ...profile } = newUserInfo;
           if (this.user.roles.indexOf('_admin') !== -1) {
             profile.roles.push('_admin');
           }
           this.set(profile);
+        } else {
+          this.userChange.next(profile);
         }
         if (planetConfiguration.adminName === newUserInfo.name + '@' + planetConfiguration.code) {
           return this.updateConfigurationContact(newUserInfo, planetConfiguration);
