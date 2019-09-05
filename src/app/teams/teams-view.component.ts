@@ -49,7 +49,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
-  spinnerOn = true;
 
   constructor(
     private couchService: CouchService,
