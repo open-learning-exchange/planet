@@ -122,8 +122,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addTeam(team?) {
-    this.teamsService.addTeamDialog(this.user._id, this.mode, team).subscribe(() => {
+  addTeam(team: any = {}) {
+    const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
+    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
       const msg = team ? 'Team updated successfully' : 'Team created successfully';
       this.planetMessageService.showMessage(msg);
