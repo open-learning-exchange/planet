@@ -32,6 +32,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set value(tags: string[]) {
     this._value = tags || [];
+    if (this.mode === 'filter') {
+      this.tagsService.filterReroute(tags);
+    }
     this.onChange(tags);
     this.stateChanges.next();
   }
@@ -56,16 +59,14 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this._disabled = coerceBooleanProperty(dis);
     this.stateChanges.next();
   }
-  @Input() mode = 'filter';
+  @Input() mode;
   @Input() parent = false;
   @Input() filteredData = [];
   @Input() helperText = true;
   @Input() selectedIds;
-  @Input() labelType = this.mode;
+  @Input() labelType;
   @Input() db;
   @Input() largeFont = false;
-  @Input() compId;
-  @Input() initToService = false;
   @Input() selectMany = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
@@ -95,6 +96,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   ngOnChanges() {
+    this.labelType = this.labelType || this.mode;
     if (this.selectMany) {
       this.resetDialogData();
     }
@@ -223,4 +225,5 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       this.removeTag(tag);
     }
   }
+
 }

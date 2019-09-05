@@ -127,7 +127,6 @@ export class PlanetTagInputDialogComponent {
 
   selectOne(tag, subTag?) {
     this.data.tagUpdate(tag, true, true);
-    this.tagsService.filterReroute(tag);
     if (subTag !== undefined) {
       this.data.tagUpdate(subTag, true);
     }

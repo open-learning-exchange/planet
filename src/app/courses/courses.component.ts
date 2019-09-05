@@ -402,6 +402,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTag(tag: string) {
     this.tagInputComponent.addTag(tag);
-    this.tagsService.filterReroute(tag);
   }
+
 }
