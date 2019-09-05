@@ -24,7 +24,6 @@ import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { TagsService } from '../shared/forms/tags.service';
 
 @Component({
   selector: 'planet-resources',
@@ -81,7 +80,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       filterShelf(this.myLibraryFilter, 'libraryInfo')
     ]
   );
-  private tagsService: TagsService;
   trackById = trackById;
 
   @ViewChild(PlanetTagInputComponent, { static: false })
