@@ -75,7 +75,6 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.submissions.data = submissions.map(submission => ({
         ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
       }));
-      this.emptyData = !this.submissions.data.length || this.submissions.data.length === 0;
       this.dialogsLoadingService.stop();
       this.applyFilter('');
     });
@@ -115,7 +114,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
-    this.emptyData = !this.submissions.filteredData;
+    this.emptyData = !this.submissions.filteredData.length;
   }
 
   dropdownsFill() {
