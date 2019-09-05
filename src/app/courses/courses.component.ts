@@ -181,7 +181,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.courses.paginator = this.paginator;
     const tagParam = this.route.snapshot.paramMap.get('collections');
     if (tagParam) {
-      this.addTag(tagParam);
+      tagParam.split('_,_').forEach(tag => this.addTag(tag));
     }
   }
 
