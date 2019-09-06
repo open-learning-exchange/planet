@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';achievement
+import { CouchService } from '../shared/couchdb.service';
 
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
