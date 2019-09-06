@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { OptionsInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import { MatDialog } from '@angular/material';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
 import { CouchService } from './couchdb.service';
@@ -10,7 +10,7 @@ import { findDocuments } from './mangoQueries';
   selector: 'planet-calendar',
   template: `
     <full-calendar
-      defaultView="timeGridWeek"
+      defaultView="dayGridMonth"
       [events]="events"
       [plugins]="calendarPlugins"
       [firstDay]="6"
@@ -20,14 +20,15 @@ import { findDocuments } from './mangoQueries';
     </full-calendar>
   `
 })
-export class PlanetCalendarComponent {
+export class PlanetCalendarComponent implements OnInit {
 
   @Input() link: any = {};
-  calendarPlugins = [ dayGridPlugin, timeGridPlugin ];
+  options: OptionsInput;
+  calendarPlugins = [ dayGridPlugin ];
   header = {
     left: 'title',
     center: '',
-    right: 'addEventButton dayGridMonth,timeGridWeek,timeGridDay today prev,next'
+    right: 'addEventButton today prev,next'
   };
   buttons = {
     addEventButton: {
