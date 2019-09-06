@@ -69,8 +69,9 @@ export class PlanetCalendarComponent implements OnInit {
     this.getMeetups();
   }
 
-  eventClick(event) {
+  eventClick({ event }) {
     console.log(event);
+    this.dialog.open(DialogsAddMeetupsComponent, { data: { meetup: event.extendedProps.meetup, view: 'view' } });
   }
 
 }

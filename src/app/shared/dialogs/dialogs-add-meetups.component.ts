@@ -4,12 +4,17 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 
 @Component({
   template: `
-    <planet-meetups-add [isDialog]="true" [link]="link" (onGoBack)="meetupSubmitted($event)"></planet-meetups-add>
+    <ng-container [ngSwitch]="view">
+      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link" (onGoBack)="meetupSubmitted($event)"></planet-meetups-add>
+      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup"></planet-meetups-view>
+    </ng-container>
   `
 })
 export class DialogsAddMeetupsComponent {
 
   link: any = {};
+  view = 'add';
+  meetup: any = {};
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
@@ -17,6 +22,8 @@ export class DialogsAddMeetupsComponent {
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.link = this.data.link;
+    this.view = this.data.view;
+    this.meetup = this.data.meetup;
   }
 
   meetupSubmitted(res) {

@@ -1,38 +1,38 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!isDialog">
   <a mat-icon-button [routerLink]="parent ? ['/manager/meetups'] : ['/meetups']"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>Meetup</span>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail.title}}</h3>
+    <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
     <span class="toolbar-fill"></span>
     <div>
-      <ng-container *ngIf="!parent">
-        <button mat-stroked-button class="margin-lr-3" [disabled]="this.dateNow > (meetupDetail.endDate || meetupDetail.startDate)" (click)="openInviteMemberDialog()">
+      <ng-container *ngIf="!parent && !isDialog">
+        <button mat-stroked-button class="margin-lr-3" [disabled]="this.dateNow > (meetupDetail?.endDate || meetupDetail?.startDate)" (click)="openInviteMemberDialog()">
           <span i18n>Invite Member</span>
         </button>
         <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="isMeetupDisabled() ? 'You cannot join old meetup' : ''" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
-          <span *ngIf="meetupDetail.participate; else joinMeetupText" i18n>Leave</span>
+          <span *ngIf="meetupDetail?.participate; else joinMeetupText" i18n>Leave</span>
           <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
         </button>
       </ng-container>
     </div>
   </mat-toolbar>
   <div class="view-container">
-    <div class="left-tile">
+    <div [ngClass]="{'left-tile':!isDialog}">
       <p><b i18n>Created By:</b>
-        <a *ngIf="meetupDetail.createdBy !== undefined; else na" [routerLink]="['/users/profile', meetupDetail.createdBy]">{{' ' + meetupDetail.createdBy}}</a>
+        <a *ngIf="meetupDetail?.createdBy; else na" [routerLink]="['/users/profile', meetupDetail?.createdBy]">{{' ' + meetupDetail?.createdBy}}</a>
         <ng-template #na i18n> N/A </ng-template>
       </p>
-      <p *ngIf="meetupDetail.category" i18n><b>Category:</b> {{meetupDetail.category}}</p>
-      <p i18n><b>Meetup Date:</b> {{meetupDetail.startDate | date: 'fullDate'}} {{ meetupDetail.endDate && meetupDetail.endDate !== meetupDetail.startDate ? '- ' + (meetupDetail.endDate | date: 'fullDate') : '' }}</p>
-      <p *ngIf="meetupDetail.startTime || meetupDetail.endTime" i18n><b>Meetup Time:</b> {{meetupDetail.startTime}} {{ meetupDetail.endTime ? '-' : '' }} {{meetupDetail.endTime}}</p>
-      <p *ngIf="meetupDetail.recurring" i18n><b>Recurring:</b> {{meetupDetail.recurring | titlecase}}</p>
-      <p *ngIf="meetupDetail.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-      <p *ngIf="meetupDetail.meetupLocation" i18n><b>Location:</b> {{meetupDetail.meetupLocation}}</p>
-      <b i18n>Description:</b><td-markdown [content]="meetupDetail.description"></td-markdown>
+      <p *ngIf="meetupDetail?.category" i18n><b>Category:</b> {{meetupDetail?.category}}</p>
+      <p i18n><b>Meetup Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Meetup Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
+      <p *ngIf="meetupDetail?.recurring" i18n><b>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
+      <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
+      <p *ngIf="meetupDetail?.meetupLocation" i18n><b>Location:</b> {{meetupDetail?.meetupLocation}}</p>
+      <b i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
-    <div class="right-tile">
+    <div *ngIf="!isDialog" class="right-tile">
       <span i18n><b>Joined Members: ({{members.length}})</b></span>
       <p *ngIf="members.length === 0; else memberList" i18n> - No member has Joined this Meetup</p>
       <ng-template #memberList>
