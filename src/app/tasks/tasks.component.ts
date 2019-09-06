@@ -4,6 +4,9 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
+import { CouchService } from '../shared/couchdb.service';
+import { findDocuments } from '../shared/mangoQueries';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-tasks',
@@ -33,7 +36,8 @@ export class TasksComponent implements OnInit {
   constructor(
     private tasksService: TasksService,
     private planetMessageService: PlanetMessageService,
-    private userService: UserService
+    private userService: UserService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -80,6 +84,25 @@ export class TasksComponent implements OnInit {
 
   filterTasks() {
     this.filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
+  }
+
+  sendNotifications() {
+    const link = '/teams/view';
+    const notificationDoc = ({ user, userPlanetCode }) => ({
+      user,
+      'message': 'You were assigned a new task',
+      link,
+      'type': 'newTask',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode
+    });
+    return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread' })).pipe(
+      switchMap((notifications: any[]) => {
+
+      })
+    );
   }
 
 }
