@@ -7,34 +7,44 @@
 <div [ngClass]="{'space-container':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
   <div class="view-container">
-    <form class="view-container" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
-      <div>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-      </div>
+    <form class="form-spacing" [formGroup]="meetupForm" (ngSubmit)="onSubmit()" novalidate>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" required="true" placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <div>
-        <mat-form-field>
-          <input matInput [matDatepicker]="datepickerStart" i18n-placeholder required="true" placeholder="Start Date" formControlName="startDate">
-          <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
-          <mat-datepicker #datepickerStart></mat-datepicker>
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput [matDatepicker]="datepickerEnd" i18n-placeholder placeholder="End Date" formControlName="endDate">
-          <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
-          <mat-datepicker #datepickerEnd></mat-datepicker>
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
-      <div>
+      <mat-form-field>
+        <input matInput [matDatepicker]="datepickerStart" i18n-placeholder required="true" placeholder="Start Date" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
+        <mat-datepicker #datepickerStart></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [matDatepicker]="datepickerEnd" i18n-placeholder placeholder="End Date" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker #datepickerEnd></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <div class="full-width">
         <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">
           <mat-radio-button class="margin-tblr" value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
@@ -43,39 +53,13 @@
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
       </div>
-      <div *ngIf="meetupForm.controls.recurring.value==='weekly'">
+      <div *ngIf="meetupForm.controls.recurring.value==='weekly'" class="full-width">
         <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
-      <div class="margin-tb">
-        <mat-form-field>
-          <input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Category" formControlName="category">
-            <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
-          </mat-select>
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.category"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
-          <mat-error>
-            <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <ng-container>
-        <button mat-raised-button type="submit" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" i18n>Save</button>
-        <button class="margin-lr-2" mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
-      </ng-container>
     </form>
+    <div class="actions-container">
+      <button mat-raised-button type="submit" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" i18n>Save</button>
+      <button class="margin-lr-2" mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+    </div>
   </div>
 </div>

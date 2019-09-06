@@ -467,7 +467,7 @@ body {
     }
 
     .full-width {
-      grid-column: span 3;
+      grid-column: 1 / -1;
     }
 
     .new-line {
@@ -497,9 +497,6 @@ body {
 
     .form-spacing {
       width: $form-width-2;
-      .full-width {
-        grid-column: span 2;
-      }
     }
   }
 
@@ -510,9 +507,6 @@ body {
 
     .form-spacing {
       width: $form-width-1;
-      .full-width {
-        grid-column: span 1;
-      }
     }
   }
 
