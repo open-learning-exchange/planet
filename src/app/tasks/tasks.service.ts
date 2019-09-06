@@ -57,7 +57,8 @@ export class TasksService {
       onSubmit: (task) => {
         if (task) {
           const fullDate = new Date(task.deadline);
-          this.addTask({ ...task, deadline: new Date(fullDate.getFullYear(), fullDate.getMonth(), fullDate.getDate() - 0).getTime(), ...additionalFields }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
+          this.addTask({ ...task, deadline: new Date(fullDate.getFullYear(), fullDate.getMonth(), fullDate.getDate() - 0).getTime(),
+              ...additionalFields }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
             onSuccess(res.doc);
             this.dialogsFormService.closeDialogsForm();
           });
