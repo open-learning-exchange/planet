@@ -13,6 +13,7 @@ import { trackById } from '../shared/table-helpers';
 })
 export class TasksComponent implements OnInit {
 
+  now: Date = new Date();
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   private _assigness: any[];
@@ -34,7 +35,11 @@ export class TasksComponent implements OnInit {
     private tasksService: TasksService,
     private planetMessageService: PlanetMessageService,
     private userService: UserService
-  ) {}
+  ) {
+    setInterval(() => {
+      this.now = new Date();
+    }, 1);
+  }
 
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
