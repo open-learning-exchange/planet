@@ -39,8 +39,8 @@ export class SyncDirective {
   }
 
   syncPlanet() {
+    const defaultList = this.replicatorList((type) => (val) => this.syncService.replicatorId(val, type));
     const deleteArray = (replicators) => replicators.filter(rep => {
-      const defaultList = this.replicatorList((type) => (val) => val.db + '_' + type);
       return rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1;
     }).map(rep => {
       return { ...rep, _deleted: true };
