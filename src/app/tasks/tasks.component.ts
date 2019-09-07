@@ -75,6 +75,7 @@ export class TasksComponent implements OnInit {
     this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasksService.getTasks();
     });
+    this.sendNotifications();
   }
 
   setFilter(newFilter: 'self' | 'all') {
@@ -86,7 +87,7 @@ export class TasksComponent implements OnInit {
     this.filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
   }
 
-  sendNotifications() {
+  sendNotifications(assignee: any = '') {
     const link = '/teams/view';
     const notificationDoc = ({ user, userPlanetCode }) => ({
       user,
@@ -98,11 +99,16 @@ export class TasksComponent implements OnInit {
       'time': this.couchService.datePlaceholder,
       userPlanetCode
     });
-    return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread' })).pipe(
-      switchMap((notifications: any[]) => {
 
-      })
-    );
+    if (assignee !== '' && assignee.userDoc) {
+      return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread' })).pipe(
+        switchMap(() => {
+          const newNotifications = this.assignees.filter(user => notificationDoc => notificationDoc.user === user.user)
+            .map(user => notificationDoc(user));
+          return this.couchService.bulkDocs('notifications', newNotifications);
+        })
+      );
+    }
   }
 
 }
