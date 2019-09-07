@@ -103,7 +103,7 @@ export class TasksComponent implements OnInit {
     if (assignee !== '' && assignee.userDoc) {
       return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread' })).pipe(
         switchMap(() => {
-          const newNotifications = this.assignees.filter(user => notificationDoc => notificationDoc.user === user.user)
+          const newNotifications = this.tasks.filter(assignee)
             .map(user => notificationDoc(user));
           return this.couchService.bulkDocs('notifications', newNotifications);
         })
