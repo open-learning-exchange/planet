@@ -4,7 +4,9 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FeedbackService {
   readonly dbName = 'feedback';
   private feedbackUpdate = new Subject<any[]>();

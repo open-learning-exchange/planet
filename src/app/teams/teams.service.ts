@@ -26,7 +26,9 @@ const addTeamDialogFields = [
 ];
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TeamsService {
 
   dbName = 'teams';

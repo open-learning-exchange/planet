@@ -22,7 +22,9 @@ const passwordFormFields = [
   }
 ];
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ManagerService {
 
   private configuration = this.stateService.configuration;

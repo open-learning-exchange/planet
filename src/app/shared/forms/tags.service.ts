@@ -7,7 +7,9 @@ import { findDocuments } from '../mangoQueries';
 import { createDeleteArray } from '../table-helpers';
 import { Router, ActivatedRoute, UrlTree, UrlSegmentGroup, UrlSegment, PRIMARY_OUTLET } from '@angular/router';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TagsService {
 
   constructor(

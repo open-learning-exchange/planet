@@ -48,23 +48,23 @@ import { NotificationsService } from './notifications/notifications.service';
     AppComponent, PageNotFoundComponent
   ],
   providers: [
-    CouchService,
-    AuthService,
-    UserService,
-    ValidatorService,
-    PlanetMessageService,
+    //CouchService,
+    //AuthService,
+    //UserService,
+    //ValidatorService,
+    //PlanetMessageService,
     MatIconRegistry,
-    FeedbackService,
-    ResourcesService,
-    SubmissionsService,
-    CoursesService,
+    //FeedbackService,
+    //ResourcesService,
+    //SubmissionsService,
+    //CoursesService,
     ...SHARED_SERVICES,
-    SyncService,
-    TeamsService,
-    RatingService,
-    TagsService,
-    ManagerService,
-    NotificationsService
+    //SyncService,
+    //TeamsService,
+    //RatingService,
+    //TagsService,
+    //ManagerService,
+    //NotificationsService
   ],
   bootstrap: [ AppComponent ]
 })
