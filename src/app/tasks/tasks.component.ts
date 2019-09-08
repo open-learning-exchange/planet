@@ -61,7 +61,7 @@ export class TasksComponent implements OnInit {
   }
 
   toggleTaskComplete(task) {
-    this.tasksService.addTask({ ...task, completed: !task.completed }).subscribe((res) => {
+    this.tasksService.addTask({ ...task, completed: !task.completed, completedTime: this.now }).subscribe((res) => {
       this.tasksService.getTasks();
     });
   }

@@ -65,11 +65,7 @@ export class TasksService {
       autoFocus: true
     });
   }
-  //task.completed
-//   const fullDate = new Date(item[dateField]);
-//   return { ...item, date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf() };
-// }),
-//.getTime()
+
   addTask(task) {
     return this.couchService.updateDocument(this.dbName, { ...task, completed: task.completed || false });
   }
