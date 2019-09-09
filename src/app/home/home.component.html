@@ -20,10 +20,7 @@
     <a mat-button routerLink="/teams"
       routerLinkActive="active"
       i18n-title title="Teams" i18n>Teams</a>
-    <a mat-button routerLink="/meetups" *planetBeta="false"
-      routerLinkActive="active"
-      i18n-title title="Meetups" i18n>Meetups</a>
-    <a mat-button routerLink="/enterprises" *planetBeta
+    <a mat-button routerLink="/enterprises"
       routerLinkActive="active"
       i18n-title title="Enterprises" i18n>Enterprises</a>
     <a mat-button routerLink="/surveys"
@@ -115,16 +112,7 @@
             <label i18n>Teams</label>
           </a>
         </li>
-        <li *planetBeta="false">
-          <a mat-button routerLink="/meetups"
-            routerLinkActive="active"
-            planetPulsateIcon
-            i18n-title title="Meetups">
-            <mat-icon svgIcon="myMeetups"></mat-icon>
-            <label i18n>Meetups</label>
-          </a>
-        </li>
-        <li *planetBeta>
+        <li>
             <a mat-button routerLink="/enterprises"
             routerLinkActive="active"
             planetPulsateIcon
