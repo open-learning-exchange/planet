@@ -39,7 +39,7 @@
           {{element.doc.createdDate | date: 'medium'}}
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="teamType" *ngIf="!(planetType === 'community' && mode === 'enterprise')">
+      <ng-container matColumnDef="teamType">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container [ngSwitch]="element.doc.teamType">
