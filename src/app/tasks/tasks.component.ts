@@ -88,7 +88,7 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = '/teams/view';
+    const link = '/teams/view/${teamID}';
     const notificationDoc = ({ user, userPlanetCode }) => ({
       user,
       'message': 'You were assigned a new task',
@@ -102,8 +102,8 @@ export class TasksComponent implements OnInit {
 
     if (assignee !== '' && assignee.userDoc) {
       return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread' })).pipe(
-        switchMap(() => {
-          const newNotifications = this.tasks.filter(assignee)
+        switchMap((res: any[]) => {
+          const newNotifications = res.filter(a => a.userId !== assignee.userId)
             .map(user => notificationDoc(user));
           return this.couchService.bulkDocs('notifications', newNotifications);
         })
