@@ -35,7 +35,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   userMembership: any[] = [];
-  displayedColumns = [ 'name', 'createdDate', 'teamType', 'action' ];
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
@@ -47,6 +46,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  displayedColumns = this.planetType === 'community' && this.mode === 'enterprise' ?
+    [ 'name', 'createdDate', 'action' ] :
+    [ 'name', 'createdDate', 'teamType', 'action' ];
 
   constructor(
     private userService: UserService,
