@@ -105,18 +105,18 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.meetupForm.valid) {
-      const meetup = { ...this.meetupForm.value, link: this.link };
-      if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
-        this.updateMeetup(meetup);
-      } else {
-        this.addMeetup(meetup);
-      }
-    } else {
+    if (!this.meetupForm.valid) {
       Object.keys(this.meetupForm.controls).forEach(field => {
         const control = this.meetupForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+      return;
+    }
+    const meetup = { ...this.meetupForm.value, link: this.link };
+    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
+      this.updateMeetup(meetup);
+    } else {
+      this.addMeetup(meetup);
     }
   }
 
