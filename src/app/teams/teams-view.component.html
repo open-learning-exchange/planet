@@ -136,10 +136,10 @@
                     {{course.courseTitle}}
                   </a>
                 </div>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu">
                   <mat-icon>more_vert</mat-icon>
                 </button>
-                <mat-menu #resourceMenu="matMenu">
+                <mat-menu #courseMenu="matMenu">
                   <button mat-menu-item (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
