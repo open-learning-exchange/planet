@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
+import { Validators } from '@angular/forms';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -67,7 +68,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
         {
           type: [ 'credit', CustomValidators.required ],
           description: [ '', CustomValidators.required ],
-          amount: [ '', CustomValidators.required ],
+          amount: [ '', [ CustomValidators.required, Validators.min(0) ] ],
           date: [ new Date(time), CustomValidators.required ]
         },
         { onSubmit: this.submitTransaction.bind(this) }
