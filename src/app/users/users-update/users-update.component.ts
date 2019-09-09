@@ -25,7 +25,7 @@ import { ValidatorService } from '../../validators/validator.service';
     .view-container form {
       margin: 0 10px 10px 0;
     }
-    ` ]
+  ` ]
 })
 export class UsersUpdateComponent implements OnInit {
   user: any = {};
