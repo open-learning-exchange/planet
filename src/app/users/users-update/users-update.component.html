@@ -55,7 +55,7 @@
           <mat-error><planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-radio-group formControlName="gender" [required]="!submissionMode" class="full-width">
-          <label i18n>Gender</label>
+          <label id="required" i18n>Gender</label>
           <mat-radio-button class="planet-radio-button" value="male">
             <div class="radio-icon-label">
               <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
