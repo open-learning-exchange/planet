@@ -5,7 +5,6 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
 
@@ -56,7 +55,9 @@ export class TasksService {
     this.dialogsFormService.openDialogsForm('Add Task', fields, formGroup, {
       onSubmit: (task) => {
         if (task) {
-          this.addTask({ ...task, ...additionalFields }).pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe((res) => {
+          this.addTask({ ...task, deadline: new Date(task.deadline).getTime(), ...additionalFields }).pipe(
+            finalize(() => this.dialogsLoadingService.stop())
+          ).subscribe((res) => {
             onSuccess(res.doc);
             this.dialogsFormService.closeDialogsForm();
           });

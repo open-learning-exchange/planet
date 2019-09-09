@@ -47,9 +47,7 @@ export class TasksComponent implements OnInit {
   }
 
   addTask() {
-    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, (newTask) => {
-      let newTaskIndex = this.tasks.findIndex((task) => new Date(newTask.deadline) < new Date(task.deadline) || task.completed);
-      newTaskIndex = newTaskIndex < 0 ? this.tasks.length : newTaskIndex;
+    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, () => {
       this.tasksService.getTasks();
       this.planetMessageService.showMessage('New task has been added');
     });
