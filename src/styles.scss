@@ -516,6 +516,10 @@ body {
     }
   }
 
+  mat-radio-group[required] label:after {
+    content: " *";
+  }
+
   .inner-gaps {
     display: grid;
     grid-gap: 3px;
