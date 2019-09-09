@@ -47,7 +47,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   displayedColumns = this.planetType === 'community' && this.mode === 'enterprise' ?
-   [ 'name', 'createdDate', 'action' ] : [ 'name', 'createdDate', 'teamType', 'action' ];
+    [ 'name', 'createdDate', 'action' ] :
+    [ 'name', 'createdDate', 'teamType', 'action' ];
 
   constructor(
     private userService: UserService,
