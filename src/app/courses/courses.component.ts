@@ -179,10 +179,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
-    const tagParam = this.route.snapshot.paramMap.get('collections');
-    if (tagParam) {
-      tagParam.split('_,_').forEach(tag => this.addTag(tag));
-    }
+    this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
   }
 
   onPaginateChange(e: PageEvent) {

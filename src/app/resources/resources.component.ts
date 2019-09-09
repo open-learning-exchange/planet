@@ -150,10 +150,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
-    const tagParam = this.route.snapshot.paramMap.get('collections');
-    if (tagParam) {
-      tagParam.split('_,_').forEach(tag => this.addTag(tag));
-    }
+    this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
   }
 
   ngOnDestroy() {

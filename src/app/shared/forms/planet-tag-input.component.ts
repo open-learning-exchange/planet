@@ -118,6 +118,15 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
+  // newTags is a string of tags delimited by _,_
+  addTags(newTags?: string) {
+    if (newTags === undefined) {
+      return;
+    }
+    newTags.split('_,_').forEach(tag => this.addTag(tag));
+  }
+
+
   addTag(newTag: string) {
     if (this.value.indexOf(newTag.trim()) > -1) {
       return;
