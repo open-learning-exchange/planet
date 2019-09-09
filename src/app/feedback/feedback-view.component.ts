@@ -118,9 +118,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.put(this.dbName + '/' + this.feedback._id, this.feedback).subscribe(
       (res) => {
         this.changeEditTitleMode = false;
-        this.couchService.put(this.dbName + '/' + res.rev, this.feedback).subscribe(
-          this.changeEditTitleMode = false
-        );
+        this.feedback._rev = res.rev;
       },
       () => this.planetMessageService.showAlert('There was an error changing title')
     );
