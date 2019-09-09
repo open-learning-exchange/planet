@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
+import { Validators } from '@angular/forms';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'planet-teams-view-finances',
