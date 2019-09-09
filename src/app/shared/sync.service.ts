@@ -51,7 +51,7 @@ export class SyncService {
     }
     return {
       // Name the id always after the local database
-      '_id': (type === 'push' ? dbSource : dbTarget).replace('_', '') + '_' + type + (replicator.date ? '_' + Date.now() : ''),
+      '_id': this.replicatorId(replicator, type),
       'source': this.dbObj(dbSource, credentials, type === 'pull' && type !== 'internal'),
       'target': this.dbObj(dbTarget, credentials, type !== 'pull' && type !== 'internal'),
       'selector': replicator.selector,
@@ -59,6 +59,10 @@ export class SyncService {
       'owner': credentials.name,
       'continuous': replicator.continuous
     };
+  }
+
+  replicatorId({ db, dbSource, dbTarget, date }: { db?, dbSource?, dbTarget?, date? }, type: 'push' | 'pull' | 'internal') {
+    return ((type === 'push' ? dbSource : dbTarget) || db).replace('_', '') + '_' + type + (date ? '_' + Date.now() : '');
   }
 
   private itemSelector(items) {
