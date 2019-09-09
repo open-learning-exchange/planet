@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import {
@@ -17,10 +17,26 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
-  templateUrl: './meetups-add.component.html'
+  selector: 'planet-meetups-add',
+  templateUrl: './meetups-add.component.html',
+  styles: [ `
+    form.form-spacing {
+      width: inherit;
+    }
+    .actions-container {
+      align-self: center;
+    }
+    .view-container form {
+      min-width: 385px;
+      max-width: 750px;
+    }
+  ` ]
 })
-
 export class MeetupsAddComponent implements OnInit {
+
+  @Input() link: any = {};
+  @Input() isDialog = false;
+  @Output() onGoBack = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup;
   readonly dbName = 'meetups'; // database name constant
@@ -44,7 +60,7 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.route.snapshot.url[0].path === 'update') {
+    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
@@ -89,17 +105,18 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.meetupForm.valid) {
-      if (this.route.snapshot.url[0].path === 'update') {
-        this.updateMeetup(this.meetupForm.value);
-      } else {
-        this.addMeetup(this.meetupForm.value);
-      }
-    } else {
+    if (!this.meetupForm.valid) {
       Object.keys(this.meetupForm.controls).forEach(field => {
         const control = this.meetupForm.get(field);
         control.markAsTouched({ onlySelf: true });
       });
+      return;
+    }
+    const meetup = { ...this.meetupForm.value, link: this.link };
+    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
+      this.updateMeetup(meetup);
+    } else {
+      this.addMeetup(meetup);
     }
   }
 
@@ -118,9 +135,9 @@ export class MeetupsAddComponent implements OnInit {
       switchMap(data => {
         return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
       })
-    ).subscribe(() => {
-        this.router.navigate([ '/meetups' ]);
-        this.planetMessageService.showMessage(meetupInfo.title + ' Updated Successfully');
+    ).subscribe((res) => {
+      this.goBack(res);
+      this.planetMessageService.showMessage(meetupInfo.title + ' Updated Successfully');
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -132,14 +149,22 @@ export class MeetupsAddComponent implements OnInit {
       ...meetupInfo,
       'startDate': Date.parse(meetupInfo.startDate),
       'endDate': Date.parse(meetupInfo.endDate),
-    }).subscribe(() => {
-      this.router.navigate([ '/meetups' ]);
+    }).subscribe((res) => {
+      this.goBack(res);
       this.planetMessageService.showMessage(meetupInfo.title + ' Added');
     }, (err) => console.log(err));
   }
 
   cancel() {
-    this.router.navigate([ '/meetups' ]);
+    this.goBack();
+  }
+
+  goBack(res?) {
+    if (this.isDialog) {
+      this.onGoBack.emit(res);
+    } else {
+      this.router.navigate([ '/meetups' ]);
+    }
   }
 
   isClassDay(day) {

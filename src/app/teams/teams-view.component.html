@@ -91,6 +91,12 @@
         </ng-template>
       </mat-tab>
       <ng-container *ngIf="userStatus === 'member'">
+        <mat-tab *planetBeta #calendarTab>
+          <ng-template mat-tab-label>
+            <ng-container i18n>Calendar</ng-container>
+          </ng-template>
+          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }"></planet-calendar>
+        </mat-tab>
         <mat-tab *planetBeta>
           <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>

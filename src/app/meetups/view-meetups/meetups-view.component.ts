@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -16,13 +16,16 @@ import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 
 @Component({
+  selector: 'planet-meetups-view',
   templateUrl: './meetups-view.component.html',
   styleUrls: [ './meetups-view.scss' ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {
+
+  @Input() meetupDetail: any;
+  @Input() isDialog = false;
   private onDestroy$ = new Subject<void>();
-  meetupDetail: any = {};
   members = [];
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
@@ -46,20 +49,22 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getEnrolledUsers();
-    this.route.paramMap
-      .pipe(debug('Getting meetup id from parameters'), takeUntil(this.onDestroy$))
-      .subscribe((params: ParamMap) => {
-        const meetupId = params.get('id');
-        const getOpts: any = { meetupIds: [ meetupId ] };
-        if (this.parent) {
-          getOpts.opts = { domain: this.stateService.configuration.parentDomain };
-        }
-        this.meetupService.updateMeetups(getOpts);
-      }, error => console.log(error), () => console.log('complete getting meetup id'));
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
         this.meetupDetail = meetupArray[0];
       });
+    if (this.meetupDetail === undefined) {
+      this.route.paramMap
+        .pipe(debug('Getting meetup id from parameters'), takeUntil(this.onDestroy$))
+        .subscribe((params: ParamMap) => {
+          const meetupId = params.get('id');
+          const getOpts: any = { meetupIds: [ meetupId ] };
+          if (this.parent) {
+            getOpts.opts = { domain: this.stateService.configuration.parentDomain };
+          }
+          this.meetupService.updateMeetups(getOpts);
+        }, error => console.log(error), () => console.log('complete getting meetup id'));
+    }
   }
 
   ngOnDestroy() {
@@ -140,7 +145,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   isMeetupDisabled() {
-    const meetupDate = this.meetupDetail.endDate ? this.meetupDetail.endDate : this.meetupDetail.startDate;
+    const meetupDate = this.meetupDetail && (this.meetupDetail.endDate ? this.meetupDetail.endDate : this.meetupDetail.startDate);
     return (this.dateNow > meetupDate) && !this.meetupDetail.participate ? true : false;
   }
 

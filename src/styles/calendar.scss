@@ -1,0 +1,37 @@
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '../app/variables';
+
+full-calendar {
+  .fc-button-primary {
+    background-color: $primary;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 36px;
+    padding: 0 16px;
+    position: relative;
+
+    &:disabled {
+      background-color: $disabled-button;
+      color: $disabled-button-text;
+    }
+
+    &:not(:disabled).fc-button-active, &:not(:disabled).fc-button-active:hover {
+      background-color: $primary-dark;
+    }
+
+    &:not(:disabled):hover {
+      background-color: $primary;
+      &::before {
+        height: 100%;
+        width: 100%;
+        content: "";
+        background-color: rgba(0, 0, 0, 0.04);
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
+}

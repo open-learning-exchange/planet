@@ -27,9 +27,12 @@ $grey: mat-color($mat-grey, 400);
 $primary-lighter: mat-color($planet-app-primary, 100);
 $primary-light: mat-color($planet-app-primary, 300);
 $accent-lighter: mat-color($planet-app-accent, 100);
+$primary-dark: mat-color($planet-app-primary, $dark-hue);
 
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
+$disabled-button: map-get($mat-light-theme-background, 'disabled-button');
+$disabled-button-text: map-get($mat-light-theme-foreground, 'disabled-button');
 
 $font-family: Roboto, sans-serif;
 

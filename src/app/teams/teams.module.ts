@@ -10,6 +10,7 @@ import { NewsModule } from '../news/news.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
+import { PlanetCalendarModule } from '../shared/calendar.module';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { TeamsViewFinancesComponent } from './teams-view-finances.component';
     NewsModule,
     DialogsAddResourcesModule,
     CovalentMarkdownModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    PlanetCalendarModule
   ],
   declarations: [
     TeamsComponent,
