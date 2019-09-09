@@ -267,14 +267,21 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       ...user,
       roles,
       oldRoles: [ ...user.roles ] || [ 'learner' ],
-      isUserAdmin: roles.indexOf('manager') > -1
+      isUserAdmin: roles.indexOf('manager') > -1 || roles.indexOf('_admin') > -1
     };
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(switchMap((response) => {
+    const obs = [ this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser) ];
+    if (tempUser.oldRoles.indexOf('_admin')) {
+      obs.push(this.couchService.delete('_node/nonode@nohost/_config/admins/' + tempUser.name));
+    }
+    if (tempUser.roles.indexOf('_admin')) {
+      obs.push(this.couchService.put('_node/nonode@nohost/_config/admins/' + tempUser.name, 'password'));
+    }
+    forkJoin(obs).pipe(switchMap(() => {
       if (tempUser.isUserAdmin) {
         return this.removeFromTabletUsers(tempUser);
       }
       return of({ });
-    })).subscribe((response) => {
+    })).subscribe(() => {
       console.log('Success!');
       this.initializeData();
     }, (error) => {
