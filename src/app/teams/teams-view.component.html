@@ -135,12 +135,24 @@
           </ng-template>
           <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
           <ng-template #courseList>
-            <mat-card *ngFor="let course of team?.courses">
-              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
-              <mat-card-actions>
-                <button mat-raised-button color="warn" (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })" i18n>Remove</button>
-              </mat-card-actions>
-            </mat-card>
+            <div class="card-grid">
+              <mat-card *ngFor="let course of team?.courses">
+                <div class="mat-subheading-2">
+                  <a [routerLink]="'/courses/view/' + course._id">
+                    {{course.courseTitle}}
+                  </a>
+                </div>
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #courseMenu="matMenu">
+                  <button mat-menu-item (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })">
+                    <mat-icon>clear</mat-icon>
+                    <span i18n>Remove</span>
+                  </button>
+                </mat-menu>
+              </mat-card>
+            </div>
           </ng-template>
         </mat-tab>
         <mat-tab label="Resources">
