@@ -34,7 +34,7 @@
     </div>
     <div class="right-tile">
       <span i18n><b>Joined Members: ({{members.length}})</b></span>
-      <p *ngIf="members.length === 0; else memberList" i18n> - No members have joined this meetup</p>
+      <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
       <ng-template #memberList>
         <ul>
           <li *ngFor="let mem of members">
