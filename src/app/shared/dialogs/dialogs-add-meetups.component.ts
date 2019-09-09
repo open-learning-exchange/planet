@@ -21,9 +21,9 @@ export class DialogsAddMeetupsComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.link = this.data.link;
-    this.view = this.data.view;
-    this.meetup = this.data.meetup;
+    this.link = this.data.link || this.link;
+    this.view = this.data.view || this.view;
+    this.meetup = this.data.meetup || this.meetup;
   }
 
   meetupSubmitted(res) {
