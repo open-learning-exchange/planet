@@ -1,5 +1,5 @@
 FROM node:10.16.0-alpine as builder
-LABEL maintainer="sahil@ole.org,mappuji@ole.org"
+LABEL maintainer="paul@ole.org"
 
 ARG LANGUAGE_MODE="single"
 ENV I18N ${LANGUAGE_MODE}
@@ -20,3 +20,9 @@ RUN apk add --update \
     jq
 RUN npm i --silent
 RUN ./compile_planet.sh
+
+####
+
+FROM node:10.16.0-alpine
+
+COPY --from=builder /ng-app/dist /ng-app/dist
