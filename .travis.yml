@@ -56,18 +56,22 @@ jobs:
   include:
     - stage: docker-creation
       script:
-        - set -e
-        - source ./.travis/travis_utils.sh
-        - prepare_ci
-        - prepare_planet_test
-        - deploy_docker './docker/planet/builder-Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST 'eng' 'en'
+        - bash ./.travis/deploy_planet.sh 'eng' 'en'
     - stage: docker-creation
       script:
-        - set -e
-        - source ./.travis/travis_utils.sh
-        - prepare_ci
-        - prepare_planet_test
-        - deploy_docker './docker/planet/builder-Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST 'ara' 'ar'
+        - bash ./.travis/deploy_planet.sh 'ara' 'ar'
+    - stage: docker-creation
+      script:
+        - bash ./.travis/deploy_planet.sh 'fra' 'fr'
+    - stage: docker-creation
+      script:
+        - bash ./.travis/deploy_planet.sh 'spa' 'es'
+    - stage: docker-creation
+      script:
+        - bash ./.travis/deploy_planet.sh 'nep' 'ne'
+    - stage: docker-creation
+      script:
+        - bash ./.travis/deploy_planet.sh 'som' 'so'
     - stage: docker-creation
       script:
         - set -e
