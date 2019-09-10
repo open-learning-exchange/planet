@@ -135,9 +135,9 @@
               (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'], $event)"
               mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
             <a
-              *ngIf="element.doc.roles.length > 0 && filterType === 'local'"
-              (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['_admin'], $event)"
-              mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Member} 0 {Admin}}</a>
+              *ngIf="filterType === 'local'"
+              (click)="setRoles(element.doc, element.doc.roles.length ? ['_admin'] : ['learner'], $event, element.doc.isUserAdmin && element.doc.roles.length === 0)"
+              mat-raised-button color="primary" i18n>{+(element.doc.isUserAdmin && element.doc.roles.length === 0), select, 1 {Member} 0 {Admin}}</a>
           </span>
           <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
             <mat-icon>visibility</mat-icon> View Profile
