@@ -55,21 +55,27 @@ stages:
 jobs:
   include:
     - stage: docker-creation
+      name: "English"
       script:
         - bash ./.travis/deploy_single_language.sh 'eng' 'en'
     - stage: docker-creation
+      name: "Arabic"
       script:
         - bash ./.travis/deploy_single_language.sh 'ara' 'ar'
     - stage: docker-creation
+      name: "French"
       script:
         - bash ./.travis/deploy_single_language.sh 'fra' 'fr'
     - stage: docker-creation
+      name: "Spanish"
       script:
         - bash ./.travis/deploy_single_language.sh 'spa' 'es'
     - stage: docker-creation
+      name: "Nepali"
       script:
         - bash ./.travis/deploy_single_language.sh 'nep' 'ne'
     - stage: docker-creation
+      name: "Somali"
       script:
         - bash ./.travis/deploy_single_language.sh 'som' 'so'
     - stage: docker-creation
