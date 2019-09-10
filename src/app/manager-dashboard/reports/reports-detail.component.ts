@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { combineLatest, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject, of } from 'rxjs';
+import { map, takeUntil, switchMap } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
 import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { PlanetCsvService } from '../../shared/planet-csv.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -24,12 +25,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   filter = '';
   codeParam = '';
+  loginActivities = [];
+  resourceActivities = [];
 
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private planetCsvService: PlanetCsvService
   ) {}
 
   ngOnInit() {
@@ -79,7 +83,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.activityParams()).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+    this.activityService.getAllLoginActivities(this.activityParams())
+    .pipe(
+      switchMap((loginActivities: any) => {
+        this.loginActivities = loginActivities;
+        return of(loginActivities);
+      }),
+      this.activityService.groupLoginActivities()
+    ).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
@@ -95,7 +106,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.activityParams()).subscribe(({ byResource, byMonth }) => {
+    this.activityService.getAllResourceVisits(this.activityParams())
+    .pipe(
+      switchMap((resourceActivities: any) => {
+        this.resourceActivities = resourceActivities;
+        return of(resourceActivities);
+      }),
+      this.activityService.groupResourceVisits()
+    ).subscribe(({ byResource, byMonth }) => {
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
@@ -197,4 +215,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
+  exportCSV(type) {
+    switch (type) {
+      case 'login':
+        this.planetCsvService.generate(this.loginActivities);
+        break;
+      case 'resource_visit':
+        this.planetCsvService.generate(this.resourceActivities);
+        break;
+    }
+  }
 }
