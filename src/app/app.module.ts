@@ -47,10 +47,6 @@ import { NotificationsService } from './notifications/notifications.service';
   declarations: [
     AppComponent, PageNotFoundComponent
   ],
-  providers: [
-    MatIconRegistry,
-    ...SHARED_SERVICES,
-  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {}

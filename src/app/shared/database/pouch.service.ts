@@ -9,7 +9,9 @@ import { environment } from '../../../environments/environment';
 PouchDB.plugin(PouchDBAuth);
 PouchDB.plugin(PouchDBFind);
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class PouchService {
   private baseUrl = environment.couchAddress + '/';
   private localDBs = new Map<string, PouchDB.Database>();
