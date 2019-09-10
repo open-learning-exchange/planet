@@ -56,22 +56,22 @@ jobs:
   include:
     - stage: docker-creation
       script:
-        - bash ./.travis/deploy_planet.sh 'eng' 'en'
+        - bash ./.travis/deploy_single_language.sh 'eng' 'en'
     - stage: docker-creation
       script:
-        - bash ./.travis/deploy_planet.sh 'ara' 'ar'
+        - bash ./.travis/deploy_single_language.sh 'ara' 'ar'
     - stage: docker-creation
       script:
-        - bash ./.travis/deploy_planet.sh 'fra' 'fr'
+        - bash ./.travis/deploy_single_language.sh 'fra' 'fr'
     - stage: docker-creation
       script:
-        - bash ./.travis/deploy_planet.sh 'spa' 'es'
+        - bash ./.travis/deploy_single_language.sh 'spa' 'es'
     - stage: docker-creation
       script:
-        - bash ./.travis/deploy_planet.sh 'nep' 'ne'
+        - bash ./.travis/deploy_single_language.sh 'nep' 'ne'
     - stage: docker-creation
       script:
-        - bash ./.travis/deploy_planet.sh 'som' 'so'
+        - bash ./.travis/deploy_single_language.sh 'som' 'so'
     - stage: docker-creation
       script:
         - set -e
