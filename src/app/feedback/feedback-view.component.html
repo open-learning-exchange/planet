@@ -16,7 +16,7 @@
         <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
-        <button class="margin-tb" mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
+        <button class="margin-tb" mat-stroked-button i18n (click)="toggleParams()" *planetAuthorizedRoles>{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
       </ng-container>
       <ng-template #editTitleBlock>
         <mat-form-field color="accent" class="margin-lr-3 title-edit">
@@ -42,6 +42,7 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div *ngIf="showParams==='on'">
+      <h2>Page Parameters</h2>
       <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
     </div>
     <div class="chat-list" #chatList>
