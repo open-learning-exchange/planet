@@ -71,7 +71,9 @@ export class PlanetCalendarComponent implements OnInit {
 
   eventClick({ event }) {
     console.log(event);
-    this.dialog.open(DialogsAddMeetupsComponent, { data: { meetup: event.extendedProps.meetup, view: 'view' } });
+    this.dialog.open(DialogsAddMeetupsComponent, { data: {
+      meetup: event.extendedProps.meetup, view: 'view', link: this.link, onMeetupSubmitted: this.onMeetupSubmitted.bind(this)
+    } });
   }
 
 }

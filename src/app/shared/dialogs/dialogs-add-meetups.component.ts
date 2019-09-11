@@ -6,7 +6,8 @@ import { DialogsLoadingService } from './dialogs-loading.service';
   template: `
     <ng-container [ngSwitch]="view">
       <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link" (onGoBack)="meetupSubmitted($event)"></planet-meetups-add>
-      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup"></planet-meetups-view>
+      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)">
+      </planet-meetups-view>
     </ng-container>
   `
 })
@@ -30,6 +31,13 @@ export class DialogsAddMeetupsComponent {
     this.data.onMeetupSubmitted(res);
     this.dialogsLoadingService.stop();
     this.dialogRef.close();
+  }
+
+  switchView(view: 'add' | 'view' | 'close') {
+    if (view === 'close') {
+      this.dialogRef.close();
+    }
+    this.view = view;
   }
 
 }
