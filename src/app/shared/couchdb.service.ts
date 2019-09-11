@@ -13,7 +13,6 @@ class DatePlaceholder {}
   providedIn: 'root'
 })
 
-
 export class CouchService {
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
