@@ -47,7 +47,7 @@
           <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
+          <mat-select i18n-placeholder placeholder="Level" formControlName="level" [required]="!submissionMode">
             <mat-option *ngFor="let level of educationLevel" [value]="level">
               {{level}}
             </mat-option>
