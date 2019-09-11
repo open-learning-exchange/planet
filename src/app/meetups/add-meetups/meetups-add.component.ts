@@ -36,6 +36,7 @@ export class MeetupsAddComponent implements OnInit {
 
   @Input() link: any = {};
   @Input() isDialog = false;
+  @Input() meetup: any = {};
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup;
@@ -60,21 +61,26 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
-      this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id'))
-      .subscribe((data) => {
-        this.pageType = 'Update';
-        this.revision = data._rev;
-        this.id = data._id;
-        this.meetupFrequency = data.recurring === 'daily' ? [] : data.day;
-        data.startDate = new Date(data.startDate);
-        data.endDate = data.endDate ? new Date(data.endDate) : '';
-        this.meetupForm.patchValue(data);
-        this.meetupForm.controls.day.patchValue(data.day);
-      }, (error) => {
-        console.log(error);
-      });
+    if (this.meetup._id) {
+      this.setMeetupData({ ...this.meetup });
     }
+    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
+      this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
+        data => this.setMeetupData(data),
+        error => console.log(error)
+      );
+    }
+  }
+
+  setMeetupData(meetup: any) {
+    this.pageType = 'Update';
+    this.revision = meetup._rev;
+    this.id = meetup._id;
+    this.meetupFrequency = meetup.recurring === 'daily' ? [] : meetup.day;
+    meetup.startDate = new Date(meetup.startDate);
+    meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : '';
+    this.meetupForm.patchValue(meetup);
+    this.meetupForm.controls.day.patchValue(meetup.day);
   }
 
   createForm() {
@@ -113,7 +119,7 @@ export class MeetupsAddComponent implements OnInit {
       return;
     }
     const meetup = { ...this.meetupForm.value, link: this.link };
-    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
+    if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
       this.addMeetup(meetup);
