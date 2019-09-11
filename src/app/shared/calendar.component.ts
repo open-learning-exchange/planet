@@ -62,17 +62,17 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   openAddEventDialog() {
-    this.dialog.open(DialogsAddMeetupsComponent, { data: { link: this.link, onMeetupSubmitted: this.onMeetupSubmitted.bind(this) } });
+    this.dialog.open(DialogsAddMeetupsComponent, { data: { link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this) } });
   }
 
-  onMeetupSubmitted(res) {
+  onMeetupsChange() {
     this.getMeetups();
   }
 
   eventClick({ event }) {
     console.log(event);
     this.dialog.open(DialogsAddMeetupsComponent, { data: {
-      meetup: event.extendedProps.meetup, view: 'view', link: this.link, onMeetupSubmitted: this.onMeetupSubmitted.bind(this)
+      meetup: event.extendedProps.meetup, view: 'view', link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this)
     } });
   }
 

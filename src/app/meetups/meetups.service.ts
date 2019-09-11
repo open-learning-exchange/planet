@@ -7,16 +7,20 @@ import { Subject, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { dedupeShelfReduce } from '../shared/utils';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Injectable()
 export class MeetupService {
 
   private meetupUpdated = new Subject<any[]>();
+  deleteDialog: MatDialogRef<DialogsPromptComponent>;
   meetupUpdated$ = this.meetupUpdated.asObservable();
   meetups = [];
   userShelf = this.userService.shelf;
 
   constructor(
+    private dialog: MatDialog,
     private couchService: CouchService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService
@@ -89,6 +93,32 @@ export class MeetupService {
         this.userService.shelf = this.userShelf;
         return { response, participate };
     }));
+  }
+
+  openDeleteDialog(meetups: any[] | any, callback) {
+    const isMany = meetups.length > 1;
+    const displayName = isMany ? '' : (meetups[0] || meetups).title;
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteMeetups([ meetups ].flat(), displayName, callback),
+        changeType: 'delete',
+        type: 'event',
+        amount: isMany ? 'many' : 'single',
+        displayName
+      }
+    });
+  }
+
+  deleteMeetups(meetups: any[], displayName, callback) {
+    return {
+      request: this.couchService.bulkDocs('meetups', meetups.map(m => ({ ...m, _deleted: true }))),
+      onNext: (data) => {
+        callback(data.res);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage(`You have deleted the ${displayName ? `${displayName} event` : 'selected events'}`);
+      },
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this meetup')
+    };
   }
 
 }

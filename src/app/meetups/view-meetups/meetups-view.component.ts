@@ -158,7 +158,12 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   deleteMeetup() {
-
+    const callback = () => {
+      if (this.isDialog) {
+        this.switchView.emit('close');
+      }
+    };
+    this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
 }
