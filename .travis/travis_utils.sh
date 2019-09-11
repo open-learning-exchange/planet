@@ -22,6 +22,7 @@ prepare_ci(){
   COMMIT=${TRAVIS_COMMIT::8}
   REMOTE_MASTER_HASH=$(git ls-remote https://github.com/open-learning-exchange/planet.git | grep refs/heads/master | cut -f 1)
   LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")
+  export NODE_OPTIONS=--max_old_space_size=4096
 }
 
 push_a_docker(){
