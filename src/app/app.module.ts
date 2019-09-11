@@ -5,31 +5,12 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-
 import { AppRoutingModule } from './app-router.module';
-
-import { CouchService } from './shared/couchdb.service';
-import { AuthService } from './shared/auth-guard.service';
-import { UserService } from './shared/user.service';
-import { ValidatorService } from './validators/validator.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PlanetMessageService } from './shared/planet-message.service';
 import { MaterialModule } from './shared/material.module';
 import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
-import { MatIconRegistry } from '@angular/material';
-import { FeedbackService } from './feedback/feedback.service';
-import { ResourcesService } from './resources/resources.service';
-import { SubmissionsService } from './submissions/submissions.service';
-import { CoursesService } from './courses/courses.service';
-import { SHARED_SERVICES } from './shared/database';
-import { SyncService } from './shared/sync.service';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
-import { TeamsService } from './teams/teams.service';
-import { RatingService } from './shared/forms/rating.service';
-import { TagsService } from './shared/forms/tags.service';
-import { ManagerService } from './manager-dashboard/manager.service';
-import { NotificationsService } from './notifications/notifications.service';
 
 @NgModule({
   imports: [
