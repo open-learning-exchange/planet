@@ -37,9 +37,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
-    // meetupService made public because of error Property is private and only accessible within class during prod build
-    public meetupService: MeetupService,
-    public planetMessageService: PlanetMessageService,
+    private meetupService: MeetupService,
+    private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private dialogsListService: DialogsListService,
     private stateService: StateService
