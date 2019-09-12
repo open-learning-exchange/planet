@@ -50,8 +50,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
     .course-progress {
       margin-top: 0.5rem;
     }
-  ` ],
-    encapsulation: ViewEncapsulation.None
+  ` ]
 })
 
 export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -62,7 +61,6 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   courses = new MatTableDataSource();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @HostBinding('class') readonly hostClass = 'courses-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
   dialogRef: MatDialogRef<DialogsListComponent>;
