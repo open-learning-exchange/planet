@@ -125,8 +125,8 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      let userInform = Object.assign({}, this.user, this.editForm.value, attachment);
-      if(this.reset) {
+      const userInform = Object.assign({}, this.user, this.editForm.value, attachment);
+      if (this.reset) {
         userInform._attachments = undefined;
         this.reset = false;
       }
