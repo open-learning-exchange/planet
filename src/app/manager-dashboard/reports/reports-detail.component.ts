@@ -215,13 +215,27 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
-  exportCSV(type) {
-    switch (type) {
+  exportCSV(reportType) {
+    const options = { title: 'Report', showTitle: true };
+    switch (reportType) {
       case 'login':
-        this.planetCsvService.generate(this.loginActivities);
+        this.planetCsvService.generate(
+          this.loginActivities.map(({ _id, _rev, type, createdOn, parentCode, ...logins }) => ({
+            ...logins,
+            loginTime: new Date(logins.loginTime).toString(),
+            logoutTime: new Date(logins.loginTime).toString()
+          })),
+          { ...options, title: 'Member Visits', filename: 'Report of Member Visits on ' + new Date().toDateString() }
+        );
         break;
       case 'resource_visit':
-        this.planetCsvService.generate(this.resourceActivities);
+        this.planetCsvService.generate(
+          this.resourceActivities.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...visits }) => ({
+            ...visits,
+            time: new Date(visits.time).toString()
+          })),
+          { ...options, title: 'Resource Visits', filename: 'Report of Resource Visits on ' + new Date().toDateString() }
+        );
         break;
     }
   }
