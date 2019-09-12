@@ -59,27 +59,27 @@ jobs:
       script:
         - bash ./.travis/deploy_single_language.sh 'eng' 'en'
     - stage: docker-creation
-      if: tag IS present
+      if: tag = branch
       name: "Arabic"
       script:
         - bash ./.travis/deploy_single_language.sh 'ara' 'ar'
     - stage: docker-creation
-      if: tag IS present
+      if: tag = branch
       name: "French"
       script:
         - bash ./.travis/deploy_single_language.sh 'fra' 'fr'
     - stage: docker-creation
-      if: tag IS present
+      if: tag = branch
       name: "Spanish"
       script:
         - bash ./.travis/deploy_single_language.sh 'spa' 'es'
     - stage: docker-creation
-      if: tag IS present
+      if: tag = branch
       name: "Nepali"
       script:
         - bash ./.travis/deploy_single_language.sh 'nep' 'ne'
     - stage: docker-creation
-      if: tag IS present
+      if: tag = branch
       name: "Somali"
       script:
         - bash ./.travis/deploy_single_language.sh 'som' 'so'

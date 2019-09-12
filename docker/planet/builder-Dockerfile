@@ -1,8 +1,6 @@
 FROM node:10.16.0-alpine as builder
 LABEL maintainer="paul@ole.org"
 
-ARG LANGUAGE_MODE="single"
-ENV I18N ${LANGUAGE_MODE}
 ARG LANGUAGE=""
 ENV LANG ${LANGUAGE}
 ARG LANGUAGE2=""
