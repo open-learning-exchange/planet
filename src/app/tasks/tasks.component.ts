@@ -102,20 +102,18 @@ export class TasksComponent implements OnInit {
       userPlanetCode
     });
 
-
-      return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread', assignee: 'id' })).pipe(
-        switchMap((res: any[]) => {
-          res[0] = assignee;
-          if (res.length > 0) {
-            // (res)
-            //   .map(assignee => notificationDoc(assignee));
-            return res.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', res).map(assignee => notificationDoc(assignee));
-          }
-        })
-      );
-    
+    return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread', assignee: 'id' })).pipe(
+      switchMap((res: any[]) => {
+        res[0] = assignee;
+        if (res.length > 0) {
+          // (res)
+          //   .map(assignee => notificationDoc(assignee));
+          return res.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', res).map(assignee => notificationDoc(assignee));
+        }
+      })
+    );
   }
-
+  
 }
 
 @Pipe({
