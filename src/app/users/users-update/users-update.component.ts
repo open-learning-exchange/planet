@@ -40,6 +40,7 @@ export class UsersUpdateComponent implements OnInit {
   urlName = '';
   redirectUrl = '/';
   file: any;
+  reset: boolean;
   roles: string[] = [];
   languages = languages;
   submissionMode = false;
@@ -78,6 +79,9 @@ export class UsersUpdateComponent implements OnInit {
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
           this.uploadImage = true;
         }
+        console.info(this.currentProfileImg);
+        console.info("this.currentProfileImg");
+        console.info(this.file);
         this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
       }, (error) => {
@@ -124,7 +128,18 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).subscribe(() => {
+      console.info(this.file);
+      console.info(attachment);
+      console.info(this.editForm.value);
+      console.info('atttacjjjjajajaja');
+      let userInform = Object.assign({}, this.user, this.editForm.value, attachment);
+      if(this.reset) {
+        userInform._attachments = undefined;
+        this.reset = false;
+      }
+      console.info(userInform);
+      console.info('userInform');
+      this.userService.updateUser(userInform).subscribe(() => {
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -166,6 +181,11 @@ export class UsersUpdateComponent implements OnInit {
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
+  }
+
+  ResetImage() {
+    this.previewSrc = 'assets/image.png';
+    this.reset = true;
   }
 
   appendToSurvey(user) {
