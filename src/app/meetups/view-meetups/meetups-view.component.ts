@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -25,7 +25,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   @Input() meetupDetail: any;
   @Input() isDialog = false;
+  @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
+  canManage = true;
   members = [];
   parent = this.route.snapshot.data.parent;
   dialogRef: MatDialogRef<DialogsListComponent>;
@@ -147,6 +149,21 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   isMeetupDisabled() {
     const meetupDate = this.meetupDetail && (this.meetupDetail.endDate ? this.meetupDetail.endDate : this.meetupDetail.startDate);
     return (this.dateNow > meetupDate) && !this.meetupDetail.participate ? true : false;
+  }
+
+  routeToEdit() {
+    if (this.isDialog) {
+      this.switchView.emit('add');
+    }
+  }
+
+  deleteMeetup() {
+    const callback = () => {
+      if (this.isDialog) {
+        this.switchView.emit('close');
+      }
+    };
+    this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
 }

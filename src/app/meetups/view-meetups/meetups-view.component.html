@@ -3,8 +3,14 @@
   <span i18n>Meetup</span>
 </mat-toolbar>
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="primary-color font-size-1 action-buttons">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
+    <button mat-stroked-button *ngIf="canManage" (click)="routeToEdit()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-stroked-button *ngIf="canManage" (click)="deleteMeetup()">
+      <mat-icon>delete</mat-icon>
+    </button>
     <span class="toolbar-fill"></span>
     <div>
       <ng-container *ngIf="!parent && !isDialog">

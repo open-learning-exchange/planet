@@ -5,8 +5,10 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   template: `
     <ng-container [ngSwitch]="view">
-      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link" (onGoBack)="meetupSubmitted($event)"></planet-meetups-add>
-      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup"></planet-meetups-view>
+      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link" [meetup]="meetup" (onGoBack)="meetupsChange()">
+      </planet-meetups-add>
+      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)">
+      </planet-meetups-view>
     </ng-container>
   `
 })
@@ -26,10 +28,17 @@ export class DialogsAddMeetupsComponent {
     this.meetup = this.data.meetup || this.meetup;
   }
 
-  meetupSubmitted(res) {
-    this.data.onMeetupSubmitted(res);
+  meetupsChange() {
+    this.data.onMeetupsChange();
     this.dialogsLoadingService.stop();
     this.dialogRef.close();
+  }
+
+  switchView(view: 'add' | 'view' | 'close') {
+    if (view === 'close') {
+      this.meetupsChange();
+    }
+    this.view = view;
   }
 
 }
