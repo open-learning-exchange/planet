@@ -51,13 +51,6 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
     let query: any;
     this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
-    //i have to add code here
-    // if there are no submissions that match the initial filter setting
-
-      //  if( this.submissions.filteredData = !this.filter){
-      //   this.emptyData = !this.filter;  
-      //  }
-    // this.emptyData = !this.submissions.filteredData.length;
     if (this.mode === 'survey') {
       this.filter['type'] = 'survey';
       this.filter['status'] = '';
