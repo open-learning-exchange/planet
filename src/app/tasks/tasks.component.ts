@@ -108,7 +108,7 @@ export class TasksComponent implements OnInit {
         if (res.length > 0) {
           // (res)
           //   .map(assignee => notificationDoc(assignee));
-          return res.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', res).map(assignee => notificationDoc(assignee));
+          return res.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', res);
         }
       })
     );
