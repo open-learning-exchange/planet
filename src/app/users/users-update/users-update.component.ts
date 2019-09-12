@@ -79,9 +79,6 @@ export class UsersUpdateComponent implements OnInit {
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
           this.uploadImage = true;
         }
-        console.info(this.currentProfileImg);
-        console.info("this.currentProfileImg");
-        console.info(this.file);
         this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
       }, (error) => {
@@ -128,17 +125,11 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      console.info(this.file);
-      console.info(attachment);
-      console.info(this.editForm.value);
-      console.info('atttacjjjjajajaja');
       let userInform = Object.assign({}, this.user, this.editForm.value, attachment);
       if(this.reset) {
         userInform._attachments = undefined;
         this.reset = false;
       }
-      console.info(userInform);
-      console.info('userInform');
       this.userService.updateUser(userInform).subscribe(() => {
         this.goBack();
       }, (err) => {
