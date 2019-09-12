@@ -77,6 +77,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
+      this.emptyData = !this.submissions.filteredData.length;
     });
     this.submissionsService.updateSubmissions({ query });
     this.setupTable();
