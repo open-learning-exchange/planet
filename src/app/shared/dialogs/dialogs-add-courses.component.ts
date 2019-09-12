@@ -9,23 +9,16 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 export class DialogsAddCoursesComponent {
 
   @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
-  view = 'courses';
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddCoursesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService
-  ) {
-    console.log(this.data.excludeIds);
-   }
+  ) {}
 
   ok() {
     this.dialogsLoadingService.start();
-    switch (this.view) {
-      case 'courses':
-        this.addExistingCourses();
-        break;
-    }
+    this.addExistingCourses();
   }
 
   addExistingCourses() {
