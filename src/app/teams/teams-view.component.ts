@@ -282,10 +282,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   addMembers(selected: any[]) {
-    this.dialogsLoadingService.start();
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
+    const checkActiveRequest = this.requests.some((req: any) => {
+      if(req.userId === newMembershipDocs[0].userId){
+        this.changeMembership('added',req);
+        return true;
+      }
+    });
+    if (checkActiveRequest) {
+      this.dialogRef.close();
+      return
+    };
+    this.dialogsLoadingService.start();
     this.couchService.bulkDocs(this.dbName, newMembershipDocs).pipe(
       switchMap(() => {
         return forkJoin([
@@ -301,7 +311,6 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
     });
-    this.changeMembership('added',newMembershipDocs);
   }
 
   sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
