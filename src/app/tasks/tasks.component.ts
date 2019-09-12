@@ -1,9 +1,13 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
+import { CouchService } from '../shared/couchdb.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   selector: 'planet-tasks',
@@ -33,7 +37,8 @@ export class TasksComponent implements OnInit {
   constructor(
     private tasksService: TasksService,
     private planetMessageService: PlanetMessageService,
-    private userService: UserService
+    private userService: UserService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -64,11 +69,14 @@ export class TasksComponent implements OnInit {
   }
 
   addAssignee(task, assignee: any = '') {
-    if (assignee !== '' && assignee.userDoc) {
+    const hasAssignee = assignee !== '' && assignee.userDoc;
+    if (hasAssignee) {
       const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     }
-    this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
+    this.tasksService.addTask({ ...task, assignee }).pipe(
+      switchMap(() => hasAssignee && assignee.userId !== this.userService.get()._id ? this.sendNotifications(assignee) : of({}))
+    ).subscribe((res) => {
       this.tasksService.getTasks();
     });
   }
@@ -82,6 +90,25 @@ export class TasksComponent implements OnInit {
     this.filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
   }
 
+  sendNotifications(assignee: any = '') {
+    const link = `/teams/view/${this.link.teams}`;
+    const notificationDoc = {
+      user: assignee.userId,
+      'message': 'You were assigned a new task',
+      link,
+      'type': 'newTask',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: assignee.userPlanetCode
+    };
+    return this.couchService.findAll(
+      'notifications',
+      findDocuments({ link, type: 'newTask', status: 'unread', user: assignee.userId })
+    ).pipe(
+      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    );
+  }
 }
 
 @Pipe({
