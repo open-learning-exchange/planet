@@ -65,6 +65,17 @@ export class TasksComponent implements OnInit {
 
   addAssignee(task, assignee: any = '') {
     if (assignee !== '' && assignee.userDoc) {
+      // few changes over here
+      const src = (member) => {
+        const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
+        if (member.attachmentDoc) {
+          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
+        }
+        if (member.userDoc && member.userDoc._attachments) {
+          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc._attachments)[0]}`;
+        }
+        return 'assets/image.png';
+      };
       const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     }
@@ -72,64 +83,6 @@ export class TasksComponent implements OnInit {
       this.tasksService.getTasks();
     });
   }
-  // task.assignee.attachmentDoc ?
-  // imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
-  // task.assignee.avatar ?
-  // imgUrlPrefix + task.assignee.avatar :
-  // 'assets/image.png'
-
-  // const src => {
-  //   if (task.assignee.attachmentDoc) {
-  //     imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_');
-  //   }
-  //   if (task.assignee.avatar) {
-  //    imgUrlPrefix + task.assignee.avatar;
-  //   }
-  //   return 'assets/image.png';
-  // };
-
-
-  // const filename = item.user._attachments && Object.keys(item.user._attachments)[0];
-  // return { ...item, avatar: filename ? this.imgUrlPrefix + item.user._id + '/' + filename : 'assets/image.png' };
-
-  // return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
-  //   const src = (member) => {
-  //     const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
-  //     if (member.attachmentDoc) {
-  //       return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
-  //     }
-  //     if (member.userDoc && member.userDoc._attachments) {
-  //       return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc._attachments)[0]}`;
-  //     }
-  //     return 'assets/image.png';
-  //   };
-
-
-  // const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
-  // "
-  //     task.assignee.attachmentDoc ?
-  //       imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
-  //       task.assignee.avatar ?
-  //       imgUrlPrefix + task.assignee.avatar :
-  //       'assets/image.png'
-  //   "
-
-
-  // const src = (member) => {
-  //   const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
-  //   if (task.assignee.attachmentDoc) {
-  //     return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
-  //   }
-  //   if (task.assignee.avatar) {
-  //     imgUrlPrefix + task.assignee.avatar;
-  //   }
-  //   return 'assets/image.png';
-  // };
-  // task.assignee.attachmentDoc ?
-  // imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
-  // task.assignee.avatar ?
-  // imgUrlPrefix + task.assignee.avatar :
-  // 'assets/image.png'
 
   setFilter(newFilter: 'self' | 'all') {
     this.filter = newFilter;
