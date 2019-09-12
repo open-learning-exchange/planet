@@ -11,20 +11,20 @@
         <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
         <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
       </ng-container>
-      <ng-container *ngIf="!changeEditTitleMode; else changeEditTitleBlock">
+      <ng-container *ngIf="!editTitleMode; else editTitleBlock">
         <span class="margin-lr-3">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
-        <a (click)="changeEditTitle(true)" mat-icon-button>
+        <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
       </ng-container>
-      <ng-template #changeEditTitleBlock>
+      <ng-template #editTitleBlock>
         <mat-form-field color="accent" class="margin-lr-3 title-edit">
           <input matInput [(ngModel)]="feedback.title" placeholder="Feedback title" i18n-placeholder />
         </mat-form-field>
         <a (click)="setTitle()" mat-icon-button>
           <mat-icon>check</mat-icon>
         </a>
-        <a (click)="changeEditTitle(false)" mat-icon-button>
+        <a (click)="changeEditTitleMode(false)" mat-icon-button>
           <mat-icon>clear</mat-icon>
         </a>
       </ng-template>
