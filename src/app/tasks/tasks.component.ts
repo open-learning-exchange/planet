@@ -75,7 +75,7 @@ export class TasksComponent implements OnInit {
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     }
     this.tasksService.addTask({ ...task, assignee }).pipe(
-      switchMap(() => hasAssignee ? this.sendNotifications(assignee) : of({}))
+      switchMap(() => hasAssignee && assignee.userId !== this.userService.get()._id ? this.sendNotifications(assignee) : of({}))
     ).subscribe((res) => {
       this.tasksService.getTasks();
     });
