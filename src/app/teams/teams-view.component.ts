@@ -18,6 +18,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
+import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-courses.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 
@@ -306,21 +307,22 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   openCourseDialog() {
     const initialCourses = this.team.courses || [];
-    this.dialogsLoadingService.start();
-    this.dialogsListService.attachDocsData('courses', 'courseTitle', this.linkCourses.bind(this), initialCourses.map(({ _id }) => _id))
-    .pipe(takeUntil(this.onDestroy$)).subscribe((data) => {
-      if (this.dialogRef === undefined || this.dialogRef.componentInstance === null) {
-        this.openDialog(data);
+    const dialogRef = this.dialog.open(DialogsAddCoursesComponent, {
+      width: '80vw',
+      data: {
+        okClick: (courses: any[]) => {
+          const newCourses = courses.map(course => course.doc);
+          this.teamsService.updateTeam({
+            ...this.team,
+            courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
+          }).subscribe((updatedTeam) => {
+            this.team = updatedTeam;
+            dialogRef.close();
+            this.dialogsLoadingService.stop();
+          });
+        },
+        excludeIds: initialCourses.map(c => c._id)
       }
-      this.dialogsLoadingService.stop();
-    });
-  }
-
-  linkCourses(courses) {
-    courses.sort((a, b) => a.courseTitle.toLowerCase() > b.courseTitle.toLowerCase() ? 1 : -1);
-    this.teamsService.updateTeam({ ...this.team, courses }).subscribe((updatedTeam) => {
-      this.team = updatedTeam;
-      this.dialogRef.close();
     });
   }
 

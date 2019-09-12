@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
@@ -27,6 +27,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 
 @Component({
+  selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styles: [ `
     /* Column Widths */
@@ -60,6 +61,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   courses = new MatTableDataSource();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @Input() isDialog = false;
+  @Input() excludeIds = [];
   dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
@@ -143,7 +146,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
       // Sort in descending createdDate order, so the new courses can be shown on the top
       courses.sort((a, b) => b.doc.createdDate - a.doc.createdDate);
       this.userShelf = this.userService.shelf;
-      this.courses.data = this.setupList(courses, this.userShelf.courseIds);
+      this.courses.data = this.setupList(courses, this.userShelf.courseIds)
+        .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
       this.emptyData = !this.courses.data.length;
       this.dialogsLoadingService.stop();
     });
