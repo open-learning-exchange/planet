@@ -69,13 +69,15 @@ export class TasksComponent implements OnInit {
   }
 
   addAssignee(task, assignee: any = '') {
-    if (assignee !== '' && assignee.userDoc) {
+    const hasAssignee = assignee !== '' && assignee.userDoc;
+    if (hasAssignee) {
       const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     }
-    this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
+    this.tasksService.addTask({ ...task, assignee }).pipe(
+      switchMap(() => hasAssignee ? this.sendNotifications(assignee) : of({}))
+    ).subscribe((res) => {
       this.tasksService.getTasks();
-      this.sendNotifications(assignee);
     });
   }
 
@@ -89,28 +91,22 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const teamID = this.link.teams;
-    const link = `/teams/view/${teamID}`;
-    const notificationDoc = ({ user, userPlanetCode }) => ({
-      user,
+    const link = `/teams/view/${this.link.teams}`;
+    const notificationDoc = {
+      user: assignee.userId,
       'message': 'You were assigned a new task',
       link,
       'type': 'newTask',
       'priority': 1,
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
-      userPlanetCode
-    });
-
-    return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread', assignee: 'id' })).pipe(
-      switchMap((res: any[]) => {
-        res[0] = assignee;
-        if (res.length > 0) {
-          // (res)
-          //   .map(assignee => notificationDoc(assignee));
-          return res.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', res);
-        }
-      })
+      userPlanetCode: assignee.userPlanetCode
+    };
+    return this.couchService.findAll(
+      'notifications',
+      findDocuments({ link, type: 'newTask', status: 'unread', user: assignee.userId })
+    ).pipe(
+      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
     );
   }
 }
