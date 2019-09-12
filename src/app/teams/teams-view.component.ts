@@ -193,7 +193,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
             this.team = change === 'course' ? res : this.team;
             if (res.status === 'archived') {
-              this.router.navigate([ '/teams' ]);
+              this.goBack();
             }
           },
           onError: () => this.planetMessageService.showAlert(`There was a problem ${config.errorMsg} ${displayName}`)
