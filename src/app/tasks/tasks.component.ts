@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -6,8 +8,6 @@ import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'planet-tasks',
