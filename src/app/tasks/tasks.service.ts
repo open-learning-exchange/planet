@@ -67,7 +67,7 @@ export class TasksService {
   }
 
   addTask(task) {
-    return this.couchService.updateDocument(this.dbName, { ...task, completed: task.completed || false });
+    return this.couchService.updateDocument(this.dbName, { ...task, completed: task.completed || false, completedTime: this.couchService.datePlaceholder });
   }
 
   sortedTasks(tasks, tasksInOrder = []) {
