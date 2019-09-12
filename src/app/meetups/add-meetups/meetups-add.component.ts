@@ -88,7 +88,7 @@ export class MeetupsAddComponent implements OnInit {
       title: [
         '',
         CustomValidators.required,
-        ac => this.validatorService.isUnique$(this.dbName, 'title', ac, { selectors: { '_id': { $ne: this.id } } })
+        ac => this.validatorService.isUnique$(this.dbName, 'title', ac, { selectors: { '_id': { $ne: this.id }, 'link': this.link } })
       ],
       description: [ '', CustomValidators.required ],
       startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
