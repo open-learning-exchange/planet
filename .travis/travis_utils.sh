@@ -126,9 +126,8 @@ package_docker(){
   else
     docker build -f $1 -t $TAG --build-arg LANGUAGE_MODE=single --build-arg LANGUAGE=$4 --build-arg LANGUAGE2=$5 .
   fi
-  if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
-    then
-      tag_a_docker $2 $3
+  if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ] && [ -z "$LANG" ]; then
+    tag_a_docker $2 $3
   fi
 }
 
@@ -143,10 +142,9 @@ push_docker(){
     TAG=$1-$LANG
   fi
   push_a_docker $TAG
-    if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
-    then
-      push_a_docker $2
-    fi
+  if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ] && [ -z "$LANG" ]; then
+    push_a_docker $2
+  fi
 }
 
 tag_docker(){
