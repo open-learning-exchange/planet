@@ -309,14 +309,15 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {
-          courses = courses.map(course => course.doc)
-            .sort((a, b) => a.courseTitle.toLowerCase() > b.courseTitle.toLowerCase() ? 1 : -1);
-          this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.concat(courses) })
-            .subscribe((updatedTeam) => {
-              this.team = updatedTeam;
-              dialogRef.close();
-              this.dialogsLoadingService.stop();
-            });
+          const newCourses = courses.map(course => course.doc);
+          this.teamsService.updateTeam({
+            ...this.team,
+            courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
+          }).subscribe((updatedTeam) => {
+            this.team = updatedTeam;
+            dialogRef.close();
+            this.dialogsLoadingService.stop();
+          });
         },
         excludeIds: initialCourses.map(c => c._id)
       }
