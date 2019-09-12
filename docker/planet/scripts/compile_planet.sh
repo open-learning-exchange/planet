@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-# shellcheck disable=SC1091
 
 . ./build_planet.sh
 
@@ -11,6 +10,6 @@ echo "Build the angular app in production mode stage"
 if [ "${I18N}" = "multi" ]; then
  build_multi
 else
- build_single
+ build_single $LANG $LANG2
 fi
 

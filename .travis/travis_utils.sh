@@ -112,11 +112,19 @@ package_docker(){
   # $1: directory
   # $2: tag
   # $3: tag latest
+  # $4: language 3 letter code
+  # $5: language 2 letter code
   build_message processing $2
+  LANG=$4
+  if [ -z "$LANG" ]; then
+    TAG=$2
+  else
+    TAG=$2-$LANG
+  fi
   if [ ! -z "$gtag" ] || [ ! -z "$TRAVIS_TAG" ]; then
     docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=multi .
   else
-    docker build -f $1 -t $2 --build-arg LANGUAGE_MODE=single  .
+    docker build -f $1 -t $TAG --build-arg LANGUAGE_MODE=single --build-arg LANGUAGE=$4 --build-arg LANGUAGE2=$5 .
   fi
   if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
@@ -127,7 +135,14 @@ package_docker(){
 push_docker(){
   # $1: tag
   # $2: tag latest
-  push_a_docker $1
+  # $3: language 3 letter code
+  LANG=$3
+  if [ -z "$LANG" ]; then
+    TAG=$1
+  else
+    TAG=$1-$LANG
+  fi
+  push_a_docker $TAG
     if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
       push_a_docker $2
@@ -166,15 +181,17 @@ deploy_docker(){
   # $1: directory
   # $2: tag
   # $3: tag latest
+  # $4: language 3 letter code
+  # $5: language 2 letter code
     login_docker
-    package_docker $1 $2 $3
-    push_docker $2 $3
+    package_docker $1 $2 $3 $4 $5
+    push_docker $2 $3 $4
 }
 
 render_compose_travis(){
   COMPOSE_LOC=$(pwd)/.travis/planet-travis.yml
   sed -i -e "s#\${DOCKER_DB_INIT}#$DOCKER_DB_INIT_TEST#g" "$COMPOSE_LOC"
-  sed -i -e "s#\${PLANET}#$PLANET_TEST#g" "$COMPOSE_LOC"
+  sed -i -e "s#\${PLANET}#$PLANET_TEST-eng#g" "$COMPOSE_LOC"
   cat "$COMPOSE_LOC"
 }
 
@@ -288,4 +305,22 @@ push_multiarch_manifests(){
     else
          build_message No tag present so no need to Push Versioned Multiarch Manifests to cloud
     fi
+}
+
+pull_language() {
+  # $1: language 3 letter code
+  docker create --name $1 $PLANET_TEST-$1
+  docker export $1 > $1.tar
+  tar -xf $1.tar -C ./ng-app/$1
+  cp -ar ./ng-app/$1/ng-app/dist/$1/ ./ng-app/dist/
+}
+
+compose_languages() {
+  build_message Composing language containers into one
+  LANGUAGES=("$@")
+  mkdir -p ./ng-app/dist
+  for LANGUAGE in "${LANGUAGES[@]}"; do
+    mkdir -p ./ng-app/$LANGUAGE
+    pull_language $LANGUAGE
+  done
 }
