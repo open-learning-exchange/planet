@@ -7,6 +7,7 @@ import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'planet-tasks',
@@ -74,8 +75,8 @@ export class TasksComponent implements OnInit {
     }
     this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
       this.tasksService.getTasks();
+      this.sendNotifications(assignee);
     });
-    this.sendNotifications();
   }
 
   setFilter(newFilter: 'self' | 'all') {
@@ -88,7 +89,8 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = '/teams/view/${teamID}';
+    const teamID = this.link.teams;
+    const link = `/teams/view/${teamID}`;
     const notificationDoc = ({ user, userPlanetCode }) => ({
       user,
       'message': 'You were assigned a new task',
@@ -100,15 +102,18 @@ export class TasksComponent implements OnInit {
       userPlanetCode
     });
 
-    if (assignee !== '' && assignee.userDoc) {
-      return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread' })).pipe(
+
+      return this.couchService.findAll('notifications', findDocuments({ link, type: 'newTask', status: 'unread', assignee: 'id' })).pipe(
         switchMap((res: any[]) => {
-          const newNotifications = res.filter(a => a.userId !== assignee.userId)
-            .map(user => notificationDoc(user));
-          return this.couchService.bulkDocs('notifications', newNotifications);
+          res[0] = assignee;
+          if (res.length > 0) {
+            // (res)
+            //   .map(assignee => notificationDoc(assignee));
+            return res.length === 0 ? of({}) : this.couchService.bulkDocs('notifications', res).map(assignee => notificationDoc(assignee));
+          }
         })
       );
-    }
+    
   }
 
 }
