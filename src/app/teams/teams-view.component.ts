@@ -301,6 +301,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.dialogRef.close();
       this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
     });
+    this.changeMembership('added',newMembershipDocs);
   }
 
   sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
