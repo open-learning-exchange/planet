@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce } from '../../shared/utils';
@@ -85,8 +85,8 @@ export class ReportsService {
 
   getAllLoginActivities({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
     return this.couchService.findAll('login_activities', this.selector(planetCode, { tillDate, dateField: 'loginTime', fromMyPlanet }))
-    .pipe(switchMap((loginActivities: any) => {
-      return of(this.filterAdmin(loginActivities, filterAdmin));
+    .pipe(map((loginActivities: any) => {
+      return this.filterAdmin(loginActivities, filterAdmin);
     }));
   }
 
@@ -117,8 +117,8 @@ export class ReportsService {
 
   getAllResourceVisits({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
     return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
-    .pipe(switchMap((resourceActivites: any) => {
-      return of(this.filterAdmin(resourceActivites, filterAdmin));
+    .pipe(map((resourceActivites: any) => {
+      return this.filterAdmin(resourceActivites, filterAdmin);
     }));
   }
 
