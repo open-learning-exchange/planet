@@ -56,6 +56,12 @@
       <div *ngIf="meetupForm.controls.recurring.value==='weekly'" class="full-width">
         <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
       </div>
+      <ng-container *ngIf="meetupForm.controls.recurring.value==='weekly' || meetupForm.controls.recurring.value==='daily'">
+        <mat-form-field>
+          <input matInput type="number" min="2" i18n-placeholder placeholder="Number of Recurrences" formControlName="recurringNumber">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurringNumber"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+      </ng-container>
     </form>
     <div class="actions-container">
       <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
