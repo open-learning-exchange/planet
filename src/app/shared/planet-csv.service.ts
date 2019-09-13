@@ -8,11 +8,12 @@ export class PlanetCsvService {
     showLabels: true,
     useKeysAsHeaders: true
   };
-  private exportToCsv;
-  constructor() { }
+
+  constructor() {}
 
   generate(data, options?) {
-    this.exportToCsv = new ExportToCsv({ ...this.default, ...options });
-    this.exportToCsv.generateCsv(data);
+    if (data.length > 0) {
+      new ExportToCsv({ ...this.default, ...options }).generateCsv(data);
+    }
   }
 }
