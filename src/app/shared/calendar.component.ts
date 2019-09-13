@@ -3,6 +3,7 @@ import { OptionsInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { MatDialog } from '@angular/material';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
+import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
 
@@ -50,15 +51,50 @@ export class PlanetCalendarComponent implements OnInit {
 
   getMeetups() {
     this.couchService.findAll(this.dbName, findDocuments({ link: this.link })).subscribe((meetups: any[]) => {
-      this.events = meetups.map(meetup => ({
-        title: meetup.title,
-        start: new Date(meetup.startDate + (Date.parse('1970-01-01T' + meetup.startTime + 'Z') || 0)),
-        end: new Date(meetup.endDate + (Date.parse('1970-01-01T' + meetup.endTime + 'Z') || 0)),
-        allDay: meetup.startTime === undefined || meetup.startTime === '',
-        editable: true,
-        extendedProps: { meetup }
-      }));
+      this.events = meetups.map(meetup => {
+        switch (meetup.recurring) {
+          case 'daily':
+            return this.dailyEvents(meetup);
+          case 'weekly':
+            return this.weeklyEvents(meetup);
+          case 'none':
+          default:
+            return this.eventObject(meetup);
+        }
+      }).flat();
     });
+  }
+
+  eventObject(meetup, startDate?, endDate?) {
+    return {
+      title: meetup.title,
+      start: new Date((startDate || meetup.startDate) + (Date.parse('1970-01-01T' + meetup.startTime + 'Z') || 0)),
+      end: new Date((endDate || meetup.endDate) + (Date.parse('1970-01-01T' + meetup.endTime + 'Z') || 0)),
+      allDay: meetup.startTime === undefined || meetup.startTime === '',
+      editable: true,
+      extendedProps: { meetup }
+    };
+  }
+
+  dailyEvents(meetup) {
+    return [ ...Array(meetup.recurringNumber).keys() ]
+      .map(dayOffset => this.eventObject(meetup, meetup.startDate + (millisecondsToDay * dayOffset)));
+  }
+
+  weeklyEvents(meetup) {
+    if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
+      return this.eventObject(meetup);
+    }
+    const makeEvents = (events: any[], day: number) => {
+      if (events.length === meetup.recurringNumber) {
+        return events;
+      }
+      const date = new Date(day);
+      return meetup.day.indexOf(days[date.getDay()]) !== -1 ?
+        makeEvents([ ...events, this.eventObject(meetup, day) ], day + millisecondsToDay) :
+        makeEvents(events, day + millisecondsToDay);
+    };
+    return makeEvents([ this.eventObject(meetup) ], meetup.startDate + millisecondsToDay);
   }
 
   openAddEventDialog() {
