@@ -93,7 +93,7 @@ export class MeetupsAddComponent implements OnInit {
       description: [ '', CustomValidators.required ],
       startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
       endDate: [ '', CustomValidators.endDateValidator() ],
-      recurring: '',
+      recurring: 'none',
       day: this.fb.array([]),
       startTime: [ '', CustomValidators.timeValidator ],
       endTime: [
