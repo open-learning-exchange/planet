@@ -31,8 +31,8 @@
         <ng-template #na i18n> N/A </ng-template>
       </p>
       <p *ngIf="meetupDetail?.category" i18n><b>Category:</b> {{meetupDetail?.category}}</p>
-      <p i18n><b>Meetup Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
-      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Meetup Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
+      <p i18n><b>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
       <p *ngIf="meetupDetail?.recurring" i18n><b>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
       <p *ngIf="meetupDetail?.meetupLocation" i18n><b>Location:</b> {{meetupDetail?.meetupLocation}}</p>
