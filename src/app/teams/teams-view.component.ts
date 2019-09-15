@@ -206,11 +206,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   changeMembershipRequest(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
+    if (type != 'removed') this.dialogsLoadingService.start();
     return changeObject.obs.pipe(
       switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
       switchMap(() => this.getMembers()),
       switchMap(() => this.sendNotifications('added')),
-      map(() => changeObject.message)
+      map(() => changeObject.message),
+      finalize(() => this.dialogsLoadingService.stop())
     );
   }
 

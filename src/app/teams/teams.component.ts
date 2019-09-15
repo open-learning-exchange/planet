@@ -192,6 +192,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   requestToJoin(team) {
+    this.dialogsLoadingService.start();
     this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
       switchMap(() => this.teamsService.getTeamMembers(team)),
       switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
@@ -199,6 +200,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
       this.planetMessageService.showMessage('Request to join team sent');
+      this.dialogsLoadingService.stop();
     });
   }
 
