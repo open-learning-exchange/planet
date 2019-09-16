@@ -80,7 +80,7 @@ export class MeetupsAddComponent implements OnInit {
     meetup.startDate = new Date(meetup.startDate);
     meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : '';
     this.meetupForm.patchValue(meetup);
-    this.meetupForm.controls.day.patchValue(meetup.day);
+    meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
   }
 
   createForm() {
@@ -106,7 +106,8 @@ export class MeetupsAddComponent implements OnInit {
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
-      createdDate: this.couchService.datePlaceholder
+      createdDate: this.couchService.datePlaceholder,
+      recurringNumber: [ 10, Validators.min(2) ]
     });
   }
 
