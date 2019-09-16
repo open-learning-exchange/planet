@@ -59,7 +59,7 @@ export class TasksService {
       onSubmit: (task) => {
         if (task) {
           const deadline = new Date(addDateAndTime(new Date(task.deadline).getTime(), task.deadlineTime)).getTime();
-          this.addTask({ ...task, deadline, ...additionalFields }).pipe(
+          this.addTask({ ...task, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
             finalize(() => this.dialogsLoadingService.stop())
           ).subscribe((res) => {
             onSuccess(res.doc);
