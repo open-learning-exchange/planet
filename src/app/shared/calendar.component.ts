@@ -66,10 +66,11 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventObject(meetup, startDate?, endDate?) {
+    const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
     return {
       title: meetup.title,
-      start: new Date((startDate || meetup.startDate) + (Date.parse('1970-01-01T' + meetup.startTime + 'Z') || 0)),
-      end: new Date((endDate || meetup.endDate) + (Date.parse('1970-01-01T' + meetup.endTime + 'Z') || 0)),
+      start: addDateAndTime(startDate || meetup.startDate, meetup.startTime),
+      end: addDateAndTime(endDate || meetup.endDate, meetup.endTime),
       allDay: meetup.startTime === undefined || meetup.startTime === '',
       editable: true,
       extendedProps: { meetup }
