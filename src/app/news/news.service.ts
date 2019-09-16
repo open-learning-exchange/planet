@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
@@ -14,7 +14,7 @@ import { environment } from '../../environments/environment';
 export class NewsService {
 
   dbName = 'news';
-  imgUrlPrefix = environment.couchAddress + '/' + '_users' + '/';
+  imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   currentSelector = {};
 
@@ -27,12 +27,26 @@ export class NewsService {
 
   requestNews(selectors = this.currentSelector) {
     this.currentSelector = selectors;
-    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).subscribe(newsItems => {
+    forkJoin([
+      this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
+      this.couchService.findAll('attachments')
+    ]).subscribe(([ newsItems, avatars ]) => {
       this.newsUpdated$.next(newsItems.map((item: any) => {
-        const filename = item.user._attachments && Object.keys(item.user._attachments)[0];
-        return { ...item, avatar: filename ? this.imgUrlPrefix + item.user._id + '/' + filename : 'assets/image.png' };
+        const avatar = this.findAvatar(item.user, avatars);
+        return { ...item, avatar };
       }));
     });
+  }
+
+  findAvatar(user: any, attachments: any[]) {
+    const attachmentId = `${user._id}@${user.planetCode}`;
+    const attachment = attachments.find(avatar => avatar._id === attachmentId);
+    const extractFilename = (object) => Object.keys(object._attachments)[0];
+    return attachment ?
+      `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
+      user._attachments ?
+      `${this.imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
+      'assets/image.png';
   }
 
   postNews(post, successMessage = 'Thank you for submitting your news') {
