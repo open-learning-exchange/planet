@@ -7,6 +7,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
+import { addDateAndTime } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -45,17 +46,20 @@ export class TasksService {
     const fields = [
       { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
       { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
+      { placeholder: 'Deadline Time', type: 'time', name: 'deadlineTime', required: true },
       { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
     ];
     const formGroup = {
       title: [ '', CustomValidators.required ],
       deadline: [ '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
+      deadlineTime: [ '09:00', CustomValidators.dateValidRequired ],
       description: ''
     };
     this.dialogsFormService.openDialogsForm('Add Task', fields, formGroup, {
       onSubmit: (task) => {
         if (task) {
-          this.addTask({ ...task, deadline: new Date(task.deadline).getTime(), ...additionalFields }).pipe(
+          const deadline = new Date(addDateAndTime(new Date(task.deadline).getTime(), task.deadlineTime)).getTime();
+          this.addTask({ ...task, deadline, ...additionalFields }).pipe(
             finalize(() => this.dialogsLoadingService.stop())
           ).subscribe((res) => {
             onSuccess(res.doc);
