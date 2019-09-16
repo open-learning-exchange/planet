@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin, Subject, of } from 'rxjs';
+import { forkJoin, Subject, of, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -19,6 +19,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
+import { UsersService } from './users.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -73,7 +74,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private stateService: StateService,
     private reportsService: ReportsService,
     private dialogsLoadingService: DialogsLoadingService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private usersService: UsersService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -262,42 +264,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  setRoles(user, roles, event, wasSuperAdmin = false) {
-    const makeSuperAdmin = roles.indexOf('_admin') > -1;
-    const planetConfig = this.stateService.configuration;
-    const tempUser = {
-      ...user,
-      roles: roles.filter(r => r !== '_admin'),
-      oldRoles: [ ...user.roles ] || [ 'learner' ],
-      isUserAdmin: roles.indexOf('manager') > -1 || makeSuperAdmin
-    };
-    const obs = [ this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser) ];
-    if (wasSuperAdmin) {
-      obs.push(this.couchService.delete('_node/nonode@nohost/_config/admins/' + tempUser.name));
-    }
-    if (makeSuperAdmin) {
-      obs.push(this.couchService.put(
-        '_node/nonode@nohost/_config/admins/' + tempUser.name,
-        '-' + tempUser.password_scheme + '-' + tempUser.derived_key + ',' + tempUser.salt + ',' + tempUser.iterations
-      ));
-      const adminName = tempUser.name + '@' + planetConfig.parentCode;
-      const userDetail = { ...user, requestId: planetConfig._id, isUserAdmin: false, roles: [], name: adminName };
-      obs.push(this.couchService.updateDocument('_users', { '_id': 'org.couchdb.user:' + adminName, ...userDetail }, {
-        domain: planetConfig.parentDomain
-      }));
-    }
-    if (tempUser.isUserAdmin) {
-      obs.push(this.removeFromTabletUsers(tempUser));
-    }
-    forkJoin(obs).subscribe(() => {
-      console.log('Success!');
-      this.initializeData();
-    }, (error) => {
-      console.log(error);
-    });
-    event.stopPropagation();
-  }
-
   deleteRole(user: any, index: number) {
     // Make copy of user so UI doesn't change until DB change succeeds
     let tempUser = { ...user, roles: [ ...user.roles ] };
@@ -352,9 +318,34 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
+    event.stopPropagation();
+    ((type === 'admin' ? this.toggleAdminStatus(user) : this.toggleManagerStatus(user)) as Observable<any>).subscribe(
+      () => {
+        this.initializeData();
+        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+      },
+      () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
+    )
+  }
 
-  removeFromTabletUsers(user) {
-    return this.couchService.delete('tablet_users/' + user._id + '?rev=' + user._rev);
+  toggleAdminStatus(user) {
+    return user.roles.length === 0 ? this.usersService.demoteFromAdmin(user) : this.usersService.promoteToAdmin(user);
+  }
+
+  toggleManagerStatus(user) {
+    return forkJoin([
+      this.usersService.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
+      user.isUserAdmin ? of({}) : this.usersService.removeFromTabletUsers(user)
+    ])
+  }
+
+  setRoles(user, roles, event) {
+    event.stopPropagation();
+    this.usersService.setRoles(user, roles).subscribe(() => {
+      this.initializeData();
+      this.planetMessageService.showMessage(`${user.name} roles modified`);
+    });
   }
 
   back() {
