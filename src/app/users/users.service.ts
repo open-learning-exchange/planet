@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { StateService } from '../shared/state.service';
 import { switchMap } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
+import { StateService } from '../shared/state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +17,14 @@ export class UsersService {
   demoteFromAdmin(user) {
     const planetConfig = this.stateService.configuration;
     const parentUserId = `org.couchdb.user:${user.name}@${planetConfig.parentCode}`;
-    return this.couchService.findAll('_users', { selector: { _id: parentUserId } }).pipe(switchMap(([ parentUser ]: any[]) =>
+    return this.couchService.findAll(
+      '_users',
+      { selector: { _id: parentUserId } },
+      { domain: planetConfig.parentDomain }
+    ).pipe(switchMap(([ parentUser ]: any[]) =>
       forkJoin([
         this.couchService.delete('_node/nonode@nohost/_config/admins/' + user.name),
-        this.couchService.delete(`_users/${parentUserId}${parentUser ? `?rev=${parentUser._rev}` : ''}`),
+        this.couchService.delete(`_users/${parentUserId}${parentUser ? `?rev=${parentUser._rev}` : ''}`, { domain: planetConfig.parentDomain }),
         this.setRoles({ ...user, isUserAdmin: false }, user.oldRoles)
       ])
     ));
@@ -41,7 +45,7 @@ export class UsersService {
       _rev: undefined
     };
     return forkJoin([
-      this.couchService.updateDocument('_users', { ...parentUser, '_id': adminId }),
+      this.couchService.updateDocument('_users', { ...parentUser, '_id': adminId }, { domain: planetConfig.parentDomain }),
       this.couchService.put(
         `_node/nonode@nohost/_config/admins/${user.name}`,
         `-${user.password_scheme}-${user.derived_key},${user.salt},${user.iterations}`
