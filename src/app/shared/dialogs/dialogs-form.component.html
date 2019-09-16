@@ -62,9 +62,15 @@
 
       <!-- Date Select -->
       <mat-form-field *ngIf="field.type === 'date'" class="full-width">
-        <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}">
+        <input matInput [matDatepicker]="dp" placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}">
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
         <mat-datepicker #dp></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <!-- Time Select -->
+      <mat-form-field *ngIf="field.type === 'time'" class="full-width">
+        <input matInput type="time" [placeholder]="field.placeholder" [formControl]="modalForm.controls[field.name]" [required]="field.required">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
