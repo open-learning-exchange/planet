@@ -14,7 +14,7 @@
   <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="toggleTaskComplete(task)">
     <mat-checkbox [checked]="task.completed"></mat-checkbox>
     <p matLine>{{task.title}}</p>
-    <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}}</p>
+    <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</p>
     <img matTooltip="{{task.assignee.name}}" *ngIf="task.assignee" matListAvatar [src]="
       task.assignee.attachmentDoc ?
         imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :

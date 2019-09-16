@@ -6,6 +6,7 @@ import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.compon
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
+import { addDateAndTime } from './utils';
 
 @Component({
   selector: 'planet-calendar',
@@ -66,7 +67,6 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventObject(meetup, startDate?, endDate?) {
-    const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
     return {
       title: meetup.title,
       start: addDateAndTime(startDate || meetup.startDate, meetup.startTime),
