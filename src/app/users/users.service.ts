@@ -16,7 +16,7 @@ export class UsersService {
 
   demoteFromAdmin(user) {
     const planetConfig = this.stateService.configuration;
-    const parentUserId = `org.couchdb.user:${user.name}@${planetConfig.parentCode}`;
+    const parentUserId = `org.couchdb.user:${user.name}@${planetConfig.code}`;
     return this.couchService.findAll(
       '_users',
       { selector: { _id: parentUserId } },
@@ -24,7 +24,8 @@ export class UsersService {
     ).pipe(switchMap(([ parentUser ]: any[]) =>
       forkJoin([
         this.couchService.delete('_node/nonode@nohost/_config/admins/' + user.name),
-        this.couchService.delete(`_users/${parentUserId}${parentUser ? `?rev=${parentUser._rev}` : ''}`, { domain: planetConfig.parentDomain }),
+        // TODO: When changing to a sync strategy for updating parent uncomment next line
+        // this.couchService.delete(`_users/${parentUserId}${parentUser ? `?rev=${parentUser._rev}` : ''}`),
         this.setRoles({ ...user, isUserAdmin: false }, user.oldRoles)
       ])
     ));
@@ -32,7 +33,7 @@ export class UsersService {
 
   promoteToAdmin(user) {
     const planetConfig = this.stateService.configuration;
-    const adminName = user.name + '@' + planetConfig.parentCode;
+    const adminName = user.name + '@' + planetConfig.code;
     const adminId = `org.couchdb.user:${adminName}`;
     const parentUser = {
       ...user,
