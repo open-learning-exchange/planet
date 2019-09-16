@@ -48,3 +48,5 @@ export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
   };
   return keyToArray(iterable.next(), []);
 };
+
+export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
