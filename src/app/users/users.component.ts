@@ -63,6 +63,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   emptyData = false;
   private searchChange = new Subject<string>();
   isOnlyManagerSelected = false;
+  configuration = this.stateService.configuration;
 
   constructor(
     private dialog: MatDialog,

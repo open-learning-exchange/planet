@@ -144,7 +144,7 @@
               </button>
             </mat-menu>
             <button
-              *ngIf="element.doc.isUserAdmin && filterType === 'local'"
+              *ngIf="element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName"
               (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)"
               mat-raised-button color="primary" i18n>Demote</button>
           </span>
