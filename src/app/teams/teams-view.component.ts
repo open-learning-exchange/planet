@@ -154,7 +154,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   toggleMembership(team, leaveTeam) {
-    return this.teamsService.toggleTeamMembership(
+    return () => this.teamsService.toggleTeamMembership(
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
@@ -187,7 +187,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: config.request,
+          request: config.request(),
           onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
@@ -206,18 +206,20 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   changeMembershipRequest(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
-    if (type !== 'removed') { this.dialogsLoadingService.start(); }
-    return changeObject.obs.pipe(
-      switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-      switchMap(() => this.getMembers()),
-      switchMap(() => this.sendNotifications('added')),
-      map(() => changeObject.message),
-      finalize(() => this.dialogsLoadingService.stop())
-    );
+    return () => {
+      this.dialogsLoadingService.start();
+      return changeObject.obs.pipe(
+        switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
+        switchMap(() => this.getMembers()),
+        switchMap(() => this.sendNotifications('added')),
+        map(() => changeObject.message),
+        finalize(() => this.dialogsLoadingService.stop())
+      );
+    };
   }
 
   changeMembership(type, memberDoc?) {
-    this.changeMembershipRequest(type, memberDoc).subscribe((message) => {
+    this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(message);
     });
@@ -370,12 +372,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       const { _id: resId, _rev: resRev } = resource.resource;
       obs.push(this.couchService.delete(`resources/${resId}?rev=${resRev}`));
     }
-    return forkJoin(obs).pipe(switchMap(() => this.getMembers()));
+    return () => forkJoin(obs).pipe(switchMap(() => this.getMembers()));
   }
 
   makeLeader(member) {
     const currentLeader = this.members.find(mem => mem.userId === this.leader);
-    return this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
+    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
   removeCourse(course) {
@@ -384,7 +386,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     const index = this.team.courses.indexOf(course);
     const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    return this.teamsService.updateTeam({ ...this.team, courses: newCourses });
+    return () => this.teamsService.updateTeam({ ...this.team, courses: newCourses });
   }
 
   toggleTask({ option }) {

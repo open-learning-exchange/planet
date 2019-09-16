@@ -111,7 +111,7 @@ export class TeamsService {
   }
 
   archiveTeam(team) {
-    return this.updateTeam({ ...team, status: 'archived' });
+    return () => this.updateTeam({ ...team, status: 'archived' });
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
