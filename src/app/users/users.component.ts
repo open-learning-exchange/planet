@@ -326,7 +326,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
       },
       () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
-    )
+    );
   }
 
   toggleAdminStatus(user) {
@@ -337,7 +337,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     return forkJoin([
       this.usersService.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
       user.isUserAdmin ? of({}) : this.usersService.removeFromTabletUsers(user)
-    ])
+    ]);
   }
 
   setRoles(user, roles, event) {
