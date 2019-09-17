@@ -8,8 +8,8 @@ RUN apk add --no-cache \
       ca-certificates=20190108-r0 \
       nghttp2-libs=1.35.1-r1 \
       libssh2=1.8.2-r0 \
-      libcurl=7.64.0-r2 \
-    curl=7.64.0-r2 \
+      libcurl=7.64.0-r3 \
+    curl=7.64.0-r3 \
       oniguruma=6.9.1-r0 \
     jq=1.6-r0
 
