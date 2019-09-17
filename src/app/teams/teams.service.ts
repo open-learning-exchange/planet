@@ -190,6 +190,7 @@ export class TeamsService {
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
+    team.type = team.type || 'team';
     switch (type) {
       case 'message':
         return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> ${team.type}.`;
