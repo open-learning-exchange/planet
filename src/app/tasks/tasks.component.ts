@@ -8,6 +8,8 @@ import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { MatDialog } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   selector: 'planet-tasks',
@@ -17,6 +19,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class TasksComponent implements OnInit {
 
+  deleteDialog: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   private _assigness: any[];
@@ -38,7 +41,8 @@ export class TasksComponent implements OnInit {
     private tasksService: TasksService,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -51,11 +55,44 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
-  addTask() {
+  addTask(task?) {
     this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, () => {
       this.tasksService.getTasks();
-      this.planetMessageService.showMessage('New task has been added');
+      const msg = task ? 'Task updated successfully' : 'Task created successfully';
+      this.planetMessageService.showMessage(msg);
     });
+  }
+
+  archiveClick(task) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.archiveTask(task),
+        changeType: 'delete',
+        type: 'task',
+        displayName: task.title
+      }
+    });
+  }
+
+  archiveTask(task) {
+    return {
+      request: this.tasksService.archiveTask(task)(),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted a task.');
+        this.removeTaskFromTable(task);
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+    };
+  }
+
+  removeTaskFromTable(newTask: any) {
+    // this.tasks = this.tasks.filter((t: any) => t.status !== 'archived');
+    // this.tasks = { ...task, status: 'archived'}
+    // .filter(( [ section ]) => section !== 'admins')
+    // this.tasks = this.tasksService.sortedTasks(newTask, this.tasks);
+    // this.shelf = { ...newShelf, '_rev': res.rev };
+     this.tasks = this.tasks.filter((t: any) => t.tasks._rev !== newTask._rev);
   }
 
   toggleTaskComplete(task) {

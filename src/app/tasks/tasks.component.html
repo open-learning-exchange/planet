@@ -22,10 +22,20 @@
         imgUrlPrefix + task.assignee.avatar :
         'assets/image.png'
     ">
-    <button mat-icon-button [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
-    <mat-menu #assigneeMenu="matMenu">
-      <button *ngIf="task.assignee" (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee.name}}</button>
-      <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee(task, assignee)">{{assignee.name}}</button>
-    </mat-menu>
-  </button>
+    <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+    <mat-icon>more_vert</mat-icon>
+    </button>
+  <mat-menu #resourceMenu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)">
+      <mat-icon>add</mat-icon>
+      <span>Add</span>
+      <mat-menu #assigneeMenu="matMenu">
+        <button *ngIf="task.assignee" (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee.name}}</button>
+        <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee(task, assignee)">{{assignee.name}}</button>
+      </mat-menu>
+    </button>
+    <button mat-menu-item (click)="addTask(task); $event.stopPropagation()" i18n><mat-icon>edit</mat-icon> Edit</button>
+    <button mat-menu-item (click)="archiveClick(task); $event.stopPropagation()" i18n><mat-icon>delete_forever</mat-icon> Delete</button>
+  </mat-menu>
+</button>
 </mat-action-list>

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { addDateAndTime } from '../shared/utils';
 
 @Injectable({
@@ -29,6 +29,16 @@ export class TasksService {
         this.tasksUpdated.next(res);
       }
     });
+  }
+
+  archiveTask(task) {
+    return () => this.updateTask({ ...task, status: 'archived' });
+  }
+
+  updateTask(task: any) {
+    return this.couchService.updateDocument(this.dbName, task).pipe(switchMap((res: any) => {
+      return of({ ...task, _rev: res.rev, _id: res.id });
+    }));
   }
 
   getTasks(planetField = 'local') {
