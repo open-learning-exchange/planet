@@ -105,7 +105,7 @@ export class ReportsService {
     const { request, groupFunction } = {
       logins: { request: this.getLoginActivities, groupFunction: this.groupLoginActivities },
       resourceViews: {  request: this.getResourceVisits, groupFunction: this.groupResourceVisits }
-    }[type]
+    }[type];
     return request.bind(this)({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
       map(response => groupFunction.bind(this)(response))
     );
