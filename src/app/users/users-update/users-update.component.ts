@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -14,6 +14,7 @@ import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
+import { NgxImgComponent } from 'ngx-img';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -27,7 +28,7 @@ import { ValidatorService } from '../../validators/validator.service';
     }
   ` ]
 })
-export class UsersUpdateComponent implements OnInit {
+export class UsersUpdateComponent implements OnInit, AfterViewInit {
   user: any = {};
   educationLevel = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
   readonly dbName = '_users'; // make database name a constant
@@ -40,12 +41,12 @@ export class UsersUpdateComponent implements OnInit {
   urlName = '';
   redirectUrl = '/';
   file: any;
-  reset: boolean;
   roles: string[] = [];
   languages = languages;
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
+  @ViewChild('imageuploader') public imageUploader: NgxImgComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -125,12 +126,7 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      const userInform = Object.assign({}, this.user, this.editForm.value, attachment);
-      if (this.reset) {
-        userInform._attachments = undefined;
-        this.reset = false;
-      }
-      this.userService.updateUser(userInform).subscribe(() => {
+      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).subscribe(() => {
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -174,11 +170,6 @@ export class UsersUpdateComponent implements OnInit {
     this.uploadImage = false;
   }
 
-  ResetImage() {
-    this.previewSrc = 'assets/image.png';
-    this.reset = true;
-  }
-
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
     this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
@@ -186,6 +177,12 @@ export class UsersUpdateComponent implements OnInit {
     })).subscribe(() => {
       this.goBack();
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.imageUploader.hasPreview = true;
+    this.imageUploader.imgSrc = 'assets/image.png';
+    this.imageUploader.mode = 'crop';
   }
 
 }
