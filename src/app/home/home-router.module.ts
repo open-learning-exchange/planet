@@ -43,7 +43,7 @@ const routes: Routes = [
       { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent },
       { path: 'news', component: NewsComponent },
       { path: 'logs/myplanet', component: LogsMyPlanetComponent },
-      { path: 'myHealth', loadChildren: '../health/health.module#HealthModule' }
+      { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) }
     ]
   }
 ];
