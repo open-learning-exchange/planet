@@ -83,10 +83,14 @@ export class ReportsService {
     }));
   }
 
-  getLoginActivities({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('login_activities', this.selector(planetCode, { tillDate, dateField: 'loginTime', fromMyPlanet }))
-    .pipe(map((loginActivities: any) => {
-      return this.filterAdmin(loginActivities, filterAdmin);
+  getActivities(
+    db: 'login_activities' | 'resource_activities',
+    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+  ) {
+    const dateField = db === 'login_activities' ? 'loginTime' : 'time';
+    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
+    .pipe(map((activities: any) => {
+      return this.filterAdmin(activities, filterAdmin);
     }));
   }
 
@@ -102,11 +106,11 @@ export class ReportsService {
     type: 'logins' | 'resourceViews',
     { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
   ): Observable<{ byUser?, byResource?, byMonth }> {
-    const { request, groupFunction } = {
-      logins: { request: this.getLoginActivities, groupFunction: this.groupLoginActivities },
-      resourceViews: {  request: this.getResourceVisits, groupFunction: this.groupResourceVisits }
+    const { db, request, groupFunction } = {
+      logins: { db: 'login_activities', request: this.getActivities, groupFunction: this.groupLoginActivities },
+      resourceViews: { db: 'resource_activities', request: this.getActivities, groupFunction: this.groupResourceVisits }
     }[type];
-    return request.bind(this)({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
+    return request.bind(this)(db, { planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
       map(response => groupFunction.bind(this)(response))
     );
   }
@@ -119,13 +123,6 @@ export class ReportsService {
         .filter(rating => rating.title !== '' && rating.title !== undefined)
         .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
           ({ ...r, value: Math.round(10 * r.sum / r.count) / 10 }));
-    }));
-  }
-
-  getResourceVisits({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
-    .pipe(map((resourceActivites: any) => {
-      return this.filterAdmin(resourceActivites, filterAdmin);
     }));
   }
 

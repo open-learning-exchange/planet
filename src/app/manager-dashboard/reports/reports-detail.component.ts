@@ -83,7 +83,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.activityParams()).subscribe((loginActivities: any) => {
+    this.activityService.getActivities('login_activities', this.activityParams()).subscribe((loginActivities: any) => {
       this.loginActivities = loginActivities;
       const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
@@ -101,7 +101,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.activityParams()).subscribe((resourceActivities: any) => {
+    this.activityService.getActivities('login_activities', this.activityParams()).subscribe((resourceActivities: any) => {
       this.resourceActivities = resourceActivities;
       const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
