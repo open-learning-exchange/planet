@@ -10,7 +10,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
 import { SyncService } from '../shared/sync.service';
-import { PouchAuthService, PouchService } from '../shared/database';
+import { PouchAuthService } from '../shared/database/pouch-auth.service';
+import { PouchService } from '../shared/database/pouch.service';
 import { StateService } from '../shared/state.service';
 
 const registerForm = {
