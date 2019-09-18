@@ -5,8 +5,9 @@ import { map, takeUntil } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
-import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
+import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { CsvService } from '../../shared/csv.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -24,12 +25,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   filter = '';
   codeParam = '';
+  loginActivities = [];
+  resourceActivities = [];
 
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private csvService: CsvService
   ) {}
 
   ngOnInit() {
@@ -79,7 +83,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.activityParams()).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+    this.activityService.getActivities('login_activities', this.activityParams()).subscribe((loginActivities: any) => {
+      this.loginActivities = loginActivities;
+      const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
@@ -95,7 +101,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.activityParams()).subscribe(({ byResource, byMonth }) => {
+    this.activityService.getActivities('login_activities', this.activityParams()).subscribe((resourceActivities: any) => {
+      this.resourceActivities = resourceActivities;
+      const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
@@ -197,4 +205,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
+  exportCSV(reportType: 'logins' | 'resourceViews') {
+    this.csvService.exportCSV(reportType === 'logins' ?
+      { data: this.loginActivities, title: 'Member Visits' } :
+      { data: this.resourceActivities, title: 'Resource Views' }
+    );
+  }
 }

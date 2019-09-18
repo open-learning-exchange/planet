@@ -23,6 +23,14 @@
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
       <span>{{planetName}}</span>
+      <span class="toolbar-fill"></span>
+      <button class="margin-lr-10" color="accent" mat-raised-button i18n [matMenuTriggerFor]="exportMenu">
+        Export
+      </button>
+      <mat-menu #exportMenu="matMenu">
+        <a mat-menu-item *ngIf="loginActivities" (click)="exportCSV('logins')" i18n>Login Report</a>
+        <a mat-menu-item *ngIf="resourceActivities" (click)="exportCSV('resourceViews')" i18n>Resources View Report</a>
+      </mat-menu>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">

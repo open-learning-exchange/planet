@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -83,16 +83,36 @@ export class ReportsService {
     }));
   }
 
-  getLoginActivities({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('login_activities', this.selector(planetCode, { tillDate, dateField: 'loginTime', fromMyPlanet }))
-    .pipe(map((loginActivities: any) => {
-      loginActivities = this.filterAdmin(loginActivities, filterAdmin);
-      return ({
-        byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
-          .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
-        byMonth: this.groupByMonth(this.appendGender(loginActivities), 'loginTime', 'user')
-      });
+  getActivities(
+    db: 'login_activities' | 'resource_activities',
+    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+  ) {
+    const dateField = db === 'login_activities' ? 'loginTime' : 'time';
+    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
+    .pipe(map((activities: any) => {
+      return this.filterAdmin(activities, filterAdmin);
     }));
+  }
+
+  groupLoginActivities(loginActivities) {
+    return ({
+      byUser: this.groupBy(loginActivities, [ 'parentCode', 'createdOn', 'user' ], { maxField: 'loginTime' })
+        .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
+      byMonth: this.groupByMonth(this.appendGender(loginActivities), 'loginTime', 'user')
+    });
+  }
+
+  getGroupedReport(
+    type: 'logins' | 'resourceViews',
+    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+  ): Observable<{ byUser?, byResource?, byMonth }> {
+    const { db, request, groupFunction } = {
+      logins: { db: 'login_activities', request: this.getActivities, groupFunction: this.groupLoginActivities },
+      resourceViews: { db: 'resource_activities', request: this.getActivities, groupFunction: this.groupResourceVisits }
+    }[type];
+    return request.bind(this)(db, { planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
+      map(response => groupFunction.bind(this)(response))
+    );
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
@@ -106,16 +126,12 @@ export class ReportsService {
     }));
   }
 
-  getResourceVisits({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('resource_activities', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
-    .pipe(map((resourceActivites) => {
-      resourceActivites = this.filterAdmin(resourceActivites, filterAdmin);
-      return ({
-        byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
-          .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
-        byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
-      });
-    }));
+  groupResourceVisits(resourceActivites) {
+    return ({
+      byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
+        .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
+      byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
+    });
   }
 
   getDatabaseCount(db: string) {
