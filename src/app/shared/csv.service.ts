@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CsvService {
 
   default = {

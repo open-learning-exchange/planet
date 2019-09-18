@@ -30,7 +30,6 @@ import { RatingService } from './shared/forms/rating.service';
 import { TagsService } from './shared/forms/tags.service';
 import { ManagerService } from './manager-dashboard/manager.service';
 import { NotificationsService } from './notifications/notifications.service';
-import { PlanetCsvService } from './shared/planet-csv.service';
 
 @NgModule({
   imports: [
@@ -65,8 +64,7 @@ import { PlanetCsvService } from './shared/planet-csv.service';
     RatingService,
     TagsService,
     ManagerService,
-    NotificationsService,
-    PlanetCsvService
+    NotificationsService
   ],
   bootstrap: [ AppComponent ]
 })
