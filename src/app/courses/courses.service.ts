@@ -10,7 +10,9 @@ import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
 
 // Service for updating and storing active course for single course views.
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';

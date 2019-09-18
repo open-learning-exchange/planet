@@ -10,7 +10,9 @@ interface SessionInfo {
     roles: String[];
   };
 }
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class PouchAuthService {
   private authDB;
 

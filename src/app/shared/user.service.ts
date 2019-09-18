@@ -13,7 +13,9 @@ import { StateService } from './state.service';
 
 // Also handles writing log information for user sessions
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UserService {
   private user: any = { name: '' };
   private usersDb = '_users';

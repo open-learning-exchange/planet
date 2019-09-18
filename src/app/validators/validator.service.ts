@@ -9,7 +9,9 @@ import { UserService } from '../shared/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ValidatorService {
 
   constructor(
