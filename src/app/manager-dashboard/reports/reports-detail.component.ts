@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { combineLatest, Subject, of } from 'rxjs';
-import { map, takeUntil, switchMap } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
-import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
+import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { PlanetCsvService } from '../../shared/planet-csv.service';
 
@@ -83,14 +83,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getAllLoginActivities(this.activityParams())
-    .pipe(
-      switchMap((loginActivities: any) => {
-        this.loginActivities = loginActivities;
-        return of(loginActivities);
-      }),
-      this.activityService.groupLoginActivities()
-    ).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+    this.activityService.getLoginActivities(this.activityParams()).subscribe((loginActivities: any) => {
+      this.loginActivities = loginActivities;
+      const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
@@ -106,14 +101,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getResourceVisits() {
-    this.activityService.getAllResourceVisits(this.activityParams())
-    .pipe(
-      switchMap((resourceActivities: any) => {
-        this.resourceActivities = resourceActivities;
-        return of(resourceActivities);
-      }),
-      this.activityService.groupResourceVisits()
-    ).subscribe(({ byResource, byMonth }) => {
+    this.activityService.getResourceVisits(this.activityParams()).subscribe((resourceActivities: any) => {
+      this.resourceActivities = resourceActivities;
+      const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });

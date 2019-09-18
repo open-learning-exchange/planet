@@ -34,8 +34,8 @@ export class ReportsComponent {
   getLogs() {
     forkJoin([
       this.managerService.getChildPlanets(true),
-      this.activityService.getResourceVisits(),
-      this.activityService.getLoginActivities(),
+      this.activityService.getGroupedResourceVisits(),
+      this.activityService.getGroupedLoginActivities(),
       this.activityService.getAdminActivities(),
       this.couchService.findAll('hubs')
     ]).subscribe(([ planets, resourceVisits, loginActivities, adminActivities, hubs ]) => {
