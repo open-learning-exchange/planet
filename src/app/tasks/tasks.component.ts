@@ -81,14 +81,15 @@ export class TasksComponent implements OnInit {
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a task.');
-        this.removeTaskFromTable(task);
+        this.removeTaskFromTable();
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
     };
   }
 
-  removeTaskFromTable(newTask: any) {
+  removeTaskFromTable() {
     this.tasks = this.tasks.filter(t => t.status !== 'archived');
+    this.tasksService.getTasks();
   }
 
   toggleTaskComplete(task) {
