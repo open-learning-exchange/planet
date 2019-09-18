@@ -7,7 +7,7 @@ import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
 import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
-import { PlanetCsvService } from '../../shared/planet-csv.service';
+import { CsvService } from '../../shared/csv.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -33,7 +33,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private route: ActivatedRoute,
     private dialogsLoadingService: DialogsLoadingService,
-    private planetCsvService: PlanetCsvService
+    private csvService: CsvService
   ) {}
 
   ngOnInit() {
@@ -205,28 +205,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
-  exportCSV(reportType) {
-    const options = { title: 'Report', showTitle: true };
-    switch (reportType) {
-      case 'login':
-        this.planetCsvService.generate(
-          this.loginActivities.map(({ _id, _rev, type, createdOn, parentCode, ...logins }) => ({
-            ...logins,
-            loginTime: new Date(logins.loginTime).toString(),
-            logoutTime: new Date(logins.loginTime).toString()
-          })),
-          { ...options, title: 'Member Visits', filename: 'Report of Member Visits on ' + new Date().toDateString() }
-        );
-        break;
-      case 'resource_visit':
-        this.planetCsvService.generate(
-          this.resourceActivities.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...visits }) => ({
-            ...visits,
-            time: new Date(visits.time).toString()
-          })),
-          { ...options, title: 'Resource Visits', filename: 'Report of Resource Visits on ' + new Date().toDateString() }
-        );
-        break;
-    }
+  exportCSV(reportType: 'logins' | 'resourceViews') {
+    this.csvService.exportCSV(reportType === 'logins' ?
+      { data: this.loginActivities, title: 'Member Visits' } :
+      { data: this.resourceActivities, title: 'Resource Views' }
+    );
   }
 }
