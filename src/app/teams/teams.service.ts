@@ -190,20 +190,20 @@ export class TeamsService {
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
-    team.type = team.type || 'team';
+    const teamType = team.type || 'team';
     switch (type) {
       case 'message':
-        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> ${team.type}.`;
+        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> ${teamType}.`;
       case 'request':
-        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> ${team.type}.`;
+        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> ${teamType}.`;
       case 'added':
-        return `You have been added to <b>"${team.name}"</b> ${team.type}.`;
+        return `You have been added to <b>"${team.name}"</b> ${teamType}.`;
       case 'rejected':
-        return `You have not been accepted to <b>"${team.name}"</b> ${team.type}.`;
+        return `You have not been accepted to <b>"${team.name}"</b> ${teamType}.`;
       case 'removed':
-        return `You have been removed from <b>"${team.name}"</b> ${team.type}.`;
+        return `You have been removed from <b>"${team.name}"</b> ${teamType}.`;
       default:
-        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> ${team.type}.`;
+        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> ${teamType}.`;
     }
   }
 
