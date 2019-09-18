@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -98,10 +98,15 @@ export class ReportsService {
     });
   }
 
-  getGroupedLoginActivities({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.getLoginActivities({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
-      map(loginActivities => this.groupLoginActivities(loginActivities))
-    );
+  getGroupedReport(
+    type: 'logins' | 'resourceViews',
+    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+  ): Observable<{ byUser?, byResource?, byMonth }> {
+    const { request, groupFunction } = {
+      logins: { request: this.getLoginActivities, groupFunction: this.groupLoginActivities },
+      resourceViews: {  request: this.getResourceVisits, groupFunction: this.groupResourceVisits }
+    }[type]
+    return request({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(map(response => groupFunction(response)));
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
@@ -128,12 +133,6 @@ export class ReportsService {
         .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
       byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
     });
-  }
-
-  getGroupedResourceVisits({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.getResourceVisits({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
-      map(resourceActivities => this.groupResourceVisits(resourceActivities))
-    );
   }
 
   getDatabaseCount(db: string) {
