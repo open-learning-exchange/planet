@@ -19,13 +19,13 @@ export class HealthEventComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', CustomValidators.required ],
-      pulse: [ '', CustomValidators.required ],
-      bp: [ '', CustomValidators.required ],
-      height: [ '', CustomValidators.required ],
-      weight: [ '', CustomValidators.required ],
-      vision: [ '', CustomValidators.required ],
-      hearing: [ '', CustomValidators.required ],
+      temperature: [ '' ],
+      pulse: [ '' ],
+      bp: [ '' ],
+      height: [ '' ],
+      weight: [ '' ],
+      vision: [ '' ],
+      hearing: [ '' ],
       notes: '',
       diagnosis: '',
       treatments: '',
