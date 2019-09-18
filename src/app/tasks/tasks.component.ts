@@ -48,6 +48,7 @@ export class TasksComponent implements OnInit {
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
+      this.tasks = this.tasks.filter(t => t.status !== 'archived');
       this.myTasks = this.tasks.filter(task => task.assignee && task.assignee.userId === this.userService.get()._id);
       this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
       this.filterTasks();
@@ -87,12 +88,7 @@ export class TasksComponent implements OnInit {
   }
 
   removeTaskFromTable(newTask: any) {
-    // this.tasks = this.tasks.filter((t: any) => t.status !== 'archived');
-    // this.tasks = { ...task, status: 'archived'}
-    // .filter(( [ section ]) => section !== 'admins')
-    // this.tasks = this.tasksService.sortedTasks(newTask, this.tasks);
-    // this.shelf = { ...newShelf, '_rev': res.rev };
-     this.tasks = this.tasks.filter((t: any) => t.tasks._rev !== newTask._rev);
+    this.tasks = this.tasks.filter(t => t.status !== 'archived');
   }
 
   toggleTaskComplete(task) {
