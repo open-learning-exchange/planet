@@ -106,7 +106,9 @@ export class ReportsService {
       logins: { request: this.getLoginActivities, groupFunction: this.groupLoginActivities },
       resourceViews: {  request: this.getResourceVisits, groupFunction: this.groupResourceVisits }
     }[type]
-    return request({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(map(response => groupFunction(response)));
+    return request.bind(this)({ planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
+      map(response => groupFunction.bind(this)(response))
+    );
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
