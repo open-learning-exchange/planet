@@ -96,6 +96,7 @@ export class TasksComponent implements OnInit {
       user: assignee.userId,
       'message': 'You were assigned a new task',
       link,
+      linkParams: { task: true },
       'type': 'newTask',
       'priority': 1,
       'status': 'unread',

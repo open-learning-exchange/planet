@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -26,8 +26,9 @@ import { TasksService } from '../tasks/tasks.service';
   templateUrl: './teams-view.component.html',
   styleUrls: [ './teams-view.scss' ]
 })
-export class TeamsViewComponent implements OnInit, OnDestroy {
+export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
+  @ViewChild('taskTab', { static: false }) taskTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -50,6 +51,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
+  tabSelectedIndex = 0;
+  initTabPosition = false;
 
   constructor(
     private couchService: CouchService,
@@ -79,6 +82,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
       }));
     });
+  }
+
+  ngAfterViewChecked() {
+    if (this.initTabPosition && this.taskTab && this.taskTab.position !== 0) {
+      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.taskTab.position, 0);
+      this.initTabPosition = false;
+    }
   }
 
   ngOnDestroy() {
@@ -151,6 +161,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
+    if (this.userStatus === 'member' && this.route.snapshot.params.task === 'true') {
+      this.initTabPosition = true;
+    }
   }
 
   toggleMembership(team, leaveTeam) {
