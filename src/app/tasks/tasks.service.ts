@@ -62,7 +62,7 @@ export class TasksService {
     const formGroup = {
       title: [ check.title || '', CustomValidators.required ],
       deadline: [ new Date(check.deadline) || '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
-      deadlineTime: [ check.deadline.getTime || '09:00', CustomValidators.dateValidRequired ],
+      deadlineTime: [ new Date(check.deadline).getTime() || '09:00', CustomValidators.dateValidRequired ],
       description: check.description || ''
     };
     this.dialogsFormService.openDialogsForm(check.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
