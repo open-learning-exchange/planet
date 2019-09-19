@@ -299,7 +299,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    this.couchService.bulkDocs(this.dbName, newMembershipDocs).pipe(
+    const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
+      .map(request => ({ ...request, _deleted: true }));
+    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
