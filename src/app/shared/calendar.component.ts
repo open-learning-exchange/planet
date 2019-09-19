@@ -66,7 +66,7 @@ export class PlanetCalendarComponent implements OnInit {
     });
   }
 
-  eventObject(meetup, startDate?, endDate?) {
+  eventObject(meetup, startDate = meetup.startDate, endDate = meetup.endDate || startDate) {
     return {
       title: meetup.title,
       start: addDateAndTime(startDate || meetup.startDate, meetup.startTime),
@@ -78,24 +78,26 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   dailyEvents(meetup) {
-    return [ ...Array(meetup.recurringNumber).keys() ]
-      .map(dayOffset => this.eventObject(meetup, meetup.startDate + (millisecondsToDay * dayOffset)));
+    return [ ...Array(meetup.recurringNumber).keys() ].map(dayOffset => {
+      const millisecondOffset = millisecondsToDay * dayOffset;
+      return this.eventObject(meetup, meetup.startDate + millisecondOffset, meetup.endDate + millisecondOffset);
+    });
   }
 
   weeklyEvents(meetup) {
     if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
-    const makeEvents = (events: any[], day: number) => {
+    const makeEvents = (events: any[], startDay: number, endDay: number) => {
       if (events.length === meetup.recurringNumber) {
         return events;
       }
-      const date = new Date(day);
+      const date = new Date(startDay);
       return meetup.day.indexOf(days[date.getDay()]) !== -1 ?
-        makeEvents([ ...events, this.eventObject(meetup, day) ], day + millisecondsToDay) :
-        makeEvents(events, day + millisecondsToDay);
+        makeEvents([ ...events, this.eventObject(meetup, startDay, endDay) ], startDay + millisecondsToDay, endDay + millisecondsToDay) :
+        makeEvents(events, startDay + millisecondsToDay, endDay + millisecondsToDay);
     };
-    return makeEvents([ this.eventObject(meetup) ], meetup.startDate + millisecondsToDay);
+    return makeEvents([ this.eventObject(meetup) ], meetup.startDate + millisecondsToDay, meetup.endDate + millisecondsToDay);
   }
 
   openAddEventDialog() {
