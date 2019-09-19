@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -28,7 +28,7 @@ import { NgxImgComponent } from 'ngx-img';
     }
   ` ]
 })
-export class UsersUpdateComponent implements OnInit, AfterViewInit {
+export class UsersUpdateComponent implements OnInit {
   user: any = {};
   educationLevel = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
   readonly dbName = '_users'; // make database name a constant
@@ -81,6 +81,7 @@ export class UsersUpdateComponent implements OnInit, AfterViewInit {
           this.uploadImage = true;
         }
         this.previewSrc = this.currentProfileImg;
+        this.setInitImage();
         console.log('data: ' + data);
       }, (error) => {
         console.log(error);
@@ -179,9 +180,9 @@ export class UsersUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
+  setInitImage(): void {
     this.imageUploader.hasPreview = true;
-    this.imageUploader.imgSrc = 'assets/image.png';
+    this.imageUploader.imgSrc = this.currentProfileImg;
     this.imageUploader.mode = 'crop';
   }
 
