@@ -31,7 +31,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-tab-group>
+    <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
       <mat-tab i18n-label label="Messages" *ngIf="userStatus === 'member'">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
@@ -97,7 +97,7 @@
           </ng-template>
           <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }"></planet-calendar>
         </mat-tab>
-        <mat-tab>
+        <mat-tab #taskTab>
           <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>
           </ng-template>
