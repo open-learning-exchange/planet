@@ -282,21 +282,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   addMembers(selected: any[]) {
+    this.dialogsLoadingService.start();
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    const checkActiveRequest = this.requests.some((req: any) => {
-      if (req.userId === newMembershipDocs[0].userId) {
-        this.changeMembership('added', req);
-        return true;
-      }
-    });
-    if (checkActiveRequest) {
-      this.dialogRef.close();
-      return;
-    }
-    this.dialogsLoadingService.start();
-    this.couchService.bulkDocs(this.dbName, newMembershipDocs).pipe(
+    const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
+      .map(request => ({ ...request, _deleted: true }));
+    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
