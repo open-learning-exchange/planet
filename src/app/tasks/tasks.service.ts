@@ -65,7 +65,7 @@ export class TasksService {
       deadlineTime: [ check.deadlineTime || '09:00', CustomValidators.dateValidRequired ],
       description: check.description || ''
     };
-    this.dialogsFormService.openDialogsForm(check.title ? 'Edit Task': 'Add Task', fields, formGroup, {
+    this.dialogsFormService.openDialogsForm( check.title ? 'Edit Task': 'Add Task', fields, formGroup, {
       onSubmit: (task) => {
         if (task) {
           const deadline = new Date(addDateAndTime(new Date(task.deadline).getTime(), task.deadlineTime)).getTime();
