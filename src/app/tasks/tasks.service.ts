@@ -61,7 +61,7 @@ export class TasksService {
     ];
     const formGroup = {
       title: [ check.title || '', CustomValidators.required ],
-      deadline: [ check.deadline || '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
+      deadline: [ new Date(check.deadline) || '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
       deadlineTime: [ check.deadlineTime || '09:00', CustomValidators.dateValidRequired ],
       description: check.description || ''
     };
