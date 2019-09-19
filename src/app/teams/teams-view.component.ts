@@ -97,11 +97,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         }
         return this.getMembers();
       }),
-      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
+      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : of([])),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
     ).subscribe((activities) => {
-      this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
-        this.visits[visit.user] = visit.count;
+      this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
+        this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
     });
