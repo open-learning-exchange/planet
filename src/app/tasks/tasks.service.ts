@@ -52,7 +52,7 @@ export class TasksService {
     ));
   }
 
-  openAddDialog(additionalFields, onSuccess) {
+  openAddDialog(additionalFields, onSuccess, check: any = {}) {
     const fields = [
       { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
       { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
@@ -60,16 +60,16 @@ export class TasksService {
       { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
     ];
     const formGroup = {
-      title: [ '', CustomValidators.required ],
-      deadline: [ '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
-      deadlineTime: [ '09:00', CustomValidators.dateValidRequired ],
-      description: ''
+      title: [ check.title || '', CustomValidators.required ],
+      deadline: [ check.deadline || '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
+      deadlineTime: [ check.deadlineTime || '09:00', CustomValidators.dateValidRequired ],
+      description: check.description || ''
     };
-    this.dialogsFormService.openDialogsForm('Add Task', fields, formGroup, {
+    this.dialogsFormService.openDialogsForm(check.title ? 'Edit Task': 'Add Task', fields, formGroup, {
       onSubmit: (task) => {
         if (task) {
           const deadline = new Date(addDateAndTime(new Date(task.deadline).getTime(), task.deadlineTime)).getTime();
-          this.addTask({ ...task, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
+          this.addTask({ ...check, ...task, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
             finalize(() => this.dialogsLoadingService.stop())
           ).subscribe((res) => {
             onSuccess(res.doc);

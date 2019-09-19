@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -19,6 +19,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 })
 export class TasksComponent implements OnInit {
 
+  dbName = 'tasks';
   deleteDialog: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
@@ -57,11 +58,12 @@ export class TasksComponent implements OnInit {
   }
 
   addTask(task?) {
-    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, () => {
+    const asign = task ? task.assignee : '';
+    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: asign }, () => {
       this.tasksService.getTasks();
       const msg = task ? 'Task updated successfully' : 'Task created successfully';
       this.planetMessageService.showMessage(msg);
-    });
+    }, task);
   }
 
   archiveClick(task) {

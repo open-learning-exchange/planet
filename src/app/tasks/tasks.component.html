@@ -34,7 +34,7 @@
         <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee(task, assignee)">{{assignee.name}}</button>
       </mat-menu>
     </button>
-    <button mat-menu-item (click)="addTask(); $event.stopPropagation()" i18n><mat-icon>edit</mat-icon> Edit</button>
+    <button mat-menu-item (click)="addTask(task); $event.stopPropagation()" i18n><mat-icon>edit</mat-icon> Edit</button>
     <button mat-menu-item (click)="archiveClick(task); $event.stopPropagation()" i18n><mat-icon>delete_forever</mat-icon> Delete</button>
   </mat-menu>
 </button>
