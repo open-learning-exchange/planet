@@ -3,9 +3,7 @@
 
 :host {
   .view-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "lt rt";
+    display: block;
   }
   .left-tile {
     a {
