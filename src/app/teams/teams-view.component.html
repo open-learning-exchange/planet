@@ -63,8 +63,9 @@
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>
-                  <p *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
-                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <p class="primary-text-color" *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
+                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <p *ngIf="visits[member.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member.name]?.recentTime | date }}</p>
                 </mat-card-subtitle>
                 <button *ngIf="member.userId !== leader && (currentUserId === leader || user.isUserAdmin)" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
                   <mat-icon>more_vert</mat-icon>
