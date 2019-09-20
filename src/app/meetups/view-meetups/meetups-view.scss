@@ -4,6 +4,8 @@
 :host {
   .view-container {
     display: block;
+    max-height: 60vh;
+    overflow: auto;
   }
   .left-tile {
     a {
