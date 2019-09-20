@@ -12,9 +12,9 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class TasksService {
-
   private dbName = 'tasks';
   private tasksUpdated = new Subject<any>();
+  tasks: any[] = [];
 
   constructor(
     private couchService: CouchService,
@@ -25,6 +25,7 @@ export class TasksService {
   ) {
     this.stateService.couchStateListener(this.dbName).subscribe(res => {
       if (res) {
+        this.tasks = res.newData;
         this.tasksUpdated.next(res);
       }
     });
@@ -83,6 +84,10 @@ export class TasksService {
       compare(new Date(a.deadline), new Date(b.deadline)) ||
       0
     );
+  }
+
+  removeAssigneeFromTask(assignee: any = '') {
+
   }
 
 }
