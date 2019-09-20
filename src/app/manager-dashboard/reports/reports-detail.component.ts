@@ -27,6 +27,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   codeParam = '';
   loginActivities = [];
   resourceActivities = [];
+  loginByMonth: any = {};
+  resourceByMonth: any = {};
 
   constructor(
     private activityService: ReportsService,
@@ -88,6 +90,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
+      this.loginByMonth = this.setGenderDatasets(byMonth);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
       this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
     });
@@ -106,6 +109,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
+      this.resourceByMonth = this.setGenderDatasets(byMonth);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
     });
   }
@@ -203,6 +207,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   activityParams(): { planetCode, filterAdmin?, fromMyPlanet? } {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
+  }
+
+  exportSummary(reportType: 'logins' | 'resourceViews') {
+    const dataset = reportType === 'logins' ? this.loginByMonth : this.resourceByMonth;
+    this.csvService.exportCSV({
+      data: [ [ ' ' ].concat(dataset.labels) ]
+        .concat(dataset.data.datasets.map(rows => [ rows.label, ...rows.data.map(col => col.y) ])),
+      title: 'Summary',
+      opts: { showLabels: false, useKeysAsHeaders: false }
+    });
   }
 
   exportCSV(reportType: 'logins' | 'resourceViews') {

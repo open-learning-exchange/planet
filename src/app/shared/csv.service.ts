@@ -19,8 +19,8 @@ export class CsvService {
     }
   }
 
-  exportCSV({ data, title }: { data: any[], title: string }) {
-    const options = { title, filename: `Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
+  exportCSV({ data, title, opts }: { data: any[], title: string, opts?: any }) {
+    const options = { title, filename: `Report of ${title} on ${new Date().toDateString()}`, showTitle: true, ...opts };
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...dataToDisplay }) =>
       Object.entries(dataToDisplay).reduce((object, [ key, value ]: [ string, any ]) => ({
         ...object,
