@@ -10,6 +10,9 @@
     <form class="form-spacing" [formGroup]="meetupForm" novalidate>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
+        </mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
