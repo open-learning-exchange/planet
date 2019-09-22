@@ -17,6 +17,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class TasksComponent implements OnInit {
 
+  @Input() mode: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   private _assigness: any[];
@@ -91,7 +92,7 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = `/teams/view/${this.link.teams}`;
+    const link = `/` + this.mode + `s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
       'message': 'You were assigned a new task',
