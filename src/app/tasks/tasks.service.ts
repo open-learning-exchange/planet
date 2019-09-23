@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { finalize, map } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -7,11 +7,14 @@ import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TasksService {
+  @Input() link: any;
   private dbName = 'tasks';
   private tasksUpdated = new Subject<any>();
   tasks: any[] = [];
@@ -87,7 +90,14 @@ export class TasksService {
   }
 
   removeAssigneeFromTask(assignee: any = '') {
+    const removeAssignee = assignee._id === assignee.userId;
+    const link = `/teams/view/${this.link.teams}`;
 
+    if (removeAssignee) {
+      return this.couchService.findAll(this.dbName, findDocuments(this.getTasks())).pipe(
+        switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
+      );
+    }
   }
 
 }
