@@ -83,9 +83,9 @@ export class PlanetCalendarComponent implements OnInit {
     // meetup.endDate maa end hunu paryo
     // so i think event should end on final day selected
     // }
-    //first check whether kaha baata start vako ho ani yasma kati wota array maa data aako chha hera 
-    //yo array maa k chha 7 wota chha ki 6 wota chha? 6 wota chha vane yahi mistake chha natra feri arko thau maa herne ho sodhera
-    console.log([ ...Array(meetup.recurringNumber).keys()]);
+    // first check whether kaha baata start vako ho ani yasma kati wota array maa data aako chha hera
+    // yo array maa k chha 7 wota chha ki 6 wota chha? 6 wota chha vane yahi mistake chha natra feri arko thau maa herne ho sodhera
+    console.log( [ ...Array(meetup.recurringNumber).keys()] );
     return [ ...Array(meetup.recurringNumber).keys() ]
       .map(dayOffset => this.eventObject(meetup, meetup.startDate + (millisecondsToDay * dayOffset)));
   }
@@ -98,7 +98,7 @@ export class PlanetCalendarComponent implements OnInit {
     const makeEvents = (events: any[], day: number) => {
       if (events.length === meetup.recurringNumber) {
         return events;
-      } 
+      }
       // else if(meetup.day > 1 && !meetup.startTime){
       //   makeEvents(events, day);
       // }
