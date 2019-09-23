@@ -19,8 +19,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 })
 export class TasksComponent implements OnInit {
 
-  dbName = 'tasks';
-  deleteDialog: any;
+  @Input() mode: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   private _assigness: any[];
@@ -31,6 +30,8 @@ export class TasksComponent implements OnInit {
   set assignees(newAssignees: any[]) {
     this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
+  dbName = 'tasks';
+  deleteDialog: any;
   tasks: any[] = [];
   myTasks: any[] = [];
   filteredTasks: any[] = [];
@@ -124,7 +125,7 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = `/teams/view/${this.link.teams}`;
+    const link = `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
       'message': 'You were assigned a new task',
