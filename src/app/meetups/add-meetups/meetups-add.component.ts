@@ -133,7 +133,8 @@ export class MeetupsAddComponent implements OnInit {
       '_id': this.id,
       '_rev': this.revision,
       'startDate': Date.parse(meetupInfo.startDate),
-      'endDate': Date.parse(meetupInfo.endDate)
+      'endDate': Date.parse(meetupInfo.endDate),
+      // 'endTime': [!meetupInfo.startTime ? '23:59' : meetupInfo.endTime]
      }).pipe(switchMap(() => {
         return this.couchService.post('shelf/_find', findDocuments({
           'meetupIds': { '$in': [ this.id ] }
@@ -156,6 +157,8 @@ export class MeetupsAddComponent implements OnInit {
       ...meetupInfo,
       'startDate': Date.parse(meetupInfo.startDate),
       'endDate': Date.parse(meetupInfo.endDate),
+      // 'startTime': [!meetupInfo.startTime ? '00:00' : meetupInfo.startTime],
+      // 'endTime': [!meetupInfo.endTime ? '23:59' : meetupInfo.endTime]
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage(meetupInfo.title + ' Added');
