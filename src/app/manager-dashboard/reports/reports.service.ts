@@ -200,4 +200,8 @@ export class ReportsService {
     return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
   }
 
+  monthDataLabels(date) {
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+
 }
