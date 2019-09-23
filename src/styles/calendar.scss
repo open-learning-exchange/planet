@@ -3,6 +3,9 @@
 @import '../app/variables';
 
 full-calendar {
+  .fc-day-grid-event > .fc-content {
+    text-overflow: ellipsis;
+  }
   .fc-button-primary {
     background-color: $primary;
     border: none;
