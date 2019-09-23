@@ -57,12 +57,11 @@ export class TasksComponent implements OnInit {
   }
 
   addTask(task?) {
-    const asign = task ? task.assignee : '';
-    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: asign }, () => {
+    this.tasksService.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
       this.tasksService.getTasks();
       const msg = task ? 'Task updated successfully' : 'Task created successfully';
       this.planetMessageService.showMessage(msg);
-    }, task);
+    });
   }
 
   archiveClick(task) {

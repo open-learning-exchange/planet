@@ -7,7 +7,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { Subject, of } from 'rxjs';
-import { addDateAndTime } from '../shared/utils';
+import { addDateAndTime, getClockTime } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +56,7 @@ export class TasksService {
     ));
   }
 
-  openAddDialog(additionalFields, onSuccess, check: any = {}) {
+  openAddDialog(additionalFields, task: any = {}, onSuccess = (res) => {}) {
     const fields = [
       { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
       { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
@@ -64,16 +64,19 @@ export class TasksService {
       { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
     ];
     const formGroup = {
-      title: [ check.title || '', CustomValidators.required ],
-      deadline: [ new Date(check.deadline) || '', CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac) ],
-      deadlineTime: [ new Date(check.deadline).getTime() || '09:00', CustomValidators.dateValidRequired ],
-      description: check.description || ''
+      title: [ task.title || '', CustomValidators.required ],
+      deadline: [
+        new Date(new Date(task.deadline).setHours(0, 0, 0)) || '',
+        CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac)
+      ],
+      deadlineTime: [ getClockTime(new Date(task.deadline)) || '09:00', CustomValidators.dateValidRequired ],
+      description: task.description || ''
     };
-    this.dialogsFormService.openDialogsForm(check.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
-      onSubmit: (task) => {
-        if (task) {
-          const deadline = new Date(addDateAndTime(new Date(task.deadline).getTime(), task.deadlineTime)).getTime();
-          this.addTask({ ...check, ...task, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
+    this.dialogsFormService.openDialogsForm(task.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
+      onSubmit: (newTask) => {
+        if (newTask) {
+          const deadline = new Date(addDateAndTime(new Date(newTask.deadline).getTime(), newTask.deadlineTime)).getTime();
+          this.addTask({ assignee: '', ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
             finalize(() => this.dialogsLoadingService.stop())
           ).subscribe((res) => {
             onSuccess(res.doc);
