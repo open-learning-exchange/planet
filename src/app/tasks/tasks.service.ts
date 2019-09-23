@@ -57,29 +57,41 @@ export class TasksService {
       { placeholder: 'Deadline Time', type: 'time', name: 'deadlineTime', required: true },
       { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
     ];
-    const formGroup = {
-      title: [ task.title || '', CustomValidators.required ],
-      deadline: [
-        new Date(new Date(task.deadline).setHours(0, 0, 0)) || '',
-        CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac)
-      ],
-      deadlineTime: [ task.deadline ? getClockTime(new Date(task.deadline)) : '09:00', CustomValidators.dateValidRequired ],
-      description: task.description || ''
-    };
+    const formGroup = this.addDialogFormGroup(task);
     this.dialogsFormService.openDialogsForm(task.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
       onSubmit: (newTask) => {
         if (newTask) {
-          const deadline = new Date(addDateAndTime(new Date(newTask.deadline).getTime(), newTask.deadlineTime)).getTime();
-          this.addTask({ assignee: '', ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
-            finalize(() => this.dialogsLoadingService.stop())
-          ).subscribe((res) => {
-            onSuccess(res.doc);
-            this.dialogsFormService.closeDialogsForm();
-          });
+          this.addDialogSubmit(additionalFields, task, newTask, onSuccess);
         }
       },
       autoFocus: true
     });
+  }
+
+  addDialogSubmit(additionalFields, task: any, newTask: any, onSuccess) {
+    const deadline = new Date(addDateAndTime(new Date(newTask.deadline).getTime(), newTask.deadlineTime)).getTime();
+    this.addTask({ assignee: '', ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res) => {
+      onSuccess(res.doc);
+      this.dialogsFormService.closeDialogsForm();
+    });
+  }
+
+  addDialogFormGroup(task: any = {}) {
+    const { deadline, deadlineTime } = task.deadline ?
+      { deadline: new Date(new Date(task.deadline).setHours(0, 0, 0)), deadlineTime: getClockTime(new Date(task.deadline)) } :
+      { deadline: '', deadlineTime: '09:00' };
+    return {
+      title: [ task.title || '', CustomValidators.required ],
+      deadline: [
+        deadline,
+        CustomValidators.dateValidRequired,
+        (ac) => this.validatorService.notDateInPast$(ac)
+      ],
+      deadlineTime: [ deadlineTime, CustomValidators.dateValidRequired ],
+      description: task.description || ''
+    };
   }
 
   addTask(task) {
