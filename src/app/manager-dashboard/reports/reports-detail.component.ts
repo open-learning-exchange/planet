@@ -101,7 +101,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getResourceVisits() {
-    this.activityService.getActivities('login_activities', this.activityParams()).subscribe((resourceActivities: any) => {
+    this.activityService.getActivities('resource_activities', this.activityParams()).subscribe((resourceActivities: any) => {
       this.resourceActivities = resourceActivities;
       const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
@@ -124,13 +124,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   xyChartData(data, unique) {
     return data.map((visit: any) => ({
-      x: this.monthDataLabels(visit.date),
+      x: this.activityService.monthDataLabels(visit.date),
       y: unique ? visit.unique.length : visit.count || 0
     }));
-  }
-
-  monthDataLabels(date) {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 
   datasetObject(label, data, backgroundColor) {
@@ -160,7 +156,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => this.monthDataLabels(month))
+      labels: months.map(month => this.activityService.monthDataLabels(month))
     });
   }
 
@@ -211,4 +207,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       { data: this.resourceActivities, title: 'Resource Views' }
     );
   }
+
+  exportSummaryCSV() {
+    this.csvService.exportSummaryCSV(this.loginActivities, this.resourceActivities, this.planetName);
+  }
+
 }
