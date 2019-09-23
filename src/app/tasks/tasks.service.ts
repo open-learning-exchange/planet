@@ -32,13 +32,7 @@ export class TasksService {
   }
 
   archiveTask(task) {
-    return () => this.updateTask({ ...task, status: 'archived' });
-  }
-
-  updateTask(task: any) {
-    return this.couchService.updateDocument(this.dbName, task).pipe(switchMap((res: any) => {
-      return of({ ...task, _rev: res.rev, _id: res.id });
-    }));
+    return () => this.addTask({ ...task, status: 'archived' });
   }
 
   getTasks(planetField = 'local') {
