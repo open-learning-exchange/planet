@@ -49,7 +49,6 @@ export class TasksComponent implements OnInit {
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
-      this.tasks = this.tasks.filter(t => t.status !== 'archived');
       this.myTasks = this.tasks.filter(task => task.assignee && task.assignee.userId === this.userService.get()._id);
       this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
       this.filterTasks();
@@ -90,7 +89,6 @@ export class TasksComponent implements OnInit {
   }
 
   removeTaskFromTable() {
-    this.tasks = this.tasks.filter(t => t.status !== 'archived');
     this.tasksService.getTasks();
   }
 

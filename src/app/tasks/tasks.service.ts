@@ -47,7 +47,11 @@ export class TasksService {
 
   tasksListener(link = {}, planetField = 'local') {
     return this.tasksUpdated.pipe(map((res: any) => res.planetField === planetField ?
-      res.newData.filter(task => task.link && Object.entries(task.link).every(([ key, value ]) => value === link[key])) :
+      res.newData.filter(task =>
+        task.link &&
+        Object.entries(task.link).every(([ key, value ]) => value === link[key]) &&
+        task.status !== 'archived'
+      ) :
       []
     ));
   }
