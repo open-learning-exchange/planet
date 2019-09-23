@@ -85,7 +85,7 @@ export class PlanetCalendarComponent implements OnInit {
     // }
     // first check whether kaha baata start vako ho ani yasma kati wota array maa data aako chha hera
     // yo array maa k chha 7 wota chha ki 6 wota chha? 6 wota chha vane yahi mistake chha natra feri arko thau maa herne ho sodhera
-    console.log( [ ...Array(meetup.recurringNumber).keys()] );
+    console.log( [ ...Array(meetup.recurringNumber).keys() ] );
     return [ ...Array(meetup.recurringNumber).keys() ]
       .map(dayOffset => this.eventObject(meetup, meetup.startDate + (millisecondsToDay * dayOffset)));
   }
