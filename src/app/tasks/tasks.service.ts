@@ -63,7 +63,7 @@ export class TasksService {
         new Date(new Date(task.deadline).setHours(0, 0, 0)) || '',
         CustomValidators.dateValidRequired, (ac) => this.validatorService.notDateInPast$(ac)
       ],
-      deadlineTime: [ getClockTime(new Date(task.deadline)) || '09:00', CustomValidators.dateValidRequired ],
+      deadlineTime: [ task.deadline ? getClockTime(new Date(task.deadline)) : '09:00', CustomValidators.dateValidRequired ],
       description: task.description || ''
     };
     this.dialogsFormService.openDialogsForm(task.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
