@@ -67,10 +67,12 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventObject(meetup, startDate?, endDate?) {
+    // const allDay = meetup.startTime === undefined;
     return {
       title: meetup.title,
       start: addDateAndTime(startDate || meetup.startDate, meetup.startTime),
-      end: addDateAndTime(endDate || meetup.endDate, meetup.endTime),
+      // end: addDateAndTime(endDate || meetup.endDate, meetup.endTime),
+      end: addDateAndTime(endDate || meetup.endDate, endDate > startDate && meetup.endTime),
       allDay: meetup.startTime === undefined || meetup.startTime === '',
       editable: true,
       extendedProps: { meetup }
@@ -78,20 +80,11 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   dailyEvents(meetup) {
-        // if(!meetup.startTime){
-    // An event that lasts multiple days and does not have a start time should end on the final day selected, not the day before.
-    // meetup.endDate maa end hunu paryo
-    // so i think event should end on final day selected
-    // }
-    // first check whether kaha baata start vako ho ani yasma kati wota array maa data aako chha hera
-    // yo array maa k chha 7 wota chha ki 6 wota chha? 6 wota chha vane yahi mistake chha natra feri arko thau maa herne ho sodhera
-    console.log( [ ...Array(meetup.recurringNumber).keys() ] );
     return [ ...Array(meetup.recurringNumber).keys() ]
       .map(dayOffset => this.eventObject(meetup, meetup.startDate + (millisecondsToDay * dayOffset)));
   }
 
   weeklyEvents(meetup) {
-    console.log(meetup);
     if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
@@ -99,26 +92,11 @@ export class PlanetCalendarComponent implements OnInit {
       if (events.length === meetup.recurringNumber) {
         return events;
       }
-      // else if(meetup.day > 1 && !meetup.startTime){
-      //   makeEvents(events, day);
-      // }
       const date = new Date(day);
-      // if(meetup.day > 1 && !meetup.startTime){
       return meetup.day.indexOf(days[date.getDay()]) !== -1 ?
         makeEvents([ ...events, this.eventObject(meetup, day) ], day + millisecondsToDay) :
-        // console.log(makeEvents);
         makeEvents(events, day + millisecondsToDay);
-      // if (meetup.day > 1 && !meetup.startTime){
-      //   makeEvents(events, day);
-      // }
-    // }
     };
-    // return makeEvents([ this.eventObject(meetup) ], meetup.startDate + millisecondsToDay);
-    // if(!meetup.startTime){
-    //   return this.eventObject(...meetup, );
-    // }else{
-    //   return makeEvents([ this.eventObject(meetup) ], meetup.startDate + millisecondsToDay);
-    // }
   }
 
   openAddEventDialog() {
@@ -130,7 +108,6 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventClick({ event }) {
-    // console.log(event);
     this.dialog.open(DialogsAddMeetupsComponent, { data: {
       meetup: event.extendedProps.meetup, view: 'view', link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this)
     } });
