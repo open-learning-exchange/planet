@@ -127,6 +127,8 @@ export class CustomValidators {
 
   // for validating whether end time comes before start date or not
   static endTimeValidator(): ValidatorFn {
+    let startDate: AbstractControl;
+    let endDate: AbstractControl;
     let startTime: AbstractControl;
     let endTime: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -136,9 +138,13 @@ export class CustomValidators {
         return null;
       }
 
+      startDate = ac.parent.get('startDate');
+      endDate = ac.parent.get('endDate');
+
       if (!endTime) {
         endTime = ac;
         startTime = ac.parent.get('startTime');
+
         if (!startTime) {
           throw new Error(
             'validateTimes(): startTime control is not found in parent group'
@@ -149,6 +155,17 @@ export class CustomValidators {
         startTime.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
           endTime.updateValueAndValidity();
         });
+
+        if (startDate) {
+          startDate.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
+            endTime.updateValueAndValidity();
+          });
+        }
+        if (endDate) {
+          endDate.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
+            endTime.updateValueAndValidity();
+          });
+        }
       }
 
       // if start time has not been given a value yet return back
@@ -156,10 +173,13 @@ export class CustomValidators {
         return null;
       }
 
+      const startDt = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
+      const endDt = new Date(endDate.value || startDt).toLocaleDateString('en-US');
+
       // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
       if (
-        new Date('1970-1-1 ' + startTime.value).getTime() >
-        new Date(endTime.value && '1970-1-1 ' + endTime.value).getTime()
+        new Date(startDt + ' ' + startTime.value).getTime() >
+        new Date(endTime.value && endDt + ' ' + endTime.value).getTime()
       ) {
         return { invalidEndTime: true };
       }
