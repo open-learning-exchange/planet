@@ -164,13 +164,13 @@ export class CustomValidators {
         return null;
       }
 
-      const startDt = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
-      const endDt = new Date(endDate.value || startDt).toLocaleDateString('en-US');
+      const startDateString = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
+      const endDateString = new Date(endDate.value || startDateString).toLocaleDateString('en-US');
 
       // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
       if (
-        new Date(startDt + ' ' + startTime.value).getTime() >
-        new Date(endTime.value && endDt + ' ' + endTime.value).getTime()
+        new Date(startDateString + ' ' + startTime.value).getTime() >
+        new Date(endDateString + ' ' + endTime.value).getTime()
       ) {
         return { invalidEndTime: true };
       }
