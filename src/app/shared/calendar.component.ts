@@ -102,7 +102,8 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   openAddEventDialog() {
-    this.dialog.open(DialogsAddMeetupsComponent, { data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this) } });
+    this.dialog.open(DialogsAddMeetupsComponent, { data: { link: this.link, sync: this.sync,
+      onMeetupsChange: this.onMeetupsChange.bind(this) } });
   }
 
   onMeetupsChange() {
