@@ -67,11 +67,11 @@ export class TasksService {
   }
 
   addTask(task) {
-    if (task.completed) {
-      return this.couchService.updateDocument(this.dbName,
-        { ...task, completed: task.completed || false, completedTime: this.couchService.datePlaceholder });
-    }
-    return this.couchService.updateDocument(this.dbName, { ...task, completed: task.completed || false });
+    return this.couchService.updateDocument(this.dbName, {
+      ...task,
+      completed: task.completed || false,
+      completedTime: task.completed ? this.couchService.datePlaceholder : undefined
+    });
   }
 
   sortedTasks(tasks, tasksInOrder = []) {
