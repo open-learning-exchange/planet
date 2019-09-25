@@ -5,7 +5,8 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   template: `
     <ng-container [ngSwitch]="view">
-      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link" [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
+      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
+        [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
       </planet-meetups-add>
       <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)">
       </planet-meetups-view>
