@@ -67,12 +67,12 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventObject(meetup, startDate = meetup.startDate, endDate = meetup.endDate || startDate) {
+    const allDay = meetup.startTime === undefined || meetup.startTime === '';
     return {
       title: meetup.title,
-      start: addDateAndTime(startDate || meetup.startDate, meetup.startTime),
-      // end: addDateAndTime(endDate || meetup.endDate, meetup.endTime),
-      end: addDateAndTime(endDate || meetup.endDate, endDate > startDate && meetup.endTime),
-      allDay: meetup.startTime === undefined || meetup.startTime === '',
+      start: addDateAndTime(startDate, meetup.startTime),
+      end: addDateAndTime(endDate, allDay && endDate > startDate ? '24:00' : meetup.endTime),
+      allDay,
       editable: true,
       extendedProps: { meetup }
     };
