@@ -1,5 +1,5 @@
 import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {
@@ -152,20 +152,11 @@ export class CustomValidators {
         }
 
         // run validators again on when start time's value changes
-        startTime.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
+        combineLatest(startTime.valueChanges, startDate.valueChanges, endDate.valueChanges).pipe(
+          takeUntil(ngUnsubscribe)
+        ).subscribe(() => {
           endTime.updateValueAndValidity();
         });
-
-        if (startDate) {
-          startDate.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
-            endTime.updateValueAndValidity();
-          });
-        }
-        if (endDate) {
-          endDate.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
-            endTime.updateValueAndValidity();
-          });
-        }
       }
 
       // if start time has not been given a value yet return back
