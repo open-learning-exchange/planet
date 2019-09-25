@@ -17,10 +17,10 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     :host .mat-list-option span {
       font-weight: inherit;
     }
-    :host p[matLine] * {
+    :host p[matLine] *, :host .mat-nav-list .mat-list-item * {
       margin-right: 0.25rem;
     }
-    :host p[matLine] *:last-child {
+    :host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
       margin-right: 0;
     }
     :host mat-dialog-actions {
