@@ -41,7 +41,7 @@ export class MeetupsAddComponent implements OnInit {
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup;
-  readonly dbName = 'meetups'; // database name constant 
+  readonly dbName = 'meetups'; // database name constant
   categories = constants.categories;
   pageType = 'Add new';
   revision = null;
