@@ -44,6 +44,7 @@ import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resourc
     CoursesProgressLearnerComponent,
     CoursesProgressBarComponent,
     CoursesProgressChartComponent
-  ]
+  ],
+  exports: [ CoursesComponent ]
 })
 export class CoursesModule {}

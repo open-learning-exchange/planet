@@ -8,7 +8,9 @@ import { StateService } from '../state.service';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class RatingService {
   private dbName = 'ratings';
   private ratingsUpdated = new Subject<any>();

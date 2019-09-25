@@ -8,7 +8,7 @@ import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
-import { PouchAuthService } from '../shared/database';
+import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { NotificationsService } from '../notifications/notifications.service';

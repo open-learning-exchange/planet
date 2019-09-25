@@ -26,7 +26,9 @@ const addTeamDialogFields = [
 ];
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TeamsService {
 
   dbName = 'teams';
@@ -111,7 +113,7 @@ export class TeamsService {
   }
 
   archiveTeam(team) {
-    return this.updateTeam({ ...team, status: 'archived' });
+    return () => this.updateTeam({ ...team, status: 'archived' });
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
@@ -188,19 +190,20 @@ export class TeamsService {
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
+    const teamType = team.type || 'team';
     switch (type) {
       case 'message':
-        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> team.`;
+        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> ${teamType}.`;
       case 'request':
-        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> team.`;
+        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> ${teamType}.`;
       case 'added':
-        return `You have been added to <b>"${team.name}"</b> team.`;
+        return `You have been added to <b>"${team.name}"</b> ${teamType}.`;
       case 'rejected':
-        return `You have not been accepted to <b>"${team.name}"</b> team.`;
+        return `You have not been accepted to <b>"${team.name}"</b> ${teamType}.`;
       case 'removed':
-        return `You have been removed from <b>"${team.name}"</b> team.`;
+        return `You have been removed from <b>"${team.name}"</b> ${teamType}.`;
       default:
-        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> team.`;
+        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> ${teamType}.`;
     }
   }
 

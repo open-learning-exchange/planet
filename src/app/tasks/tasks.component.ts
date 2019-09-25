@@ -1,9 +1,15 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
+import { of, forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
+import { CouchService } from '../shared/couchdb.service';
+import { findDocuments } from '../shared/mangoQueries';
+import { MatDialog } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   selector: 'planet-tasks',
@@ -13,6 +19,7 @@ import { trackById } from '../shared/table-helpers';
 })
 export class TasksComponent implements OnInit {
 
+  @Input() mode: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   private _assigness: any[];
@@ -23,6 +30,8 @@ export class TasksComponent implements OnInit {
   set assignees(newAssignees: any[]) {
     this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
+  dbName = 'tasks';
+  deleteDialog: any;
   tasks: any[] = [];
   myTasks: any[] = [];
   filteredTasks: any[] = [];
@@ -33,7 +42,9 @@ export class TasksComponent implements OnInit {
   constructor(
     private tasksService: TasksService,
     private planetMessageService: PlanetMessageService,
-    private userService: UserService
+    private userService: UserService,
+    private couchService: CouchService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -46,13 +57,39 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
-  addTask() {
-    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, (newTask) => {
-      let newTaskIndex = this.tasks.findIndex((task) => new Date(newTask.deadline) < new Date(task.deadline) || task.completed);
-      newTaskIndex = newTaskIndex < 0 ? this.tasks.length : newTaskIndex;
+  addTask(task?) {
+    this.tasksService.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
       this.tasksService.getTasks();
-      this.planetMessageService.showMessage('New task has been added');
+      const msg = task ? 'Task updated successfully' : 'Task created successfully';
+      this.planetMessageService.showMessage(msg);
     });
+  }
+
+  archiveClick(task) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.archiveTask(task),
+        changeType: 'delete',
+        type: 'task',
+        displayName: task.title
+      }
+    });
+  }
+
+  archiveTask(task) {
+    return {
+      request: this.tasksService.archiveTask(task)(),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted a task.');
+        this.removeTaskFromTable();
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+    };
+  }
+
+  removeTaskFromTable() {
+    this.tasksService.getTasks();
   }
 
   toggleTaskComplete(task) {
@@ -66,11 +103,14 @@ export class TasksComponent implements OnInit {
   }
 
   addAssignee(task, assignee: any = '') {
-    if (assignee !== '' && assignee.userDoc) {
+    const hasAssignee = assignee !== '' && assignee.userDoc;
+    if (hasAssignee) {
       const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
       assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
     }
-    this.tasksService.addTask({ ...task, assignee }).subscribe((res) => {
+    this.tasksService.addTask({ ...task, assignee }).pipe(
+      switchMap(() => hasAssignee && assignee.userId !== this.userService.get()._id ? this.sendNotifications(assignee) : of({}))
+    ).subscribe((res) => {
       this.tasksService.getTasks();
     });
   }
@@ -84,6 +124,26 @@ export class TasksComponent implements OnInit {
     this.filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
   }
 
+  sendNotifications(assignee: any = '') {
+    const link = `/${this.mode}s/view/${this.link.teams}`;
+    const notificationDoc = {
+      user: assignee.userId,
+      'message': 'You were assigned a new task',
+      link,
+      linkParams: { task: true },
+      'type': 'newTask',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: assignee.userPlanetCode
+    };
+    return this.couchService.findAll(
+      'notifications',
+      findDocuments({ link, type: 'newTask', status: 'unread', user: assignee.userId })
+    ).pipe(
+      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    );
+  }
 }
 
 @Pipe({

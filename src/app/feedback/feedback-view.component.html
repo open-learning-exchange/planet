@@ -13,7 +13,7 @@
       </ng-container>
       <ng-container *ngIf="!editTitleMode; else editTitleBlock">
         <span class="margin-lr-3">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
-        <a (click)="editTitle(true)" mat-icon-button>
+        <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
       </ng-container>
@@ -24,7 +24,7 @@
         <a (click)="setTitle()" mat-icon-button>
           <mat-icon>check</mat-icon>
         </a>
-        <a (click)="editTitle(false)" mat-icon-button>
+        <a (click)="changeEditTitleMode(false)" mat-icon-button>
           <mat-icon>clear</mat-icon>
         </a>
       </ng-template>

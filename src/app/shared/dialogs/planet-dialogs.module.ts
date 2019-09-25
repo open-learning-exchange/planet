@@ -14,6 +14,8 @@ import { DialogsLoadingComponent } from './dialogs-loading.component';
 import { ChangePasswordDirective } from './change-password.directive';
 import { SharedComponentsModule } from '../shared-components.module';
 import { SyncDirective } from '../../manager-dashboard/sync.directive';
+import { MeetupsModule } from '../../meetups/meetups.module';
+import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 
 
 @NgModule({

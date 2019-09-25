@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
   <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
     <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter"></planet-tag-input>
@@ -23,7 +23,7 @@
   <button mat-raised-button color="primary" i18n (click)="resetSearch()" [disabled]="courses.filter === ''"><span>Clear</span></button>
 </mat-toolbar>
 <div class="space-container primary-link-hover">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <ng-container *ngIf="isAuthorized">
       <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
       <div class="column margin-lr-5">
@@ -91,13 +91,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
         <mat-cell  *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
-            <ng-container *ngIf="!parent">
+            <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
+            <ng-template #dialog><a [routerLink]="['courses/view', element._id]" target="_blank">{{element.doc.courseTitle}}</a></ng-template>
+            <ng-container *ngIf="!parent && !isDialog">
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
               <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
-          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent">
+          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog">
             <span i18n>Your progress:</span>
             <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
@@ -119,7 +120,7 @@
             </td-markdown>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
-          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+          <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #resourceMenu="matMenu">
@@ -166,7 +167,7 @@
       <ng-container matColumnDef="rating">
         <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'"></planet-rating>
+          <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

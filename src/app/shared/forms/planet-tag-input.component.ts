@@ -77,6 +77,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   inputControl = new FormControl();
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
+  tagUrlDelimiter = '_,_';
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -117,6 +118,15 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       this.resetDialogData();
     });
   }
+
+  // newTags is a string of tags delimited by this.tagUrlDelimiter
+  addTags(newTags?: string) {
+    if (newTags === undefined) {
+      return;
+    }
+    newTags.split(this.tagUrlDelimiter).forEach(tag => this.addTag(tag));
+  }
+
 
   addTag(newTag: string) {
     if (this.value.indexOf(newTag.trim()) > -1) {
@@ -230,7 +240,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
    * Adds parameter to url with currently selected tags to maintain selection after navigation (filter mode only)
    */
   filterReroute(tags: string[]) {
-    const collections = tags.join('_,_');
+    const collections = tags.join(this.tagUrlDelimiter);
     this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 

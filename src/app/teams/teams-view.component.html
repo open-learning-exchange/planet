@@ -31,7 +31,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-tab-group>
+    <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
       <mat-tab i18n-label label="Messages" *ngIf="userStatus === 'member'">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
@@ -63,8 +63,9 @@
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>
-                  <p *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
-                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <p class="primary-text-color" *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
+                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <p *ngIf="visits[member.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member.name]?.recentTime | date }}</p>
                 </mat-card-subtitle>
                 <button *ngIf="member.userId !== leader && (currentUserId === leader || user.isUserAdmin)" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
                   <mat-icon>more_vert</mat-icon>
@@ -91,11 +92,17 @@
         </ng-template>
       </mat-tab>
       <ng-container *ngIf="userStatus === 'member'">
-        <mat-tab *planetBeta>
+        <mat-tab *planetBeta #calendarTab>
+          <ng-template mat-tab-label>
+            <ng-container i18n>Calendar</ng-container>
+          </ng-template>
+          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }"></planet-calendar>
+        </mat-tab>
+        <mat-tab #taskTab>
           <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>
           </ng-template>
-          <planet-tasks [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
+          <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>
@@ -129,12 +136,24 @@
           </ng-template>
           <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
           <ng-template #courseList>
-            <mat-card *ngFor="let course of team?.courses">
-              <a [routerLink]="'/courses/view/' + course._id">{{course.courseTitle}}</a>
-              <mat-card-actions>
-                <button mat-raised-button color="warn" (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })" i18n>Remove</button>
-              </mat-card-actions>
-            </mat-card>
+            <div class="card-grid">
+              <mat-card *ngFor="let course of team?.courses">
+                <div class="mat-subheading-2">
+                  <a [routerLink]="'/courses/view/' + course._id">
+                    {{course.courseTitle}}
+                  </a>
+                </div>
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #courseMenu="matMenu">
+                  <button mat-menu-item (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })">
+                    <mat-icon>clear</mat-icon>
+                    <span i18n>Remove</span>
+                  </button>
+                </mat-menu>
+              </mat-card>
+            </div>
           </ng-template>
         </mat-tab>
         <mat-tab label="Resources">

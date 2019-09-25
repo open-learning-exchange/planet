@@ -6,10 +6,6 @@ source build_planet.sh
 ARCH=$1
 ACT=$2
 
-if [[ -z "${I18N}" ]]; then
-  I18N="single"
-fi
-
 if [[ "${ARCH}" == "armv7" ]]; then
   TRIPLE="arm-linux-gnueabihf"
   GCC="4.8"
@@ -28,20 +24,16 @@ export ZMQ_BUILD_OPTIONS="--host=${TRIPLE}"
 
 echo "Building Planet for ${ARCH}"
 
-if [[ "${ACT}" == "install"  ]]; then
-   echo "Install stage"
-   apt-get update -qq
-   apt-get install -y curl gnupg
-   curl -sL https://deb.nodesource.com/setup_8.x | bash -
-   apt-get install -y nodejs build-essential "${PACKAGES}"
-   npm install "--arch=${TRIPLE}"
+if [[ "${ACT}" == "install" ]]; then
+  echo "Install stage"
+  apt-get update -qq
+  apt-get install -y curl gnupg
+  curl -sL https://deb.nodesource.com/setup_8.x | bash -
+  apt-get install -y nodejs build-essential "${PACKAGES}"
+  npm install "--arch=${TRIPLE}"
 elif [[ "${ACT}" == "build"  ]]; then
-   echo "Build the angular app in production mode stage"
-   if [[ "${I18N}" == "multi" ]]; then
-     build_multi
-   else
-     build_single
-   fi
+  echo "Build the angular app in production mode stage"
+  build_single
 else
-   echo "Error: No action Specified"
+  echo "Error: No action Specified"
 fi

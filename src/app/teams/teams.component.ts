@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { filterSpecificFieldsByWord, sortNumberOrString, composeFilterFunctions, filterSpecificFields } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
@@ -35,7 +35,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   userMembership: any[] = [];
-  displayedColumns = [ 'name', 'createdDate', 'teamType', 'action' ];
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
@@ -47,6 +46,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   deleteDialog: any;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  displayedColumns = this.planetType === 'community' && this.mode === 'enterprise' ?
+    [ 'name', 'createdDate', 'action' ] :
+    [ 'name', 'createdDate', 'teamType', 'action' ];
 
   constructor(
     private userService: UserService,
@@ -164,7 +166,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   archiveTeam(team) {
     return {
-      request: this.teamsService.archiveTeam(team),
+      request: this.teamsService.archiveTeam(team)(),
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
@@ -190,10 +192,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   requestToJoin(team) {
+    this.dialogsLoadingService.start();
     this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
       switchMap(() => this.teamsService.getTeamMembers(team)),
       switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
-      switchMap(() => this.getMembershipStatus())
+      switchMap(() => this.getMembershipStatus()),
+      finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
       this.planetMessageService.showMessage('Request to join team sent');

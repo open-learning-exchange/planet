@@ -117,30 +117,18 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  deleteClick(meetup) {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: this.deleteMeetup(meetup),
-        changeType: 'delete',
-        type: 'meetup',
-        displayName: meetup.title
-      }
-    });
+  deleteCallback() {
+    return (deletedMeetups) => {
+      deletedMeetups.forEach(deletedMeetup => this.selection.deselect(deletedMeetup.id));
+      // It's safer to remove the item from the array based on its id than to splice based on the index
+      this.meetups.data = this.meetups.data.filter(
+        (meetup: any) => deletedMeetups.findIndex(deletedMeetup => deletedMeetup.id === meetup._id) === -1
+      );
+    };
   }
 
-  deleteMeetup(meetup) {
-    const { _id: meetupId, _rev: meetupRev } = meetup;
-    return {
-      request: this.couchService.delete('meetups/' + meetupId + '?rev=' + meetupRev),
-      onNext: (data) => {
-        this.selection.deselect(meetupId);
-        // It's safer to remove the item from the array based on its id than to splice based on the index
-        this.meetups.data = this.meetups.data.filter((meet: any) => data.id !== meet._id);
-        this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted Meetup ' + meetup.title);
-      },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this meetup')
-    };
+  deleteClick(meetup) {
+    this.meetupService.openDeleteDialog(meetup, this.deleteCallback());
   }
 
   deleteMeetups(meetupIds) {
@@ -161,32 +149,11 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteSelected() {
-    let amount = 'many',
-      okClick = this.deleteMeetups(this.selection.selected),
-      displayName = '';
-    if (this.selection.selected.length === 1) {
-      const meetup: any = this.meetups.data.find((m: any) => m._id === this.selection.selected[0]);
-      amount = 'single';
-      okClick = this.deleteMeetup(meetup);
-      displayName = meetup.title;
-    }
-    this.openDeleteDialog(okClick, amount, displayName);
-  }
-
-  openDeleteDialog(okClick, amount, displayName = '') {
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick,
-        amount,
-        changeType: 'delete',
-        type: 'meetup',
-        displayName
-      }
+    const meetups = this.selection.selected.map((meetupId) => {
+      const meetup: any = this.meetups.data.find((m: any) => m._id === meetupId);
+      return { ...meetup, _deleted: true };
     });
-    // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
-    });
+    this.meetupService.openDeleteDialog(meetups, this.deleteCallback());
   }
 
   goBack() {

@@ -57,9 +57,9 @@ export class FormErrorMessagesComponent {
   // Show one error at a time
   updateError(): string {
     const errorType = Object.keys(this.control.errors)[0];
-    if (this.control.errors[errorType].min !== undefined || this.control.errors[errorType].max !== undefined) {
-      this.number = this.control.errors[errorType].min || this.control.errors[errorType].max || 0;
-    }
+    this.number = this.control.errors[errorType].min !== undefined || this.control.errors[errorType].max !== undefined ?
+      this.control.errors[errorType].min || this.control.errors[errorType].max || 0 :
+      undefined;
     return errorType;
   }
 

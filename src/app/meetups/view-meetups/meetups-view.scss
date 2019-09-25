@@ -3,13 +3,16 @@
 
 :host {
   .view-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "lt rt";
+    display: block;
+    max-height: 60vh;
+    overflow: auto;
   }
   .left-tile {
     a {
       color: $primary;
     }
+  }
+  .action-buttons {
+    margin: 0;
   }
 }
