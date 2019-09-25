@@ -96,7 +96,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }"></planet-calendar>
         </mat-tab>
         <mat-tab #taskTab>
           <ng-template mat-tab-label>

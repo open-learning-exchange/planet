@@ -37,10 +37,11 @@ export class MeetupsAddComponent implements OnInit {
   @Input() link: any = {};
   @Input() isDialog = false;
   @Input() meetup: any = {};
+  @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup;
-  readonly dbName = 'meetups'; // database name constant
+  readonly dbName = 'meetups'; // database name constant 
   categories = constants.categories;
   pageType = 'Add new';
   revision = null;
@@ -115,7 +116,7 @@ export class MeetupsAddComponent implements OnInit {
       });
       return;
     }
-    const meetup = { ...this.meetupForm.value, link: this.link };
+    const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
     if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
