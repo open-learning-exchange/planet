@@ -5,7 +5,8 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   template: `
     <ng-container [ngSwitch]="view">
-      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link" [meetup]="meetup" (onGoBack)="meetupsChange()">
+      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
+        [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
       </planet-meetups-add>
       <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)">
       </planet-meetups-view>
@@ -17,6 +18,7 @@ export class DialogsAddMeetupsComponent {
   link: any = {};
   view = 'add';
   meetup: any = {};
+  sync: { type: 'local' | 'sync', planetCode: string };
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
@@ -24,6 +26,7 @@ export class DialogsAddMeetupsComponent {
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.link = this.data.link || this.link;
+    this.sync = this.data.sync || this.sync;
     this.view = this.data.view || this.view;
     this.meetup = this.data.meetup || this.meetup;
   }
