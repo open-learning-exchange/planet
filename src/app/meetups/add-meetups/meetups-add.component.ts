@@ -85,11 +85,7 @@ export class MeetupsAddComponent implements OnInit {
 
   createForm() {
     this.meetupForm = this.fb.group({
-      title: [
-        '',
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$(this.dbName, 'title', ac, { selectors: { '_id': { $ne: this.id }, 'link': this.link } })
-      ],
+      title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
       startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
       endDate: [ '', CustomValidators.endDateValidator() ],
@@ -107,7 +103,7 @@ export class MeetupsAddComponent implements OnInit {
       meetupLocation: '',
       createdBy: this.userService.get().name,
       createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [ 10, Validators.min(2) ]
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
     });
   }
 

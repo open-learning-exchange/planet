@@ -5,8 +5,8 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['update']">Update Details</a>
+    <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['event']">Add Examination</a>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="profile-container">
@@ -62,6 +62,30 @@
           <mat-divider></mat-divider>
         </mat-list-item>
       </mat-list>
+      <h4 class="full-width" *ngIf="events.length > 0">Examinations</h4>
+      <mat-accordion class="full-width" [multi]="false">
+        <mat-expansion-panel *ngFor="let event of events">
+          <mat-expansion-panel-header>{{event.date | date}}</mat-expansion-panel-header>
+          <h4 class="primary-text-color">Vitals</h4>
+          <p><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}}</p>
+          <p><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}}</p>
+          <p><strong class="mat-body-strong" i18n>Blood Pressure: </strong>{{event.bp}}</p>
+          <p><strong class="mat-body-strong" i18n>Height: </strong>{{event.height}}</p>
+          <p><strong class="mat-body-strong" i18n>Weight: </strong>{{event.weight}}</p>
+          <p><strong class="mat-body-strong" i18n>Vision: </strong>{{event.vision}}</p>
+          <p><strong class="mat-body-strong" i18n>Hearing: </strong>{{event.hearing}}</p>
+          <h4 class="primary-text-color">Condition and Treatment</h4>
+          <p *ngIf="event.notes"><strong class="mat-body-strong" i18n>Observations & Notes: </strong>{{event.notes}}</p>
+          <p *ngIf="event.diagnosis"><strong class="mat-body-strong" i18n>Diagnosis: </strong>{{event.diagnosis}}</p>
+          <p *ngIf="event.treatments"><strong class="mat-body-strong" i18n>Treatments: </strong>{{event.treatments}}</p>
+          <p *ngIf="event.medications"><strong class="mat-body-strong" i18n>Medications: </strong>{{event.medications}}</p>
+          <p *ngIf="event.immunizations"><strong class="mat-body-strong" i18n>Immunizations: </strong>{{event.immunizations}}</p>
+          <p *ngIf="event.allergies"><strong class="mat-body-strong" i18n>Allergies: </strong>{{event.allergies}}</p>
+          <p *ngIf="event.xrays"><strong class="mat-body-strong" i18n>X-rays: </strong>{{event.xrays}}</p>
+          <p *ngIf="event.tests"><strong class="mat-body-strong" i18n>Lab Tests: </strong>{{event.tests}}</p>
+          <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong>{{event.referrals}}</p>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
   </div>
 </div>

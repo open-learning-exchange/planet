@@ -31,7 +31,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-tab-group>
+    <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
       <mat-tab i18n-label label="Messages" *ngIf="userStatus === 'member'">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
@@ -63,8 +63,9 @@
                   {{ member.userDoc?.firstName || member.name }}
                 </a>
                 <mat-card-subtitle>
-                  <p *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
-                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name] || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <p class="primary-text-color" *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
+                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <p *ngIf="visits[member.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member.name]?.recentTime | date }}</p>
                 </mat-card-subtitle>
                 <button *ngIf="member.userId !== leader && (currentUserId === leader || user.isUserAdmin)" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
                   <mat-icon>more_vert</mat-icon>
@@ -97,11 +98,11 @@
           </ng-template>
           <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }"></planet-calendar>
         </mat-tab>
-        <mat-tab *planetBeta>
+        <mat-tab #taskTab>
           <ng-template mat-tab-label>
             <ng-container i18n>Tasks</ng-container>
           </ng-template>
-          <planet-tasks [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
+          <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>

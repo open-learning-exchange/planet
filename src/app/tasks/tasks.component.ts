@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -8,6 +8,8 @@ import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { MatDialog } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   selector: 'planet-tasks',
@@ -17,6 +19,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class TasksComponent implements OnInit {
 
+  @Input() mode: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   private _assigness: any[];
@@ -27,6 +30,8 @@ export class TasksComponent implements OnInit {
   set assignees(newAssignees: any[]) {
     this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
+  dbName = 'tasks';
+  deleteDialog: any;
   tasks: any[] = [];
   myTasks: any[] = [];
   filteredTasks: any[] = [];
@@ -38,7 +43,8 @@ export class TasksComponent implements OnInit {
     private tasksService: TasksService,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -51,11 +57,39 @@ export class TasksComponent implements OnInit {
     this.tasksService.getTasks();
   }
 
-  addTask() {
-    this.tasksService.openAddDialog({ link: this.link, sync: this.sync, assignee: '' }, () => {
+  addTask(task?) {
+    this.tasksService.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
       this.tasksService.getTasks();
-      this.planetMessageService.showMessage('New task has been added');
+      const msg = task ? 'Task updated successfully' : 'Task created successfully';
+      this.planetMessageService.showMessage(msg);
     });
+  }
+
+  archiveClick(task) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.archiveTask(task),
+        changeType: 'delete',
+        type: 'task',
+        displayName: task.title
+      }
+    });
+  }
+
+  archiveTask(task) {
+    return {
+      request: this.tasksService.archiveTask(task)(),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted a task.');
+        this.removeTaskFromTable();
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+    };
+  }
+
+  removeTaskFromTable() {
+    this.tasksService.getTasks();
   }
 
   toggleTaskComplete(task) {
@@ -91,11 +125,12 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = `/teams/view/${this.link.teams}`;
+    const link = `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
       'message': 'You were assigned a new task',
       link,
+      linkParams: { task: true },
       'type': 'newTask',
       'priority': 1,
       'status': 'unread',

@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -26,8 +26,9 @@ import { TasksService } from '../tasks/tasks.service';
   templateUrl: './teams-view.component.html',
   styleUrls: [ './teams-view.scss' ]
 })
-export class TeamsViewComponent implements OnInit, OnDestroy {
+export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
+  @ViewChild('taskTab', { static: false }) taskTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -50,6 +51,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
+  tabSelectedIndex = 0;
+  initTabPosition = false;
 
   constructor(
     private couchService: CouchService,
@@ -81,6 +84,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewChecked() {
+    if (this.initTabPosition && this.taskTab && this.taskTab.position !== 0) {
+      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.taskTab.position, 0);
+      this.initTabPosition = false;
+    }
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -97,11 +107,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         }
         return this.getMembers();
       }),
-      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
+      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : of([])),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
     ).subscribe((activities) => {
-      this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
-        this.visits[visit.user] = visit.count;
+      this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
+        this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
     });
@@ -151,6 +161,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
+    if (this.userStatus === 'member' && this.route.snapshot.params.task === 'true') {
+      this.initTabPosition = true;
+    }
   }
 
   toggleMembership(team, leaveTeam) {
@@ -286,7 +299,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    this.couchService.bulkDocs(this.dbName, newMembershipDocs).pipe(
+    const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
+      .map(request => ({ ...request, _deleted: true }));
+    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {

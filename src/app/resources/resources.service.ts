@@ -9,7 +9,9 @@ import { TagsService } from '../shared/forms/tags.service';
 import { dedupeShelfReduce, arraySubField } from '../shared/utils';
 import { CouchService } from '../shared/couchdb.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ResourcesService {
   private dbName = 'resources';
   private resourcesUpdated = new Subject<any>();

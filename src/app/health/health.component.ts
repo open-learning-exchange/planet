@@ -25,6 +25,7 @@ export class HealthComponent implements OnInit {
 
   userDetail = this.healthService.userDetail || this.userService.get();
   healthDetail = this.healthService.healthDetail;
+  events = this.healthService.events;
 
   constructor(
     private userService: UserService,

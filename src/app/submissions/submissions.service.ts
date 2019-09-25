@@ -8,7 +8,9 @@ import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { dedupeShelfReduce } from '../shared/utils';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SubmissionsService {
 
   // Currently there are separate observables for the single submission for a specific exam

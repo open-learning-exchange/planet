@@ -13,7 +13,7 @@ import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
-import { PouchService } from '../../shared/database';
+import { PouchService } from '../../shared/database/pouch.service';
 import { debug } from '../../debug-operator';
 import { TagsService } from '../../shared/forms/tags.service';
 

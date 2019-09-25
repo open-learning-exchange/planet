@@ -3,7 +3,9 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class NotificationsService {
 
   constructor(
