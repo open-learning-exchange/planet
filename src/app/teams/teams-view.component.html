@@ -100,7 +100,7 @@
         </mat-tab>
         <mat-tab #taskTab>
           <ng-template mat-tab-label>
-            <ng-container i18n><span matBadge="{{user.isUserAdmin ? tasks.length : members.user.tasks.length}}" matBadgeOverlap="false">Tasks</span></ng-container>
+            <ng-container i18n><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false">Tasks</span></ng-container>
           </ng-template>
           <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
         </mat-tab>
