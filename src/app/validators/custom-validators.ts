@@ -160,7 +160,7 @@ export class CustomValidators {
       }
 
       // if start time has not been given a value yet return back
-      if (!startTime) {
+      if (!startTime || !endTime.value) {
         return null;
       }
 
