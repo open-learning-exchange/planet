@@ -1,6 +1,5 @@
 <form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
-  <h1 mat-dialog-title *ngIf="title !== 'Feedback'"><span><mat-icon>create</mat-icon>{{title}}</span></h1>
-  <h1 mat-dialog-title *ngIf="title === 'Feedback'"><span><mat-icon>create</mat-icon>{{title}}&nbsp;*</span></h1>
+  <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
     <div *ngFor="let field of fields">
       <!-- input field -->
@@ -28,21 +27,10 @@
       </mat-form-field>
 
       <!-- radio button -->
-      <section *ngIf="field.type === 'radio' && title !== 'Feedback'">
-        <label>{{field.label}}</label>
+      <section *ngIf="field.type === 'radio'">
         <div class="planet-radio-group">
           <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" >
-            <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
-            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-          </mat-radio-group>
-        </div>
-      </section>
-
-      <!-- radio button for FeedBack only -->
-      <section *ngIf="field.type === 'radio' && title === 'Feedback'">
-        <label>{{field.label}}&nbsp;*</label>
-        <div class="planet-radio-group">
-          <mat-radio-group formControlName="{{field.name}}">
+            <label>{{field.label}}</label><br>
             <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-radio-group>
