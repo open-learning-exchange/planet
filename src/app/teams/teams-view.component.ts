@@ -229,8 +229,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
               this.tasksService.removeAssigneeFromTask(link)
             ]);
         })).subscribe((res) => {
-          this.userService.get()._id
-        })
+          this.userService.get()._id;
+        });
       }
       // switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask() : of({}))
   }
