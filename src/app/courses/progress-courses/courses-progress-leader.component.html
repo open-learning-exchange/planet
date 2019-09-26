@@ -11,7 +11,7 @@
     </span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
-    <mat-form-field *ngIf="configuration.planetType !== 'community'">
+    <mat-form-field class="margin-lr-3" *ngIf="configuration.planetType !== 'community'">
       <mat-select i18n-placeholder placeholder="Select Planet" (selectionChange)="onPlanetChange($event.value)">
         <mat-option *ngFor="let planet of planets" [value]="planet.code">
           {{ planet.name }}
