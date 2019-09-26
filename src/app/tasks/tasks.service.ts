@@ -90,14 +90,11 @@ export class TasksService {
   }
 
   removeAssigneeFromTask(assignee: any = '') {
-    const removeAssignee = assignee._id === assignee.userId;
-    const link = `/teams/view/${this.link.teams}`;
+    assignee = assignee._id === assignee.userId;
 
-    if (removeAssignee) {
-      return this.couchService.findAll(this.dbName, findDocuments(this.getTasks())).pipe(
-        switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
-      );
-    }
+    return this.couchService.findAll(this.dbName, findDocuments({assignee, link: { team: assignee.teamId }})).pipe(
+      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, assignee: '' }))))
+    );
   }
 
 }
