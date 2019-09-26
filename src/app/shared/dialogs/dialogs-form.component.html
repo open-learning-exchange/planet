@@ -27,15 +27,11 @@
       </mat-form-field>
 
       <!-- radio button -->
-      <section *ngIf="field.type === 'radio'">
-        <label>{{field.label}}</label>
-        <div class="planet-radio-group">
-          <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" >
-            <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
-            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-          </mat-radio-group>
-        </div>
-      </section>
+      <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" *ngIf="field.type === 'radio'">
+        <label>{{field.label}}</label><br>
+        <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="option" >{{option}}</mat-radio-button>
+        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-radio-group>
 
       <!-- Star Rating -->
       <mat-form-field class="rating" *ngIf="field.type === 'rating'">
