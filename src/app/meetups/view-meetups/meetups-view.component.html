@@ -30,22 +30,22 @@
         <a *ngIf="meetupDetail?.createdBy; else na" [routerLink]="['/users/profile', meetupDetail?.createdBy]">{{' ' + meetupDetail?.createdBy}}</a>
         <ng-template #na i18n> N/A </ng-template>
       </p>
-      <p *ngIf="meetupDetail?.category" i18n><b>Category:</b> {{meetupDetail?.category}}</p>
-      <p i18n><b>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
-      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
-      <p *ngIf="meetupDetail?.recurring" i18n><b>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
+      <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
+      <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime"><b i18n>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
+      <p *ngIf="meetupDetail?.recurring"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-      <p *ngIf="meetupDetail?.meetupLocation" i18n><b>Location:</b> {{meetupDetail?.meetupLocation}}</p>
+      <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
       <b i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
-      <span i18n><b>Joined Members: ({{members.length}})</b></span>
+      <span><b i18n>Joined Members: ({{members.length}})</b></span>
       <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
       <ng-template #memberList>
         <ul>
           <li *ngFor="let mem of members">
             <a [routerLink]="['/users/profile', mem]">
-              <span *ngIf="mem === currentUserName; else otherMember">{{mem}} (You)</span>
+              <span *ngIf="mem === currentUserName; else otherMember" i18n>{{mem}} (You)</span>
               <ng-template #otherMember><span>{{mem}}</span></ng-template>
             </a>
           </li>

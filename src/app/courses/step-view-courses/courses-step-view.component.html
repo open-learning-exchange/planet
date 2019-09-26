@@ -13,7 +13,7 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
-        (click)="goToExam()">
+        (click)="goToExam()" i18n>
         {{isExamInProgress ? "Take Test" : "Continue Test"}}
       </a>
       <a
@@ -21,21 +21,21 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
-        (click)="goToExam('survey')">
+        (click)="goToExam('survey')" i18n>
         Take Survey
       </a>
-      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu">
+      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" i18n>
         Preview
       </button>
       <mat-menu #previewMenu="matMenu">
         <a mat-menu-item
           *ngIf="stepDetail?.exam?.questions.length"
-          (click)="goToExam('exam', true)">
+          (click)="goToExam('exam', true)" i18n>
           Preview Test
         </a>
         <a mat-menu-item
           *ngIf="stepDetail?.survey?.questions.length"
-          (click)="goToExam('survey', true)">
+          (click)="goToExam('survey', true)" i18n>
           Preview Survey
         </a>
       </mat-menu>

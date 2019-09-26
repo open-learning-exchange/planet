@@ -25,8 +25,8 @@
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
     </button>
     <ng-container *ngIf="item.user.name === currentUser.name">
-      <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button type="button" (click)="editNews(item)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button type="button" (click)="openDeleteDialog(item)"><mat-icon>delete</mat-icon></button>
     </ng-container>
   </mat-card-actions>
 </mat-card>

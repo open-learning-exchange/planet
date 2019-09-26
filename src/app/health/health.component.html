@@ -46,9 +46,9 @@
         </mat-list-item>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Emergency Contact</h4>
-          <p matLine><b>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
-          <p matLine><b>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
-          <p matLine><b>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+          <p matLine><b i18n>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
+          <p matLine><b i18n>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
+          <p matLine><b i18n>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
           <mat-divider></mat-divider>
         </mat-list-item>
         <mat-list-item class="full-width">
@@ -62,11 +62,11 @@
           <mat-divider></mat-divider>
         </mat-list-item>
       </mat-list>
-      <h4 class="full-width" *ngIf="events.length > 0">Examinations</h4>
+      <h4 class="full-width" *ngIf="events.length > 0" i18n>Examinations</h4>
       <mat-accordion class="full-width" [multi]="false">
         <mat-expansion-panel *ngFor="let event of events">
           <mat-expansion-panel-header>{{event.date | date}}</mat-expansion-panel-header>
-          <h4 class="primary-text-color">Vitals</h4>
+          <h4 class="primary-text-color" i18n>Vitals</h4>
           <p><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}}</p>
           <p><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}}</p>
           <p><strong class="mat-body-strong" i18n>Blood Pressure: </strong>{{event.bp}}</p>
@@ -74,7 +74,7 @@
           <p><strong class="mat-body-strong" i18n>Weight: </strong>{{event.weight}}</p>
           <p><strong class="mat-body-strong" i18n>Vision: </strong>{{event.vision}}</p>
           <p><strong class="mat-body-strong" i18n>Hearing: </strong>{{event.hearing}}</p>
-          <h4 class="primary-text-color">Condition and Treatment</h4>
+          <h4 class="primary-text-color" i18n>Condition and Treatment</h4>
           <p *ngIf="event.notes"><strong class="mat-body-strong" i18n>Observations & Notes: </strong>{{event.notes}}</p>
           <p *ngIf="event.diagnosis"><strong class="mat-body-strong" i18n>Diagnosis: </strong>{{event.diagnosis}}</p>
           <p *ngIf="event.treatments"><strong class="mat-body-strong" i18n>Treatments: </strong>{{event.treatments}}</p>

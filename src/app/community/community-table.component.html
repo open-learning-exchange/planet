@@ -1,6 +1,6 @@
 <mat-table #table [dataSource]="communities" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="code">
@@ -33,7 +33,7 @@
           <ng-container *ngFor="let h of hubs">
             <button *ngIf="h.name!==hub.name" (click)="addHubClick(element.doc.code, h.name)" mat-menu-item>{{h.name}}</button>
           </ng-container>
-          <button (click)="removeHubClick(element.doc.code)" *ngIf="hub!=='sandbox'" mat-menu-item>Sandbox</button>
+          <button (click)="removeHubClick(element.doc.code)" *ngIf="hub!=='sandbox'" mat-menu-item i18n>Sandbox</button>
         </mat-menu>
         <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)" i18n>
           Edit Name
