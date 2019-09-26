@@ -1595,8 +1595,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">
-        Add to myLibrary
+        <target state="translated">
+        पुस्तकालयमा थप्नुहाेस्
       </target>
       </trans-unit>
       <trans-unit id="2aa6486b4568333332ae6422735ed1a32e5e5214" datatype="html">
@@ -1607,8 +1607,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">
-        Remove from myLibrary
+        <target state="translated">
+        पुस्तकालयबाट हटाउनुहोस्
       </target>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html" approved="yes">
@@ -1956,7 +1956,10 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="final">तपाईंको हालको अनुरोध सूची</target>
+        <target state="final">तपाईंको हालको प्रतिकृियाहरू</target>
+        <alt-trans>
+          <target>तपाईंको हालको अनुरोध सूची</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
         <source>Priority</source>
@@ -2121,7 +2124,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Teams</target>
+        <target state="translated">समूहहरू</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html" approved="yes">
         <source>Meetups</source>
@@ -3072,7 +3075,7 @@
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">All Members</target>
+        <target state="translated">सबै सदस्यहरू</target>
       </trans-unit>
       <trans-unit id="4277bb6581c6db21c073b4c21de2a7bb30679d6a" datatype="html">
         <source>Request to Join</source>
@@ -3102,8 +3105,8 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-      Add Members
+        <target state="translated">
+      सदस्य थप्नुहोस्
     </target>
       </trans-unit>
       <trans-unit id="43f1e3bb6d8760b33a50ded4d82640eae5716b7c" datatype="html">
