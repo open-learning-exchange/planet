@@ -24,6 +24,16 @@
     <mat-toolbar-row class="primary-color font-size-1">
       <span>{{planetName}}</span>
       <span class="toolbar-fill"></span>
+      <mat-form-field>
+        <input matInput [matDatepicker]="dpStart" i18n-placeholder placeholder="From" [max]="today" [min]="planetLaunchDate" [(ngModel)]="fromDate" (dateChange)="initializeData(!this.codeParam)">
+        <mat-datepicker-toggle matSuffix [for]="dpStart"></mat-datepicker-toggle>
+        <mat-datepicker #dpStart></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [matDatepicker]="dpEnd" i18n-placeholder placeholder="To" [max]="today" [min]="fromDate" [(ngModel)]="toDate" (dateChange)="initializeData(!this.codeParam)">
+        <mat-datepicker-toggle matSuffix [for]="dpEnd"></mat-datepicker-toggle>
+        <mat-datepicker #dpEnd></mat-datepicker>
+      </mat-form-field>
       <button class="margin-lr-10" color="accent" mat-raised-button i18n [matMenuTriggerFor]="exportMenu">
         Export
       </button>

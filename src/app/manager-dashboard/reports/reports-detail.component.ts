@@ -27,6 +27,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   codeParam = '';
   loginActivities = [];
   resourceActivities = [];
+  today = new Date();
+  // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
+  planetLaunchDate = new Date(2018, 6, 1); // 2018 July 1
+  fromDate = this.planetLaunchDate;
+  toDate = this.today;
 
   constructor(
     private activityService: ReportsService,
@@ -38,6 +43,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
+    const yrDate = new Date(this.today.getFullYear() - 1, this.today.getMonth() + 1, 1);
+    this.fromDate = yrDate > this.planetLaunchDate ? yrDate : this.planetLaunchDate;
     this.dialogsLoadingService.start();
     combineLatest(this.route.paramMap, this.stateService.couchStateListener(dbName)).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ params, planetState ]: [ ParamMap, any ]) => {
@@ -189,12 +196,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setMonths() {
-    // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
-    const planetLaunchDate = new Date(2018, 6, 1).valueOf();
-    const now = new Date();
-    return Array(12).fill(1)
-      .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
-      .filter((month: number) => month > planetLaunchDate);
+    const now = this.toDate;
+    const numOfMonths = (now.getFullYear() - this.fromDate.getFullYear()) * 12 + (now.getMonth() - this.fromDate.getMonth()) + 1;
+    return Array(numOfMonths).fill(1)
+      .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - numOfMonths + 1 + index, 1).valueOf())
+      .filter((month: number) => month >= this.fromDate.valueOf());
   }
 
   activityParams(): { planetCode, filterAdmin?, fromMyPlanet? } {
