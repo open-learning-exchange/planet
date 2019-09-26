@@ -11,6 +11,13 @@
     </span>
     <span class="toolbar-fill"></span>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
+    <mat-form-field *ngIf="configuration.planetType !== 'community'">
+      <mat-select i18n-placeholder placeholder="Select Planet" (selectionChange)="onPlanetChange($event.value)">
+        <mat-option *ngFor="let planet of planets" [value]="planet.code">
+          {{ planet.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field *ngIf="submittedExamSteps?.length > 1">
       <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
         <mat-option *ngFor="let step of submittedExamSteps" [value]="step">

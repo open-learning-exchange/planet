@@ -1,11 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { StateService } from '../../shared/state.service';
+import { ManagerService } from '../../manager-dashboard/manager.service';
+import { ReportsService } from '../../manager-dashboard/reports/reports.service';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -24,13 +27,18 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
   submittedExamSteps: any[] = [];
+  configuration = this.stateService.configuration;
+  planets: any[] = [];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private stateService: StateService,
+    private managerService: ManagerService,
+    private reportsService: ReportsService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -57,8 +65,20 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   setProgress(course) {
-    this.coursesService.findProgress([ course._id ], { allUsers: true }).subscribe((progress) => {
+    let planetCodes: any[] = [];
+    this.coursesService.findProgress([ course._id ], { allUsers: true }).pipe(switchMap((progress) => {
       this.progress = progress;
+      planetCodes = this.progress.map(item => item.createdOn).reduce(dedupeShelfReduce, []);
+      return this.planets.length > 1 ? this.managerService.getChildPlanets(true) : of([]);
+    })).subscribe((planetDocs) => {
+      const planetsWithName = this.reportsService.attachNamesToPlanets(planetDocs);
+      this.planets = planetCodes.map(planetCode => {
+        const planetWithName = planetsWithName.find(withName => withName.doc.code === planetCode);
+        return {
+          code: planetCode,
+          name: planetWithName && ((planetWithName.nameDoc || {}).name || planetWithName.doc.name)
+        };
+      });
       this.setSubmissions();
     });
   }
@@ -66,6 +86,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onStepChange(value: any) {
     this.selectedStep = value;
     this.setSingleStep(this.submissions);
+  }
+
+  onPlanetChange(value: string) {
+    if (this.selectedStep === undefined) {
+      this.setFullCourse(this.submissions, value);
+    } else {
+      this.setSingleStep(this.submissions, value);
+    }
   }
 
   setSubmissions() {
@@ -106,11 +134,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     return { number: '', fill: false, clickable: true };
   }
 
-  setFullCourse(submissions: any[]) {
+  setFullCourse(submissions: any[], planetCode?: string) {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
-    const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
+    const users = submissions
+      .filter((sub: any) => planetCode === undefined || sub.source === planetCode)
+      .map((sub: any) => sub.user.name)
+      .reduce(dedupeShelfReduce, []);
     this.chartData = users.map((user: string) => {
       const answers = this.course.steps.map((step: any, index: number) => {
         return this.userCourseAnswers(user, step, index, submissions);
@@ -122,19 +153,21 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  setSingleStep(submissions: any[]) {
+  setSingleStep(submissions: any[], planetCode?: string) {
     const step = this.selectedStep;
     this.headingStart = this.selectedStep.stepTitle;
     this.yAxisLength = this.selectedStep.exam.questions.length;
-    this.chartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
-      submission => {
+    this.chartData = submissions
+      .filter(submission =>
+        submission.parentId === (step.exam._id + '@' + this.course._id) &&
+        (planetCode === undefined || planetCode === submission.source)
+      ).map(submission => {
         const answers = this.arraySubmissionAnswers(submission);
         return {
           items: answers,
           label: submission.user.name
         };
-      }
-    );
+      });
   }
 
   changeData({ index }) {
