@@ -1,5 +1,5 @@
 import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {
@@ -127,6 +127,8 @@ export class CustomValidators {
 
   // for validating whether end time comes before start date or not
   static endTimeValidator(): ValidatorFn {
+    let startDate: AbstractControl;
+    let endDate: AbstractControl;
     let startTime: AbstractControl;
     let endTime: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -136,9 +138,13 @@ export class CustomValidators {
         return null;
       }
 
+      startDate = ac.parent.get('startDate');
+      endDate = ac.parent.get('endDate');
+
       if (!endTime) {
         endTime = ac;
         startTime = ac.parent.get('startTime');
+
         if (!startTime) {
           throw new Error(
             'validateTimes(): startTime control is not found in parent group'
@@ -146,7 +152,9 @@ export class CustomValidators {
         }
 
         // run validators again on when start time's value changes
-        startTime.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
+        combineLatest(startTime.valueChanges, startDate.valueChanges, endDate.valueChanges).pipe(
+          takeUntil(ngUnsubscribe)
+        ).subscribe(() => {
           endTime.updateValueAndValidity();
         });
       }
@@ -156,10 +164,13 @@ export class CustomValidators {
         return null;
       }
 
+      const startDateString = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
+      const endDateString = new Date(endDate.value || startDateString).toLocaleDateString('en-US');
+
       // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
       if (
-        new Date('1970-1-1 ' + startTime.value).getTime() >
-        new Date(endTime.value && '1970-1-1 ' + endTime.value).getTime()
+        new Date(startDateString + ' ' + startTime.value).getTime() >
+        new Date(endDateString + ' ' + endTime.value).getTime()
       ) {
         return { invalidEndTime: true };
       }

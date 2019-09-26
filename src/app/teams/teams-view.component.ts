@@ -53,6 +53,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   finances: any[];
   tabSelectedIndex = 0;
   initTabPosition = false;
+  taskCount = 0;
 
   constructor(
     private couchService: CouchService,
@@ -81,6 +82,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         ...member,
         tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
       }));
+      const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     });
   }
 

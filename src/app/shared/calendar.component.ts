@@ -25,6 +25,7 @@ import { addDateAndTime } from './utils';
 export class PlanetCalendarComponent implements OnInit {
 
   @Input() link: any = {};
+  @Input() sync: { type: 'local' | 'sync', planetCode: string };
   options: OptionsInput;
   calendarPlugins = [ dayGridPlugin ];
   header = {
@@ -102,7 +103,9 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   openAddEventDialog() {
-    this.dialog.open(DialogsAddMeetupsComponent, { data: { link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this) } });
+    this.dialog.open(DialogsAddMeetupsComponent, {
+      data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this) }
+    });
   }
 
   onMeetupsChange() {
@@ -110,9 +113,15 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventClick({ event }) {
-    this.dialog.open(DialogsAddMeetupsComponent, { data: {
-      meetup: event.extendedProps.meetup, view: 'view', link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this)
-    } });
+    this.dialog.open(DialogsAddMeetupsComponent, {
+      data: {
+        meetup: event.extendedProps.meetup,
+        view: 'view',
+        link: this.link,
+        sync: this.sync,
+        onMeetupsChange: this.onMeetupsChange.bind(this)
+      }
+    });
   }
 
 }
