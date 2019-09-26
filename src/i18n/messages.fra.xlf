@@ -1209,16 +1209,6 @@
         </context-group>
         <target state="needs-translation">Add Question</target>
       </trans-unit>
-      <trans-unit id="588c234a37b2550dece8156d40e050bd08b8f122" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{pageType}}"/>
-          <x id="ICU" equiv-text="{examType, select, courses {...} surveys {...}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
         <context-group purpose="location">
