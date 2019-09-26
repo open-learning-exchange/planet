@@ -170,9 +170,14 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
-      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} }?
+        <target state="translated">{VAR_SELECT_2, select, single {उल्लेखित {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {पुस्तक} meetup {भेला} user {सदस्य} }?
+      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {पुस्तकहरू} meetup {भेलाहरू} }?
       } }</target>
+        <alt-trans>
+          <target>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {पुस्तक} meetup {भेला} user {सदस्य} }?
+      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {पुस्तकहरू} meetup {भेलाहरू} }?
+      } }</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
@@ -203,7 +208,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
+        <target state="translated">{VAR_SELECT, select, yes {नछान्नु} no {छान्नु} }</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html" approved="yes">
         <source>Search</source>
@@ -3243,7 +3248,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
+        <target state="translated">{VAR_SELECT, select, 0 {प्राेमाेट} 1 {डिमाेट} }</target>
       </trans-unit>
       <trans-unit id="3076d1c40be7d031c8e8a92625b24e5eb92ce32a" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
@@ -3252,10 +3257,8 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">108</context>
         </context-group>
-        <target state="needs-translation">
-            
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
-          
+        <target state="translated">
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>प्राेफाइल हेर्नुहाेस्
           </target>
       </trans-unit>
       <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html" approved="yes">
@@ -3272,7 +3275,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>प्राेफाइल अपडेट<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="739516c2ca75843d5aec9cf0e6b3e4335c4227b9" datatype="html">
         <source>Change password</source>
@@ -3280,7 +3283,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Change password</target>
+        <target state="translated">पासवर्ड बदल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html" approved="yes">
         <source>Full Name</source>
@@ -3323,7 +3326,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Survey Profile</target>
+        <target state="translated">सर्वेक्षण प्राेफाइल</target>
       </trans-unit>
       <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html" approved="yes">
         <source>Profile</source>
@@ -3355,7 +3358,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="needs-translation">Male</target>
+        <target state="translated">पुरुष</target>
       </trans-unit>
       <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html">
         <source>Female</source>
@@ -3363,7 +3366,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="needs-translation">Female</target>
+        <target state="translated">महिला</target>
       </trans-unit>
       <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
@@ -3382,7 +3385,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target state="needs-translation">Update</target>
+        <target state="translated">अपडेट</target>
       </trans-unit>
     </body>
   </file>
