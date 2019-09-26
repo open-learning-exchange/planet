@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup } from '@angular/forms';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -123,6 +123,25 @@ export class CustomValidators {
         return { invalidEndDate: true };
       }
     };
+  }
+
+  // Start time becomes required without an end time
+  static startTimeValidator(formGroup: FormGroup): ValidationErrors {
+
+    if (!formGroup) {
+      return null;
+    }
+
+    const startTime = formGroup.get('startTime');
+
+    if (formGroup.get('endTime').value && !startTime.value) {
+      startTime.setErrors({ required: true });
+      return { required: true };
+    }
+
+    startTime.setErrors(null);
+    return null;
+
   }
 
   // for validating whether end time comes before start date or not
