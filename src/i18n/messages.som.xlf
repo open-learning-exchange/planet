@@ -20,7 +20,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">103</context>
         </context-group>
-        <target state="translated">Gudbi</target>
+        <target state="final">Gudbi</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
@@ -52,7 +52,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="translated">joojin</target>
+        <target state="final">joojin</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -60,7 +60,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Magaca: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target state="final">Magaca: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html" approved="yes">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -68,7 +68,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Koodh: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target state="final">Koodh: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html" approved="yes">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -76,7 +76,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">URL maxalliga ah: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target state="final">URL maxalliga ah: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="a773e23ee56a2fdee79cba8081bbba2a32a1f8ac" datatype="html" approved="yes">
         <source>Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -84,7 +84,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">URL waalidka: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="final">URL waalidka: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html" approved="yes">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -92,7 +92,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Nooca Qorshaha: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target state="final">Nooca Qorshaha: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html" approved="yes">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
@@ -100,7 +100,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Taariikhda la Sameeyay: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target state="final">Taariikhda la Sameeyay: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html" approved="yes">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -108,7 +108,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Luuqada: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target state="final">Luuqada: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html" approved="yes">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -116,7 +116,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Xaaladda: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target state="final">Xaaladda: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html" approved="yes">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -124,7 +124,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target state="final">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html" approved="yes">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -132,7 +132,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Lambarka Taleefanka: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target state="final">Lambarka Taleefanka: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="2aa4219aae7ea0a43d4130aa7acf2fd50fc2eea6" datatype="html">
         <source>
@@ -179,7 +179,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">ok</target>
+        <target state="final">ok</target>
       </trans-unit>
       <trans-unit id="d7039076b24be09bd64cbfd5b38bb95363a89931" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -188,7 +188,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
     <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> dhamaan
   </target>
       </trans-unit>
@@ -222,7 +222,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Raadi</target>
+        <target state="final">Raadi</target>
         <alt-trans>
           <target>Saadi</target>
         </alt-trans>
@@ -241,7 +241,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
       <trans-unit id="f52df91ad79481987baa252e69202d15e60ae9e4" datatype="html" approved="yes">
         <source>
@@ -250,7 +250,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
     waan ka xunahay!</target>
       </trans-unit>
       <trans-unit id="bdaf1d83654dab176a524d6638588bc2d7d8c70c" datatype="html" approved="yes">
@@ -260,7 +260,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
     404 malaheli karo</target>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html" approved="yes">
@@ -271,7 +271,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
     waan kaxumahay, qalad aya dhacay, codsade..."!",
   </target>
       </trans-unit>
@@ -281,7 +281,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Riix halkan ku laabo app</target>
+        <target state="final">Riix halkan ku laabo app</target>
       </trans-unit>
       <trans-unit id="4190ceaecd39e4628edbe902e62673f57d981d36" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field is required as valid date} }</source>
@@ -297,7 +297,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Celcelis ahaan</target>
+        <target state="final">Celcelis ahaan</target>
       </trans-unit>
       <trans-unit id="1e1b81bc44eb078f50afc06365f530ca2677d91c" datatype="html">
         <source>Upto date</source>
@@ -313,7 +313,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Cusub</target>
+        <target state="final">Cusub</target>
       </trans-unit>
       <trans-unit id="a5eb07587a845a6e31ac6faee94ba465ed733e06" datatype="html" approved="yes">
         <source>Older</source>
@@ -321,7 +321,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Ka weyn</target>
+        <target state="final">Ka weyn</target>
         <alt-trans>
           <target>Ka ween</target>
         </alt-trans>
@@ -343,7 +343,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Liiska Codsiyada</target>
+        <target state="final">Liiska Codsiyada</target>
       </trans-unit>
       <trans-unit id="2d78f8c2108598d4f1f05bce677f97d0c7a64d98" datatype="html" approved="yes">
         <source>Your Current List of Requests</source>
@@ -351,7 +351,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated">Liiska Magangelyada ee Codsiyadaada</target>
+        <target state="final">Liiska Magangelyada ee Codsiyadaada</target>
       </trans-unit>
       <trans-unit id="68572de01b84c678be4bf8a27b990ecac2f41ce9" datatype="html" approved="yes">
         <source>Code</source>
@@ -363,7 +363,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="translated">Koodh</target>
+        <target state="final">Koodh</target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html" approved="yes">
         <source>URL</source>
@@ -371,7 +371,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated">URL</target>
+        <target state="final">URL</target>
       </trans-unit>
       <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html" approved="yes">
         <source>Created Date</source>
@@ -379,7 +379,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated">Taariikhda la Sameeyey</target>
+        <target state="final">Taariikhda la Sameeyey</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html" approved="yes">
         <source>Actions</source>
@@ -387,7 +387,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated">Tallaabooyinka</target>
+        <target state="final">Tallaabooyinka</target>
       </trans-unit>
       <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html" approved="yes">
         <source>View</source>
@@ -403,7 +403,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">73</context>
         </context-group>
-        <target state="translated">Eeeg</target>
+        <target state="final">Eeeg</target>
         <alt-trans>
           <target>Eeeg
 </target>
@@ -417,7 +417,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
               Bulshooyinka
             </target>
       </trans-unit>
@@ -455,7 +455,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Abuuro maamule</target>
+        <target state="final">Abuuro maamule</target>
       </trans-unit>
       <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html" approved="yes">
         <source>Username</source>
@@ -467,7 +467,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">magaca isticmaalaha</target>
+        <target state="final">magaca isticmaalaha</target>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html" approved="yes">
         <source>Password</source>
@@ -479,7 +479,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">furaha</target>
+        <target state="final">furaha</target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html" approved="yes">
         <source>Confirm Password</source>
@@ -487,7 +487,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">xaqiiji lambarka sirta </target>
+        <target state="final">xaqiiji lambarka sirta </target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html" approved="yes">
         <source>Next</source>
@@ -499,7 +499,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="translated">kuxiga</target>
+        <target state="final">kuxiga</target>
       </trans-unit>
       <trans-unit id="c221a0f624f0e3ede0e0fc080f42271f0ef2c45c" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuration</source>
@@ -515,7 +515,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated">Qaran</target>
+        <target state="final">Qaran</target>
       </trans-unit>
       <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html" approved="yes">
         <source>Community</source>
@@ -523,7 +523,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated">Bulsho</target>
+        <target state="final">Bulsho</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html" approved="yes">
         <source>Select Nation/Community</source>
@@ -531,7 +531,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated">Xulo Qaran/Bulsho</target>
+        <target state="final">Xulo Qaran/Bulsho</target>
       </trans-unit>
       <trans-unit id="4c5801cfafb0bf7b68021fe73093f522544fed30" datatype="html" approved="yes">
         <source>Nation(s)</source>
@@ -539,7 +539,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Qaran(quruumaha)</target>
+        <target state="final">Qaran(quruumaha)</target>
       </trans-unit>
       <trans-unit id="fc60c6126b9d7048411532b9bd15a83228a27f77" datatype="html" approved="yes">
         <source>Center</source>
@@ -547,7 +547,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="translated">Xarun</target>
+        <target state="final">Xarun</target>
         <alt-trans>
           <target>Xarunta</target>
         </alt-trans>
@@ -566,7 +566,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="translated">Magaca</target>
+        <target state="final">Magaca</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html" approved="yes">
         <source>Language</source>
@@ -586,7 +586,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Luuqad</target>
+        <target state="final">Luuqad</target>
         <alt-trans>
           <target>Luuqada</target>
         </alt-trans>
@@ -597,7 +597,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">URL Maxaliga</target>
+        <target state="final">URL Maxaliga</target>
         <alt-trans>
           <target>URL maxalliga ah</target>
         </alt-trans>
@@ -616,7 +616,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target state="translated">Muuji Fursadaha Horukacsan</target>
+        <target state="final">Muuji Fursadaha Horukacsan</target>
       </trans-unit>
       <trans-unit id="5625ca84c68ea5de3d37a188acc4a555b2263164" datatype="html" approved="yes">
         <source>You have changed the advanced option. Please confirm that you wanted to change it.</source>
@@ -624,7 +624,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="translated">Waxaad bedeshay ikhtiyaar sare. Fadlan cadee inaad rabto inaad bedesho.</target>
+        <target state="final">Waxaad bedeshay ikhtiyaar sare. Fadlan cadee inaad rabto inaad bedesho.</target>
       </trans-unit>
       <trans-unit id="d09710672702802c0988db004ce798ec31cb3666" datatype="html" approved="yes">
         <source>I confirm the changes.</source>
@@ -632,7 +632,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="translated">Waan xaqiijinayaa isbedelka.</target>
+        <target state="final">Waan xaqiijinayaa isbedelka.</target>
       </trans-unit>
       <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html" approved="yes">
         <source>Back</source>
@@ -644,7 +644,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">105</context>
         </context-group>
-        <target state="translated">Laabo</target>
+        <target state="final">Laabo</target>
       </trans-unit>
       <trans-unit id="7245654afd5dd28a03f82283972e701bfe78bce1" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Contact Details</source>
@@ -664,7 +664,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">Magaca hore</target>
+        <target state="final">Magaca hore</target>
       </trans-unit>
       <trans-unit id="e82f6e4c34cdbb18b0d9a753ebcfe8b3e9f43e4c" datatype="html" approved="yes">
         <source>Middle Name</source>
@@ -676,7 +676,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Magaca Dhexe</target>
+        <target state="final">Magaca Dhexe</target>
       </trans-unit>
       <trans-unit id="166b2cc65003221ff5f3ec05d5baca41e6821396" datatype="html" approved="yes">
         <source>Last Name</source>
@@ -688,7 +688,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">Magaca Dambe</target>
+        <target state="final">Magaca Dambe</target>
       </trans-unit>
       <trans-unit id="244aae9346da82b0922506c2d2581373a15641cc" datatype="html" approved="yes">
         <source>Email</source>
@@ -704,7 +704,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated">Email</target>
+        <target state="final">Email</target>
       </trans-unit>
       <trans-unit id="db654f91d847f34e71ffb99268ff3a1807913421" datatype="html" approved="yes">
         <source>Phone Number</source>
@@ -716,7 +716,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="translated">Lambarka Taleefanka</target>
+        <target state="final">Lambarka Taleefanka</target>
       </trans-unit>
       <trans-unit id="f419e773cf4936c610049ab1d1d961d8ff29c7ad" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Course</source>
@@ -724,7 +724,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Koorso</target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Koorso</target>
       </trans-unit>
       <trans-unit id="33bea638f978cb23de5fc5ebc735218d5c469357" datatype="html" approved="yes">
         <source>Add Step</source>
@@ -736,7 +736,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated">Ku dar talaabada</target>
+        <target state="final">Ku dar talaabada</target>
       </trans-unit>
       <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html" approved="yes">
         <source>Course Title</source>
@@ -744,7 +744,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Magaca Koorsada</target>
+        <target state="final">Magaca Koorsada</target>
       </trans-unit>
       <trans-unit id="c420749a4d671195164749dc99bb89d9fc40c718" datatype="html" approved="yes">
         <source>Member Limit</source>
@@ -752,7 +752,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="translated">Xadka Xubinta</target>
+        <target state="final">Xadka Xubinta</target>
       </trans-unit>
       <trans-unit id="162a0cdc541668672140bc2905c4ecd1e51f4019" datatype="html" approved="yes">
         <source>Language of Instruction</source>
@@ -760,7 +760,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="translated">Luqadda Waxbarashada</target>
+        <target state="final">Luqadda Waxbarashada</target>
       </trans-unit>
       <trans-unit id="e2ec6c55b25c3243cda9a5e14ca9cf5cb6457433" datatype="html" approved="yes">
         <source>Grade Level</source>
@@ -768,7 +768,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated">Heerka Fasalka</target>
+        <target state="final">Heerka Fasalka</target>
       </trans-unit>
       <trans-unit id="85f929f5065179d0605ed68115b8915deaf7e710" datatype="html" approved="yes">
         <source>Subject Level</source>
@@ -776,7 +776,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Heerka Maadada</target>
+        <target state="final">Heerka Maadada</target>
       </trans-unit>
       <trans-unit id="a0c7e8516852d2b5888c8a00894acd60aad61317" datatype="html" approved="yes">
         <source>Method</source>
@@ -784,7 +784,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="translated">Habka</target>
+        <target state="final">Habka</target>
       </trans-unit>
       <trans-unit id="7eec194fdb5177fb2a2b67ddfd1a5c71a943eb9d" datatype="html" approved="yes">
         <source>Courses</source>
@@ -812,7 +812,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Koorsooyinka</target>
+        <target state="final">Koorsooyinka</target>
       </trans-unit>
       <trans-unit id="dfc3c34e182ea73c5d784ff7c8135f087992dac1" datatype="html" approved="yes">
         <source>All</source>
@@ -828,7 +828,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Dhammaan</target>
+        <target state="final">Dhammaan</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html" approved="yes">
         <source>Title</source>
@@ -860,7 +860,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Ciwaan</target>
+        <target state="final">Ciwaan</target>
       </trans-unit>
       <trans-unit id="5aacbee9239d7422e3c92fd18293df496818c4b6" datatype="html" approved="yes">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Reset<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -876,7 +876,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Dib u bilow<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="final"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Dib u bilow<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <alt-trans>
           <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Dib u soo noqo<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         </alt-trans>
@@ -947,7 +947,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="translated">Tirtir</target>
+        <target state="final">Tirtir</target>
       </trans-unit>
       <trans-unit id="1c9f4ce85f463611a742ff1835a9878489d5104a" datatype="html" approved="yes">
         <source> Title </source>
@@ -959,7 +959,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated"> Ciwaan </target>
+        <target state="final"> Ciwaan </target>
       </trans-unit>
       <trans-unit id="e75b2aae16dbd8e5a8bbd1296572d4cbbb1b9260" datatype="html">
         <source>Your progress:</source>
@@ -979,7 +979,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">87</context>
         </context-group>
-        <target state="translated">Ogolaansho</target>
+        <target state="final">Ogolaansho</target>
       </trans-unit>
       <trans-unit id="26987e0e2a2962641a3a60791741ea5137a0fa1c" datatype="html" approved="yes">
         <source>Resign</source>
@@ -987,7 +987,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="translated">Iska casil</target>
+        <target state="final">Iska casil</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html" approved="yes">
         <source>Feedback</source>
@@ -1039,7 +1039,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="translated">Warcelinta</target>
+        <target state="final">Warcelinta</target>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html" approved="yes">
         <source>Manage</source>
@@ -1059,7 +1059,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="translated">Maamul</target>
+        <target state="final">Maamul</target>
       </trans-unit>
       <trans-unit id="beed332f1562199b0a99c6216be53aa1d7d2171b" datatype="html" approved="yes">
         <source>View Course</source>
@@ -1067,7 +1067,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">103</context>
         </context-group>
-        <target state="translated">Koorsada Firin</target>
+        <target state="final">Koorsada Firin</target>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html" approved="yes">
         <source>Progress</source>
@@ -1075,7 +1075,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target state="translated">Horumarka</target>
+        <target state="final">Horumarka</target>
       </trans-unit>
       <trans-unit id="30c21093bd539da428afa90407b8f780c147e64d" datatype="html" approved="yes">
         <source> Information </source>
@@ -1083,7 +1083,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">117</context>
         </context-group>
-        <target state="translated"> Macluumaadka </target>
+        <target state="final"> Macluumaadka </target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html" approved="yes">
         <source>Rating</source>
@@ -1095,7 +1095,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="translated">Qiimeynta</target>
+        <target state="final">Qiimeynta</target>
       </trans-unit>
       <trans-unit id="b7a285515e41f0c8038d8b8e65b5199cb9928681" datatype="html" approved="yes">
         <source>Course</source>
@@ -1107,7 +1107,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Koorso</target>
+        <target state="final">Koorso</target>
       </trans-unit>
       <trans-unit id="8dc53f4ff60cad8c0fdc45c5d0cea820a48da9de" datatype="html">
         <source>
@@ -1139,7 +1139,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">Eeg Tallaabada</target>
+        <target state="final">Eeg Tallaabada</target>
       </trans-unit>
       <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
@@ -1147,7 +1147,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka Maadada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka Maadada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></target>
       </trans-unit>
       <trans-unit id="ef9ea2b8e0e20c3500a390e081cdfc53882cf55d" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Grade Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></source>
@@ -1155,7 +1155,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka fasalka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Heerka fasalka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.gradeLevel}}"/></target>
       </trans-unit>
       <trans-unit id="c27c01ac14e3a79760322122760cff26db09077d" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Language of Instruction:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></source>
@@ -1163,7 +1163,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Luqadda Waxbarashada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Luqadda Waxbarashada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.languageOfInstruction}}"/></target>
       </trans-unit>
       <trans-unit id="b576358946632f81322424330e303c059ae87ad4" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Method:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></source>
@@ -1171,7 +1171,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Habka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Habka:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail.method}}"/></target>
       </trans-unit>
       <trans-unit id="4a22c6843133f0b0d7dc0d28f864f2f90c1de7ad" datatype="html">
         <source>Description:</source>
@@ -1195,7 +1195,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="translated">Eeg Khayraadka</target>
+        <target state="final">Eeg Khayraadka</target>
       </trans-unit>
       <trans-unit id="01df8eb930f83e59444f915bad8b8e5197fb8af3" datatype="html" approved="yes">
         <source>Take exam</source>
@@ -1203,7 +1203,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="translated">Imtixaan qaado</target>
+        <target state="final">Imtixaan qaado</target>
       </trans-unit>
       <trans-unit id="feee99b11743fd0ee450a8f1de83293d0dac1a2a" datatype="html">
         <source>{VAR_SELECT, select, courses {Exam} surveys {Survey} }</source>
@@ -1227,7 +1227,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Ku dar su'aal</target>
+        <target state="final">Ku dar su'aal</target>
         <alt-trans>
           <target>Suaal Kudar </target>
         </alt-trans>
@@ -1256,7 +1256,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Tallaabo</target>
+        <target state="final">Tallaabo</target>
       </trans-unit>
       <trans-unit id="86a03cba21504143b18dea634f76513c1b18685a" datatype="html" approved="yes">
         <source>Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></source>
@@ -1264,7 +1264,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Isku dayadii hore: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
+        <target state="final">Isku dayadii hore: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
       <trans-unit id="b1a045c8850fc0b5e3db079bc60c13ae01167c72" datatype="html" approved="yes">
         <source>
@@ -1274,7 +1274,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
       Khariid furan oo cusub
     </target>
       </trans-unit>
@@ -1284,7 +1284,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated">Liistada Khayraadka</target>
+        <target state="final">Liistada Khayraadka</target>
       </trans-unit>
       <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
@@ -1292,7 +1292,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="7244b411f047aa7cc7a4018d1452a45b460ff0e4" datatype="html">
         <source>No description provided.</source>
@@ -1324,7 +1324,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Keli jawaab halkan</target>
+        <target state="final">Keli jawaab halkan</target>
       </trans-unit>
       <trans-unit id="73c34be23712a3b6418c7fa78133edcc6243aaf1" datatype="html">
         <source>Submitted answer:</source>
@@ -1340,7 +1340,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="translated">Sax</target>
+        <target state="final">Sax</target>
       </trans-unit>
       <trans-unit id="8b42d54000704393a3c06e5f8b668880014f6986" datatype="html" approved="yes">
         <source>Incorrect</source>
@@ -1348,7 +1348,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">Khalad</target>
+        <target state="final">Khalad</target>
       </trans-unit>
       <trans-unit id="20fa923f713d65971258a4e3e2d361810d70851d" datatype="html">
         <source>Response:</source>
@@ -1366,7 +1366,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
         Soo Gudbi Jawaab
       </target>
       </trans-unit>
@@ -1376,7 +1376,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="translated">Jawaab qaldan, fadlan iskuday mar kale</target>
+        <target state="final">Jawaab qaldan, fadlan iskuday mar kale</target>
       </trans-unit>
       <trans-unit id="0c133b7890efd3c4e62ec1c87570d3f39fdd5892" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + ' ' : ''}}"/>Course Progress</source>
@@ -1428,7 +1428,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Talaabada koowaad</target>
+        <target state="final">Talaabada koowaad</target>
       </trans-unit>
       <trans-unit id="f9a1f574266549405afb276f92f836d93c2e2bad" datatype="html">
         <source>Attached Resources: </source>
@@ -1480,7 +1480,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="translated">Maktabadda</target>
+        <target state="final">Maktabadda</target>
       </trans-unit>
       <trans-unit id="90d0d462ba8f3cc1d435ea47b558e48b9e68ad4f" datatype="html">
         <source>Filter labels</source>
@@ -1516,7 +1516,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target state="translated">Ku dar qaybta Makdabadayda</target>
+        <target state="final">Ku dar qaybta Makdabadayda</target>
       </trans-unit>
       <trans-unit id="95b8dfb6cc7200a7c8c8637c610ee8f40ff1a42d" datatype="html" approved="yes">
         <source>Remove from myLibrary</source>
@@ -1524,7 +1524,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="translated">Ka saar maktabadayda</target>
+        <target state="final">Ka saar maktabadayda</target>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html" approved="yes">
         <source>Download file</source>
@@ -1532,7 +1532,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="translated">Fayl Dejin </target>
+        <target state="final">Fayl Dejin </target>
       </trans-unit>
       <trans-unit id="a35562563b046bb09e22a6599f2da51fa8111a83" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
@@ -1541,7 +1541,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
       <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> faahfaahin
     </target>
       </trans-unit>
@@ -1591,7 +1591,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> khayraadka</target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> khayraadka</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html" approved="yes">
         <source>Author</source>
@@ -1599,7 +1599,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Qoraa</target>
+        <target state="final">Qoraa</target>
       </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html" approved="yes">
         <source>Year</source>
@@ -1607,7 +1607,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">Sanad</target>
+        <target state="final">Sanad</target>
       </trans-unit>
       <trans-unit id="2af7efecfae8d7fed3b07f718a623eca1ad8163f" datatype="html">
         <source>Labels</source>
@@ -1623,7 +1623,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated">Ingiriisi</target>
+        <target state="final">Ingiriisi</target>
       </trans-unit>
       <trans-unit id="e00fde81f1d8d3a8585bc2e03445dd63ceeb3b55" datatype="html" approved="yes">
         <source>Español</source>
@@ -1631,7 +1631,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated">Ispanyol</target>
+        <target state="final">Ispanyol</target>
         <alt-trans>
           <target>Español</target>
         </alt-trans>
@@ -1642,7 +1642,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">Daabacaadda / Dajinta</target>
+        <target state="final">Daabacaadda / Dajinta</target>
       </trans-unit>
       <trans-unit id="d891222d75499aa82e5f979ffb001e642384d175" datatype="html" approved="yes">
         <source>Link to License</source>
@@ -1650,7 +1650,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="translated">Isku xirka liisanka</target>
+        <target state="final">Isku xirka liisanka</target>
       </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html" approved="yes">
         <source>Subject(s)</source>
@@ -1658,7 +1658,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">Mawduuc (yada)</target>
+        <target state="final">Mawduuc (yada)</target>
       </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html" approved="yes">
         <source>Level(s)</source>
@@ -1666,7 +1666,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="translated">Heerka (yada)</target>
+        <target state="final">Heerka (yada)</target>
       </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html" approved="yes">
         <source>Open</source>
@@ -1674,7 +1674,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="translated">Furit</target>
+        <target state="final">Furit</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html" approved="yes">
         <source>Default</source>
@@ -1682,7 +1682,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">Caadi</target>
+        <target state="final">Caadi</target>
       </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html" approved="yes">
         <source>Leader</source>
@@ -1690,7 +1690,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="translated">Hogaamiye</target>
+        <target state="final">Hogaamiye</target>
       </trans-unit>
       <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html" approved="yes">
         <source>learner</source>
@@ -1698,7 +1698,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="translated">bartaha</target>
+        <target state="final">bartaha</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html" approved="yes">
         <source>Resource For</source>
@@ -1706,7 +1706,7 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="translated">Khayraadka</target>
+        <target state="final">Khayraadka</target>
         <alt-trans>
           <target>
 Khayraadka</target>
@@ -1718,7 +1718,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated">Warbaahinta</target>
+        <target state="final">Warbaahinta</target>
       </trans-unit>
       <trans-unit id="6dffc29e9f023bc83a3d5ac080c870c6af20bd46" datatype="html" approved="yes">
         <source>Article Date</source>
@@ -1726,7 +1726,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="translated">Taariikhda Taariikhda</target>
+        <target state="final">Taariikhda Taariikhda</target>
       </trans-unit>
       <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html" approved="yes">
         <source>Resource Type</source>
@@ -1734,7 +1734,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="translated">Nooca Khayraadka</target>
+        <target state="final">Nooca Khayraadka</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html" approved="yes">
         <source>Added By</source>
@@ -1742,7 +1742,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="translated">Kudarit</target>
+        <target state="final">Kudarit</target>
       </trans-unit>
       <trans-unit id="e6cf591b31401e030391c1703785cec3430b56de" datatype="html" approved="yes">
         <source>Open URL</source>
@@ -1750,7 +1750,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">85</context>
         </context-group>
-        <target state="translated">URL furan</target>
+        <target state="final">URL furan</target>
       </trans-unit>
       <trans-unit id="b8b0ff24acc2df6a8482367d06e3801ae977b370" datatype="html" approved="yes">
         <source>Open Which File</source>
@@ -1758,7 +1758,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">88</context>
         </context-group>
-        <target state="translated">Furan Faylka</target>
+        <target state="final">Furan Faylka</target>
       </trans-unit>
       <trans-unit id="ab2d402efd915ef9b8988853c468d37fec83a57d" datatype="html">
         <source>File Upload:</source>
@@ -1790,7 +1790,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">Tirtir faylka</target>
+        <target state="final">Tirtir faylka</target>
       </trans-unit>
       <trans-unit id="26bff472b6d1cdf6b0479ef9cb93cc0181fcab31" datatype="html" approved="yes">
         <source>Question Title</source>
@@ -1798,7 +1798,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Suaal Bilow</target>
+        <target state="final">Suaal Bilow</target>
       </trans-unit>
       <trans-unit id="3e242f213dd1a0754aad9164aa80887d67708500" datatype="html" approved="yes">
         <source>Input</source>
@@ -1806,7 +1806,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Gundasho</target>
+        <target state="final">Gundasho</target>
       </trans-unit>
       <trans-unit id="d0d0ffb152f14b8794dd6c8dda40edba72ca7193" datatype="html">
         <source>Multiple Choice - single answer</source>
@@ -1834,7 +1834,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Nooca</target>
+        <target state="final">Nooca</target>
       </trans-unit>
       <trans-unit id="1fc2618c7ca4b3722929d8739dbf6d9ab4f7dacf" datatype="html" approved="yes">
         <source>Add Choice</source>
@@ -1842,7 +1842,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">Ku dar xulasho</target>
+        <target state="final">Ku dar xulasho</target>
       </trans-unit>
       <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html" approved="yes">
         <source>Visits</source>
@@ -1850,7 +1850,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Booqashooyinka</target>
+        <target state="final">Booqashooyinka</target>
       </trans-unit>
       <trans-unit id="e6b61e5dab50fc2b018082f8882a8bf1460dd4ca" datatype="html" approved="yes">
         <source>Submissions</source>
@@ -1858,7 +1858,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Soo gudbinta</target>
+        <target state="final">Soo gudbinta</target>
       </trans-unit>
       <trans-unit id="43a51f6aa1c907dfef5d2e40423995e30f56f236" datatype="html" approved="yes">
         <source>Surveys</source>
@@ -1886,7 +1886,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Daraasado</target>
+        <target state="final">Daraasado</target>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html" approved="yes">
         <source>Feedback List</source>
@@ -1894,7 +1894,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Liiska Warbixinta</target>
+        <target state="final">Liiska Warbixinta</target>
       </trans-unit>
       <trans-unit id="2b4943909f1e88357c5874b29637a57006c77a2f" datatype="html" approved="yes">
         <source>Type text to search...</source>
@@ -1910,7 +1910,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">Qoro qoraalka si aad u raadisid ...</target>
+        <target state="final">Qoro qoraalka si aad u raadisid ...</target>
       </trans-unit>
       <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html" approved="yes">
         <source>Your Current Lists of Feedback</source>
@@ -1918,7 +1918,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Liiskaaga cusub ee jawaab celinta</target>
+        <target state="final">Liiskaaga cusub ee jawaab celinta</target>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
         <source>Priority</source>
@@ -1926,7 +1926,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated">Mudnaanta</target>
+        <target state="final">Mudnaanta</target>
       </trans-unit>
       <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html">
         <source>Yes</source>
@@ -1950,7 +1950,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">Milkiilaha</target>
+        <target state="final">Milkiilaha</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html" approved="yes">
         <source>Status</source>
@@ -1962,7 +1962,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">Xaaladda</target>
+        <target state="final">Xaaladda</target>
       </trans-unit>
       <trans-unit id="73c8ea027d594b211a22ad250947eb93b9ab235f" datatype="html">
         <source>Open Date</source>
@@ -1986,7 +1986,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="translated">Xigasho</target>
+        <target state="final">Xigasho</target>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html" approved="yes">
         <source> Action </source>
@@ -1994,7 +1994,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="translated"> Waxqabadka </target>
+        <target state="final"> Waxqabadka </target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html" approved="yes">
         <source>Close</source>
@@ -2002,7 +2002,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="translated">Xir</target>
+        <target state="final">Xir</target>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html" approved="yes">
         <source>Re-open</source>
@@ -2010,7 +2010,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="translated">Dib u fur</target>
+        <target state="final">Dib u fur</target>
       </trans-unit>
       <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html" approved="yes">
         <source>Feedback title</source>
@@ -2018,7 +2018,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Cinwaanka jawaabta</target>
+        <target state="final">Cinwaanka jawaabta</target>
       </trans-unit>
       <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html" approved="yes">
         <source>Type your reply here</source>
@@ -2026,7 +2026,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">Jawaabtaada halkan ku qor</target>
+        <target state="final">Jawaabtaada halkan ku qor</target>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html" approved="yes">
         <source>Planet Learning</source>
@@ -2042,7 +2042,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Barashada Qorshaha</target>
+        <target state="final">Barashada Qorshaha</target>
       </trans-unit>
       <trans-unit id="8a6afcf38cbb3107a31ae8636805be7f65182dc8" datatype="html">
         <source>Teams</source>
@@ -2094,7 +2094,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Kulannada</target>
+        <target state="final">Kulannada</target>
       </trans-unit>
       <trans-unit id="f354ea5d0c5bae1154e5e34f86e22abe7d668552" datatype="html">
         <source>
@@ -2118,7 +2118,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Farriimo</target>
+        <target state="final">Farriimo</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html" approved="yes">
         <source>Manager Settings</source>
@@ -2134,7 +2134,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Maamulaha Goobaha</target>
+        <target state="final">Maamulaha Goobaha</target>
       </trans-unit>
       <trans-unit id="8bcabdf6b16cad0313a86c7e940c5e3ad7f9f8ab" datatype="html" approved="yes">
         <source>Notifications</source>
@@ -2146,7 +2146,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Ogeysiisyada</target>
+        <target state="final">Ogeysiisyada</target>
       </trans-unit>
       <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html" approved="yes">
         <source>No Notification</source>
@@ -2158,7 +2158,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Ogeysiin la'aan</target>
+        <target state="final">Ogeysiin la'aan</target>
       </trans-unit>
       <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html">
         <source>View Profile</source>
@@ -2214,7 +2214,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">105</context>
         </context-group>
-        <target state="translated">Ka bax</target>
+        <target state="final">Ka bax</target>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html" approved="yes">
         <source>Menu</source>
@@ -2222,7 +2222,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">Muujinta</target>
+        <target state="final">Muujinta</target>
       </trans-unit>
       <trans-unit id="92eee6be6de0b11c924e3ab27db30257159c0a7c" datatype="html" approved="yes">
         <source>Home</source>
@@ -2234,7 +2234,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="translated">Guriga</target>
+        <target state="final">Guriga</target>
       </trans-unit>
       <trans-unit id="c0313c8016bf778e8022d3464a9dac8051c02441" datatype="html" approved="yes">
         <source>Your Notifications</source>
@@ -2242,7 +2242,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Ogaysiisyadaada</target>
+        <target state="final">Ogaysiisyadaada</target>
       </trans-unit>
       <trans-unit id="fb55bc908a9ef04a80dcf464cd899a559e579d35" datatype="html">
         <source>Mark as Read</source>
@@ -2290,7 +2290,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/login/login-form.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Ku celi sireetka</target>
+        <target state="final">Ku celi sireetka</target>
       </trans-unit>
       <trans-unit id="7b39459e4e45c1e91ee4354a50e47c62da35ed3c" datatype="html">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ planetVersion }}"/></source>
@@ -2330,7 +2330,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Codsiyada</target>
+        <target state="final">Codsiyada</target>
       </trans-unit>
       <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html">
         <source>Reports</source>
@@ -2354,7 +2354,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Dib udir Codso Diiwaangelinta</target>
+        <target state="final">Dib udir Codso Diiwaangelinta</target>
       </trans-unit>
       <trans-unit id="49599fd0b55ca84378584328e2d3644786bf6708" datatype="html" approved="yes">
         <source>Delete Community</source>
@@ -2362,7 +2362,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated">Baabi Beesha</target>
+        <target state="final">Baabi Beesha</target>
       </trans-unit>
       <trans-unit id="4a41f824a35ba01d5bd7be61aa06b3e8145209d0" datatype="html">
         <source>Configuration</source>
@@ -2426,7 +2426,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Xubnaha</target>
+        <target state="final">Xubnaha</target>
       </trans-unit>
       <trans-unit id="b9ff3705ef6d1098028e6a6ea0805af2eaa91939" datatype="html">
         <source>Send On Accept</source>
@@ -2442,7 +2442,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Khayraadka</target>
+        <target state="final">Khayraadka</target>
       </trans-unit>
       <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
@@ -2450,7 +2450,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> Liiska</target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> Liiska</target>
       </trans-unit>
       <trans-unit id="26151745a5b777e9bfb9e80a164cca0e95bcf9b0" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/> Version:</source>
@@ -2482,7 +2482,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="translated">Qor Ilaha Kheyraadka</target>
+        <target state="final">Qor Ilaha Kheyraadka</target>
       </trans-unit>
       <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html" approved="yes">
         <source>List Courses</source>
@@ -2490,7 +2490,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="translated">Kursiyada liistada</target>
+        <target state="final">Kursiyada liistada</target>
       </trans-unit>
       <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html" approved="yes">
         <source>List Meetups</source>
@@ -2498,7 +2498,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="translated">Liiska kulannada</target>
+        <target state="final">Liiska kulannada</target>
       </trans-unit>
       <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html" approved="yes">
         <source>Checking request status...</source>
@@ -2506,7 +2506,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="translated">Hubinta xaaladda codsiga ...</target>
+        <target state="final">Hubinta xaaladda codsiga ...</target>
       </trans-unit>
       <trans-unit id="46391706ae6359a1df41fde9decdcd0e52598a6c" datatype="html">
         <source>Your request has been rejected by parent. You can retry or contact parent planet.</source>
@@ -2522,7 +2522,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="translated">Waalidka Codsigaaga suman aqbalin </target>
+        <target state="final">Waalidka Codsigaaga suman aqbalin </target>
       </trans-unit>
       <trans-unit id="4473b88150ab069fea4b91b497042373f7d32b55" datatype="html">
         <source>Your tablet pin number is:</source>
@@ -2686,7 +2686,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Ku biir</target>
+        <target state="final">Ku biir</target>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
@@ -2702,7 +2702,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target state="translated">Macluumaadka</target>
+        <target state="final">Macluumaadka</target>
       </trans-unit>
       <trans-unit id="05fa0bded36de6e73a1fa44838b627349dace044" datatype="html" approved="yes">
         <source>Date:</source>
@@ -2710,7 +2710,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target state="translated">Taariikhda:</target>
+        <target state="final">Taariikhda:</target>
       </trans-unit>
       <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html" approved="yes">
         <source>at</source>
@@ -2718,7 +2718,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target state="translated">at</target>
+        <target state="final">at</target>
       </trans-unit>
       <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html" approved="yes">
         <source>Recurring:</source>
@@ -2726,7 +2726,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
-        <target state="translated">Soo noqoshada:</target>
+        <target state="final">Soo noqoshada:</target>
       </trans-unit>
       <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html" approved="yes">
         <source>Recurring Days: </source>
@@ -2734,7 +2734,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="translated">Maalmaha soo noqoshada: </target>
+        <target state="final">Maalmaha soo noqoshada: </target>
       </trans-unit>
       <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html" approved="yes">
         <source>Location:</source>
@@ -2742,7 +2742,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">Goobta:</target>
+        <target state="final">Goobta:</target>
       </trans-unit>
       <trans-unit id="ab2f3dda1bafbf47aab0985df2f08ea3eef3176e" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> Meetup</source>
@@ -2750,7 +2750,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> La kulan</target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> La kulan</target>
       </trans-unit>
       <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html" approved="yes">
         <source>Start Date</source>
@@ -2758,7 +2758,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="translated">Taariikhda billowga</target>
+        <target state="final">Taariikhda billowga</target>
       </trans-unit>
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html" approved="yes">
         <source>End Date</source>
@@ -2766,7 +2766,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="translated">Dhammaadka Taariikhda</target>
+        <target state="final">Dhammaadka Taariikhda</target>
       </trans-unit>
       <trans-unit id="3843f812b31c369520c337100fcf5a95f612e6ca" datatype="html">
         <source>Recurring Frequency</source>
@@ -2782,7 +2782,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="translated">Malinkasto</target>
+        <target state="final">Malinkasto</target>
       </trans-unit>
       <trans-unit id="fbf7ac0008332622d7380335be909c2d408303ac" datatype="html" approved="yes">
         <source>Weekly</source>
@@ -2790,7 +2790,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="translated">Toddobaadkiiba</target>
+        <target state="final">Toddobaadkiiba</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html" approved="yes">
         <source>None</source>
@@ -2798,7 +2798,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated">Midna</target>
+        <target state="final">Midna</target>
       </trans-unit>
       <trans-unit id="7c0a71d337783e527c1c8e91e433b301c5b1d8a8" datatype="html" approved="yes">
         <source>Start Time</source>
@@ -2806,7 +2806,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="translated">Waqtiga Bilowga</target>
+        <target state="final">Waqtiga Bilowga</target>
       </trans-unit>
       <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html" approved="yes">
         <source>End Time</source>
@@ -2814,7 +2814,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">Dhameysta waqtiga</target>
+        <target state="final">Dhameysta waqtiga</target>
         <alt-trans>
           <target>Waqtiga Dhamaadkiis</target>
         </alt-trans>
@@ -2825,7 +2825,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="translated">Qeybta</target>
+        <target state="final">Qeybta</target>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html" approved="yes">
         <source>Location</source>
@@ -2833,7 +2833,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="translated">Goobta</target>
+        <target state="final">Goobta</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html" approved="yes">
         <source>Save</source>
@@ -2841,7 +2841,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="translated">Badbaadi</target>
+        <target state="final">Badbaadi</target>
       </trans-unit>
       <trans-unit id="6620f791963724bb0a3c50969438f51cfca2929e" datatype="html" approved="yes">
         <source>Meetup</source>
@@ -2849,7 +2849,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">La kulan</target>
+        <target state="final">La kulan</target>
       </trans-unit>
       <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html" approved="yes">
         <source>Invite Member</source>
@@ -2857,7 +2857,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Ku martiqaad Member</target>
+        <target state="final">Ku martiqaad Member</target>
       </trans-unit>
       <trans-unit id="3eed3c0167ac14df9b8fcf72108d32ea25436c5d" datatype="html" approved="yes">
         <source>Leave</source>
@@ -2865,7 +2865,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Tag</target>
+        <target state="final">Tag</target>
       </trans-unit>
       <trans-unit id="ef18d704b9e303d1dd72b0f56d5de8ea625c5311" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/></source>
@@ -2913,7 +2913,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Soo noqoshada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Soo noqoshada:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.recurring | titlecase}}"/></target>
       </trans-unit>
       <trans-unit id="550df11c1046a9283aebac14f33a7865442d410e" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Location:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></source>
@@ -2921,7 +2921,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Goobta:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Goobta:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.meetupLocation}}"/></target>
       </trans-unit>
       <trans-unit id="fb5a59efb4430d702a68c624aa9d8bd98a20c062" datatype="html" approved="yes">
         <source>Recurring Days:</source>
@@ -2929,7 +2929,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated">Maalmaha soo noqoshada:</target>
+        <target state="final">Maalmaha soo noqoshada:</target>
       </trans-unit>
       <trans-unit id="44bf4fce64f69f0d8a1d0b6443a16d504cdc6598" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
@@ -2949,7 +2949,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated"> - xubin kama mid ah masoo gelin kulankan</target>
+        <target state="final"> - xubin kama mid ah masoo gelin kulankan</target>
       </trans-unit>
       <trans-unit id="8398f0f83ca04e0abf4b2ec1f5e1341073fbe250" datatype="html">
         <source>Survey</source>
@@ -2981,7 +2981,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="translated">Waxqabadka</target>
+        <target state="final">Waxqabadka</target>
       </trans-unit>
       <trans-unit id="5ff0a1019f3760676fce8b5cc9421bb56235ecab" datatype="html">
         <source>All Members</source>
@@ -3081,7 +3081,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="translated">Xulo All</target>
+        <target state="final">Xulo All</target>
       </trans-unit>
       <trans-unit id="fdd8c0ec42148f76f93fa98129edf03bb03ac990" datatype="html" approved="yes">
         <source>Deselect All</source>
@@ -3089,7 +3089,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">Hadooran Dhaman</target>
+        <target state="final">Hadooran Dhaman</target>
       </trans-unit>
       <trans-unit id="dbe383bc1cd8442abfaa0c3d0feb8b0710e72a44" datatype="html">
         <source>Roles to add</source>
@@ -3105,7 +3105,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="translated">Ku dar doorarka</target>
+        <target state="final">Ku dar doorarka</target>
       </trans-unit>
       <trans-unit id="fe29c5d80f15cf046e65d26f65f7a83bd8edf901" datatype="html" approved="yes">
         <source>Profile Image</source>
@@ -3113,7 +3113,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="translated">Profile Sawirka</target>
+        <target state="final">Profile Sawirka</target>
       </trans-unit>
       <trans-unit id="4fcb6dbd1b656de4f606e061af0ed606d3fdc547" datatype="html" approved="yes">
         <source>User Name</source>
@@ -3121,7 +3121,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="translated">Magaca isticmaalaha</target>
+        <target state="final">Magaca isticmaalaha</target>
       </trans-unit>
       <trans-unit id="7b79ab95f86e6b433a2b457d6297ebf537002048" datatype="html">
         <source>No. of Visits</source>
@@ -3137,7 +3137,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="translated">Roles</target>
+        <target state="final">Roles</target>
       </trans-unit>
       <trans-unit id="506bcfcdbb95044d7597c7f0833f25a68d37738a" datatype="html">
         <source>{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</source>
@@ -3166,7 +3166,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Isticmaalayaasha</target>
+        <target state="final">Isticmaalayaasha</target>
       </trans-unit>
       <trans-unit id="761e7bc19e9488ae4447d0cd58a9c83b4d1844e2" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -3190,7 +3190,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="translated">Magaca buuxa</target>
+        <target state="final">Magaca buuxa</target>
       </trans-unit>
       <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html" approved="yes">
         <source>DOB</source>
@@ -3198,7 +3198,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="translated">DOB</target>
+        <target state="final">DOB</target>
       </trans-unit>
       <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html" approved="yes">
         <source>Phone</source>
@@ -3206,7 +3206,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="translated">Telefoonka</target>
+        <target state="final">Telefoonka</target>
       </trans-unit>
       <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html" approved="yes">
         <source>Level</source>
@@ -3214,7 +3214,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">Heerka</target>
+        <target state="final">Heerka</target>
       </trans-unit>
       <trans-unit id="a9aa4a447e7a64b1744ee9ec9581cdf5ba73501c" datatype="html">
         <source>Survey Profile</source>
@@ -3230,7 +3230,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Profile</target>
+        <target state="final">Profile</target>
       </trans-unit>
       <trans-unit id="3909338c4bd606fae7ba39a4d80533aa94514241" datatype="html" approved="yes">
         <source>BirthDate</source>
@@ -3238,7 +3238,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="translated">Taariiqda dhalasha</target>
+        <target state="final">Taariiqda dhalasha</target>
       </trans-unit>
       <trans-unit id="003d4f5e4909ccf01b6a204c688fd6dab15c20bd" datatype="html" approved="yes">
         <source>Gender</source>
@@ -3246,7 +3246,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">Lamaanaha</target>
+        <target state="final">Lamaanaha</target>
       </trans-unit>
       <trans-unit id="097b5dfee5665aa0f7daba8b696acecde6445474" datatype="html">
         <source>Male</source>
@@ -3270,7 +3270,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="translated">heerka</target>
+        <target state="final">heerka</target>
       </trans-unit>
       <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html" approved="yes">
         <source>Update</source>
@@ -3278,7 +3278,7 @@ Khayraadka</target>
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target state="translated">Cusboonaysii</target>
+        <target state="final">Cusboonaysii</target>
       </trans-unit>
     </body>
   </file>
