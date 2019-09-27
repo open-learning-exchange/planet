@@ -144,8 +144,9 @@ export class CustomValidators {
       endTime.setErrors({ required: true });
       return { required: true };
     }
-    startTime
+
     startTime.setErrors(null);
+    endTime.setErrors(null);
     return null;
 
   }
