@@ -121,7 +121,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   // newTags is a string of tags delimited by this.tagUrlDelimiter
   addTags(newTags?: string) {
-    if (newTags === undefined) {
+    if (newTags === undefined || newTags === null) {
       return;
     }
     newTags.split(this.tagUrlDelimiter).forEach(tag => this.addTag(tag));
