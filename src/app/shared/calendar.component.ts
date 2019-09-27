@@ -49,6 +49,7 @@ export class PlanetCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getMeetups();
+    this.getTasks();
   }
 
   getMeetups() {
@@ -64,6 +65,14 @@ export class PlanetCalendarComponent implements OnInit {
             return this.eventObject(meetup);
         }
       }).flat();
+    });
+  }
+
+  getTasks() {
+    this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
+      this.events = [ ...this.events, ...tasks.map(task => {
+          return this.eventObject(task, task.deadline, task.deadline);
+      }).flat() ];
     });
   }
 
