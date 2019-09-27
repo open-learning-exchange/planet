@@ -125,20 +125,26 @@ export class CustomValidators {
     };
   }
 
-  // Start time becomes required without an end time
-  static startTimeValidator(formGroup: FormGroup): ValidationErrors {
+  // Start time becomes required without an end time and endTime becomes required if below condition matches
+  static startAndEndTimeValidator(formGroup: FormGroup): ValidationErrors {
 
     if (!formGroup) {
       return null;
     }
 
     const startTime = formGroup.get('startTime');
+    const endTime = formGroup.get('endTime');
 
     if (formGroup.get('endTime').value && !startTime.value) {
       startTime.setErrors({ required: true });
       return { required: true };
     }
 
+    if (formGroup.get('startDate').value && formGroup.get('endDate').value && startTime.value && !endTime.value) {
+      endTime.setErrors({ required: true });
+      return { required: true };
+    }
+    startTime
     startTime.setErrors(null);
     return null;
 
