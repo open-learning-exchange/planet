@@ -135,6 +135,7 @@ export class CustomValidators {
 
     const startTime = formGroup.get('startTime');
     const endTime = formGroup.get('endTime');
+    const formDateToString = (acName) => (formGroup.get(acName).value || {}).toString();
     const clearRequired = (ac: AbstractControl) => {
       if (ac.hasError('required')) {
         ac.setErrors({ ...ac.errors, required: false });
@@ -147,7 +148,7 @@ export class CustomValidators {
       clearRequired(startTime);
     }
 
-    if (formGroup.get('startDate').value && formGroup.get('endDate').value && startTime.value && !endTime.value) {
+    if (formDateToString('startDate') !== formDateToString('endDate') && startTime.value && !endTime.value) {
       endTime.setErrors({ required: true });
       return;
     } else {
