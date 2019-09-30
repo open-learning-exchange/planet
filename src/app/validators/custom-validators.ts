@@ -132,8 +132,8 @@ export class CustomValidators {
     }
   }
 
-  private static formDateToString(formGroup: FormGroup, acName: string) {
-    return (formGroup.get(acName).value || {}).toString();
+  private static formDateToString(ac: AbstractControl) {
+    return (ac.value || {}).toString();
   }
 
   // Start time becomes required if end time exists
@@ -147,6 +147,8 @@ export class CustomValidators {
 
       const startTime = formGroup.get('startTime');
       const endTime = formGroup.get('endTime');
+      const startDate = formGroup.get('startDate');
+      const endDate = formGroup.get('endDate');
 
       if (formGroup.get('endTime').value && !startTime.value) {
         startTime.setErrors({ required: true });
@@ -155,7 +157,8 @@ export class CustomValidators {
       }
 
       if (
-        this.formDateToString(formGroup, 'startDate') !== this.formDateToString(formGroup, 'endDate') &&
+        this.formDateToString(startDate) !== this.formDateToString(endDate) &&
+        endDate.value &&
         startTime.value &&
         !endTime.value
       ) {
