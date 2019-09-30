@@ -215,22 +215,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   changeMembership(type, memberDoc?) {
-      this.changeMembershipRequest(type, memberDoc).subscribe((message) => {
-        this.setStatus(this.team, this.userService.get());
-        this.planetMessageService.showMessage(message);
-      });
-      if (type === 'removed') {
-        return forkJoin([
-          this.couchService.post('tasks/_find', { 'selector': { 'userId': 'org.couchdb.user:' + { name } } }),
-          this.couchService.post('tasks/_find', { 'selector': { 'link': 'teams:' } })
-        ]).pipe(switchMap(([ userId, link ]) => {
-            return forkJoin([
-              this.tasksService.removeAssigneeFromTask(userId),
-              this.tasksService.removeAssigneeFromTask(link)
-            ]);
-        }));
-      }
-      // switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask() : of({}))
+    this.changeMembershipRequest(type, memberDoc).pipe(switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { team: this.teamId }) : of({})))
+    .subscribe((message) => {
+      this.setStatus(this.team, this.userService.get());
+      this.planetMessageService.showMessage(message);
+    });
   }
 
   private changeObject(type, memberDoc?) {

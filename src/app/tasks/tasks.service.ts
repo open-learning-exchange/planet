@@ -14,10 +14,8 @@ import { findDocuments } from '../shared/mangoQueries';
   providedIn: 'root'
 })
 export class TasksService {
-  @Input() link: any;
   private dbName = 'tasks';
   private tasksUpdated = new Subject<any>();
-  tasks: any[] = [];
 
   constructor(
     private couchService: CouchService,
@@ -28,7 +26,6 @@ export class TasksService {
   ) {
     this.stateService.couchStateListener(this.dbName).subscribe(res => {
       if (res) {
-        this.tasks = res.newData;
         this.tasksUpdated.next(res);
       }
     });
@@ -89,10 +86,10 @@ export class TasksService {
     );
   }
 
-  removeAssigneeFromTask(assignee: any = '') {
+  removeAssigneeFromTask(assignee: any = '', link = {}) {
     assignee = assignee._id === assignee.userId;
 
-    return this.couchService.findAll(this.dbName, findDocuments({ assignee, link: { team: assignee.teamId } })).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments({ assignee, link })).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, assignee: '' }))))
     );
   }
