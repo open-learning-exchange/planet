@@ -150,7 +150,6 @@ export class CustomValidators {
 
     if (formDateToString('startDate') !== formDateToString('endDate') && startTime.value && !endTime.value) {
       endTime.setErrors({ required: true });
-      return;
     } else {
       clearRequired(endTime);
     }
