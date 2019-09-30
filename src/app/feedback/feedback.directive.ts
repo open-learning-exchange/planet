@@ -9,7 +9,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { urlToParamObject } from '../shared/utils';
 
 export class Message {
   message: string;
@@ -90,7 +89,6 @@ export class FeedbackDirective {
         status: 'Open',
         messages: [ startingMessage ],
         url: this.router.url,
-        params: urlToParamObject(this.router.url),
         source: this.stateService.configuration.code,
         parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
