@@ -128,6 +128,7 @@ export class CustomValidators {
   private static clearRequired(ac: AbstractControl) {
     if (ac.hasError('required')) {
       ac.setErrors({ ...ac.errors, required: false });
+      ac.updateValueAndValidity();
     }
   }
 
@@ -137,30 +138,32 @@ export class CustomValidators {
 
   // Start time becomes required if end time exists
   // End time becomes required for multi day events with a start time
-  static meetupTimeValidator(formGroup: FormGroup): ValidationErrors {
+  static meetupTimeValidator(): ValidatorFn {
 
-    if (!formGroup) {
-      return null;
-    }
+    return (formGroup: FormGroup): ValidationErrors => {
+      if (!formGroup) {
+        return null;
+      }
 
-    const startTime = formGroup.get('startTime');
-    const endTime = formGroup.get('endTime');
+      const startTime = formGroup.get('startTime');
+      const endTime = formGroup.get('endTime');
 
-    if (formGroup.get('endTime').value && !startTime.value) {
-      startTime.setErrors({ required: true });
-    } else {
-      this.clearRequired(startTime);
-    }
+      if (formGroup.get('endTime').value && !startTime.value) {
+        startTime.setErrors({ required: true });
+      } else {
+        this.clearRequired(startTime);
+      }
 
-    if (
-      this.formDateToString(formGroup, 'startDate') !== this.formDateToString(formGroup, 'endDate') &&
-      startTime.value &&
-      !endTime.value
-    ) {
-      endTime.setErrors({ required: true });
-    } else {
-      this.clearRequired(endTime);
-    }
+      if (
+        this.formDateToString(formGroup, 'startDate') !== this.formDateToString(formGroup, 'endDate') &&
+        startTime.value &&
+        !endTime.value
+      ) {
+        endTime.setErrors({ required: true });
+      } else {
+        this.clearRequired(endTime);
+      }
+    };
 
   }
 
