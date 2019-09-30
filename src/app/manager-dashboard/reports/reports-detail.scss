@@ -31,4 +31,12 @@
   canvas {
     max-height: 30vh;
   }
+
+  .mat-toolbar-row > * {
+    margin-right: 0.25rem;
+  }
+
+  .mat-toolbar-row > *:last-child {
+    margin-right: 0;
+  }
 }

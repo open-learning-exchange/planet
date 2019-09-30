@@ -406,8 +406,8 @@ body {
     filter: brightness(0) invert(1);
   }
 
-  mat-toolbar:first-child > mat-form-field,
-  mat-toolbar form mat-form-field,
+  .mat-toolbar .mat-form-field,
+  .mat-toolbar form .mat-form-field,
   .input-icon {
     margin-top: 10px;
     &.mat-form-field-type-no-underline {
