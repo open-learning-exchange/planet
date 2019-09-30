@@ -166,9 +166,9 @@
             <div class="card-grid">
               <mat-card *ngFor="let resource of resources">
                 <div class="mat-subheading-2">
-                  <a *ngIf="resource.resource!==undefined" target="_blank" [routerLink]="'/resources/view/' + resource.resource._id">
+                  <span *ngIf="resource.resource!==undefined" class="cursor-pointer" (click)="openResource(resource.resource._id)">
                     {{resource.resource.title}}
-                  </a>
+                  </span>
                   <span *ngIf="resource.resource===undefined" i18n-matTooltip
                     matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
                     {{resource.linkDoc.title}}
