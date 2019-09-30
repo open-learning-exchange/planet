@@ -134,20 +134,24 @@ export class CustomValidators {
 
     const startTime = formGroup.get('startTime');
     const endTime = formGroup.get('endTime');
+    const clearRequired = (ac: AbstractControl) => {
+      if (ac.hasError('required')) {
+        ac.setErrors({ ...ac.errors, required: false });
+      }
+    };
 
     if (formGroup.get('endTime').value && !startTime.value) {
       startTime.setErrors({ required: true });
-      return { required: true };
+    } else {
+      clearRequired(startTime);
     }
 
     if (formGroup.get('startDate').value && formGroup.get('endDate').value && startTime.value && !endTime.value) {
       endTime.setErrors({ required: true });
-      return { required: true };
+      return;
+    } else {
+      clearRequired(endTime);
     }
-
-    startTime.setErrors(null);
-    endTime.setErrors(null);
-    return null;
 
   }
 
