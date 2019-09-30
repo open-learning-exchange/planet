@@ -72,11 +72,15 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   getTasks() {
-    const taskColors = {
-      backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
-    };
     this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
-      this.tasks = tasks.map(task => this.eventObject(task, task.deadline, task.deadline, taskColors));
+      this.tasks = tasks.map(task => {
+        const taskColors = task.completed ? {
+          backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: styleVariables.greyText
+        } : {
+          backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
+        };
+        return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
+      });
       this.events = [ ...this.meetups, ...this.tasks ];
     });
   }
