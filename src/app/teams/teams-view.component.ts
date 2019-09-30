@@ -215,7 +215,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   changeMembership(type, memberDoc?) {
-    this.changeMembershipRequest(type, memberDoc).pipe(switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { team: this.teamId }) : of({})))
+    this.changeMembershipRequest(type, memberDoc)
+    .pipe(switchMap(() =>
+    type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { team: this.teamId }) : of({})))
     .subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(message);
