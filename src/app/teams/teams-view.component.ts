@@ -21,6 +21,7 @@ import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-reso
 import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-courses.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
+import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -415,6 +416,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  openResource(resourceId) {
+    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId } });
   }
 
 }
