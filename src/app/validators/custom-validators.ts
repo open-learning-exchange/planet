@@ -125,7 +125,8 @@ export class CustomValidators {
     };
   }
 
-  // Start time becomes required without an end time and endTime becomes required if below condition matches
+  // Start time becomes required if end time exists
+  // End time becomes required for multi day events with a start time
   static meetupTimeValidator(formGroup: FormGroup): ValidationErrors {
 
     if (!formGroup) {
