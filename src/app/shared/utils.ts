@@ -54,3 +54,12 @@ export const twoDigitNumber = (number: number) => `${number.toString().length < 
 export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
 
 export const getClockTime = (time: Date) => `${twoDigitNumber(time.getHours())}:${twoDigitNumber(time.getMinutes())}`;
+
+export const urlToParamObject = (url: string) => url.split(';').reduce((params, fragment) => {
+  const [ key, value ] = fragment.split('=');
+  if (value) {
+    params[key] = value;
+  }
+  return params;
+}, {});
+
