@@ -55,16 +55,11 @@ export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-
 
 export const getClockTime = (time: Date) => `${twoDigitNumber(time.getHours())}:${twoDigitNumber(time.getMinutes())}`;
 
-export const parseToObject = (url: string) => {
-  const frags = url.split(';');
-  const obj = {};
-  if (frags.length > 1) {
-    const props = [];
-    const value = [];
-    for (let i = 1; i < frags.length; i++) {
-      const split = frags[i].split('=');
-      obj[split[0]] = split[1];
-    }
+export const urlToParamObject = (url: string) => url.split(';').reduce((params, fragment) => {
+  const [ key, value ] = fragment.split('=');
+  if (value) {
+    params[key] = value;
   }
-  return obj;
-};
+  return params;
+}, {});
+
