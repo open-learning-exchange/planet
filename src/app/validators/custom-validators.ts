@@ -125,22 +125,48 @@ export class CustomValidators {
     };
   }
 
-  // Start time becomes required without an end time
-  static startTimeValidator(formGroup: FormGroup): ValidationErrors {
-
-    if (!formGroup) {
-      return null;
+  private static clearRequired(ac: AbstractControl) {
+    if (ac.hasError('required')) {
+      ac.setErrors({ ...ac.errors, required: false });
+      ac.updateValueAndValidity();
     }
+  }
 
-    const startTime = formGroup.get('startTime');
+  private static formDateToString(ac: AbstractControl) {
+    return (ac.value || {}).toString();
+  }
 
-    if (formGroup.get('endTime').value && !startTime.value) {
-      startTime.setErrors({ required: true });
-      return { required: true };
-    }
+  // Start time becomes required if end time exists
+  // End time becomes required for multi day events with a start time
+  static meetupTimeValidator(): ValidatorFn {
 
-    startTime.setErrors(null);
-    return null;
+    return (formGroup: FormGroup): ValidationErrors => {
+      if (!formGroup) {
+        return null;
+      }
+
+      const startTime = formGroup.get('startTime');
+      const endTime = formGroup.get('endTime');
+      const startDate = formGroup.get('startDate');
+      const endDate = formGroup.get('endDate');
+
+      if (formGroup.get('endTime').value && !startTime.value) {
+        startTime.setErrors({ required: true });
+      } else {
+        this.clearRequired(startTime);
+      }
+
+      if (
+        this.formDateToString(startDate) !== this.formDateToString(endDate) &&
+        endDate.value &&
+        startTime.value &&
+        !endTime.value
+      ) {
+        endTime.setErrors({ required: true });
+      } else {
+        this.clearRequired(endTime);
+      }
+    };
 
   }
 
