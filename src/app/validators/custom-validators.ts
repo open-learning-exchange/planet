@@ -126,7 +126,7 @@ export class CustomValidators {
   }
 
   // Start time becomes required without an end time and endTime becomes required if below condition matches
-  static startAndEndTimeValidator(formGroup: FormGroup): ValidationErrors {
+  static meetupTimeValidator(formGroup: FormGroup): ValidationErrors {
 
     if (!formGroup) {
       return null;
