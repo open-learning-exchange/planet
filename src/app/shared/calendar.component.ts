@@ -89,7 +89,9 @@ export class PlanetCalendarComponent implements OnInit {
     meetup,
     startDate = meetup.startDate,
     endDate = meetup.endDate || startDate,
-    otherProps: any = { backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText }
+    otherProps: any = {
+      backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText
+    }
   ) {
     const allDay = meetup.startTime === undefined || meetup.startTime === '';
     return {
