@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
+import { MatTableDataSource } from '@angular/material';
 
 @Component({
   templateUrl: './health.component.html',
@@ -19,6 +20,12 @@ import { HealthService } from './health.service';
     .full-width {
       grid-column: 1 / -1;
     }
+    mat-table {
+      overflow-x: auto;
+    }
+    .table-column {
+      min-width: 200px;
+    }
   ` ]
 })
 export class HealthComponent implements OnInit {
@@ -26,6 +33,8 @@ export class HealthComponent implements OnInit {
   userDetail = this.healthService.userDetail || this.userService.get();
   healthDetail = this.healthService.healthDetail;
   events = this.healthService.events;
+  eventTable = new MatTableDataSource();
+  displayedColumns: string[] = [];
 
   constructor(
     private userService: UserService,
@@ -38,6 +47,12 @@ export class HealthComponent implements OnInit {
     if (this.userDetail.name !== this.userService.get().name) {
       this.router.navigate([ 'update' ], { relativeTo: this.route });
     }
+
+    this.eventTable.data = this.events.reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
+      { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
+      { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
+    ]);
+    this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
   goBack() {
