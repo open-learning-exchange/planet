@@ -208,17 +208,14 @@ export class TeamsService {
   }
 
   teamNotification(message, user, { team, url }) {
-    url = url.split(';')[0];
+    const link = url.split(';')[0];
     const userId = user.userId || user._id;
-    let linkParams = {};
-    if (message.includes('requested')) {
-      linkParams = { activeTab: 'applicantTab' };
-    }
-    const result = {
+    const linkParams = message.includes('requested') ? { activeTab: 'applicantTab' } : {};
+    return {
       'user': userId,
       message,
-      'link': url,
-      linkParams: linkParams,
+      link,
+      linkParams,
       'item': team._id,
       'type': 'team',
       'priority': 1,
@@ -226,9 +223,6 @@ export class TeamsService {
       'time': this.couchService.datePlaceholder,
       userPlanetCode: user.userPlanetCode
     };
-    console.log('%c warning', 'color:orange');
-    console.log(result);
-    return result;
   }
 
   teamActivity(team: any, activity = 'teamVisit') {
