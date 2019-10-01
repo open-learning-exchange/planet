@@ -90,13 +90,19 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (this.initTabPosition === 'taskTab' && this.taskTab && this.taskTab.position !== 0) {
-      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.taskTab.position, 0);
-      this.initTabPosition = '';
-    }
-    if (this.initTabPosition === 'applicantTab' && this.applicantTab && this.applicantTab.position !== 0) {
-      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.applicantTab.position, 0);
-      this.initTabPosition = '';
+    if (this.initTabPosition !== '' ) {
+      let activeTab: MatTab;
+      switch (this.initTabPosition) {
+        case 'taskTab':
+          activeTab = this.taskTab;
+          break;
+        case 'applicantTab':
+          activeTab = this.applicantTab;
+      }
+      if (activeTab && activeTab.position !== 0) {
+        setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position, 0);
+        this.initTabPosition = '';
+      }
     }
   }
 
