@@ -21,6 +21,7 @@ import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-reso
 import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-courses.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
+import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -54,6 +55,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   finances: any[];
   tabSelectedIndex = 0;
   initTabPosition = '';
+  taskCount = 0;
 
   constructor(
     private couchService: CouchService,
@@ -82,6 +84,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         ...member,
         tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
       }));
+      const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     });
   }
 
@@ -417,6 +421,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  openResource(resourceId) {
+    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId } });
   }
 
 }

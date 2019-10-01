@@ -6,7 +6,7 @@ import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.compon
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
-import { addDateAndTime } from './utils';
+import { addDateAndTime, styleVariables } from './utils';
 
 @Component({
   selector: 'planet-calendar',
@@ -25,6 +25,7 @@ import { addDateAndTime } from './utils';
 export class PlanetCalendarComponent implements OnInit {
 
   @Input() link: any = {};
+  @Input() sync: { type: 'local' | 'sync', planetCode: string };
   options: OptionsInput;
   calendarPlugins = [ dayGridPlugin ];
   header = {
@@ -40,6 +41,8 @@ export class PlanetCalendarComponent implements OnInit {
   };
   dbName = 'meetups';
   events: any[] = [];
+  meetups: any[] = [];
+  tasks: any[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -48,11 +51,12 @@ export class PlanetCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getMeetups();
+    this.getTasks();
   }
 
   getMeetups() {
     this.couchService.findAll(this.dbName, findDocuments({ link: this.link })).subscribe((meetups: any[]) => {
-      this.events = meetups.map(meetup => {
+      this.meetups = meetups.map(meetup => {
         switch (meetup.recurring) {
           case 'daily':
             return this.dailyEvents(meetup);
@@ -63,17 +67,41 @@ export class PlanetCalendarComponent implements OnInit {
             return this.eventObject(meetup);
         }
       }).flat();
+      this.events = [ ...this.meetups, ...this.tasks ];
     });
   }
 
-  eventObject(meetup, startDate = meetup.startDate, endDate = meetup.endDate || startDate) {
+  getTasks() {
+    this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
+      this.tasks = tasks.map(task => {
+        const taskColors = task.completed ? {
+          backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: styleVariables.greyText
+        } : {
+          backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
+        };
+        return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
+      });
+      this.events = [ ...this.meetups, ...this.tasks ];
+    });
+  }
+
+  eventObject(
+    meetup,
+    startDate = meetup.startDate,
+    endDate = meetup.endDate || startDate,
+    otherProps: any = {
+      backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText
+    }
+  ) {
+    const allDay = !meetup.isTask && meetup.startTime === undefined || meetup.startTime === '';
     return {
       title: meetup.title,
-      start: addDateAndTime(startDate || meetup.startDate, meetup.startTime),
-      end: addDateAndTime(endDate || meetup.endDate, meetup.endTime),
-      allDay: meetup.startTime === undefined || meetup.startTime === '',
+      start: addDateAndTime(startDate, meetup.startTime),
+      end: addDateAndTime(endDate, allDay && endDate > startDate ? '24:00' : meetup.endTime),
+      allDay,
       editable: true,
-      extendedProps: { meetup }
+      extendedProps: { meetup },
+      ...otherProps
     };
   }
 
@@ -101,7 +129,9 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   openAddEventDialog() {
-    this.dialog.open(DialogsAddMeetupsComponent, { data: { link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this) } });
+    this.dialog.open(DialogsAddMeetupsComponent, {
+      data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this) }
+    });
   }
 
   onMeetupsChange() {
@@ -109,10 +139,15 @@ export class PlanetCalendarComponent implements OnInit {
   }
 
   eventClick({ event }) {
-    console.log(event);
-    this.dialog.open(DialogsAddMeetupsComponent, { data: {
-      meetup: event.extendedProps.meetup, view: 'view', link: this.link, onMeetupsChange: this.onMeetupsChange.bind(this)
-    } });
+    this.dialog.open(DialogsAddMeetupsComponent, {
+      data: {
+        meetup: event.extendedProps.meetup,
+        view: 'view',
+        link: this.link,
+        sync: this.sync,
+        onMeetupsChange: this.onMeetupsChange.bind(this)
+      }
+    });
   }
 
 }

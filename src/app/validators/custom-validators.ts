@@ -1,5 +1,5 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup } from '@angular/forms';
+import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {
@@ -125,8 +125,55 @@ export class CustomValidators {
     };
   }
 
+  private static clearRequired(ac: AbstractControl) {
+    if (ac.hasError('required')) {
+      ac.setErrors({ ...ac.errors, required: false });
+      ac.updateValueAndValidity();
+    }
+  }
+
+  private static formDateToString(ac: AbstractControl) {
+    return (ac.value || {}).toString();
+  }
+
+  // Start time becomes required if end time exists
+  // End time becomes required for multi day events with a start time
+  static meetupTimeValidator(): ValidatorFn {
+
+    return (formGroup: FormGroup): ValidationErrors => {
+      if (!formGroup) {
+        return null;
+      }
+
+      const startTime = formGroup.get('startTime');
+      const endTime = formGroup.get('endTime');
+      const startDate = formGroup.get('startDate');
+      const endDate = formGroup.get('endDate');
+
+      if (formGroup.get('endTime').value && !startTime.value) {
+        startTime.setErrors({ required: true });
+      } else {
+        this.clearRequired(startTime);
+      }
+
+      if (
+        this.formDateToString(startDate) !== this.formDateToString(endDate) &&
+        endDate.value &&
+        startTime.value &&
+        !endTime.value
+      ) {
+        endTime.setErrors({ required: true });
+      } else {
+        this.clearRequired(endTime);
+      }
+    };
+
+  }
+
   // for validating whether end time comes before start date or not
   static endTimeValidator(): ValidatorFn {
+    let startDate: AbstractControl;
+    let endDate: AbstractControl;
     let startTime: AbstractControl;
     let endTime: AbstractControl;
     const ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -136,9 +183,13 @@ export class CustomValidators {
         return null;
       }
 
+      startDate = ac.parent.get('startDate');
+      endDate = ac.parent.get('endDate');
+
       if (!endTime) {
         endTime = ac;
         startTime = ac.parent.get('startTime');
+
         if (!startTime) {
           throw new Error(
             'validateTimes(): startTime control is not found in parent group'
@@ -146,20 +197,25 @@ export class CustomValidators {
         }
 
         // run validators again on when start time's value changes
-        startTime.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
+        combineLatest(startTime.valueChanges, startDate.valueChanges, endDate.valueChanges).pipe(
+          takeUntil(ngUnsubscribe)
+        ).subscribe(() => {
           endTime.updateValueAndValidity();
         });
       }
 
       // if start time has not been given a value yet return back
-      if (!startTime) {
+      if (!startTime || !endTime.value) {
         return null;
       }
 
+      const startDateString = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
+      const endDateString = new Date(endDate.value || startDateString).toLocaleDateString('en-US');
+
       // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
       if (
-        new Date('1970-1-1 ' + startTime.value).getTime() >
-        new Date(endTime.value && '1970-1-1 ' + endTime.value).getTime()
+        new Date(startDateString + ' ' + startTime.value).getTime() >
+        new Date(endDateString + ' ' + endTime.value).getTime()
       ) {
         return { invalidEndTime: true };
       }

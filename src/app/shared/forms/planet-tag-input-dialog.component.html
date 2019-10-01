@@ -58,6 +58,9 @@
         <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
         <span class="toolbar-fill"></span>
         <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)">Edit</button>
+        <span matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
+          <button mat-stroked-button *ngIf="isUserAdmin" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event,tag)">Delete</button>
+        </span>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(tag._id || tag.name, subTag._id || subTag.name)">
@@ -65,6 +68,7 @@
           {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
           <span class="toolbar-fill"></span>
           <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)">Edit</button>
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event,subTag)">Delete</button>
         </mat-list-item>
       </ng-container>
       <mat-divider></mat-divider>

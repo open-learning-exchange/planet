@@ -37,6 +37,7 @@ export class MeetupsAddComponent implements OnInit {
   @Input() link: any = {};
   @Input() isDialog = false;
   @Input() meetup: any = {};
+  @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup;
@@ -103,7 +104,9 @@ export class MeetupsAddComponent implements OnInit {
       meetupLocation: '',
       createdBy: this.userService.get().name,
       createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [ 10, Validators.min(2) ]
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
+    }, {
+      validators: CustomValidators.meetupTimeValidator()
     });
   }
 
@@ -115,7 +118,7 @@ export class MeetupsAddComponent implements OnInit {
       });
       return;
     }
-    const meetup = { ...this.meetupForm.value, link: this.link };
+    const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
     if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
