@@ -104,7 +104,7 @@
           </ng-template>
           <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
         </mat-tab>
-        <mat-tab>
+        <mat-tab #applicantTab>
           <ng-template mat-tab-label>
             <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} }</ng-container> ({{requests.length}})
           </ng-template>

@@ -29,6 +29,7 @@ import { TasksService } from '../tasks/tasks.service';
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('taskTab', { static: false }) taskTab: MatTab;
+  @ViewChild('applicantTab', { static: false }) applicantTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -52,7 +53,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   leaderDialog: any;
   finances: any[];
   tabSelectedIndex = 0;
-  initTabPosition = false;
+  initTabPosition = '';
 
   constructor(
     private couchService: CouchService,
@@ -85,9 +86,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (this.initTabPosition && this.taskTab && this.taskTab.position !== 0) {
+    if (this.initTabPosition === 'taskTab' && this.taskTab && this.taskTab.position !== 0) {
       setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.taskTab.position, 0);
-      this.initTabPosition = false;
+      this.initTabPosition = '';
+    }
+    if (this.initTabPosition === 'applicantTab' && this.applicantTab && this.applicantTab.position !== 0) {
+      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.applicantTab.position, 0);
+      this.initTabPosition = '';
     }
   }
 
@@ -161,8 +166,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    if (this.userStatus === 'member' && this.route.snapshot.params.task === 'true') {
-      this.initTabPosition = true;
+    if (this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
+      this.initTabPosition = this.route.snapshot.params.activeTab;
     }
   }
 
