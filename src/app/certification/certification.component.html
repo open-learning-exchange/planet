@@ -1,6 +1,6 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-      <a mat-mini-fab routerLink="/manager/certification/add"><mat-icon>add</mat-icon></a>
+      <button i18n mat-mini-fab (click)="addCertification()"><mat-icon>add</mat-icon></button>
   </mat-toolbar>
   <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
     <ng-container matColumnDef="name">
@@ -10,7 +10,7 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
       <mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="editCertification(element)" i18n>
+          <button mat-raised-button color="primary" (click)="addCertification(element); $event.stopPropagation()"i18n>
             <mat-icon>edit</mat-icon>Edit
           </button>
         <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>
