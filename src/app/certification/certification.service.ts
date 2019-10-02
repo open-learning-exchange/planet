@@ -64,7 +64,7 @@ export class CertificationService {
 
   openAddDialog( certification: any = {}, onSuccess = (res) => {} ) {
     const fields = [
-      { placeholder: 'Certification', type: 'textbox', name: 'name' , required: false }
+      { placeholder: 'Certification', type: 'textbox', name: 'name' , required: true }
     ];
     const formGroup = this.addDialogFormGroup(certification);
     this.dialogsFormService.openDialogsForm(certification.name ? 'Edit Certification' : 'Add Certification', fields, formGroup, {
@@ -94,7 +94,7 @@ export class CertificationService {
 
   addDialogFormGroup(certification: any = {}) {
     return {
-      name: [ certification.name || '' ]
+      name: [ certification.name || '', CustomValidators.required ]
     };
   }
 
