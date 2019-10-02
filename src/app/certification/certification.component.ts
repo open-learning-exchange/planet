@@ -34,9 +34,6 @@ export class CertificationComponent implements OnInit, OnChanges, AfterViewInit 
   ) { }
 
   ngOnInit() {
-    // this.certificationService.getCertificationList().subscribe((certificationList: any) => {
-    //   this.certifications.data = certificationList;
-    // });
     this.getAllCertifications();
   }
 
@@ -65,7 +62,7 @@ export class CertificationComponent implements OnInit, OnChanges, AfterViewInit 
     this.certificationService.openDeleteDialog(certification, this.deleteCertification());
   }
 
-  getAllCertifications(){
+  getAllCertifications() {
     this.certificationService.getCertificationList().subscribe((certificationList: any) => {
       this.certifications.data = certificationList;
     });
@@ -73,10 +70,6 @@ export class CertificationComponent implements OnInit, OnChanges, AfterViewInit 
 
   addCertification(certification?) {
     this.certificationService.openAddDialog( certification, () => {
-      // this.certificationService.getCertifications();
-      // this.certificationService.getCertificationList().subscribe((certificationList: any) => {
-      //   this.certifications.data = certificationList;
-      // });
       this.getAllCertifications();
       const msg = certification ? 'certification updated successfully' : 'certification created successfully';
       this.planetMessageService.showMessage(msg);
