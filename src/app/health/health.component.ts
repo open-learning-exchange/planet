@@ -62,11 +62,13 @@ export class HealthComponent implements OnInit {
   }
 
   examClick(eventDate) {
-    this.dialog.open(HealthEventDialogComponent, {
-      data: { event: this.events.find(event => event.date === +eventDate) },
-      width: '50vw',
-      maxHeight: '90vh'
-    });
+    if (eventDate !== 'label') {
+      this.dialog.open(HealthEventDialogComponent, {
+        data: { event: this.events.find(event => event.date === +eventDate) },
+        width: '50vw',
+        maxHeight: '90vh'
+      });
+    }
   }
 
 }
