@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { CouchService } from '../../shared/couchdb.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CustomValidators } from '../validators/custom-validators';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { CustomValidators } from '../../validators/custom-validators';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { finalize, } from 'rxjs/operators';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
-@Injectable()
-export class CertificationService {
+@Injectable({
+  providedIn: 'root'
+})
+export class CertificationsService {
 
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   readonly dbName = 'certifications';

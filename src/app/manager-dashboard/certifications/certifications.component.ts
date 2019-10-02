@@ -1,15 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { CertificationService } from './certification.service';
-import { sortNumberOrString } from '../shared/table-helpers';
+import { CertificationsService } from './certifications.service';
+import { sortNumberOrString } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
-  selector: 'planet-certification',
-  templateUrl: './certification.component.html'
+  templateUrl: './certifications.component.html'
 })
-export class CertificationComponent implements OnInit, AfterViewInit {
+export class CertificationsComponent implements OnInit, AfterViewInit {
 
   certifications = new MatTableDataSource();
   selection = new SelectionModel(true, []);
@@ -21,7 +20,7 @@ export class CertificationComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
-    private certificationService: CertificationService,
+    private certificationsService: CertificationsService,
     private planetMessageService: PlanetMessageService
   ) { }
 
@@ -47,17 +46,17 @@ export class CertificationComponent implements OnInit, AfterViewInit {
   }
 
   deleteClick(certification) {
-    this.certificationService.openDeleteDialog(certification, this.deleteCertification());
+    this.certificationsService.openDeleteDialog(certification, this.deleteCertification());
   }
 
   getCertifications() {
-    this.certificationService.getCertifications().subscribe((certifications: any) => {
+    this.certificationsService.getCertifications().subscribe((certifications: any) => {
       this.certifications.data = certifications;
     });
   }
 
   addCertification(certification?) {
-    this.certificationService.openAddDialog(certification, () => {
+    this.certificationsService.openAddDialog(certification, () => {
       this.getCertifications();
       const msg = certification ? 'certification updated successfully' : 'certification created successfully';
       this.planetMessageService.showMessage(msg);

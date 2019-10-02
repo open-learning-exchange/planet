@@ -11,7 +11,7 @@ import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
-  { path: 'certifications', loadChildren: () => import('../certification/certification.module').then(m => m.CertificationModule) },
+  { path: 'certifications', loadChildren: () => import('./certifications/certifications.module').then(m => m.CertificationsModule) },
   { path: 'sync', component: ManagerSyncComponent },
   { path: 'fetch', component: ManagerFetchComponent },
   { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule), data: { parent: true } },
