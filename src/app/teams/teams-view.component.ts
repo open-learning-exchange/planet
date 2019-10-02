@@ -54,7 +54,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   leaderDialog: any;
   finances: any[];
   tabSelectedIndex = 0;
-  initTab = '';
+  initTab;
   taskCount = 0;
 
   constructor(
@@ -92,8 +92,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngAfterViewChecked() {
     const activeTab: MatTab = this.getActiveTab(this.initTab);
     if (activeTab && activeTab.position !== 0) {
-      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position, 0);
-      this.initTab = '';
+      setTimeout(() => {
+        this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
+        this.initTab = activeTab.position === 0 ? '' : this.initTab;
+      }, 0);
     }
   }
 
@@ -175,7 +177,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    if (this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
+    if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
   }
