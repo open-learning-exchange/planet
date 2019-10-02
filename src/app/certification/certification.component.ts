@@ -7,8 +7,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-certification',
-  templateUrl: './certification.component.html',
-  styleUrls: [ './certification.component.scss' ]
+  templateUrl: './certification.component.html'
 })
 export class CertificationComponent implements OnInit, AfterViewInit {
 
