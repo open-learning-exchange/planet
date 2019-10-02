@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnChanges, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
 import { CertificationService } from './certification.service';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
@@ -10,7 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   templateUrl: './certification.component.html',
   styleUrls: [ './certification.component.scss' ]
 })
-export class CertificationComponent implements OnInit {
+export class CertificationComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() data = [];
   @Input() certificationDetail: any;

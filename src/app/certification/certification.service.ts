@@ -84,7 +84,7 @@ export class CertificationService {
   }
 
   addDialogSubmit( certification: any, newCertification: any, onSuccess ) {
-    this.addCertification( { ...certification, ...newCertification} ).pipe(
+    this.addCertification( { ...certification, ...newCertification } ).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       onSuccess(res.doc);
