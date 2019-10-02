@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatDialog } from '@angular/material';
+import { HealthEventDialogComponent } from './health-event-dialog.component';
 
 @Component({
   templateUrl: './health.component.html',
@@ -40,7 +41,8 @@ export class HealthComponent implements OnInit {
     private userService: UserService,
     private healthService: HealthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -57,6 +59,14 @@ export class HealthComponent implements OnInit {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
+  }
+
+  examClick(eventDate) {
+    this.dialog.open(HealthEventDialogComponent, {
+      data: { event: this.events.find(event => event.date === +eventDate) },
+      width: '50vw',
+      maxHeight: '90vh'
+    });
   }
 
 }
