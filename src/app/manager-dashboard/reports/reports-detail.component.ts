@@ -8,6 +8,7 @@ import { Chart } from 'chart.js';
 import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -27,17 +28,25 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   codeParam = '';
   loginActivities = [];
   resourceActivities = [];
+  today = new Date();
+  // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
+  planetLaunchDate = new Date(2018, 6, 1); // 2018 July 1
+  fromDate = this.planetLaunchDate;
+  toDate = this.today;
 
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
     private dialogsLoadingService: DialogsLoadingService,
-    private csvService: CsvService
+    private csvService: CsvService,
+    private dialogsFormService: DialogsFormService,
   ) {}
 
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
+    const yrDate = new Date(this.today.getFullYear() - 1, this.today.getMonth() + 1, 1);
+    this.fromDate = yrDate > this.planetLaunchDate ? yrDate : this.planetLaunchDate;
     this.dialogsLoadingService.start();
     combineLatest(this.route.paramMap, this.stateService.couchStateListener(dbName)).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ params, planetState ]: [ ParamMap, any ]) => {
@@ -104,6 +113,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.getActivities('resource_activities', this.activityParams()).subscribe((resourceActivities: any) => {
       this.resourceActivities = resourceActivities;
       const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
+      console.log(byResource, byMonth);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
@@ -201,15 +211,62 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
-  exportCSV(reportType: 'logins' | 'resourceViews') {
-    this.csvService.exportCSV(reportType === 'logins' ?
-      { data: this.loginActivities, title: 'Member Visits' } :
-      { data: this.resourceActivities, title: 'Resource Views' }
-    );
-  }
-
-  exportSummaryCSV() {
-    this.csvService.exportSummaryCSV(this.loginActivities, this.resourceActivities, this.planetName);
+  exportCSV(reportType: 'logins' | 'resourceViews' | 'summary') {
+    const fields = [
+      {
+        'label': 'From',
+        'type': 'date',
+        'name': 'fromDate',
+        'required': true
+      },
+      {
+        'label': 'To',
+        'type': 'date',
+        'name': 'toDate',
+        'required': true
+      }
+    ];
+    const formGroup = {
+      fromDate: [ this.fromDate ],
+      toDate: [ this.toDate ]
+    };
+    this.dialogsFormService.openDialogsForm('Export Date Filter', fields, formGroup, {
+      onSubmit: (response: any) => {
+        if (response) {
+          switch (reportType) {
+            case 'logins':
+              this.csvService.exportCSV({
+                data: this.loginActivities.filter(rec =>
+                  rec.loginTime >= response.fromDate.getTime() && rec.loginTime <= response.toDate.getTime()
+                ),
+                title: 'Member Visits'
+              });
+              break;
+            case 'resourceViews':
+              this.csvService.exportCSV({
+                data: this.resourceActivities.filter(rec =>
+                  rec.time >= response.fromDate.getTime() && rec.time <= response.toDate.getTime()
+                ),
+                title: 'Resource Views'
+              });
+              break;
+            default:
+              this.csvService.exportSummaryCSV(
+                this.loginActivities.filter(rec =>
+                  rec.loginTime >= response.fromDate.getTime() && rec.loginTime <= response.toDate.getTime()
+                ),
+                this.resourceActivities.filter(rec =>
+                  rec.time >= response.fromDate.getTime() && rec.time <= response.toDate.getTime()
+                ),
+                this.planetName
+              );
+              break;
+          }
+          this.dialogsFormService.closeDialogsForm();
+          this.dialogsLoadingService.stop();
+        }
+      }
+    });
   }
 
 }
