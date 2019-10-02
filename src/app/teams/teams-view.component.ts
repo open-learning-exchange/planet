@@ -208,6 +208,8 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const changeObject = this.changeObject(type, memberDoc);
     return changeObject.obs.pipe(
       switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
+      switchMap(() => 
+      type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { team: this.teamId }) : of({})),
       switchMap(() => this.getMembers()),
       switchMap(() => this.sendNotifications('added')),
       map(() => changeObject.message)
@@ -215,10 +217,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   }
 
   changeMembership(type, memberDoc?) {
-    this.changeMembershipRequest(type, memberDoc)
-    .pipe(switchMap(() =>
-    type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { team: this.teamId }) : of({})))
-    .subscribe((message) => {
+    this.changeMembershipRequest(type, memberDoc).subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(message);
     });
