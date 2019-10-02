@@ -1,7 +1,7 @@
-import { Component, OnInit, OnChanges, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { CertificationService } from './certification.service';
-import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
+import { sortNumberOrString } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
@@ -10,35 +10,24 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   templateUrl: './certification.component.html',
   styleUrls: [ './certification.component.scss' ]
 })
-export class CertificationComponent implements OnInit, OnChanges, AfterViewInit {
+export class CertificationComponent implements OnInit, AfterViewInit {
 
-  @Input() data = [];
-  @Input() certificationDetail: any;
-  @Input() isDialog = false;
-  @Output() switchView = new EventEmitter<'close' | 'add'>();
   certifications = new MatTableDataSource();
   selection = new SelectionModel(true, []);
-  revision = null;
-  id = null;
-  readonly dbName = 'certificatios'; // database name constant
   displayedColumns = [
     'name',
     'action'
   ];
-
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+
   constructor(
     private certificationService: CertificationService,
     private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
-    this.getAllCertifications();
-  }
-
-  ngOnChanges() {
-    this.certifications.data = this.data;
+    this.getCertifications();
   }
 
   ngAfterViewInit() {
@@ -62,15 +51,15 @@ export class CertificationComponent implements OnInit, OnChanges, AfterViewInit 
     this.certificationService.openDeleteDialog(certification, this.deleteCertification());
   }
 
-  getAllCertifications() {
-    this.certificationService.getCertificationList().subscribe((certificationList: any) => {
-      this.certifications.data = certificationList;
+  getCertifications() {
+    this.certificationService.getCertifications().subscribe((certifications: any) => {
+      this.certifications.data = certifications;
     });
   }
 
   addCertification(certification?) {
-    this.certificationService.openAddDialog( certification, () => {
-      this.getAllCertifications();
+    this.certificationService.openAddDialog(certification, () => {
+      this.getCertifications();
       const msg = certification ? 'certification updated successfully' : 'certification created successfully';
       this.planetMessageService.showMessage(msg);
     });
