@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CertificationComponent } from './certification.component';
 import { CertificationRouterModule } from './certification-router.module';
-import { AddCertificationComponent } from './add-certification/add-certification.component';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,8 +12,7 @@ import { CertificationService } from './certification.service';
 
 @NgModule({
   declarations: [
-    CertificationComponent,
-    AddCertificationComponent
+    CertificationComponent
   ],
   imports: [
     CommonModule,

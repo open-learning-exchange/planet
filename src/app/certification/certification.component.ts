@@ -3,14 +3,12 @@ import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } fr
 import { CertificationService } from './certification.service';
 import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { CouchService } from '../shared/couchdb.service';
-import { Router, ActivatedRoute } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
-  selector: 'app-certification',
+  selector: 'planet-certification',
   templateUrl: './certification.component.html',
-  styleUrls: ['./certification.component.scss']
+  styleUrls: [ './certification.component.scss' ]
 })
 export class CertificationComponent implements OnInit {
 
@@ -32,9 +30,6 @@ export class CertificationComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   constructor(
     private certificationService: CertificationService,
-    private couchService: CouchService,
-    private router: Router,
-    private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService
   ) { }
 
@@ -59,7 +54,8 @@ export class CertificationComponent implements OnInit {
       deletedCertifications.forEach(deletedCertification => this.selection.deselect(deletedCertification.id));
       // It's safer to remove the item from the array based on its id than to splice based on the index
       this.certifications.data = this.certifications.data.filter(
-        (certification: any) => deletedCertifications.findIndex(deletedCertification => deletedCertification.id === certification._id) === -1
+        (certification: any) => deletedCertifications
+          .findIndex(deletedCertification => deletedCertification.id === certification._id) === -1
       );
     };
   }
@@ -71,7 +67,6 @@ export class CertificationComponent implements OnInit {
   addCertification(certification?) {
     this.certificationService.openAddDialog( certification, () => {
       this.certificationService.getCertifications();
-      // this.certificationService.getCertificationList();
       const msg = certification ? 'certification updated successfully' : 'certification created successfully';
       this.planetMessageService.showMessage(msg);
     });

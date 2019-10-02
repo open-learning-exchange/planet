@@ -55,21 +55,22 @@ export class CertificationService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage(`You have deleted the ${displayName ? `${displayName} certification` : 'selected certification'}`);
+        this.planetMessageService.showMessage(`You have deleted the ${displayName ? `${displayName} certification`
+          : 'selected certification'}`);
       },
       onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this certification')
     };
   }
 
-  openAddDialog( certification: any = {}, onSuccess = (res) => {}) {
+  openAddDialog( certification: any = {}, onSuccess = (res) => {} ) {
     const fields = [
-      { placeholder: 'Certification', type: 'textbox', name: 'name' , required: false}
+      { placeholder: 'Certification', type: 'textbox', name: 'name' , required: false }
     ];
     const formGroup = this.addDialogFormGroup(certification);
     this.dialogsFormService.openDialogsForm(certification.name ? 'Edit Certification' : 'Add Certification', fields, formGroup, {
       onSubmit: (newCertification) => {
         if (newCertification) {
-          this.addDialogSubmit( certification, newCertification, onSuccess);
+          this.addDialogSubmit( certification, newCertification, onSuccess );
         }
       },
       autoFocus: true
@@ -82,8 +83,8 @@ export class CertificationService {
     });
   }
 
-  addDialogSubmit( certification: any, newCertification: any, onSuccess) {
-    this.addCertification({ ...certification, ...newCertification}).pipe(
+  addDialogSubmit( certification: any, newCertification: any, onSuccess ) {
+    this.addCertification( { ...certification, ...newCertification} ).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       onSuccess(res.doc);
