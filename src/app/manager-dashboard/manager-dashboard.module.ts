@@ -19,8 +19,6 @@ import { PendingTableComponent } from './reports/pending-table.component';
 import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
 import { MyPlanetTableComponent } from './reports/myplanet-table.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { CertificationComponent } from '../certification/certification.component';
-import { CertificationModule } from '../certification/certification.module';
 
 @NgModule({
   imports: [
@@ -34,8 +32,7 @@ import { CertificationModule } from '../certification/certification.module';
     HttpClientModule,
     HttpClientJsonpModule,
     ConfigurationModule,
-    SharedComponentsModule,
-    CertificationModule
+    SharedComponentsModule
   ],
   declarations: [
     ManagerDashboardComponent,
