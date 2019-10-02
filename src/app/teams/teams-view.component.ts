@@ -54,7 +54,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   leaderDialog: any;
   finances: any[];
   tabSelectedIndex = 0;
-  initTabPosition = '';
+  initTab = '';
   taskCount = 0;
 
   constructor(
@@ -90,20 +90,19 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (this.initTabPosition !== '' ) {
-      let activeTab: MatTab;
-      switch (this.initTabPosition) {
-        case 'taskTab':
-          activeTab = this.taskTab;
-          break;
-        case 'applicantTab':
-          activeTab = this.applicantTab;
-      }
-      if (activeTab && activeTab.position !== 0) {
-        setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position, 0);
-        this.initTabPosition = '';
-      }
+    const activeTab: MatTab = this.getActieTab(this.initTab);
+    if (activeTab && activeTab.position !== 0) {
+      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position, 0);
+      this.initTab = '';
     }
+  }
+
+  getActieTab(initTab: string) {
+    const activeTabs = {
+      'taskTab' : this.taskTab,
+      'applicantTab' : this.applicantTab
+    };
+    return activeTabs[initTab];
   }
 
   ngOnDestroy() {
@@ -177,7 +176,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
     if (this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
-      this.initTabPosition = this.route.snapshot.params.activeTab;
+      this.initTab = this.route.snapshot.params.activeTab;
     }
   }
 
