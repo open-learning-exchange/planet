@@ -22,8 +22,8 @@
   </ng-container>
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let element; let i = index">
-      <ng-container *ngIf="i">
+    <mat-cell *matCellDef="let element">
+      <ng-container *ngIf="element.date !== 'Total'">
         <button mat-icon-button (click)="openTransactionDialog(element); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
         <button mat-icon-button (click)="archiveTransaction(element); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
       </ng-container>
