@@ -53,6 +53,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
+  tasks: any[];
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
@@ -80,12 +81,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.initTeam(this.teamId);
     });
     this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
-      this.members = this.members.map(member => ({
-        ...member,
-        tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
-      }));
-      const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
-      this.taskCount = tasksForCount.filter(task => task.completed === false).length;
+      this.tasks = tasks;
+      this.setTasks(tasks);
     });
   }
 
@@ -158,8 +155,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
+      this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  setTasks(tasks) {
+    this.members = this.members.map(member => ({
+      ...member,
+      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+    }));
+    const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+    this.taskCount = tasksForCount.filter(task => task.completed === false).length;
   }
 
   resetData() {
