@@ -12,7 +12,12 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 
 @Component({
   selector: 'planet-teams-view-finances',
-  templateUrl: './teams-view-finances.component.html'
+  templateUrl: './teams-view-finances.component.html',
+  styles: [ `
+    .narrow-column {
+      max-width: 100px;
+    }
+  ` ]
 })
 export class TeamsViewFinancesComponent implements OnChanges {
 
