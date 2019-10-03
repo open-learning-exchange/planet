@@ -1,16 +1,23 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
+import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   selector: 'planet-teams-view-finances',
-  templateUrl: './teams-view-finances.component.html'
+  templateUrl: './teams-view-finances.component.html',
+  styles: [ `
+    .narrow-column {
+      max-width: 100px;
+    }
+  ` ]
 })
 export class TeamsViewFinancesComponent implements OnChanges {
 
@@ -19,21 +26,24 @@ export class TeamsViewFinancesComponent implements OnChanges {
   @Input() getMembers;
   @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource();
-  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
+  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
+  deleteDialog: any;
 
   constructor(
     private teamsService: TeamsService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog
   ) {}
 
   ngOnChanges() {
     if (this.finances.length === 0) {
       return;
     }
-    const financeData = this.finances.sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
+    const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
+      .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
     this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
   }
@@ -52,10 +62,10 @@ export class TeamsViewFinancesComponent implements OnChanges {
     ];
   }
 
-  openTransactionDialog() {
+  openEditTransactionDialog(transaction: any = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
       this.dialogsFormService.openDialogsForm(
-        'Add Transaction',
+        transaction.title ? 'Edit Transaction' : 'Add Transaction',
         [
           {
             name: 'type', placeholder: 'Type', type: 'selectbox',
@@ -66,28 +76,62 @@ export class TeamsViewFinancesComponent implements OnChanges {
           { name: 'date', placeholder: 'Date', type: 'date', required: true }
         ],
         {
-          type: [ 'credit', CustomValidators.required ],
-          description: [ '', CustomValidators.required ],
-          amount: [ '', [ CustomValidators.required, Validators.min(0) ] ],
-          date: [ new Date(time), CustomValidators.required ]
+          type: [ transaction.type || 'credit', CustomValidators.required ],
+          description: [ transaction.description || '', CustomValidators.required ],
+          amount: [ transaction.amount || '', [ CustomValidators.required, Validators.min(0) ] ],
+          date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
-        { onSubmit: this.submitTransaction.bind(this) }
+        {
+          onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
+            this.planetMessageService.showMessage('Transaction added');
+            this.dialogsFormService.closeDialogsForm();
+          })
+        }
       );
     });
   }
 
-  submitTransaction(transaction) {
+  submitTransaction(newTransaction, oldTransaction) {
     const { _id: teamId, teamType, teamPlanetCode } = this.team;
-    const amount = +(transaction.amount);
-    const date = new Date(transaction.date).getTime();
-    return this.teamsService.updateTeam(
-      { ...transaction, date, amount, [transaction.type]: amount, docType: 'transaction', teamId, teamType, teamPlanetCode }
-    ).subscribe(() => {
+    const amount = +(newTransaction.amount);
+    const date = new Date(newTransaction.date).getTime();
+    const transaction = {
+      ...oldTransaction,
+      ...newTransaction,
+      date,
+      amount,
+      [newTransaction.type]: amount,
+      docType: 'transaction',
+      teamId,
+      teamType,
+      teamPlanetCode
+    };
+    return this.teamsService.updateTeam(transaction).pipe(map(() => {
       this.financesChanged.emit();
-      this.planetMessageService.showMessage('Transaction added');
-      this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
+    }));
+  }
+
+  openArchiveTransactionDialog(transaction) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.archiveTransaction(transaction),
+        changeType: 'delete',
+        type: 'transaction',
+        displayName: transaction.title
+      }
     });
+  }
+
+  archiveTransaction(transaction) {
+    return {
+      request: this.submitTransaction(transaction, { status: 'archived' }),
+      onNext: () => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted a transaction.');
+      },
+      onError: () => this.planetMessageService.showAlert('There was a problem deleting this transaction.')
+    };
   }
 
 }
