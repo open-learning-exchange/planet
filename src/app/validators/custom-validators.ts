@@ -124,7 +124,6 @@ export class CustomValidators {
     ac.setErrors(this.formError(ac, error, newError));
   }
 
-
   private static formDateToString(ac: AbstractControl) {
     return (ac.value || {}).toString();
   }
