@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { Validators } from '@angular/forms';
+import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -76,7 +77,12 @@ export class TeamsViewFinancesComponent implements OnChanges {
           amount: [ transaction.amount || '', [ CustomValidators.required, Validators.min(0) ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
-        { onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction) }
+        {
+          onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
+            this.planetMessageService.showMessage('Transaction added');
+            this.dialogsFormService.closeDialogsForm();
+          })
+        }
       );
     });
   }
@@ -96,12 +102,10 @@ export class TeamsViewFinancesComponent implements OnChanges {
       teamType,
       teamPlanetCode
     };
-    return this.teamsService.updateTeam(transaction).subscribe(() => {
+    return this.teamsService.updateTeam(transaction).pipe(map(() => {
       this.financesChanged.emit();
-      this.planetMessageService.showMessage('Transaction added');
-      this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
-    });
+    }));
   }
 
   openArchiveTransactionDialog(transaction) {
@@ -119,10 +123,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
     return {
       request: this.submitTransaction(transaction, { status: 'archived' }),
       onNext: () => {
-        this.financesChanged.emit();
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a transaction.');
-        this.dialogsLoadingService.stop();
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this transaction.')
     };
