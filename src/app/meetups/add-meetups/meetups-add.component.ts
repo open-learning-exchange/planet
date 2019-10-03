@@ -92,14 +92,8 @@ export class MeetupsAddComponent implements OnInit {
       endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
-      startTime: [ '', CustomValidators.timeValidator ],
-      endTime: [
-        '',
-        Validators.compose([
-          CustomValidators.endTimeValidator(),
-          CustomValidators.timeValidator
-        ])
-      ],
+      startTime: '',
+      endTime: '',
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,

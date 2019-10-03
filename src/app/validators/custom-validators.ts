@@ -49,18 +49,6 @@ export class CustomValidators {
     };
   }
 
-  static timeValidator(ac: AbstractControl): ValidationErrors {
-
-    if (!ac.value) {
-      return null;
-    }
-
-    // the regex is for hh:mm because input type=time always evaluates to this form regardless of how it may appear to the user
-    const isValidTime = /^([01]?[0-9]|2[0-3]):[0-5][0-9]?$/.test(ac.value);
-
-    return isValidTime ? null : { invalidTime: true };
-  }
-
   static dateValidator(ac: AbstractControl): ValidationErrors {
 
     if (!ac.value) {
@@ -125,12 +113,17 @@ export class CustomValidators {
     };
   }
 
-  private static clearRequired(ac: AbstractControl) {
-    if (ac.hasError('required')) {
-      ac.setErrors({ ...ac.errors, required: false });
-      ac.updateValueAndValidity();
+  private static formError(ac: AbstractControl, error: string, newError: boolean) {
+    if (ac.status === 'INVALID' && Object.keys(ac.errors).some(key => key !== error)) {
+      return ac.errors;
     }
+    return newError ? { [error]: newError } : null;
   }
+
+  private static setFormError(ac: AbstractControl, error: string, newError: boolean) {
+    ac.setErrors(this.formError(ac, error, newError));
+  }
+
 
   private static formDateToString(ac: AbstractControl) {
     return (ac.value || {}).toString();
@@ -150,76 +143,38 @@ export class CustomValidators {
       const startDate = formGroup.get('startDate');
       const endDate = formGroup.get('endDate');
 
-      if (formGroup.get('endTime').value && !startTime.value) {
-        startTime.setErrors({ required: true });
-      } else {
-        this.clearRequired(startTime);
-      }
-
-      if (
+      this.setFormError(startTime, 'required', !!formGroup.get('endTime').value && !startTime.value);
+      this.setFormError(endTime, 'required',
         this.formDateToString(startDate) !== this.formDateToString(endDate) &&
         endDate.value &&
         startTime.value &&
         !endTime.value
-      ) {
-        endTime.setErrors({ required: true });
-      } else {
-        this.clearRequired(endTime);
-      }
+      );
+      this.setFormError(endTime, 'invalidEndTime', this.endTimeValidator(startDate, endDate, startTime, endTime));
+
     };
 
   }
 
   // for validating whether end time comes before start date or not
-  static endTimeValidator(): ValidatorFn {
-    let startDate: AbstractControl;
-    let endDate: AbstractControl;
-    let startTime: AbstractControl;
-    let endTime: AbstractControl;
-    const ngUnsubscribe: Subject<void> = new Subject<void>();
+  private static endTimeValidator(startDate, endDate, startTime, endTime): boolean {
+    // if start time has not been given a value yet return back
+    if (!startTime || !endTime.value) {
+      return false;
+    }
 
-    return (ac: AbstractControl): { [key: string]: any } => {
-      if (!ac.parent) {
-        return null;
-      }
+    const startDateString = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
+    const endDateString = new Date(endDate.value || startDateString).toLocaleDateString('en-US');
 
-      startDate = ac.parent.get('startDate');
-      endDate = ac.parent.get('endDate');
+    // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
+    if (
+      new Date(startDateString + ' ' + startTime.value).getTime() >
+      new Date(endDateString + ' ' + endTime.value).getTime()
+    ) {
+      return true;
+    }
 
-      if (!endTime) {
-        endTime = ac;
-        startTime = ac.parent.get('startTime');
-
-        if (!startTime) {
-          throw new Error(
-            'validateTimes(): startTime control is not found in parent group'
-          );
-        }
-
-        // run validators again on when start time's value changes
-        combineLatest(startTime.valueChanges, startDate.valueChanges, endDate.valueChanges).pipe(
-          takeUntil(ngUnsubscribe)
-        ).subscribe(() => {
-          endTime.updateValueAndValidity();
-        });
-      }
-
-      // if start time has not been given a value yet return back
-      if (!startTime || !endTime.value) {
-        return null;
-      }
-
-      const startDateString = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
-      const endDateString = new Date(endDate.value || startDateString).toLocaleDateString('en-US');
-
-      // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
-      if (
-        new Date(startDateString + ' ' + startTime.value).getTime() >
-        new Date(endDateString + ' ' + endTime.value).getTime()
-      ) {
-        return { invalidEndTime: true };
-      }
-    };
+    return false;
   }
 
   // Set this on both password and confirmation fields so it runs when either changes
