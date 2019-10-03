@@ -30,6 +30,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('taskTab', { static: false }) taskTab: MatTab;
+  @ViewChild('applicantTab', { static: false }) applicantTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -53,7 +54,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   leaderDialog: any;
   finances: any[];
   tabSelectedIndex = 0;
-  initTabPosition = false;
+  initTab;
   taskCount = 0;
 
   constructor(
@@ -89,10 +90,21 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (this.initTabPosition && this.taskTab && this.taskTab.position !== 0) {
-      setTimeout(() => this.tabSelectedIndex = this.tabSelectedIndex + this.taskTab.position, 0);
-      this.initTabPosition = false;
+    const activeTab: MatTab = this.getActiveTab(this.initTab);
+    if (activeTab && activeTab.position !== 0) {
+      setTimeout(() => {
+        this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
+        this.initTab = activeTab.position === 0 ? '' : this.initTab;
+      }, 0);
     }
+  }
+
+  getActiveTab(initTab: string) {
+    const activeTabs = {
+      'taskTab' : this.taskTab,
+      'applicantTab' : this.applicantTab
+    };
+    return activeTabs[initTab];
   }
 
   ngOnDestroy() {
@@ -165,8 +177,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
-    if (this.userStatus === 'member' && this.route.snapshot.params.task === 'true') {
-      this.initTabPosition = true;
+    if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
+      this.initTab = this.route.snapshot.params.activeTab;
     }
   }
 
