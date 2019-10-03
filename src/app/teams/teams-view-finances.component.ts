@@ -57,7 +57,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     ];
   }
 
-  openTransactionDialog(transaction: any = {}) {
+  openEditTransactionDialog(transaction: any = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
       this.dialogsFormService.openDialogsForm(
         transaction.title ? 'Edit Transaction' : 'Add Transaction',
@@ -104,7 +104,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     });
   }
 
-  archiveClick(transaction) {
+  openArchiveTransactionDialog(transaction) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.archiveTransaction(transaction),
