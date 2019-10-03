@@ -8,11 +8,18 @@
   iframe {
     display: block;
     border: none;
-    width: 100%;
-    height: $view-container-height;
+    align-self: center;
+    height: calc(#{$dashboard-height});
+    width: calc(#{$dashboard-height} + 20rem);
   }
 
   div > video {
     max-height: calc(#{$view-container-height} - 4px);
+  }
+
+  img {
+    height: calc(#{$dashboard-height});
+    width: calc(#{$dashboard-height} + 20rem);
+    align-self: center;
   }
 }
