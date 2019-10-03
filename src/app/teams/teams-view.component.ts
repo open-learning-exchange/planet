@@ -210,7 +210,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }[change];
   }
 
-  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove' | 'course', dialogParams: { changeType, type }) {
+  openDialogPrompt(
+    { tasks, ...item },
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader',
+    dialogParams: { changeType, type }
+  ) {
     const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
@@ -407,7 +411,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const currentLeader = this.members.find(mem => mem.userId === this.leader);
+    const { tasks, ...currentLeader } = this.members.find(mem => mem.userId === this.leader);
     return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
