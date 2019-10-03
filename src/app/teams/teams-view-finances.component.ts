@@ -118,7 +118,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
         okClick: this.archiveTransaction(transaction),
         changeType: 'delete',
         type: 'transaction',
-        displayName: transaction.title
+        displayName: transaction.description
       }
     });
   }
