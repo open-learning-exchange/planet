@@ -113,6 +113,7 @@ DBS=(
   "meetups"
   "resources"
   "courses"
+  "certifications"
   "exams"
   "nations"
   "communityregistrationrequests"
