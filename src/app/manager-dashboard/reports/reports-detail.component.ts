@@ -211,7 +211,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
-  exportCSV(reportType: 'logins' | 'resourceViews' | 'summary') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
     const fields = [
       {
         'label': 'From',
@@ -230,43 +230,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       fromDate: [ this.fromDate ],
       toDate: [ this.toDate ]
     };
-    this.dialogsFormService.openDialogsForm('Export Date Filter', fields, formGroup, {
-      onSubmit: (response: any) => {
-        if (response) {
-          switch (reportType) {
-            case 'logins':
-              this.csvService.exportCSV({
-                data: this.loginActivities.filter(rec =>
-                  rec.loginTime >= response.fromDate.getTime() && rec.loginTime <= response.toDate.getTime()
-                ),
-                title: 'Member Visits'
-              });
-              break;
-            case 'resourceViews':
-              this.csvService.exportCSV({
-                data: this.resourceActivities.filter(rec =>
-                  rec.time >= response.fromDate.getTime() && rec.time <= response.toDate.getTime()
-                ),
-                title: 'Resource Views'
-              });
-              break;
-            default:
-              this.csvService.exportSummaryCSV(
-                this.loginActivities.filter(rec =>
-                  rec.loginTime >= response.fromDate.getTime() && rec.loginTime <= response.toDate.getTime()
-                ),
-                this.resourceActivities.filter(rec =>
-                  rec.time >= response.fromDate.getTime() && rec.time <= response.toDate.getTime()
-                ),
-                this.planetName
-              );
-              break;
-          }
-          this.dialogsFormService.closeDialogsForm();
-          this.dialogsLoadingService.stop();
-        }
-      }
+    this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
+      onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
     });
+  }
+
+  exportCSV(reportType: string, dateRange: { fromDate, toDate }) {
+    const filterByDate = (array, dateField, { fromDate, toDate }) => array.filter(item =>
+      item[dateField] >= fromDate.getTime() && item[dateField] <= toDate.getTime()
+    );
+    switch (reportType) {
+      case 'logins':
+        this.csvService.exportCSV({ data: filterByDate(this.loginActivities, 'loginTime', dateRange), title: 'Member Visits' });
+        break;
+      case 'resourceViews':
+        this.csvService.exportCSV({ data: filterByDate(this.resourceActivities, 'time', dateRange), title: 'Resource Views' });
+        break;
+      case 'summary':
+        this.csvService.exportSummaryCSV(
+          filterByDate(this.loginActivities, 'loginTime', dateRange),
+          filterByDate(this.resourceActivities, 'time', dateRange),
+          this.planetName
+        );
+        break;
+    }
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
   }
 
 }
