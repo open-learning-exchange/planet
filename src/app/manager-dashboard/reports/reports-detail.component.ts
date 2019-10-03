@@ -110,7 +110,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.getActivities('resource_activities', this.activityParams()).subscribe((resourceActivities: any) => {
       this.resourceActivities = resourceActivities;
       const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
-      console.log(byResource, byMonth);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
