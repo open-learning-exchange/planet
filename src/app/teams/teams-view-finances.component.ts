@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
@@ -8,7 +8,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
