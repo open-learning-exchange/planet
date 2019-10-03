@@ -73,7 +73,7 @@ export class PlanetCalendarComponent implements OnInit {
 
   getTasks() {
     this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
-      this.tasks = tasks.map(task => {
+      this.tasks = tasks.filter(task => task.status !== 'archived').map(task => {
         const taskColors = task.completed ? {
           backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: styleVariables.greyText
         } : {
