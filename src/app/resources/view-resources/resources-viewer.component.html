@@ -1,3 +1,6 @@
+<button mat-dialog-close class="clear" i18n>
+  <mat-icon>clear</mat-icon>
+</button>
 <div [ngSwitch]="mediaType">
   <img [src]="resourceSrc" *ngSwitchCase="'image'">
   <video controls *ngSwitchCase="'video'" [src]="resourceSrc">
