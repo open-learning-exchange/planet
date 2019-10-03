@@ -222,13 +222,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         'required': true
       }
     ];
-    const minDate = new Date(
-      this.loginActivities.reduce((minLoginTime, { loginTime }) => {
-        console.log(minLoginTime);
-        console.log(loginTime);
-        return minLoginTime && minLoginTime < loginTime ? minLoginTime : loginTime;
-      }, undefined)
-    ).setHours(0, 0, 0, 0);
+    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
     const formGroup = {
       fromDate: [ new Date(minDate) ],
       toDate: [ new Date(this.today) ]
