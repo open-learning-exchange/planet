@@ -100,7 +100,7 @@ export class CustomValidators {
       }
 
       // if start date has not been given a value yet return back
-      if (!startDate) {
+      if (!startDate || !endDate.value) {
         return null;
       }
 
