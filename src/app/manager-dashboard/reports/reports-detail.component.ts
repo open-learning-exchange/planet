@@ -9,6 +9,7 @@ import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -28,11 +29,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   codeParam = '';
   loginActivities = [];
   resourceActivities = [];
-  today = new Date();
-  // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
-  planetLaunchDate = new Date(2018, 6, 1); // 2018 July 1
-  fromDate = this.planetLaunchDate;
-  toDate = this.today;
+  today: Date;
 
   constructor(
     private activityService: ReportsService,
@@ -41,12 +38,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
-    const yrDate = new Date(this.today.getFullYear() - 1, this.today.getMonth() + 1, 1);
-    this.fromDate = yrDate > this.planetLaunchDate ? yrDate : this.planetLaunchDate;
     this.dialogsLoadingService.start();
     combineLatest(this.route.paramMap, this.stateService.couchStateListener(dbName)).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ params, planetState ]: [ ParamMap, any ]) => {
@@ -62,6 +58,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
+    this.couchService.currentTime().subscribe((currentTime: number) => this.today = new Date(currentTime));
   }
 
   ngOnDestroy() {
@@ -227,8 +224,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     ];
     const formGroup = {
-      fromDate: [ this.fromDate ],
-      toDate: [ this.toDate ]
+      fromDate: [ new Date(this.today.getFullYear() - 1, this.today.getMonth() + 1, 1) ],
+      toDate: [ new Date(this.today) ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
