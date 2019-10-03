@@ -76,38 +76,32 @@ export class TeamsViewFinancesComponent implements OnChanges {
           amount: [ transaction.amount || '', [ CustomValidators.required, Validators.min(0) ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
-        { onSubmit: (newTransaction) => {
-          if (newTransaction) {
-            this.submitTransaction(newTransaction, transaction)
-              .subscribe(() => {
-                this.financesChanged.emit();
-                this.planetMessageService.showMessage('Transaction added');
-                this.dialogsFormService.closeDialogsForm();
-                this.dialogsLoadingService.stop();
-              });
-          }
-        } }
+        { onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction) }
       );
     });
   }
 
-  submitTransaction(transaction, oldTransaction) {
+  submitTransaction(newTransaction, oldTransaction) {
     const { _id: teamId, teamType, teamPlanetCode } = this.team;
-    const amount = +(transaction.amount);
-    const date = new Date(transaction.date).getTime();
-    return this.teamsService.updateTeam(
-      {
-        ...oldTransaction,
-        ...transaction,
-        date,
-        amount,
-        [transaction.type]: amount,
-        docType: 'transaction',
-        teamId,
-        teamType,
-        teamPlanetCode
-      }
-    );
+    const amount = +(newTransaction.amount);
+    const date = new Date(newTransaction.date).getTime();
+    const transaction = {
+      ...oldTransaction,
+      ...newTransaction,
+      date,
+      amount,
+      [newTransaction.type]: amount,
+      docType: 'transaction',
+      teamId,
+      teamType,
+      teamPlanetCode
+    };
+    return this.teamsService.updateTeam(transaction).subscribe(() => {
+      this.financesChanged.emit();
+      this.planetMessageService.showMessage('Transaction added');
+      this.dialogsFormService.closeDialogsForm();
+      this.dialogsLoadingService.stop();
+    });
   }
 
   archiveClick(transaction) {
