@@ -10,6 +10,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { HealthComponent } from './health.component';
 import { HealthUpdateComponent } from './health-update.component';
 import { HealthEventComponent } from './health-event.component';
+import { HealthEventDialogComponent } from './health-event-dialog.component';
 
 const routes: Routes = [
   { path: '', component: HealthComponent },
@@ -31,7 +32,9 @@ const routes: Routes = [
   declarations: [
     HealthComponent,
     HealthUpdateComponent,
-    HealthEventComponent
-  ]
+    HealthEventComponent,
+    HealthEventDialogComponent
+  ],
+  entryComponents: [ HealthEventDialogComponent ]
 })
 export class HealthModule {}
