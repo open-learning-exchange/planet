@@ -222,8 +222,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         'required': true
       }
     ];
+    const minDate = new Date(
+      this.loginActivities.reduce((minLoginTime, { loginTime }) => {
+        console.log(minLoginTime);
+        console.log(loginTime);
+        return minLoginTime && minLoginTime < loginTime ? minLoginTime : loginTime;
+      }, undefined)
+    ).setHours(0, 0, 0, 0);
     const formGroup = {
-      fromDate: [ new Date(this.today.getFullYear() - 1, this.today.getMonth() + 1, 1) ],
+      fromDate: [ new Date(minDate) ],
       toDate: [ new Date(this.today) ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
