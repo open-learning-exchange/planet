@@ -258,9 +258,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   changeMembership(type, memberDoc?) {
     this.dialogsLoadingService.start();
-    this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
+    this.changeMembershipRequest(type, memberDoc)().pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
-      this.dialogsLoadingService.stop();
       this.planetMessageService.showMessage(message);
     });
   }
