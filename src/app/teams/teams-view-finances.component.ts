@@ -44,8 +44,12 @@ export class TeamsViewFinancesComponent implements OnChanges {
     }
     const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
-    const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
-    this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
+    if (financeData.length) {
+      const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
+      this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
+    } else {
+      this.table.data = [];
+    }
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
