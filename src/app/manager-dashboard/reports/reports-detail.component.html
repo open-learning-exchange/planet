@@ -28,9 +28,9 @@
         Export
       </button>
       <mat-menu #exportMenu="matMenu">
-        <button mat-menu-item *ngIf="loginActivities" (click)="exportCSV('logins')" i18n>Login Report</button>
-        <button mat-menu-item *ngIf="resourceActivities" (click)="exportCSV('resourceViews')" i18n>Resources View Report</button>
-        <button mat-menu-item (click)="exportSummaryCSV()" i18n>Summary</button>
+        <button mat-menu-item *ngIf="loginActivities" (click)="openExportDialog('logins')" i18n>Login Report</button>
+        <button mat-menu-item *ngIf="resourceActivities" (click)="openExportDialog('resourceViews')" i18n>Resources View Report</button>
+        <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
     </mat-toolbar-row>
   </mat-toolbar>

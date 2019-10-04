@@ -8,6 +8,8 @@ import { Chart } from 'chart.js';
 import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -27,13 +29,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   codeParam = '';
   loginActivities = [];
   resourceActivities = [];
+  today: Date;
 
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
     private dialogsLoadingService: DialogsLoadingService,
-    private csvService: CsvService
+    private csvService: CsvService,
+    private dialogsFormService: DialogsFormService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -53,6 +58,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
+    this.couchService.currentTime().subscribe((currentTime: number) => this.today = new Date(currentTime));
   }
 
   ngOnDestroy() {
@@ -201,15 +207,52 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
-  exportCSV(reportType: 'logins' | 'resourceViews') {
-    this.csvService.exportCSV(reportType === 'logins' ?
-      { data: this.loginActivities, title: 'Member Visits' } :
-      { data: this.resourceActivities, title: 'Resource Views' }
-    );
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
+    const fields = [
+      {
+        'label': 'From',
+        'type': 'date',
+        'name': 'fromDate',
+        'required': true
+      },
+      {
+        'label': 'To',
+        'type': 'date',
+        'name': 'toDate',
+        'required': true
+      }
+    ];
+    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
+    const formGroup = {
+      fromDate: [ new Date(minDate) ],
+      toDate: [ new Date(this.today) ]
+    };
+    this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
+      onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
+    });
   }
 
-  exportSummaryCSV() {
-    this.csvService.exportSummaryCSV(this.loginActivities, this.resourceActivities, this.planetName);
+  exportCSV(reportType: string, dateRange: { fromDate, toDate }) {
+    const filterByDate = (array, dateField, { fromDate, toDate }) => array.filter(item =>
+      item[dateField] >= fromDate.getTime() && item[dateField] <= toDate.getTime()
+    );
+    switch (reportType) {
+      case 'logins':
+        this.csvService.exportCSV({ data: filterByDate(this.loginActivities, 'loginTime', dateRange), title: 'Member Visits' });
+        break;
+      case 'resourceViews':
+        this.csvService.exportCSV({ data: filterByDate(this.resourceActivities, 'time', dateRange), title: 'Resource Views' });
+        break;
+      case 'summary':
+        this.csvService.exportSummaryCSV(
+          filterByDate(this.loginActivities, 'loginTime', dateRange),
+          filterByDate(this.resourceActivities, 'time', dateRange),
+          this.planetName
+        );
+        break;
+    }
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
   }
 
 }

@@ -204,4 +204,8 @@ export class ReportsService {
     return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 
+  minTime(activities, timeField) {
+    return activities.reduce((minTime, { [timeField]: time }) => minTime && minTime < time ? minTime : time, undefined);
+  }
+
 }
