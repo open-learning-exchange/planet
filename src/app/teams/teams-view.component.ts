@@ -252,6 +252,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications('added')),
         map(() => changeObject.message),
+        finalize(() => this.dialogsLoadingService.stop())
       );
     };
   }
