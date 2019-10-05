@@ -126,9 +126,10 @@ export class PlanetTagInputDialogComponent {
   }
 
   selectOne(tag, subTag?) {
-    this.data.tagUpdate(tag, true, true);
     if (subTag !== undefined) {
       this.data.tagUpdate(subTag, true);
+    } else {
+      this.data.tagUpdate(tag, true, true);
     }
     this.dialogRef.close();
   }
