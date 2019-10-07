@@ -208,7 +208,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const changeObject = this.changeObject(type, memberDoc);
     return changeObject.obs.pipe(
       switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-      switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { team: this.teamId }) : of({})),
+      switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { teams: this.teamId }) : of({})),
       switchMap(() => this.getMembers()),
       switchMap(() => this.sendNotifications('added')),
       map(() => changeObject.message)
