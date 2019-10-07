@@ -869,7 +869,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">Send Courses</target>
+        <target state="translated">पाठ्यक्रम भेजना</target>
       </trans-unit>
       <trans-unit id="3fb7e6346b849c76565533055cef02a7c3827597" datatype="html">
         <source>Enroll in Selected</source>
