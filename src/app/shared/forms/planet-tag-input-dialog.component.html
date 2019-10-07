@@ -63,7 +63,7 @@
         </span>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
-        <mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(tag._id || tag.name, subTag._id || subTag.name)">
+        <mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(subTag._id || subTag.name)">
           <mat-icon>subdirectory_arrow_right</mat-icon>
           {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
           <span class="toolbar-fill"></span>
