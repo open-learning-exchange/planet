@@ -43,6 +43,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
       return;
     }
     const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
+      // Overwrite values for credit and debit from early document versions on database
+      .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
     this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
@@ -100,7 +102,6 @@ export class TeamsViewFinancesComponent implements OnChanges {
       ...newTransaction,
       date,
       amount,
-      [newTransaction.type]: amount,
       docType: 'transaction',
       teamId,
       teamType,
