@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  template: `<planet-resources-viewer [resourceId]="data.resourceId"></planet-resources-viewer>`
+  template: `<planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>`
 })
 export class DialogsResourcesViewerComponent {
 

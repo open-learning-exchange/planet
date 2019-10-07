@@ -1,4 +1,7 @@
-<div [ngSwitch]="mediaType">
+<button *ngIf="isDialog" mat-dialog-close mat-icon-button class="close-dialog" i18n>
+  <mat-icon>clear</mat-icon>
+</button>
+<div [ngClass]="{'dialog-view':isDialog}" [ngSwitch]="mediaType">
   <img [src]="resourceSrc" *ngSwitchCase="'image'">
   <video controls *ngSwitchCase="'video'" [src]="resourceSrc">
     Browser not supported

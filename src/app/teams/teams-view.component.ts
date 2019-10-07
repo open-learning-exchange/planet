@@ -443,7 +443,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResource(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId } });
+    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
 }

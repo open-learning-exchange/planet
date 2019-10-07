@@ -1,4 +1,5 @@
 @import '../../variables';
+$full-height: calc(#{$view-container-height} - 2rem);
 
 :host {
   * {
@@ -9,10 +10,31 @@
     display: block;
     border: none;
     width: 100%;
-    height: $view-container-height;
+    height: $full-height;
   }
 
   div > video {
-    max-height: calc(#{$view-container-height} - 4px);
+    max-height: $full-height;
   }
+
+  .dialog-view {
+
+    iframe {
+      height: calc(#{$dashboard-height});
+      width: calc(#{$dashboard-height} + 20rem);
+    }
+
+    img {
+      height: calc(#{$dashboard-height});
+      width: calc(#{$dashboard-height} + 20rem);
+      align-self: center;
+    }
+
+  }
+
+  .close-dialog {
+    margin-top: -1rem;
+    float: right;
+  }
+
 }
