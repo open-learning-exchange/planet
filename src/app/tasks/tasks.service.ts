@@ -6,8 +6,9 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { Subject, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { addDateAndTime, getClockTime } from '../shared/utils';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -113,6 +114,13 @@ export class TasksService {
       compare(a.completed, b.completed) ||
       compare(new Date(a.deadline), new Date(b.deadline)) ||
       0
+    );
+  }
+
+  removeAssigneeFromTask(assignee: any, link: any = {}) {
+    return this.couchService.findAll(this.dbName, findDocuments({ 'assignee.userId': assignee, link })).pipe(
+      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, assignee: '' })))),
+      map(() => this.getTasks())
     );
   }
 
