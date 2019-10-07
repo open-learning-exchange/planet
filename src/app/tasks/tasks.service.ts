@@ -86,9 +86,7 @@ export class TasksService {
     );
   }
 
-  removeAssigneeFromTask(assignee: any = '', link = {}) {
-    assignee = assignee._id === assignee.userId;
-
+  removeAssigneeFromTask(assignee: any, link: any = {}) {
     return this.couchService.findAll(this.dbName, findDocuments({ assignee, link })).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, assignee: '' }))))
     );
