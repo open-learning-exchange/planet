@@ -247,7 +247,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   changeMembershipRequest(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
-      this.dialogsLoadingService.start();
       return changeObject.obs.pipe(
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => this.getMembers()),
@@ -259,6 +258,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   changeMembership(type, memberDoc?) {
+    this.dialogsLoadingService.start();
     this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(message);
