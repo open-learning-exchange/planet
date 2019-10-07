@@ -125,12 +125,8 @@ export class PlanetTagInputDialogComponent {
     return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
-  selectOne(tag, subTag?) {
-    if (subTag !== undefined) {
-      this.data.tagUpdate(subTag, true);
-    } else {
-      this.data.tagUpdate(tag, true, true);
-    }
+  selectOne(tag) {
+    this.data.tagUpdate(tag, true, true);
     this.dialogRef.close();
   }
 
