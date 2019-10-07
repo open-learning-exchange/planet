@@ -25,6 +25,7 @@ export class Feedback {
   source: string;
   url: string;
   messages: Array<Message>;
+  params: Object;
 }
 
 const dialogFieldOptions = [
@@ -92,7 +93,9 @@ export class FeedbackDirective {
         parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
       };
-    this.couchService.updateDocument('feedback', { ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url })
+    const feedbackUrl = newFeedback.url.substring(0, newFeedback.url.indexOf(';')) || newFeedback.url;
+    this.couchService.updateDocument('feedback', {
+      ...newFeedback, title: newFeedback.type + ' regarding ' + feedbackUrl })
     .subscribe((data) => {
       this.feedbackService.setfeedback();
       this.planetMessageService.showMessage('Thank you, your feedback is submitted!');

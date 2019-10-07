@@ -7,7 +7,9 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from './state.service';
 import { TagsService } from './forms/tags.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SyncService {
 
   private parentProtocol: string;

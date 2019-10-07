@@ -11,11 +11,13 @@ export const categories = [
 ];
 
 export const days = [
+  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
   'Friday',
-  'Saturday',
-  'Sunday'
+  'Saturday'
 ];
+
+export const millisecondsToDay = 86400000;

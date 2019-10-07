@@ -5,8 +5,8 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['update']">Update Details</a>
+    <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['event']">Add Examination</a>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="profile-container">
@@ -62,6 +62,17 @@
           <mat-divider></mat-divider>
         </mat-list-item>
       </mat-list>
+      <ng-container *ngIf="events.length > 0">
+        <h4 class="full-width">Examinations</h4>
+        <mat-table [dataSource]="eventTable" class="full-width" *ngIf="events.length > 0">
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef class="table-column">{{ column === 'label' ? '' : (column | date) }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ row[column] }}</mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </ng-container>
     </div>
   </div>
 </div>

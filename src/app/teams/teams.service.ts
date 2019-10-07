@@ -26,7 +26,9 @@ const addTeamDialogFields = [
 ];
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TeamsService {
 
   dbName = 'teams';
@@ -111,7 +113,7 @@ export class TeamsService {
   }
 
   archiveTeam(team) {
-    return this.updateTeam({ ...team, status: 'archived' });
+    return () => this.updateTeam({ ...team, status: 'archived' });
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
@@ -182,34 +184,38 @@ export class TeamsService {
       const userId = user.userId || user._id;
       return this.userService.get()._id !== userId && user.name !== 'satellite';
     }).map((user: any) => {
-      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), user, notificationParams);
+      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), type, user, notificationParams);
     });
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
+    const teamType = team.type || 'team';
     switch (type) {
       case 'message':
-        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> ${team.type}.`;
+        return `<b>${this.userService.get().name}</b> has posted a message on <b>"${team.name}"</b> ${teamType}.`;
       case 'request':
-        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> ${team.type}.`;
+        return `<b>${this.userService.get().name}</b> has requested to join <b>"${team.name}"</b> ${teamType}.`;
       case 'added':
-        return `You have been added to <b>"${team.name}"</b> ${team.type}.`;
+        return `You have been added to <b>"${team.name}"</b> ${teamType}.`;
       case 'rejected':
-        return `You have not been accepted to <b>"${team.name}"</b> ${team.type}.`;
+        return `You have not been accepted to <b>"${team.name}"</b> ${teamType}.`;
       case 'removed':
-        return `You have been removed from <b>"${team.name}"</b> ${team.type}.`;
+        return `You have been removed from <b>"${team.name}"</b> ${teamType}.`;
       default:
-        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> ${team.type}.`;
+        return `${newMembersLength} member(s) has been added to <b>${team.name}</b> ${teamType}.`;
     }
   }
 
-  teamNotification(message, user, { team, url }) {
+  teamNotification(message, type, user, { team, url }) {
+    const link = url.split(';')[0];
     const userId = user.userId || user._id;
+    const linkParams = type === 'request' ? { activeTab: 'applicantTab' } : {};
     return {
       'user': userId,
       message,
-      'link': url,
+      link,
+      linkParams,
       'item': team._id,
       'type': 'team',
       'priority': 1,

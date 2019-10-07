@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -21,13 +21,16 @@ import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-reso
 import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-courses.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
+import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
   styleUrls: [ './teams-view.scss' ]
 })
-export class TeamsViewComponent implements OnInit, OnDestroy {
+export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
+  @ViewChild('taskTab', { static: false }) taskTab: MatTab;
+  @ViewChild('applicantTab', { static: false }) applicantTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -50,6 +53,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
+  tasks: any[];
+  tabSelectedIndex = 0;
+  initTab;
+  taskCount = 0;
 
   constructor(
     private couchService: CouchService,
@@ -74,11 +81,27 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.initTeam(this.teamId);
     });
     this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
-      this.members = this.members.map(member => ({
-        ...member,
-        tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
-      }));
+      this.tasks = tasks;
+      this.setTasks(tasks);
     });
+  }
+
+  ngAfterViewChecked() {
+    const activeTab: MatTab = this.getActiveTab(this.initTab);
+    if (activeTab && activeTab.position !== 0) {
+      setTimeout(() => {
+        this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
+        this.initTab = activeTab.position === 0 ? '' : this.initTab;
+      }, 0);
+    }
+  }
+
+  getActiveTab(initTab: string) {
+    const activeTabs = {
+      'taskTab' : this.taskTab,
+      'applicantTab' : this.applicantTab
+    };
+    return activeTabs[initTab];
   }
 
   ngOnDestroy() {
@@ -97,11 +120,11 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
         }
         return this.getMembers();
       }),
-      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : []),
+      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : of([])),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
     ).subscribe((activities) => {
-      this.reportsService.groupBy(activities, [ 'user' ]).forEach((visit) => {
-        this.visits[visit.user] = visit.count;
+      this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
+        this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
     });
@@ -132,8 +155,18 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
+      this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  setTasks(tasks) {
+    this.members = this.members.map(member => ({
+      ...member,
+      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+    }));
+    const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+    this.taskCount = tasksForCount.filter(task => task.completed === false).length;
   }
 
   resetData() {
@@ -151,10 +184,13 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
     this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
+    if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
+      this.initTab = this.route.snapshot.params.activeTab;
+    }
   }
 
   toggleMembership(team, leaveTeam) {
-    return this.teamsService.toggleTeamMembership(
+    return () => this.teamsService.toggleTeamMembership(
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
@@ -181,13 +217,17 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }[change];
   }
 
-  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove' | 'course', dialogParams: { changeType, type }) {
+  openDialogPrompt(
+    { tasks, ...item },
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader',
+    dialogParams: { changeType, type }
+  ) {
     const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: config.request,
+          request: config.request(),
           onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
@@ -206,17 +246,21 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   changeMembershipRequest(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
-    return changeObject.obs.pipe(
-      switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-      switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { teams: this.teamId }) : of({})),
-      switchMap(() => this.getMembers()),
-      switchMap(() => this.sendNotifications('added')),
-      map(() => changeObject.message)
-    );
+    return () => {
+      return changeObject.obs.pipe(
+        switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
+        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { teams: this.teamId }) : of({})),
+        switchMap(() => this.getMembers()),
+        switchMap(() => this.sendNotifications('added')),
+        map(() => changeObject.message),
+        finalize(() => this.dialogsLoadingService.stop())
+      );
+    };
   }
 
   changeMembership(type, memberDoc?) {
-    this.changeMembershipRequest(type, memberDoc).subscribe((message) => {
+    this.dialogsLoadingService.start();
+    this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
       this.setStatus(this.team, this.userService.get());
       this.planetMessageService.showMessage(message);
     });
@@ -283,7 +327,9 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     const newMembershipDocs = selected.map(
       user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
     );
-    this.couchService.bulkDocs(this.dbName, newMembershipDocs).pipe(
+    const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
+      .map(request => ({ ...request, _deleted: true }));
+    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
@@ -369,12 +415,12 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
       const { _id: resId, _rev: resRev } = resource.resource;
       obs.push(this.couchService.delete(`resources/${resId}?rev=${resRev}`));
     }
-    return forkJoin(obs).pipe(switchMap(() => this.getMembers()));
+    return () => forkJoin(obs).pipe(switchMap(() => this.getMembers()));
   }
 
   makeLeader(member) {
-    const currentLeader = this.members.find(mem => mem.userId === this.leader);
-    return this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
+    const { tasks, ...currentLeader } = this.members.find(mem => mem.userId === this.leader);
+    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
   removeCourse(course) {
@@ -383,7 +429,7 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
     }
     const index = this.team.courses.indexOf(course);
     const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    return this.teamsService.updateTeam({ ...this.team, courses: newCourses });
+    return () => this.teamsService.updateTeam({ ...this.team, courses: newCourses });
   }
 
   toggleTask({ option }) {
@@ -394,6 +440,10 @@ export class TeamsViewComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+  }
+
+  openResource(resourceId) {
+    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId } });
   }
 
 }

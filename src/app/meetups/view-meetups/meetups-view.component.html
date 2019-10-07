@@ -5,10 +5,10 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 action-buttons">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
-    <button mat-stroked-button *ngIf="canManage" (click)="routeToEdit()">
+    <button mat-stroked-button *ngIf="canManage && !meetupDetail.isTask" (click)="routeToEdit()">
       <mat-icon>edit</mat-icon>
     </button>
-    <button mat-stroked-button *ngIf="canManage" (click)="deleteMeetup()">
+    <button mat-stroked-button *ngIf="canManage && !meetupDetail.isTask" (click)="deleteMeetup()">
       <mat-icon>delete</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
@@ -26,17 +26,18 @@
   </mat-toolbar>
   <div class="view-container">
     <div [ngClass]="{'left-tile':!isDialog}">
-      <p><b i18n>Created By:</b>
-        <a *ngIf="meetupDetail?.createdBy; else na" [routerLink]="['/users/profile', meetupDetail?.createdBy]">{{' ' + meetupDetail?.createdBy}}</a>
-        <ng-template #na i18n> N/A </ng-template>
+      <p *ngIf="meetupDetail?.createdBy"><b i18n>Created By:</b>
+        <a [routerLink]="['/users/profile', meetupDetail?.createdBy]">{{' ' + meetupDetail?.createdBy}}</a>
       </p>
-      <p *ngIf="meetupDetail?.category" i18n><b>Category:</b> {{meetupDetail?.category}}</p>
-      <p i18n><b>Meetup Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
-      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Meetup Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
-      <p *ngIf="meetupDetail?.recurring" i18n><b>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
+      <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
+      <p *ngIf="meetupDetail?.startDate || meetupDetail?.endDate"><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+      <p *ngIf="meetupDetail?.deadline"><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}}</p>
+      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
+      <p *ngIf="meetupDetail?.recurring"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-      <p *ngIf="meetupDetail?.meetupLocation" i18n><b>Location:</b> {{meetupDetail?.meetupLocation}}</p>
-      <b i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
+      <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
+      <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b> {{meetupDetail?.assignee?.name}}</p>
+      <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
       <span i18n><b>Joined Members: ({{members.length}})</b></span>

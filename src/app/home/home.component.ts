@@ -8,7 +8,7 @@ import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
-import { PouchAuthService } from '../shared/database';
+import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -123,7 +123,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     const url = this.router.url;
     const routesWithBackground = [
       'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams', 'surveys', 'news',
-      'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises'
+      'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises', 'certifications'
     ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];

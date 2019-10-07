@@ -1,5 +1,5 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup } from '@angular/forms';
+import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {
@@ -47,18 +47,6 @@ export class CustomValidators {
     return (ac: AbstractControl): ValidationErrors => {
       return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
     };
-  }
-
-  static timeValidator(ac: AbstractControl): ValidationErrors {
-
-    if (!ac.value) {
-      return null;
-    }
-
-    // the regex is for hh:mm because input type=time always evaluates to this form regardless of how it may appear to the user
-    const isValidTime = /^([01]?[0-9]|2[0-3]):[0-5][0-9]?$/.test(ac.value);
-
-    return isValidTime ? null : { invalidTime: true };
   }
 
   static dateValidator(ac: AbstractControl): ValidationErrors {
@@ -112,7 +100,7 @@ export class CustomValidators {
       }
 
       // if start date has not been given a value yet return back
-      if (!startDate) {
+      if (!startDate || !endDate.value) {
         return null;
       }
 
@@ -125,45 +113,67 @@ export class CustomValidators {
     };
   }
 
-  // for validating whether end time comes before start date or not
-  static endTimeValidator(): ValidatorFn {
-    let startTime: AbstractControl;
-    let endTime: AbstractControl;
-    const ngUnsubscribe: Subject<void> = new Subject<void>();
+  private static formError(ac: AbstractControl, error: string, newError: boolean) {
+    if (ac.status === 'INVALID' && Object.keys(ac.errors).some(key => key !== error)) {
+      return ac.errors;
+    }
+    return newError ? { [error]: newError } : null;
+  }
 
-    return (ac: AbstractControl): { [key: string]: any } => {
-      if (!ac.parent) {
+  private static setFormError(ac: AbstractControl, error: string, newError: boolean) {
+    ac.setErrors(this.formError(ac, error, newError));
+  }
+
+  private static formDateToString(ac: AbstractControl) {
+    return (ac.value || {}).toString();
+  }
+
+  // Start time becomes required if end time exists
+  // End time becomes required for multi day events with a start time
+  static meetupTimeValidator(): ValidatorFn {
+
+    return (formGroup: FormGroup): ValidationErrors => {
+      if (!formGroup) {
         return null;
       }
 
-      if (!endTime) {
-        endTime = ac;
-        startTime = ac.parent.get('startTime');
-        if (!startTime) {
-          throw new Error(
-            'validateTimes(): startTime control is not found in parent group'
-          );
-        }
+      const startTime = formGroup.get('startTime');
+      const endTime = formGroup.get('endTime');
+      const startDate = formGroup.get('startDate');
+      const endDate = formGroup.get('endDate');
 
-        // run validators again on when start time's value changes
-        startTime.valueChanges.pipe(takeUntil(ngUnsubscribe)).subscribe(() => {
-          endTime.updateValueAndValidity();
-        });
-      }
+      this.setFormError(startTime, 'required', !!formGroup.get('endTime').value && !startTime.value);
+      this.setFormError(endTime, 'required',
+        this.formDateToString(startDate) !== this.formDateToString(endDate) &&
+        endDate.value &&
+        startTime.value &&
+        !endTime.value
+      );
+      this.setFormError(endTime, 'invalidEndTime', this.endTimeValidator(startDate, endDate, startTime, endTime));
 
-      // if start time has not been given a value yet return back
-      if (!startTime) {
-        return null;
-      }
-
-      // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
-      if (
-        new Date('1970-1-1 ' + startTime.value).getTime() >
-        new Date(endTime.value && '1970-1-1 ' + endTime.value).getTime()
-      ) {
-        return { invalidEndTime: true };
-      }
     };
+
+  }
+
+  // for validating whether end time comes before start date or not
+  private static endTimeValidator(startDate, endDate, startTime, endTime): boolean {
+    // if start time has not been given a value yet return back
+    if (!startTime || !endTime.value) {
+      return false;
+    }
+
+    const startDateString = new Date(startDate.value || '1970-1-1').toLocaleDateString('en-US');
+    const endDateString = new Date(endDate.value || startDateString).toLocaleDateString('en-US');
+
+    // cannot directly convert time (HH:MM) to Date object so changed it to a Unix time date
+    if (
+      new Date(startDateString + ' ' + startTime.value).getTime() >
+      new Date(endDateString + ' ' + endTime.value).getTime()
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   // Set this on both password and confirmation fields so it runs when either changes

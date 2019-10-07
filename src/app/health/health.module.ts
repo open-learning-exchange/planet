@@ -9,10 +9,13 @@ import { MaterialModule } from '../shared/material.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { HealthComponent } from './health.component';
 import { HealthUpdateComponent } from './health-update.component';
+import { HealthEventComponent } from './health-event.component';
+import { HealthEventDialogComponent } from './health-event-dialog.component';
 
 const routes: Routes = [
   { path: '', component: HealthComponent },
   { path: 'update', component: HealthUpdateComponent },
+  { path: 'event', component: HealthEventComponent }
 ];
 
 @NgModule({
@@ -28,7 +31,10 @@ const routes: Routes = [
   ],
   declarations: [
     HealthComponent,
-    HealthUpdateComponent
-  ]
+    HealthUpdateComponent,
+    HealthEventComponent,
+    HealthEventDialogComponent
+  ],
+  entryComponents: [ HealthEventDialogComponent ]
 })
 export class HealthModule {}

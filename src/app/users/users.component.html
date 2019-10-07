@@ -130,10 +130,23 @@
             <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
               <mat-icon>delete</mat-icon>Delete
             </button>
-            <a
-              *ngIf="element.doc.roles.length > 0 && filterType === 'local'"
-              (click)="setRoles(element.doc, element.doc.isUserAdmin ? element.doc.oldRoles : ['manager'], $event)"
-              mat-raised-button color="primary" i18n>{+element.doc.isUserAdmin, select, 1 {Demote} 0 {Promote}}</a>
+            <button
+              *ngIf="!element.doc.isUserAdmin && filterType === 'local'"
+              (click)="$event.stopPropagation()"
+              [matMenuTriggerFor]="promotionMenu"
+              mat-raised-button color="primary" i18n>Promote</button>
+            <mat-menu #promotionMenu="matMenu">
+              <button mat-menu-item (click)="toggleStatus($event, element.doc, 'manager', false)" i18n>
+                Manager
+              </button>
+              <button mat-menu-item (click)="toggleStatus($event, element.doc, 'admin', false)" i18n>
+                Admin
+              </button>
+            </mat-menu>
+            <button
+              *ngIf="element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName"
+              (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)"
+              mat-raised-button color="primary" i18n>Demote</button>
           </span>
           <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
             <mat-icon>visibility</mat-icon> View Profile

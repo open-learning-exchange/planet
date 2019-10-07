@@ -17,10 +17,10 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     :host .mat-list-option span {
       font-weight: inherit;
     }
-    :host p[matLine] * {
+    :host p[matLine] *, :host .mat-nav-list .mat-list-item * {
       margin-right: 0.25rem;
     }
-    :host p[matLine] *:last-child {
+    :host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
       margin-right: 0;
     }
     :host mat-dialog-actions {
@@ -125,11 +125,8 @@ export class PlanetTagInputDialogComponent {
     return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
-  selectOne(tag, subTag?) {
+  selectOne(tag) {
     this.data.tagUpdate(tag, true, true);
-    if (subTag !== undefined) {
-      this.data.tagUpdate(subTag, true);
-    }
     this.dialogRef.close();
   }
 

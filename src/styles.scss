@@ -510,7 +510,7 @@ body {
     }
   }
 
-  mat-radio-group[required] label:after {
+  mat-radio-group[required] > label:after {
     content: " *";
   }
 

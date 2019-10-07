@@ -37,6 +37,7 @@ export class MeetupsAddComponent implements OnInit {
   @Input() link: any = {};
   @Input() isDialog = false;
   @Input() meetup: any = {};
+  @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup;
@@ -80,33 +81,26 @@ export class MeetupsAddComponent implements OnInit {
     meetup.startDate = new Date(meetup.startDate);
     meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : '';
     this.meetupForm.patchValue(meetup);
-    this.meetupForm.controls.day.patchValue(meetup.day);
+    meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
   }
 
   createForm() {
     this.meetupForm = this.fb.group({
-      title: [
-        '',
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$(this.dbName, 'title', ac, { selectors: { '_id': { $ne: this.id }, 'link': this.link } })
-      ],
+      title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
       startDate: [ '', [], ac => this.validatorService.notDateInPast$(ac) ],
       endDate: [ '', CustomValidators.endDateValidator() ],
-      recurring: '',
+      recurring: 'none',
       day: this.fb.array([]),
-      startTime: [ '', CustomValidators.timeValidator ],
-      endTime: [
-        '',
-        Validators.compose([
-          CustomValidators.endTimeValidator(),
-          CustomValidators.timeValidator
-        ])
-      ],
+      startTime: '',
+      endTime: '',
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
-      createdDate: this.couchService.datePlaceholder
+      createdDate: this.couchService.datePlaceholder,
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
+    }, {
+      validators: CustomValidators.meetupTimeValidator()
     });
   }
 
@@ -118,7 +112,7 @@ export class MeetupsAddComponent implements OnInit {
       });
       return;
     }
-    const meetup = { ...this.meetupForm.value, link: this.link };
+    const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
     if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {

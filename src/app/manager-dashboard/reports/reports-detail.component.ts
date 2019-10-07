@@ -5,8 +5,11 @@ import { map, takeUntil } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
-import { styleVariables, dedupeShelfReduce } from '../../shared/utils';
+import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { CsvService } from '../../shared/csv.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -24,12 +27,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   filter = '';
   codeParam = '';
+  loginActivities = [];
+  resourceActivities = [];
+  today: Date;
 
   constructor(
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private csvService: CsvService,
+    private dialogsFormService: DialogsFormService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -49,6 +58,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
+    this.couchService.currentTime().subscribe((currentTime: number) => this.today = new Date(currentTime));
   }
 
   ngOnDestroy() {
@@ -79,7 +89,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getLoginActivities(this.activityParams()).subscribe(({ byUser, byMonth }: { byUser: any[], byMonth: any[] }) => {
+    this.activityService.getActivities('login_activities', this.activityParams()).subscribe((loginActivities: any) => {
+      this.loginActivities = loginActivities;
+      const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.visits = byUser.slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
@@ -95,7 +107,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getResourceVisits() {
-    this.activityService.getResourceVisits(this.activityParams()).subscribe(({ byResource, byMonth }) => {
+    this.activityService.getActivities('resource_activities', this.activityParams()).subscribe((resourceActivities: any) => {
+      this.resourceActivities = resourceActivities;
+      const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
@@ -116,13 +130,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   xyChartData(data, unique) {
     return data.map((visit: any) => ({
-      x: this.monthDataLabels(visit.date),
+      x: this.activityService.monthDataLabels(visit.date),
       y: unique ? visit.unique.length : visit.count || 0
     }));
-  }
-
-  monthDataLabels(date) {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 
   datasetObject(label, data, backgroundColor) {
@@ -152,7 +162,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => this.monthDataLabels(month))
+      labels: months.map(month => this.activityService.monthDataLabels(month))
     });
   }
 
@@ -195,6 +205,54 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   activityParams(): { planetCode, filterAdmin?, fromMyPlanet? } {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
+  }
+
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
+    const fields = [
+      {
+        'label': 'From',
+        'type': 'date',
+        'name': 'fromDate',
+        'required': true
+      },
+      {
+        'label': 'To',
+        'type': 'date',
+        'name': 'toDate',
+        'required': true
+      }
+    ];
+    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
+    const formGroup = {
+      fromDate: [ new Date(minDate) ],
+      toDate: [ new Date(this.today) ]
+    };
+    this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
+      onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
+    });
+  }
+
+  exportCSV(reportType: string, dateRange: { fromDate, toDate }) {
+    const filterByDate = (array, dateField, { fromDate, toDate }) => array.filter(item =>
+      item[dateField] >= fromDate.getTime() && item[dateField] <= toDate.getTime()
+    );
+    switch (reportType) {
+      case 'logins':
+        this.csvService.exportCSV({ data: filterByDate(this.loginActivities, 'loginTime', dateRange), title: 'Member Visits' });
+        break;
+      case 'resourceViews':
+        this.csvService.exportCSV({ data: filterByDate(this.resourceActivities, 'time', dateRange), title: 'Resource Views' });
+        break;
+      case 'summary':
+        this.csvService.exportSummaryCSV(
+          filterByDate(this.loginActivities, 'loginTime', dateRange),
+          filterByDate(this.resourceActivities, 'time', dateRange),
+          this.planetName
+        );
+        break;
+    }
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
   }
 
 }

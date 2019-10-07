@@ -99,7 +99,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion(nextClicked: boolean = false) {
-    const { correctAnswer, obs }: { correctAnswer: boolean | undefined, obs: any } = this.createAnswerObservable();
+    const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable();
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
@@ -244,9 +244,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
         return { obs, correctAnswer };
       case 'grade':
-        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1), correctAnswer };
+        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1) };
       default:
-        return { obs: of({ nextQuestion: this.questionNum + 1 }), correctAnswer };
+        return { obs: of({ nextQuestion: this.questionNum + 1 }) };
     }
   }
 
