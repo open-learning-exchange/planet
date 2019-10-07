@@ -8,10 +8,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../../shared/shared-components.module';
 import { PlanetDialogsModule } from '../../shared/dialogs/planet-dialogs.module';
+import { CertificationsAddComponent } from './certifications-add.component';
+import { CoursesModule } from '../../courses/courses.module';
+import { DialogsAddCoursesModule } from '../../shared/dialogs/dialogs-add-courses.module';
 
 @NgModule({
   declarations: [
-    CertificationsComponent
+    CertificationsComponent,
+    CertificationsAddComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +26,9 @@ import { PlanetDialogsModule } from '../../shared/dialogs/planet-dialogs.module'
     FormsModule,
     MatDialogModule,
     SharedComponentsModule,
-    PlanetDialogsModule
+    PlanetDialogsModule,
+    CoursesModule,
+    DialogsAddCoursesModule
   ]
 })
 export class CertificationsModule {}

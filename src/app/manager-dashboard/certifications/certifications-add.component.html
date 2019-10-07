@@ -1,0 +1,27 @@
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Certifications</span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" type="button" (click)="submitCertificate(false)" i18n>Save</button>
+      <button mat-raised-button color="primary" type="button" (click)="submitCertificate(true)" i18n class="margin-lr-5">Save & Return</button>
+      <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" i18n>Add Courses</button>
+      <button mat-raised-button color="accent" type="button" (click)="removeCourses()" i18n>Remove Courses</button>
+    </div>
+    <form [formGroup]="certificateForm" novalidate>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Certificate Name" formControlName="name" required>
+        <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="certificateForm.controls.name"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+    </form>
+    <planet-courses *ngIf="courseIds.length > 0" [isForm]="true" [includeIds]="courseIds"></planet-courses>
+  </div>
+</div>

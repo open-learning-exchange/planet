@@ -162,3 +162,9 @@ export const showFormErrors = (controls: { [key: string]: AbstractControl }) => 
     control.markAsTouched({ onlySelf: true });
   });
 };
+
+export const filterIds = (filterObj: { ids: string[] }) => {
+  return (data: any, filter: string) => {
+    return filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true;
+  };
+};
