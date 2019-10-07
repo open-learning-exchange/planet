@@ -1,4 +1,4 @@
-import { Injectable, Input } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { finalize, map } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -14,6 +14,7 @@ import { findDocuments } from '../shared/mangoQueries';
   providedIn: 'root'
 })
 export class TasksService {
+
   private dbName = 'tasks';
   private tasksUpdated = new Subject<any>();
 
