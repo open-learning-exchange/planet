@@ -945,7 +945,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Your progress:</target>
+        <target state="translated">आपके प्रगति</target>
       </trans-unit>
       <trans-unit id="0959cf719affa339c7223bcb273d12260028c47d" datatype="html">
         <source>Admission</source>
@@ -961,7 +961,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="needs-translation">Resign</target>
+        <target state="translated">इस्तीफ़ा देना</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html">
         <source>Feedback</source>
