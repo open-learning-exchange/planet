@@ -93,8 +93,9 @@ export class FeedbackDirective {
         parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
       };
+    const feedbackUrl = newFeedback.url.substring(0, newFeedback.url.indexOf(';')) || newFeedback.url;
     this.couchService.updateDocument('feedback', {
-      ...newFeedback, title: newFeedback.type + ' regarding ' + newFeedback.url.substring(0, newFeedback.url.indexOf(';')) })
+      ...newFeedback, title: newFeedback.type + ' regarding ' + feedbackUrl })
     .subscribe((data) => {
       this.feedbackService.setfeedback();
       this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
