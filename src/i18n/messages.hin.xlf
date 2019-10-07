@@ -1113,7 +1113,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">View Step</target>
+        <target state="translated">कदम जांच करना</target>
       </trans-unit>
       <trans-unit id="7ada2e55e1ede2316448307b8be16730e4dd9299" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail.subjectLevel}}"/></source>
