@@ -19,6 +19,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   @Input() resourceId: string;
   @Input() fetchRating = true;
+  @Input() isDialog = false;
   @Output() resourceUrl = new EventEmitter<any>();
   mediaType: string;
   contentType: string;
