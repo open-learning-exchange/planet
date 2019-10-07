@@ -53,6 +53,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
+  tasks: any[];
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
@@ -80,12 +81,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.initTeam(this.teamId);
     });
     this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
-      this.members = this.members.map(member => ({
-        ...member,
-        tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
-      }));
-      const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
-      this.taskCount = tasksForCount.filter(task => task.completed === false).length;
+      this.tasks = tasks;
+      this.setTasks(tasks);
     });
   }
 
@@ -158,8 +155,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
+      this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  setTasks(tasks) {
+    this.members = this.members.map(member => ({
+      ...member,
+      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+    }));
+    const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+    this.taskCount = tasksForCount.filter(task => task.completed === false).length;
   }
 
   resetData() {
@@ -210,7 +217,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }[change];
   }
 
-  openDialogPrompt(item, change: 'leave' | 'archive' | 'resource' | 'remove' | 'course', dialogParams: { changeType, type }) {
+  openDialogPrompt(
+    { tasks, ...item },
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader',
+    dialogParams: { changeType, type }
+  ) {
     const config = this.dialogPromptConfig(item, change);
     const displayName = config.name || item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
@@ -407,7 +418,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const currentLeader = this.members.find(mem => mem.userId === this.leader);
+    const { tasks, ...currentLeader } = this.members.find(mem => mem.userId === this.leader);
     return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
