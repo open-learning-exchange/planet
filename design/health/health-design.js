@@ -56,6 +56,17 @@ module.exports = {
           return new Uint8Array(length);
       }
 
+      function copyArray(sourceArray, targetArray, targetStart, sourceStart, sourceEnd) {
+        if (sourceStart != null || sourceEnd != null) {
+            if (sourceArray.slice) {
+                sourceArray = sourceArray.slice(sourceStart, sourceEnd);
+            } else {
+                sourceArray = Array.prototype.slice.call(sourceArray, sourceStart, sourceEnd);
+            }
+        }
+        targetArray.set(sourceArray, targetStart);
+      }
+
       var convertUtf8 = (function() {
           function toBytes(text) {
               var result = [], i = 0;
@@ -454,6 +465,77 @@ module.exports = {
       // Decryption is symetric
       ModeOfOperationCTR.prototype.decrypt = ModeOfOperationCTR.prototype.encrypt;
 
+      /**
+      *  Mode Of Operation - Cipher Block Chaining (CBC)
+      */
+      var ModeOfOperationCBC = function(key, iv) {
+        if (!(this instanceof ModeOfOperationCBC)) {
+            throw Error('AES must be instanitated with `new`');
+        }
+
+        this.description = "Cipher Block Chaining";
+        this.name = "cbc";
+
+        if (!iv) {
+            iv = createArray(16);
+
+        } else if (iv.length != 16) {
+            throw new Error('invalid initialation vector size (must be 16 bytes)');
+        }
+
+        this._lastCipherblock = coerceArray(iv, true);
+
+        this._aes = new AES(key);
+      }
+
+      ModeOfOperationCBC.prototype.encrypt = function(plaintext) {
+        plaintext = coerceArray(plaintext);
+
+        if ((plaintext.length % 16) !== 0) {
+          throw new Error('invalid plaintext size (must be multiple of 16 bytes)');
+        }
+
+        var ciphertext = createArray(plaintext.length);
+        var block = createArray(16);
+
+        for (var i = 0; i < plaintext.length; i += 16) {
+          copyArray(plaintext, block, 0, i, i + 16);
+
+          for (var j = 0; j < 16; j++) {
+            block[j] ^= this._lastCipherblock[j];
+          }
+
+          this._lastCipherblock = this._aes.encrypt(block);
+          copyArray(this._lastCipherblock, ciphertext, i);
+        }
+
+        return ciphertext;
+      }
+
+      ModeOfOperationCBC.prototype.decrypt = function(ciphertext) {
+        ciphertext = coerceArray(ciphertext);
+
+        if ((ciphertext.length % 16) !== 0) {
+          throw new Error('invalid ciphertext size (must be multiple of 16 bytes)');
+        }
+
+        var plaintext = createArray(ciphertext.length);
+        var block = createArray(16);
+
+        for (var i = 0; i < ciphertext.length; i += 16) {
+          copyArray(ciphertext, block, 0, i, i + 16);
+          block = this._aes.decrypt(block);
+
+          for (var j = 0; j < 16; j++) {
+            plaintext[i + j] = block[j] ^ this._lastCipherblock[j];
+          }
+
+          copyArray(ciphertext, this._lastCipherblock, 0, i, i + 16);
+        }
+
+        return plaintext;
+      }
+
       // START DESIGN DOC
 
       var request = JSON.parse(req.body);
@@ -465,20 +547,30 @@ module.exports = {
       }, {});
       // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
       var key = request.key;
+      var iv = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5 ];
       if (key === undefined) {
         return [ null, 'Must supply a key' ]
       }
 
+      var text = JSON.stringify(newDoc);
+
+      function textTo16Byte(text) {
+        if (text.length % 16 === 0) {
+          return text;
+        }
+        return textTo16Byte(text + ' ');
+      }
+
       // Convert text to bytes
-      var textBytes = convertUtf8.toBytes(JSON.stringify(newDoc));
+      var textBytes = convertUtf8.toBytes(textTo16Byte(text));
 
       // The counter is optional, and if omitted will begin at 1
-      var aesCtr = new ModeOfOperationCTR(key, new Counter(5));
-      var encryptedBytes = aesCtr.encrypt(textBytes);
+      var aesCBC = new ModeOfOperationCBC(key, iv);
+      var encryptedBytes = aesCBC.encrypt(textBytes);
 
       // To print or store the binary data, you may convert it to hex
       var encryptedHex = convertHex.fromBytes(encryptedBytes);
-      return [ { '_id': request._id, '_rev': request._rev, 'data': encryptedHex }, 'Document updated' ];
+      return [ { '_id': request._id, '_rev': request._rev, 'data': encryptedHex, }, '{"message":"Document updated"}' ];
 
     }
   },
@@ -539,6 +631,17 @@ module.exports = {
           return new Uint8Array(length);
       }
 
+      function copyArray(sourceArray, targetArray, targetStart, sourceStart, sourceEnd) {
+        if (sourceStart != null || sourceEnd != null) {
+            if (sourceArray.slice) {
+                sourceArray = sourceArray.slice(sourceStart, sourceEnd);
+            } else {
+                sourceArray = Array.prototype.slice.call(sourceArray, sourceStart, sourceEnd);
+            }
+        }
+        targetArray.set(sourceArray, targetStart);
+      }
+
       var convertUtf8 = (function() {
           function toBytes(text) {
               var result = [], i = 0;
@@ -937,11 +1040,83 @@ module.exports = {
       // Decryption is symetric
       ModeOfOperationCTR.prototype.decrypt = ModeOfOperationCTR.prototype.encrypt;
 
+      /**
+      *  Mode Of Operation - Cipher Block Chaining (CBC)
+      */
+      var ModeOfOperationCBC = function(key, iv) {
+        if (!(this instanceof ModeOfOperationCBC)) {
+            throw Error('AES must be instanitated with `new`');
+        }
+
+        this.description = "Cipher Block Chaining";
+        this.name = "cbc";
+
+        if (!iv) {
+          iv = createArray(16);
+        } else if (iv.length != 16) {
+            throw new Error('invalid initialation vector size (must be 16 bytes)');
+        }
+
+        this._lastCipherblock = coerceArray(iv, true);
+
+        this._aes = new AES(key);
+      }
+
+      ModeOfOperationCBC.prototype.encrypt = function(plaintext) {
+        plaintext = coerceArray(plaintext);
+
+        if ((plaintext.length % 16) !== 0) {
+          throw new Error('invalid plaintext size (must be multiple of 16 bytes)');
+        }
+
+        var ciphertext = createArray(plaintext.length);
+        var block = createArray(16);
+
+        for (var i = 0; i < plaintext.length; i += 16) {
+          copyArray(plaintext, block, 0, i, i + 16);
+
+          for (var j = 0; j < 16; j++) {
+            block[j] ^= this._lastCipherblock[j];
+          }
+
+          this._lastCipherblock = this._aes.encrypt(block);
+          copyArray(this._lastCipherblock, ciphertext, i);
+        }
+
+        return ciphertext;
+      }
+
+      ModeOfOperationCBC.prototype.decrypt = function(ciphertext) {
+        ciphertext = coerceArray(ciphertext);
+
+        if ((ciphertext.length % 16) !== 0) {
+          throw new Error('invalid ciphertext size (must be multiple of 16 bytes)');
+        }
+
+        var plaintext = createArray(ciphertext.length);
+        var block = createArray(16);
+
+        for (var i = 0; i < ciphertext.length; i += 16) {
+          copyArray(ciphertext, block, 0, i, i + 16);
+          block = this._aes.decrypt(block);
+
+          for (var j = 0; j < 16; j++) {
+            plaintext[i + j] = block[j] ^ this._lastCipherblock[j];
+          }
+
+          copyArray(ciphertext, this._lastCipherblock, 0, i, i + 16);
+        }
+
+        return plaintext;
+      }
+
+
       // START DESIGN DOC
 
       var request = JSON.parse(req.body);
       // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
       var key = request.key;
+      var iv = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5 ];
       if (key === undefined) {
         return [ null, 'Must supply a key' ]
       }
@@ -951,11 +1126,11 @@ module.exports = {
 
       // The counter mode of operation maintains internal state, so to
       // decrypt a new instance must be instantiated.
-      var aesCtr = new ModeOfOperationCTR(key, new Counter(5));
-      var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+      var aesCbc = new ModeOfOperationCBC(key, iv);
+      var decryptedBytes = aesCbc.decrypt(encryptedBytes);
 
       // Convert our bytes back into text
-      var decryptedText = convertUtf8.fromBytes(decryptedBytes);
+      var decryptedText = convertUtf8.fromBytes(decryptedBytes).trim();
 
       try {
         return { 'json': { '_id': doc._id, '_rev': doc._rev, 'doc': JSON.parse(decryptedText) } };
