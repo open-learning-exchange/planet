@@ -160,7 +160,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }), map(resources => this.resources = resources));
   }
 
-  setTasks(tasks) {
+  setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
       tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
