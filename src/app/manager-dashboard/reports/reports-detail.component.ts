@@ -213,13 +213,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
     const fields = [
       {
-        'label': 'From',
+        'placeholder': 'From',
         'type': 'date',
         'name': 'startDate',
         'required': true
       },
       {
-        'label': 'To',
+        'placeholder': 'To',
         'type': 'date',
         'name': 'toDate',
         'required': true
