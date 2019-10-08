@@ -14,6 +14,7 @@ import { addDateAndTime, styleVariables } from './utils';
     <full-calendar
       defaultView="dayGridMonth"
       [events]="events"
+      [eventTimeFormat]="eventTimeFormat"
       [plugins]="calendarPlugins"
       [firstDay]="6"
       [header]="header"
@@ -38,6 +39,11 @@ export class PlanetCalendarComponent implements OnInit {
       text: 'Add Event',
       click: this.openAddEventDialog.bind(this)
     }
+  };
+  eventTimeFormat = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
   };
   dbName = 'meetups';
   events: any[] = [];
