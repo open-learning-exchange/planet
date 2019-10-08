@@ -89,4 +89,11 @@ export class DialogsFormComponent {
     return this.modalForm.dirty;
   }
 
+  isDateValid() {
+    if (this.modalForm.value.fromDate !== undefined && this.modalForm.value.toDate !== undefined) {
+      return this.modalForm.value.toDate > this.modalForm.value.fromDate;
+    } else {
+      return false;
+    }
+  }
 }
