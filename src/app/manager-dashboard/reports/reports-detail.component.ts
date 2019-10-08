@@ -10,6 +10,8 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -38,7 +40,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private validatorService: ValidatorService
   ) {}
 
   ngOnInit() {
@@ -212,7 +215,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       {
         'label': 'From',
         'type': 'date',
-        'name': 'fromDate',
+        'name': 'startDate',
         'required': true
       },
       {
@@ -224,8 +227,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     ];
     const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
     const formGroup = {
-      fromDate: [ new Date(minDate) ],
-      toDate: [ new Date(this.today) ]
+      startDate: [ new Date(minDate) , CustomValidators.isAfterDate(new Date(minDate)) ],
+      toDate: [ new Date(this.today), CustomValidators.endDateValidator(), ac => this.validatorService.notDateInFuture$(ac) ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)

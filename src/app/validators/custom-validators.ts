@@ -244,16 +244,11 @@ export class CustomValidators {
 
   // for validating whether end date comes before start date or not
   static isAfterDate(minDate: Date): ValidatorFn {
-    let inputDate: AbstractControl;
-
     return (ac: AbstractControl): ValidationErrors => {
-      if (!inputDate) {
-        inputDate = ac;
-      }
       if (
-        minDate.getTime() > new Date(inputDate.value).getTime()
+        minDate.getTime() > new Date(ac.value).getTime()
       ) {
-        return { invalidEndDate: true };
+        return { invalidDate: true };
       }
     };
   }
