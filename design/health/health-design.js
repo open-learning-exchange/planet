@@ -367,105 +367,6 @@ module.exports = {
       }
 
       /**
-      *  Counter object for CTR common mode of operation
-      */
-      var Counter = function(initialValue) {
-          if (!(this instanceof Counter)) {
-              throw Error('Counter must be instanitated with `new`');
-          }
-
-          // We allow 0, but anything false-ish uses the default 1
-          if (initialValue !== 0 && !initialValue) { initialValue = 1; }
-
-          if (typeof(initialValue) === 'number') {
-              this._counter = createArray(16);
-              this.setValue(initialValue);
-
-          } else {
-              this.setBytes(initialValue);
-          }
-      }
-
-      Counter.prototype.setValue = function(value) {
-          if (typeof(value) !== 'number' || parseInt(value) != value) {
-              throw new Error('invalid counter value (must be an integer)');
-          }
-
-          // We cannot safely handle numbers beyond the safe range for integers
-          if (value > Number.MAX_SAFE_INTEGER) {
-              throw new Error('integer value out of safe range');
-          }
-
-          for (var index = 15; index >= 0; --index) {
-              this._counter[index] = value % 256;
-              value = parseInt(value / 256);
-          }
-      }
-
-      Counter.prototype.setBytes = function(bytes) {
-          bytes = coerceArray(bytes, true);
-
-          if (bytes.length != 16) {
-              throw new Error('invalid counter bytes size (must be 16 bytes)');
-          }
-
-          this._counter = bytes;
-      };
-
-      Counter.prototype.increment = function() {
-          for (var i = 15; i >= 0; i--) {
-              if (this._counter[i] === 255) {
-                  this._counter[i] = 0;
-              } else {
-                  this._counter[i]++;
-                  break;
-              }
-          }
-      }
-
-
-      /**
-      *  Mode Of Operation - Counter (CTR)
-      */
-      var ModeOfOperationCTR = function(key, counter) {
-          if (!(this instanceof ModeOfOperationCTR)) {
-              throw Error('AES must be instanitated with `new`');
-          }
-
-          this.description = "Counter";
-          this.name = "ctr";
-
-          if (!(counter instanceof Counter)) {
-              counter = new Counter(counter)
-          }
-
-          this._counter = counter;
-
-          this._remainingCounter = null;
-          this._remainingCounterIndex = 16;
-
-          this._aes = new AES(key);
-      }
-
-      ModeOfOperationCTR.prototype.encrypt = function(plaintext) {
-          var encrypted = coerceArray(plaintext, true);
-
-          for (var i = 0; i < encrypted.length; i++) {
-              if (this._remainingCounterIndex === 16) {
-                  this._remainingCounter = this._aes.encrypt(this._counter._counter);
-                  this._remainingCounterIndex = 0;
-                  this._counter.increment();
-              }
-              encrypted[i] ^= this._remainingCounter[this._remainingCounterIndex++];
-          }
-
-          return encrypted;
-      }
-
-      // Decryption is symetric
-      ModeOfOperationCTR.prototype.decrypt = ModeOfOperationCTR.prototype.encrypt;
-
-      /**
       *  Mode Of Operation - Cipher Block Chaining (CBC)
       */
       var ModeOfOperationCBC = function(key, iv) {
@@ -510,30 +411,6 @@ module.exports = {
         }
 
         return ciphertext;
-      }
-
-      ModeOfOperationCBC.prototype.decrypt = function(ciphertext) {
-        ciphertext = coerceArray(ciphertext);
-
-        if ((ciphertext.length % 16) !== 0) {
-          throw new Error('invalid ciphertext size (must be multiple of 16 bytes)');
-        }
-
-        var plaintext = createArray(ciphertext.length);
-        var block = createArray(16);
-
-        for (var i = 0; i < ciphertext.length; i += 16) {
-          copyArray(ciphertext, block, 0, i, i + 16);
-          block = this._aes.decrypt(block);
-
-          for (var j = 0; j < 16; j++) {
-            plaintext[i + j] = block[j] ^ this._lastCipherblock[j];
-          }
-
-          copyArray(ciphertext, this._lastCipherblock, 0, i, i + 16);
-        }
-
-        return plaintext;
       }
 
       // START DESIGN DOC
@@ -945,105 +822,6 @@ module.exports = {
       }
 
       /**
-      *  Counter object for CTR common mode of operation
-      */
-      var Counter = function(initialValue) {
-          if (!(this instanceof Counter)) {
-              throw Error('Counter must be instanitated with `new`');
-          }
-
-          // We allow 0, but anything false-ish uses the default 1
-          if (initialValue !== 0 && !initialValue) { initialValue = 1; }
-
-          if (typeof(initialValue) === 'number') {
-              this._counter = createArray(16);
-              this.setValue(initialValue);
-
-          } else {
-              this.setBytes(initialValue);
-          }
-      }
-
-      Counter.prototype.setValue = function(value) {
-          if (typeof(value) !== 'number' || parseInt(value) != value) {
-              throw new Error('invalid counter value (must be an integer)');
-          }
-
-          // We cannot safely handle numbers beyond the safe range for integers
-          if (value > Number.MAX_SAFE_INTEGER) {
-              throw new Error('integer value out of safe range');
-          }
-
-          for (var index = 15; index >= 0; --index) {
-              this._counter[index] = value % 256;
-              value = parseInt(value / 256);
-          }
-      }
-
-      Counter.prototype.setBytes = function(bytes) {
-          bytes = coerceArray(bytes, true);
-
-          if (bytes.length != 16) {
-              throw new Error('invalid counter bytes size (must be 16 bytes)');
-          }
-
-          this._counter = bytes;
-      };
-
-      Counter.prototype.increment = function() {
-          for (var i = 15; i >= 0; i--) {
-              if (this._counter[i] === 255) {
-                  this._counter[i] = 0;
-              } else {
-                  this._counter[i]++;
-                  break;
-              }
-          }
-      }
-
-
-      /**
-      *  Mode Of Operation - Counter (CTR)
-      */
-      var ModeOfOperationCTR = function(key, counter) {
-          if (!(this instanceof ModeOfOperationCTR)) {
-              throw Error('AES must be instanitated with `new`');
-          }
-
-          this.description = "Counter";
-          this.name = "ctr";
-
-          if (!(counter instanceof Counter)) {
-              counter = new Counter(counter)
-          }
-
-          this._counter = counter;
-
-          this._remainingCounter = null;
-          this._remainingCounterIndex = 16;
-
-          this._aes = new AES(key);
-      }
-
-      ModeOfOperationCTR.prototype.encrypt = function(plaintext) {
-          var encrypted = coerceArray(plaintext, true);
-
-          for (var i = 0; i < encrypted.length; i++) {
-              if (this._remainingCounterIndex === 16) {
-                  this._remainingCounter = this._aes.encrypt(this._counter._counter);
-                  this._remainingCounterIndex = 0;
-                  this._counter.increment();
-              }
-              encrypted[i] ^= this._remainingCounter[this._remainingCounterIndex++];
-          }
-
-          return encrypted;
-      }
-
-      // Decryption is symetric
-      ModeOfOperationCTR.prototype.decrypt = ModeOfOperationCTR.prototype.encrypt;
-
-      /**
       *  Mode Of Operation - Cipher Block Chaining (CBC)
       */
       var ModeOfOperationCBC = function(key, iv) {
@@ -1063,30 +841,6 @@ module.exports = {
         this._lastCipherblock = coerceArray(iv, true);
 
         this._aes = new AES(key);
-      }
-
-      ModeOfOperationCBC.prototype.encrypt = function(plaintext) {
-        plaintext = coerceArray(plaintext);
-
-        if ((plaintext.length % 16) !== 0) {
-          throw new Error('invalid plaintext size (must be multiple of 16 bytes)');
-        }
-
-        var ciphertext = createArray(plaintext.length);
-        var block = createArray(16);
-
-        for (var i = 0; i < plaintext.length; i += 16) {
-          copyArray(plaintext, block, 0, i, i + 16);
-
-          for (var j = 0; j < 16; j++) {
-            block[j] ^= this._lastCipherblock[j];
-          }
-
-          this._lastCipherblock = this._aes.encrypt(block);
-          copyArray(this._lastCipherblock, ciphertext, i);
-        }
-
-        return ciphertext;
       }
 
       ModeOfOperationCBC.prototype.decrypt = function(ciphertext) {
