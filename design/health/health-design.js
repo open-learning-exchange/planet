@@ -553,12 +553,14 @@ module.exports = {
       }
 
       var text = JSON.stringify(newDoc);
+      var paddingChar = convertHex.fromBytes([ text.length % 16 ]);
+      text = text + paddingChar;
 
       function textTo16Byte(text) {
         if (text.length % 16 === 0) {
           return text;
         }
-        return textTo16Byte(text + ' ');
+        return textTo16Byte(text + paddingChar);
       }
 
       // Convert text to bytes
