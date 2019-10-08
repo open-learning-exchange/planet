@@ -553,7 +553,8 @@ module.exports = {
       }
 
       var text = JSON.stringify(newDoc);
-      var paddingChar = convertHex.fromBytes([ text.length % 16 ]);
+      var blockLength = 16;
+      var paddingChar = convertUtf8.fromBytes([ blockLength - (text.length % blockLength) ]);
       text = text + paddingChar;
 
       function textTo16Byte(text) {
