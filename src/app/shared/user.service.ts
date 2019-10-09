@@ -32,6 +32,7 @@ export class UserService {
   }
   currentSession: any;
   userProperties: string[] = [];
+  credentialProperties = [ 'derived_key', 'iterations', 'password_scheme', 'salt', 'key', 'iv' ];
   credentials: any;
   emptyShelf = { meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] };
 
@@ -72,8 +73,8 @@ export class UserService {
         const userData = users.find(u => u.name === user.name);
         if (userData) {
           // Remove hashed password information from the data object
-          const { derived_key, iterations, password_scheme, salt, ...profile } = userData;
-          this.credentials = { derived_key, iterations, password_scheme, salt };
+          const profile = this.getUserProperties(userData, this.userProperties);
+          this.credentials = this.getUserProperties(userData, this.credentialProperties);
           this.user = profile;
           this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
         }
@@ -90,12 +91,15 @@ export class UserService {
       }));
   }
 
-  setUserProperties(users) {
+  private getUserProperties(user, properties: string[]): any {
+    return properties.reduce((object, key) => ({ ...object, [key]: user[key] }), {});
+  }
+
+  private setUserProperties(users) {
     this.userProperties = users.reduce((properties: string[], user: any) => {
-      const { derived_key, iterations, password_scheme, salt, ...profile } = user;
-      const newProperties = Object.keys(profile);
-      return properties.concat(newProperties).reduce(dedupeShelfReduce, [])
-        .filter((prop) => [ 'requestId', '_attachments' ].indexOf(prop) === -1);
+      const { requestId, _attachments, ...profile } = user;
+      return [ ...properties, Object.keys(profile) ].filter((prop: string) => this.credentialProperties.indexOf(prop) === -1)
+        .reduce(dedupeShelfReduce, []);
     }, []);
   }
 
@@ -195,11 +199,12 @@ export class UserService {
     .pipe(
       switchMap(res => {
         newUserInfo._rev = res.rev;
-        const { derived_key, iterations, password_scheme, salt, password, ...profile } = newUserInfo;
+        const profile = this.getUserProperties(newUserInfo, this.userProperties);
         if (newUserInfo.name === this.get().name) {
           if (this.user.roles.indexOf('_admin') !== -1) {
             profile.roles.push('_admin');
           }
+          this.credentials = this.getUserProperties(newUserInfo, this.credentialProperties);
           this.set(profile);
         } else {
           this.userChange.next(profile);
