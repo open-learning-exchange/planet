@@ -18,18 +18,19 @@ export class HealthService {
     this.events = [];
   }
 
-  key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
+  key = '0102030405060708090001020304050607080900010203040506070809000102';
+  iv = '00010203040506070809000102030405';
 
   constructor(
     private couchService: CouchService
   ) {}
 
   getHealthData(userId) {
-    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key });
+    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key, iv: this.iv });
   }
 
   postHealthData(data) {
-    return this.couchService.put('health/_design/health/_update/encrypt', { ...data, key: this.key });
+    return this.couchService.put('health/_design/health/_update/encrypt', { ...data, key: this.key, iv: this.iv });
   }
 
 }

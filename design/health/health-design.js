@@ -417,17 +417,17 @@ module.exports = {
 
       var request = JSON.parse(req.body);
       var newDoc = Object.keys(request).reduce(function(b, k) {
-        if (k !== '_id' && k !== 'key' && k !== '_rev') {
+        if (k !== '_id' && k !== 'key' && k !== '_rev' && k !== 'iv') {
           b[k] = request[k];
         }
         return b;
       }, {});
-      // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
-      var key = request.key;
-      var iv = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5 ];
-      if (key === undefined) {
-        return [ null, 'Must supply a key' ]
+      if (request.key === undefined || request.iv === undefined) {
+        return [ null, '{"message":"Must supply a key and initialization vector"}' ];
       }
+      // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
+      var key = convertHex.toBytes(request.key);
+      var iv = convertHex.toBytes(request.iv);
 
       var text = JSON.stringify(newDoc);
       var blockLength = 16;
@@ -871,12 +871,12 @@ module.exports = {
       // START DESIGN DOC
 
       var request = JSON.parse(req.body);
-      // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
-      var key = request.key;
-      var iv = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5 ];
-      if (key === undefined) {
-        return [ null, 'Must supply a key' ]
+      if (request.key === undefined || request.iv === undefined) {
+        return { 'code': 500, 'body': 'Must supply a key and initialization vector' };
       }
+      // An example 128-bit key (16 bytes * 8 bits/byte = 128 bits)
+      var key = convertHex.toBytes(request.key);
+      var iv = convertHex.toBytes(request.iv);
 
       // When ready to decrypt the hex string, convert it back to bytes
       var encryptedBytes = convertHex.toBytes(doc.data);
