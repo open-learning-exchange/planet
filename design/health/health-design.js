@@ -889,13 +889,13 @@ module.exports = {
       var paddingByte = decryptedBytes[decryptedBytes.length - 1];
 
       // Convert our bytes back into text
-      var decryptedText = convertUtf8.fromBytes(decryptedBytes).trim();
+      var decryptedText = convertUtf8.fromBytes(decryptedBytes);
       var jsonString = decryptedText.slice(0, -paddingByte);
 
       try {
         return { 'json': { '_id': doc._id, '_rev': doc._rev, 'doc': JSON.parse(jsonString) } };
       } catch (e) {
-        return { 'json': { '_id': doc._id, '_rev': doc._rev, 'doc': jsonString, 'error': 'bad key' } };
+        return { 'json': { '_id': doc._id, '_rev': doc._rev, 'doc': jsonString, 'error': e } };
       }
 
     }
