@@ -10,21 +10,18 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 
-const addTeamDialogFields = [
-  {
-    'type': 'textbox',
-    'name': 'name',
-    'placeholder': 'Name',
-    'required': true
-  },
-  {
-    'type': 'markdown',
-    'name': 'description',
-    'placeholder': 'Description',
-    'required': false
-  }
-];
-
+const nameField = {
+  'type': 'textbox',
+  'name': 'name',
+  'placeholder': 'Name',
+  'required': true
+};
+const descriptionField = {
+  'type': 'markdown',
+  'name': 'description',
+  'placeholder': 'Description',
+  'required': false
+};
 
 @Injectable({
   providedIn: 'root'
@@ -44,11 +41,14 @@ export class TeamsService {
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = `${team._id ? 'Update' : 'Create'} ${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
-    const formGroup = {
-      name: [
+    const nameControl = type !== 'services' ? { name:
+      [
         team.name || '', CustomValidators.required,
         ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id || '' }, status: 'active' } })
-      ],
+      ]
+    } : {}
+    const formGroup = {
+      ...nameControl,
       description: team.description || '',
       requests: [ team.requests || [] ],
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ]
@@ -79,7 +79,7 @@ export class TeamsService {
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
-    return [ ...addTeamDialogFields, type === 'team' ? typeField : [] ].flat();
+    return [ type === 'services' ? [] : nameField, descriptionField, type === 'team' ? typeField : [] ].flat();
   }
 
   updateTeam(team: any) {

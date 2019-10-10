@@ -89,9 +89,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.mode === 'services') {
       this.getTeam(`${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`).pipe(
         catchError(() => this.teamsService.createServicesDoc()),
-        switchMap(() => this.getMembers())
-      ).subscribe(team => {
-        this.team = team;
+        switchMap(team => {
+          this.team = team;
+          return this.getMembers();
+        })
+      ).subscribe(() => {
         this.userStatus = 'member';
       });
     }
@@ -316,7 +318,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
-      this.planetMessageService.showMessage(this.team.name + ' updated successfully');
+      this.planetMessageService.showMessage(this.team.name || `${this.configuration.name} Services Directory` + ' updated successfully');
     });
   }
 
@@ -452,7 +454,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    if (this.mode === 'services') {
+      this.router.navigate([ '../' ], { relativeTo: this.route });
+    } else {
+      this.router.navigate([ '../../' ], { relativeTo: this.route });
+    }
   }
 
   openResource(resourceId) {
