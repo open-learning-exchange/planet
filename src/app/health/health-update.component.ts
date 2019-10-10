@@ -49,13 +49,11 @@ export class HealthUpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    const serviceMatchesUser = this.healthService.userDetail.name === this.userService.get().name;
-    this.profileForm.patchValue(serviceMatchesUser ? this.healthService.userDetail : this.userService.get());
-    this.healthForm.patchValue(serviceMatchesUser ? this.healthService.healthDetail : {});
+    this.profileForm.patchValue(this.userService.get());
     this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
       this.existingData = data;
-      this.profileForm.patchValue(data.doc);
-      this.healthForm.patchValue(data.doc);
+      this.profileForm.patchValue(data.profile);
+      this.healthForm.patchValue(data.profile);
     });
   }
 
@@ -63,8 +61,10 @@ export class HealthUpdateComponent implements OnInit {
     this.healthService.postHealthData({
       _id: this.existingData._id || this.userService.get()._id,
       _rev: this.existingData._rev,
-      ...this.profileForm.value,
-      ...this.healthForm.value
+      profile: {
+        ...this.profileForm.value,
+        ...this.healthForm.value
+      }
     }).subscribe(() => this.goBack());
   }
 

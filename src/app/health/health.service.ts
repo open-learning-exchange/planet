@@ -2,27 +2,17 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HealthService {
 
-  healthDetail: any;
-  userDetail: any = { name: '' };
-  events: any[] = [];
 
-  addEvent(event: any) {
-    this.events = [ ...this.events, event ];
-  }
-
-  resetEvents() {
-    this.events = [];
-  }
-
-  key: string;
-  iv: string;
+  key: string = this.userService.credentials.key;
+  iv: string = this.userService.credentials.iv;
+  healthData: any = {};
 
   constructor(
     private couchService: CouchService,
@@ -36,9 +26,14 @@ export class HealthService {
 
   getHealthData(userId) {
     if (this.key === undefined || this.iv === undefined) {
-      return of({ doc: {} });
+      return of({ profile: {}, events: [] });
     }
-    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key, iv: this.iv });
+    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key, iv: this.iv })
+      .pipe(tap((response) => this.healthData = response));
+  }
+
+  addEvent(event: any) {
+    return this.postHealthData({ events: [ ...(this.healthData.events || []), event ] });
   }
 
   postHealthData(data) {
@@ -48,7 +43,7 @@ export class HealthService {
       ) :
       of({})
     ).pipe(switchMap(() =>
-      this.couchService.put('health/_design/health/_update/encrypt', { ...data, key: this.key, iv: this.iv })
+      this.couchService.put('health/_design/health/_update/encrypt', { ...this.healthData, ...data, key: this.key, iv: this.iv })
     ));
   }
 

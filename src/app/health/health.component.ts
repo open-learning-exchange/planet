@@ -33,8 +33,8 @@ import { environment } from '../../environments/environment';
 export class HealthComponent implements OnInit {
 
   userDetail = this.userService.get();
-  healthDetail = this.healthService.healthDetail;
-  events = this.healthService.events;
+  healthDetail: any = {};
+  events: any[] = [];
   eventTable = new MatTableDataSource();
   displayedColumns: string[] = [];
   imageSrc = '';
@@ -49,18 +49,15 @@ export class HealthComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
-    this.eventTable.data = this.events.reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
-      { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
-      { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
-    ]);
-    this.displayedColumns = Object.keys(this.eventTable.data[0]);
-    this.healthService.getHealthData(this.userService.get()._id).subscribe(({ doc }) => {
-      this.userDetail = { ...doc, ...this.userDetail };
+    this.healthService.getHealthData(this.userService.get()._id).subscribe(({ profile, events }) => {
+      // const { profile, events } = doc;
+      this.userDetail = { ...profile, ...this.userDetail };
       if (this.userDetail._attachments) {
         this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
       }
-      this.healthDetail = doc;
+      this.healthDetail = profile;
+      this.events = events || [];
+      this.setEventData();
     });
   }
 
@@ -76,6 +73,14 @@ export class HealthComponent implements OnInit {
         maxHeight: '90vh'
       });
     }
+  }
+
+  setEventData() {
+    this.eventTable.data = this.events.reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
+      { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
+      { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
+    ]);
+    this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
 }

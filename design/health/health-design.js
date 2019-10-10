@@ -891,11 +891,12 @@ module.exports = {
       // Convert our bytes back into text
       var decryptedText = convertUtf8.fromBytes(decryptedBytes);
       var jsonString = decryptedText.slice(0, -paddingByte);
+      var data = JSON.parse(jsonString);
 
       try {
-        return { 'json': { '_id': doc._id, '_rev': doc._rev, 'doc': JSON.parse(jsonString) } };
+        return { 'json': { '_id': doc._id, '_rev': doc._rev, 'profile': data.profile, 'events': data.events } };
       } catch (e) {
-        return { 'json': { '_id': doc._id, '_rev': doc._rev, 'doc': jsonString, 'error': e } };
+        return { 'json': { '_id': doc._id, '_rev': doc._rev, 'data': data, 'error': e } };
       }
 
     }
