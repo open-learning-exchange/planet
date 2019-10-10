@@ -52,6 +52,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
+  configuration = this.stateService.configuration;
 
   private onDestroy$ = new Subject<void>();
 
