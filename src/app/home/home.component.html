@@ -132,7 +132,7 @@
             <label i18n>Enterprises</label>
           </a>
         </li>
-        <li>
+        <li *planetBeta="false">
           <a mat-button routerLink="/surveys"
             routerLinkActive="active"
             planetPulsateIcon
@@ -141,6 +141,35 @@
             <label i18n>Surveys</label>
           </a>
         </li>
+        <ng-container *planetBeta [ngSwitch]="configuration.planetType">
+          <li *ngSwitchCase="'community'">
+            <a mat-button routerLink="/community"
+              routerLinkActive="active"
+              planetPulsateIcon
+              i18n-title title="Community">
+              <mat-icon>business_center</mat-icon>
+              <label i18n>Community</label>
+            </a>
+          </li>
+          <li *ngSwitchCase="'nation'">
+            <a mat-button routerLink="/nation"
+              routerLinkActive="active"
+              planetPulsateIcon
+              i18n-title title="Nation">
+              <mat-icon>menu_book</mat-icon>
+              <label i18n>Nation</label>
+            </a>
+          </li>
+          <li *ngSwitchCase="'earth'">
+            <a mat-button routerLink="/earth"
+              routerLinkActive="active"
+              planetPulsateIcon
+              i18n-title title="Earth">
+              <mat-icon>menu_book</mat-icon>
+              <label i18n>Earth</label>
+            </a>
+          </li>
+        </ng-container>
       </ul>
       <!--Bottom part-->
       <ul class="bottom-nav">
