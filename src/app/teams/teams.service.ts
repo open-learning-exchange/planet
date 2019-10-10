@@ -10,21 +10,18 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 
-const addTeamDialogFields = [
-  {
-    'type': 'textbox',
-    'name': 'name',
-    'placeholder': 'Name',
-    'required': true
-  },
-  {
-    'type': 'markdown',
-    'name': 'description',
-    'placeholder': 'Description',
-    'required': false
-  }
-];
-
+const nameField = {
+  'type': 'textbox',
+  'name': 'name',
+  'placeholder': 'Name',
+  'required': true
+};
+const descriptionField = {
+  'type': 'markdown',
+  'name': 'description',
+  'placeholder': 'Description',
+  'required': false
+};
 
 @Injectable({
   providedIn: 'root'
@@ -41,14 +38,17 @@ export class TeamsService {
     private validatorService: ValidatorService
   ) {}
 
-  addTeamDialog(userId: string, type: 'team' | 'enterprise', team: any = {}) {
+  addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = `${team._id ? 'Update' : 'Create'} ${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
-    const formGroup = {
-      name: [
+    const nameControl = type !== 'services' ? { name:
+      [
         team.name || '', CustomValidators.required,
         ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id || '' }, status: 'active' } })
-      ],
+      ]
+    } : {};
+    const formGroup = {
+      ...nameControl,
       description: team.description || '',
       requests: [ team.requests || [] ],
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ]
@@ -79,7 +79,7 @@ export class TeamsService {
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
-    return [ ...addTeamDialogFields, type === 'team' ? typeField : [] ].flat();
+    return [ type === 'services' ? [] : nameField, descriptionField, type === 'team' ? typeField : [] ].flat();
   }
 
   updateTeam(team: any) {
@@ -155,13 +155,18 @@ export class TeamsService {
       this.couchService.findAll('_users'),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
-      ...membershipDocs.map(doc => ({
+      ...(team.type === 'services' ? this.servicesMembers(team, users) : membershipDocs).map(doc => ({
         ...doc,
         userDoc: users.find(user => user._id === doc.userId),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));
+  }
+
+  servicesMembers(team, users) {
+    return users.filter(user => user.name !== 'satellite' && (user.roles.length > 0 || user.isUserAdmin === true))
+      .map(user => this.membershipProps(team, { userId: user._id, userPlanetCode: team.teamPlanetCode }, 'membership'));
   }
 
   getTeamResources(linkDocs: any[]) {
@@ -256,6 +261,21 @@ export class TeamsService {
 
   updateSendDocs(resources, sendTo) {
     this.couchService.bulkDocs('send_items', resources.map(resource => ({ db: 'resources', sendTo, item: resource }))).subscribe();
+  }
+
+  createServicesDoc() {
+    const { code, parentCode } = this.stateService.configuration;
+    const newServicesDoc = {
+      '_id': `${code}@${parentCode}`,
+      'createdDate': this.couchService.datePlaceholder,
+      'teamPlanetCode': `${code}`,
+      'parentCode': `${parentCode}`,
+      'description': '',
+      'requests': [],
+      'teamType': 'sync',
+      'type': 'services'
+    };
+    return this.updateTeam(newServicesDoc);
   }
 
 }

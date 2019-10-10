@@ -15,6 +15,7 @@ import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 
 @NgModule({
+  exports: [ TeamsViewComponent ],
   imports: [
     TeamsRouterModule,
     CommonModule,

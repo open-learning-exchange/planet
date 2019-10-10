@@ -20,6 +20,7 @@ import { CommunityTableComponent } from '../community/community-table.component'
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
 import { NewsModule } from '../news/news.module';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
+import { TeamsModule } from '../teams/teams.module';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component'
     PlanetDialogsModule,
     SharedComponentsModule,
     UsersAchievementsModule,
-    NewsModule
+    NewsModule,
+    TeamsModule
   ],
   declarations: [
     HomeComponent,

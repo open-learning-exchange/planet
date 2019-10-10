@@ -9,6 +9,7 @@ import { UsersAchievementsComponent } from '../users/users-achievements/users-ac
 import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
 import { NewsComponent } from '../news/news.component';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
+import { TeamsViewComponent } from '../teams/teams-view.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -43,7 +44,10 @@ const routes: Routes = [
       { path: 'myAchievements/update', component: UsersAchievementsUpdateComponent },
       { path: 'news', component: NewsComponent },
       { path: 'logs/myplanet', component: LogsMyPlanetComponent },
-      { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) }
+      { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
+      { path: 'community', component: TeamsViewComponent, data: { mode: 'services' } },
+      { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
+      { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } }
     ]
   }
 ];
