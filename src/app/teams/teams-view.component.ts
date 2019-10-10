@@ -57,6 +57,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
+  configuration = this.stateService.configuration;
 
   constructor(
     private couchService: CouchService,
