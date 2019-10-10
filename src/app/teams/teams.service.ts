@@ -41,7 +41,7 @@ export class TeamsService {
     private validatorService: ValidatorService
   ) {}
 
-  addTeamDialog(userId: string, type: 'team' | 'enterprise', team: any = {}) {
+  addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
     const title = `${team._id ? 'Update' : 'Create'} ${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
     const formGroup = {
@@ -256,6 +256,21 @@ export class TeamsService {
 
   updateSendDocs(resources, sendTo) {
     this.couchService.bulkDocs('send_items', resources.map(resource => ({ db: 'resources', sendTo, item: resource }))).subscribe();
+  }
+
+  createServicesDoc() {
+    const { code, parentCode } = this.stateService.configuration;
+    const newServicesDoc = {
+      '_id': `${code}@${parentCode}`,
+      'createdDate': this.couchService.datePlaceholder,
+      'teamPlanetCode': `${code}`,
+      'parentCode': `${parentCode}`,
+      'description': '',
+      'requests': [],
+      'teamType': 'sync',
+      'type': 'services'
+    };
+    return this.updateTeam(newServicesDoc);
   }
 
 }

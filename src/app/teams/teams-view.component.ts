@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, finalize, map } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -49,7 +49,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   leader: string;
   planetCode: string;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
-  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[];
@@ -76,6 +76,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId');
       this.initTeam(this.teamId);
@@ -84,6 +85,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
+    if (this.mode === 'services') {
+      this.getTeam(`${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`).pipe(catchError(() =>
+        this.teamsService.createServicesDoc()
+      )).subscribe(team => {
+        this.team = team;
+        this.userStatus = 'member';
+      });
+    }
   }
 
   ngAfterViewChecked() {
@@ -109,11 +118,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  getTeam(teamId: string) {
+    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(tap((data) => this.team = data));
+  }
+
   initTeam(teamId: string) {
-    this.couchService.get(`${this.dbName}/${teamId}`).pipe(
-      switchMap(data => {
-        this.planetCode = this.stateService.configuration.code;
-        this.team = data;
+    this.getTeam(teamId).pipe(
+      switchMap(() => {
         if (this.team.status === 'archived') {
           this.router.navigate([ '/teams' ]);
           this.planetMessageService.showMessage('This team no longer exists');
