@@ -211,23 +211,27 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
+    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
     const fields = [
       {
         'placeholder': 'From',
         'type': 'date',
         'name': 'startDate',
-        'required': true
+        'required': true,
+        'min': new Date(minDate),
+        'max': new Date(this.today)
       },
       {
         'placeholder': 'To',
         'type': 'date',
         'name': 'toDate',
-        'required': true
+        'required': true,
+        'min': new Date(minDate),
+        'max': new Date(this.today)
       }
     ];
-    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
     const formGroup = {
-      startDate: [ new Date(minDate) , CustomValidators.isAfterDate(new Date(minDate)) ],
+      startDate: [ new Date(minDate), CustomValidators.isAfterDate(new Date(minDate)) ],
       toDate: [ new Date(this.today), CustomValidators.endDateValidator(), ac => this.validatorService.notDateInFuture$(ac) ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
