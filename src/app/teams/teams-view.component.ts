@@ -94,6 +94,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           return this.getMembers();
         })
       ).subscribe(() => {
+        this.leader = '';
         this.userStatus = 'member';
       });
     }
