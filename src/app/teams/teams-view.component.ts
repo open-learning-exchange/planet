@@ -87,9 +87,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setTasks(tasks);
     });
     if (this.mode === 'services') {
-      this.getTeam(`${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`).pipe(catchError(() =>
-        this.teamsService.createServicesDoc()
-      )).subscribe(team => {
+      this.getTeam(`${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`).pipe(
+        catchError(() => this.teamsService.createServicesDoc()),
+        switchMap(() => this.getMembers())
+      ).subscribe(team => {
         this.team = team;
         this.userStatus = 'member';
       });
