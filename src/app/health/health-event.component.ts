@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CustomValidators } from '../validators/custom-validators';
 import { HealthService } from './health.service';
 
 @Component({
@@ -42,8 +41,9 @@ export class HealthEventComponent implements OnInit {
   }
 
   onSubmit() {
-    this.healthService.addEvent({ ...this.healthForm.value, date: Date.now() });
-    this.goBack();
+    this.healthService.addEvent({ ...this.healthForm.value, date: Date.now() }).subscribe(() => {
+      this.goBack();
+    });
   }
 
   goBack() {

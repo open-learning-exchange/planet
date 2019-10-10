@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatTableDataSource, MatDialog } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
-import { MatTableDataSource, MatDialog } from '@angular/material';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './health.component.html',
@@ -31,11 +32,13 @@ import { HealthEventDialogComponent } from './health-event-dialog.component';
 })
 export class HealthComponent implements OnInit {
 
-  userDetail = this.healthService.userDetail || this.userService.get();
-  healthDetail = this.healthService.healthDetail;
-  events = this.healthService.events;
+  userDetail = this.userService.get();
+  healthDetail: any = {};
+  events: any[] = [];
   eventTable = new MatTableDataSource();
   displayedColumns: string[] = [];
+  imageSrc = '';
+  urlPrefix = environment.couchAddress + '/_users/';
 
   constructor(
     private userService: UserService,
@@ -46,15 +49,16 @@ export class HealthComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.userDetail.name !== this.userService.get().name) {
-      this.router.navigate([ 'update' ], { relativeTo: this.route });
-    }
-
-    this.eventTable.data = this.events.reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
-      { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
-      { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
-    ]);
-    this.displayedColumns = Object.keys(this.eventTable.data[0]);
+    this.healthService.getHealthData(this.userService.get()._id).subscribe(({ profile, events }) => {
+      // const { profile, events } = doc;
+      this.userDetail = { ...profile, ...this.userDetail };
+      if (this.userDetail._attachments) {
+        this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
+      }
+      this.healthDetail = profile;
+      this.events = events || [];
+      this.setEventData();
+    });
   }
 
   goBack() {
@@ -69,6 +73,14 @@ export class HealthComponent implements OnInit {
         maxHeight: '90vh'
       });
     }
+  }
+
+  setEventData() {
+    this.eventTable.data = this.events.reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
+      { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
+      { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
+    ]);
+    this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
 }
