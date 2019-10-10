@@ -46,7 +46,7 @@ export class TeamsService {
         team.name || '', CustomValidators.required,
         ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { $ne: team._id || '' }, status: 'active' } })
       ]
-    } : {}
+    } : {};
     const formGroup = {
       ...nameControl,
       description: team.description || '',
