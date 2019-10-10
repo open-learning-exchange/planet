@@ -124,7 +124,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     const url = this.router.url;
     const routesWithBackground = [
       'resources', 'courses', 'feedback', 'users', 'meetups', 'requests', 'associated', 'submissions', 'teams', 'surveys', 'news',
-      'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises', 'certifications'
+      'mySurveys', 'myHealth', 'myCourses', 'myLibrary', 'myTeams', 'enterprises', 'certifications', 'community', 'nation', 'earth'
     ];
     // Leaving the exception variable in so we can easily use this while still testing backgrounds
     const routesWithoutBackground = [];
