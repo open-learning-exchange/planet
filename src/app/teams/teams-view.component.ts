@@ -79,7 +79,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.teamId = params.get('teamId');
+      this.teamId = params.get('teamId') || `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
       this.initTeam(this.teamId);
     });
     this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
@@ -87,16 +87,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setTasks(tasks);
     });
     if (this.mode === 'services') {
-      this.getTeam(`${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`).pipe(
-        catchError(() => this.teamsService.createServicesDoc()),
-        switchMap(team => {
-          this.team = team;
-          return this.getMembers();
-        })
-      ).subscribe(() => {
-        this.leader = '';
-        this.userStatus = 'member';
-      });
+
     }
   }
 
@@ -128,6 +119,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initTeam(teamId: string) {
+    this.newsService.requestNews({ viewableBy: 'teams', viewableId: teamId });
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    if (this.mode === 'services') {
+      this.initServices(teamId);
+      return;
+    }
     this.getTeam(teamId).pipe(
       switchMap(() => {
         if (this.team.status === 'archived') {
@@ -144,8 +141,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.setStatus(teamId, this.userService.get());
     });
-    this.newsService.requestNews({ viewableBy: 'teams', viewableId: teamId });
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+
+  }
+
+  initServices(teamId) {
+    this.getTeam(teamId).pipe(
+      catchError(() => this.teamsService.createServicesDoc()),
+      switchMap(team => {
+        this.team = team;
+        return this.getMembers();
+      })
+    ).subscribe(() => {
+      this.leader = '';
+      this.userStatus = 'member';
+    });
   }
 
   getMembers() {
