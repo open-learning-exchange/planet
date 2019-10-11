@@ -155,7 +155,7 @@ export class TeamsService {
       this.couchService.findAll('_users'),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
-      ...(team.type === 'services' ? this.servicesMembers(team, users) : membershipDocs).map(doc => ({
+      ...[ ...(team.type === 'services' ? this.servicesMembers(team, users) : []), ...membershipDocs ].map(doc => ({
         ...doc,
         userDoc: users.find(user => user._id === doc.userId),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
