@@ -276,7 +276,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications('added')),
+        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
         finalize(() => this.dialogsLoadingService.stop())
       );
