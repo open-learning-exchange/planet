@@ -9,15 +9,15 @@
   <p><strong class="mat-body-strong" i18n>Vision: </strong>{{event.vision}}</p>
   <p><strong class="mat-body-strong" i18n>Hearing: </strong>{{event.hearing}}</p>
   <h4 class="primary-text-color" *ngIf="hasConditionAndTreatment">Condition and Treatment</h4>
-  <p *ngIf="event.notes"><strong class="mat-body-strong" i18n>Observations & Notes: </strong>{{event.notes}}</p>
-  <p *ngIf="event.diagnosis"><strong class="mat-body-strong" i18n>Diagnosis: </strong>{{event.diagnosis}}</p>
-  <p *ngIf="event.treatments"><strong class="mat-body-strong" i18n>Treatments: </strong>{{event.treatments}}</p>
-  <p *ngIf="event.medications"><strong class="mat-body-strong" i18n>Medications: </strong>{{event.medications}}</p>
-  <p *ngIf="event.immunizations"><strong class="mat-body-strong" i18n>Immunizations: </strong>{{event.immunizations}}</p>
-  <p *ngIf="event.allergies"><strong class="mat-body-strong" i18n>Allergies: </strong>{{event.allergies}}</p>
-  <p *ngIf="event.xrays"><strong class="mat-body-strong" i18n>X-rays: </strong>{{event.xrays}}</p>
-  <p *ngIf="event.tests"><strong class="mat-body-strong" i18n>Lab Tests: </strong>{{event.tests}}</p>
-  <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong>{{event.referrals}}</p>
+  <p *ngIf="event.notes"><strong class="mat-body-strong" i18n>Observations & Notes: </strong><td-markdown [content]="event.notes"></td-markdown>
+  <p *ngIf="event.diagnosis"><strong class="mat-body-strong" i18n>Diagnosis: </strong><td-markdown [content]="event.diagnosis"></td-markdown>
+  <p *ngIf="event.treatments"><strong class="mat-body-strong" i18n>Treatments: </strong><td-markdown [content]="event.treatments"></td-markdown>
+  <p *ngIf="event.medications"><strong class="mat-body-strong" i18n>Medications: </strong><td-markdown [content]="event.medications"></td-markdown>
+  <p *ngIf="event.immunizations"><strong class="mat-body-strong" i18n>Immunizations: </strong><td-markdown [content]="event.immunizations"></td-markdown>
+  <p *ngIf="event.allergies"><strong class="mat-body-strong" i18n>Allergies: </strong><td-markdown [content]="event.allergies"></td-markdown>
+  <p *ngIf="event.xrays"><strong class="mat-body-strong" i18n>X-rays: </strong><td-markdown [content]="event.xrays"></td-markdown>
+  <p *ngIf="event.tests"><strong class="mat-body-strong" i18n>Lab Tests: </strong><td-markdown [content]="event.tests"></td-markdown>
+  <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button type="button" color="primary" mat-raised-button mat-dialog-close i18n>OK</button>
