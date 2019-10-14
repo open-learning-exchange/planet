@@ -221,22 +221,22 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       },
       {
         'placeholder': 'To',
-        'name': 'toDate',
+        'name': 'endDate',
         ...commonProps
       }
     ];
     const formGroup = {
       startDate: [ new Date(minDate), CustomValidators.isAfterDate(new Date(minDate)) ],
-      toDate: [ new Date(this.today), CustomValidators.endDateValidator(), ac => this.validatorService.notDateInFuture$(ac) ]
+      endDate: [ new Date(this.today), CustomValidators.endDateValidator(), ac => this.validatorService.notDateInFuture$(ac) ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
     });
   }
 
-  exportCSV(reportType: string, dateRange: { fromDate, toDate }) {
-    const filterByDate = (array, dateField, { fromDate, toDate }) => array.filter(item =>
-      item[dateField] >= fromDate.getTime() && item[dateField] <= toDate.getTime()
+  exportCSV(reportType: string, dateRange: { startDate, endDate }) {
+    const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
+      item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
     );
     switch (reportType) {
       case 'logins':
