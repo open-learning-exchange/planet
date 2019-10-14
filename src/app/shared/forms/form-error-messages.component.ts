@@ -6,16 +6,19 @@
  * Message will need update if used for other situations
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
 
 @Component({
   selector: 'planet-form-error-messages',
   template: `
-    <span *ngIf="shouldShowError()" [matTooltip]="tooltipText()" i18n>{updateError(), select,
+    <span *ngIf="error" [matTooltip]="tooltipText()" i18n>{error, select,
       required {This field is required}
       min {The number cannot be below}
       max {The number cannot exceed}
+      matDatepickerMin {The date cannot be before}
+      matDatepickerMax {The date cannot be after}
+      matDatepickerParse {Invalid date}
       duplicate {Value already exists}
       duplicateUser {User already exists}
       email {Please enter a valid email}
@@ -37,14 +40,24 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       dateRequired {This field requires a valid date}
       noUnderscore {Cannot include an underscore}
     }</span>{{number === undefined ? '' : ' ' + number}}
+    <ng-container *ngIf="error === 'matDatepickerMin' || error === 'matDatepickerMax'">
+      {{date === undefined ? '' : ' ' + (date | date)}}
+    </ng-container>
   `
 })
-export class FormErrorMessagesComponent {
+export class FormErrorMessagesComponent implements OnInit {
 
   @Input() private control: AbstractControlDirective | AbstractControl;
 
   error = '';
   number: number;
+  date: Date;
+
+  ngOnInit() {
+    this.control.statusChanges.subscribe(() => {
+      this.updateError();
+    });
+  }
 
   shouldShowError(): boolean {
     return (
@@ -55,16 +68,25 @@ export class FormErrorMessagesComponent {
   }
 
   // Show one error at a time
-  updateError(): string {
+  updateError() {
+    if (!this.control.errors) {
+      this.error = '';
+      return;
+    }
     const errorType = Object.keys(this.control.errors)[0];
-    this.number = this.control.errors[errorType].min !== undefined || this.control.errors[errorType].max !== undefined ?
+    const number = this.control.errors[errorType].min !== undefined || this.control.errors[errorType].max !== undefined ?
       this.control.errors[errorType].min || this.control.errors[errorType].max || 0 :
       undefined;
-    return errorType;
+    if (errorType.indexOf('Datepicker') > -1) {
+      this.date = new Date(number);
+    } else {
+      this.number = number;
+    }
+    this.error = errorType;
   }
 
   tooltipText() {
-    switch (this.updateError()) {
+    switch (this.error) {
       case 'pattern':
         return 'Letters, numbers and _ . - allowed.';
       default:

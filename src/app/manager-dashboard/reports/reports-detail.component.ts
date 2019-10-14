@@ -10,6 +10,8 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -38,7 +40,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private validatorService: ValidatorService
   ) {}
 
   ngOnInit() {
@@ -208,33 +211,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
+    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
+    const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const fields = [
       {
-        'label': 'From',
-        'type': 'date',
-        'name': 'fromDate',
-        'required': true
+        'placeholder': 'From',
+        'name': 'startDate',
+        ...commonProps
       },
       {
-        'label': 'To',
-        'type': 'date',
-        'name': 'toDate',
-        'required': true
+        'placeholder': 'To',
+        'name': 'endDate',
+        ...commonProps
       }
     ];
-    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
     const formGroup = {
-      fromDate: [ new Date(minDate) ],
-      toDate: [ new Date(this.today) ]
+      startDate: new Date(minDate),
+      endDate: [ new Date(this.today), CustomValidators.endDateValidator() ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
     });
   }
 
-  exportCSV(reportType: string, dateRange: { fromDate, toDate }) {
-    const filterByDate = (array, dateField, { fromDate, toDate }) => array.filter(item =>
-      item[dateField] >= fromDate.getTime() && item[dateField] <= toDate.getTime()
+  exportCSV(reportType: string, dateRange: { startDate, endDate }) {
+    const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
+      item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
     );
     switch (reportType) {
       case 'logins':
