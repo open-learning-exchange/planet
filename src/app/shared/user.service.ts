@@ -32,6 +32,7 @@ export class UserService {
   }
   currentSession: any;
   userProperties: string[] = [];
+  additionalProperties: string[] = [ 'requestId', '_attachments' ];
   credentialProperties = [ 'derived_key', 'iterations', 'password_scheme', 'salt', 'key', 'iv' ];
   credentials: any;
   emptyShelf = { meetupIds: [], resourceIds: [], courseIds: [], myTeamIds: [] };
@@ -73,7 +74,7 @@ export class UserService {
         const userData = users.find(u => u.name === user.name);
         if (userData) {
           // Remove hashed password information from the data object
-          const profile = this.getUserProperties(userData, this.userProperties);
+          const profile = this.getUserProperties(userData, [ ...this.userProperties, ...this.additionalProperties ]);
           this.credentials = this.getUserProperties(userData, this.credentialProperties);
           this.user = profile;
           this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
@@ -199,7 +200,7 @@ export class UserService {
     .pipe(
       switchMap(res => {
         newUserInfo._rev = res.rev;
-        const profile = this.getUserProperties(newUserInfo, this.userProperties);
+        const profile = this.getUserProperties(newUserInfo, [ ...this.userProperties, ...this.additionalProperties ]);
         if (newUserInfo.name === this.get().name) {
           if (this.user.roles.indexOf('_admin') !== -1) {
             profile.roles.push('_admin');
