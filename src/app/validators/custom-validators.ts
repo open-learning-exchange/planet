@@ -242,14 +242,4 @@ export class CustomValidators {
     return /\S/.test(ac.value) ? null : { 'required': true };
   }
 
-  // for validating whether end date comes before start date or not
-  static isAfterDate(minDate: Date): ValidatorFn {
-    return (ac: AbstractControl): ValidationErrors => {
-      if (
-        minDate.getTime() > new Date(ac.value).getTime()
-      ) {
-        return { invalidDate: true };
-      }
-    };
-  }
 }
