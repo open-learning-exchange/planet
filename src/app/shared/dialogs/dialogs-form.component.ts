@@ -12,7 +12,7 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: any;
-  public modalForm: any;
+  public modalForm: FormGroup;
   passwordVisibility = new Map();
   isSpinnerOk = true;
   errorMessage = '';
@@ -83,6 +83,10 @@ export class DialogsFormComponent {
       this.dialogListRef.close();
       this.modalForm.markAsDirty();
     };
+  }
+
+  isValid() {
+    return this.modalForm.status === 'VALID';
   }
 
   isDirty() {
