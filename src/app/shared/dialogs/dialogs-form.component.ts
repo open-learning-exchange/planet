@@ -12,7 +12,7 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: any;
-  public modalForm: any;
+  public modalForm: FormGroup;
   passwordVisibility = new Map();
   isSpinnerOk = true;
   errorMessage = '';
@@ -85,15 +85,12 @@ export class DialogsFormComponent {
     };
   }
 
+  isValid() {
+    return this.modalForm.status === 'VALID';
+  }
+
   isDirty() {
     return this.modalForm.dirty;
   }
 
-  isDateValid() {
-    if (this.modalForm.value.fromDate !== undefined && this.modalForm.value.toDate !== undefined) {
-      return this.modalForm.value.toDate > this.modalForm.value.fromDate;
-    } else {
-      return false;
-    }
-  }
 }
