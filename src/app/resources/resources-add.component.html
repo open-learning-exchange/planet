@@ -86,6 +86,7 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
+        <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.notInFile">Choose existing file please</label>
         <div class="inner-gaps by-column full-width">
           <label i18n>File Upload:</label>
           <input type="file" (change)="bindFile($event)" />
