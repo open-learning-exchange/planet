@@ -66,7 +66,7 @@
         <h4 class="full-width">Examinations</h4>
         <mat-table [dataSource]="eventTable" class="full-width" *ngIf="events.length > 0">
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <mat-header-cell *matHeaderCellDef class="table-column">{{ column === 'label' ? '' : (column | date) }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ column === 'label' ? '' : (column | date) }}</mat-header-cell>
             <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ row[column] }}</mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
