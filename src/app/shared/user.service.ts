@@ -78,6 +78,7 @@ export class UserService {
           this.credentials = this.getUserProperties(userData, this.credentialProperties);
           this.user = profile;
           this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
+          this.userChange.next(this.user);
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
@@ -107,7 +108,9 @@ export class UserService {
   unset(): any {
     this.user = { name: '' };
     this.shelf = {};
+    this.credentials = {};
     this.currentSession = undefined;
+    this.userChange.next(this.user);
   }
 
   logObj(loginTime, logoutTime: any = 0) {
