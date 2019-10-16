@@ -197,7 +197,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.examType = submission.parent.type === 'surveys' ? 'survey' : 'exam';
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
-        this.grade = ans ? ans.grade || this.grade : this.grade;
+        this.grade = (ans && ans.grade !== undefined) ? ans.grade : this.grade
       }
       if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
