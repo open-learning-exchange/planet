@@ -11,6 +11,7 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { toProperCase } from '../shared/utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -128,8 +129,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
     this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
-      const update = `${team._id ? 'updated' : 'created'}`;
-      const msg = this.mode === 'enterprise' ? 'Enterprise ' + update + ' successfully' : 'Team ' + update + ' successfully';
+      const action = `${team._id ? 'updated' : 'created'}`;
+      const msg = `${toProperCase(this.mode)} ${action} successfully`;
       this.planetMessageService.showMessage(msg);
     });
   }
