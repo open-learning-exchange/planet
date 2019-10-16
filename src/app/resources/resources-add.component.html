@@ -85,6 +85,7 @@
               {{file}}
             </mat-option>
           </mat-autocomplete>
+          <mat-error><planet-form-error-messages [control]="resourceForm.controls.openWhichFile"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <div class="inner-gaps by-column full-width">
           <label i18n>File Upload:</label>

@@ -134,7 +134,7 @@ export class ResourcesAddComponent implements OnInit {
       medium: '',
       resourceType: '',
       addedBy: '',
-      openWhichFile: { value: '', disabled: true },
+      openWhichFile: [ { value: '', disabled: true }, (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles) ],
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
