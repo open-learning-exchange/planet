@@ -8,27 +8,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './health.component.html',
-  styles: [ `
-    .profile-container {
-      display: grid;
-      grid-template-columns: minmax(200px, 1fr) 3fr;
-      grid-column-gap: 2rem;
-    }
-    .profile-container mat-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 200px);
-      grid-column-gap: 0.5rem;
-    }
-    .full-width {
-      grid-column: 1 / -1;
-    }
-    mat-table {
-      overflow-x: auto;
-    }
-    .table-column {
-      min-width: 200px;
-    }
-  ` ]
+  styleUrls: [ './health.scss' ]
 })
 export class HealthComponent implements OnInit {
 
