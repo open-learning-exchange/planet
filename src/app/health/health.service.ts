@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,11 +25,17 @@ export class HealthService {
   }
 
   getHealthData(userId) {
-    if (this.key === undefined || this.iv === undefined) {
+    const resetHealthData = () => {
+      this.healthData = {};
       return of({ profile: {}, events: [] });
+    };
+    if (this.key === undefined || this.iv === undefined) {
+      return resetHealthData();
     }
-    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key, iv: this.iv })
-      .pipe(tap((response) => this.healthData = response));
+    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key, iv: this.iv }).pipe(
+      tap((response) => this.healthData = response),
+      catchError(() => resetHealthData())
+    );
   }
 
   addEvent(event: any) {
