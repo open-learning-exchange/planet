@@ -5,8 +5,8 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
       <h3 class="margin-lr-3 ellipsis-title" >
-          <ng-container *ngIf="mode==='enterprise'; else elseTemplate">{{team?.name}} Office</ng-container>
-            <ng-template #elseTemplate>
+          <ng-container *ngIf="mode==='enterprise'; else notEnterprise">{{team?.name}} Office</ng-container>
+            <ng-template #notEnterprise>
               {{team?.name}}
             </ng-template>
         </h3>
