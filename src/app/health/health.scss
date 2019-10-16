@@ -1,7 +1,10 @@
+$exam-table-col-width: 150px;
+
 .profile-container {
   display: grid;
   grid-template-columns: minmax(200px, 1fr) 3fr;
   grid-column-gap: 2rem;
+  grid-auto-columns: $exam-table-col-width;
 }
 .profile-container mat-list {
   display: grid;
@@ -11,9 +14,12 @@
 .full-width {
   grid-column: 1 / -1;
 }
-mat-table {
+.table-container {
   overflow-x: auto;
 }
+mat-table {
+  width: max-content;
+}
 .table-column {
-  min-width: 200px;
+  min-width: $exam-table-col-width;
 }
