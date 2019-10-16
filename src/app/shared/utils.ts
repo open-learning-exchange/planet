@@ -63,3 +63,4 @@ export const urlToParamObject = (url: string) => url.split(';').reduce((params, 
   return params;
 }, {});
 
+export const toProperCase = (string: string) => `${string.slice(0, 1).toUpperCase()}${string.slice(1)}`;

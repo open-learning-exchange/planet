@@ -9,6 +9,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
+import { toProperCase } from '../shared/utils';
 
 const nameField = {
   'type': 'textbox',
@@ -40,7 +41,7 @@ export class TeamsService {
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
-    const title = `${team._id ? 'Update' : 'Create'} ${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
+    const title = `${team._id ? 'Update' : 'Create'} ${toProperCase(type)}`;
     const nameControl = type !== 'services' ? { name:
       [
         team.name || '', CustomValidators.required,
