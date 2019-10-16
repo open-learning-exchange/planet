@@ -85,14 +85,6 @@ export class ResourcesAddComponent implements OnInit {
         return null;
       }
     });
-    this.resourceForm.setValidators(() => {
-      if (this.file && this.simpleMediaType(this.file.type) === 'zip' && this.resourceForm.controls.openWhichFile.value !== ''
-           && !this.attachedZipFiles.includes(this.resourceForm.controls.openWhichFile.value)) {
-        return { 'notInFile': true };
-      } else {
-        return null;
-      }
-    });
     this.userDetail = this.userService.get();
     this.resourcesService.requestResourcesUpdate(false, false);
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
@@ -142,7 +134,7 @@ export class ResourcesAddComponent implements OnInit {
       medium: '',
       resourceType: '',
       addedBy: '',
-      openWhichFile: { value: '', disabled: true },
+      openWhichFile: [ { value: '', disabled: true }, (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles) ],
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,

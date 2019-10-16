@@ -242,4 +242,11 @@ export class CustomValidators {
     return /\S/.test(ac.value) ? null : { 'required': true };
   }
 
+  static fileMatch(ac: AbstractControl, fileList: string[]) {
+    if (fileList.length > 1 && ac.value !== '' && !fileList.includes(ac.value)) {
+      return { 'notFileMatch': true };
+    }
+    return null;
+  }
+
 }
