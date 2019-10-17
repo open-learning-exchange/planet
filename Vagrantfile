@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
   end
 
   BOX = "treehouses/buster64"
-  BOX_VERSION = "0.11.3"
+  BOX_VERSION = "0.12.1"
 
   # production VM
   config.vm.define "prod" do |prod|
@@ -46,7 +46,6 @@ Vagrant.configure(2) do |config|
 
     # Start docker on every startup
     prod.vm.provision "shell", run: "always", inline: <<-SHELL
-      sed -i "s#2.3.0#2.3.1#" planet.yml
       if [ -f /srv/planet/pwd/credentials.yml ]; then
         docker-compose -f planet.yml -f volumes.yml -f /srv/planet/pwd/credentials.yml -p planet up -d
       else
