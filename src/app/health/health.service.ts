@@ -32,8 +32,8 @@ export class HealthService {
       .pipe(tap((response) => this.healthData = response));
   }
 
-  addEvent(event: any) {
-    return this.postHealthData({ events: [ ...(this.healthData.events || []), event ] });
+  addEvent(_id: string, event: any) {
+    return this.postHealthData({ _id, events: [ ...(this.healthData.events || []), event ] });
   }
 
   postHealthData(data) {
