@@ -11,12 +11,14 @@ import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   exports: [ MeetupsAddComponent, MeetupsViewComponent ],
   imports: [
     MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule,
-     MatDialogModule, SharedComponentsModule
+     MatDialogModule, SharedComponentsModule,
+     NgxMaskModule.forRoot()
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent

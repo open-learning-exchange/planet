@@ -11,6 +11,7 @@ import { MaterialModule } from './shared/material.module';
 import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
     MaterialModule,
     PlanetDialogsModule,
     NgxImgModule.forRoot(),
+    NgxMaskModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
