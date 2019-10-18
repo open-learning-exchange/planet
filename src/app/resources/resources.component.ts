@@ -49,7 +49,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
   planetType = this.planetConfiguration.planetType;
-  displayedColumns = [ 'select', 'title', 'rating' ];
+  displayedColumns = [ 'select', 'title', 'createdDate', 'rating' ];
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
