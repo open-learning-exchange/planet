@@ -89,7 +89,9 @@
               <mat-card-content *ngIf="member.tasks && member.tasks.length > 0">
                 <span class="mat-caption">Tasks</span>
                 <mat-selection-list (selectionChange)="toggleTask($event)">
-                  <mat-list-option checkboxPosition="before" *ngFor="let task of member.tasks" [selected]="task.completed" [value]="task">{{task.title}}</mat-list-option>
+                  <mat-list-option checkboxPosition="before" *ngFor="let task of member.tasks" [selected]="task.completed" [value]="task">
+                    <p class="ellipsis-title">{{task.title}}</p>
+                  </mat-list-option>
                 </mat-selection-list>
               </mat-card-content>
             </mat-card>
