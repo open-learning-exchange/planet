@@ -5,8 +5,10 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">
-      <ng-container *ngIf="mode==='enterprise'; else notEnterprise">{{team?.name}} Office</ng-container>
-      <ng-template #notEnterprise>{{team?.name}}</ng-template>
+      <div *ngIf="team">
+        <ng-container *ngIf="mode==='enterprise'; else notEnterprise">{{team.name}}<ng-container i18n> Office</ng-container></ng-container>
+        <ng-template #notEnterprise>{{team.name}}</ng-template>
+      </div>
     </h3>
     <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
     <span class="toolbar-fill"></span>
