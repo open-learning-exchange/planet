@@ -190,7 +190,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       ...member,
       tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
     }));
-    if ( this.userStatus === 'member') {
+    if (this.userStatus === 'member') {
       const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
