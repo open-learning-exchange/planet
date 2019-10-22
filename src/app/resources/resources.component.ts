@@ -24,7 +24,6 @@ import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
-import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   selector: 'planet-resources',
@@ -319,9 +318,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendResource() {
     return (selectedPlanet: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      let updatedData = selectedPlanet;
-      for (let i = 0; i < updatedData.length; i++) {
-        this.syncService.createChildPullDoc(items, 'resources', updatedData[i].code).subscribe(() => {
+      for (let i = 0; i < selectedPlanet.length; i++) {
+        this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[i].code).subscribe(() => {
           const msg = this.planetType === 'center' ? 'nation' : 'community';
           this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
           this.dialogRef.close();
