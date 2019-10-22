@@ -24,6 +24,7 @@ import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   selector: 'planet-resources',
@@ -307,7 +308,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((planet) => {
       const data = { okClick: this.sendResource().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: false,
+        allowMulti: true,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data, maxHeight: '500px', width: '600px', autoFocus: false
@@ -318,11 +319,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendResource() {
     return (selectedPlanet: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code).subscribe(() => {
-        const msg = this.planetType === 'center' ? 'nation' : 'community';
-        this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
-        this.dialogRef.close();
-      }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
+      let updatedData = selectedPlanet;
+      for (let i = 0; i < updatedData.length; i++) {
+        this.syncService.createChildPullDoc(items, 'resources', updatedData[i].code).subscribe(() => {
+          const msg = this.planetType === 'center' ? 'nation' : 'community';
+          this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
+          this.dialogRef.close();
+        }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
+      }
     };
   }
 
