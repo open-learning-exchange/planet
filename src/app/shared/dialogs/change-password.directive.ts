@@ -171,10 +171,12 @@ export class ChangePasswordDirective implements OnChanges {
       this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
       this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, 'password': password },
         { withCredentials: true, domain: this.planetConfiguration.parentDomain })
-    ]).pipe(catchError(() => {
+    ]).pipe(
       // Silent error for now so other specific messages are shown
-      return of({ ok: true });
-    }));
+      catchError(() => of({})),
+      // Reset user data with credential information
+      switchMap(() => this.userService.resetUserData(`org.couchdb.user:${username}`))
+    );
   }
 
   updatePasswordOnParent(userData) {
