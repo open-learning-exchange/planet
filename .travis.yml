@@ -16,13 +16,7 @@ _prepare_multiarch: &_prepare_multiarch
     - prepare_planet_rpi
 _use_chrome: &_use_chrome
   addons:
-    apt:
-      sources:
-        - google-chrome
-      packages:
-        - google-chrome-stable
-        - google-chrome-beta
-        - jq
+    chrome: stable
 _use_nodejs: &_use_nodejs
   language: node_js
   node_js:
