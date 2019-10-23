@@ -56,10 +56,12 @@ export class HealthComponent implements OnInit {
   }
 
   setEventData() {
-    this.eventTable.data = this.events.reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
-      { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
-      { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
-    ]);
+    this.eventTable.data = this.events
+      .sort((a, b) => b.date - a.date)
+      .reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
+        { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
+        { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
+      ]);
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
