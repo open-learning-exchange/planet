@@ -177,7 +177,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.members = docsWithName.filter(mem => mem.docType === 'membership')
         .sort((a, b) => a.userId === this.leader ? -1 : 0);
       const memberPrint = this.members;
-      console.log({memberPrint});
+      console.log({ memberPrint });
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
