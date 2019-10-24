@@ -390,7 +390,10 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
       this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
-        const childType = this.planetType === 'center' ? 'nation' : 'community';
+        const childType = {
+          center: selected.length > 1 ? 'nations' : 'nation',
+          nation: selected.length > 1 ? 'communities' : 'community'
+        }[this.planetType];
         this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
