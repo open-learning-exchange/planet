@@ -9,9 +9,9 @@ import { selectedOutOfFilter } from '../../shared/table-helpers';
 import { ResourcesSearchComponent } from '../../resources/search-resources/resources-search.component';
 
 @Component({
-  selector: 'app-users-personals',
+  selector: 'planet-users-personals',
   templateUrl: './users-personals.component.html',
-  styleUrls: ['./users-personals.component.scss']
+  styleUrls: [ './users-personals.component.scss' ]
 })
 export class UsersPersonalsComponent implements OnInit {
 
