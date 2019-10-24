@@ -44,9 +44,7 @@ export class HealthService {
 
   postHealthData(data) {
     return (this.key === undefined || this.iv === undefined ?
-      this.userService.updateUser(
-        { ...this.userService.get(), ...this.userService.credentials, key: this.createNewKey(32), iv: this.createNewKey(16) }
-      ) :
+      this.userService.updateUser({ ...this.userService.get(), key: this.createNewKey(32), iv: this.createNewKey(16) }) :
       of({})
     ).pipe(switchMap(() =>
       this.couchService.put('health/_design/health/_update/encrypt', { ...this.healthData, ...data, key: this.key, iv: this.iv })
