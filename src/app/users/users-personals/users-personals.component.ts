@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 // import { FormControl } from '../../../node_modules/@angular/forms';
 import { FormControl, } from '@angular/forms';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // import { selectedOutOfFilter } from '../shared/table-helpers';
 import { selectedOutOfFilter } from '../../shared/table-helpers';
