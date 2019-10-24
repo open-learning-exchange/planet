@@ -5,6 +5,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -52,20 +53,19 @@ export class HealthUpdateComponent implements OnInit {
     this.profileForm.patchValue(this.userService.get());
     this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
       this.existingData = data;
-      this.profileForm.patchValue(data.profile);
       this.healthForm.patchValue(data.profile);
     });
   }
 
   onSubmit() {
-    this.healthService.postHealthData({
-      _id: this.existingData._id || this.userService.get()._id,
-      _rev: this.existingData._rev,
-      profile: {
-        ...this.profileForm.value,
-        ...this.healthForm.value
-      }
-    }).subscribe(() => this.goBack());
+    forkJoin([
+      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
+      this.healthService.postHealthData({
+        _id: this.existingData._id || this.userService.get()._id,
+        _rev: this.existingData._rev,
+        profile: this.healthForm.value
+      })
+    ]).subscribe(() => this.goBack());
   }
 
   goBack() {

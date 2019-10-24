@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce } from '../../shared/utils';
+import { UsersService } from '../../users/users.service';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -20,7 +21,8 @@ export class ReportsService {
   users: any[] = [];
 
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private usersService: UsersService
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
@@ -67,7 +69,7 @@ export class ReportsService {
 
   getTotalUsers(planetCode: string, local: boolean) {
     const obs = local ?
-      this.couchService.findAll('_users') :
+      this.usersService.getAllUsers() :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite' && user.roles.length);

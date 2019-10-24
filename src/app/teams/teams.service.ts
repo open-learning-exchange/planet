@@ -10,6 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { toProperCase } from '../shared/utils';
+import { UsersService } from '../users/users.service';
 
 const nameField = {
   'type': 'textbox',
@@ -35,6 +36,7 @@ export class TeamsService {
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
+    private usersService: UsersService,
     private stateService: StateService,
     private validatorService: ValidatorService
   ) {}
@@ -153,7 +155,7 @@ export class TeamsService {
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
-      this.couchService.findAll('_users'),
+      this.usersService.getAllUsers(),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...[ ...(team.type === 'services' ? this.servicesMembers(team, users) : []), ...membershipDocs ].map(doc => ({
