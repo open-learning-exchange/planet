@@ -51,9 +51,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: { value: string, text: string }[] = [ {value: 'leader', text: 'Leader'}, {value: 'monitor', text: 'Monitor'}, {value: 'health', text: 'Health Provider'} ];
+  roleList: { value: string, text: string }[] =
+  [ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' }, { value: 'health', text: 'Health Provider' } ];
   allRolesList: string[] = [ ...this.roleList.map(r => r.text), 'learner', 'manager' ].sort();
-  selectedRoles: string[] = [];
+  selectedRoles: { value: string, text: string }[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
   private dbName = '_users';
@@ -292,11 +293,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   roleSubmit(userIds: any[], roles: { value: string, text: string }[]) {
-    console.info(roles);
-    console.info(".......");
-    console.info(this.selectedRoles);
-    console.info(this.allRolesList);
-    console.info('roles......');
     const users: any = this.idsToUsers(userIds);
     forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
@@ -362,10 +358,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateSelectedRoles(newSelection: { value: string, text: string }[]) {
-    console.info(newSelection);
-    console.info("newSelection");
-    this.selectedRoles = newSelection.map(r => r.value);
-    console.info(this.selectedRoles);
+    this.selectedRoles = newSelection;
   }
 
   userLoginCount(user: any, loginActivities: any[]) {
