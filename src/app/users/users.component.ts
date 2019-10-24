@@ -51,8 +51,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'leader', 'monitor', 'Health Provider' ];
-  allRolesList: string[] = [ ...this.roleList, 'learner', 'manager' ].sort();
+  roleList: { value: string, text: string }[] = [ {value: 'leader', text: 'Leader'}, {value: 'monitor', text: 'Monitor'}, {value: 'health', text: 'Health Provider'} ];
+  allRolesList: string[] = [ ...this.roleList.map(r => r.text), 'learner', 'manager' ].sort();
   selectedRoles: string[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
@@ -291,20 +291,18 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  roleSubmit(userIds: any[], roles: string[]) {
+  roleSubmit(userIds: any[], roles: { value: string, text: string }[]) {
+    console.info(roles);
+    console.info(".......");
+    console.info(this.selectedRoles);
+    console.info(this.allRolesList);
+    console.info('roles......');
     const users: any = this.idsToUsers(userIds);
-    roles = roles.map((role) => {
-      if (role === 'Health Provider') {
-        return role = 'health';
-      } else {
-        return role;
-      }
-    });
     forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = { ...user, roles: [ 'learner', ...roles ] };
+        const tempUser = { ...user, roles: [ 'learner', ...roles.map(r => r.value) ] };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
@@ -363,8 +361,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate([ path ], { relativeTo: this.route });
   }
 
-  updateSelectedRoles(newSelection: string[]) {
-    this.selectedRoles = newSelection;
+  updateSelectedRoles(newSelection: { value: string, text: string }[]) {
+    console.info(newSelection);
+    console.info("newSelection");
+    this.selectedRoles = newSelection.map(r => r.value);
+    console.info(this.selectedRoles);
   }
 
   userLoginCount(user: any, loginActivities: any[]) {
