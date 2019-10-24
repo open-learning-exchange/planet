@@ -378,7 +378,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((planet) => {
       const data = { okClick: this.sendCourse('courses').bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: false,
+        allowMulti: true,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data, maxHeight: '500px', width: '600px', autoFocus: false
@@ -389,7 +389,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendCourse(db: string) {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
+      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
         const childType = this.planetType === 'center' ? 'nation' : 'community';
         this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
