@@ -1,19 +1,29 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 // import { FormControl } from '../../../node_modules/@angular/forms';
 import { FormControl, } from '@angular/forms';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // import { selectedOutOfFilter } from '../shared/table-helpers';
-import { selectedOutOfFilter } from '../../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById 
+} from '../../shared/table-helpers';
 import { ResourcesSearchComponent } from '../../resources/search-resources/resources-search.component';
+import { Subject, of, combineLatest } from 'rxjs';
+import { ResourcesService } from '../../resources/resources.service';
+import { UserService } from '../../shared/user.service';
+import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { CouchService } from '../../shared/couchdb.service';
+import { StateService } from '../../shared/state.service';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 
 @Component({
   selector: 'planet-users-personals',
   templateUrl: './users-personals.component.html',
   styleUrls: [ './users-personals.component.scss' ]
 })
-export class UsersPersonalsComponent implements OnInit {
+export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(ResourcesSearchComponent, { static: false }) searchComponent: ResourcesSearchComponent;
@@ -35,13 +45,101 @@ export class UsersPersonalsComponent implements OnInit {
     this.removeFilteredFromSelection();
   }
   selection = new SelectionModel(true, []);
+  trackById = trackById;
+  onDestroy$ = new Subject<void>();
+  emptyData = false;
+  @Input() excludeIds = [];
+  filterPredicate = composeFilterFunctions(
+    [
+      filterAdvancedSearch(this.searchSelection),
+      filterTags(this.tagFilter),
+      filterSpecificFieldsByWord([ 'doc.title' ]),
+      filterShelf(this.myLibraryFilter, 'libraryInfo')
+    ]
+  );
+  isAuthorized = false;
+  selectedNotAdded = 0;
+  selectedAdded = 0;
+  selectedSync = [];
+  currentUser = this.userService.get();
+  planetConfiguration = this.stateService.configuration;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+  @ViewChild(PlanetTagInputComponent, { static: false })
+  private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private resourcesService: ResourcesService,
+    private userService: UserService,
+    private couchService: CouchService,
+    private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
+    this.titleSearch = this.dropdownsFill();
+    combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
+      startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
+      map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
+      switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
+    ).subscribe((resources) => {
+      this.resources.data = resources.filter(
+        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private !== true
+      );
+      this.emptyData = !this.resources.data.length;
+      this.resources.paginator = this.paginator;
+      this.dialogsLoadingService.stop();
+    });
+    this.resourcesService.requestResourcesUpdate(this.parent);
+    this.resources.filterPredicate = this.filterPredicate;
+    this.resources.sortingDataAccessor = commonSortingDataAccessor;
+    this.tagFilter.valueChanges.subscribe((tags) => {
+      this.tagFilterValue = tags;
+      this.resources.filter = this.resources.filter || tags.length > 0 ? ' ' : '';
+      this.removeFilteredFromSelection();
+    });
+    this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
+    this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    console.log(this.resources.data);
+  }
+
+  ngAfterViewInit() {
+    this.resources.sort = this.sort;
+    this.resources.paginator = this.paginator;
+    this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  onSelectionChange(selected) {
+    const { inShelf, notInShelf } = this.userService.countInShelf(selected, 'resourceIds');
+    this.selectedAdded = inShelf;
+    this.selectedNotAdded = notInShelf;
+    this.selectedSync = selected.filter(id => this.hasAttachment(id));
+  }
+
+  hasAttachment(id: string) {
+    return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
+  }
+
+  setupList(resourcesRes, myLibrarys) {
+    return resourcesRes.map((resource: any) => {
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
+        return resource._id === resourceId;
+      });
+      resource.canManage = this.currentUser.isUserAdmin ||
+        (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
+      return { ...resource, libraryInfo: myLibraryIndex > -1 };
+    });
   }
 
   goBack() {

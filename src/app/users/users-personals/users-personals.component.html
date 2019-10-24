@@ -38,19 +38,15 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{element.doc.title}}</a>
-            <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{element.doc.title}}</a></ng-template>
-            <ng-container *ngIf="!parent && !isDialog">
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
-            </ng-container>
+            <a *ngIf="!isDialog; else dialog">{{element.doc.title}}</a>
+            <ng-template #dialog><a target="_blank">{{element.doc.title}}</a></ng-template>
           </h3>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
+              <mat-chip *ngIf="tag.isMainTag" color="primary" selected>
                 {{tag.name}}
               </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
+              <mat-chip *ngFor="let subTag of tag.subTags">
                 {{subTag.name}}
               </mat-chip>
             </ng-container>
@@ -67,37 +63,17 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #resourceMenu="matMenu">
-            <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
-              <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
-            </a>
-            <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
-              <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
-            </a>
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
-              <mat-icon>feedback</mat-icon>
-              <span i18n>Feedback</span>
-            </a>
             <ng-container *ngIf="element.canManage">
-              <a mat-menu-item (click)="updateResource(element)">
+              <a mat-menu-item>
                 <mat-icon>folder</mat-icon>
                 <span i18n>Manage</span>
               </a>
-              <button mat-menu-item (click)="deleteClick(element)">
+              <button mat-menu-item>
                 <mat-icon>delete_forever</mat-icon>
                 <span i18n>Delete</span>
               </button>
             </ng-container>
-            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!element.doc.isDownloadable">
-              <mat-icon>file_download</mat-icon>
-              <span i18n>Download file</span>
-            </a>
           </mat-menu>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Rating</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
