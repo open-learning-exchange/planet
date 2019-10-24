@@ -316,15 +316,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sendResource() {
-    return (selectedPlanet: any) => {
+    return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      for (let i = 0; i < selectedPlanet.length; i++) {
-        this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[i].code).subscribe(() => {
-          const msg = this.planetType === 'center' ? 'nation' : 'community';
-          this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
-          this.dialogRef.close();
-        }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
-      }
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).subscribe(() => {
+        const msg = this.planetType === 'center' ? 'nation' : 'community';
+        this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
+        this.dialogRef.close();
+      }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
     };
   }
 
