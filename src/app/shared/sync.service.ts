@@ -23,8 +23,10 @@ export class SyncService {
     private tagsService: TagsService
   ) {}
 
-  createChildPullDoc(items: any[], db, planetCode) {
-    const itemsToSend = items.map(item => ({ db, sendTo: planetCode, item, time: this.couchService.datePlaceholder }));
+  createChildPullDoc(items: any[], db, planets: any[]) {
+    const itemsToSend = planets.map(
+      planet => items.map(item => ({ db, sendTo: planet.code, item, time: this.couchService.datePlaceholder }))
+    ).flat();
     return this.couchService.bulkDocs('send_items', itemsToSend);
   }
 

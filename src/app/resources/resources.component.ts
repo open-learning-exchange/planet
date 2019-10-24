@@ -307,7 +307,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((planet) => {
       const data = { okClick: this.sendResource().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: false,
+        allowMulti: true,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data, maxHeight: '500px', width: '600px', autoFocus: false
@@ -316,11 +316,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sendResource() {
-    return (selectedPlanet: any) => {
+    return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code).subscribe(() => {
-        const msg = this.planetType === 'center' ? 'nation' : 'community';
-        this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
+      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).subscribe(() => {
+        const childType = {
+          center: selectedPlanets.length > 1 ? 'nations' : 'nation',
+          nation: selectedPlanets.length > 1 ? 'communities' : 'community'
+        }[this.planetType];
+        this.planetMessageService.showMessage(`Resources queued to push to ${childType}.`);
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
     };
