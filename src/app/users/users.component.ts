@@ -51,7 +51,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'leader', 'monitor' ];
+  roleList: string[] = [ 'leader', 'monitor', 'Health Provider' ];
   allRolesList: string[] = [ ...this.roleList, 'learner', 'manager' ].sort();
   selectedRoles: string[] = [];
   filteredRole: string;
@@ -293,6 +293,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   roleSubmit(userIds: any[], roles: string[]) {
     const users: any = this.idsToUsers(userIds);
+    roles = roles.map((role) => {
+      if (role === 'Health Provider') {
+        return role = 'health';
+      } else {
+        return role;
+      }
+    });
     forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
