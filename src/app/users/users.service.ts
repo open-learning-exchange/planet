@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 
 @Injectable({
@@ -11,8 +12,16 @@ export class UsersService {
 
   constructor(
     private couchService: CouchService,
+    private userService: UserService,
     private stateService: StateService
   ) {}
+
+  getAllUsers(withPrivateDocs = false) {
+    return this.couchService.findAll('_users').pipe(map(users => withPrivateDocs ?
+      users :
+      users.map(user => this.userService.getUserProperties(user))
+    ));
+  }
 
   demoteFromAdmin(user) {
     const planetConfig = this.stateService.configuration;

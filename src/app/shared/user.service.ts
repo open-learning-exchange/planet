@@ -74,7 +74,7 @@ export class UserService {
         const userData = users.find(u => u.name === user.name);
         if (userData) {
           // Remove hashed password information from the data object
-          const profile = this.getUserProperties(userData, [ ...this.userProperties, ...this.additionalProperties ]);
+          const profile = this.getUserProperties(userData);
           this.credentials = this.getUserProperties(userData, this.credentialProperties);
           this.user = profile;
           this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
@@ -93,16 +93,15 @@ export class UserService {
       }));
   }
 
-  private getUserProperties(user, properties: string[]): any {
+  getUserProperties(user, properties: string[] = [ ...this.userProperties, ...this.additionalProperties ]): any {
     return properties.reduce((object, key) => ({ ...object, [key]: user[key] }), {});
   }
 
   private setUserProperties(users) {
     this.userProperties = users.reduce((properties: string[], user: any) => {
       const { requestId, _attachments, ...profile } = user;
-      return [ ...properties, Object.keys(profile) ].filter((prop: string) => this.credentialProperties.indexOf(prop) === -1)
-        .reduce(dedupeShelfReduce, []);
-    }, []);
+      return [ ...properties, ...Object.keys(profile).filter((prop: string) => this.credentialProperties.indexOf(prop) === -1) ];
+    }, []).reduce(dedupeShelfReduce, []);
   }
 
   unset(): any {
@@ -203,7 +202,7 @@ export class UserService {
     .pipe(
       switchMap(res => {
         newUserInfo._rev = res.rev;
-        const profile = this.getUserProperties(newUserInfo, [ ...this.userProperties, ...this.additionalProperties ]);
+        const profile = this.getUserProperties(newUserInfo);
         if (newUserInfo.name === this.get().name) {
           if (this.user.roles.indexOf('_admin') !== -1) {
             profile.roles.push('_admin');
