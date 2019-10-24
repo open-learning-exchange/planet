@@ -16,6 +16,10 @@ $label-height: 1rem;
   .mat-column-rating {
     max-width: 225px;
   }
+  .mat-column-createdDate {
+    max-width: 125px;
+    align-self: start;
+  }
   .mat-progress-bar {
     height: 10px;
     width: 120px;
