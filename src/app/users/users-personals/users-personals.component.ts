@@ -6,7 +6,7 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDia
 import { SelectionModel } from '@angular/cdk/collections';
 // import { selectedOutOfFilter } from '../shared/table-helpers';
 import { filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById 
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById
 } from '../../shared/table-helpers';
 import { ResourcesSearchComponent } from '../../resources/search-resources/resources-search.component';
 import { Subject, of, combineLatest } from 'rxjs';
