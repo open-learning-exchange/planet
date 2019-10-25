@@ -42,7 +42,7 @@
             <ng-template #dialog><a target="_blank">{{element.doc.title}}</a></ng-template>
           </h3>
           <mat-chip-list #tagsList class="tags-list">
-            <ng-container *ngFor="let tag of element.tags">
+            <ng-container *ngFor="let tag of element.doc.tags">
               <mat-chip *ngIf="tag.isMainTag" color="primary" selected>
                 {{tag.name}}
               </mat-chip>

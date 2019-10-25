@@ -17,6 +17,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { StateService } from '../../shared/state.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
+import { UsersPersonalsService } from './users-personals.service';
 
 @Component({
   selector: 'planet-users-personals',
@@ -67,6 +68,7 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
 
   @ViewChild(PlanetTagInputComponent, { static: false })
   private tagInputComponent: PlanetTagInputComponent;
+  displayedColumns = [ 'select', 'title' ];
 
   constructor(
     private router: Router,
@@ -75,24 +77,25 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
     private userService: UserService,
     private couchService: CouchService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private usersPersonalsService: UsersPersonalsService
   ) {}
 
   ngOnInit() {
     this.titleSearch = this.dropdownsFill();
-    combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
+    combineLatest(this.usersPersonalsService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
-        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private !== true
+        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private === true
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
     });
-    this.resourcesService.requestResourcesUpdate(this.parent);
+    this.usersPersonalsService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
@@ -103,6 +106,7 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     console.log(this.resources.data);
+    // this.getPersonals();
   }
 
   ngAfterViewInit() {
@@ -122,6 +126,14 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
     this.selectedNotAdded = notInShelf;
     this.selectedSync = selected.filter(id => this.hasAttachment(id));
   }
+
+  // getPersonals() {
+  //   this.usersPersonalsService.getPersonals().subscribe(
+  //     (resources: any) => {
+  //       console.log(resources);
+  //       this.resources.data = resources;
+  //     });
+  // }
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
