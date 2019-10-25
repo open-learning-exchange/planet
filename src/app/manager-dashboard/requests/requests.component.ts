@@ -1,28 +1,26 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { findDocuments } from '../shared/mangoQueries';
-import { filterSpecificFields } from '../shared/table-helpers';
-import { StateService } from '../shared/state.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { Validators } from '@angular/forms';
-import { ValidatorService } from '../validators/validator.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { ReportsService } from '../manager-dashboard/reports/reports.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
+import { filterSpecificFields } from '../../shared/table-helpers';
+import { StateService } from '../../shared/state.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { ValidatorService } from '../../validators/validator.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { ReportsService } from '../reports/reports.service';
+import { ManagerService } from '../manager.service';
 
 @Component({
-  templateUrl: './community.component.html',
+  templateUrl: './requests.component.html',
   styles: [ `
     mat-panel-title {
       align-items: center;
     }
   ` ]
 })
-export class CommunityComponent implements OnInit, OnDestroy {
+export class RequestsComponent implements OnInit, OnDestroy {
 
   searchValue = '';
   data = [];

@@ -11,6 +11,8 @@ import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerFetchComponent } from './manager-fetch.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ConfigurationModule } from '../configuration/configuration.module';
+import { RequestsComponent } from '../manager-dashboard/requests/requests.component';
+import { RequestsTableComponent } from './requests/requests-table.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
@@ -39,6 +41,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     ManagerSyncComponent,
     ManagerFetchComponent,
     ManagerDashboardConfigurationComponent,
+    RequestsComponent,
+    RequestsTableComponent,
     ReportsComponent,
     ReportsTableComponent,
     ReportsDetailComponent,
