@@ -4,6 +4,12 @@
 </mat-toolbar>
 <div class="space-container">
   <div class="view-container view-full-height">
+    <mat-toolbar>
+      <button mat-button i18n>
+        Library
+      </button>
+    </mat-toolbar>
+    <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
     <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
   </div>
 </div>

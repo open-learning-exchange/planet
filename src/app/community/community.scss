@@ -1,0 +1,28 @@
+@import '../variables';
+
+.view-container {
+
+  &.view-full-height {
+    height: $view-container-height-no-toolbar;
+  }
+
+  display: grid;
+  grid-template-columns: 4fr 3fr;
+  grid-template-rows: 64px auto;
+  grid-template-areas:
+    "links calendar"
+    "news calendar";
+  gap: 0.5rem;
+}
+
+mat-toolbar {
+  grid-area: links;
+}
+
+planet-news-list {
+  grid-area: news;
+}
+
+planet-calendar {
+  grid-template-areas: calendar;
+}
