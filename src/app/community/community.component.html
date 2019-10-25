@@ -1,0 +1,9 @@
+<mat-toolbar>
+  <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
+  <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
+</mat-toolbar>
+<div class="space-container">
+  <div class="view-container view-full-height">
+    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
+  </div>
+</div>
