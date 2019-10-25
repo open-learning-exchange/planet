@@ -19,8 +19,20 @@ mat-toolbar {
   grid-area: links;
 }
 
-planet-news-list {
+.community-news {
+
   grid-area: news;
+
+  h3 {
+
+    margin: 0;
+
+    *:not(:last-child) {
+      margin-right: 0.25rem;
+    }
+
+  }
+
 }
 
 planet-calendar {

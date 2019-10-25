@@ -9,7 +9,13 @@
         Library
       </button>
     </mat-toolbar>
-    <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
+    <div class="community-news">
+      <h3>
+        <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+        <button mat-stroked-button (click)="openAddMessageDialog()" i18n>New News</button>
+      </h3>
+      <planet-news-list [items]="news" (viewChange)="toggleForm($event)"></planet-news-list>
+    </div>
     <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
   </div>
 </div>
