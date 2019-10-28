@@ -25,8 +25,4 @@ import { DateAdapter } from '@angular/material';
   ],
   providers: [ MeetupService, { provide: DateAdapter, useValue: CustomDateAdapter } ]
 })
-export class MeetupsModule {
-  constructor(private dateAdapter: DateAdapter<Date>) {
-    this.dateAdapter.setLocale('en-en');
-  }
-}
+export class MeetupsModule {}
