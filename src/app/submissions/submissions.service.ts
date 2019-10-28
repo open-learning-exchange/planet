@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Subject, of, forkJoin } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase } from '../shared/utils';
+import { CsvService } from '../shared/csv.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,8 @@ export class SubmissionsService {
     private couchService: CouchService,
     private stateService: StateService,
     private courseService: CoursesService,
-    private userService: UserService
+    private userService: UserService,
+    private csvService: CsvService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -235,6 +237,27 @@ export class SubmissionsService {
     if (docs.length > 0) {
       this.couchService.bulkDocs('notifications', docs).subscribe((res) => console.log(res));
     }
+  }
+
+  exportSubmissionsCsv(exam, type: 'exam' | 'survey') {
+    const query = findDocuments({ parentId: exam._id, type, status: 'complete' });
+    const questionTexts = exam.questions.map(question => question.body);
+    return this.getSubmissions(query).pipe(tap((submissions: [any]) => {
+      const data = submissions.map((submission) => {
+        const answerIndexes = questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
+        return {
+          'User': submission.user ? submission.user.firstName + ' ' + submission.user.lastName : 'Anonymous',
+          ...questionTexts.reduce((answerObj, text, index) => {
+            const label = `Q${index + 1}: ${text}`;
+            return {
+              ...answerObj,
+              [label]: answerIndexes[index] > -1 ? submission.answers[index].value.text || submission.answers[index].value : undefined
+            };
+          }, {})
+        };
+      });
+      this.csvService.exportCSV({ data, title: `${toProperCase(type)} -  ${exam.name}` });
+    }));
   }
 
 }

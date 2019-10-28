@@ -273,14 +273,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportCSV(survey) {
-    const query = findDocuments({ parentId: survey._id, type: 'survey', status: 'complete' });
-    this.submissionsService.getSubmissions(query).subscribe((submissions: [any]) => {
-      const labels = [ 'User' ].concat(submissions[0].parent.questions.map(q => q.body));
-      const records = submissions.map(s =>
-        [ s.user ? s.user.firstName + ' ' + s.user.lastName : 'Anonymous' ].concat(s.answers.map(a => a.value))
-      );
-      this.csvService.exportCSV({ data: [ labels, ...records ], title: 'Survey - ' + survey.name });
-    });
+    this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe();
+    // const query = findDocuments({ parentId: survey._id, type: 'survey', status: 'complete' });
+    // const questionTexts = survey.questions.map(question => question.body);
+    // this.submissionsService.getSubmissions(query).subscribe((submissions: [any]) => {
+    //   const data = submissions.map((submission) => ({
+    //     'User': submission.user ? submission.user.firstName + ' ' + submission.user.lastName : 'Anonymous',
+    //     ...questionTexts.reduce((answerObj, question, index) => ({
+    //       ...answerObj,
+    //       [question]: (submission.answers[index] || {}).value
+    //     }), {})
+    //   }));
+    //   this.csvService.exportCSV({ data, title: 'Survey - ' + survey.name });
+    // });
   }
 
 }
