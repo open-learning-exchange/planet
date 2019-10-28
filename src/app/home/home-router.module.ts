@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeComponent } from './home.component';
-import { CommunityComponent } from '../community/community.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
@@ -19,7 +18,6 @@ const routes: Routes = [
       { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
       { path: 'myCourses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true } },
-      { path: 'requests', component: CommunityComponent },
       { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
       {

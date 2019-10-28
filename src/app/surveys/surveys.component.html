@@ -62,6 +62,7 @@
           <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)"><mat-icon>edit</mat-icon> Edit Survey</button>
           <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)"><mat-icon>send</mat-icon> Send Survey</button>
           <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)"><mat-icon>fiber_manual_record</mat-icon> Record Survey</button>
+          <button mat-raised-button color="primary" (click)="exportCSV(element)"><mat-icon>move_to_inbox</mat-icon> Export Survey</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

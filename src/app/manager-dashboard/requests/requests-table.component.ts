@@ -1,26 +1,26 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { CouchService } from '../../shared/couchdb.service';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatPaginator, MatDialog, MatSort, MatDialogRef } from '@angular/material';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
-import { filterSpecificFields, sortNumberOrString } from '../shared/table-helpers';
-import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
+import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
+import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
+import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
+import { StateService } from '../../shared/state.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { FormBuilder } from '@angular/forms';
-import { CustomValidators } from '../validators/custom-validators';
-import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { ValidatorService } from '../validators/validator.service';
+import { CustomValidators } from '../../validators/custom-validators';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
-  selector: 'planet-community-table',
-  templateUrl: './community-table.component.html'
+  selector: 'planet-requests-table',
+  templateUrl: './requests-table.component.html'
 })
-export class CommunityTableComponent implements OnChanges, AfterViewInit, OnDestroy {
+export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   @Input() data = [];
   @Input() hubs = [];
