@@ -8,6 +8,7 @@ import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
+import { RequestsComponent } from '../manager-dashboard/requests/requests.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'reports', component: ReportsComponent },
   { path: 'reports/detail', component: ReportsDetailComponent },
   { path: 'reports/pending', component: ReportsPendingComponent },
-  { path: 'reports/myplanet', component: ReportsMyPlanetComponent }
+  { path: 'reports/myplanet', component: ReportsMyPlanetComponent },
+  { path: 'requests', component: RequestsComponent }
 ];
 
 @NgModule({
