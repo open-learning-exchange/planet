@@ -19,8 +19,6 @@ import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
-import { CsvService } from '../shared/csv.service';
-import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -51,7 +49,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
+  displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
+    [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
+  );
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -71,16 +71,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private reportsService: ReportsService,
-    private csvService: CsvService
+    private reportsService: ReportsService
   ) {
     this.dialogsLoadingService.start();
   }
 
   ngOnInit() {
-    if (this.userService.doesUserHaveRole([ '_admin', 'manager' ])) {
-      this.displayedColumns.unshift('select');
-    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, { 'selector': { 'type': type } });
