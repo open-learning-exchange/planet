@@ -209,13 +209,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (team === undefined) {
       return;
     }
-    this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
-    this.userStatus = this.members.some((req: any) => req.userId === user._id && req.userPlanetCode === user.planetCode) ?
-      'member' :
-      this.userStatus;
+    this.userStatus = this.requests.some((req: any) => this.isSameUser(req, user)) ? 'requesting' : this.userStatus;
+    this.userStatus = this.members.some((req: any) => this.isSameUser(req, user)) ? 'member' : this.userStatus;
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
+  }
+
+  isSameUser(req, user) {
+    return req.userId === user._id && req.userPlanetCode === user.planetCode;
   }
 
   toggleMembership(team, leaveTeam) {
