@@ -247,6 +247,7 @@ export class SubmissionsService {
         const answerIndexes = questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
         return {
           'User': submission.user ? submission.user.firstName + ' ' + submission.user.lastName : 'Anonymous',
+          'Date': new Date(submission.lastUpdateTime).toString(),
           ...questionTexts.reduce((answerObj, text, index) => {
             const label = `Q${index + 1}: ${text}`;
             return {
