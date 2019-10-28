@@ -49,7 +49,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  displayedColumns = [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
+  displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
+    [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
+  );
   dialogRef: MatDialogRef<DialogsListComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -75,14 +77,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.userService.doesUserHaveRole([ '_admin', 'manager' ])) {
-      this.displayedColumns.unshift('select');
-    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, { 'selector': { 'type': type } });
     forkJoin([
-      this.receiveData('exams', 'surveys'),
-      this.receiveData('submissions', 'survey'),
+      receiveData('exams', 'surveys'),
+      receiveData('submissions', 'survey'),
       this.couchService.findAll('courses')
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
@@ -114,10 +114,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  receiveData(dbName: string, type: string) {
-    return this.couchService.findAll(dbName, { 'selector': { 'type': type } });
   }
 
   goBack() {
@@ -267,6 +263,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
       ], { relativeTo: this.route });
     });
+  }
+
+  exportCSV(survey) {
+    this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe();
   }
 
 }
