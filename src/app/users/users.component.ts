@@ -55,7 +55,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     ...[ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' } ],
     ...[ this.userService.isBetaEnabled ? [ { value: 'health', text: 'Health Provider' } ] : [] ].flat()
   ];
-  allRolesList: string[] = [ ...this.roleList.map(r => r.text), 'learner', 'manager' ].sort();
+  allRolesList: { value: string, text: string }[] = [
+    ...this.roleList, { value: 'learner', text: 'Learner' }, { value: 'manager', text: 'Manager' }
+  ].sort();
   selectedRoles: string[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
@@ -204,7 +206,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
           doc: user,
           imageSrc: '',
           visitCount: this.userLoginCount(user, loginActivities),
-          lastLogin: this.userLastLogin(user, loginActivities)
+          lastLogin: this.userLastLogin(user, loginActivities),
+          roles: user.roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text)
         };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];

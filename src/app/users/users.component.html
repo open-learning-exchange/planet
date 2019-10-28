@@ -26,7 +26,7 @@
   <mat-form-field class="font-size-1 margin-lr-5">
     <mat-select placeholder="Filter by role" [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let role of allRolesList" [value]="role">{{role}}</mat-option>
+      <mat-option *ngFor="let role of allRolesList" [value]="role.value">{{role.text}}</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -103,9 +103,9 @@
         <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <mat-chip-list>
-            <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>learner</mat-chip>
-            <ng-container *ngFor="let role of element.doc.roles; index as i">
-              <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
+            <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
+            <ng-container *ngFor="let role of element.roles; index as i">
+              <mat-chip *ngIf="role !== 'Learner'" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
                 {{role}}
                 <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
               </mat-chip>
