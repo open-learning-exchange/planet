@@ -46,6 +46,17 @@ export class HealthEventComponent implements OnInit {
     });
   }
 
+  isEmptyForm() {
+    return this.healthForm.controls.temperature.value === '' && this.healthForm.controls.pulse.value === '' &&
+            this.healthForm.controls.bp.value === '' && this.healthForm.controls.height.value === '' &&
+            this.healthForm.controls.weight.value === '' && this.healthForm.controls.vision.value === '' &&
+            this.healthForm.controls.hearing.value === '' && this.healthForm.controls.notes.value === '' &&
+            this.healthForm.controls.diagnosis.value === '' && this.healthForm.controls.treatments.value === '' &&
+            this.healthForm.controls.medications.value === '' && this.healthForm.controls.immunizations.value === ''
+            && this.healthForm.controls.allergies.value === '' && this.healthForm.controls.xrays.value === '' &&
+            this.healthForm.controls.tests.value === '' && this.healthForm.controls.referrals.value === '';
+  }
+
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
