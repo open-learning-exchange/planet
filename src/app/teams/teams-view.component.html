@@ -175,7 +175,9 @@
             <div class="card-grid">
               <mat-card *ngFor="let resource of resources">
                 <div class="mat-subheading-2">
-                  <span *ngIf="resource.resource!==undefined" class="cursor-pointer" (click)="openResource(resource.resource._id)">
+                  <span *ngIf="resource.resource!==undefined" [ngClass]="{'cursor-pointer': resource.resource._attachments}"
+                  (click)="resource.resource._attachments ? openResource(resource.resource._id) : false"
+                  i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments">
                     {{resource.resource.title}}
                   </span>
                   <span *ngIf="resource.resource===undefined" i18n-matTooltip
