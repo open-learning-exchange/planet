@@ -56,7 +56,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     ...[ this.userService.isBetaEnabled ? [ { value: 'health', text: 'Health Provider' } ] : [] ].flat()
   ];
   allRolesList: string[] = [ ...this.roleList.map(r => r.text), 'learner', 'manager' ].sort();
-  selectedRoles: { value: string, text: string }[] = [];
+  selectedRoles: string[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
   private dbName = '_users';
@@ -294,13 +294,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  roleSubmit(userIds: any[], roles: { value: string, text: string }[]) {
+  roleSubmit(userIds: any[], roles: string[]) {
     const users: any = this.idsToUsers(userIds);
     forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = { ...user, roles: [ 'learner', ...roles.map(r => r.value) ] };
+        const tempUser = { ...user, roles: [ 'learner', ...roles ] };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
@@ -360,7 +360,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateSelectedRoles(newSelection: { value: string, text: string }[]) {
-    this.selectedRoles = newSelection;
+    this.selectedRoles = newSelection.map(r => r.value);
   }
 
   userLoginCount(user: any, loginActivities: any[]) {
