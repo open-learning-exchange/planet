@@ -19,6 +19,8 @@ import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { CsvService } from '../shared/csv.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -69,7 +71,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private csvService: CsvService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -266,6 +269,17 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         'dispense',
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
       ], { relativeTo: this.route });
+    });
+  }
+
+  exportCSV(survey) {
+    const query = findDocuments({ parentId: survey._id, type: 'survey', status: 'complete' });
+    this.submissionsService.getSubmissions(query).subscribe((submissions: [any]) => {
+      const labels = [ 'User' ].concat(submissions[0].parent.questions.map(q => q.body));
+      const records = submissions.map(s =>
+        [ s.user ? s.user.firstName + ' ' + s.user.lastName : 'Anonymous' ].concat(s.answers.map(a => a.value))
+      );
+      this.csvService.exportCSV({ data: [ labels, ...records ], title: 'Survey - ' + survey.name });
     });
   }
 
