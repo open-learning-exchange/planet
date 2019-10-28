@@ -51,8 +51,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: { value: string, text: string }[] =
-  [ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' }, { value: 'health', text: 'Health Provider' } ];
+  roleList: { value: string, text: string }[] = [
+    ...[ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' } ],
+    ...[ this.userService.isBetaEnabled ? [ { value: 'health', text: 'Health Provider' } ] : [] ].flat()
+  ];
   allRolesList: string[] = [ ...this.roleList.map(r => r.text), 'learner', 'manager' ].sort();
   selectedRoles: { value: string, text: string }[] = [];
   filteredRole: string;
