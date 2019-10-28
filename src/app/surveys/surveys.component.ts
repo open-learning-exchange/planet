@@ -83,9 +83,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, { 'selector': { 'type': type } });
     forkJoin([
-      this.receiveData('exams', 'surveys'),
-      this.receiveData('submissions', 'survey'),
+      receiveData('exams', 'surveys'),
+      receiveData('submissions', 'survey'),
       this.couchService.findAll('courses')
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
@@ -117,10 +118,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  receiveData(dbName: string, type: string) {
-    return this.couchService.findAll(dbName, { 'selector': { 'type': type } });
   }
 
   goBack() {
@@ -274,18 +271,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   exportCSV(survey) {
     this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe();
-    // const query = findDocuments({ parentId: survey._id, type: 'survey', status: 'complete' });
-    // const questionTexts = survey.questions.map(question => question.body);
-    // this.submissionsService.getSubmissions(query).subscribe((submissions: [any]) => {
-    //   const data = submissions.map((submission) => ({
-    //     'User': submission.user ? submission.user.firstName + ' ' + submission.user.lastName : 'Anonymous',
-    //     ...questionTexts.reduce((answerObj, question, index) => ({
-    //       ...answerObj,
-    //       [question]: (submission.answers[index] || {}).value
-    //     }), {})
-    //   }));
-    //   this.csvService.exportCSV({ data, title: 'Survey - ' + survey.name });
-    // });
   }
 
 }
