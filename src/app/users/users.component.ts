@@ -51,8 +51,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteDialog: any;
   children: any;
   // List of all possible roles to add to users
-  roleList: string[] = [ 'leader', 'monitor' ];
-  allRolesList: string[] = [ ...this.roleList, 'learner', 'manager' ].sort();
+  roleList: { value: string, text: string }[] = [
+    ...[ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' } ],
+    ...[ this.userService.isBetaEnabled ? [ { value: 'health', text: 'Health Provider' } ] : [] ].flat()
+  ];
+  allRolesList: { value: string, text: string }[] = [
+    ...this.roleList, { value: 'learner', text: 'Learner' }, { value: 'manager', text: 'Manager' }
+  ].sort();
   selectedRoles: string[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
@@ -186,14 +191,13 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   initializeData() {
-    const currentLoginUser = this.userService.get().name;
     this.selection.clear();
     this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities, childUsers, communities ]) => {
       this.children = communities;
       this.allUsers.data = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
-        return currentLoginUser !== user.name && user.name !== 'satellite';
+        return this.userService.get().name !== user.name && user.name !== 'satellite';
       }).concat(childUsers)
       .map((user: any) => {
         const userInfo = {
@@ -201,7 +205,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
           doc: user,
           imageSrc: '',
           visitCount: this.userLoginCount(user, loginActivities),
-          lastLogin: this.userLastLogin(user, loginActivities)
+          lastLogin: this.userLastLogin(user, loginActivities),
+          roles: user.roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text)
         };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -356,8 +361,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate([ path ], { relativeTo: this.route });
   }
 
-  updateSelectedRoles(newSelection: string[]) {
-    this.selectedRoles = newSelection;
+  updateSelectedRoles(newSelection: { value: string, text: string }[]) {
+    this.selectedRoles = newSelection.map(r => r.value);
   }
 
   userLoginCount(user: any, loginActivities: any[]) {
