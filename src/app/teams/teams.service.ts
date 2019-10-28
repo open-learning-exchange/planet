@@ -160,7 +160,7 @@ export class TeamsService {
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...[ ...(team.type === 'services' ? this.servicesMembers(team, users) : []), ...membershipDocs ].map(doc => ({
         ...doc,
-        userDoc: users.find(user => user._id === doc.userId),
+        userDoc: users.find(user => user._id === doc.userId && user.planetCode === doc.userPlanetCode),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))

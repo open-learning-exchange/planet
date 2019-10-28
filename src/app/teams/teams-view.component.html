@@ -70,7 +70,8 @@
                 </a>
                 <mat-card-subtitle>
                   <p class="primary-text-color" *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
-                  <span i18n *ngIf="member.userId === currentUserId">(You)</span>{{' '}}<span i18n *ngIf="member.userId === leader">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+                  <span i18n *ngIf="member.userId === currentUserId && member.userPlanetCode === planetCode">(You)</span>{{' '}}
+                  <span i18n *ngIf="member.userId === leader && member.userPlanetCode === planetCode">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
                   <p *ngIf="visits[member.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member.name]?.recentTime | date }}</p>
                 </mat-card-subtitle>
                 <button *ngIf="mode !== 'services' && member.userId !== leader && (currentUserId === leader || (user.isUserAdmin && team.teamPlanetCode === user.planetCode))" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
