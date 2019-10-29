@@ -274,23 +274,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
 
-  deleteRole(user: any, index: number) {
-    // Make copy of user so UI doesn't change until DB change succeeds
-    let tempUser = { ...user, roles: [ ...user.roles ] };
-    tempUser.roles.splice(index, 1);
-    if (tempUser.roles.length === 0) {
-      tempUser = { ...tempUser, oldRoles: [ 'learner' ] };
-    }
-    this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).subscribe((response) => {
-      console.log('Success!');
-      user.roles.splice(index, 1);
-      user._rev = response.rev;
-      user.oldRoles = response.oldRoles;
-    }, (error) => {
-      // Placeholder for error handling until we have popups for user notification.
-      console.log('Error!');
-      console.log(error);
-    });
+  removeRole(user: any, roleIndex: number) {
+    this.setRolesForUsers([ user._id ], [ ...user.roles.slice(0, roleIndex), ...user.roles.slice(roleIndex + 1) ]);
   }
 
   idsToUsers(userIds: any[]) {
@@ -300,7 +285,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  roleSubmit(userIds: any[], roles: string[]) {
+  setRolesForUsers(userIds: any[], roles: string[]) {
     const users: any = this.idsToUsers(userIds);
     const newRoles = [ 'learner', ...roles ];
     forkJoin(users.reduce((observers, user) => {
