@@ -314,7 +314,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     }, []))
     .pipe(debug('Adding role to users'))
     .subscribe((responses) => {
-      this.allUsers.data = this.allUsers.data.map(user => {
+      this.allUsers.data = this.allUsers.data.map((user: any) => {
         if (user.doc.isUserAdmin === false && userIds.indexOf(user.doc._id) > -1) {
           // Add role to UI and update rev from CouchDB response
           const res: any = responses.find((response: any) => response.id === user._id);
