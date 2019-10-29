@@ -31,8 +31,10 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
+  DateAdapter
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { CustomDateAdapter } from '../meetups/add-meetups/custom-date-adapter';
 
 @NgModule({
   exports: [
@@ -68,6 +70,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-  ]
+  ],
+  providers: [ { provide: DateAdapter, useClass: CustomDateAdapter } ]
 })
 export class MaterialModule {}

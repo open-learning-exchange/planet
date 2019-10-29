@@ -11,8 +11,6 @@ import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { CustomDateAdapter } from './add-meetups/custom-date-adapter';
-import { DateAdapter } from '@angular/material';
 
 @NgModule({
   exports: [ MeetupsAddComponent, MeetupsViewComponent ],
@@ -23,6 +21,6 @@ import { DateAdapter } from '@angular/material';
   declarations: [
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
   ],
-  providers: [ MeetupService, { provide: DateAdapter, useValue: CustomDateAdapter } ]
+  providers: [ MeetupService ]
 })
 export class MeetupsModule {}
