@@ -311,9 +311,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
-    }, []))
-    .pipe(debug('Adding role to users'))
-    .subscribe((responses) => {
+    }, [])).subscribe((responses) => {
       this.allUsers.data = this.allUsers.data.map((user: any) => {
         if (user.doc.isUserAdmin === false && userIds.indexOf(user.doc._id) > -1) {
           // Add role to UI and update rev from CouchDB response
@@ -326,10 +324,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         return user;
       });
-    }, (error) => {
-      // Placeholder for error handling until we have popups for user notification.
-      console.log('Error!');
-      console.log(error);
+    }, () => {
+      this.planetMessageService.showAlert('There was an error adding role(s) to member(s)');
     });
   }
 
