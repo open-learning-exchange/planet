@@ -206,7 +206,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
           imageSrc: '',
           visitCount: this.userLoginCount(user, loginActivities),
           lastLogin: this.userLastLogin(user, loginActivities),
-          roles: user.roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text)
+          roles: this.toProperRoles(user.roles)
         };
         if (user._attachments) {
           userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -218,6 +218,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     }, () => {
       this.planetMessageService.showAlert('There was an error retrieving user data');
     });
+  }
+
+  toProperRoles(roles) {
+    return roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text);
   }
 
   deleteClick(user, event) {
@@ -298,24 +302,29 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   roleSubmit(userIds: any[], roles: string[]) {
     const users: any = this.idsToUsers(userIds);
+    const newRoles = [ 'learner', ...roles ];
     forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = { ...user, roles: [ 'learner', ...roles ] };
+        const tempUser = { ...user, roles: newRoles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
     }, []))
     .pipe(debug('Adding role to users'))
     .subscribe((responses) => {
-      users.map((user) => {
-        if (user.isUserAdmin === false) {
+      this.allUsers.data = this.allUsers.data.map(user => {
+        if (user.doc.isUserAdmin === false && userIds.indexOf(user.doc._id) > -1) {
           // Add role to UI and update rev from CouchDB response
-          user.roles = [ 'learner', ...roles ];
           const res: any = responses.find((response: any) => response.id === user._id);
-          user._rev = res.rev;
+          return {
+            ...user,
+            roles: this.toProperRoles(newRoles),
+            doc: { ...user.doc, roles: newRoles, _rev: res.rev }
+          };
         }
+        return user;
       });
     }, (error) => {
       // Placeholder for error handling until we have popups for user notification.
