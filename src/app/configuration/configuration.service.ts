@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { switchMap, mergeMap, takeWhile, tap } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
@@ -132,7 +132,8 @@ export class ConfigurationService {
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
       switchMap(() => this.postConfiguration(configuration)),
-      switchMap(([ conf, autoAcceptRes ]) => {
+      switchMap(([ conf ]) => forkJoin([ of(conf), this.setCouchPerUser(conf) ])),
+      switchMap(([ conf ]) => {
         return forkJoin([
           // When creating a planet, add admin
           this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
@@ -168,6 +169,14 @@ export class ConfigurationService {
 
   createUser(name, details, opts?) {
     return this.couchService.updateDocument('_users', { '_id': 'org.couchdb.user:' + name, ...details }, opts);
+  }
+
+  setCouchPerUser({ doc: configuration }) {
+    return forkJoin([
+      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${configuration.code}-`),
+      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
+      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
+    ]);
   }
 
 }
