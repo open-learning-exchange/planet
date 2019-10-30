@@ -41,7 +41,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3" *ngIf="filterType==='local'">
-      <form (ngSubmit)="roleSubmit(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
+      <form (ngSubmit)="setRolesForUsers(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Set roles of selected">
             <mat-option disabled="disabled" class="hide-checkbox">
@@ -105,7 +105,7 @@
           <mat-chip-list>
             <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
             <ng-container *ngFor="let role of element.roles; index as i">
-              <mat-chip *ngIf="role !== 'Learner'" [removable]="!element.doc.isUserAdmin" (removed)="deleteRole(element.doc,i)">
+              <mat-chip *ngIf="role !== 'Learner'" [removable]="!element.doc.isUserAdmin" (removed)="removeRole(element.doc,i)">
                 {{role}}
                 <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
               </mat-chip>
