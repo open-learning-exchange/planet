@@ -67,7 +67,7 @@ export class HealthComponent implements OnInit, AfterViewChecked {
 
   setEventData() {
     this.eventTable.data = this.events
-      .sort((a, b) => b.date - a.date)
+      .sort((a, b) => a.date - b.date)
       .reduce((eventRows, event) => eventRows.map(item => ({ ...item, [event.date]: event[item.label] })), [
         { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
         { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
