@@ -458,9 +458,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (!this.team.courses) {
       return of(true);
     }
-    const index = this.team.courses.indexOf(course);
-    const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    return () => this.teamsService.updateTeam({ ...this.team, courses: newCourses });
+    return () => this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.filter(c => c._id !== course._id) });
   }
 
   toggleTask({ option }) {
