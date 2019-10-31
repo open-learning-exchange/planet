@@ -20,6 +20,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
+import { TasksService } from '../tasks/tasks.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -81,7 +82,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private reportsService: ReportsService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private tasksService: TasksService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -247,7 +249,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       switchMap(teams => {
         const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
         return this.couchService.bulkDocs('teams', docsWithUser);
-      })
+      }),
+      switchMap(() => this.tasksService.removeAssigneeFromTask(user, { users: user._id }))
     );
   }
 
