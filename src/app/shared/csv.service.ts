@@ -32,11 +32,11 @@ export class CsvService {
         [key]: key.toLowerCase().indexOf('time') === -1 ? value : value ? new Date(value).toString() : ''
       }), {}
     ));
-    if (formattedData.length) {
-      this.generate(formattedData, options);
-    } else {
+    if (formattedData.length === 0) {
       this.planetMessageService.showAlert('There was no data during that period to export');
+      return;
     }
+    this.generate(formattedData, options);
   }
 
   exportSummaryCSV(logins: any[], resourceViews: any[], planetName: string) {
