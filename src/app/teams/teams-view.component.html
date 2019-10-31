@@ -147,13 +147,9 @@
           <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
           <ng-template #courseList>
             <div class="card-grid">
-              <mat-card *ngFor="let course of team?.courses">
-                <div class="mat-subheading-2">
-                  <a [routerLink]="'/courses/view/' + course._id">
-                    {{course.courseTitle}}
-                  </a>
-                </div>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu">
+              <mat-card *ngFor="let course of team?.courses" [routerLink]="'/courses/view/' + course._id" class="cursor-pointer">
+                <div class="mat-subheading-2">{{course.courseTitle}}</div>
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #courseMenu="matMenu">
@@ -173,11 +169,9 @@
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no { mode, select, team {resources} enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #resourceList>
             <div class="card-grid">
-              <mat-card *ngFor="let resource of resources">
+              <mat-card *ngFor="let resource of resources" (click)="resource.resource._attachments ? openResource(resource.resource._id) : false" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments" [ngClass]="{'cursor-pointer': resource.resource._attachments}">
                 <div class="mat-subheading-2">
-                  <span *ngIf="resource.resource!==undefined" [ngClass]="{'cursor-pointer': resource.resource._attachments}"
-                  (click)="resource.resource._attachments ? openResource(resource.resource._id) : false"
-                  i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments">
+                  <span *ngIf="resource.resource!==undefined">
                     {{resource.resource.title}}
                   </span>
                   <span *ngIf="resource.resource===undefined" i18n-matTooltip
@@ -185,7 +179,7 @@
                     {{resource.linkDoc.title}}
                   </span>
                 </div>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
