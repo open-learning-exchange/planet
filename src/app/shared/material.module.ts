@@ -81,6 +81,3 @@ class CustomDateAdapter extends NativeDateAdapter {
   providers: [ { provide: DateAdapter, useClass: CustomDateAdapter } ]
 })
 export class MaterialModule {}
-
-
-
