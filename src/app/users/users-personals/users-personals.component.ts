@@ -1,16 +1,12 @@
 import { Component, OnInit, ViewChild, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-// import { FormControl } from '../../../node_modules/@angular/forms';
 import { FormControl, } from '@angular/forms';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-// import { selectedOutOfFilter } from '../shared/table-helpers';
 import { filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
   createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById
 } from '../../shared/table-helpers';
-import { ResourcesSearchComponent } from '../../resources/search-resources/resources-search.component';
 import { Subject, of, combineLatest } from 'rxjs';
-import { ResourcesService } from '../../resources/resources.service';
 import { UserService } from '../../shared/user.service';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
@@ -18,6 +14,10 @@ import { StateService } from '../../shared/state.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { UsersPersonalsService } from './users-personals.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { debug } from '../../debug-operator';
+import { ResourcesSearchComponent } from '../../resources/search-resources/resources-search.component';
 
 @Component({
   selector: 'planet-users-personals',
@@ -65,20 +65,23 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-
+  @Input() privateFor: any;
   @ViewChild(PlanetTagInputComponent, { static: false })
   private tagInputComponent: PlanetTagInputComponent;
   displayedColumns = [ 'select', 'title' ];
+  deleteDialog: any;
+  message = '';
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private resourcesService: ResourcesService,
     private userService: UserService,
     private couchService: CouchService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private usersPersonalsService: UsersPersonalsService
+    private usersPersonalsService: UsersPersonalsService,
+    private planetMessageService: PlanetMessageService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -89,7 +92,7 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
-        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private === true
+        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private === true && resource.doc.privateFor.users
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
@@ -105,8 +108,6 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    console.log(this.resources.data);
-    // this.getPersonals();
   }
 
   ngAfterViewInit() {
@@ -126,14 +127,6 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
     this.selectedNotAdded = notInShelf;
     this.selectedSync = selected.filter(id => this.hasAttachment(id));
   }
-
-  // getPersonals() {
-  //   this.usersPersonalsService.getPersonals().subscribe(
-  //     (resources: any) => {
-  //       console.log(resources);
-  //       this.resources.data = resources;
-  //     });
-  // }
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
@@ -205,6 +198,46 @@ export class UsersPersonalsComponent implements OnInit, AfterViewInit, OnDestroy
   isAllSelected() {
     const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
     return this.selection.selected.length === itemsShown;
+  }
+
+  deleteClick(resource) {
+    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title, 1);
+  }
+
+  deleteResource(resource) {
+    const { _id: resourceId, _rev: resourceRev } = resource;
+    return {
+      request: this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev),
+      onNext: (data) => {
+        this.selection.deselect(resourceId);
+        this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage('You have deleted resource: ' + resource.doc.title);
+      },
+      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+    };
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '', count) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'resource',
+        displayName,
+        count
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+      this.message = '';
+    });
+  }
+
+  updateResource(resource) {
+    const { _id: resourceId } = resource;
+    this.router.navigate([ '/resources/update/' + resource._id ]);
   }
 
 }

@@ -27,6 +27,7 @@ const routes: Routes = [
         path: 'myLibrary',
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true }
       },
+      { path: 'myPersonals', component: UsersPersonalsComponent },
       { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'submissions', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) },
@@ -48,8 +49,7 @@ const routes: Routes = [
       { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'community', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
-      { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
-      { path: 'myPersonals', component: UsersPersonalsComponent }
+      { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } }
     ]
   }
 ];

@@ -12,6 +12,7 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
+import { UsersPersonalsComponent } from '../users/users-personals/users-personals.component';
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search
     ResourcesViewerComponent,
     ResourcesAddComponent,
     ResourcesSearchComponent,
-    ResourcesSearchListComponent
+    ResourcesSearchListComponent,
+    UsersPersonalsComponent
   ],
   exports: [ ResourcesViewerComponent, ResourcesComponent, ResourcesAddComponent ]
 })

@@ -21,7 +21,6 @@ import { UsersAchievementsModule } from '../users/users-achievements/users-achie
 import { NewsModule } from '../news/news.module';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsModule } from '../teams/teams.module';
-import { UsersPersonalsComponent } from '../users/users-personals/users-personals.component';
 
 @NgModule({
   imports: [
@@ -48,8 +47,7 @@ import { UsersPersonalsComponent } from '../users/users-personals/users-personal
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
-    LogsMyPlanetComponent,
-    UsersPersonalsComponent
+    LogsMyPlanetComponent
   ]
 })
 export class HomeModule {}
