@@ -25,6 +25,19 @@ export class HealthUpdateComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    this.initProfileForm();
+    this.initHealthForm();
+  }
+
+  ngOnInit() {
+    this.profileForm.patchValue(this.userService.get());
+    this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
+      this.existingData = data;
+      this.healthForm.patchValue(data.profile);
+    });
+  }
+
+  initProfileForm() {
     this.profileForm = this.fb.group({
       name: '',
       firstName: [ '', CustomValidators.required ],
@@ -40,6 +53,9 @@ export class HealthUpdateComponent implements OnInit {
       ],
       birthplace: ''
     });
+  }
+
+  initHealthForm() {
     this.healthForm = this.fb.group({
       emergencyContactName: '',
       emergencyContactType: '',
@@ -47,13 +63,9 @@ export class HealthUpdateComponent implements OnInit {
       specialNeeds: '',
       notes: ''
     });
-  }
-
-  ngOnInit() {
-    this.profileForm.patchValue(this.userService.get());
-    this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
-      this.existingData = data;
-      this.healthForm.patchValue(data.profile);
+    this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
+      this.healthForm.controls.emergencyContact.setValidators(value === 'email' ? Validators.email : null);
+      this.healthForm.controls.emergencyContact.updateValueAndValidity();
     });
   }
 
