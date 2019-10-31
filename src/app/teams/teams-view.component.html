@@ -147,7 +147,7 @@
             <div class="card-grid">
               <mat-card *ngFor="let course of team?.courses" [routerLink]="'/courses/view/' + course._id">
                 <div class="mat-subheading-2">{{course.courseTitle}}</div>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu">
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #courseMenu="matMenu">
@@ -177,7 +177,7 @@
                     {{resource.linkDoc.title}}
                   </span>
                 </div>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
