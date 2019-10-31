@@ -56,6 +56,10 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.filter['status'] = '';
       query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
+    } else {
+      if (this.filter['type'] === 'survey') {
+        this.filter['status'] = '';
+      }
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
