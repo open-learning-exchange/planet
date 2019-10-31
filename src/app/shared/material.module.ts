@@ -31,10 +31,17 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  DateAdapter
+  DateAdapter,
+  NativeDateAdapter
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { CustomDateAdapter } from '../meetups/add-meetups/custom-date-adapter';
+
+/** Adapts the native JS Date for use with cdk-based components that work with dates. */
+class CustomDateAdapter extends NativeDateAdapter {
+  getFirstDayOfWeek(): number {
+    return 6;
+  }
+}
 
 @NgModule({
   exports: [
@@ -74,3 +81,6 @@ import { CustomDateAdapter } from '../meetups/add-meetups/custom-date-adapter';
   providers: [ { provide: DateAdapter, useClass: CustomDateAdapter } ]
 })
 export class MaterialModule {}
+
+
+
