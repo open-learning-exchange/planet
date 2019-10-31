@@ -133,20 +133,18 @@ export class ConfigurationService {
       switchMap(() => this.createReplicators(configuration, credentials)),
       switchMap(() => this.postConfiguration(configuration)),
       switchMap(([ conf ]) => forkJoin([ of(conf), this.setCouchPerUser(conf) ])),
-      switchMap(([ conf ]) => {
-        return forkJoin([
-          // When creating a planet, add admin
-          this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
-          // then add user with same credentials
-          this.createUser(credentials.name, userDetail),
-          // then add a shelf for that user
-          this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
-          // and add credentials.yml for that user
-          this.managerService.updateCredentialsYml(credentials),
-          // then post configuration to parent planet's registration requests
-          this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
-        ]);
-      })
+      switchMap(([ conf ]) => forkJoin([
+        // When creating a planet, add admin
+        this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
+        // then add user with same credentials
+        this.createUser(credentials.name, userDetail),
+        // then add a shelf for that user
+        this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
+        // and add credentials.yml for that user
+        this.managerService.updateCredentialsYml(credentials),
+        // then post configuration to parent planet's registration requests
+        this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
+      ]))
     );
   }
 
@@ -172,11 +170,13 @@ export class ConfigurationService {
   }
 
   setCouchPerUser({ doc: configuration }) {
-    return forkJoin([
-      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${configuration.code}-`),
-      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
-      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
-    ]);
+    return configuration.betaEnabled !== 'off' ?
+      forkJoin([
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${configuration.code}-`),
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
+      ]) :
+      of({});
   }
 
 }

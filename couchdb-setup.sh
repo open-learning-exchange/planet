@@ -35,8 +35,10 @@ insert_dbs() {
 }
 
 set_couch_per_user() {
-  CODE=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER | jq -r '.["rows"][0]["doc"]["code"] // empty')
-  if [ ! -z "$CODE" ]
+  CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
+  CODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["code"] // empty')
+  BETAMODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["betaEnabled"] // empty')
+  if [ ! -z "$CODE" ] && [ "$BETAMODE" != "off" ];
   then
     upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$CODE'-"'
     upsert_doc _node/nonode@nohost/_config couch_peruser/delete_dbs '"true"'
