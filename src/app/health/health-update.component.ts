@@ -46,6 +46,14 @@ export class HealthUpdateComponent implements OnInit {
       emergencyContact: '',
       specialNeeds: '',
       notes: ''
+    }, {
+      validators: (formGroup: FormGroup) => {
+        formGroup.controls.emergencyContact.setValidators(
+          formGroup.controls.emergencyContactType.value === 'email' ?
+            Validators.email :
+            null
+        );
+      }
     });
   }
 
