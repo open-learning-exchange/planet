@@ -266,7 +266,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportCSV(survey) {
-    this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe();
+    this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe(res => {
+      if (!res.length) {
+        this.planetMessageService.showMessage('There is no survey response');
+      }
+    });
   }
 
 }
