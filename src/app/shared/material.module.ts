@@ -37,7 +37,7 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
 /** Adapts the native JS Date for use with cdk-based components that work with dates. */
-class CustomDateAdapter extends NativeDateAdapter {
+export class CustomDateAdapter extends NativeDateAdapter {
   getFirstDayOfWeek(): number {
     return 6;
   }
