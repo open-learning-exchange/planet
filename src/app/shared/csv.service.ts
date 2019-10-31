@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { PlanetMessageService } from './planet-message.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class CsvService {
   };
 
   constructor(
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   private generate(data, options?) {
@@ -30,7 +32,11 @@ export class CsvService {
         [key]: key.toLowerCase().indexOf('time') === -1 ? value : value ? new Date(value).toString() : ''
       }), {}
     ));
-    this.generate(formattedData, options);
+    if (formattedData.length) {
+      this.generate(formattedData, options);
+    } else {
+      this.planetMessageService.showAlert('There was no data during that period to export');
+    }
   }
 
   exportSummaryCSV(logins: any[], resourceViews: any[], planetName: string) {
