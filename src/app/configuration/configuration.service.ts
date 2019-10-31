@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { switchMap, mergeMap, takeWhile, tap } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce } from '../shared/utils';
@@ -132,20 +132,19 @@ export class ConfigurationService {
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
       switchMap(() => this.postConfiguration(configuration)),
-      switchMap(([ conf, autoAcceptRes ]) => {
-        return forkJoin([
-          // When creating a planet, add admin
-          this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
-          // then add user with same credentials
-          this.createUser(credentials.name, userDetail),
-          // then add a shelf for that user
-          this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
-          // and add credentials.yml for that user
-          this.managerService.updateCredentialsYml(credentials),
-          // then post configuration to parent planet's registration requests
-          this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
-        ]);
-      })
+      switchMap(([ conf ]) => forkJoin([ of(conf), this.setCouchPerUser(conf) ])),
+      switchMap(([ conf ]) => forkJoin([
+        // When creating a planet, add admin
+        this.couchService.put('_node/nonode@nohost/_config/admins/' + credentials.name, credentials.password),
+        // then add user with same credentials
+        this.createUser(credentials.name, userDetail),
+        // then add a shelf for that user
+        this.couchService.put('shelf/org.couchdb.user:' + credentials.name, {}),
+        // and add credentials.yml for that user
+        this.managerService.updateCredentialsYml(credentials),
+        // then post configuration to parent planet's registration requests
+        this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
+      ]))
     );
   }
 
@@ -168,6 +167,16 @@ export class ConfigurationService {
 
   createUser(name, details, opts?) {
     return this.couchService.updateDocument('_users', { '_id': 'org.couchdb.user:' + name, ...details }, opts);
+  }
+
+  setCouchPerUser({ doc: configuration }) {
+    return configuration.betaEnabled !== 'off' ?
+      forkJoin([
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${configuration.code}-`),
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
+      ]) :
+      of({});
   }
 
 }
