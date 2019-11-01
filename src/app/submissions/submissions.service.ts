@@ -252,7 +252,7 @@ export class SubmissionsService {
             const label = `Q${index + 1}: ${text}`;
             return {
               ...answerObj,
-              [label]: answerIndexes[index] > -1 ? this.getAnswerTest(submission.answers[index].value) : undefined
+              [label]: answerIndexes[index] > -1 ? this.getAnswerText(submission.answers[index].value) : undefined
             };
           }, {})
         };
@@ -261,7 +261,7 @@ export class SubmissionsService {
     }));
   }
 
-  getAnswerTest(answer: any) {
+  getAnswerText(answer: any) {
     return Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer;
   }
 
