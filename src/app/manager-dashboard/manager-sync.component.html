@@ -10,14 +10,14 @@
   </mat-toolbar>
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators">
-      <h3 matLine>
+      <h3 matLine [matTooltip]="rep.info">
         <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
         <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
-        {{rep._id}}
+        {{rep.doc_id}}
       </h3>
       <p matLine>
-        <span>{{rep.source.url}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target.url}}</span>
-        <ng-container [ngSwitch]="rep?._replication_state">
+        <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
+        <ng-container [ngSwitch]="rep?.state">
         <!-- States: initializing, failed, error, running, pending, crashing, completed -->
         <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" i18n-title title="Error">error</mat-icon>
         <mat-icon *ngSwitchCase="'running'" i18n-title title="In Progress">sync</mat-icon>
