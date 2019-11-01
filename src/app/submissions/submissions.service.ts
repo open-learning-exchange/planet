@@ -252,13 +252,17 @@ export class SubmissionsService {
             const label = `Q${index + 1}: ${text}`;
             return {
               ...answerObj,
-              [label]: answerIndexes[index] > -1 ? submission.answers[index].value.text || submission.answers[index].value : undefined
+              [label]: answerIndexes[index] > -1 ? this.getAnswerTest(submission.answers[index].value) : undefined
             };
           }, {})
         };
       });
       this.csvService.exportCSV({ data, title: `${toProperCase(type)} -  ${exam.name}` });
     }));
+  }
+
+  getAnswerTest(answer: any) {
+    return Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '') : answer.text || answer;
   }
 
 }
