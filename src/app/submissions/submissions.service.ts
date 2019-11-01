@@ -262,7 +262,7 @@ export class SubmissionsService {
   }
 
   getAnswerTest(answer: any) {
-    return Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '') : answer.text || answer;
+    return Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer;
   }
 
 }
