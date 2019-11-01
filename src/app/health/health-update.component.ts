@@ -70,14 +70,21 @@ export class HealthUpdateComponent implements OnInit {
   }
 
   onSubmit() {
-    forkJoin([
-      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
-      this.healthService.postHealthData({
-        _id: this.existingData._id || this.userService.get()._id,
-        _rev: this.existingData._rev,
-        profile: this.healthForm.value
-      })
-    ]).subscribe(() => this.goBack());
+    if (this.profileForm.valid) {
+      forkJoin([
+        this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
+        this.healthService.postHealthData({
+          _id: this.existingData._id || this.userService.get()._id,
+          _rev: this.existingData._rev,
+          profile: this.healthForm.value
+        })
+      ]).subscribe(() => this.goBack());
+    } else {
+      Object.keys(this.profileForm.controls).forEach(field => {
+        const control = this.profileForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
+    }
   }
 
   goBack() {
