@@ -6,6 +6,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { forkJoin } from 'rxjs';
+import { showFormErrors } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -70,6 +71,10 @@ export class HealthUpdateComponent implements OnInit {
   }
 
   onSubmit() {
+    if (!this.profileForm.valid) {
+      showFormErrors(this.profileForm.controls);
+      return;
+    }
     forkJoin([
       this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
       this.healthService.postHealthData({

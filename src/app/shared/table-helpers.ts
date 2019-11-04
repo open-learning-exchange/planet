@@ -1,4 +1,4 @@
-import { FormControl } from '../../../node_modules/@angular/forms';
+import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
 
 const dropdownString = (fieldValue: any, value: string) => {
   if (fieldValue === undefined || value === undefined) {
@@ -145,3 +145,9 @@ export const commonSortingDataAccessor = (item: any, property: string) => {
 };
 
 export const trackById = (index, item) => item._id;
+
+export const showFormErrors = (controls: { [key: string]: AbstractControl }) => {
+  Object.values(controls).forEach(control => {
+    control.markAsTouched({ onlySelf: true });
+  });
+};

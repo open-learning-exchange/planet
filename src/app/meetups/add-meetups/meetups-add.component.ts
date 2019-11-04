@@ -15,6 +15,7 @@ import { UserService } from '../../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { ValidatorService } from '../../validators/validator.service';
+import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   selector: 'planet-meetups-add',
@@ -106,10 +107,7 @@ export class MeetupsAddComponent implements OnInit {
 
   onSubmit() {
     if (!this.meetupForm.valid) {
-      Object.keys(this.meetupForm.controls).forEach(field => {
-        const control = this.meetupForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      showFormErrors(this.meetupForm.controls);
       return;
     }
     const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };

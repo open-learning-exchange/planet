@@ -23,6 +23,7 @@ import { ResourcesService } from './resources.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { map, startWith } from 'rxjs/operators';
+import { showFormErrors } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-resources-add',
@@ -182,32 +183,29 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.resourceForm.valid) {
-      const fileObs: Observable<any> = this.createFileObs();
-      fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
-        const { _id, _rev } = this.existingResource;
-        // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
-        const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
-        // Start with empty object so this.resourceForm.value does not change
-        const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-        const message = newResource.title +
-          (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-        if (JSON.stringify(existingData) !== JSON.stringify(newResource)) {
-          this.updateResource(newResource, file).subscribe(
-            (resourceRes) => this.afterResourceUpdate(message, resourceRes),
-            (err) => this.planetMessageService.showAlert('There was an error with this resource')
-          );
-        } else {
-          this.afterResourceUpdate(message);
-        }
-      });
-    } else {
+    if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
-      Object.keys(this.resourceForm.controls).forEach(field => {
-        const control = this.resourceForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      showFormErrors(this.resourceForm.controls);
+      return;
     }
+    const fileObs: Observable<any> = this.createFileObs();
+    fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
+      const { _id, _rev } = this.existingResource;
+      // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
+      const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
+      // Start with empty object so this.resourceForm.value does not change
+      const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
+      const message = newResource.title +
+        (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
+      if (JSON.stringify(existingData) !== JSON.stringify(newResource)) {
+        this.updateResource(newResource, file).subscribe(
+          (resourceRes) => this.afterResourceUpdate(message, resourceRes),
+          (err) => this.planetMessageService.showAlert('There was an error with this resource')
+        );
+      } else {
+        this.afterResourceUpdate(message);
+      }
+    });
   }
 
   createFileObs() {
