@@ -32,7 +32,9 @@
           <mat-error><planet-form-error-messages [control]="profileForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput required i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
+          <input matInput [matDatepicker]="dp" required i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
