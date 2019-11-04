@@ -9,8 +9,8 @@
     <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
   </mat-toolbar>
   <mat-list>
-    <mat-list-item *ngFor="let rep of replicators">
-      <h3 matLine [matTooltip]="rep.info">
+    <mat-list-item *ngFor="let rep of replicators" [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
+      <h3 matLine>
         <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
         <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
         {{rep.doc_id}}
@@ -19,13 +19,17 @@
         <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
         <ng-container [ngSwitch]="rep?.state">
         <!-- States: initializing, failed, error, running, pending, crashing, completed -->
-        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" i18n-title title="Error">error</mat-icon>
+        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" class="warn-text-color" i18n-title title="Error">error</mat-icon>
         <mat-icon *ngSwitchCase="'running'" i18n-title title="In Progress">sync</mat-icon>
         <mat-icon *ngSwitchCase="'pending'" i18n-title title="Paused">pause</mat-icon>
         <mat-icon *ngSwitchCase="'completed'" i18n-title title="Completed">cloud_done</mat-icon>
         <mat-icon *ngSwitchDefault i18n-title title="In Progress">sync</mat-icon>
         </ng-container>
       </p>
+      <p matLine class="warn-text-color" *ngIf="rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'">
+        {{rep.info}}
+      </p>
+      <mat-divider></mat-divider>
     </mat-list-item>
   </mat-list>
 </div>
