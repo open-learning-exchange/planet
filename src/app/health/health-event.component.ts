@@ -46,8 +46,8 @@ export class HealthEventComponent implements OnInit {
     });
   }
 
-  isNotEmptyForm() {
-    return Object.values(this.healthForm.controls).some(v => v.value !== '');
+  isEmptyForm() {
+    return Object.values(this.healthForm.controls).every(v => v.value === '');
   }
 
   goBack() {
