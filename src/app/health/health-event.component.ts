@@ -46,6 +46,10 @@ export class HealthEventComponent implements OnInit {
     });
   }
 
+  isEmptyForm() {
+    return Object.values(this.healthForm.controls).every(control => control.value === '');
+  }
+
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
