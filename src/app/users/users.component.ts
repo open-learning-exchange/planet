@@ -248,9 +248,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
       switchMap(teams => {
         const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
+        this.tasksService.removeAssigneeFromTask(user.userId);
         return this.couchService.bulkDocs('teams', docsWithUser);
       }),
-      switchMap(() => this.tasksService.removeAssigneeFromTask(user, { users: user._id }))
     );
   }
 
