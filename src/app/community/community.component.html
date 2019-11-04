@@ -1,18 +1,20 @@
 <mat-toolbar>
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
   <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
+  <span class="toolbar-fill"></span>
+  <button mat-raised-button color="primary" *planetAuthorizedRoles>Modify Links</button>
 </mat-toolbar>
 <div class="space-container">
   <div class="view-container view-full-height">
     <mat-toolbar>
-      <button mat-button i18n>
+      <a routerLink="/resources" mat-button i18n>
         Library
-      </button>
+      </a>
     </mat-toolbar>
     <div class="community-news">
       <h3>
         <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
-        <button mat-stroked-button (click)="openAddMessageDialog()" i18n>New News</button>
+        <button mat-stroked-button (click)="openAddMessageDialog()" *planetAuthorizedRoles="'learner'" i18n>New News</button>
       </h3>
       <planet-news-list [items]="news" (viewChange)="toggleForm($event)"></planet-news-list>
     </div>
