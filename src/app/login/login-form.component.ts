@@ -13,6 +13,7 @@ import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { PouchService } from '../shared/database/pouch.service';
 import { StateService } from '../shared/state.service';
+import { showFormErrors } from '../shared/table-helpers';
 
 const registerForm = {
   name: [],
@@ -67,16 +68,14 @@ export class LoginFormComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
   onSubmit() {
-    if (this.userForm.valid) {
-      if (this.createMode) {
-        this.createUser(this.userForm.value);
-      } else {
-        this.login(this.userForm.value, false);
-      }
+    if (!this.userForm.valid) {
+      showFormErrors(this.userForm.controls);
+      return;
+    }
+    if (this.createMode) {
+      this.createUser(this.userForm.value);
     } else {
-      Object.keys(this.userForm.controls).forEach(fieldName => {
-        this.userForm.controls[fieldName].markAsTouched();
-      });
+      this.login(this.userForm.value, false);
     }
   }
 

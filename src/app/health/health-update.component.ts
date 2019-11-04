@@ -6,6 +6,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { forkJoin } from 'rxjs';
+import { showFormErrors } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -71,10 +72,7 @@ export class HealthUpdateComponent implements OnInit {
 
   onSubmit() {
     if (!this.profileForm.valid) {
-      Object.keys(this.profileForm.controls).forEach(field => {
-        const control = this.profileForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      showFormErrors(this.profileForm.controls);
       return;
     }
     forkJoin([

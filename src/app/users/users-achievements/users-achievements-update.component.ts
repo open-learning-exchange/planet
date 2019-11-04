@@ -18,6 +18,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
+import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -215,10 +216,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   markAsInvalid(userForm) {
     if (!userForm.valid) {
-      Object.keys(userForm.controls).forEach(field => {
-        const control = userForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+      showFormErrors(userForm.controls);
     }
   }
 

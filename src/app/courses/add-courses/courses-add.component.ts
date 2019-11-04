@@ -16,6 +16,7 @@ import { PlanetStepListService } from '../../shared/forms/planet-step-list.compo
 import { PouchService } from '../../shared/database/pouch.service';
 import { debug } from '../../debug-operator';
 import { TagsService } from '../../shared/forms/tags.service';
+import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -188,14 +189,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(shouldNavigate = true) {
-    if (this.courseForm.valid) {
-      this.updateCourse(this.courseForm.value, shouldNavigate);
-    } else {
-      Object.keys(this.courseForm.controls).forEach(field => {
-        const control = this.courseForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+    if (!this.courseForm.valid) {
+      showFormErrors(this.courseForm.controls);
+      return;
     }
+    this.updateCourse(this.courseForm.value, shouldNavigate);
   }
 
   courseChangeComplete(message, response: any, shouldNavigate) {
