@@ -5,6 +5,8 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { MatDialog } from '@angular/material';
+import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 
 @Component({
   templateUrl: './community.component.html',
@@ -18,6 +20,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
 
   constructor(
+    private dialog: MatDialog,
     private stateService: StateService,
     private newsService: NewsService,
     private dialogsFormService: DialogsFormService,
@@ -52,6 +55,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }, 'Message has been posted successfully').pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => this.dialogsFormService.closeDialogsForm());
+  }
+
+  openAddLinkDialog() {
+    this.dialog.open(CommunityLinkDialogComponent);
   }
 
 }
