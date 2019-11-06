@@ -14,7 +14,11 @@ export class DashboardNotificationsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.surveys = this.data.surveys;
+    this.surveys = this.data.surveys.map(survey => ({
+      ...survey,
+      completedAnswers: survey.answers.filter(answer => answer.value).length,
+      nextQuestion: (survey.answers.findIndex(answer => !answer.value) + 1) || survey.answers.length + 1
+    }));
     this.surveysCount = this.surveys.length;
   }
 
