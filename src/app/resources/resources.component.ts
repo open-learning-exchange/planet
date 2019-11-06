@@ -65,6 +65,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.removeFilteredFromSelection();
   }
   readonly myLibraryFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
+  readonly myPersonalsFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myPersonals === true ? 'on' : 'off' };
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
@@ -109,7 +110,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
-        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private !== true
+        (resource: any) => this.excludeIds.indexOf(resource._id) === -1
+        && resource.doc.private !== true || this.route.snapshot.data.myPersonals === true
+        && (resource.doc.privateFor || {}).users === this.userService.get()._id
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;

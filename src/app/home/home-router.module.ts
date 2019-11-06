@@ -27,7 +27,10 @@ const routes: Routes = [
         path: 'myLibrary',
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true }
       },
-      { path: 'myPersonals', component: UsersPersonalsComponent },
+      {
+        path: 'myPersonals',
+        loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myPersonals: true }
+      },
       { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'submissions', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) },
