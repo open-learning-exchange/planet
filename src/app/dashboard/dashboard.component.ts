@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { UserService } from '../shared/user.service';
@@ -42,6 +43,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
+    private router: Router,
     private userService: UserService,
     private couchService: CouchService,
     private submissionsService: SubmissionsService,
@@ -157,7 +159,8 @@ export class DashboardComponent implements OnInit {
       this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
-      if (this.surveysCount > 0) {
+      const currentNavigation = this.router.getCurrentNavigation();
+      if (this.surveysCount > 0 && currentNavigation && currentNavigation.extras.state.login === true) {
         this.openNotificationsDialog(surveys);
       }
       this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: this.surveysCount } : item);
@@ -176,7 +179,7 @@ export class DashboardComponent implements OnInit {
   }
 
   openNotificationsDialog(surveys) {
-    if (this.notificationDialog === undefined) {
+    if (this.notificationDialog === undefined || this.notificationDialog.componentInstance === null) {
       this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
         data: { surveys },
         width: '40vw',
