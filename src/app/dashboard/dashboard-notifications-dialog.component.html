@@ -1,0 +1,14 @@
+<p mat-dialog-title><ng-container i18n>You have</ng-container> {{surveysCount}} <ng-container i18n>{ surveysCount, plural, =1 {survey} other {surveys} } to complete</ng-container></p>
+<mat-dialog-content>
+  <mat-action-list>
+    <button mat-list-item
+      *ngFor="let survey of surveys"
+      [routerLink]="[ '/mySurveys/exam', { submissionId: survey._id, questionNum: 1, status: 'pending', mode: 'take' } ]"
+      mat-dialog-close>
+      {{ survey.parent.name }}
+    </button>
+  </mat-action-list>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-dialog-close mat-raised-button color="primary">OK</button>
+</mat-dialog-actions>
