@@ -28,7 +28,7 @@ export class ConfigurationService {
       const requestNotification = {
         'user': 'SYSTEM',
         'message': `New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
-        'link': '/requests/',
+        'link': '/manager/requests/',
         'linkParams': { 'search': configuration.code },
         'type': 'request',
         'priority': 1,
