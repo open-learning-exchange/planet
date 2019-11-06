@@ -2,10 +2,13 @@
 <mat-dialog-content>
   <mat-action-list>
     <button mat-list-item
-      *ngFor="let survey of surveys"
+      *ngFor="let survey of surveys; last as last"
       [routerLink]="[ '/mySurveys/exam', { submissionId: survey._id, questionNum: 1, status: 'pending', mode: 'take' } ]"
       mat-dialog-close>
-      {{ survey.parent.name }}
+      <span>{{ survey.parent.name }}</span>
+      <span class="toolbar-fill"></span>
+      <span>{{ survey.answers.length / survey.parent.questions.length | percent }} <ng-container i18n>Complete</ng-container></span>
+      <mat-divider *ngIf="!last"></mat-divider>
     </button>
   </mat-action-list>
 </mat-dialog-content>

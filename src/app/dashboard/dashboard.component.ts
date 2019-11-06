@@ -180,7 +180,8 @@ export class DashboardComponent implements OnInit {
       this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
         data: { surveys },
         width: '40vw',
-        maxHeight: '90vh'
+        maxHeight: '90vh',
+        autoFocus: false
       });
     }
   }
