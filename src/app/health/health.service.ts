@@ -1,40 +1,50 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
-import { switchMap, tap, catchError } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
+import { StateService } from '../shared/state.service';
+import { stringToHex } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HealthService {
 
-
-  key: string = this.userService.credentials.key;
-  iv: string = this.userService.credentials.iv;
   healthData: any = {};
 
   constructor(
     private couchService: CouchService,
-    private userService: UserService
-  ) {
-    this.userService.userChange$.subscribe(() => {
-      this.key = this.userService.credentials.key;
-      this.iv = this.userService.credentials.iv;
-    });
+    private stateService: StateService
+  ) {}
+
+  getUserKey(userId: string) {
+    const userDb = `userdb-${stringToHex(this.stateService.configuration.code)}-${stringToHex(userId.split(':')[1])}`;
+    return this.couchService.findAll(userDb).pipe(
+      switchMap((docs: any[]) => {
+        const max = docs.reduce((maxDoc, doc) => doc.createdOn > maxDoc.createdOn ? doc : maxDoc, { createdOn: -Infinity });
+        return max.key && max.iv ?
+          of({ doc: max }) :
+          this.createUserKey(userDb);
+      })
+    );
+  }
+
+  createUserKey(userDb) {
+    return this.couchService.updateDocument(
+      userDb,
+      { key: this.generateKey(32), iv: this.generateKey(16), createdOn: this.couchService.datePlaceholder }
+    );
   }
 
   getHealthData(userId) {
-    const resetHealthData = () => {
-      this.healthData = {};
-      return of({ profile: {}, events: [] });
-    };
-    if (this.key === undefined || this.iv === undefined) {
-      return resetHealthData();
-    }
-    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key: this.key, iv: this.iv }).pipe(
-      tap((response) => this.healthData = response),
-      catchError(() => resetHealthData())
+    return this.getUserKey(userId).pipe(
+      switchMap(({ doc }: any) => this.getHealthDoc(userId, doc)),
+    );
+  }
+
+  private getHealthDoc(userId, { key, iv }) {
+    return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key, iv }).pipe(
+      catchError(() => of({ profile: {}, events: [] }))
     );
   }
 
@@ -43,15 +53,15 @@ export class HealthService {
   }
 
   postHealthData(data) {
-    return (this.key === undefined || this.iv === undefined ?
-      this.userService.updateUser({ ...this.userService.get(), key: this.createNewKey(32), iv: this.createNewKey(16) }) :
-      of({})
-    ).pipe(switchMap(() =>
-      this.couchService.put('health/_design/health/_update/encrypt', { ...this.healthData, ...data, key: this.key, iv: this.iv })
-    ));
+    return this.getUserKey(data._id).pipe(
+      switchMap(({ doc }: any) => forkJoin([ of(doc), this.getHealthDoc(data._id, doc) ])),
+      switchMap(([ keyDoc, healthDoc ]: any[]) =>
+        this.couchService.put('health/_design/health/_update/encrypt', { ...healthDoc, ...data, key: keyDoc.key, iv: keyDoc.iv })
+      )
+    );
   }
 
-  createNewKey(size: number) {
+  generateKey(size: number) {
     if (size % 16 !== 0) {
       console.error('Invalid key size');
       return;
