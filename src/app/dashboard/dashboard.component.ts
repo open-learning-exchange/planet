@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit {
   surveysCount = 0;
   examsCount = 0;
   leaderIds = [];
+  isLogin = false;
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
@@ -56,6 +57,8 @@ export class DashboardComponent implements OnInit {
         this.ngOnInit();
       });
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+    const currentNavigation = this.router.getCurrentNavigation();
+    this.isLogin = currentNavigation && currentNavigation.extras.state.login === true;
   }
 
   ngOnInit() {
@@ -159,9 +162,9 @@ export class DashboardComponent implements OnInit {
       this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
-      const currentNavigation = this.router.getCurrentNavigation();
-      if (this.surveysCount > 0 && currentNavigation && currentNavigation.extras.state.login === true) {
+      if (this.surveysCount > 0 && this.isLogin) {
         this.openNotificationsDialog(surveys);
+        this.isLogin = false;
       }
       this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: this.surveysCount } : item);
     });
@@ -179,14 +182,12 @@ export class DashboardComponent implements OnInit {
   }
 
   openNotificationsDialog(surveys) {
-    if (this.notificationDialog === undefined || this.notificationDialog.componentInstance === null) {
-      this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
-        data: { surveys },
-        width: '40vw',
-        maxHeight: '90vh',
-        autoFocus: false
-      });
-    }
+    this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
+      data: { surveys },
+      width: '40vw',
+      maxHeight: '90vh',
+      autoFocus: false
+    });
   }
 
 }
