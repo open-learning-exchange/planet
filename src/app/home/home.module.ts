@@ -19,6 +19,7 @@ import { UsersAchievementsModule } from '../users/users-achievements/users-achie
 import { NewsModule } from '../news/news.module';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsModule } from '../teams/teams.module';
+import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
 
 @NgModule({
   imports: [
@@ -40,10 +41,12 @@ import { TeamsModule } from '../teams/teams.module';
     HomeComponent,
     DashboardComponent,
     DashboardTileComponent,
+    DashboardNotificationsDialogComponent,
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
     LogsMyPlanetComponent
-  ]
+  ],
+  entryComponents: [ DashboardNotificationsDialogComponent ]
 })
 export class HomeModule {}

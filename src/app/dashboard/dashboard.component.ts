@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -10,12 +12,15 @@ import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce } from '../shared/utils';
+import { DashboardNotificationsDialogComponent } from './dashboard-notifications-dialog.component';
 
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
 })
 export class DashboardComponent implements OnInit {
+
+  notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   displayName: string = this.userService.get().firstName !== undefined ?
@@ -28,6 +33,7 @@ export class DashboardComponent implements OnInit {
   surveysCount = 0;
   examsCount = 0;
   leaderIds = [];
+  isLogin = false;
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
@@ -37,6 +43,8 @@ export class DashboardComponent implements OnInit {
   ];
 
   constructor(
+    private dialog: MatDialog,
+    private router: Router,
     private userService: UserService,
     private couchService: CouchService,
     private submissionsService: SubmissionsService,
@@ -49,6 +57,9 @@ export class DashboardComponent implements OnInit {
         this.ngOnInit();
       });
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+    const currentNavigation = this.router.getCurrentNavigation();
+    this.isLogin = currentNavigation && currentNavigation.extras.state && currentNavigation.extras.state.login === true;
+    this.router.events.subscribe(e => console.log(e));
   }
 
   ngOnInit() {
@@ -152,6 +163,10 @@ export class DashboardComponent implements OnInit {
       this.surveysCount = surveys.filter((survey: any, index: number) => {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
+      if (this.surveysCount > 0 && this.isLogin) {
+        this.openNotificationsDialog(surveys);
+        this.isLogin = false;
+      }
       this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: this.surveysCount } : item);
     });
   }
@@ -165,6 +180,15 @@ export class DashboardComponent implements OnInit {
 
   teamRemoved(team: any) {
     this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
+  }
+
+  openNotificationsDialog(surveys) {
+    this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
+      data: { surveys },
+      width: '40vw',
+      maxHeight: '90vh',
+      autoFocus: false
+    });
   }
 
 }

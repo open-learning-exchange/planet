@@ -94,7 +94,7 @@ export class LoginFormComponent {
   }
 
   reRoute() {
-    return this.router.navigateByUrl(this.returnUrl);
+    return this.router.navigateByUrl(this.returnUrl, { state: { login: true } });
   }
 
   createUser({ name, password }: { name: string, password: string }) {
