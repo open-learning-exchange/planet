@@ -249,7 +249,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       switchMap(teams => {
         const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
         return this.couchService.bulkDocs('teams', docsWithUser);
-      }),
+      })
     );
   }
 
