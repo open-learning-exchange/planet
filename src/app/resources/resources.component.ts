@@ -111,8 +111,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
         (resource: any) => this.excludeIds.indexOf(resource._id) === -1
-        && resource.doc.private !== true || this.route.snapshot.data.myPersonals === true
-        && (resource.doc.privateFor || {}).users === this.userService.get()._id
+        // && resource.doc.private !== true || this.route.snapshot.data.myPersonals === true
+        // && (resource.doc.privateFor || {}).users === this.userService.get()._id
+        && resource.doc.private !== true
+        && this.route === '/myPersonals' ? (resource.doc.privateFor || {}).users === this.userService.get()._id : resource.doc.private !== true
+        // && this.route === '/myPersonals' ? (resource.doc.privateFor || {}).users === this.userService.get()._id : resource.doc.private !== true || this.route.snapshot.data.myPersonals === true
+        // && resource.doc.private !== true
+        // now if route is myPersonals then only check resource.doc.privateFor
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;

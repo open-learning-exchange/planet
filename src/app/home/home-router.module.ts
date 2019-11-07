@@ -27,6 +27,11 @@ const routes: Routes = [
         path: 'myLibrary',
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true }
       },
+      // {
+      //   path: 'resourceSet',
+      //   loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule),
+      //     data: { prop1: 'myLibrary', prop2: 'myPersonals', prop3: '' }
+      // },
       {
         path: 'myPersonals',
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myPersonals: true }
