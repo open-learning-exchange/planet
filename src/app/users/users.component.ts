@@ -20,6 +20,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
+import { TasksService } from '../tasks/tasks.service';
 
 @Component({
   templateUrl: './users.component.html',
@@ -81,7 +82,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     private reportsService: ReportsService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private tasksService: TasksService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -259,7 +261,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
           return forkJoin([
             this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
             this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
-            this.deleteUserFromTeams(user)
+            this.deleteUserFromTeams(user),
+            this.tasksService.removeAssigneeFromTasks(user._id)
           ]);
         })
       ),
