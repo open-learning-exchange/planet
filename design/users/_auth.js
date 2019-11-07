@@ -3,11 +3,13 @@ module.exports = { "validate_doc_update":
     if (newDoc._deleted === true) {
       // allow deletes by admins and matching users
       // without checking the other fields
-      if ((userCtx.roles.indexOf('_admin') !== -1) ||
-        (userCtx.name == oldDoc.name)) {
+      // and forbid deleting admin's user doc
+      if (((userCtx.roles.indexOf('_admin') !== -1) ||
+        (userCtx.name == oldDoc.name)) &&
+        (oldDoc.isUserAdmin !== true && oldDoc.roles.length === 0)) {
         return;
       } else {
-        throw({forbidden: 'Only admins may delete other user docs.'});
+        throw({forbidden: oldDoc.isUserAdmin === true ? 'Deleting admin is not permitted' : 'Only admins may delete other user docs.'});
       }
     }
 
