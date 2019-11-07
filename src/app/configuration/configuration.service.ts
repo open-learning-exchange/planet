@@ -6,7 +6,7 @@ import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { SyncService } from '../shared/sync.service';
-import { dedupeShelfReduce } from '../shared/utils';
+import { dedupeShelfReduce, stringToHex } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -172,7 +172,7 @@ export class ConfigurationService {
   setCouchPerUser({ doc: configuration }) {
     return configuration.betaEnabled !== 'off' ?
       forkJoin([
-        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${configuration.code}-`),
+        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${stringToHex(configuration.code)}-`),
         this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
         this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
       ]) :
