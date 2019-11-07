@@ -10,7 +10,6 @@ import { UsersAchievementsUpdateComponent } from '../users/users-achievements/us
 import { NewsComponent } from '../news/news.component';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsViewComponent } from '../teams/teams-view.component';
-import { UsersPersonalsComponent } from '../users/users-personals/users-personals.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -27,11 +26,6 @@ const routes: Routes = [
         path: 'myLibrary',
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true }
       },
-      // {
-      //   path: 'resourceSet',
-      //   loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule),
-      //     data: { prop1: 'myLibrary', prop2: 'myPersonals', prop3: '' }
-      // },
       {
         path: 'myPersonals',
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myPersonals: true }
