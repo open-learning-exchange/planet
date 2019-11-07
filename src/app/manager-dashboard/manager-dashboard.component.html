@@ -22,7 +22,7 @@
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
-      <a routerLink="/upgrade/myplanet" *ngIf="versionLocal === versionParent" i18n mat-raised-button>Upgrade planet apk</a>
+      <a routerLink="/upgrade/myplanet" *ngIf="versionLocal === versionParent && this.versionLocalApk !== this.versionLatestApk" i18n mat-raised-button>Upgrade planet apk</a>
     </ng-container>
   </ng-container>
   <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
@@ -46,8 +46,12 @@
     </div>
     <div class="view-container" *ngIf="planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <p><b i18n>{planetType, select, community {Nation} nation {Center}} Version:</b> {{versionParent || 'N/A'}}</p>
-      <p><b i18n>Local Version:</b> {{versionLocal}}</p>
+      <mat-grid-list cols="4" rowHeight="2rem">
+        <mat-grid-tile><b i18n>{planetType, select, community {Nation} nation {Center}} Version:</b></mat-grid-tile><mat-grid-tile>{{versionParent || 'N/A'}}</mat-grid-tile>
+        <mat-grid-tile><b i18n>Local Version:</mat-grid-tile><mat-grid-tile>{{versionLocal}}</b></mat-grid-tile>
+        <mat-grid-tile><b i18n>Latest Apk Version:</b></mat-grid-tile><mat-grid-list>{{versionLatestApk || 'N/A'}}</mat-grid-list>
+        <mat-grid-tile><b i18n>Local Apk Version:</b></mat-grid-tile><mat-grid-list>{{versionLocalApk || 'N/A'}}</mat-grid-list>
+      </mat-grid-list>
       <ng-container [ngSwitch]="requestStatus">
         <ng-container *ngSwitchCase="'accepted'">
           <span><b i18n> List all from the {planetType, select, community {Nation} nation {Center}}</b>

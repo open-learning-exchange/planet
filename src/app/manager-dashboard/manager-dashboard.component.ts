@@ -31,6 +31,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   deleteCommunityDialog: any;
   versionLocal = '';
   versionParent = '';
+  versionLatestApk = '';
+  versionLocalApk = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
   pin: string;
   activityLogs: any = {};
@@ -61,6 +63,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
       this.getVersion({ domain: this.planetConfiguration.parentDomain, ...opts })
         .subscribe((version: string) => this.versionParent = version);
+      this.getApkVersion(opts).subscribe(( [ version, versions ]: [ string, any ]) => {
+        this.versionLocalApk = version;
+        this.versionLatestApk = versions.latestapk;
+      });
     }
     this.getSatellitePin();
     this.couchService.currentTime().pipe(switchMap((time: number) => {
@@ -249,6 +255,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   getVersion(opts: any = {}) {
     return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
+  }
+
+  getApkVersion(opts: any = {}) {
+    return forkJoin([
+      this.couchService.getUrl('apkversion', opts),
+      this.couchService.getUrl('versions', opts)
+    ]).pipe(catchError(() => of([ '', 'N/A' ])));
   }
 
 }
