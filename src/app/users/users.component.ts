@@ -262,7 +262,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
             this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
             this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
             this.deleteUserFromTeams(user),
-            this.tasksService.removeAssigneeFromTask(user._id)
+            this.tasksService.removeAssigneeFromTasks(user._id)
           ]);
         })
       ),
