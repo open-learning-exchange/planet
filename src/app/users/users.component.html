@@ -85,7 +85,14 @@
       </ng-container>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.doc.name}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <span *ngIf="element.doc.firstName || element.doc.lastName; else origName">
+            {{element.doc.firstName}} {{element.doc.middleName}} {{element.doc.lastName}}
+          </span>
+          <ng-template #origName>
+            {{element.doc.name}}
+          </ng-template>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitCount">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No. of Visits</mat-header-cell>
