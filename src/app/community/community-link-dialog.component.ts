@@ -1,7 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatStepper } from '@angular/material';
+import { MatStepper, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CustomValidators } from '../validators/custom-validators';
+import { TeamsService } from '../teams/teams.service';
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
@@ -17,7 +18,10 @@ export class CommunityLinkDialogComponent {
   linkForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder
+    private dialogRef: MatDialogRef<CommunityLinkDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private fb: FormBuilder,
+    private teamsService: TeamsService
   ) {
     this.linkForm = this.fb.group({
       title: [ '', CustomValidators.required ],
@@ -34,6 +38,13 @@ export class CommunityLinkDialogComponent {
     if (selectedIndex === 0 && this.linkForm.pristine !== true) {
       this.linkForm.reset();
     }
+  }
+
+  linkSubmit() {
+    this.teamsService.createServicesLink(this.linkForm.value).subscribe(() => {
+      this.data.getLinks();
+      this.dialogRef.close();
+    });
   }
 
 }

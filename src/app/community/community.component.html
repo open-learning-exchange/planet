@@ -10,6 +10,9 @@
       <a routerLink="/resources" mat-button i18n>
         Library
       </a>
+      <a *ngFor="let link of links" [routerLink]="link.route" mat-button i18n>
+        {{link.title}}
+      </a>
       <span class="toolbar-fill"></span>
       <button (click)="openAddLinkDialog()" mat-icon-button><mat-icon>add</mat-icon></button>
     </mat-toolbar>

@@ -20,3 +20,6 @@
     </mat-horizontal-stepper>
   </form>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid">OK</button>
+</mat-dialog-actions>

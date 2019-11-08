@@ -7,6 +7,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { MatDialog } from '@angular/material';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
+import { TeamsService } from '../teams/teams.service';
 
 @Component({
   templateUrl: './community.component.html',
@@ -17,6 +18,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   configuration = this.stateService.configuration;
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   news: any[] = [];
+  links: any[] = [];
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -24,12 +26,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private newsService: NewsService,
     private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private teamsService: TeamsService
   ) {}
 
   ngOnInit() {
     this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.getLinks();
   }
 
   ngOnDestroy() {
@@ -57,10 +61,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(() => this.dialogsFormService.closeDialogsForm());
   }
 
+  getLinks() {
+    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links);
+  }
+
   openAddLinkDialog() {
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
-      maxHeight: '90vh'
+      maxHeight: '90vh',
+      data: { getLinks: this.getLinks.bind(this) }
     });
   }
 
