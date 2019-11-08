@@ -59,7 +59,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openAddLinkDialog() {
     this.dialog.open(CommunityLinkDialogComponent, {
-      width: '40vw',
+      width: '50vw',
       maxHeight: '90vh'
     });
   }
