@@ -99,7 +99,7 @@ export class MeetupsAddComponent implements OnInit {
       meetupLocation: '',
       createdBy: this.userService.get().name,
       createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [ 10, [ Validators.min(2), Validators.max(50), CustomValidators.integerValidator ] ]
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
