@@ -22,6 +22,7 @@ import { TeamsModule } from '../teams/teams.module';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
+import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
 
 @NgModule({
   imports: [
@@ -49,8 +50,9 @@ import { PlanetCalendarModule } from '../shared/calendar.module';
     PulsateIconDirective,
     UpgradeComponent,
     LogsMyPlanetComponent,
-    CommunityComponent
+    CommunityComponent,
+    CommunityLinkDialogComponent
   ],
-  entryComponents: [ DashboardNotificationsDialogComponent ]
+  entryComponents: [ DashboardNotificationsDialogComponent, CommunityLinkDialogComponent ]
 })
 export class HomeModule {}

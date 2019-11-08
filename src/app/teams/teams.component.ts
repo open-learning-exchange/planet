@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -28,7 +28,8 @@ import { toProperCase } from '../shared/utils';
     mat-row {
       cursor: pointer;
     }
-  ` ]
+  ` ],
+  selector: 'planet-teams'
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
@@ -46,7 +47,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   message = '';
   deleteDialog: any;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
-  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  @Input() mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   displayedColumns = this.planetType === 'community' && this.mode === 'enterprise' ?
     [ 'name', 'createdDate', 'action' ] :
     [ 'name', 'createdDate', 'teamType', 'action' ];

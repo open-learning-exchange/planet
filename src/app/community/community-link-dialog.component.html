@@ -1,7 +1,11 @@
-<mat-form-field [ngModel]="selectedLink">
-  <mat-label>Type of Link</mat-label>
-  <mat-select>
-    <mat-option *ngFor="let link of links" [value]="link.title">{{link.title}}</mat-option>
-  </mat-select>
-</mat-form-field>
-<planet-teams *ngIf="selectedLink !== 'Library'" mode="enterprise"></planet-teams>
+<div mat-dialog-title>
+  <mat-form-field class="full-width">
+    <mat-label>Type of Link</mat-label>
+    <mat-select [(ngModel)]="selectedLink">
+      <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<mat-dialog-content>
+  <planet-teams *ngIf="selectedLink?.db === 'teams'" [mode]="selectedLink?.selector?.type"></planet-teams>
+</mat-dialog-content>

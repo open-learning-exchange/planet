@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 })
 export class CommunityLinkDialogComponent {
 
-  selectedLink: string;
+  selectedLink: { db, title, selector? };
   links: { db, title, selector? }[] = [
     { db: 'resources', title: 'Library' },
     { db: 'teams', title: 'Teams', selector: { type: 'team' } },
