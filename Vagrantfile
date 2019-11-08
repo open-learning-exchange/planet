@@ -35,6 +35,8 @@ Vagrant.configure(2) do |config|
     prod.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
     prod.vm.network "forwarded_port", guest: 2200, host: 2300, auto_correct: true
     prod.vm.network "forwarded_port", guest: 2200, host: 5984, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 2400, host: 2400, auto_correct: true
+    prod.vm.network "forwarded_port", guest: 3200, host: 3200, auto_correct: true
     prod.vm.network "forwarded_port", guest: 22, host: 2223, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
 
     # Prevent TTY Errors (copied from laravel/homestead: "homestead.rb" file)... By default this is "bash -l".
@@ -52,6 +54,13 @@ Vagrant.configure(2) do |config|
         docker-compose -f planet.yml -f volumes.yml -p planet up -d
         docker wait planet_db-init_1
         docker start planet_db-init_1
+      fi
+      if [ -f /srv/hub/pwd/credentials.yml ]; then
+        docker-compose -f /vagrant/docker/hub.yml -f /vagrant/docker/volumes_hub.yml -f /srv/hub/pwd/credentials.yml -p hub up -d
+      else
+        docker-compose -f /vagrant/docker/hub.yml -f /vagrant/docker/volumes_hub.yml  -p hub up -d
+        docker wait hub_db-init_1
+        docker start hub_db-init_1
       fi
     SHELL
   end
