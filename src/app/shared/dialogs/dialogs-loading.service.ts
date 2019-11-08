@@ -16,6 +16,7 @@ export class DialogsLoadingService {
 
   start() {
     if (!this.isSpinnerOn) {
+      this.isSpinnerOn = true;
       this.spinnerDialog = this.dialog.open(DialogsLoadingComponent, {
         disableClose: true
       });
@@ -25,6 +26,7 @@ export class DialogsLoadingService {
   stop() {
     if (this.spinnerDialog !== undefined) {
       this.spinnerDialog.close();
+      this.isSpinnerOn = false;
     }
   }
 
