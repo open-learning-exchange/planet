@@ -6,7 +6,7 @@ module.exports = { "validate_doc_update":
       // and forbid deleting admin's user doc
       if (((userCtx.roles.indexOf('_admin') !== -1) ||
         (userCtx.name == oldDoc.name)) &&
-        (oldDoc.isUserAdmin !== true && oldDoc.roles.length === 0)) {
+        (oldDoc.isUserAdmin !== true || oldDoc.roles.length > 0)) {
         return;
       } else {
         throw({forbidden: oldDoc.isUserAdmin === true ? 'Deleting admin is not permitted' : 'Only admins may delete other user docs.'});
