@@ -14,6 +14,7 @@ import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { PouchService } from '../shared/database/pouch.service';
 import { StateService } from '../shared/state.service';
 import { showFormErrors } from '../shared/table-helpers';
+import { HealthService } from '../health/health.service';
 
 const registerForm = {
   name: [],
@@ -52,7 +53,8 @@ export class LoginFormComponent {
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
-    private pouchService: PouchService
+    private pouchService: PouchService,
+    private healthService: HealthService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -129,6 +131,7 @@ export class LoginFormComponent {
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
     const configuration = this.stateService.configuration;
+    const userId = `org.couchdb.user:${name}`;
     this.pouchAuthService.login(name, password).pipe(
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
@@ -136,7 +139,8 @@ export class LoginFormComponent {
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-      })
+      }),
+      switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId)))
     ).subscribe(() => {}, this.loginError.bind(this));
   }
 
