@@ -282,4 +282,18 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
+  createServicesLink({ title, route }) {
+    const { code, parentCode } = this.stateService.configuration;
+    const newServicesDoc = {
+      'teamId': `${code}@${parentCode}`,
+      'createdDate': this.couchService.datePlaceholder,
+      'teamPlanetCode': `${code}`,
+      'parentCode': `${parentCode}`,
+      'docType': 'link',
+      title,
+      route
+    };
+    return this.updateTeam(newServicesDoc);
+  }
+
 }

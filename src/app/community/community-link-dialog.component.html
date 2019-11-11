@@ -1,0 +1,25 @@
+<div mat-dialog-title>
+  <mat-form-field class="full-width">
+    <mat-label>Type of Link</mat-label>
+    <mat-select [(ngModel)]="selectedLink">
+      <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<mat-dialog-content *ngIf="selectedLink?.db === 'teams'">
+  <form [formGroup]="linkForm">
+    <mat-horizontal-stepper #linkStepper (selectionChange)="linkStepperChange($event)">
+      <mat-step i18n-label label="Select">
+        <planet-teams [mode]="selectedLink?.selector?.type" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
+      </mat-step>
+      <mat-step i18n-label label="Title" [stepControl]="linkTitleForm">
+        <mat-form-field class="full-width">
+          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+        </mat-form-field>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid">OK</button>
+</mat-dialog-actions>

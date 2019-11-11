@@ -20,6 +20,9 @@ import { NewsModule } from '../news/news.module';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsModule } from '../teams/teams.module';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
+import { CommunityComponent } from '../community/community.component';
+import { PlanetCalendarModule } from '../shared/calendar.module';
+import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
 
 @NgModule({
   imports: [
@@ -35,7 +38,8 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
     SharedComponentsModule,
     UsersAchievementsModule,
     NewsModule,
-    TeamsModule
+    TeamsModule,
+    PlanetCalendarModule
   ],
   declarations: [
     HomeComponent,
@@ -45,8 +49,10 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
-    LogsMyPlanetComponent
+    LogsMyPlanetComponent,
+    CommunityComponent,
+    CommunityLinkDialogComponent
   ],
-  entryComponents: [ DashboardNotificationsDialogComponent ]
+  entryComponents: [ DashboardNotificationsDialogComponent, CommunityLinkDialogComponent ]
 })
 export class HomeModule {}

@@ -1,0 +1,35 @@
+<mat-toolbar>
+  <a mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></a>
+  <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+<div class="space-container">
+  <div class="view-container view-full-height">
+    <mat-toolbar>
+      <a routerLink="/resources" mat-button i18n>
+        Library
+      </a>
+      <ng-container *ngFor="let link of links">
+        <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
+          {{link.title}}
+        </a>
+        <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
+      </ng-container>
+      <span class="toolbar-fill"></span>
+      <ng-container *planetAuthorizedRoles>
+        <button (click)="toggleDeleteMode()" mat-icon-button><mat-icon>delete</mat-icon></button>
+        <button (click)="openAddLinkDialog()" mat-icon-button><mat-icon>add</mat-icon></button>
+      </ng-container>
+    </mat-toolbar>
+    <div class="community-news">
+      <h3>
+        <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+        <ng-container *planetAuthorizedRoles="'learner'">
+          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New News</button>
+        </ng-container>
+      </h3>
+      <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
+    </div>
+    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
+  </div>
+</div>
