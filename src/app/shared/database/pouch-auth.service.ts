@@ -3,7 +3,6 @@ import { from, throwError, Observable, forkJoin } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
 import { CouchService } from '../couchdb.service';
-import { HealthService } from '../../health/health.service';
 
 interface SessionInfo {
   userCtx: {
@@ -19,8 +18,7 @@ export class PouchAuthService {
 
   constructor(
     private pouchService: PouchService,
-    private couchService: CouchService,
-    private healthService: HealthService
+    private couchService: CouchService
   ) {
     this.authDB = this.pouchService.getAuthDB();
   }
@@ -41,7 +39,6 @@ export class PouchAuthService {
   signup(username, password, opts = {}) {
     return this.couchService.currentTime().pipe(
       switchMap((date) => from(this.authDB.signUp(username, password, this.couchService.fillInDateFields(opts, date)))),
-      // switchMap((res: any) => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(res.id))),
       catchError(this.handleError)
     );
   }
