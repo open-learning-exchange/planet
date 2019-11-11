@@ -32,7 +32,7 @@
 
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search username...">
+    <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search name...">
   </mat-form-field>
   <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
 </mat-toolbar>
