@@ -55,9 +55,10 @@ export class HealthService {
   postHealthData(data) {
     return this.getUserKey(data._id).pipe(
       switchMap(({ doc }: any) => forkJoin([ of(doc), this.getHealthDoc(data._id, doc) ])),
-      switchMap(([ keyDoc, healthDoc ]: any[]) =>
-        this.couchService.put('health/_design/health/_update/encrypt', { ...healthDoc, ...data, key: keyDoc.key, iv: keyDoc.iv })
-      )
+      switchMap(([ keyDoc, healthDoc ]: any[]) => {
+        const newHealthDoc = { ...healthDoc, ...data, events: [ ...healthDoc.events, ...(data.events || []) ] };
+        return this.couchService.put('health/_design/health/_update/encrypt', { ...newHealthDoc, key: keyDoc.key, iv: keyDoc.iv });
+      })
     );
   }
 
