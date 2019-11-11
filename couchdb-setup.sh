@@ -37,7 +37,7 @@ insert_dbs() {
 set_couch_per_user() {
   CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
   CODE=$(echo $CONFIGURATION | jq -rj '.["rows"][0]["doc"]["code"] // empty')
-  HEXCODE=$(echo $CODE | tr -d \\n | xxd -p)
+  HEXCODE=$(echo $CODE | tr -d \\n | hexdump -v -e '/1 "%02x"')
   BETAMODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["betaEnabled"] // empty')
   if [ ! -z "$CODE" ] && [ "$BETAMODE" != "off" ];
   then
