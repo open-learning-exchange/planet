@@ -69,7 +69,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getLinks() {
-    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links);
+    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links.filter(link => link.docType === 'link'));
   }
 
   deleteLink(link) {
