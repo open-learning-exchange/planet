@@ -7,6 +7,7 @@ import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { forkJoin } from 'rxjs';
 import { showFormErrors } from '../shared/table-helpers';
+import { languages } from '../shared/languages';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -17,6 +18,7 @@ export class HealthUpdateComponent implements OnInit {
   profileForm: FormGroup;
   healthForm: FormGroup;
   existingData: any = {};
+  languages = languages;
 
   constructor(
     private fb: FormBuilder,
