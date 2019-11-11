@@ -17,8 +17,11 @@ export class HealthService {
     private stateService: StateService
   ) {}
 
-  getUserKey(userId: string) {
-    const userDb = `userdb-${stringToHex(this.stateService.configuration.code)}-${stringToHex(userId.split(':')[1])}`;
+  userDatabaseName(userId: string) {
+    return `userdb-${stringToHex(this.stateService.configuration.code)}-${stringToHex(userId.split(':')[1])}`;
+  }
+
+  getUserKey(userDb: string) {
     return this.couchService.findAll(userDb).pipe(
       switchMap((docs: any[]) => {
         const max = docs.reduce((maxDoc, doc) => doc.createdOn > maxDoc.createdOn ? doc : maxDoc, { createdOn: -Infinity });
@@ -36,8 +39,22 @@ export class HealthService {
     );
   }
 
+  userHealthSecurity(userDb) {
+    return this.couchService.get(`${userDb}/_security`).pipe(switchMap((securityDoc: any) => {
+      const securityHasHealth = securityDoc.members === undefined || securityDoc.members.roles === undefined ||
+        securityDoc.members.roles.indexOf('health') === -1;
+      const securityPost = securityHasHealth ?
+        this.couchService.put(`${userDb}/_security`, {
+          ...securityDoc,
+          members: { ...securityDoc.members, roles: [ ...(securityDoc.members.roles || []), 'health' ] }
+        }) :
+        of({});
+      return securityPost;
+    }));
+  }
+
   getHealthData(userId) {
-    return this.getUserKey(userId).pipe(
+    return this.getUserKey(this.userDatabaseName(userId)).pipe(
       switchMap(({ doc }: any) => this.getHealthDoc(userId, doc)),
     );
   }
@@ -53,11 +70,15 @@ export class HealthService {
   }
 
   postHealthData(data) {
-    return this.getUserKey(data._id).pipe(
+    const userDb = this.userDatabaseName(data._id);
+    return this.getUserKey(userDb).pipe(
       switchMap(({ doc }: any) => forkJoin([ of(doc), this.getHealthDoc(data._id, doc) ])),
-      switchMap(([ keyDoc, healthDoc ]: any[]) =>
-        this.couchService.put('health/_design/health/_update/encrypt', { ...healthDoc, ...data, key: keyDoc.key, iv: keyDoc.iv })
-      )
+      switchMap(([ keyDoc, healthDoc, securityDoc ]: any[]) => {
+        return forkJoin([
+          this.couchService.put('health/_design/health/_update/encrypt', { ...healthDoc, ...data, key: keyDoc.key, iv: keyDoc.iv }),
+          this.userHealthSecurity(userDb)
+        ]);
+      })
     );
   }
 
