@@ -19,6 +19,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   news: any[] = [];
   links: any[] = [];
+  showNewsButton = true;
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -71,6 +72,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       maxHeight: '90vh',
       data: { getLinks: this.getLinks.bind(this) }
     });
+  }
+
+  toggleShowButton(data) {
+    this.showNewsButton = data._id === 'root';
   }
 
 }

@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></a>
   <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
   <span class="toolbar-fill"></span>
   <button mat-raised-button color="primary" *planetAuthorizedRoles>Modify Links</button>
@@ -19,9 +19,11 @@
     <div class="community-news">
       <h3>
         <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
-        <button mat-stroked-button (click)="openAddMessageDialog()" *planetAuthorizedRoles="'learner'" i18n>New News</button>
+        <ng-container *planetAuthorizedRoles="'learner'">
+          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New News</button>
+        </ng-container>
       </h3>
-      <planet-news-list [items]="news" (viewChange)="toggleForm($event)"></planet-news-list>
+      <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
     </div>
     <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
   </div>
