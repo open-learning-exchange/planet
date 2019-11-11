@@ -8,6 +8,9 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { CouchService } from '../shared/couchdb.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './community.component.html',
@@ -20,6 +23,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   news: any[] = [];
   links: any[] = [];
   showNewsButton = true;
+  deleteMode = false;
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -28,7 +32,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private newsService: NewsService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -66,6 +72,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links);
   }
 
+  deleteLink(link) {
+    return this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+  }
+
   openAddLinkDialog() {
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
@@ -74,8 +84,31 @@ export class CommunityComponent implements OnInit, OnDestroy {
     });
   }
 
+  openDeleteLinkDialog(link) {
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.deleteLink(link),
+          onNext: () => {
+            this.planetMessageService.showMessage(`${link.title} deleted`);
+            this.getLinks();
+            deleteDialog.close();
+          },
+          onError: () => this.planetMessageService.showAlert(`There was an error deleting ${link.title}`)
+        },
+        changeType: 'delete',
+        type: 'link',
+        displayName: link.title
+      }
+    });
+  }
+
   toggleShowButton(data) {
     this.showNewsButton = data._id === 'root';
+  }
+
+  toggleDeleteMode() {
+    this.deleteMode = !this.deleteMode;
   }
 
 }
