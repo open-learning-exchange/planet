@@ -110,10 +110,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
-        (resource: any) => this.excludeIds.indexOf(resource._id) === -1 
-          && resource.doc.private && (resource.doc.privateFor || {}).users === this.userService.get()._id
-          && this.route === '/myLibrary' ? resource.doc.private !== true 
-            : this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private === true && resource.doc.privateFor.users
+        (resource: any) => this.excludeIds.indexOf(resource._id) === -1
+          && (this.route === '/myPersonals' ? (resource.doc.private === true &&
+          (resource.doc.privateFor || {}).users === this.userService.get()._id) :
+          resource.doc.private !== true)
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
