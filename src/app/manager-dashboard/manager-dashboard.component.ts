@@ -63,8 +63,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
       this.getVersion({ domain: this.planetConfiguration.parentDomain, ...opts })
         .subscribe((version: string) => this.versionParent = version);
-      this.getApkVersion(opts).subscribe(( [ version, versions ]: [ string, any ]) => {
-        this.versionLocalApk = version;
+      this.getApkVersion(opts).subscribe(( [ version, versions ]: [ any, any ]) => {
+        this.versionLocalApk = version.liveVersion;
         this.versionLatestApk = versions.latestapk;
       });
     }
@@ -261,7 +261,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return forkJoin([
       this.couchService.getUrl('apkversion', opts),
       this.couchService.getUrl('versions', opts)
-    ]).pipe(catchError(() => of([ '', 'N/A' ])));
+    ]).pipe(catchError(() => of([ 'N/A', 'N/A' ])));
   }
 
 }

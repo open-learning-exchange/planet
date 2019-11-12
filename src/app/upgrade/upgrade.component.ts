@@ -156,7 +156,7 @@ export class UpgradeComponent {
 
   upgradeMyPlanet() {
     this.start();
-    const upgradeUrl = this.stateService.configuration.planetType === 'center' ? '/planetapk' : '/fromnation/planetapk';
+    const upgradeUrl = '/planetapk';
     this.http.get(environment.upgradeAddress + upgradeUrl, { responseType: 'text' })
       .subscribe(result => this.handleResult(result), err => this.handleError(err));
   }

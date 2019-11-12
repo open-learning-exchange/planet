@@ -29,7 +29,6 @@ if [ -f "$apkName" ] && [ -f "$sha256File" ]; then
     if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
       echo "Download successful"
       rm -f "$apkName.tmp"
-      echo $tag > /usr/share/nginx/html/apkversion
     else
       echo "Download error"
       mv "$apkName.tmp" "$apkName"
@@ -41,7 +40,6 @@ else
   if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
     echo "Download successful"
     rm -f "$apkName.tmp"
-    echo $tag > /usr/share/nginx/html/apkversion
   else
     echo "Download error"
   fi
