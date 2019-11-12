@@ -10,18 +10,19 @@ sha256File="$apkName.sha256"
 
 tag=$(cat versions | jq -r .latestapk)
 tagCode=$(cat versions | jq -r .latestapkcode)
-curVersion=$(cat apkversion | jq -r .liveVersion)
-curCode=$(cat apkversion | jq -r .liveCode)
+curVersion=$(cat apkdownloadstatus | jq -r .liveVersion)
+curCode=$(cat apkdownloadstatus | jq -r .liveCode)
 echo "Last release version: $tag"
 downloadUrl="$repoUrl/releases/download/$tag/$apkName"
 
 write_status() {
+  time=$(date +%s000)
   if [ "$1" = "Success"]
   then
     curVersion="$tag"
     curCode="$tagCode"
   fi
-  echo '{"apkcode":"'$tagCode'","apkversion":"'$tag'","liveVersion":"'$curVersion'","liveCode":"'$curCode'","status":"'$1'"}' > /usr/share/nginx/html/apkversion
+  echo '{"apkcode":"'$tagCode'","apkversion":"'$tag'","liveVersion":"'$curVersion'","liveCode":"'$curCode'","status":"'$1'","time":'$time'}' > /usr/share/nginx/html/apkdownloadstatus
 }
 download_apk(){
   write_status "Downloading"
