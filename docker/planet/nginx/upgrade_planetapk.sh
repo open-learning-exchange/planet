@@ -44,6 +44,7 @@ if [ -f "$apkName" ] && [ -f "$sha256File" ]; then
       write_status "Success"
       echo "Download successful"
       rm -f "$apkName.tmp"
+      echo $tag > /usr/share/nginx/html/apkversion
     else
       write_status "Failed"
       echo "Download error"
@@ -57,6 +58,7 @@ else
     write_status "Success"
     echo "Download successful"
     rm -f "$apkName.tmp"
+    echo $tag > /usr/share/nginx/html/apkversion
   else
     write_status "Failed"
     echo "Download error"

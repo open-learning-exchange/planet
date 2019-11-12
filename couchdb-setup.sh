@@ -36,11 +36,12 @@ insert_dbs() {
 
 set_couch_per_user() {
   CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
-  CODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["code"] // empty')
+  CODE=$(echo $CONFIGURATION | jq -rj '.["rows"][0]["doc"]["code"] // empty')
+  HEXCODE=$(echo $CODE | tr -d \\n | xxd -p)
   BETAMODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["betaEnabled"] // empty')
   if [ ! -z "$CODE" ] && [ "$BETAMODE" != "off" ];
   then
-    upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$CODE'-"'
+    upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$HEXCODE'-"'
     upsert_doc _node/nonode@nohost/_config couch_peruser/delete_dbs '"true"'
     upsert_doc _node/nonode@nohost/_config couch_peruser/enable '"true"'
   fi

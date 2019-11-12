@@ -64,3 +64,7 @@ export const urlToParamObject = (url: string) => url.split(';').reduce((params, 
 }, {});
 
 export const toProperCase = (string: string) => `${string.slice(0, 1).toUpperCase()}${string.slice(1)}`;
+
+export const stringToHex = (string: string) => string.split('').map(char => char.charCodeAt(0).toString(16)).join('');
+
+export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
