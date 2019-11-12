@@ -124,7 +124,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       ),
       filterDropdowns(this.filter),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFields([ 'doc.name' ])
+      filterSpecificFields([ 'doc.firstName', 'doc.lastName' ])
     ]);
     this.allUsers.filter = this.allUsers.filter || ' ';
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
