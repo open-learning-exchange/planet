@@ -95,7 +95,7 @@ jobs:
         - prepare_planet_test
         - prepare_db_init_test
         - render_compose_travis
-        - nohup docker-compose -f ./.travis/planet-travis.yml up &
+        - nohup docker-compose -f ./.travis/planet-travis.yml -p planet up &
         - export CHROME_BIN=chromium-browser
         - export DISPLAY=:99.0
       install:
