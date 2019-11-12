@@ -434,9 +434,8 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">
-              
-              <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
+        <target state="translated">
+                            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>स्वीकार्नुहोस्
             
             </target>
       </trans-unit>
@@ -1541,7 +1540,10 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target state="final">पुस्तकालयमा थप्नुहाेस्</target>
+        <target state="final">मेरो पुस्तकालयमा थप्नुहाेस्</target>
+        <alt-trans>
+          <target>पुस्तकालयमा थप्नुहाेस्</target>
+        </alt-trans>
         <alt-trans>
           <target>पुस्तकालयमा थप गर्नुहोस्</target>
         </alt-trans>
@@ -1552,7 +1554,10 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="final">पुस्तकालयबाट हटाउनुहोस्</target>
+        <target state="final">मेरो पुस्तकालयबाट हटाउनुहोस्</target>
+        <alt-trans>
+          <target>पुस्तकालयबाट हटाउनुहोस्</target>
+        </alt-trans>
         <alt-trans>
           <target>पुस्तकालय बाट हटाउनुहोस्</target>
         </alt-trans>
@@ -1601,8 +1606,13 @@
           <context context-type="linenumber">15</context>
         </context-group>
         <target state="translated">
+        मेरो पुस्तकालयमा थप्नुहाेस्
+      </target>
+        <alt-trans>
+          <target>
         पुस्तकालयमा थप्नुहाेस्
       </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="2aa6486b4568333332ae6422735ed1a32e5e5214" datatype="html">
         <source>
@@ -1613,8 +1623,13 @@
           <context context-type="linenumber">18</context>
         </context-group>
         <target state="translated">
+        मेरो पुस्तकालयबाट हटाउनुहोस्
+      </target>
+        <alt-trans>
+          <target>
         पुस्तकालयबाट हटाउनुहोस्
       </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</source>
@@ -2327,7 +2342,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Mark as Read</target>
+        <target state="translated">पढिएको भनि चिन्ह लगाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="ea344b0d56cca460ce3e90a00c04fdff5dc05712" datatype="html">
         <source>{VAR_SELECT, select, survey {Surveys} grade {Submissions} }</source>
@@ -3131,8 +3146,8 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">
-        Leave
+        <target state="translated">
+        छोड्नुहाेस्
       </target>
       </trans-unit>
       <trans-unit id="f8cdf6a93002350fe817a12f497299eb5a4e2e43" datatype="html">
@@ -3149,7 +3164,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">(You)</target>
+        <target state="translated">(तपाईं)</target>
       </trans-unit>
       <trans-unit id="466855df62605763e78d805760bcdbe992d74af7" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Requested Members: (<x id="INTERPOLATION" equiv-text="{{team?.requests.length}}"/>)<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
