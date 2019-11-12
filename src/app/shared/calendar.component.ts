@@ -85,7 +85,7 @@ export class PlanetCalendarComponent implements OnInit {
         } : {
           backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
         };
-        return this.eventObject({ ...task, isTask: true }, task.deadline, task.completed ? task.completedTime: '', taskColors);
+        return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
       this.events = [ ...this.meetups, ...this.tasks ];
     });
