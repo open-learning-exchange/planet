@@ -134,4 +134,15 @@ export class ManagerService {
     return of({});
   }
 
+  getVersion(app: 'planet' | 'myPlanet', opts: any = {}) {
+    return this.couchService.getUrl(`${app === 'myPlanet' ? 'apk' : ''}version`, opts).pipe(catchError(() => of('N/A')));
+  }
+
+  getApkLatestVersion(opts: any = {}) {
+    return this.couchService.getUrl('versions', opts).pipe(
+      map((response: string) => JSON.parse(response)),
+      catchError(() => of({}))
+    );
+  }
+
 }

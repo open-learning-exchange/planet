@@ -67,14 +67,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
-      const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
-      this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
-      this.getVersion({ domain: this.planetConfiguration.parentDomain, ...opts })
-        .subscribe((version: string) => this.versionParent = version);
-      this.getApkVersion(opts).subscribe(( [ version, versions ]: [ any, any ]) => {
-        this.versionLocalApk = version.liveVersion;
-        this.versionLatestApk = versions.latestapk;
-      });
+      this.setVersions();
     }
     this.getSatellitePin();
     this.couchService.currentTime().pipe(switchMap((time: number) => {
@@ -261,15 +254,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }, (error) => this.planetMessageService.showAlert('Error to reset pin'));
   }
 
-  getVersion(opts: any = {}) {
-    return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
-  }
-
-  getApkVersion(opts: any = {}) {
-    return forkJoin([
-      this.couchService.getUrl('apkversion', opts),
-      this.couchService.getUrl('versions', opts)
-    ]).pipe(catchError(() => of([ 'N/A', 'N/A' ])));
+  setVersions() {
+    const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
+    this.managerService.getVersion('planet', opts).subscribe((version: string) => this.versionLocal = version);
+    this.managerService.getVersion('planet', { domain: this.planetConfiguration.parentDomain, ...opts })
+      .subscribe((version: string) => this.versionParent = version);
+    forkJoin([
+      this.managerService.getVersion('myPlanet', opts),
+      this.managerService.getApkLatestVersion(opts)
+    ]).subscribe(( [ localVersion, latestVersion ]: [ any, any ]) => {
+      this.versionLocalApk = localVersion.liveVersion;
+      this.versionLatestApk = latestVersion.latestapk;
+    });
   }
 
 }
