@@ -18,7 +18,15 @@ import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 
 @Component({
-  templateUrl: './manager-dashboard.component.html'
+  templateUrl: './manager-dashboard.component.html',
+  styles: [ `
+    .view-container > * {
+      margin-bottom: 0.5rem;
+    }
+    .view-container > *:last-child {
+      margin-bottom: 0;
+    }
+  ` ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
