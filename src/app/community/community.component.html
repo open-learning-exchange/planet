@@ -13,7 +13,7 @@
         <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
           {{link.title}}
         </a>
-        <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
+        <button *ngIf="deleteMode" mat-flat-button class="margin-lr-2" (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
       </ng-container>
       <span class="toolbar-fill"></span>
       <ng-container *planetAuthorizedRoles>
