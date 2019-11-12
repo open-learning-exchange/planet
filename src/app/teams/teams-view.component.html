@@ -125,6 +125,9 @@
                 <mat-card-header>
                   <img mat-card-avatar [src]="request.avatar">
                   <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName || request.name}}</a>
+                  <mat-card-subtitle>
+                    <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
+                  </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-actions>
                   <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
