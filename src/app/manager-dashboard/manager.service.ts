@@ -4,7 +4,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { throwError, of, forkJoin, Observable } from 'rxjs';
 import { map, switchMap, catchError, takeWhile } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService, PlanetRequestOptions } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
@@ -124,7 +124,7 @@ export class ManagerService {
 
   updateCredentialsYml({ name, password }) {
     if (environment.production === true) {
-      const opts = {
+      const opts: PlanetRequestOptions = {
         responseType: 'text',
         withCredentials: false,
         headers: { 'Content-Type': 'text/plain' }

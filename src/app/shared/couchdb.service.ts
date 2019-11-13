@@ -9,6 +9,17 @@ import { findDocuments, inSelector } from './mangoQueries';
 
 class DatePlaceholder {}
 
+export interface PlanetRequestOptions {
+  domain?: string;
+  protocol?: string;
+  body?: any;
+  headers?: HttpHeaders | { [header: string]: string | Array<string> };
+  observe?: any;
+  reportProgress?: boolean;
+  responseType?: 'arraybuffer' | 'blob' | 'json' | 'text';
+  withCredentials?: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +30,7 @@ export class CouchService {
   private reqNum = 0;
   datePlaceholder = new DatePlaceholder();
 
-  private setOpts(opts: any = {}) {
+  private setOpts(opts: PlanetRequestOptions): [ string, string, PlanetRequestOptions ] {
     const { domain, protocol, ...httpOpts } = opts;
     return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
   }
@@ -140,11 +151,11 @@ export class CouchService {
     }));
   }
 
-  getUrl(url: string, reqOpts?: any) {
+  getUrl(url: string, reqOpts?: PlanetRequestOptions) {
     const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
     const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
     const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
-    return this.http.get(urlPrefix + '/' + url, opts);
+    return this.http.get(urlPrefix + '/' + url, { ...opts, responseType: 'text' });
   }
 
   private compareRev = (parent, local) => {

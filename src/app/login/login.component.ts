@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService, PlanetRequestOptions } from '../shared/couchdb.service';
 import { Router } from '@angular/router';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
           }
           return this.couchService.findAll('configurations');
         }),
-        switchMap(data => {
+        switchMap((data: any) => {
           if (!data[0] || data[0].planetType === 'center') {
             return of(false);
           }
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
   }
 
   getPlanetVersion() {
-    const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
+    const opts: PlanetRequestOptions = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
     this.couchService.getUrl('version', opts).pipe(catchError(() => of(require('../../../package.json').version)))
       .subscribe((version: string) => this.planetVersion = version);
   }
