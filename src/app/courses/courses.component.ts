@@ -38,7 +38,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
       max-width: 200px;
     }
     .mat-column-createdDate {
-      max-width: 100px;
+      max-width: 95px;
     }
     .mat-column-rating {
       max-width: 225px;
