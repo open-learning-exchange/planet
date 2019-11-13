@@ -30,7 +30,7 @@ export class CouchService {
   private reqNum = 0;
   datePlaceholder = new DatePlaceholder();
 
-  private setOpts(opts: PlanetRequestOptions): [ string, string, PlanetRequestOptions ] {
+  private setOpts(opts: PlanetRequestOptions = {}): [ string, string, PlanetRequestOptions ] {
     const { domain, protocol, ...httpOpts } = opts;
     return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
   }
