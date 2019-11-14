@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -28,7 +28,8 @@ import { toProperCase } from '../shared/utils';
     mat-row {
       cursor: pointer;
     }
-  ` ]
+  ` ],
+  selector: 'planet-teams'
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
@@ -46,10 +47,22 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   message = '';
   deleteDialog: any;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
-  mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
-  displayedColumns = this.planetType === 'community' && this.mode === 'enterprise' ?
-    [ 'name', 'createdDate', 'action' ] :
-    [ 'name', 'createdDate', 'teamType', 'action' ];
+  private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  @Input()
+  get mode(): 'team' | 'enterprise' {
+    return this._mode;
+  }
+  set mode(newMode: 'team' | 'enterprise') {
+    if (newMode !== this._mode) {
+      this._mode = newMode;
+      this.getTeams();
+    }
+  }
+  @Input() isDialog = false;
+  @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
+  displayedColumns = this.isDialog ?
+    [ 'name', 'createdDate', 'teamType', 'action' ] :
+    [ 'name', 'createdDate', 'teamType' ];
 
   constructor(
     private userService: UserService,
@@ -61,9 +74,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private stateService: StateService,
     private route: ActivatedRoute
-  ) {
-    this.dialogsLoadingService.start();
-  }
+  ) {}
 
   ngOnInit() {
     this.getTeams();
@@ -76,6 +87,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
+    this.dialogsLoadingService.start();
     forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
       this.getMembershipStatus()
@@ -123,6 +135,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           return { ...team, userStatus: 'unrelated' };
       }
     });
+  }
+
+  teamClick(teamId) {
+    if (this.isDialog) {
+      this.rowClick.emit({ mode: this.mode, teamId });
+      return;
+    }
+    this.router.navigate([ 'view', teamId ], { relativeTo: this.route });
   }
 
   addTeam(team: any = {}) {

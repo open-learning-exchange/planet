@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></button>
+  <button mat-icon-button routerLink="/" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{ mode, select,
     team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
     enterprise {Enterprises}
@@ -11,8 +11,8 @@
   </mat-form-field>
 </mat-toolbar>
 
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+<div [ngClass]="{'space-container':!isDialog}">
+  <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <ng-container *ngIf="isAuthorized">
       <button mat-mini-fab (click)="addTeam()"><mat-icon>add</mat-icon></button>
       <span class="toolbar-fill"></span>
@@ -22,7 +22,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <div class="view-container view-full-height view-table primary-link-hover" *ngIf="!emptyData; else notFoundMessage">
+  <div class="primary-link-hover" *ngIf="!emptyData; else notFoundMessage" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
     <mat-table #table [dataSource]="teams" matSortActive="createdDate" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
@@ -75,7 +75,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row [routerLink]="['view', row.doc._id]" *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row (click)="teamClick(row.doc._id)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
