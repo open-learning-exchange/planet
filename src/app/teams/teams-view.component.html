@@ -180,14 +180,14 @@
                   <span *ngIf="resource.resource!==undefined">
                     <b>{{resource.resource.title}}</b>
                   </span>
-                  <mat-card-content>
-                    <p>{{resource.resource.description}}</p>
-                  </mat-card-content>
                   <span *ngIf="resource.resource===undefined" i18n-matTooltip
                     matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
                     {{resource.linkDoc.title}}
                   </span>
                 </div>
+                <mat-card-content>
+                  <p>{{resource.resource.description}}</p>
+                </mat-card-content>
                 <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
