@@ -89,19 +89,13 @@ jobs:
       <<: *_use_nodejs
       services:
         - xvfb
-      env:
-        - DOCKER_COMPOSE_VERSION=1.4.2
       before_install:
-        - sudo rm /usr/local/bin/docker-compose
-        - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-        - chmod +x docker-compose
-        - sudo mv docker-compose /usr/local/bin
         - source ./.travis/travis_utils.sh
         - prepare_ci
         - prepare_planet_test
         - prepare_db_init_test
         - render_compose_travis
-        - nohup docker-compose -f ./.travis/planet-travis.yml -p planet up &
+        - nohup docker-compose -f ./.travis/planet-travis.yml up &
         - export CHROME_BIN=chromium-browser
         - export DISPLAY=:99.0
       install:
