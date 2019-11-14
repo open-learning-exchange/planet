@@ -30,6 +30,7 @@
       <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
       <p *ngIf="meetupDetail?.startDate || meetupDetail?.endDate"><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
       <p *ngIf="meetupDetail?.deadline"><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}}</p>
+      <p *ngIf="meetupDetail?.completedTime"><b i18n>Completed On:</b> {{meetupDetail?.completedTime | date: 'fullDate'}}</p>
       <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
       <p *ngIf="meetupDetail?.recurring"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
