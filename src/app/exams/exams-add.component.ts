@@ -91,7 +91,7 @@ export class ExamsAddComponent implements OnInit {
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
-        this.documentInfo = { _rev: data._rev, _id: data._id };
+        this.documentInfo = this.examType === 'survey' ? {} : { _rev: data._rev, _id: data._id };
         this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
         this.examForm.patchValue(data);
         this.initializeQuestions(data.questions);
