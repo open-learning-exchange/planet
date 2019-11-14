@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService, PlanetRequestOptions } from '../shared/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -58,7 +58,7 @@ export class UpgradeComponent {
         parentVersion = pVersion;
         return this.managerService.openPasswordConfirmation();
       }),
-      switchMap(credentials => this.managerService.updateCredentialsYml(credentials)),
+      switchMap((credentials: { name, password }) => this.managerService.updateCredentialsYml(credentials)),
       switchMap(() => this.managerService.addAdminLog('upgrade')),
       switchMap(() => {
         this.start();
@@ -145,7 +145,7 @@ export class UpgradeComponent {
   }
 
   getParentVersion() {
-    const opts = {
+    const opts: PlanetRequestOptions = {
       domain: this.stateService.configuration.parentDomain,
       responseType: 'text',
       withCredentials: false,
@@ -156,7 +156,7 @@ export class UpgradeComponent {
 
   upgradeMyPlanet() {
     this.start();
-    const upgradeUrl = this.stateService.configuration.planetType === 'center' ? '/planetapk' : '/fromnation/planetapk';
+    const upgradeUrl = '/planetapk';
     this.http.get(environment.upgradeAddress + upgradeUrl, { responseType: 'text' })
       .subscribe(result => this.handleResult(result), err => this.handleError(err));
   }
