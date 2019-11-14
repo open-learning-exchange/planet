@@ -34,7 +34,13 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
     .mat-column-select {
       max-width: 44px;
     }
-    .mat-column-info, .mat-column-rating {
+    .mat-column-info {
+      max-width: 200px;
+    }
+    .mat-column-createdDate {
+      max-width: 95px;
+    }
+    .mat-column-rating {
       max-width: 225px;
     }
     .column {
@@ -70,7 +76,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'courseTitle', 'info', 'rating' ];
+  displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   planetConfiguration = this.stateService.configuration;
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
