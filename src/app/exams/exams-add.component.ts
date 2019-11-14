@@ -18,6 +18,7 @@ import { PlanetStepListService } from '../shared/forms/planet-step-list.componen
 import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { ExamsPreviewComponent } from './exams-preview.component';
+import { StateService } from '../shared/state.service';
 
 const showdown = require('showdown');
 
@@ -64,7 +65,8 @@ export class ExamsAddComponent implements OnInit {
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
     private userService: UserService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService
   ) {
     this.createForm();
   }
@@ -130,8 +132,13 @@ export class ExamsAddComponent implements OnInit {
       { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
     ).pipe(switchMap((exams) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
-      return this.couchService.updateDocument(this.dbName,
-        { createdDate: date, createdBy: this.userService.get().name, ...examInfo, updatedDate: date });
+      return this.couchService.updateDocument(this.dbName, {
+        createdDate: date,
+        createdBy: this.userService.get().name,
+        ...examInfo,
+        updatedDate: date,
+        sourcePlanet: this.stateService.configuration.code
+      });
     }))
     .subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
