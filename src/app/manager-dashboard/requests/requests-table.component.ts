@@ -15,6 +15,7 @@ import { FormBuilder } from '@angular/forms';
 import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
+import { RequestsService } from './requests.service';
 
 @Component({
   selector: 'planet-requests-table',
@@ -54,7 +55,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private requestsService: RequestsService
   ) {}
 
   ngOnChanges() {
@@ -81,10 +83,6 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         displayName: planet.nameDoc ? planet.nameDoc.name : planet.doc.name
       }
     });
-  }
-
-  planetTypeText(planetType) {
-    return planetType === 'nation' ? 'Nation' : 'Community';
   }
 
   updateCommunity(community, change) {
@@ -164,14 +162,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   view(planet) {
-    this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
-      width: '600px',
-      autoFocus: false,
-      data: {
-        allData: planet,
-        title: `${this.planetTypeText(planet.planetType)} Details`
-      }
-    });
+    this.requestsService.view(planet);
   }
 
   getChildPlanet(url: string) {
@@ -216,7 +207,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   openEditChildNameDialog(planet) {
     const exceptions = [ planet.nameDoc ? planet.nameDoc.name : planet.doc.name ];
     this.dialogsFormService.openDialogsForm(
-      `Edit ${this.planetTypeText(planet.doc.planetType)} Name`,
+      `Edit ${this.requestsService.planetTypeText(planet.doc.planetType)} Name`,
       [ { 'label': 'Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', 'required': true } ],
       this.fb.group({ name: [
         planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
@@ -237,9 +228,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage(`${this.planetTypeText(doc.planetType)} name updated.`);
+        this.planetMessageService.showMessage(`${this.requestsService.planetTypeText(doc.planetType)} name updated.`);
         this.requestUpdate.emit();
-      }, () => { this.planetMessageService.showAlert(`There was an error updating ${this.planetTypeText(doc.planetType)} name`); });
+      },
+      () => this.planetMessageService.showAlert(`There was an error updating ${this.requestsService.planetTypeText(doc.planetType)} name`));
     };
   }
 

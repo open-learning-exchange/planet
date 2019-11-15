@@ -41,6 +41,7 @@
       <mat-expansion-panel *ngFor="let hub of hubs">
         <mat-expansion-panel-header>
           <mat-panel-title>{{hub.name}}</mat-panel-title>
+          <a *ngIf="hub?.planetId" mat-button class="margin-lr-10" (click)="view(hub.planetId)" i18n>View</a>
           <a mat-button class="margin-lr-10" (click)="deleteHub(hub, $event)" i18n>
             <mat-icon>delete</mat-icon>Delete Network
           </a>
