@@ -124,7 +124,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       ),
       filterDropdowns(this.filter),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFields([ 'doc.firstName', 'doc.lastName' ])
+      filterSpecificFields([ 'fullName' ])
     ]);
     this.allUsers.filter = this.allUsers.filter || ' ';
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
@@ -206,6 +206,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
           _id: user._id,
           doc: user,
           imageSrc: '',
+          fullName: user.firstName + ' ' + user.lastName,
           visitCount: this.userLoginCount(user, loginActivities),
           lastLogin: this.userLastLogin(user, loginActivities),
           roles: this.toProperRoles(user.roles)
