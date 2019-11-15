@@ -94,8 +94,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]: any[]) => {
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
-      this.teams.data = this.teamList(teams
-        .filter(team => {return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
+      this.teams.data = this.teamList(teams.filter(team => {
+        return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
       }));
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
