@@ -28,9 +28,10 @@
             <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
           </mat-form-field>
           <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
-            <mat-radio-button *ngFor="let option of question.choices" [value]="option">
-              {{option.text}}
-            </mat-radio-button>
+            <div *ngFor="let option of question.choices">
+              <mat-radio-button  [value]="option"></mat-radio-button>
+              <span>{{option.text}}</span>
+            </div>            
           </mat-radio-group>
           <div *ngSwitchCase="'selectMultiple'" class="question-list">
             <span class="mat-caption" i18n>
