@@ -39,8 +39,8 @@ export class NewsListItemComponent implements AfterViewChecked {
   addReply(news) {
     console.log(news)
     this.updateNews.emit({
-      title: 'Reply to Message',
-      placeholder: 'Message',
+      title: news.viewableBy == "teams"? 'Reply to Message' : 'Reply to Story',
+      placeholder: news.viewableBy == "teams"? 'Message' : 'Your Story',
       initialValue: '',
       news: {
         replyTo: news._id,
