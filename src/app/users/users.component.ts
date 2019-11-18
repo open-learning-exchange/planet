@@ -200,8 +200,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         return this.userService.get().name !== user.name && user.name !== 'satellite';
-      }).concat(childUsers)
-      .map((user: any) => {
+      }).concat(childUsers).map((user: any) => {
         const userInfo = {
           _id: user._id,
           doc: user,
