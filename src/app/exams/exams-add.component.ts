@@ -139,8 +139,7 @@ export class ExamsAddComponent implements OnInit {
         updatedDate: date,
         sourcePlanet: this.stateService.configuration.code
       });
-    }))
-    .subscribe((res) => {
+    })).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
