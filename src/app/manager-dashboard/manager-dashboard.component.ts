@@ -103,6 +103,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+  checkHub() {
+    this.couchService.findAll('hubs',
+      findDocuments({ 'planetId': this.planetConfiguration._id }),
+      { domain: this.planetConfiguration.parentDomain }
+    ).subscribe(a => console.log(a));
+  }
+
   countFetchItemAvailable() {
     this.managerService.getPushedList().subscribe((pushedList: any) => {
       this.fetchItemCount = pushedList.length;
