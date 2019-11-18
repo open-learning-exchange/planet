@@ -32,7 +32,7 @@
 
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search username...">
+    <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search name...">
   </mat-form-field>
   <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
 </mat-toolbar>
@@ -84,8 +84,15 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>User Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.doc.name}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span *ngIf="element.doc.firstName || element.doc.lastName; else origName">
+            {{element.doc.firstName}} {{element.doc.middleName}} {{element.doc.lastName}}
+          </span>
+          <ng-template #origName>
+            {{element.doc.name}}
+          </ng-template>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitCount">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No. of Visits</mat-header-cell>
