@@ -51,8 +51,8 @@ export class NewsListItemComponent implements AfterViewChecked {
 
   editNews(news) {
     this.updateNews.emit({
-      title: 'Edit Post',
-      placeholder: 'Your Story',
+      title: news.viewableBy === 'teams' ? 'Edit Message' : 'Edit Story',
+      placeholder: news.viewableBy === 'teams' ? 'Your Message' : 'Your Story',
       initialValue: news.message,
       news
     });
