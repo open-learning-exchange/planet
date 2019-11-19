@@ -5,11 +5,11 @@
   </ng-container>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.deviceName}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.customDeviceName || element.deviceName}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSynced">
     <mat-header-cell *matHeaderCellDef i18n>Last Synced</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.last_synced | date: 'mediumDate'}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element.time || element.last_synced | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="version">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Version</mat-header-cell>
