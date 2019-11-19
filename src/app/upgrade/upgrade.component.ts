@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { CouchService, PlanetRequestOptions } from '../shared/couchdb.service';
+import { CouchService } from '../shared/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -145,7 +145,7 @@ export class UpgradeComponent {
   }
 
   getParentVersion() {
-    const opts: PlanetRequestOptions = {
+    const opts = {
       domain: this.stateService.configuration.parentDomain,
       responseType: 'text',
       withCredentials: false,
