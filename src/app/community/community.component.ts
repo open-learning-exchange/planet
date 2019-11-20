@@ -81,7 +81,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       width: '50vw',
       maxHeight: '90vh',
       data: { getLinks: this.getLinks.bind(this),
-        excludeIds: this.links.map(c => c.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))}
+        excludeIds: this.links.map(link => link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))}
     });
   }
 
