@@ -3,7 +3,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, Subject, of, Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
@@ -45,19 +44,11 @@ export class UsersComponent implements OnInit, OnDestroy {
   isUserAdmin = false;
   deleteDialog: any;
   children: any;
-  // List of all possible roles to add to users
-  roleList: { value: string, text: string }[] = [
-    ...[ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' } ],
-    ...[ this.userService.isBetaEnabled ? [ { value: 'health', text: 'Health Provider' } ] : [] ].flat()
-  ];
-  allRolesList: { value: string, text: string }[] = [
-    ...this.roleList, { value: 'learner', text: 'Learner' }, { value: 'manager', text: 'Manager' }
-  ].sort();
+  roleList = this.usersService.roleList;
+  allRolesList = this.usersService.allRolesList;
   selectedRoles: string[] = [];
   filteredRole: string;
   selection = new SelectionModel(true, []);
-  private dbName = '_users';
-  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   emptyData = false;
@@ -90,7 +81,14 @@ export class UsersComponent implements OnInit, OnDestroy {
     ).subscribe((params: ParamMap) => {
       this.applyFilter(params.get('search'));
     });
-    this.initializeData();
+    this.managerService.getChildPlanets(true).pipe(map(
+      (state) => this.reportsService.attachNamesToPlanets(state)
+    )).subscribe(childPlanets => this.children = childPlanets);
+    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      this.dialogsLoadingService.stop();
+      this.users = users;
+    });
+    this.usersService.requestUsers();
   }
 
   ngOnDestroy() {
@@ -124,51 +122,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   searchChanged(searchText: string) {
     this.searchChange.next(searchText);
-  }
-
-  getUsersAndLoginActivities() {
-    return forkJoin([
-      this.couchService.findAll(this.dbName, { 'selector': {}, 'limit': 100 }),
-      this.couchService.findAll('login_activities', { 'selector': {}, 'limit': 100 }),
-      this.couchService.findAll('child_users', { 'selector': {} }),
-      this.managerService.getChildPlanets(true).pipe(map(
-        (state) => this.reportsService.attachNamesToPlanets(state)
-      ))
-    ]);
-  }
-
-  initializeData() {
-    this.selection.clear();
-    this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities, childUsers, communities ]) => {
-      this.children = communities;
-      this.users = users.filter((user: any) => {
-        // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
-        // so this protects from that.  May need to unhide in the future.
-        return this.userService.get().name !== user.name && user.name !== 'satellite';
-      }).concat(childUsers).map((user: any) => {
-        const userInfo = {
-          _id: user._id,
-          doc: user,
-          imageSrc: '',
-          fullName: user.firstName + ' ' + user.lastName,
-          visitCount: this.userLoginCount(user, loginActivities),
-          lastLogin: this.userLastLogin(user, loginActivities),
-          roles: this.toProperRoles(user.roles)
-        };
-        if (user._attachments) {
-          userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
-        }
-        return userInfo;
-      });
-      this.emptyData = !this.users.length;
-      this.dialogsLoadingService.stop();
-    }, () => {
-      this.planetMessageService.showAlert('There was an error retrieving user data');
-    });
-  }
-
-  toProperRoles(roles) {
-    return roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text);
   }
 
   deleteClick(user, event) {
@@ -251,7 +204,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           const res: any = responses.find((response: any) => response.id === user._id);
           return {
             ...user,
-            roles: this.toProperRoles(newRoles),
+            roles: this.usersService.toProperRoles(newRoles),
             doc: { ...user.doc, roles: newRoles, _rev: res.rev }
           };
         }
@@ -266,7 +219,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     ((type === 'admin' ? this.toggleAdminStatus(user) : this.toggleManagerStatus(user)) as Observable<any>).subscribe(
       () => {
-        this.initializeData();
+        this.usersService.requestUsers();
         this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
       },
       () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
@@ -287,7 +240,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   setRoles(user, roles, event) {
     event.stopPropagation();
     this.usersService.setRoles(user, roles).subscribe(() => {
-      this.initializeData();
+      this.usersService.requestUsers();
       this.planetMessageService.showMessage(`${user.name} roles modified`);
     });
   }
@@ -301,15 +254,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   updateSelectedRoles(newSelection: { value: string, text: string }[]) {
     this.selectedRoles = newSelection.map(r => r.value);
-  }
-
-  userLoginCount(user: any, loginActivities: any[]) {
-    return loginActivities.filter((logItem: any) => logItem.user === user.name).length;
-  }
-
-  userLastLogin(user: any, loginActivities: any[]) {
-    return loginActivities.filter((logItem: any) => logItem.user === user.name)
-      .reduce((max: number, log: any) => log.loginTime > max ? log.loginTime : max, '');
   }
 
   onFilterChange(filterValue: string) {
