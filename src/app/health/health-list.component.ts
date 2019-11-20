@@ -40,4 +40,8 @@ export class HealthListComponent implements OnInit, OnDestroy {
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
+  resetFilter() {
+    this.searchValue = '';
+  }
+
 }
