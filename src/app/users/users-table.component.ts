@@ -15,9 +15,9 @@ import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class TableState {
-  isOnlyManagerSelected: boolean = false;
+  isOnlyManagerSelected = false;
   selectedChild: any = {};
-  filterType: string = 'local';
+  filterType = 'local';
 }
 
 @Component({
