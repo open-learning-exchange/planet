@@ -27,7 +27,7 @@
   <div class="view-container">
     <div [ngClass]="{'left-tile':!isDialog}">
       <p *ngIf="meetupDetail?.createdBy"><b i18n>Created By:</b>
-        <button mat-button mat-dialog-close><a [routerLink]="['/users/profile', meetupDetail?.createdBy]" >{{' ' + meetupDetail?.createdBy}}</a></button>
+        <a class="cursor-pointer" (click)="routeToCreator(meetupDetail?.createdBy)">{{' ' + meetupDetail?.createdBy}}</a>
       </p>
       <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
       <p *ngIf="meetupDetail?.startDate || meetupDetail?.endDate"><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
