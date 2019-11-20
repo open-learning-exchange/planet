@@ -170,24 +170,16 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
     event.stopPropagation();
-    ((type === 'admin' ? this.toggleAdminStatus(user) : this.toggleManagerStatus(user)) as Observable<any>).subscribe(
+    const request: Observable<any> = type === 'admin' ?
+      this.usersService.toggleAdminStatus(user) :
+      this.usersService.toggleManagerStatus(user);
+    request.subscribe(
       () => {
         this.usersService.requestUsers();
         this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
       },
       () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
-  }
-
-  toggleAdminStatus(user) {
-    return user.roles.length === 0 ? this.usersService.demoteFromAdmin(user) : this.usersService.promoteToAdmin(user);
-  }
-
-  toggleManagerStatus(user) {
-    return forkJoin([
-      this.usersService.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
-      user.isUserAdmin ? of({}) : this.usersService.removeFromTabletUsers(user)
-    ]);
   }
 
   setRoles(user, roles, event) {

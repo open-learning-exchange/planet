@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Subject, zip, combineLatest } from 'rxjs';
+import { forkJoin, Subject, zip, combineLatest, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
@@ -81,6 +81,10 @@ export class UsersService {
     return userInfo;
   }
 
+  toggleAdminStatus(user) {
+    return user.roles.length === 0 ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
+  }
+
   demoteFromAdmin(user) {
     const planetConfig = this.stateService.configuration;
     const parentUserId = `org.couchdb.user:${user.name}@${planetConfig.code}`;
@@ -120,6 +124,13 @@ export class UsersService {
       ),
       this.setRoles({ ...user, isUserAdmin: true }, []),
       this.removeFromTabletUsers(user)
+    ]);
+  }
+
+  toggleManagerStatus(user) {
+    return forkJoin([
+      this.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
+      user.isUserAdmin ? of({}) : this.removeFromTabletUsers(user)
     ]);
   }
 
