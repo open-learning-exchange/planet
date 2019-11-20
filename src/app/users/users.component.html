@@ -7,10 +7,10 @@
       class="margin-lr-5 font-size-1"
       (change)="changeFilter(filterGroup.value)"
       #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="local" [checked]="filterType==='local'">
+      <mat-button-toggle value="local" [checked]="tableState.filterType==='local'">
         Local
       </mat-button-toggle>
-      <mat-button-toggle value="associated" [checked]="filterType==='associated'">
+      <mat-button-toggle value="associated" [checked]="tableState.filterType==='associated'">
         Associated
       </mat-button-toggle>
     </mat-button-toggle-group>
@@ -40,8 +40,8 @@
 <div class="space-container" *ngIf="displayTable">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <div class="margin-lr-3" *ngIf="filterType==='local'">
-      <form (ngSubmit)="setRolesForUsers(selection.selected,selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
+    <div class="margin-lr-3" *ngIf="tableState.filterType==='local'">
+      <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Set roles of selected">
             <mat-option disabled="disabled" class="hide-checkbox">
@@ -51,13 +51,13 @@
             <mat-option *ngFor="let role of roleList" [value]="role.value">{{role.text}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-button class="margin-lr-3" type="submit" [disabled]="!selection.selected.length || selectedRoles.length === 0 || tableState.isOnlyManagerSelected"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
+        <button mat-button class="margin-lr-3" type="submit" [disabled]="!usersTable || !usersTable.selection.selected.length || selectedRoles.length === 0 || tableState.isOnlyManagerSelected"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
       </form>
     </div>
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
-    <planet-users-table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState"></planet-users-table>
+    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState"></planet-users-table>
   </div>
   <ng-template #notFoundMessage>
     <div class="view-container">No User Found</div>

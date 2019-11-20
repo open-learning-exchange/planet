@@ -1,16 +1,18 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
-
-import { UserService } from '../shared/user.service';
-import { Subject } from 'rxjs';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject, of, forkJoin, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
 } from '../shared/table-helpers';
 import { findByIdInArray } from '../shared/utils';
+import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { UsersService } from './users.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class TableState {
   isOnlyManagerSelected: boolean = false;
@@ -64,12 +66,16 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit {
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
+  deleteDialog: MatDialogRef<DialogsPromptComponent>;
 
   constructor(
+    private dialog: MatDialog,
     private userService: UserService,
+    private usersService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -133,6 +139,63 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit {
 
   trackByFn(index, item) {
     return item._id;
+  }
+
+  deleteClick(user, event) {
+    event.stopPropagation();
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.usersService.deleteUser(user),
+          onNext: () => {
+            this.selection.deselect(user._id);
+            this.planetMessageService.showMessage('User deleted: ' + user.name);
+            this.deleteDialog.close();
+          },
+          onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.')
+        },
+        amount: 'single',
+        changeType: 'delete',
+        type: 'user',
+        displayName: user.name,
+        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
+      }
+    });
+  }
+
+  removeRole(user: any, roleIndex: number) {
+    this.usersService.setRolesForUsers([ user ], [ ...user.roles.slice(0, roleIndex), ...user.roles.slice(roleIndex + 1) ])
+      .subscribe(() => {}, () => this.planetMessageService.showAlert('There was an error removing the member\'s role'));
+  }
+
+  toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
+    event.stopPropagation();
+    ((type === 'admin' ? this.toggleAdminStatus(user) : this.toggleManagerStatus(user)) as Observable<any>).subscribe(
+      () => {
+        this.usersService.requestUsers();
+        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+      },
+      () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
+    );
+  }
+
+  toggleAdminStatus(user) {
+    return user.roles.length === 0 ? this.usersService.demoteFromAdmin(user) : this.usersService.promoteToAdmin(user);
+  }
+
+  toggleManagerStatus(user) {
+    return forkJoin([
+      this.usersService.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
+      user.isUserAdmin ? of({}) : this.usersService.removeFromTabletUsers(user)
+    ]);
+  }
+
+  setRoles(user, roles, event) {
+    event.stopPropagation();
+    this.usersService.setRoles(user, roles).subscribe(() => {
+      this.usersService.requestUsers();
+      this.planetMessageService.showMessage(`${user.name} roles modified`);
+    });
   }
 
 }

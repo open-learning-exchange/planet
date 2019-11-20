@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { TasksService } from '../tasks/tasks.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class UsersService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
+    private tasksService: TasksService
   ) {
     const checkIfLocal = (current, data: { newData, planetField }) => data && data.planetField === 'local' ? data.newData : current;
     combineLatest([
@@ -145,6 +147,43 @@ export class UsersService {
 
   toProperRoles(roles) {
     return roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text);
+  }
+
+  deleteUser(user) {
+    const userId = 'org.couchdb.user:' + user.name;
+    return this.couchService.get('shelf/' + userId).pipe(
+      switchMap(shelfUser => {
+        return forkJoin([
+          this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+          this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
+          this.deleteUserFromTeams(user),
+          this.tasksService.removeAssigneeFromTasks(user._id)
+        ]);
+      }),
+      map(() => this.requestUsers())
+    );
+  }
+
+  deleteUserFromTeams(user) {
+    return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
+      switchMap(teams => {
+        const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
+        return this.couchService.bulkDocs('teams', docsWithUser);
+      })
+    );
+  }
+
+  setRolesForUsers(users: any[], roles: string[]) {
+    const newRoles = [ 'learner', ...roles ];
+    return forkJoin(users.reduce((observers, user) => {
+      // Do not allow an admin to be given another role
+      if (user.isUserAdmin === false) {
+        // Make copy of user so UI doesn't change until DB change succeeds
+        const tempUser = { ...user, roles: newRoles };
+        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
+      }
+      return observers;
+    }, [])).pipe(map((responses) => this.stateService.requestData(this.dbName, 'local')));
   }
 
 }
