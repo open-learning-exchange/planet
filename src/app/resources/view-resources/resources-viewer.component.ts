@@ -80,7 +80,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     };
     this.couchService.updateDocument('resource_activities', data)
       .subscribe((response) => {
-        console.log(response);
       }, (error) => console.log('Error'));
   }
 
