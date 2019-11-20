@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
-import { CouchService } from '../shared/couchdb.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -11,7 +10,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
-import { TasksService } from '../tasks/tasks.service';
 import { TableState, UsersTableComponent } from './users-table.component';
 
 @Component({
@@ -35,7 +33,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   searchValue = '';
   filter = { 'doc.roles' : '' };
   planetType = '';
-  displayTable = true;
   displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   isUserAdmin = false;
   children: any;
@@ -52,7 +49,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
@@ -61,7 +57,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private usersService: UsersService,
-    private tasksService: TasksService
   ) {
     this.dialogsLoadingService.start();
   }
