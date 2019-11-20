@@ -26,13 +26,15 @@ export class CommunityLinkDialogComponent {
     this.linkForm = this.fb.group({
       title: [ '', CustomValidators.required ],
       route: [ '', CustomValidators.required ],
-      linkId: ''
+      linkId: '',
+      linkType: ''
     });
   }
 
   teamSelect({ mode, teamId }) {
     this.linkForm.controls.route.setValue(`/${mode}s/view/${teamId}`);
-    this.linkForm.controls.linkId.setValue(`${teamId}`);
+    this.linkForm.controls.linkId.setValue(teamId);
+    this.linkForm.controls.linkType.setValue(mode);
     this.linkStepper.next();
   }
 
