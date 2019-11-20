@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -34,7 +34,7 @@ export class TableState {
     }
   ` ]
 })
-export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit {
+export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
   @Input() displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   @Input() users: any[];
