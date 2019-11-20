@@ -23,6 +23,8 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
 import { CommunityComponent } from '../community/community.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
+import { HealthListComponent } from '../health/health-list.component';
+import { UsersModule } from '../users/users.module';
 
 @NgModule({
   imports: [
@@ -39,7 +41,8 @@ import { CommunityLinkDialogComponent } from '../community/community-link-dialog
     UsersAchievementsModule,
     NewsModule,
     TeamsModule,
-    PlanetCalendarModule
+    PlanetCalendarModule,
+    UsersModule
   ],
   declarations: [
     HomeComponent,
@@ -51,7 +54,8 @@ import { CommunityLinkDialogComponent } from '../community/community-link-dialog
     UpgradeComponent,
     LogsMyPlanetComponent,
     CommunityComponent,
-    CommunityLinkDialogComponent
+    CommunityLinkDialogComponent,
+    HealthListComponent
   ],
   entryComponents: [ DashboardNotificationsDialogComponent, CommunityLinkDialogComponent ]
 })

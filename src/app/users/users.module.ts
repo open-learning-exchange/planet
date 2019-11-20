@@ -15,6 +15,9 @@ import { UsersAchievementsModule } from './users-achievements/users-achievements
 import { UsersTableComponent } from './users-table.component';
 
 @NgModule({
+  exports: [
+    UsersTableComponent
+  ],
   imports: [
     NgxImgModule,
     UsersRouterModule,
