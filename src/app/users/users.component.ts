@@ -1,17 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, Subject, of, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, takeUntil, debounceTime, map } from 'rxjs/operators';
-import {
-  filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
-} from '../shared/table-helpers';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { debug } from '../debug-operator';
 import { findByIdInArray } from '../shared/utils';
@@ -21,6 +18,7 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TasksService } from '../tasks/tasks.service';
+import { TableState } from './users-table.component';
 
 @Component({
   templateUrl: './users.component.html',
@@ -35,15 +33,11 @@ import { TasksService } from '../tasks/tasks.service';
     }
   ` ]
 })
-export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
+export class UsersComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  allUsers = new MatTableDataSource();
+  users: any[] = [];
   message = '';
   searchValue = '';
-  selectedChild: any = {};
-  filterType = 'local';
   filter = { 'doc.roles' : '' };
   planetType = '';
   displayTable = true;
@@ -68,8 +62,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
   private onDestroy$ = new Subject<void>();
   emptyData = false;
   private searchChange = new Subject<string>();
-  isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
+  tableState = new TableState();
 
   constructor(
     private dialog: MatDialog,
@@ -97,15 +91,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applyFilter(params.get('search'));
     });
     this.initializeData();
-    this.allUsers.sortingDataAccessor = (item: any, property) => {
-      if (item[property]) {
-        return sortNumberOrString(item, property);
-      }
-      return sortNumberOrString(item.doc, property);
-    };
-    this.selection.changed.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.isOnlyManagerSelected = this.onlyManagerSelected();
-    });
   }
 
   ngOnDestroy() {
@@ -115,18 +100,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   changeFilter(type, child: any = {}) {
     this.filterDisplayColumns(type);
-    this.filterType = type;
-    this.selectedChild = child;
-    this.allUsers.filterPredicate = composeFilterFunctions([
-      filterDropdowns(
-        this.filterType === 'associated' ? { 'doc.roles': [ 'leader', 'learner' ] }
-        : { 'doc.planetCode': child.code || this.stateService.configuration.code }
-      ),
-      filterDropdowns(this.filter),
-      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFields([ 'fullName' ])
-    ]);
-    this.allUsers.filter = this.allUsers.filter || ' ';
+    this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
       this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
     });
@@ -145,39 +119,11 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
-    this.allUsers.filter = filterValue;
-    this.changeFilter(this.filterType);
+    this.changeFilter(this.tableState.filterType);
   }
 
   searchChanged(searchText: string) {
     this.searchChange.next(searchText);
-  }
-
-  ngAfterViewInit() {
-    this.allUsers.sort = this.sort;
-    this.allUsers.paginator = this.paginator;
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
-  isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
-  }
-
-  onlyManagerSelected() {
-    return this.selection.selected.every((user) => findByIdInArray(this.allUsers.data, user).doc.isUserAdmin === true);
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.allUsers.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
   }
 
   getUsersAndLoginActivities() {
@@ -188,7 +134,6 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       this.managerService.getChildPlanets(true).pipe(map(
         (state) => this.reportsService.attachNamesToPlanets(state)
       ))
-
     ]);
   }
 
@@ -196,7 +141,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selection.clear();
     this.getUsersAndLoginActivities().pipe(debug('Getting user list')).subscribe(([ users, loginActivities, childUsers, communities ]) => {
       this.children = communities;
-      this.allUsers.data = users.filter((user: any) => {
+      this.users = users.filter((user: any) => {
         // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
         // so this protects from that.  May need to unhide in the future.
         return this.userService.get().name !== user.name && user.name !== 'satellite';
@@ -215,7 +160,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         return userInfo;
       });
-      this.emptyData = !this.allUsers.data.length;
+      this.emptyData = !this.users.length;
       this.dialogsLoadingService.stop();
     }, () => {
       this.planetMessageService.showAlert('There was an error retrieving user data');
@@ -271,7 +216,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.planetMessageService.showMessage('User deleted: ' + user.name);
         this.deleteDialog.close();
         // It's safer to remove the item from the array based on its id than to splice based on the index
-        this.allUsers.data = this.allUsers.data.filter((u: any) => data[0].id !== u.doc._id);
+        this.users = this.users.filter((u: any) => data[0].id !== u.doc._id);
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.')
     };
@@ -283,7 +228,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
   idsToUsers(userIds: any[]) {
     return userIds.map(userId => {
-      const user: any = this.allUsers.data.find((u: any) => u.doc._id === userId);
+      const user: any = this.users.find((u: any) => u.doc._id === userId);
       return user.doc;
     });
   }
@@ -300,7 +245,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       return observers;
     }, [])).subscribe((responses) => {
-      this.allUsers.data = this.allUsers.data.map((user: any) => {
+      this.users = this.users.map((user: any) => {
         if (user.doc.isUserAdmin === false && userIds.indexOf(user.doc._id) > -1) {
           // Add role to UI and update rev from CouchDB response
           const res: any = responses.find((response: any) => response.id === user._id);
@@ -367,19 +312,14 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
       .reduce((max: number, log: any) => log.loginTime > max ? log.loginTime : max, '');
   }
 
-  gotoProfileView(userName: string) {
-    const optParams = this.selectedChild.code ? { planet: this.selectedChild.code } : {};
-    this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
-  }
-
   onFilterChange(filterValue: string) {
-    this.filter['doc.roles'] = filterValue === 'All' ? '' : filterValue;
-    this.changeFilter(this.filterType);
+    this.filter = { ...this.filter, 'doc.roles': filterValue === 'All' ? '' : filterValue };
+    this.changeFilter(this.tableState.filterType);
   }
 
   resetFilter() {
     this.filteredRole = 'All';
-    this.filter['doc.roles'] = '';
+    this.filter = { ...this.filter, 'doc.roles': '' };
     this.applyFilter('');
   }
 }

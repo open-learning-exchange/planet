@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UsersService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
   ) {}
 
   getAllUsers(withPrivateDocs = false) {
@@ -21,6 +22,16 @@ export class UsersService {
       users :
       users.map(user => this.userService.getUserProperties(user))
     ));
+  }
+
+  usersListener() {
+    return combineLatest([
+      this.stateService.couchStateListener('_users'),
+      this.stateService.couchStateListener('login_activities'),
+      this.stateService.couchStateListener('child_users')
+    ]).pipe(map(([ users, loginActivities, childUsers ]) => {
+
+    }));
   }
 
   demoteFromAdmin(user) {
