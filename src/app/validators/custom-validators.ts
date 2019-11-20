@@ -176,6 +176,20 @@ export class CustomValidators {
     return false;
   }
 
+  static timeValidator(): ValidationErrors {
+    return (ac: AbstractControl): ValidationErrors => {
+      console.log({ac});
+      const timeRegExp = new RegExp('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$');
+      if (!ac.value) {
+        return null;
+      }
+      if (!timeRegExp.test(ac.value)) {
+        return { invalidTimeFormat: true };
+      }
+      return null;
+    };
+  }
+
   // Set this on both password and confirmation fields so it runs when either changes
   // confirm should be true for the confirmation field validator
   // match is true by default, for unmatching passwords, match should be false

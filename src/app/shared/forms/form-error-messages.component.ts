@@ -29,6 +29,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidHex {Hex is not valid}
       invalidTime {Time is invalid}
       invalidDateFormat {Date is in incorrect format}
+      invalidTimeFormat {Time is in incorrect format}
       invalidDate {Date is invalid}
       invalidEndDate {End date cannot be before start date}
       invalidEndTime {End time cannot be before start time}

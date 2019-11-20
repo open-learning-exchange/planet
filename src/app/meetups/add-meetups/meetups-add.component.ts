@@ -93,8 +93,8 @@ export class MeetupsAddComponent implements OnInit {
       endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
-      startTime: '',
-      endTime: '',
+      startTime: [ '', CustomValidators.timeValidator() ],
+      endTime: [ '', CustomValidators.timeValidator() ],
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
@@ -116,6 +116,15 @@ export class MeetupsAddComponent implements OnInit {
     } else {
       this.addMeetup(meetup);
     }
+  }
+
+  changeTimeFormat(time: String) {
+    console.log(time);
+    const hourMin = time.split(':', 2);
+    if ( hourMin[0].length < 2) {hourMin[0] = '0' + hourMin[0] }
+    if ( hourMin[1].length < 2) {hourMin[1] = '0' + hourMin[1] }
+    console.log(hourMin);
+    return hourMin.join(':');
   }
 
   updateMeetup(meetupInfo) {
