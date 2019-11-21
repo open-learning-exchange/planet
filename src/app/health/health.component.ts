@@ -9,6 +9,8 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
+import { CsvService } from '../shared/csv.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   templateUrl: './health.component.html',
@@ -35,7 +37,9 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private csvService: CsvService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit() {
@@ -110,6 +114,18 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
     }), {});
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
+  }
+
+  exportCSV() {
+    const data = this.eventTable.data.map(h =>
+      Object.entries(h).reduce((object, [ key, value ]: [ any, any ]) => {
+        key = isNaN(key) ? key : this.datePipe.transform(key, 'shortDate');
+        return ({
+        ...object,
+        [key]: value
+      }); }, {})
+    );
+    this.csvService.exportCSV({ data, title: 'Health Report' });
   }
 
 }

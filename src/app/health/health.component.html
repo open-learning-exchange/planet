@@ -5,10 +5,13 @@
 </mat-toolbar>
 
 <div class="space-container">
+<<<<<<< HEAD
   <mat-toolbar class="primary-color font-size-1 action-buttons">
     <a mat-raised-button color="accent" i18n [routerLink]="['update']" *ngIf="isOwnUser">Update Details</a>
     <a mat-raised-button color="accent" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
     <span *ngIf="userDetail.firstName === undefined"><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
+    <span class="toolbar-fill"></span>
+    <a mat-raised-button color="primary" class="margin-lr-3" i18n (click)="exportCSV()" >Export Examination</a>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="profile-container">
