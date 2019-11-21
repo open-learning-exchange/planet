@@ -542,6 +542,17 @@ body {
     }
   }
 
+  .overflow-ellipsis {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .overflow-ellipsis:hover {
+    overflow: visible;
+  }
+
   .action-buttons {
     margin: 0 0 0.5rem 0;
     & > * {
