@@ -20,6 +20,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -247,7 +248,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getUserData(obs: any) {
     return obs.pipe(switchMap(([ users, childUsers, children ]) => {
-      children = this.reportsService.attachNamesToPlanets(children);
+      children = attachNamesToPlanets(children);
       return of({
         tableData: [
           ...users.tableData,

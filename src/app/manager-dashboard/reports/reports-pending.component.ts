@@ -6,6 +6,7 @@ import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ReportsService } from './reports.service';
 import { ManagerService } from '../manager.service';
+import { attachNamesToPlanets } from './reports.utils';
 
 @Component({
   templateUrl: './reports-pending.component.html'
@@ -45,7 +46,7 @@ export class ReportsPendingComponent implements OnInit {
       this.couchService.findAll('send_items'),
       this.managerService.getChildPlanets()
     ]).subscribe(([ data, planets ]) => {
-      this.planets = this.reportsService.attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
+      this.planets = attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
       this.data = data;
       this.filterData();
       console.log(this.data);

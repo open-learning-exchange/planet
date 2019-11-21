@@ -11,6 +11,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
+import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -71,7 +72,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
     );
-    const { hubs, sandboxPlanets } = this.reportsService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
+    const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets;
   }
@@ -87,7 +88,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
-      this.data = this.reportsService.attachNamesToPlanets(data);
+      this.data = attachNamesToPlanets(data);
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }

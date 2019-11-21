@@ -12,6 +12,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
+import { attachNamesToPlanets } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -52,7 +53,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       if (planetState === undefined) {
         return;
       }
-      const planets = this.activityService.attachNamesToPlanets((planetState && planetState.newData) || []);
+      const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
       this.codeParam = params.get('code');
       const planet = planets.find((p: any) => p.doc.code === this.codeParam);
       this.planetCode = this.codeParam || this.stateService.configuration.code;

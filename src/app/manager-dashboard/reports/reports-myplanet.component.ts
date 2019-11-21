@@ -6,6 +6,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
+import { attachNamesToPlanets } from './reports.utils';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
@@ -58,7 +59,7 @@ export class ReportsMyPlanetComponent implements OnInit {
       this.couchService.findAll('myplanet_activities')
     ]).subscribe(([ planets, myPlanets ]) => {
       this.setAllPlanets(
-        [ { doc: this.stateService.configuration } ].concat(this.reportsService.attachNamesToPlanets(planets))
+        [ { doc: this.stateService.configuration } ].concat(attachNamesToPlanets(planets))
           .filter((planet: any) => planet.doc.docType !== 'parentName')
           .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
