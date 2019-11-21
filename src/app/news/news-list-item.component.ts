@@ -37,9 +37,10 @@ export class NewsListItemComponent implements AfterViewChecked {
   }
 
   addReply(news) {
+    const label = this.formLabel(news);
     this.updateNews.emit({
-      title: news.viewableBy === 'teams' ? 'Reply to Message' : 'Reply to Story',
-      placeholder: news.viewableBy === 'teams' ? 'Message' : 'Your Story',
+      title: `Reply to ${label}`,
+      placeholder: `Your ${label}`,
       initialValue: '',
       news: {
         replyTo: news._id,
@@ -50,12 +51,17 @@ export class NewsListItemComponent implements AfterViewChecked {
   }
 
   editNews(news) {
+    const label = this.formLabel(news);
     this.updateNews.emit({
-      title: 'Edit Post',
-      placeholder: 'Your Story',
+      title: `Edit ${label}`,
+      placeholder: `Your ${label}`,
       initialValue: news.message,
       news
     });
+  }
+
+  formLabel(news) {
+    return news.viewableBy === 'teams' ? 'Message' : 'Story';
   }
 
   showReplies(news) {
