@@ -59,6 +59,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     }
   }
   @Input() isDialog = false;
+  @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
   displayedColumns = this.isDialog ?
     [ 'name', 'createdDate', 'teamType', 'action' ] :
@@ -93,7 +94,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getMembershipStatus()
     ]).subscribe(([ teams, requests ]: any[]) => {
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
-      this.teams.data = this.teamList(teams.filter(team => team.type === this.mode || (team.type === undefined && this.mode === 'team')));
+      this.teams.data = this.teamList(teams.filter(team => {
+        return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
+      }));
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
       )) {
