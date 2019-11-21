@@ -87,7 +87,7 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <span>
-            {{ element.doc.firstName || element.doc.lastName ? element.fullName : element.doc.name }}
+            {{ element.fullName ? element.fullName : element.doc.name }}
           </span>
         </mat-cell>
       </ng-container>
