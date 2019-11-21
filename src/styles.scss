@@ -543,8 +543,11 @@ body {
   }
 
   .overflow-ellipsis {
+    display: block;
+    display: -webkit-box;
     width: 100px;
-    white-space: nowrap;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
   }
