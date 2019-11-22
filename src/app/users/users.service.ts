@@ -110,14 +110,18 @@ export class UsersService {
       ...user,
       requestId: planetConfig._id,
       isUserAdmin: false,
-      roles: [],
+      roles: [ 'learner' ],
       name: adminName,
       sync: true,
       _attachments: undefined,
       _rev: undefined
     };
     return forkJoin([
-      this.couchService.updateDocument(this.dbName, { ...parentUser, '_id': adminId }, { domain: planetConfig.parentDomain }),
+      this.couchService.updateDocument(
+        this.dbName,
+        { ...parentUser, '_id': adminId },
+        { domain: planetConfig.parentDomain, withCredentials: false }
+      ),
       this.couchService.put(
         `_node/nonode@nohost/_config/admins/${user.name}`,
         `-${user.password_scheme}-${user.derived_key},${user.salt},${user.iterations}`
