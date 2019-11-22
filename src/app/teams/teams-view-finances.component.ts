@@ -28,6 +28,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
   table = new MatTableDataSource();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
   deleteDialog: any;
+  dateNow: any;
+  startDate: string;
+  endDate: string;
 
   constructor(
     private teamsService: TeamsService,
@@ -36,19 +39,27 @@ export class TeamsViewFinancesComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+  }
 
   ngOnChanges() {
-    const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
-      // Overwrite values for credit and debit from early document versions on database
-      .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
-      .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
+   this.transactionFilter();
+  }
+
+  transactionFilter(){
+    const fromDate = this.startDate || this.team.createdDate;
+    const toDate = this.endDate || this.dateNow
+    const financeData = this.finances.filter(transaction => transaction.status !== 'archived' && (transaction.date >= fromDate && transaction.date <= toDate))
+    // Overwrite values for credit and debit from early document versions on database
+    .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
+    .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
       this.table.data = [];
       return;
-    }
-    const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
-    this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
+  }
+  const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
+  this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {

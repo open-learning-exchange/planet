@@ -13,6 +13,8 @@ import { DialogsResourcesViewerModule } from '../shared/dialogs/dialogs-resource
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
+import { FormsModule } from '@angular/forms'
+
 
 @NgModule({
   exports: [ TeamsViewComponent, TeamsComponent ],
@@ -27,7 +29,8 @@ import { PlanetCalendarModule } from '../shared/calendar.module';
     DialogsResourcesViewerModule,
     CovalentMarkdownModule,
     SharedComponentsModule,
-    PlanetCalendarModule
+    PlanetCalendarModule,
+    FormsModule
   ],
   declarations: [
     TeamsComponent,
