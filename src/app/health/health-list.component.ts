@@ -13,7 +13,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
   searchValue = '';
   onDestroy$ = new Subject<void>();
   users: any[] = [];
-  displayedColumns = [ 'name' ];
+  displayedColumns = [ 'profile', 'name' ];
   tableState = new TableState();
   emptyData = true;
 
