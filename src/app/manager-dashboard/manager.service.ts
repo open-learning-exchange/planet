@@ -122,6 +122,13 @@ export class ManagerService {
       findDocuments(selector, 0, [ { 'createdDate': 'desc' } ] ));
   }
 
+  getHubChilds(spokes) {
+    return this.couchService.findAll('communityregistrationrequests',
+      findDocuments({ 'code': { '$in': spokes } }, 0, [ { 'createdDate': 'desc' } ] ),
+      { domain: this.stateService.configuration.parentDomain }
+    );
+  }
+
   updateCredentialsYml({ name, password }) {
     if (environment.production === true) {
       const opts: PlanetRequestOptions = {

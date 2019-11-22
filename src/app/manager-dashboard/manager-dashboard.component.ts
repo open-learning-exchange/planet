@@ -16,6 +16,7 @@ import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
+import { ReportsService } from './reports/reports.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
@@ -47,6 +48,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
   pendingPushCount = 0;
+  hubCommunities = [];
+  hubDetail: any;
 
   constructor(
     private userService: UserService,
@@ -58,7 +61,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private reportsService: ReportsService
   ) {}
 
   ngOnInit() {
@@ -68,6 +72,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
       this.setVersions();
+      this.checkHub();
     }
     this.getSatellitePin();
     this.couchService.currentTime().pipe(switchMap((time: number) => {
@@ -107,7 +112,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.couchService.findAll('hubs',
       findDocuments({ 'planetId': this.planetConfiguration._id }),
       { domain: this.planetConfiguration.parentDomain }
-    ).subscribe(a => console.log(a));
+    ).pipe(switchMap((hubPlanets: any) => {
+      this.hubDetail = hubPlanets[0] || {};
+      if (!hubPlanets.length) {
+        return of([]);
+      }
+      return this.managerService.getHubChilds(this.hubDetail.spokes);
+    })).subscribe(hubCom => this.hubCommunities = this.reportsService.attachNamesToPlanets(hubCom));
   }
 
   countFetchItemAvailable() {

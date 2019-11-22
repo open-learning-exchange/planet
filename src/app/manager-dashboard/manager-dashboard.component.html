@@ -74,6 +74,12 @@
     <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> {{pin}}
       <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
     </div>
+    <mat-expansion-panel *ngIf="hubDetail">
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n>Hub Communities</mat-panel-title>
+      </mat-expansion-panel-header>
+      <planet-requests-table [data]="hubCommunities"></planet-requests-table>
+    </mat-expansion-panel>
   </ng-container>
   <div>
     <p>
