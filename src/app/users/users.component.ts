@@ -205,7 +205,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
           _id: user._id,
           doc: user,
           imageSrc: '',
-          fullName: `${user.firstName} ${user.middleName} ${user.lastName}`,
+          fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.doc.name,
           visitCount: this.userLoginCount(user, loginActivities),
           lastLogin: this.userLastLogin(user, loginActivities),
           roles: this.toProperRoles(user.roles)
