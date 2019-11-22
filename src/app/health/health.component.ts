@@ -39,7 +39,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngOnInit() {
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).pipe(switchMap((params: ParamMap) => {
       const id = `org.couchdb.user:${params.get('id')}`;
-      this.isOwnUser = params.get('id') === undefined || params.get('id') === this.userService.get().name;
+      this.isOwnUser = params.get('id') === null || params.get('id') === this.userService.get().name;
       return params.get('id') ? this.couchService.get(`_users/${id}`) : of(this.userService.get());
     })).subscribe((user) => {
       this.userDetail = user;
