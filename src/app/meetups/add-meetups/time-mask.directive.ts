@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { Directive, HostListener } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 @Directive({
@@ -6,15 +6,10 @@ import { NgControl } from '@angular/forms';
 })
 export class TimeMaskDirective {
 
-  constructor(private _el: ElementRef) { }
+  constructor(private controlRef: NgControl) {}
 
-  @HostListener('input', [ '$event' ]) onInputChange(event) {
-    const inputTime = this._el.nativeElement.value;
-    this._el.nativeElement.value = this.getOutputTime(inputTime);
-    console.log(this.getOutputTime(inputTime));
-    if ( inputTime !== this._el.nativeElement.value) {
-      event.stopPropagation();
-    }
+  @HostListener('input', [ '$event' ]) onInput($event) {
+    this.controlRef.control.setValue(this.getOutputTime($event.target.value));
   }
 
   getOutputTime(inputTime: String): String {

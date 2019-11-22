@@ -110,6 +110,8 @@ export class MeetupsAddComponent implements OnInit {
       showFormErrors(this.meetupForm.controls);
       return;
     }
+    this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
+    this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
     const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
     if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
@@ -118,13 +120,11 @@ export class MeetupsAddComponent implements OnInit {
     }
   }
 
-  changeTimeFormat(time: String) {
-    console.log(time);
-    const hourMin = time.split(':', 2);
-    if ( hourMin[0].length < 2) {hourMin[0] = '0' + hourMin[0]; }
-    if ( hourMin[1].length < 2) {hourMin[1] = '0' + hourMin[1]; }
-    console.log(hourMin);
-    return hourMin.join(':');
+  changeTimeFormat(time: string): string {
+    if (time.length < 5) {
+      return '0' + time;
+    }
+    return time;
   }
 
   updateMeetup(meetupInfo) {
