@@ -13,7 +13,7 @@ import { DialogsResourcesViewerModule } from '../shared/dialogs/dialogs-resource
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
-import { FormsModule } from '@angular/forms'
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
