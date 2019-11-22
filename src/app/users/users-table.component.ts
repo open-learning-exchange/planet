@@ -32,6 +32,9 @@ export class TableState {
     .mat-column-profile {
       max-width: 100px;
     }
+    .mat-column-lastVisit {
+      max-width: 225px;
+    }
   ` ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
@@ -83,6 +86,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.sortingDataAccessor = (item: any, property) => {
       if (item[property]) {
         return sortNumberOrString(item, property);
+      }
+      if (item.health[property]) {
+        return sortNumberOrString(item.health, property);
       }
       return sortNumberOrString(item.doc, property);
     };
@@ -188,6 +194,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.usersService.requestUsers();
       this.planetMessageService.showMessage(`${user.name} roles modified`);
     });
+  }
+
+  onPageChange(e: PageEvent) {
+    console.log(e);
   }
 
 }

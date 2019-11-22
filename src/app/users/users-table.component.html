@@ -40,6 +40,10 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Login</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.lastLogin | date: 'mediumDate'}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="lastVisit">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Examination</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{(element.health.lastVisit | date: 'mediumDate') || 'Never'}}</mat-cell>
+  </ng-container>
   <ng-container matColumnDef="roles">
     <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
     <mat-cell *matCellDef="let element">
