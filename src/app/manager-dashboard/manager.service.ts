@@ -1,26 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { ValidatorService } from '../validators/validator.service';
-import { throwError, of, forkJoin, Observable } from 'rxjs';
-import { map, switchMap, catchError, takeWhile } from 'rxjs/operators';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { of, forkJoin } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
-
-const passwordFormFields = [
-  {
-    'label': 'Password',
-    'type': 'password',
-    'name': 'password',
-    'placeholder': 'Password',
-    'required': true
-  }
-];
 
 @Injectable({
   providedIn: 'root'
@@ -30,46 +16,11 @@ export class ManagerService {
   private configuration = this.stateService.configuration;
 
   constructor(
-    private dialogsFormService: DialogsFormService,
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
-    private activityService: ReportsService,
-    private validatorService: ValidatorService,
+    private activityService: ReportsService
   ) {}
-
-  openPasswordConfirmation() {
-    const title = 'Admin Confirmation';
-    const formGroup = {
-      password: [ '', Validators.required, ac => this.validatorService.checkPassword$(ac) ]
-    };
-    return this.dialogsFormService
-    .confirm(title, passwordFormFields, formGroup, true)
-    .pipe(
-      debug('Dialog confirm'),
-      switchMap((response: any): Observable<{ name, password, cancelled? }> => {
-        if (response !== undefined) {
-          return this.verifyPassword(response.password);
-        }
-        return of({ name: undefined, password: undefined, cancelled: true });
-      }),
-      takeWhile((value) => value.cancelled !== true),
-      catchError((err) => {
-        const errorMessage = err.error.reason;
-        return throwError(errorMessage === 'Name or password is incorrect.' ? 'Password is incorrect.' : errorMessage);
-      })
-    );
-  }
-
-  private verifyPassword(password) {
-    return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(switchMap((data) => {
-      if (!data.ok) {
-        return throwError('Invalid password');
-      }
-      return of({ name: this.userService.get().name, password });
-    }));
-  }
 
   addAdminLog(type) {
     const log = {

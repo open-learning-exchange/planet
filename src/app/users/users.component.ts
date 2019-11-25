@@ -11,6 +11,7 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
+import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './users.component.html',
@@ -53,7 +54,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private reportsService: ReportsService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private usersService: UsersService,
@@ -70,7 +70,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.applyFilter(params.get('search'));
     });
     this.managerService.getChildPlanets(true).pipe(map(
-      (state) => this.reportsService.attachNamesToPlanets(state)
+      (state) => attachNamesToPlanets(state)
     )).subscribe(childPlanets => this.children = childPlanets);
     this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
