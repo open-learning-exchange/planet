@@ -64,8 +64,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.removeFilteredFromSelection();
   }
-  readonly myLibraryFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
-  readonly myPersonalsFilter: { value: 'on' | 'off'} = { value: this.route.snapshot.data.myPersonals === true ? 'on' : 'off' };
+  myView = this.route.snapshot.data.view;
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
@@ -78,7 +77,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
       filterSpecificFieldsByWord([ 'doc.title' ]),
-      filterShelf(this.myLibraryFilter, 'libraryInfo')
+      filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')
     ]
   );
   trackById = trackById;
@@ -110,10 +109,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap((resources) => this.parent ? this.couchService.localComparison(this.dbName, resources) : of(resources))
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
-        (resource: any) => this.excludeIds.indexOf(resource._id) === -1
-          && (this.route === '/myPersonals' ? (resource.doc.private === true &&
-          (resource.doc.privateFor || {}).users === this.userService.get()._id) :
-          resource.doc.private !== true)
+        (resource: any) =>
+          this.excludeIds.indexOf(resource._id) === -1 &&
+          this.myView === 'myPersonals' ?
+            (resource.doc.private === true && (resource.doc.privateFor || {}).users === this.userService.get()._id) :
+            resource.doc.private !== true
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
@@ -297,7 +297,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
       Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
-      this.myLibraryFilter.value === 'on' ?
+      this.myView !== null ?
       ' ' : '';
   }
 
