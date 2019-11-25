@@ -70,7 +70,7 @@ export class UsersService {
       _id: user._id,
       doc: user,
       imageSrc: '',
-      fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.doc.name,
+      fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name,
       visitCount: this.userLoginCount(user, this.data.loginActivities),
       lastLogin: this.userLastLogin(user, this.data.loginActivities),
       roles: this.toProperRoles(user.roles)
