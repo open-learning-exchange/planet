@@ -13,6 +13,7 @@ import { TasksService } from '../tasks/tasks.service';
 export class UsersService {
 
   private dbName = '_users';
+  private adminConfig = '_node/nonode@nohost/_config/admins/';
   usersUpdated = new Subject<any>();
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   data: { users: any[], loginActivities: any[], childUsers: any[] } = { users: [], loginActivities: [], childUsers: [] };
@@ -94,7 +95,7 @@ export class UsersService {
       { domain: planetConfig.parentDomain }
     ).pipe(switchMap(([ parentUser ]: any[]) =>
       forkJoin([
-        this.couchService.delete('_node/nonode@nohost/_config/admins/' + user.name),
+        this.couchService.delete(`${this.adminConfig}${user.name}`),
         // TODO: When changing to a sync strategy for updating parent uncomment next line
         // this.couchService.delete(`_users/${parentUserId}${parentUser ? `?rev=${parentUser._rev}` : ''}`),
         this.setRoles({ ...user, isUserAdmin: false }, user.oldRoles)
@@ -103,25 +104,23 @@ export class UsersService {
   }
 
   promoteToAdmin(user) {
-    const planetConfig = this.stateService.configuration;
-    const adminName = user.name + '@' + planetConfig.code;
+    const { name, password_scheme, derived_key, salt, iterations } = user;
+    const { code, _id: requestId, parentDomain: domain } = this.stateService.configuration;
+    const adminName = name + '@' + code;
     const adminId = `org.couchdb.user:${adminName}`;
     const parentUser = {
       ...user,
-      requestId: planetConfig._id,
+      requestId,
       isUserAdmin: false,
-      roles: [],
+      roles: [ 'learner' ],
       name: adminName,
       sync: true,
       _attachments: undefined,
       _rev: undefined
     };
     return forkJoin([
-      this.couchService.updateDocument(this.dbName, { ...parentUser, '_id': adminId }, { domain: planetConfig.parentDomain }),
-      this.couchService.put(
-        `_node/nonode@nohost/_config/admins/${user.name}`,
-        `-${user.password_scheme}-${user.derived_key},${user.salt},${user.iterations}`
-      ),
+      this.couchService.updateDocument(this.dbName, { ...parentUser, '_id': adminId }, { domain, withCredentials: false }),
+      this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
       this.setRoles({ ...user, isUserAdmin: true }, []),
       this.removeFromTabletUsers(user)
     ]);
