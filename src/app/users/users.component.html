@@ -5,7 +5,7 @@
   <ng-container *ngIf="planetType !== 'community'">
     <mat-button-toggle-group
       class="margin-lr-5 font-size-1"
-      (change)="changeFilter(filterGroup.value)"
+      (change)="changePlanetFilter(filterGroup.value)"
       #filterGroup="matButtonToggleGroup">
       <mat-button-toggle value="local" [checked]="tableState.filterType==='local'">
         Local
@@ -15,7 +15,7 @@
       </mat-button-toggle>
     </mat-button-toggle-group>
     <mat-form-field class="font-size-1">
-      <mat-select i18n-placeholder placeholder="Children" [value]="tableState.selectedChild" (selectionChange)="changeFilter('child', $event.value)">
+      <mat-select i18n-placeholder placeholder="Children" [value]="tableState.selectedChild" (selectionChange)="changePlanetFilter('child', $event.value)">
         <mat-option *ngFor="let child of children" [value]="child.doc">
           {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
         </mat-option>
