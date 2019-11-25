@@ -196,7 +196,13 @@ export class UserService {
 
   updateUser(userInfo) {
     const planetConfiguration = this.stateService.configuration;
-    const newUserInfo = { ...this.credentials, ...userInfo, roles: userInfo.roles.filter(role => role.indexOf('_') === -1) };
+    const newUserInfo = {
+      ...this.credentials,
+      ...userInfo,
+      // Fix for Health & Achievements forms which can initialize middle name to undefined
+      middleName: userInfo.middleName || '',
+      roles: userInfo.roles.filter(role => role.indexOf('_') === -1)
+    };
     // ...is the rest syntax for object destructuring
     return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo, type: 'user' }).pipe(
       switchMap(() => userInfo._id === this.user._id ? this.resetUserData(userInfo._id) : of({})),
