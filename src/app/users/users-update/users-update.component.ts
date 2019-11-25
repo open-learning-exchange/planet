@@ -14,6 +14,7 @@ import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
+import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -109,14 +110,12 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.editForm.valid) {
-      this.submitUser();
-    } else {
-      Object.keys(this.editForm.controls).forEach(field => {
-        const control = this.editForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
+    if (!this.editForm.valid) {
+      showFormErrors(this.editForm.controls);
+      return;
     }
+    this.submitUser();
+
   }
 
   submitUser() {

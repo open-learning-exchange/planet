@@ -1,0 +1,19 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Health Care</span>
+  <span class="toolbar-fill"></span>
+  <mat-icon class="input-icon">search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput [(ngModel)]="searchValue" i18n-placeholder placeholder="Search name...">
+  </mat-form-field>
+  <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
+</mat-toolbar>
+
+<div class="space-container">
+  <div class="view-container view-full-height no-toolbar view-table" *ngIf="!emptyData; else notFoundMessage">
+    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns"></planet-users-table>
+  </div>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No User Found</div>
+  </ng-template>
+</div>

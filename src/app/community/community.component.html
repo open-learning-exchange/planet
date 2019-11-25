@@ -1,58 +1,35 @@
-<!-- Request template -->
 <mat-toolbar>
-  <button class="btnBack" mat-icon-button routerLink="/manager">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
+  <a mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></a>
+  <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
-    (change)="shownStatusChange($event.value)"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'">
-      Pending
-    </mat-button-toggle>
-    <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'">
-      Connected
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="requestListFilter($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
-  </mat-form-field>
 </mat-toolbar>
-
 <div class="space-container">
-  <mat-toolbar>
-    <mat-toolbar-row class="primary-color font-size-1">
-      <span i18n>{ shownStatus, select,
-        pending {Your Current List of Requests}
-        accepted {{ planetType, select, nation {Connected Community Networks} center {Connected Regions} }} }
-      </span>
+  <div class="view-container view-full-height">
+    <mat-toolbar class="action-buttons">
+      <a routerLink="/resources" mat-button i18n>
+        Library
+      </a>
+      <ng-container *ngFor="let link of links">
+        <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
+          {{link.title}}
+        </a>
+        <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
+      </ng-container>
       <span class="toolbar-fill"></span>
-      <button *ngIf="shownStatus==='accepted'" mat-raised-button color="accent" i18n (click)="addHubClick()">
-        { planetType, select, nation {Add Network} center {Add Region} }
-      </button>
-    </mat-toolbar-row>
-  </mat-toolbar>
-  <div class="view-container view-full-height" [ngClass]="{'view-table':shownStatus==='pending'}">
-    <planet-community-table *ngIf="shownStatus==='pending'" [data]="filteredData" (requestUpdate)="getCommunityList()"></planet-community-table>
-    <ng-container *ngIf="shownStatus==='accepted'">
-      <mat-expansion-panel *ngFor="let hub of hubs">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{hub.name}}</mat-panel-title>
-          <a mat-button class="margin-lr-10" (click)="deleteHub(hub, $event)" i18n>
-            <mat-icon>delete</mat-icon>Delete Network
-          </a>
-        </mat-expansion-panel-header>
-        <planet-community-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-community-table>
-      </mat-expansion-panel>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>Sandbox</mat-panel-title>
-        </mat-expansion-panel-header>
-        <planet-community-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-community-table>
-      </mat-expansion-panel>
-    </ng-container>
+      <ng-container *planetAuthorizedRoles>
+        <button (click)="toggleDeleteMode()" mat-icon-button><mat-icon>delete</mat-icon></button>
+        <button (click)="openAddLinkDialog()" mat-icon-button><mat-icon>add</mat-icon></button>
+      </ng-container>
+    </mat-toolbar>
+    <div class="community-news">
+      <h3>
+        <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+        <ng-container *planetAuthorizedRoles="'learner'">
+          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
+        </ng-container>
+      </h3>
+      <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
+    </div>
+    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
   </div>
 </div>

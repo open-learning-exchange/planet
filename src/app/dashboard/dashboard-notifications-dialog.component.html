@@ -1,0 +1,17 @@
+<p mat-dialog-title><ng-container i18n>You have</ng-container> {{surveysCount}} <ng-container i18n>{ surveysCount, plural, =1 {survey} other {surveys} } to complete</ng-container></p>
+<mat-dialog-content>
+  <mat-action-list>
+    <button mat-list-item
+      *ngFor="let survey of surveys; last as last"
+      [routerLink]="[ '/mySurveys/exam', { submissionId: survey._id, questionNum: survey.nextQuestion, status: 'pending', mode: 'take' } ]"
+      mat-dialog-close>
+      <span>{{ survey.parent.name }}</span>
+      <span class="toolbar-fill"></span>
+      <span>{{ survey.completedAnswers / survey.parent.questions.length | percent }} <ng-container i18n>Complete</ng-container></span>
+      <mat-divider *ngIf="!last"></mat-divider>
+    </button>
+  </mat-action-list>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-dialog-close mat-raised-button color="primary">OK</button>
+</mat-dialog-actions>

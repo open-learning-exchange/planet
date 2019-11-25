@@ -1,60 +1,46 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { CouchService } from '../shared/couchdb.service';
-import { switchMap, takeUntil } from 'rxjs/operators';
-import { forkJoin, of, Subject } from 'rxjs';
-import { findDocuments } from '../shared/mangoQueries';
-import { filterSpecificFields } from '../shared/table-helpers';
+import { Subject } from 'rxjs';
+import { takeUntil, finalize } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
+import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { Validators } from '@angular/forms';
-import { ValidatorService } from '../validators/validator.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { MatDialog } from '@angular/material';
+import { CommunityLinkDialogComponent } from './community-link-dialog.component';
+import { TeamsService } from '../teams/teams.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { CustomValidators } from '../validators/custom-validators';
-import { ReportsService } from '../manager-dashboard/reports/reports.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './community.component.html',
-  styles: [ `
-    mat-panel-title {
-      align-items: center;
-    }
-  ` ]
+  styleUrls: [ './community.scss' ]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  searchValue = '';
-  data = [];
-  filteredData = [];
-  hubs = [];
-  sandboxPlanets = [];
-  shownStatus = 'pending';
+  configuration = this.stateService.configuration;
+  teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+  news: any[] = [];
+  links: any[] = [];
+  showNewsButton = true;
+  deleteMode = false;
   onDestroy$ = new Subject<void>();
-  planetType = this.stateService.configuration.planetType;
-  get childType() {
-    return this.planetType === 'nation' ? 'Network' : 'Region';
-  }
 
   constructor(
-    private couchService: CouchService,
-    private validatorService: ValidatorService,
-    private dialogsFormService: DialogsFormService,
-    private route: ActivatedRoute,
+    private dialog: MatDialog,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService,
-    private reportsService: ReportsService,
-    private managerService: ManagerService
+    private newsService: NewsService,
+    private dialogsFormService: DialogsFormService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private teamsService: TeamsService,
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((params: ParamMap) => {
-      const searchValue = params.get('search');
-      this.searchValue = searchValue || '';
-      this.getCommunityList();
-    });
+    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.getLinks();
   }
 
   ngOnDestroy() {
@@ -62,57 +48,70 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  shownStatusChange(newStatus: string) {
-    this.shownStatus = newStatus;
-    this.filterData();
-  }
-
-  filterData(search = this.searchValue) {
-    const planetFilterDoc = (planet) => ({ ...planet.doc, ...(planet.nameDoc ? { 'name': planet.nameDoc.name } : {}) });
-    const filterFunction = filterSpecificFields([ 'code', 'name' ]);
-    this.filteredData = this.data.filter(
-      (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
-    );
-    const { hubs, sandboxPlanets } = this.reportsService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
-    this.hubs = hubs;
-    this.sandboxPlanets = sandboxPlanets;
-  }
-
-  requestListFilter(filterValue: string) {
-    this.searchValue = filterValue;
-    this.filterData();
-  }
-
-  getCommunityList(search = this.searchValue) {
-    forkJoin([
-      this.managerService.getChildPlanets(),
-      this.couchService.findAll('hubs')
-    ]).subscribe(([ data, hubs ]) => {
-      this.hubs = hubs;
-      this.data = this.reportsService.attachNamesToPlanets(data);
-      this.filterData(search);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
-  }
-
-  addHubClick() {
-    const type = this.childType;
-    this.dialogsFormService.confirm(
-      'Add ' + type,
-      [ { placeholder: 'Name', name: 'name', required: true, type: 'textbox' } ],
-      { name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
-    ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, spokes: [] }) : of())
-    ).subscribe(
-      () => {
-        this.planetMessageService.showMessage(type + ' Added');
-        this.getCommunityList();
-      },
-      () => this.planetMessageService.showAlert('There was an error adding ' + type)
+  openAddMessageDialog(message = '') {
+    this.dialogsFormService.openDialogsForm(
+      'Add Story',
+      [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true } ],
+      { message },
+      { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }
 
-  deleteHub(hub, event) {
-    this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).subscribe(() => this.getCommunityList());
-    event.stopPropagation();
+  postMessage(message) {
+    this.newsService.postNews({
+      viewableBy: 'community',
+      messageType: 'sync',
+      messagePlanetCode: this.configuration.code,
+      ...message
+    }, 'Message has been posted successfully').pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => this.dialogsFormService.closeDialogsForm());
+  }
+
+  getLinks() {
+    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links.filter(link => link.docType === 'link'));
+  }
+
+  deleteLink(link) {
+    return this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+  }
+
+  openAddLinkDialog() {
+    this.dialog.open(CommunityLinkDialogComponent, {
+      width: '50vw',
+      maxHeight: '90vh',
+      data: {
+        getLinks: this.getLinks.bind(this),
+        excludeIds: this.links.map(link => link.linkId || link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
+      }
+    });
+  }
+
+  openDeleteLinkDialog(link) {
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.deleteLink(link),
+          onNext: () => {
+            this.planetMessageService.showMessage(`${link.title} deleted`);
+            this.getLinks();
+            deleteDialog.close();
+          },
+          onError: () => this.planetMessageService.showAlert(`There was an error deleting ${link.title}`)
+        },
+        changeType: 'delete',
+        type: 'link',
+        displayName: link.title
+      }
+    });
+  }
+
+  toggleShowButton(data) {
+    this.showNewsButton = data._id === 'root';
+  }
+
+  toggleDeleteMode() {
+    this.deleteMode = !this.deleteMode;
   }
 
 }

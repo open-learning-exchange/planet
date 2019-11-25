@@ -209,11 +209,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (team === undefined) {
       return;
     }
-    this.userStatus = this.requests.some((req: any) => req.userId === user._id) ? 'requesting' : this.userStatus;
-    this.userStatus = this.members.some((req: any) => req.userId === user._id) ? 'member' : this.userStatus;
+    this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
+    this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
+  }
+
+  isUserInMemberDocs(memberDocs, user) {
+    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === user.planetCode);
   }
 
   toggleMembership(team, leaveTeam) {
@@ -276,7 +280,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return () => {
       return changeObject.obs.pipe(
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTask(memberDoc.userId, { teams: this.teamId }) : of({})),
+        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
@@ -454,9 +458,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (!this.team.courses) {
       return of(true);
     }
-    const index = this.team.courses.indexOf(course);
-    const newCourses = this.team.courses.slice(0, index).concat(this.team.courses.slice(index + 1, this.team.courses.length));
-    return () => this.teamsService.updateTeam({ ...this.team, courses: newCourses });
+    return () => this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.filter(c => c._id !== course._id) });
   }
 
   toggleTask({ option }) {

@@ -7,6 +7,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from '../shared/state.service';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
@@ -29,7 +30,8 @@ export class UpgradeComponent {
     private http: HttpClient,
     private couchService: CouchService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private syncService: SyncService
   ) {
     this.mode = this.route.snapshot.data.myPlanet === true ? 'myPlanet' : 'planet';
     this.addLine('Not started');
@@ -56,9 +58,9 @@ export class UpgradeComponent {
     this.getParentVersion().pipe(
       switchMap((pVersion: string) => {
         parentVersion = pVersion;
-        return this.managerService.openPasswordConfirmation();
+        return this.syncService.openPasswordConfirmation();
       }),
-      switchMap(credentials => this.managerService.updateCredentialsYml(credentials)),
+      switchMap((credentials: { name, password }) => this.managerService.updateCredentialsYml(credentials)),
       switchMap(() => this.managerService.addAdminLog('upgrade')),
       switchMap(() => {
         this.start();
@@ -156,7 +158,7 @@ export class UpgradeComponent {
 
   upgradeMyPlanet() {
     this.start();
-    const upgradeUrl = this.stateService.configuration.planetType === 'center' ? '/planetapk' : '/fromnation/planetapk';
+    const upgradeUrl = '/planetapk';
     this.http.get(environment.upgradeAddress + upgradeUrl, { responseType: 'text' })
       .subscribe(result => this.handleResult(result), err => this.handleError(err));
   }

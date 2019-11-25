@@ -5,6 +5,9 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
+import { forkJoin } from 'rxjs';
+import { showFormErrors } from '../shared/table-helpers';
+import { languages } from '../shared/languages';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -15,6 +18,7 @@ export class HealthUpdateComponent implements OnInit {
   profileForm: FormGroup;
   healthForm: FormGroup;
   existingData: any = {};
+  languages = languages;
 
   constructor(
     private fb: FormBuilder,
@@ -24,6 +28,19 @@ export class HealthUpdateComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    this.initProfileForm();
+    this.initHealthForm();
+  }
+
+  ngOnInit() {
+    this.profileForm.patchValue(this.userService.get());
+    this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
+      this.existingData = data;
+      this.healthForm.patchValue(data.profile);
+    });
+  }
+
+  initProfileForm() {
     this.profileForm = this.fb.group({
       name: '',
       firstName: [ '', CustomValidators.required ],
@@ -39,6 +56,9 @@ export class HealthUpdateComponent implements OnInit {
       ],
       birthplace: ''
     });
+  }
+
+  initHealthForm() {
     this.healthForm = this.fb.group({
       emergencyContactName: '',
       emergencyContactType: '',
@@ -46,26 +66,25 @@ export class HealthUpdateComponent implements OnInit {
       specialNeeds: '',
       notes: ''
     });
-  }
-
-  ngOnInit() {
-    this.profileForm.patchValue(this.userService.get());
-    this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
-      this.existingData = data;
-      this.profileForm.patchValue(data.profile);
-      this.healthForm.patchValue(data.profile);
+    this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
+      this.healthForm.controls.emergencyContact.setValidators(value === 'email' ? Validators.email : null);
+      this.healthForm.controls.emergencyContact.updateValueAndValidity();
     });
   }
 
   onSubmit() {
-    this.healthService.postHealthData({
-      _id: this.existingData._id || this.userService.get()._id,
-      _rev: this.existingData._rev,
-      profile: {
-        ...this.profileForm.value,
-        ...this.healthForm.value
-      }
-    }).subscribe(() => this.goBack());
+    if (!this.profileForm.valid) {
+      showFormErrors(this.profileForm.controls);
+      return;
+    }
+    forkJoin([
+      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
+      this.healthService.postHealthData({
+        _id: this.existingData._id || this.userService.get()._id,
+        _rev: this.existingData._rev,
+        profile: this.healthForm.value
+      })
+    ]).subscribe(() => this.goBack());
   }
 
   goBack() {

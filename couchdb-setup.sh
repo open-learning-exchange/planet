@@ -34,6 +34,19 @@ insert_dbs() {
   done
 }
 
+set_couch_per_user() {
+  CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
+  CODE=$(echo $CONFIGURATION | jq -rj '.["rows"][0]["doc"]["code"] // empty')
+  HEXCODE=$(echo $CODE | tr -d \\n | hexdump -v -e '/1 "%02x"')
+  BETAMODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["betaEnabled"] // empty')
+  if [ ! -z "$CODE" ] && [ "$BETAMODE" != "off" ];
+  then
+    upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$HEXCODE'-"'
+    upsert_doc _node/nonode@nohost/_config couch_peruser/delete_dbs '"true"'
+    upsert_doc _node/nonode@nohost/_config couch_peruser/enable '"true"'
+  fi
+}
+
 # Options are -u for username -w for passWord and -p for port number
 while getopts "u:w:p:h:ix" option; do
   case $option in
@@ -183,6 +196,7 @@ then
 fi
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
+set_couch_per_user
 # Increase session timeout
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/timeout '"2400"'
 # Increse http request size for large attachments

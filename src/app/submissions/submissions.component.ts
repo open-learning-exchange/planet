@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns, dropdownsFill } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -18,12 +18,13 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
     }
   ` ]
 })
-export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  initTable = true;
   displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
   statusOptions: any = [
     { text: 'Pending', value: 'pending' },
@@ -53,9 +54,11 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
     if (this.mode === 'survey') {
       this.filter['type'] = 'survey';
-      this.filter['status'] = '';
       query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
+    }
+    if (this.filter['type'] === 'survey') {
+      this.filter['status'] = '';
     }
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe((submissions) => {
@@ -83,9 +86,12 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setupTable();
   }
 
-  ngAfterViewInit() {
-    this.submissions.paginator = this.paginator;
-    this.submissions.sort = this.sort;
+  ngAfterViewChecked() {
+    if (this.initTable === true) {
+      this.submissions.paginator = this.paginator;
+      this.submissions.sort = this.sort;
+      this.initTable = false;
+    }
   }
 
   ngOnDestroy() {
@@ -116,6 +122,7 @@ export class SubmissionsComponent implements OnInit, AfterViewInit, OnDestroy {
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
     this.emptyData = !this.submissions.filteredData.length;
+    this.initTable = !this.emptyData;
   }
 
   dropdownsFill() {

@@ -18,7 +18,15 @@ import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 
 @Component({
-  templateUrl: './manager-dashboard.component.html'
+  templateUrl: './manager-dashboard.component.html',
+  styles: [ `
+    .view-container > * {
+      margin-bottom: 0.5rem;
+    }
+    .view-container > *:last-child {
+      margin-bottom: 0;
+    }
+  ` ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
@@ -31,6 +39,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   deleteCommunityDialog: any;
   versionLocal = '';
   versionParent = '';
+  versionLatestApk = '';
+  versionLocalApk = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
   pin: string;
   activityLogs: any = {};
@@ -57,10 +67,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
-      const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
-      this.getVersion(opts).subscribe((version: string) => this.versionLocal = version);
-      this.getVersion({ domain: this.planetConfiguration.parentDomain, ...opts })
-        .subscribe((version: string) => this.versionParent = version);
+      this.setVersions();
     }
     this.getSatellitePin();
     this.couchService.currentTime().pipe(switchMap((time: number) => {
@@ -247,8 +254,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }, (error) => this.planetMessageService.showAlert('Error to reset pin'));
   }
 
-  getVersion(opts: any = {}) {
-    return this.couchService.getUrl('version', opts).pipe(catchError(() => of('N/A')));
+  setVersions() {
+    const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
+    this.managerService.getVersion('planet', opts).subscribe((version: string) => this.versionLocal = version);
+    this.managerService.getVersion('planet', { domain: this.planetConfiguration.parentDomain, ...opts })
+      .subscribe((version: string) => this.versionParent = version);
+    forkJoin([
+      this.managerService.getVersion('myPlanet', opts),
+      this.managerService.getApkLatestVersion(opts)
+    ]).subscribe(( [ localVersion, latestVersion ]: [ string, any ]) => {
+      this.versionLocalApk = localVersion;
+      this.versionLatestApk = latestVersion.latestapk;
+    });
   }
 
 }

@@ -122,16 +122,17 @@ export class PlanetCalendarComponent implements OnInit {
     if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
-    const makeEvents = (events: any[], startDay: number, endDay: number) => {
-      if (events.length === meetup.recurringNumber) {
-        return events;
-      }
+    const events = [];
+    let i = 0;
+    while (events.length < meetup.recurringNumber) {
+      const startDay = meetup.startDate + (i * millisecondsToDay);
       const date = new Date(startDay);
-      return meetup.day.indexOf(days[date.getDay()]) !== -1 ?
-        makeEvents([ ...events, this.eventObject(meetup, startDay, endDay) ], startDay + millisecondsToDay, endDay + millisecondsToDay) :
-        makeEvents(events, startDay + millisecondsToDay, endDay + millisecondsToDay);
-    };
-    return makeEvents([ this.eventObject(meetup) ], meetup.startDate + millisecondsToDay, meetup.endDate + millisecondsToDay);
+      if (meetup.day.indexOf(days[date.getDay()]) !== -1) {
+        events.push(this.eventObject(meetup, startDay, meetup.endDate + (i * millisecondsToDay)));
+      }
+      i++;
+    }
+    return events;
   }
 
   openAddEventDialog() {

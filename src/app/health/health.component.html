@@ -1,11 +1,12 @@
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>myHealth</span>
+  <span i18n *ngIf="isOwnUser">myHealth</span>
+  <span i18n *ngIf="!isOwnUser">Health Care</span>
 </mat-toolbar>
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['update']">Update Details</a>
+    <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['update']" *ngIf="isOwnUser">Update Details</a>
     <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
   </mat-toolbar>
   <div class="view-container view-full-height">
@@ -64,7 +65,7 @@
       </mat-list>
       <ng-container *ngIf="events.length > 0">
         <h4 class="full-width">Examinations</h4>
-        <div class="full-width table-container">
+        <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
               <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ column === 'label' ? '' : (column | date) }}</mat-header-cell>

@@ -20,7 +20,6 @@ export class TasksService {
 
   constructor(
     private couchService: CouchService,
-    private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private validatorService: ValidatorService,
     private stateService: StateService
@@ -51,47 +50,36 @@ export class TasksService {
     ));
   }
 
-  openAddDialog(additionalFields, task: any = {}, onSuccess = (res) => {}) {
-    const fields = [
-      { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
-      { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
-      { placeholder: 'Deadline Time', type: 'time', name: 'deadlineTime', required: true },
-      { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
-    ];
-    const formGroup = this.addDialogFormGroup(task);
-    this.dialogsFormService.openDialogsForm(task.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
-      onSubmit: (newTask) => {
-        if (newTask) {
-          this.addDialogSubmit(additionalFields, task, newTask, onSuccess);
-        }
-      },
-      autoFocus: true
-    });
-  }
-
   addDialogSubmit(additionalFields, task: any, newTask: any, onSuccess) {
     const deadline = new Date(addDateAndTime(new Date(newTask.deadline).getTime(), newTask.deadlineTime)).getTime();
     this.addTask({ assignee: '', ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       onSuccess(res.doc);
-      this.dialogsFormService.closeDialogsForm();
     });
   }
 
-  addDialogFormGroup(task: any = {}) {
+  addDialogForm(task: any = {}) {
     const { deadline, deadlineTime } = task.deadline ?
       { deadline: new Date(new Date(task.deadline).setHours(0, 0, 0)), deadlineTime: getClockTime(new Date(task.deadline)) } :
       { deadline: '', deadlineTime: '09:00' };
     return {
-      title: [ task.title || '', CustomValidators.required ],
-      deadline: [
-        deadline,
-        CustomValidators.dateValidRequired,
-        (ac) => this.validatorService.notDateInPast$(ac)
+      fields: [
+        { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
+        { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
+        { placeholder: 'Deadline Time', type: 'time', name: 'deadlineTime', required: true },
+        { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
       ],
-      deadlineTime: [ deadlineTime, CustomValidators.dateValidRequired ],
-      description: task.description || ''
+      formGroup: {
+        title: [ task.title || '', CustomValidators.required ],
+        deadline: [
+          deadline,
+          CustomValidators.dateValidRequired,
+          (ac) => this.validatorService.notDateInPast$(ac)
+        ],
+        deadlineTime: [ deadlineTime, CustomValidators.dateValidRequired ],
+        description: task.description || ''
+      }
     };
   }
 
@@ -117,8 +105,8 @@ export class TasksService {
     );
   }
 
-  removeAssigneeFromTask(assignee: any, link: any = {}) {
-    return this.couchService.findAll(this.dbName, findDocuments({ 'assignee.userId': assignee, link })).pipe(
+  removeAssigneeFromTasks(userId: any, link?: any) {
+    return this.couchService.findAll(this.dbName, findDocuments({ 'assignee.userId': userId, link })).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, assignee: '' })))),
       map(() => this.getTasks())
     );

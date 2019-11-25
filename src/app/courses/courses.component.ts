@@ -34,7 +34,13 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
     .mat-column-select {
       max-width: 44px;
     }
-    .mat-column-info, .mat-column-rating {
+    .mat-column-info {
+      max-width: 200px;
+    }
+    .mat-column-createdDate {
+      max-width: 95px;
+    }
+    .mat-column-rating {
       max-width: 225px;
     }
     .column {
@@ -70,7 +76,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'courseTitle', 'info', 'rating' ];
+  displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   planetConfiguration = this.stateService.configuration;
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;
@@ -378,7 +384,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((planet) => {
       const data = { okClick: this.sendCourse('courses').bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: false,
+        allowMulti: true,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data, maxHeight: '500px', width: '600px', autoFocus: false
@@ -389,8 +395,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendCourse(db: string) {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
-        const childType = this.planetType === 'center' ? 'nation' : 'community';
+      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
+        const childType = {
+          center: selected.length > 1 ? 'nations' : 'nation',
+          nation: selected.length > 1 ? 'communities' : 'community'
+        }[this.planetType];
         this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));

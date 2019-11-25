@@ -13,6 +13,8 @@ import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { PouchService } from '../shared/database/pouch.service';
 import { StateService } from '../shared/state.service';
+import { showFormErrors } from '../shared/table-helpers';
+import { HealthService } from '../health/health.service';
 
 const registerForm = {
   name: [],
@@ -51,7 +53,8 @@ export class LoginFormComponent {
     private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
-    private pouchService: PouchService
+    private pouchService: PouchService,
+    private healthService: HealthService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -67,16 +70,14 @@ export class LoginFormComponent {
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
   onSubmit() {
-    if (this.userForm.valid) {
-      if (this.createMode) {
-        this.createUser(this.userForm.value);
-      } else {
-        this.login(this.userForm.value, false);
-      }
+    if (!this.userForm.valid) {
+      showFormErrors(this.userForm.controls);
+      return;
+    }
+    if (this.createMode) {
+      this.createUser(this.userForm.value);
     } else {
-      Object.keys(this.userForm.controls).forEach(fieldName => {
-        this.userForm.controls[fieldName].markAsTouched();
-      });
+      this.login(this.userForm.value, false);
     }
   }
 
@@ -95,7 +96,7 @@ export class LoginFormComponent {
   }
 
   reRoute() {
-    return this.router.navigateByUrl(this.returnUrl);
+    return this.router.navigateByUrl(this.returnUrl, { state: { login: true } });
   }
 
   createUser({ name, password }: { name: string, password: string }) {
@@ -130,6 +131,7 @@ export class LoginFormComponent {
 
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
     const configuration = this.stateService.configuration;
+    const userId = `org.couchdb.user:${name}`;
     this.pouchAuthService.login(name, password).pipe(
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
@@ -137,7 +139,8 @@ export class LoginFormComponent {
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-      })
+      }),
+      switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId)))
     ).subscribe(() => {}, this.loginError.bind(this));
   }
 

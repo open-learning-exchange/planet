@@ -10,6 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { toProperCase } from '../shared/utils';
+import { UsersService } from '../users/users.service';
 
 const nameField = {
   'type': 'textbox',
@@ -35,6 +36,7 @@ export class TeamsService {
     private couchService: CouchService,
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
+    private usersService: UsersService,
     private stateService: StateService,
     private validatorService: ValidatorService
   ) {}
@@ -153,12 +155,12 @@ export class TeamsService {
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
-      this.couchService.findAll('_users'),
+      this.usersService.getAllUsers(),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...[ ...(team.type === 'services' ? this.servicesMembers(team, users) : []), ...membershipDocs ].map(doc => ({
         ...doc,
-        userDoc: users.find(user => user._id === doc.userId),
+        userDoc: users.find(user => user._id === doc.userId && user.planetCode === doc.userPlanetCode),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
@@ -276,6 +278,20 @@ export class TeamsService {
       'requests': [],
       'teamType': 'sync',
       'type': 'services'
+    };
+    return this.updateTeam(newServicesDoc);
+  }
+
+  createServicesLink({ title, route }) {
+    const { code, parentCode } = this.stateService.configuration;
+    const newServicesDoc = {
+      'teamId': `${code}@${parentCode}`,
+      'createdDate': this.couchService.datePlaceholder,
+      'teamPlanetCode': `${code}`,
+      'parentCode': `${parentCode}`,
+      'docType': 'link',
+      title,
+      route
     };
     return this.updateTeam(newServicesDoc);
   }

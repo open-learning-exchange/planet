@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
           }
           return this.couchService.findAll('configurations');
         }),
-        switchMap(data => {
+        switchMap((data: any) => {
           if (!data[0] || data[0].planetType === 'center') {
             return of(false);
           }

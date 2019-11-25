@@ -31,8 +31,17 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
+  DateAdapter,
+  NativeDateAdapter
 } from '@angular/material';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+
+/** Adapts the native JS Date for use with cdk-based components that work with dates. */
+export class CustomDateAdapter extends NativeDateAdapter {
+  getFirstDayOfWeek(): number {
+    return 6;
+  }
+}
 
 @NgModule({
   exports: [
@@ -68,6 +77,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-  ]
+  ],
+  providers: [ { provide: DateAdapter, useClass: CustomDateAdapter } ]
 })
 export class MaterialModule {}

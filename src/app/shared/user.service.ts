@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from './couchdb.service';
-import { catchError, switchMap, map } from 'rxjs/operators';
+import { catchError, switchMap, map, tap } from 'rxjs/operators';
 import { of, Observable, Subject, BehaviorSubject, forkJoin } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
@@ -74,7 +74,7 @@ export class UserService {
         const userData = users.find(u => u.name === user.name);
         if (userData) {
           // Remove hashed password information from the data object
-          const profile = this.getUserProperties(userData, [ ...this.userProperties, ...this.additionalProperties ]);
+          const profile = this.getUserProperties(userData);
           this.credentials = this.getUserProperties(userData, this.credentialProperties);
           this.user = profile;
           this.user.roles = [ ...this.user.roles, ...user.roles ].reduce(dedupeShelfReduce, []);
@@ -93,16 +93,15 @@ export class UserService {
       }));
   }
 
-  private getUserProperties(user, properties: string[]): any {
+  getUserProperties(user, properties: string[] = [ ...this.userProperties, ...this.additionalProperties ]): any {
     return properties.reduce((object, key) => ({ ...object, [key]: user[key] }), {});
   }
 
   private setUserProperties(users) {
     this.userProperties = users.reduce((properties: string[], user: any) => {
       const { requestId, _attachments, ...profile } = user;
-      return [ ...properties, Object.keys(profile) ].filter((prop: string) => this.credentialProperties.indexOf(prop) === -1)
-        .reduce(dedupeShelfReduce, []);
-    }, []);
+      return [ ...properties, ...Object.keys(profile).filter((prop: string) => this.credentialProperties.indexOf(prop) === -1) ];
+    }, []).reduce(dedupeShelfReduce, []);
   }
 
   unset(): any {
@@ -197,20 +196,13 @@ export class UserService {
 
   updateUser(userInfo) {
     const planetConfiguration = this.stateService.configuration;
-    const newUserInfo = { ...userInfo, roles: userInfo.roles.filter(role => role.indexOf('_') === -1) };
+    const newUserInfo = { ...this.credentials, ...userInfo, roles: userInfo.roles.filter(role => role.indexOf('_') === -1) };
     // ...is the rest syntax for object destructuring
-    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo, type: 'user' })
-    .pipe(
-      switchMap(res => {
-        newUserInfo._rev = res.rev;
-        const profile = this.getUserProperties(newUserInfo, [ ...this.userProperties, ...this.additionalProperties ]);
-        if (newUserInfo.name === this.get().name) {
-          if (this.user.roles.indexOf('_admin') !== -1) {
-            profile.roles.push('_admin');
-          }
-          this.credentials = this.getUserProperties(newUserInfo, this.credentialProperties);
-          this.set(profile);
-        } else {
+    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo, type: 'user' }).pipe(
+      switchMap(() => userInfo._id === this.user._id ? this.resetUserData(userInfo._id) : of({})),
+      switchMap(() => {
+        const profile = this.getUserProperties(newUserInfo);
+        if (newUserInfo.name !== this.get().name) {
           this.userChange.next(profile);
         }
         if (planetConfiguration.adminName === newUserInfo.name + '@' + planetConfiguration.code) {
@@ -219,6 +211,17 @@ export class UserService {
         return of({ ok: true });
       })
     );
+  }
+
+  resetUserData(userId: string) {
+    return this.couchService.get(`${this.usersDb}/${userId}`).pipe(tap(newUser => {
+      const profile = this.getUserProperties(newUser);
+      if (this.user.roles.indexOf('_admin') !== -1) {
+        profile.roles.push('_admin');
+      }
+      this.credentials = this.getUserProperties(newUser, this.credentialProperties);
+      this.set(profile);
+    }));
   }
 
   updateConfigurationContact(userInfo, planetConfiguration) {

@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce } from '../../shared/utils';
+import { UsersService } from '../../users/users.service';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -20,7 +21,8 @@ export class ReportsService {
   users: any[] = [];
 
   constructor(
-    private couchService: CouchService
+    private couchService: CouchService,
+    private usersService: UsersService
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
@@ -67,7 +69,7 @@ export class ReportsService {
 
   getTotalUsers(planetCode: string, local: boolean) {
     const obs = local ?
-      this.couchService.findAll('_users') :
+      this.usersService.getAllUsers() :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite' && user.roles.length);
@@ -177,23 +179,6 @@ export class ReportsService {
 
   timeFilter(field, time) {
     return time !== undefined ? { [field]: { '$gt': time } } : {};
-  }
-
-  attachNamesToPlanets(planetDocs) {
-    const names = planetDocs.filter((d: any) => d.docType === 'parentName');
-    return planetDocs.map((d: any) => ({ doc: d, nameDoc: names.find((name: any) => name.planetId === d._id) }));
-  }
-
-  arrangePlanetsIntoHubs(planets, hubs) {
-    return ({
-      hubs: hubs.map((hub: any) => ({
-        ...hub,
-        children: hub.spokes.map(code => planets.find((planet: any) => planet.doc.code === code)).filter(child => child)
-      })),
-      sandboxPlanets: planets.filter(
-        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.doc.code) > -1) === undefined
-      )
-    });
   }
 
   filterAdmin(records, filter) {

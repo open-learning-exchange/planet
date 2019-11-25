@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { HomeComponent } from './home.component';
-import { CommunityComponent } from '../community/community.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
@@ -10,6 +9,8 @@ import { UsersAchievementsUpdateComponent } from '../users/users-achievements/us
 import { NewsComponent } from '../news/news.component';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsViewComponent } from '../teams/teams-view.component';
+import { CommunityComponent } from '../community/community.component';
+import { HealthListComponent } from '../health/health-list.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -19,7 +20,6 @@ const routes: Routes = [
       { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
       { path: 'myCourses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true } },
-      { path: 'requests', component: CommunityComponent },
       { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
       {
@@ -49,7 +49,9 @@ const routes: Routes = [
       { path: 'news', component: NewsComponent },
       { path: 'logs/myplanet', component: LogsMyPlanetComponent },
       { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
-      { path: 'community', component: TeamsViewComponent, data: { mode: 'services' } },
+      { path: 'health', component: HealthListComponent },
+      { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
+      { path: 'community', component: CommunityComponent },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } }
     ]
