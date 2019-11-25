@@ -85,12 +85,12 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   setResource(resource: any) {
+    this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
     this.mediaType = resource.mediaType;
     this.contentType = resource._attachments[filename].content_type;
     this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
-    this.resourceActivity(resource, 'visit');
     if (!this.mediaType) {
       const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
       this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
