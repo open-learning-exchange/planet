@@ -130,10 +130,6 @@ export class PlanetTagInputDialogComponent {
     this.dialogRef.close();
   }
 
-  selectNone() {
-    this.data.tagUpdate('', false, true);
-    this.dialogRef.close();
-  }
   checkboxChange(event, tag) {
     event.source.checked = isInMap(tag, this.selected);
   }
