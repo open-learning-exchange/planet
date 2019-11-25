@@ -30,12 +30,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   canManage = true;
   members = [];
   parent = this.route.snapshot.data.parent;
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  listDialogRef: MatDialogRef<DialogsListComponent>;
   currentUserName = this.userService.get().name;
   dateNow: any;
 
   constructor(
     public dialog: MatDialog,
+    public dialogRef: MatDialogRef<MeetupsViewComponent>,
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
@@ -112,7 +113,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         nameProperty: 'name',
         ...res
       };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
+      this.listDialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
         maxHeight: '500px',
         width: '600px',
@@ -126,7 +127,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       return this.inviteNotification(user._id, this.meetupDetail);
     });
     this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
-      this.dialogRef.close();
+      this.listDialogRef.close();
       this.planetMessageService.showMessage('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
     });
   }
@@ -163,6 +164,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       }
     };
     this.meetupService.openDeleteDialog(this.meetupDetail, callback);
+  }
+
+  routeToCreator(createdBy: string) {
+    this.router.navigate([ '/users/profile', createdBy ]);
+    if (this.isDialog) {
+      this.dialogRef.close();
+    }
   }
 
 }

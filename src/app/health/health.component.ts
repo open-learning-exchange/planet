@@ -1,16 +1,19 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { MatTableDataSource, MatDialog } from '@angular/material';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
 import { environment } from '../../environments/environment';
+import { takeUntil, switchMap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   templateUrl: './health.component.html',
   styleUrls: [ './health.scss' ]
 })
-export class HealthComponent implements OnInit, AfterViewChecked {
+export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('examsTable', { static: false }) examsTable: ElementRef;
   userDetail = this.userService.get();
@@ -21,25 +24,26 @@ export class HealthComponent implements OnInit, AfterViewChecked {
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/_users/';
   initializeEvents = true;
+  isOwnUser = true;
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private userService: UserService,
     private healthService: HealthService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
-    this.healthService.getHealthData(this.userService.get()._id).subscribe(({ profile, events }) => {
-      // const { profile, events } = doc;
-      this.userDetail = { ...profile, ...this.userDetail };
-      if (this.userDetail._attachments) {
-        this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
-      }
-      this.healthDetail = profile;
-      this.events = events || [];
-      this.setEventData();
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).pipe(switchMap((params: ParamMap) => {
+      const id = `org.couchdb.user:${params.get('id')}`;
+      this.isOwnUser = params.get('id') === null || params.get('id') === this.userService.get().name;
+      return params.get('id') ? this.couchService.get(`_users/${id}`) : of(this.userService.get());
+    })).subscribe((user) => {
+      this.userDetail = user;
+      this.initData();
     });
   }
 
@@ -51,8 +55,29 @@ export class HealthComponent implements OnInit, AfterViewChecked {
     this.examsTable.nativeElement.scrollLeft = this.examsTable.nativeElement.scrollWidth - this.examsTable.nativeElement.clientWidth;
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  initData() {
+    this.healthService.getHealthData(this.userDetail._id).subscribe(({ profile, events }) => {
+      this.userDetail = { ...profile, ...this.userDetail };
+      if (this.userDetail._attachments) {
+        this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
+      }
+      this.healthDetail = profile;
+      this.events = events || [];
+      this.setEventData();
+    });
+  }
+
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    if (this.router.url.indexOf('profile') === -1) {
+      this.router.navigate([ '..' ], { relativeTo: this.route });
+    } else {
+      this.router.navigate([ '../../' ], { relativeTo: this.route });
+    }
   }
 
   examClick(eventDate) {
