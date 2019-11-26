@@ -29,8 +29,9 @@
           </mat-form-field>
           <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
             <div *ngFor="let option of question.choices">
-              <mat-radio-button  [value]="option"></mat-radio-button>
-              <span class="mat-radio-label-text">{{option.text}}</span>
+              <mat-radio-button [value]="option">
+                <span class="mat-radio-label-text">{{option.text}}</span>
+              </mat-radio-button>
             </div>            
           </mat-radio-group>
           <div *ngSwitchCase="'selectMultiple'" class="question-list">
