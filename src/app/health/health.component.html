@@ -1,12 +1,14 @@
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>myHealth</span>
+  <span i18n *ngIf="isOwnUser">myHealth</span>
+  <span i18n *ngIf="!isOwnUser">Health Care</span>
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['update']">Update Details</a>
-    <a mat-raised-button color="accent" class="margin-lr-3" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
+  <mat-toolbar class="primary-color font-size-1 action-buttons">
+    <a mat-raised-button color="accent" i18n [routerLink]="['update']" *ngIf="isOwnUser">Update Details</a>
+    <a mat-raised-button color="accent" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
+    <span *ngIf="userDetail.firstName === undefined"><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="profile-container">

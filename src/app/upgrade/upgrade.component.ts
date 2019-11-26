@@ -2,11 +2,12 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { CouchService, PlanetRequestOptions } from '../shared/couchdb.service';
+import { CouchService } from '../shared/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from '../shared/state.service';
+import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
@@ -29,7 +30,8 @@ export class UpgradeComponent {
     private http: HttpClient,
     private couchService: CouchService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private syncService: SyncService
   ) {
     this.mode = this.route.snapshot.data.myPlanet === true ? 'myPlanet' : 'planet';
     this.addLine('Not started');
@@ -56,7 +58,7 @@ export class UpgradeComponent {
     this.getParentVersion().pipe(
       switchMap((pVersion: string) => {
         parentVersion = pVersion;
-        return this.managerService.openPasswordConfirmation();
+        return this.syncService.openPasswordConfirmation();
       }),
       switchMap((credentials: { name, password }) => this.managerService.updateCredentialsYml(credentials)),
       switchMap(() => this.managerService.addAdminLog('upgrade')),
@@ -145,7 +147,7 @@ export class UpgradeComponent {
   }
 
   getParentVersion() {
-    const opts: PlanetRequestOptions = {
+    const opts = {
       domain: this.stateService.configuration.parentDomain,
       responseType: 'text',
       withCredentials: false,

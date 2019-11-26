@@ -5,7 +5,7 @@
 </mat-toolbar>
 <div class="space-container">
   <div class="view-container view-full-height">
-    <mat-toolbar>
+    <mat-toolbar class="action-buttons">
       <a routerLink="/resources" mat-button i18n>
         Library
       </a>
@@ -25,7 +25,7 @@
       <h3>
         <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
         <ng-container *planetAuthorizedRoles="'learner'">
-          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New News</button>
+          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
         </ng-container>
       </h3>
       <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>

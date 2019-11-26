@@ -11,7 +11,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
-import { RequestsService } from './requests.service';
+import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -44,8 +44,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
-    private managerService: ManagerService,
-    private requestsService: RequestsService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
@@ -75,7 +74,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
       && this.hubPlanet.findIndex(h => h.planetId === planet.doc._id) === -1
     );
-    const { hubs, sandboxPlanets } = this.reportsService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
+    const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets;
   }
@@ -92,7 +91,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
       this.hubPlanet = hubs.filter((hub: any) => hub.planetId);
-      this.data = this.reportsService.attachNamesToPlanets(data);
+      this.data = attachNamesToPlanets(data);
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }

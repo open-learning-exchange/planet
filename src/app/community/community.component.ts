@@ -50,8 +50,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
-      'Add News',
-      [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true } ],
+      'Add Story',
+      [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true } ],
       { message },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
@@ -80,7 +80,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
-      data: { getLinks: this.getLinks.bind(this) }
+      data: {
+        getLinks: this.getLinks.bind(this),
+        excludeIds: this.links.map(link => link.linkId || link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
+      }
     });
   }
 

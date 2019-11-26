@@ -5,6 +5,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets } from './reports.utils';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -49,9 +50,7 @@ export class ReportsComponent {
   }
 
   arrangePlanetData(planetDocs, hubData) {
-    const { hubs, sandboxPlanets } = this.activityService.arrangePlanetsIntoHubs(
-      this.activityService.attachNamesToPlanets(planetDocs), hubData
-    );
+    const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(attachNamesToPlanets(planetDocs), hubData);
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets.filter((planet: any) => planet.doc.docType !== 'parentName');
   }

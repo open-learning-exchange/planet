@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit {
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { firstLine: 'my', title: 'Personals', link: '/myPersonals' },
     { firstLine: 'my', title: 'Achievements', link: '/myAchievements' },
     { firstLine: 'our', title: 'News', link: '/news' },
     { firstLine: 'my', title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
@@ -59,7 +60,6 @@ export class DashboardComponent implements OnInit {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
     const currentNavigation = this.router.getCurrentNavigation();
     this.isLogin = currentNavigation && currentNavigation.extras.state && currentNavigation.extras.state.login === true;
-    this.router.events.subscribe(e => console.log(e));
   }
 
   ngOnInit() {

@@ -19,6 +19,8 @@ import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
+import { findDocuments } from '../shared/mangoQueries';
+import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -156,7 +158,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSurveys(surveys) {
     const deleteArray = createDeleteArray(surveys);
     return {
-      request: this.couchService.bulkDocs(this.dbName, deleteArray),
+      request: forkJoin([
+        this.couchService.bulkDocs(this.dbName, deleteArray),
+        ...surveys.reduce(this.submissionDeleteReq, [])
+      ]),
       onNext: () => {
         this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === undefined);
         this.selection.clear();
@@ -170,7 +175,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSurvey(survey) {
     const { _id: surveyId, _rev: surveyRev } = survey;
     return {
-      request: this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
+      request: forkJoin([
+        this.couchService.delete(this.dbName + '/' + surveyId + '?rev=' + surveyRev),
+        ...this.submissionDeleteReq([], survey)
+      ]),
       onNext: () => {
         this.selection.deselect(survey._id);
         this.surveys.data = filterById(this.surveys.data, survey._id);
@@ -179,6 +187,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this survey.')
     };
+  }
+
+  submissionDeleteReq(requests, survey) {
+    if (survey.sourcePlanet === this.stateService.configuration.code) {
+      requests.push(
+        this.couchService.findAll('submissions', findDocuments({ 'status': 'pending', 'parentId': survey._id }, 0 ))
+        .pipe(switchMap((submissions) => {
+          const submissionArray = createDeleteArray(submissions);
+          return this.couchService.bulkDocs('submissions', submissionArray);
+        }))
+      );
+    }
+    return requests;
   }
 
   openDeleteDialog(okClick, amount, displayName = '') {
@@ -227,7 +248,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getUserData(obs: any) {
     return obs.pipe(switchMap(([ users, childUsers, children ]) => {
-      children = this.reportsService.attachNamesToPlanets(children);
+      children = attachNamesToPlanets(children);
       return of({
         tableData: [
           ...users.tableData,
