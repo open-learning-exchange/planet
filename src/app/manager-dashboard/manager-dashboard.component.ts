@@ -17,6 +17,7 @@ import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
+import { attachNamesToPlanets } from './reports/reports.utils';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
@@ -118,7 +119,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         return of([]);
       }
       return this.managerService.getHubChilds(this.hubDetail.spokes);
-    })).subscribe(hubCom => this.hubCommunities = this.reportsService.attachNamesToPlanets(hubCom));
+    })).subscribe(hubCom => this.hubCommunities = attachNamesToPlanets(hubCom));
   }
 
   countFetchItemAvailable() {

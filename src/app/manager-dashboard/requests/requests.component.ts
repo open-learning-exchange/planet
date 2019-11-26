@@ -12,6 +12,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
+import { RequestsService } from './requests.service';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -44,7 +45,8 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private requestsService: RequestsService
   ) {}
 
   ngOnInit() {
