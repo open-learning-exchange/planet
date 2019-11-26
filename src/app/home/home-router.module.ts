@@ -24,7 +24,11 @@ const routes: Routes = [
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
       {
         path: 'myLibrary',
-        loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { myLibrary: true }
+        loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myLibrary' }
+      },
+      {
+        path: 'myPersonals',
+        loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
       },
       { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
       { path: 'notifications', component: NotificationsComponent },
