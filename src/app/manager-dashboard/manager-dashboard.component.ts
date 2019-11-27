@@ -2,8 +2,8 @@ import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap, catchError, takeUntil } from 'rxjs/operators';
-import { forkJoin, of, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -16,8 +16,6 @@ import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
-import { ReportsService } from './reports/reports.service';
-import { attachNamesToPlanets } from './reports/reports.utils';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
@@ -61,16 +59,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService,
-    private reportsService: ReportsService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
-    if (this.planetType !== 'center') {
-      this.checkRequestStatus();
-    }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
+      this.checkRequestStatus();
       this.setVersions();
       this.checkHub();
     }
@@ -98,7 +93,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   resendConfig() {
     const configuration = this.planetConfiguration;
-    const userDetail = { ...this.userService.get(), ...this.userService.credentials };
     this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
       error => this.planetMessageService.showAlert('An error occurred please try again.'),
       () => {
