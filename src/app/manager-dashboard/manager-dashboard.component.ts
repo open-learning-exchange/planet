@@ -2,8 +2,8 @@ import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap, catchError, takeUntil } from 'rxjs/operators';
-import { forkJoin, of, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -47,6 +47,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
   pendingPushCount = 0;
+  isHub: boolean;
 
   constructor(
     private userService: UserService,
@@ -62,12 +63,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if (this.planetType !== 'center') {
-      this.checkRequestStatus();
-    }
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
+      this.checkRequestStatus();
       this.setVersions();
+      this.checkHub();
     }
     this.getSatellitePin();
     this.couchService.currentTime().pipe(switchMap((time: number) => {
@@ -93,7 +93,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   resendConfig() {
     const configuration = this.planetConfiguration;
-    const userDetail = { ...this.userService.get(), ...this.userService.credentials };
     this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
       error => this.planetMessageService.showAlert('An error occurred please try again.'),
       () => {
@@ -101,6 +100,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.showResendConfiguration = false;
       }
     );
+  }
+
+  checkHub() {
+    this.couchService.findAll('hubs',
+      findDocuments({ 'planetId': this.planetConfiguration._id }, [ '_id' ], [], 1),
+      { domain: this.planetConfiguration.parentDomain }
+    ).subscribe(hub => this.isHub = hub.length > 0);
   }
 
   countFetchItemAvailable() {

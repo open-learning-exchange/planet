@@ -229,7 +229,7 @@
       },
       "members": {
         "names": [],
-        "roles": ["manager", "monitor"]
+        "roles": ["manager", "monitor", "learner", "leader"]
       }
     }
   },

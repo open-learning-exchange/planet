@@ -12,17 +12,22 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-expansion-panel *ngFor="let hub of hubs">
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{hub.name}}</mat-panel-title>
-      </mat-expansion-panel-header>
-      <planet-reports-table [planets]="hub.children"></planet-reports-table>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Sandbox</mat-panel-title>
-      </mat-expansion-panel-header>
+    <ng-container *ngIf="hubId === null; else singleTable">
+      <mat-expansion-panel *ngFor="let hub of hubs">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{hub.name}}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-reports-table [planets]="hub.children"></planet-reports-table>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Sandbox</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
+      </mat-expansion-panel>
+    </ng-container>
+    <ng-template #singleTable>
       <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
-    </mat-expansion-panel>
+    </ng-template>
   </div>
 </div>

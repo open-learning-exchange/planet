@@ -62,15 +62,15 @@ export class ManagerService {
     return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
   }
 
-  getChildPlanets(onlyAccepted = false) {
+  getChildPlanets(onlyAccepted = false, parentCode = this.stateService.configuration.code, domain?) {
     const selector = onlyAccepted ?
       { '$or': [
-        { 'parentCode': this.stateService.configuration.code, 'registrationRequest': 'accepted' },
+        { 'parentCode': parentCode, 'registrationRequest': 'accepted' },
         { 'docType': 'parentName' }
       ] } :
       { '_id': { '$gt': null } };
     return this.couchService.findAll('communityregistrationrequests',
-      findDocuments(selector, 0, [ { 'createdDate': 'desc' } ] ));
+      findDocuments(selector, 0, [ { 'createdDate': 'desc' } ] ), domain ? { domain } : undefined);
   }
 
   updateCredentialsYml({ name, password }) {
