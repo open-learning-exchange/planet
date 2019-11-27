@@ -251,13 +251,10 @@ export class SubmissionsService {
           'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
           'Planet': submission.source,
           'Date': new Date(submission.lastUpdateTime).toString(),
-          ...questionTexts.reduce((answerObj, text, index) => {
-            const label = `Q${index + 1}: ${text}`;
-            return {
-              ...answerObj,
-              [label]: answerIndexes[index] > -1 ? this.getAnswerText(submission.answers[index].value) : undefined
-            };
-          }, {})
+          ...questionTexts.reduce((answerObj, text, index) => ({
+            ...answerObj,
+            [`Q${index + 1}: ${text}`]: answerIndexes[index] > -1 ? this.getAnswerText(submission.answers[index].value) : undefined
+          }), {})
         };
       });
       this.csvService.exportCSV({ data, title: `${toProperCase(type)} -  ${exam.name}` });
