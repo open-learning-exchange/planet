@@ -35,7 +35,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
     ).subscribe((healthData: any[]) => {
       this.users = this.users.map(user => {
         const userHealth = healthData.find(data => data._id === user._id) || { events: [] };
-        return { ...user, health: { lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, 0) } };
+        return { ...user, health: { lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) } };
       });
       this.emptyData = this.users.length === 0;
     });
