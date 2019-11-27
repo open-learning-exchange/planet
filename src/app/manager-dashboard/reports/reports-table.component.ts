@@ -2,7 +2,6 @@ import { Component, Input, ViewChild, OnChanges, AfterViewInit } from '@angular/
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { commonSortingDataAccessor } from '../../shared/table-helpers';
 import { ReportsService } from './reports.service';
-import { RequestsService } from '../requests/requests.service';
 
 @Component({
   selector: 'planet-reports-table',
@@ -25,7 +24,7 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
-    private requestsService: RequestsService
+    private reportsService: ReportsService
   ) {}
 
   ngOnChanges() {
@@ -45,7 +44,7 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
   }
 
   viewDetails(planet: any) {
-    this.requestsService.view(planet);
+    this.reportsService.viewPlanetDetails(planet);
   }
 
 }

@@ -12,7 +12,6 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
-import { RequestsService } from './requests.service';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -46,7 +45,6 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
     private managerService: ManagerService,
-    private requestsService: RequestsService
   ) {}
 
   ngOnInit() {
@@ -132,7 +130,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
 
   view(planetId) {
     const hubPlanet = this.data.find(planet => planet.doc._id === planetId);
-    this.requestsService.view(hubPlanet.doc);
+    this.reportsService.viewPlanetDetails(hubPlanet.doc);
   }
 
 }
