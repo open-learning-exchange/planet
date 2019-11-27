@@ -28,7 +28,6 @@ export class RequestsComponent implements OnInit, OnDestroy {
   filteredData = [];
   hubs = [];
   sandboxPlanets = [];
-  hubPlanet = [];
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
@@ -72,7 +71,6 @@ export class RequestsComponent implements OnInit, OnDestroy {
     const filterFunction = filterSpecificFields([ 'code', 'name' ]);
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
-      && this.hubPlanet.findIndex(h => h.planetId === planet.doc._id) === -1
     );
     const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
@@ -90,7 +88,6 @@ export class RequestsComponent implements OnInit, OnDestroy {
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
-      this.hubPlanet = hubs.filter((hub: any) => hub.planetId);
       this.data = attachNamesToPlanets(data);
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
