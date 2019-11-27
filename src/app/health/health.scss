@@ -6,23 +6,29 @@ $exam-table-col-width: 100px;
   grid-column-gap: 2rem;
   grid-auto-columns: $exam-table-col-width;
 }
+
 .profile-container mat-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, 200px);
   grid-column-gap: 0.5rem;
 }
+
 .full-width {
   grid-column: 1 / -1;
 }
+
 .table-container {
   overflow-x: auto;
 }
+
 mat-table {
   width: max-content;
 }
+
 .table-column {
   min-width: $exam-table-col-width;
 }
+
 .action-buttons {
   margin: 0;
 }
