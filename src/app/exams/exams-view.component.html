@@ -28,18 +28,16 @@
             <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
           </mat-form-field>
           <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
-            <div *ngFor="let option of question.choices">
-              <mat-radio-button [value]="option">
-                <span class="mat-radio-label-text">{{option.text}}</span>
-              </mat-radio-button>
-            </div>            
+            <mat-radio-button [value]="option" *ngFor="let option of question.choices">
+              <span class="multiple-choice-text">{{option.text}}</span>
+            </mat-radio-button>
           </mat-radio-group>
           <div *ngSwitchCase="'selectMultiple'" class="question-list">
             <span class="mat-caption" i18n>
               {examType, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}
             </span>
             <mat-checkbox *ngFor="let option of question.choices" [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
-              {{option.text}}
+              <span class="multiple-choice-text">{{option.text}}</span>
             </mat-checkbox>
           </div>
         </ng-container>
