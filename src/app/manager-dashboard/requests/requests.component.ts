@@ -43,7 +43,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
-    private managerService: ManagerService,
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
