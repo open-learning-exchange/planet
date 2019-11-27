@@ -7,8 +7,6 @@ import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.componen
 })
 export class RequestsService {
 
-  viewNationDetailDialog: any;
-
   constructor(
     private dialog: MatDialog
   ) {}
@@ -18,7 +16,7 @@ export class RequestsService {
   }
 
   view(planet) {
-    this.viewNationDetailDialog = this.dialog.open(DialogsViewComponent, {
+    this.dialog.open(DialogsViewComponent, {
       width: '600px',
       autoFocus: false,
       data: {

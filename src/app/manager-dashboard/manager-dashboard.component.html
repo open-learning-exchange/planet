@@ -5,10 +5,10 @@
   <span i18n>Manager Settings</span>
 </mat-toolbar>
 <div class="space-container">
-  <span *ngIf="planetType !== 'community'">
+  <ng-container *ngIf="planetType !== 'community'">
     <a routerLink="requests" i18n mat-raised-button *planetAuthorizedRoles="'manager'">{ planetType, select, nation {Manage Communities} center {Manage Nations} }</a>
-    <a [routerLink]="['reports']" i18n mat-raised-button>Reports</a>
-  </span>
+  </ng-container>
+  <a [routerLink]="['reports', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>Reports</a>
   <a [routerLink]="['reports', 'myplanet']" i18n mat-raised-button>myPlanet Reports</a>
   <ng-container *planetAuthorizedRoles="'manager'">
     <a [routerLink]="['/surveys']" mat-raised-button i18n>Surveys</a>
@@ -45,12 +45,6 @@
       <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
     </div>
     <div class="view-container" *ngIf="planetType !== 'center'">
-      <mat-expansion-panel *ngIf="hubDetail">
-        <mat-expansion-panel-header>
-          <mat-panel-title i18n>Hub Communities</mat-panel-title>
-        </mat-expansion-panel-header>
-        <planet-requests-table [data]="hubCommunities"></planet-requests-table>
-      </mat-expansion-panel>
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
       <mat-card>
         <mat-card-title i18n>Planet Version</mat-card-title>

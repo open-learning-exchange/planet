@@ -49,8 +49,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
   pendingPushCount = 0;
-  hubCommunities = [];
-  hubDetail: any;
+  isHub: boolean;
 
   constructor(
     private userService: UserService,
@@ -111,15 +110,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   checkHub() {
     this.couchService.findAll('hubs',
-      findDocuments({ 'planetId': this.planetConfiguration._id }),
+      findDocuments({ 'planetId': this.planetConfiguration._id }, [ '_id' ], [], 1),
       { domain: this.planetConfiguration.parentDomain }
-    ).pipe(switchMap((hubPlanets: any) => {
-      this.hubDetail = hubPlanets[0] || {};
-      if (!hubPlanets.length) {
-        return of([]);
-      }
-      return this.managerService.getHubChilds(this.hubDetail.spokes);
-    })).subscribe(hubCom => this.hubCommunities = attachNamesToPlanets(hubCom));
+    ).subscribe(hub => this.isHub = hub.length > 0);
   }
 
   countFetchItemAvailable() {
