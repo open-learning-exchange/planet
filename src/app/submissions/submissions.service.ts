@@ -6,7 +6,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 
 @Injectable({
@@ -242,17 +242,13 @@ export class SubmissionsService {
   exportSubmissionsCsv(exam, type: 'exam' | 'survey') {
     const query = findDocuments({ parentId: exam._id, type, status: 'complete' });
     const questionTexts = exam.questions.map(question => question.body);
-    return this.getSubmissions(query).pipe(tap((submissions: [any]) => {
+    return forkJoin([ this.getSubmissions(query), this.couchService.currentTime() ])
+    .pipe(tap(([ submissions, time ]: [ any[], number ]) => {
       const data = submissions.map((submission) => {
         const answerIndexes = questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
-        const typeField = type === 'exam' ?
-          { 'User': submission.user ? submission.user.firstName + ' ' + submission.user.lastName : 'Anonymous' } :
-          {
-            'Gender': submission.user.gender || 'N/A',
-            'Age': new Date().getFullYear() - new Date(submission.user.birthDate).getFullYear() || 'N/A'
-          };
         return {
-          ...typeField,
+          'Gender': submission.user.gender || 'N/A',
+          'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
           'Planet': submission.source,
           'Date': new Date(submission.lastUpdateTime).toString(),
           ...questionTexts.reduce((answerObj, text, index) => {
