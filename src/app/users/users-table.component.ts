@@ -28,12 +28,14 @@ export class TableState {
     .mat-column-select {
       max-width: 44px;
     }
-
     .mat-column-profile {
       max-width: 100px;
     }
-    .mat-column-lastVisit {
+    .mat-column-birthDate, .mat-column-lastVisit {
       max-width: 225px;
+    }
+    mat-cell p {
+      margin: 0;
     }
   ` ]
 })

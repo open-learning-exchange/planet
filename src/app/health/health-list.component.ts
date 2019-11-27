@@ -14,7 +14,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
   searchValue = '';
   onDestroy$ = new Subject<void>();
   users: any[] = [];
-  displayedColumns = [ 'profile', 'name', 'lastVisit' ];
+  displayedColumns = [ 'profile', 'name', 'contact', 'birthDate', 'lastVisit' ];
   tableState = new TableState();
   emptyData = true;
 
@@ -35,7 +35,10 @@ export class HealthListComponent implements OnInit, OnDestroy {
     ).subscribe((healthData: any[]) => {
       this.users = this.users.map(user => {
         const userHealth = healthData.find(data => data._id === user._id) || { events: [] };
-        return { ...user, health: { lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) } };
+        return {
+          ...user,
+          health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
+        };
       });
       this.emptyData = this.users.length === 0;
     });
