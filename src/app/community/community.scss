@@ -38,3 +38,9 @@ mat-toolbar {
 planet-calendar {
   grid-template-areas: calendar;
 }
+
+.scrolling {
+  overflow-x: auto;
+  white-space: nowrap;
+  display: inline-block;
+}
