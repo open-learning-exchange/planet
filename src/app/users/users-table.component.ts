@@ -60,7 +60,16 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.filter = this.usersTable.filter;
     this._filter = newFilter;
   }
-  @Input() tableState: TableState;
+  private _tableState: TableState;
+  @Input()
+  get tableState(): TableState {
+    return this._tableState;
+  }
+  set tableState(newState: TableState) {
+    this.filter['doc.planetCode'] = newState.selectedChild.code;
+    this.filterType = newState.filterType;
+    this._tableState = newState;
+  }
   @Output() tableStateChange = new EventEmitter<TableState>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;

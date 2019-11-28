@@ -84,7 +84,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  changeFilter(type, child: any = {}) {
+  changePlanetFilter(type, child: any = {}) {
     this.filterDisplayColumns(type);
     this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
     this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
@@ -105,7 +105,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
-    this.changeFilter(this.tableState.filterType);
+    this.changePlanetFilter(this.tableState.filterType);
   }
 
   searchChanged(searchText: string) {
@@ -140,7 +140,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   onFilterChange(filterValue: string) {
     this.filter = { ...this.filter, 'doc.roles': filterValue === 'All' ? '' : filterValue };
-    this.changeFilter(this.tableState.filterType);
+    this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild);
   }
 
   resetFilter() {
