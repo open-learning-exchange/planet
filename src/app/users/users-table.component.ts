@@ -28,9 +28,14 @@ export class TableState {
     .mat-column-select {
       max-width: 44px;
     }
-
     .mat-column-profile {
       max-width: 100px;
+    }
+    .mat-column-birthDate, .mat-column-lastVisit {
+      max-width: 225px;
+    }
+    mat-cell p {
+      margin: 0;
     }
   ` ]
 })
@@ -83,6 +88,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.sortingDataAccessor = (item: any, property) => {
       if (item[property]) {
         return sortNumberOrString(item, property);
+      }
+      if (item.health[property]) {
+        return sortNumberOrString(item.health, property);
       }
       return sortNumberOrString(item.doc, property);
     };
@@ -188,6 +196,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.usersService.requestUsers();
       this.planetMessageService.showMessage(`${user.name} roles modified`);
     });
+  }
+
+  onPageChange(e: PageEvent) {
+    console.log(e);
   }
 
 }
