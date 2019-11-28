@@ -74,7 +74,7 @@ export class UsersService {
       fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name,
       visitCount: this.userLoginCount(user, this.data.loginActivities),
       lastLogin: this.userLastLogin(user, this.data.loginActivities),
-      roles: this.toProperRoles(user.roles)
+      roles: user.roles
     };
     if (user._attachments) {
       userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];

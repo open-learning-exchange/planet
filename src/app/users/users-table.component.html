@@ -43,17 +43,7 @@
   <ng-container matColumnDef="roles">
     <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <mat-chip-list>
-        <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
-        <ng-container *ngFor="let role of element.roles; index as i">
-          <mat-chip *ngIf="role !== 'Learner'" [removable]="!element.doc.isUserAdmin" (removed)="removeRole(element.doc,i)">
-            {{role}}
-            <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
-          </mat-chip>
-        </ng-container>
-        <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
-      </mat-chip-list>
-      <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
+      <planet-role [roles]="element.doc.roles" display="chip" [item]="element.doc" canManage="!element.doc.isUserAdmin"></planet-role>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="action">
