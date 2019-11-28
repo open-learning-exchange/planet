@@ -32,17 +32,19 @@ export class UsersService {
     private stateService: StateService,
     private tasksService: TasksService
   ) {
-    const checkIfLocal = (current, data: { newData, planetField }) => data && data.planetField === 'local' ? data.newData : current;
+    const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
+    const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
     combineLatest([
-      this.stateService.couchStateListener(this.dbName),
       this.stateService.couchStateListener('login_activities'),
       this.stateService.couchStateListener('child_users')
-    ]).subscribe(([ users, loginActivities, childUsers ]) => {
-      this.data = {
-        users: checkIfLocal(this.data.users, users),
-        loginActivities: checkIfLocal(this.data.loginActivities, loginActivities),
-        childUsers: checkIfLocal(this.data.childUsers, childUsers)
-      };
+    ]).pipe(switchMap(([ loginActivities, childUsers ]) => {
+      const [ loginLocal, childLocal ]: boolean[] = [ checkIfLocal(loginActivities), checkIfLocal(childUsers) ];
+      const [ loginData, childData ]: any[] = [
+        dataToUse(this.data.loginActivities, loginActivities, loginLocal), dataToUse(this.data.childUsers, childUsers, childLocal)
+      ];
+      return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([]);
+    })).subscribe(([ users, loginActivities, childUsers ]) => {
+      this.data = { users, loginActivities, childUsers };
       this.usersUpdated.next(
         this.data.users.filter((user: any) => {
           // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
