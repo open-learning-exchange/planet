@@ -5,6 +5,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
+import { MatDialog } from '@angular/material';
+import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -22,7 +24,8 @@ export class ReportsService {
 
   constructor(
     private couchService: CouchService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private dialog: MatDialog
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
@@ -181,23 +184,6 @@ export class ReportsService {
     return time !== undefined ? { [field]: { '$gt': time } } : {};
   }
 
-  attachNamesToPlanets(planetDocs) {
-    const names = planetDocs.filter((d: any) => d.docType === 'parentName');
-    return planetDocs.map((d: any) => ({ doc: d, nameDoc: names.find((name: any) => name.planetId === d._id) }));
-  }
-
-  arrangePlanetsIntoHubs(planets, hubs) {
-    return ({
-      hubs: hubs.map((hub: any) => ({
-        ...hub,
-        children: hub.spokes.map(code => planets.find((planet: any) => planet.doc.code === code)).filter(child => child)
-      })),
-      sandboxPlanets: planets.filter(
-        (planet: any) => hubs.find((hub: any) => hub.spokes.indexOf(planet.doc.code) > -1) === undefined
-      )
-    });
-  }
-
   filterAdmin(records, filter) {
     return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
   }
@@ -208,6 +194,21 @@ export class ReportsService {
 
   minTime(activities, timeField) {
     return activities.reduce((minTime, { [timeField]: time }) => minTime && minTime < time ? minTime : time, undefined);
+  }
+
+  planetTypeText(planetType) {
+    return planetType === 'nation' ? 'Nation' : 'Community';
+  }
+
+  viewPlanetDetails(planet) {
+    this.dialog.open(DialogsViewComponent, {
+      width: '600px',
+      autoFocus: false,
+      data: {
+        allData: planet,
+        title: `${this.planetTypeText(planet.planetType)} Details`
+      }
+    });
   }
 
 }

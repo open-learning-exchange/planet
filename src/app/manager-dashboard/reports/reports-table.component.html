@@ -1,7 +1,10 @@
 <mat-table #table [dataSource]="logs" matSort>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
-    <mat-cell *matCellDef="let element"><a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a></mat-cell>
+    <mat-cell *matCellDef="let element" class="action-buttons">
+      <a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a>
+      <button (click)="viewDetails(element.doc)" mat-stroked-button color="primary">Details</button>
+    </mat-cell>
   </ng-container>
   <!-- <ng-container matColumnDef="downloads">
     <mat-header-cell *matHeaderCellDef i18n>Resource Downloads</mat-header-cell>

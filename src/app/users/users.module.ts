@@ -12,8 +12,12 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { UsersAchievementsModule } from './users-achievements/users-achievements.module';
+import { UsersTableComponent } from './users-table.component';
 
 @NgModule({
+  exports: [
+    UsersTableComponent
+  ],
   imports: [
     NgxImgModule,
     UsersRouterModule,
@@ -29,7 +33,8 @@ import { UsersAchievementsModule } from './users-achievements/users-achievements
   declarations: [
     UsersComponent,
     UsersProfileComponent,
-    UsersUpdateComponent
+    UsersUpdateComponent,
+    UsersTableComponent
   ]
 })
 export class UsersModule {}

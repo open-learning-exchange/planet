@@ -10,6 +10,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   selector: 'planet-tasks',
@@ -44,7 +45,8 @@ export class TasksComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private couchService: CouchService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogsFormService: DialogsFormService
   ) {}
 
   ngOnInit() {
@@ -58,10 +60,23 @@ export class TasksComponent implements OnInit {
   }
 
   addTask(task?) {
-    this.tasksService.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
+    this.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
       this.tasksService.getTasks();
       const msg = task ? 'Task updated successfully' : 'Task created successfully';
       this.planetMessageService.showMessage(msg);
+      this.dialogsFormService.closeDialogsForm();
+    });
+  }
+
+  openAddDialog(additionalFields, task: any = {}, onSuccess = (res) => {}) {
+    const { fields, formGroup } = this.tasksService.addDialogForm(task);
+    this.dialogsFormService.openDialogsForm(task.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
+      onSubmit: (newTask) => {
+        if (newTask) {
+          this.tasksService.addDialogSubmit(additionalFields, task, newTask, onSuccess.bind(this));
+        }
+      },
+      autoFocus: true
     });
   }
 

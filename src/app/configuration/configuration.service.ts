@@ -47,9 +47,7 @@ export class ConfigurationService {
     return mergeMap((data: any) => {
       // then add user to parent planet with id of configuration and isUserAdmin set to false
       userDetail = { ...user, requestId: data.id, isUserAdmin: false, roles: [], name: adminName };
-      return this.createUser(adminName, userDetail, {
-        domain: configuration.parentDomain
-      });
+      return this.createUser(adminName, userDetail, { domain: configuration.parentDomain, withCredentials: false });
     });
   }
 

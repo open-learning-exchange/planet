@@ -80,7 +80,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
       maxHeight: '90vh',
-      data: { getLinks: this.getLinks.bind(this) }
+      data: {
+        getLinks: this.getLinks.bind(this),
+        excludeIds: this.links.map(link => link.linkId || link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
+      }
     });
   }
 

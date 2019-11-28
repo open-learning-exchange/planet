@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ResourcesService } from '../resources.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -37,6 +37,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
+    private router: Router
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
@@ -75,11 +76,11 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       'type': activity,
       'time': this.couchService.datePlaceholder,
       'createdOn': this.stateService.configuration.code,
-      'parentCode': this.stateService.configuration.parentCode
+      'parentCode': this.stateService.configuration.parentCode,
+      'url': this.router.url
     };
     this.couchService.updateDocument('resource_activities', data)
       .subscribe((response) => {
-        console.log(response);
       }, (error) => console.log('Error'));
   }
 

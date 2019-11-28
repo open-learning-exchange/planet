@@ -1,27 +1,45 @@
-import { Component } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { forkJoin, Subject } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
-import { findDocuments } from '../../shared/mangoQueries';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets } from './reports.utils';
+import { StateService } from '../../shared/state.service';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntil, map } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
 })
-export class ReportsComponent {
+export class ReportsComponent implements OnInit, OnDestroy {
 
   hubs = [];
   sandboxPlanets = [];
+  hubId: string | null = null;
+  configuration = this.stateService.configuration;
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
     private activityService: ReportsService,
     private planetMessageService: PlanetMessageService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private stateService: StateService,
+    private route: ActivatedRoute
   ) {
     this.getLogs();
   }
+
+  ngOnInit() {
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(params => this.hubId = params.get('hubId'));
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   countByPlanet(planet, logs) {
     return logs.reduce((total, log: any) => {
       if (log.createdOn === planet.code) {
@@ -32,12 +50,15 @@ export class ReportsComponent {
   }
 
   getLogs() {
+    const { planetCode, domain } = this.configuration.planetType === 'community' ?
+      { planetCode: this.configuration.parentCode, domain: this.configuration.parentDomain } :
+      { planetCode: undefined, domain: undefined };
     forkJoin([
-      this.managerService.getChildPlanets(true),
+      this.managerService.getChildPlanets(true, planetCode, domain),
       this.activityService.getGroupedReport('resourceViews'),
       this.activityService.getGroupedReport('logins'),
       this.activityService.getAdminActivities(),
-      this.couchService.findAll('hubs')
+      this.couchService.findAll('hubs', undefined, domain ? { domain } : {})
     ]).subscribe(([ planets, resourceVisits, loginActivities, adminActivities, hubs ]) => {
       this.arrangePlanetData(planets.map((planet: any) => planet.docType === 'parentName' ? planet : ({
         ...planet,
@@ -49,9 +70,11 @@ export class ReportsComponent {
   }
 
   arrangePlanetData(planetDocs, hubData) {
-    const { hubs, sandboxPlanets } = this.activityService.arrangePlanetsIntoHubs(
-      this.activityService.attachNamesToPlanets(planetDocs), hubData
-    );
+    const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(attachNamesToPlanets(planetDocs), hubData);
+    if (this.hubId !== null) {
+      this.sandboxPlanets = hubs.find(hub => hub.planetId === this.hubId).children;
+      return;
+    }
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets.filter((planet: any) => planet.doc.docType !== 'parentName');
   }

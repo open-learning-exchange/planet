@@ -11,6 +11,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
+import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
 
 @Component({
   templateUrl: './requests.component.html',
@@ -71,7 +72,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
     this.filteredData = this.data.filter(
       (planet) => planet.doc.registrationRequest === this.shownStatus && filterFunction(planetFilterDoc(planet), search)
     );
-    const { hubs, sandboxPlanets } = this.reportsService.arrangePlanetsIntoHubs(this.filteredData, this.hubs);
+    const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(this.filteredData, this.hubs);
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets;
   }
@@ -87,7 +88,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
       this.couchService.findAll('hubs')
     ]).subscribe(([ data, hubs ]) => {
       this.hubs = hubs;
-      this.data = this.reportsService.attachNamesToPlanets(data);
+      this.data = attachNamesToPlanets(data);
       this.filterData(search);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
@@ -96,8 +97,19 @@ export class RequestsComponent implements OnInit, OnDestroy {
     const type = this.childType;
     this.dialogsFormService.confirm(
       'Add ' + type,
-      [ { placeholder: 'Name', name: 'name', required: true, type: 'textbox' } ],
-      { name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ] }
+      [
+        { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
+        { type: 'selectbox', name: 'planetId', placeholder: 'Planet', required: false,
+          'options': [
+            { name: 'Select Planet', value: '' },
+            ...this.sandboxPlanets.map(p => ({ name: p.nameDoc ? p.nameDoc.name : p.doc.name, value: p.doc._id }))
+          ]
+        }
+      ],
+      {
+        name: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('hubs', 'name', ac) ],
+        planetId: ''
+      }
     ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, spokes: [] }) : of())
     ).subscribe(
       () => {
@@ -111,6 +123,11 @@ export class RequestsComponent implements OnInit, OnDestroy {
   deleteHub(hub, event) {
     this.couchService.delete('hubs/' + hub._id + '?rev=' + hub._rev).subscribe(() => this.getCommunityList());
     event.stopPropagation();
+  }
+
+  view(planetId) {
+    const hubPlanet = this.data.find(planet => planet.doc._id === planetId);
+    this.reportsService.viewPlanetDetails(hubPlanet.doc);
   }
 
 }
