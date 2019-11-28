@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HealthService } from './health.service';
+import { conditions } from './health.constants';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -10,6 +11,7 @@ import { HealthService } from './health.service';
 export class HealthEventComponent implements OnInit {
 
   healthForm: FormGroup;
+  conditions = conditions;
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +35,8 @@ export class HealthEventComponent implements OnInit {
       allergies: '',
       xrays: '',
       tests: '',
-      referrals: ''
+      referrals: '',
+      conditions: {}
     });
   }
 
@@ -52,6 +55,11 @@ export class HealthEventComponent implements OnInit {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
+  }
+
+  conditionChange(condition) {
+    const currentConditions = this.healthForm.controls.conditions.value;
+    this.healthForm.controls.conditions.setValue({ ...currentConditions, [condition]: currentConditions[condition] !== true });
   }
 
 }
