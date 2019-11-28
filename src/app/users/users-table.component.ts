@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, of, forkJoin, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFields, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
 } from '../shared/table-helpers';
 import { findByIdInArray } from '../shared/utils';
 import { UserService } from '../shared/user.service';
@@ -92,7 +92,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersTable.filterPredicate = (data, filter) => composeFilterFunctions([
       filterDropdowns(this.filter),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFields([ 'fullName' ])
+      filterSpecificFieldsByWord([ 'fullName' ])
     ])(data, filter);
   }
 
