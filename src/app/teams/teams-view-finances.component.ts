@@ -44,17 +44,17 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   ngOnChanges() {
-   this.transactionFilter();
+    this.transactionFilter();
   }
 
   transactionFilter() {
     const fromDate = this.startDate || this.team.createdDate;
     const toDate = this.endDate || this.dateNow;
-    const financeData = this.finances.filter(transaction => transaction.status !== 'archived' &&
-      (transaction.date >= fromDate && transaction.date <= toDate))
+    const financeData = this.finances
+      .filter(transaction => transaction.status !== 'archived' && (transaction.date >= fromDate && transaction.date <= toDate))
     // Overwrite values for credit and debit from early document versions on database
-    .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
-    .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
+      .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
+      .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
       this.table.data = [];
       return;

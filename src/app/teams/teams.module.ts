@@ -15,7 +15,6 @@ import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { FormsModule } from '@angular/forms';
 
-
 @NgModule({
   exports: [ TeamsViewComponent, TeamsComponent ],
   imports: [
