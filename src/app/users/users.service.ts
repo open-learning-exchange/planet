@@ -34,23 +34,25 @@ export class UsersService {
   ) {
     const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
     const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
-    combineLatest([
-      this.stateService.couchStateListener('login_activities'),
-      this.stateService.couchStateListener('child_users')
-    ]).pipe(switchMap(([ loginActivities, childUsers ]) => {
-      const [ loginLocal, childLocal ]: boolean[] = [ checkIfLocal(loginActivities), checkIfLocal(childUsers) ];
-      const [ loginData, childData ]: any[] = [
-        dataToUse(this.data.loginActivities, loginActivities, loginLocal), dataToUse(this.data.childUsers, childUsers, childLocal)
-      ];
-      return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([[], [], []]);
-    })).subscribe(([ users, loginActivities, childUsers ]) => {
+    combineLatest([ this.stateService.couchStateListener('login_activities'), this.stateService.couchStateListener('child_users') ]).pipe(
+      switchMap(([ loginActivities, childUsers ]) => {
+        const [ loginLocal, childLocal ]: boolean[] = [ checkIfLocal(loginActivities), checkIfLocal(childUsers) ];
+        const [ loginData, childData ]: any[] = [
+          dataToUse(this.data.loginActivities, loginActivities, loginLocal), dataToUse(this.data.childUsers, childUsers, childLocal)
+        ];
+        return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([]);
+      })
+    ).subscribe(([ users, loginActivities, childUsers ]) => {
+      if (users === undefined) {
+        return;
+      }
       this.data = { users, loginActivities, childUsers };
       this.usersUpdated.next(
         this.data.users.filter((user: any) => {
           // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
           // so this protects from that.  May need to unhide in the future.
           return this.userService.get().name !== user.name && user.name !== 'satellite';
-        }).concat(this.data.childUsers).map((user: any) => user ? this.fullUserDoc(user) : {})
+        }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
       );
     });
   }
@@ -63,7 +65,6 @@ export class UsersService {
   }
 
   requestUsers() {
-    this.stateService.requestData(this.dbName, 'local');
     this.stateService.requestData('login_activities', 'local');
     this.stateService.requestData('child_users', 'local');
   }
