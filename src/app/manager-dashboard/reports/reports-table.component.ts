@@ -18,7 +18,8 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
     'logins',
     'lastAdminLogin',
     'lastUpgrade',
-    'lastSync'
+    'lastSync',
+    'lastSyncTime'
   ];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
