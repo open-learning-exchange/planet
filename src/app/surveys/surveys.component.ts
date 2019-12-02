@@ -61,6 +61,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   deleteDialog: any;
   message = '';
+  configuration = this.stateService.configuration;
 
   constructor(
     private couchService: CouchService,
