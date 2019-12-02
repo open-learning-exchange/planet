@@ -44,15 +44,16 @@ export class TeamsViewFinancesComponent implements OnChanges {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
 
-  ngOnChanges() {
-    this.transactionFilter();
+  ngOnInit() {
+    this.table.filterPredicate = (data: any, filter) => {
+      const fromDate = this.startDate || -Infinity;
+      const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
+      return data.date >= fromDate && data.date < toDate;
+    };
   }
 
-  transactionFilter() {
-    const fromDate = this.startDate || -Infinity;
-    const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-    const financeData = this.finances
-      .filter(transaction => transaction.status !== 'archived' && (transaction.date >= fromDate && transaction.date < toDate))
+  ngOnChanges() {
+    const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
       // Overwrite values for credit and debit from early document versions on database
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
@@ -62,6 +63,10 @@ export class TeamsViewFinancesComponent implements OnChanges {
     }
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
     this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
+  }
+
+  transactionFilter() {
+    this.table.filter = ' ';
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
@@ -147,6 +152,12 @@ export class TeamsViewFinancesComponent implements OnChanges {
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this transaction.')
     };
+  }
+
+  resetDateFilter() {
+    this.startDate = undefined;
+    this.endDate = undefined;
+    this.table.filter = '';
   }
 
 }
