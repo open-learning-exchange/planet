@@ -63,7 +63,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.planetType = this.stateService.configuration.planetType;
-    this.isUserAdmin = this.userService.get().isUserAdmin;
     this.route.paramMap.pipe(
       takeUntil(this.onDestroy$)
     ).subscribe((params: ParamMap) => {
@@ -77,6 +76,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.users = users;
     });
     this.usersService.requestUsers();
+    this.isUserAdmin = this.userService.get().isUserAdmin;
   }
 
   ngOnDestroy() {

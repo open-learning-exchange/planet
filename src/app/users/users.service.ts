@@ -42,7 +42,7 @@ export class UsersService {
       const [ loginData, childData ]: any[] = [
         dataToUse(this.data.loginActivities, loginActivities, loginLocal), dataToUse(this.data.childUsers, childUsers, childLocal)
       ];
-      return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([]);
+      return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([[], [], []]);
     })).subscribe(([ users, loginActivities, childUsers ]) => {
       this.data = { users, loginActivities, childUsers };
       this.usersUpdated.next(
@@ -50,7 +50,7 @@ export class UsersService {
           // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
           // so this protects from that.  May need to unhide in the future.
           return this.userService.get().name !== user.name && user.name !== 'satellite';
-        }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
+        }).concat(this.data.childUsers).map((user: any) => user ? this.fullUserDoc(user) : {})
       );
     });
   }
