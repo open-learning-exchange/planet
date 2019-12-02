@@ -76,7 +76,8 @@
           </mat-slide-toggle>
         </mat-radio-group>
         <div>
-          <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+          <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary"
+            i18n matTooltip="Record survey information from a person who is not a member of  {{planetConfiguration.name}}">Update</button>
           <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
         </div>
       </form>
