@@ -1,14 +1,16 @@
-<button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()">Add Transaction</button>
-<mat-form-field>
-  <input matInput [matDatepicker]="tvfs" [(ngModel)]="startDate" (dateInput)="transactionFilter()" required i18n-placeholder placeholder="Pick Starting Date">
-  <mat-datepicker-toggle matSuffix [for]="tvfs"></mat-datepicker-toggle>
-  <mat-datepicker #tvfs></mat-datepicker>
-</mat-form-field>
-<mat-form-field>
-  <input matInput [matDatepicker]="tvfe" [(ngModel)]="endDate" (dateInput)="transactionFilter()" required i18n-placeholder placeholder="Pick End Date">
-  <mat-datepicker-toggle matSuffix [for]="tvfe"></mat-datepicker-toggle>
-  <mat-datepicker #tvfe></mat-datepicker>
-</mat-form-field>
+<div class="action-buttons">
+  <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()">Add Transaction</button>
+  <mat-form-field>
+    <input matInput [matDatepicker]="tvfs" [(ngModel)]="startDate" (dateInput)="transactionFilter()" required i18n-placeholder placeholder="Pick Starting Date">
+    <mat-datepicker-toggle matSuffix [for]="tvfs"></mat-datepicker-toggle>
+    <mat-datepicker #tvfs></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [matDatepicker]="tvfe" [(ngModel)]="endDate" (dateInput)="transactionFilter()" required i18n-placeholder placeholder="Pick End Date">
+    <mat-datepicker-toggle matSuffix [for]="tvfe"></mat-datepicker-toggle>
+    <mat-datepicker #tvfe></mat-datepicker>
+  </mat-form-field>
+</div>
 <mat-table [dataSource]="table">
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef class="narrow-column">Date</mat-header-cell>
