@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { millisecondsToDay } from '../meetups/constants';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -29,8 +30,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
   deleteDialog: any;
   dateNow: any;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
 
   constructor(
     private teamsService: TeamsService,
@@ -48,11 +49,11 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   transactionFilter() {
-    const fromDate = this.startDate || this.team.createdDate;
-    const toDate = this.endDate || this.dateNow;
+    const fromDate = this.startDate || -Infinity;
+    const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
     const financeData = this.finances
-      .filter(transaction => transaction.status !== 'archived' && (transaction.date >= fromDate && transaction.date <= toDate))
-    // Overwrite values for credit and debit from early document versions on database
+      .filter(transaction => transaction.status !== 'archived' && (transaction.date >= fromDate && transaction.date < toDate))
+      // Overwrite values for credit and debit from early document versions on database
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
