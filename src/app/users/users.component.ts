@@ -133,8 +133,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.router.navigate([ path ], { relativeTo: this.route });
   }
 
-  updateSelectedRoles(newSelection: { value: string, text: string }[]) {
-    this.selectedRoles = newSelection.map(r => r.value);
+  updateSelectedRoles(newSelection: string[]) {
+    this.selectedRoles = newSelection;
   }
 
   onFilterChange(filterValue: string) {

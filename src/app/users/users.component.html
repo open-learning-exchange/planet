@@ -26,7 +26,7 @@
   <mat-form-field class="font-size-1 margin-lr-5">
     <mat-select placeholder="Filter by role" [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let role of allRolesList" [value]="role.value"><planet-role [role]="role.value"></planet-role></mat-option>
+      <mat-option *ngFor="let role of allRolesList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -48,7 +48,7 @@
               <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
               <button mat-raised-button class="margin-lr-3" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
             </mat-option>
-            <mat-option *ngFor="let role of roleList" [value]="role.value"><planet-role [role]="role.value"></planet-role></mat-option>
+            <mat-option *ngFor="let role of roleList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
           </mat-select>
         </mat-form-field>
         <button mat-button class="margin-lr-3" type="submit" [disabled]="!usersTable || !usersTable.selection.selected.length || selectedRoles.length === 0 || tableState.isOnlyManagerSelected"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
