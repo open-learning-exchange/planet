@@ -17,6 +17,7 @@
 
 mat-toolbar {
   grid-area: links;
+  overflow: hidden;
 }
 
 .community-news {
@@ -43,8 +44,4 @@ planet-calendar {
   overflow-x: auto;
   white-space: nowrap;
   display: inline-block;
-}
-
-.toolbar-unfill {
-  overflow: hidden;
 }
