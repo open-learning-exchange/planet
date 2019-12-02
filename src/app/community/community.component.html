@@ -5,16 +5,18 @@
 </mat-toolbar>
 <div class="space-container">
   <div class="view-container view-full-height">
-    <mat-toolbar class="action-buttons scrolling">
-      <a routerLink="/resources" mat-button i18n>
-        Library
-      </a>
-      <ng-container *ngFor="let link of links">
-        <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
-          {{link.title}}
+    <mat-toolbar class="action-buttons">
+      <span class="scrolling">
+        <a routerLink="/resources" mat-button i18n>
+          Library
         </a>
-        <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
-      </ng-container>
+        <ng-container *ngFor="let link of links">
+          <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
+            {{link.title}}
+          </a>
+          <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
+        </ng-container>
+      </span>
       <span class="toolbar-fill"></span>
       <ng-container *planetAuthorizedRoles>
         <button (click)="toggleDeleteMode()" mat-icon-button><mat-icon>delete</mat-icon></button>
