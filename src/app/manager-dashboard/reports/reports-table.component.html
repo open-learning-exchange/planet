@@ -20,20 +20,16 @@
   </ng-container>
   <ng-container matColumnDef="lastAdminLogin">
     <mat-header-cell *matHeaderCellDef i18n>Last Admin Login</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.lastAdminLogin?.max?.loginTime | date}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.doc?.lastAdminLogin?.max?.loginTime | date:'medium'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastUpgrade">
     <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date:'medium'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSync">
     <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date:'medium'}}</mat-cell>
   </ng-container>
-  <ng-container matColumnDef="lastSyncTime">
-      <mat-header-cell *matHeaderCellDef i18n>Last Sync Time</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date:'mediumTime'}}</mat-cell>
-    </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>
