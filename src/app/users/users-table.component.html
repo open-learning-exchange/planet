@@ -70,7 +70,7 @@
             <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
           </mat-chip>
         </ng-container>
-        <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
+        <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">Admin</mat-chip>
       </mat-chip-list>
       <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
     </mat-cell>
