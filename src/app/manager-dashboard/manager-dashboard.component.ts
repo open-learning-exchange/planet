@@ -269,8 +269,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.managerService.getVersion('myPlanet', opts),
       this.managerService.getApkLatestVersion(opts)
     ]).subscribe(( [ localVersion, latestVersion ]: [ string, any ]) => {
-      this.versionLocalApk = localVersion;
-      this.versionLatestApk = latestVersion.latestapk;
+      this.versionLocalApk = localVersion.replace(/v/gi, '');
+      this.versionLatestApk = (latestVersion.latestapk || 'N/A').replace(/v/gi, '');
     });
   }
 
