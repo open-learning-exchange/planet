@@ -40,10 +40,39 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Login</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.lastLogin | date: 'mediumDate'}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="contact">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Emergency Contact</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <div *ngIf="element.health?.profile?.emergencyContact; else noneBlock">
+        <p><b i18n>Name:</b> {{element.health.profile.emergencyContactName}}</p>
+        <p><b i18n>Type:</b> {{element.health.profile.emergencyContactType}}</p>
+        <p>{{element.health.profile.emergencyContact}}</p>
+      </div>
+      <ng-template #noneBlock><span i18n>None</span></ng-template>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="birthDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Birthdate</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{(element.doc.birthDate | date: 'mediumDate') || 'Missing'}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="lastVisit">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Examination</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{(element.health.lastVisit | date: 'mediumDate') || 'Never'}}</mat-cell>
+  </ng-container>
   <ng-container matColumnDef="roles">
     <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <planet-role [roles]="element.doc.roles" display="chip" [item]="element.doc" canManage="!element.doc.isUserAdmin"></planet-role>
+      <mat-chip-list>
+        <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
+        <ng-container *ngFor="let role of element.doc.roles; index as i">
+          <mat-chip *ngIf="role !== 'Learner'" [removable]="!element.doc.isUserAdmin" (removed)="removeRole(element.doc,i)">
+            <planet-role [role]="role"></planet-role>
+            <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
+          </mat-chip>
+        </ng-container>
+        <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">admin</mat-chip>
+      </mat-chip-list>
+      <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="action">

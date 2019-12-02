@@ -1,37 +1,19 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { dedupeShelfReduce } from '../shared/utils';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'planet-role',
-  templateUrl: './planet-role.component.html'
+  template: `
+    <span *ngIf="role" i18n>{role, select,
+      leader {Leader}
+      monitor {Monitor}
+      health {Health Provider}
+      learner {Learner}
+      manager {Manager}
+    }</span>
+  `
 })
-export class PlanetRoleComponent implements OnInit {
+export class PlanetRoleComponent {
 
-  @Input() roles: any[];
-  @Input() display = 'text';
-  @Input() item: any;
-  @Input() canManage = false;
-  roleList: [];
-  allRolesList: { value: string, text: string }[] = [
-    { value: '_admin', text: 'Admin' },
-    { value: 'learner', text: 'Learner' },
-    { value: 'leader', text: 'Leader' },
-    { value: 'monitor', text: 'Monitor' },
-    { value: 'manager', text: 'Manager' },
-    { value: 'health', text: 'Health Provider' }
-  ];
-
-  constructor() {}
-
-  ngOnInit() {
-    this.roleList = this.roles.reduce(
-      dedupeShelfReduce,
-      this.display === 'option' ? [] : this.roles.length ? [ 'learner' ] : [ 'Inactive' ]
-    );
-  }
-
-  toProperRoles(roles) {
-    return roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text);
-  }
+  @Input() role: string;
 
 }
