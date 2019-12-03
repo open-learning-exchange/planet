@@ -18,13 +18,8 @@ export class UsersService {
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   data: { users: any[], loginActivities: any[], childUsers: any[] } = { users: [], loginActivities: [], childUsers: [] };
   // List of all possible roles to add to users
-  roleList: { value: string, text: string }[] = [
-    ...[ { value: 'leader', text: 'Leader' }, { value: 'monitor', text: 'Monitor' } ],
-    ...[ this.userService.isBetaEnabled ? [ { value: 'health', text: 'Health Provider' } ] : [] ].flat()
-  ];
-  allRolesList: { value: string, text: string }[] = [
-    ...this.roleList, { value: 'learner', text: 'Learner' }, { value: 'manager', text: 'Manager' }
-  ].sort();
+  roleList: string[] = [ ...[ 'leader', 'monitor' ], ...[ this.userService.isBetaEnabled ? [ 'health' ] : [] ].flat() ];
+  allRolesList: string[] = [ ...this.roleList, 'learner', 'manager' ].sort();
 
   constructor(
     private couchService: CouchService,
@@ -76,8 +71,7 @@ export class UsersService {
       imageSrc: '',
       fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name,
       visitCount: this.userLoginCount(user, this.data.loginActivities),
-      lastLogin: this.userLastLogin(user, this.data.loginActivities),
-      roles: this.toProperRoles(user.roles)
+      lastLogin: this.userLastLogin(user, this.data.loginActivities)
     };
     if (user._attachments) {
       userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -156,10 +150,6 @@ export class UsersService {
   userLastLogin(user: any, loginActivities: any[]) {
     return loginActivities.filter((logItem: any) => logItem.user === user.name)
       .reduce((max: number, log: any) => log.loginTime > max ? log.loginTime : max, '');
-  }
-
-  toProperRoles(roles) {
-    return roles.map(role => this.allRolesList.find(roleObj => roleObj.value === role).text);
   }
 
   deleteUser(user) {

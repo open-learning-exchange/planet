@@ -7,7 +7,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil, debounceTime, map } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
@@ -134,8 +133,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.router.navigate([ path ], { relativeTo: this.route });
   }
 
-  updateSelectedRoles(newSelection: { value: string, text: string }[]) {
-    this.selectedRoles = newSelection.map(r => r.value);
+  updateSelectedRoles(newSelection: string[]) {
+    this.selectedRoles = newSelection;
   }
 
   onFilterChange(filterValue: string) {

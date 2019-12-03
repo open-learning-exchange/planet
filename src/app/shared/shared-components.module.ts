@@ -10,6 +10,7 @@ import { AuthorizedRolesDirective } from './authorized-roles.directive';
 import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
 import { TasksComponent, FilterAssigneePipe } from '../tasks/tasks.component';
+import { PlanetRoleComponent } from './planet-role.component';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { TasksComponent, FilterAssigneePipe } from '../tasks/tasks.component';
     PlanetBetaDirective,
     FilteredAmountComponent,
     TasksComponent,
-    FilterAssigneePipe
+    FilterAssigneePipe,
+    PlanetRoleComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -37,7 +39,8 @@ import { TasksComponent, FilterAssigneePipe } from '../tasks/tasks.component';
     PlanetBetaDirective,
     FilteredAmountComponent,
     TasksComponent,
-    FilterAssigneePipe
+    FilterAssigneePipe,
+    PlanetRoleComponent
   ]
 })
 export class SharedComponentsModule {}
