@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatTableDataSource, MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
@@ -20,7 +20,7 @@ import { millisecondsToDay } from '../meetups/constants';
     }
   ` ]
 })
-export class TeamsViewFinancesComponent implements OnChanges {
+export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 
   @Input() finances: any[] = [];
   @Input() team: any = {};
