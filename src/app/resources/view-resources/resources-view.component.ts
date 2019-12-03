@@ -62,7 +62,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         if (this.resource === undefined) {
-          if (resources.length !== this.resourcesCount) {
+          if (this.resourcesService.isActiveResourceFetch) {
             this.resourcesCount = resources.length;
             return;
           }
