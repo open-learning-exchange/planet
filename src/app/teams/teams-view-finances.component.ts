@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatTableDataSource, MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { millisecondsToDay } from '../meetups/constants';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -19,7 +20,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
     }
   ` ]
 })
-export class TeamsViewFinancesComponent implements OnChanges {
+export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 
   @Input() finances: any[] = [];
   @Input() team: any = {};
@@ -28,6 +29,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
   table = new MatTableDataSource();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
   deleteDialog: any;
+  dateNow: any;
+  startDate: Date;
+  endDate: Date;
 
   constructor(
     private teamsService: TeamsService,
@@ -36,7 +40,17 @@ export class TeamsViewFinancesComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+  }
+
+  ngOnInit() {
+    this.table.filterPredicate = (data: any, filter) => {
+      const fromDate = this.startDate || -Infinity;
+      const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
+      return data.date >= fromDate && data.date < toDate;
+    };
+  }
 
   ngOnChanges() {
     const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
@@ -49,6 +63,10 @@ export class TeamsViewFinancesComponent implements OnChanges {
     }
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
     this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
+  }
+
+  transactionFilter() {
+    this.table.filter = ' ';
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
@@ -134,6 +152,12 @@ export class TeamsViewFinancesComponent implements OnChanges {
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this transaction.')
     };
+  }
+
+  resetDateFilter() {
+    this.startDate = undefined;
+    this.endDate = undefined;
+    this.table.filter = '';
   }
 
 }

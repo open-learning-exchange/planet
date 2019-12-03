@@ -1,4 +1,17 @@
-<button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()">Add Transaction</button>
+<div class="action-buttons">
+  <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()">Add Transaction</button>
+  <mat-form-field>
+    <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick Starting Date">
+    <mat-datepicker-toggle matSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
+    <mat-datepicker #dateFilterStart></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick End Date">
+    <mat-datepicker-toggle matSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
+    <mat-datepicker #dateFilterEnd></mat-datepicker>
+  </mat-form-field>
+  <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
+</div>
 <mat-table [dataSource]="table">
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef class="narrow-column">Date</mat-header-cell>
