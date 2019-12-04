@@ -2,9 +2,10 @@ import {
   Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material';
+import { MatFormFieldControl, MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -68,7 +69,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   constructor(
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -149,6 +151,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   addImage() {
+    this.dialog.open(DialogsImagesComponent, {
+      data: this.imageGroup
+    });
   }
 
 }
