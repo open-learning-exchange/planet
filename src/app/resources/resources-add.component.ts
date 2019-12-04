@@ -166,13 +166,6 @@ export class ResourcesAddComponent implements OnInit {
     return this.attachedZipFiles.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  // Function which takes a MIME Type as a string and returns whether the file is an
-  // image, audio file, video, pdf, or zip.  If none of those five returns 'other'
-  private simpleMediaType(mimeType: string) {
-    const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
-    return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
-  }
-
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
@@ -210,7 +203,7 @@ export class ResourcesAddComponent implements OnInit {
 
   createFileObs() {
     // If file doesn't exist, mediaType will be undefined
-    const mediaType = this.file && this.simpleMediaType(this.file.type);
+    const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
     switch (mediaType) {
       case undefined:
         // Creates an observable that immediately returns an empty object
@@ -223,24 +216,11 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   updateResource(resourceInfo, file) {
-    return this.couchService.updateDocument(
-      this.dbName, { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: this.privateFor }
+    return this.resourcesService.updateResource(
+      { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: this.privateFor },
+      file,
+      { newTags: this.tags.value, existingTags: this.existingResource.tags }
     ).pipe(
-      switchMap((resourceRes) =>
-        forkJoin([
-          of(resourceRes),
-          file ?
-            this.couchService.putAttachment(
-              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
-              { headers: { 'Content-Type': file.type } }
-            ) :
-            of({}),
-          this.couchService.bulkDocs(
-            'tags',
-            this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, this.tags.value, this.existingResource.tags)
-          )
-        ])
-      ),
       switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`))
     );
   }
@@ -338,7 +318,7 @@ export class ResourcesAddComponent implements OnInit {
     this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
 
-    if (this.simpleMediaType(this.file.type) !== 'zip') {
+    if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
       disableOpenWhichFile();
       return;
     }
