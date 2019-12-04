@@ -60,7 +60,8 @@ export class NewsListComponent implements OnChanges {
       'type': 'markdown',
       'name': 'message',
       placeholder,
-      'required': true
+      'required': true,
+      imageGroup: this.viewableId ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
     const formGroup = { message: [ initialValue, CustomValidators.required ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {

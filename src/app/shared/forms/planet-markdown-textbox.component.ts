@@ -58,10 +58,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     return true;
   }
 
+  @Input() imageGroup: 'community' | { [db: string]: string };
   onTouched;
   stateChanges = new Subject<void>();
   focused = false;
   errorState = false;
+  options: any = { hideIcons: [ 'image' ] };
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -81,7 +83,29 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this.checkHighlight();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const imageToolbarIcon = {
+      name: 'custom',
+      action: this.addImage.bind(this),
+      className: 'fa fa-picture-o',
+      title: 'Add Image'
+    };
+    this.options = {
+      ...this.options,
+      ...(this.imageGroup ?
+        {
+          toolbar: [
+            'bold', 'italic', 'heading', '|',
+            'quote', 'unordered-list', 'ordered-list', '|',
+            'link', imageToolbarIcon, '|',
+            'preview', 'side-by-side', 'fullscreen', '|',
+            'guide'
+          ]
+        } :
+        {}
+      )
+    };
+  }
 
   ngOnDestroy() {
     this.stateChanges.complete();
@@ -122,6 +146,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     } else {
       this.errorState = false;
     }
+  }
+
+  addImage() {
   }
 
 }

@@ -1,6 +1,6 @@
 
 <td-text-editor
-  [options]="{ hideIcons: [ 'image' ] }"
+  [options]="options"
   [ngClass]="{ 'warn-text-color': errorState }"
   [ngModel]="value"
   (ngModelChange)="writeValue($event)"
