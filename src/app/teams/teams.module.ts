@@ -16,7 +16,7 @@ import { PlanetCalendarModule } from '../shared/calendar.module';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent ],
+  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent ],
   imports: [
     TeamsRouterModule,
     CommonModule,

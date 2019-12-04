@@ -20,8 +20,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration = this.stateService.configuration;
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+  team = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   news: any[] = [];
   links: any[] = [];
+  finances: any[] = [];
   showNewsButton = true;
   deleteMode = false;
   onDestroy$ = new Subject<void>();
@@ -69,7 +71,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getLinks() {
-    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links.filter(link => link.docType === 'link'));
+    this.teamsService.getTeamMembers(this.team, true).subscribe((docs) => {
+      const { link: links, transaction: finances } = docs.reduce((docObject, doc) => ({
+        ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
+      }));
+      this.links = links;
+      this.finances = finances;
+    });
   }
 
   deleteLink(link) {
