@@ -21,13 +21,21 @@
       </ng-container>
     </mat-toolbar>
     <div class="community-news">
-      <h3>
-        <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
-        <ng-container *planetAuthorizedRoles="'learner'">
-          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
-        </ng-container>
-      </h3>
-      <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
+      <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
+        <mat-tab i18n-label label="News">
+          <h3>
+            <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+            <ng-container *planetAuthorizedRoles="'learner'">
+              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
+            </ng-container>
+          </h3>
+          <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
+        </mat-tab>
+        <mat-tab i18n-label label="Council">
+        </mat-tab>
+        <mat-tab i18n-label label="Finances">
+        </mat-tab>
+      </mat-tab-group>
     </div>
     <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
   </div>
