@@ -79,6 +79,7 @@ jobs:
         - bash ./.travis/deploy_single_language.sh 'som' 'so'
     - stage: docker-creation
       script:
+        - travis_retry npm config set unsafe-perm true
         - set -e
         - source ./.travis/travis_utils.sh
         - prepare_ci
@@ -103,7 +104,6 @@ jobs:
               && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh
               && nvm install $TRAVIS_NODE_VERSION
       before_script:
-        - travis_retry npm config set unsafe-perm true
         - travis_retry npm install
         - travis_retry npm install -g @angular/cli
         - travis_retry npm install -g karma
