@@ -80,3 +80,13 @@ export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
     true;
   return yearDiff - (afterBirthDay ? 0 : 1);
 };
+
+export const deepEqual = (item1: any, item2: any) => {
+  if (typeof item1 !== typeof item2) {
+    return false;
+  }
+  if (item1 instanceof Object) {
+    return Object.entries(item1).reduce((isEqual, [ key1, value1 ]) => deepEqual(value1, item2[key1]), true);
+  }
+  return item1 === item2;
+};

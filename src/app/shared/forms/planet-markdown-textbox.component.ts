@@ -152,7 +152,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   addImage() {
     this.dialog.open(DialogsImagesComponent, {
-      data: this.imageGroup
+      width: '500px',
+      data: {
+        imageGroup: this.imageGroup
+      }
     });
   }
 
