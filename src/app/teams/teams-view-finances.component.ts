@@ -48,7 +48,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.table.filterPredicate = (data: any, filter) => {
       const fromDate = this.startDate || -Infinity;
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-      return data.date >= fromDate && data.date < toDate;
+      return data.date >= fromDate && data.date < toDate || data.date === 'Total';
     };
   }
 
@@ -66,6 +66,15 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   transactionFilter() {
+    const fromDate = this.startDate || -Infinity;
+    const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
+    const financeData = this.table.data.filter(transaction => transaction.date >= fromDate && transaction.date < toDate);
+    if (financeData.length === 0) {
+      this.table.data[0] = { date: 'Total', credit: 0, debit: 0, balance: 0 };
+      return;
+    }
+    const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
+    this.table.data[0] = { date: 'Total', credit, debit, balance };
     this.table.filter = ' ';
   }
 
