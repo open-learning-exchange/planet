@@ -107,20 +107,24 @@ export class UsersService {
     const adminId = `org.couchdb.user:${adminName}`;
     const parentUser = {
       ...user,
+      _id: adminId,
       requestId,
       isUserAdmin: false,
       roles: [ 'learner' ],
       name: adminName,
       sync: true,
-      _attachments: undefined,
-      _rev: undefined
+      _attachments: undefined
     };
-    return forkJoin([
-      this.couchService.updateDocument(this.dbName, { ...parentUser, '_id': adminId }, { domain, withCredentials: false }),
+    return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(switchMap(oldDoc => forkJoin([
+      this.couchService.updateDocument(
+        this.dbName,
+        { ...parentUser, _rev: oldDoc ? oldDoc._rev : undefined },
+        { domain, withCredentials: false }
+      ),
       this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
       this.setRoles({ ...user, isUserAdmin: true }, []),
       this.removeFromTabletUsers(user)
-    ]);
+    ])));
   }
 
   toggleManagerStatus(user) {
