@@ -79,7 +79,6 @@ jobs:
         - bash ./.travis/deploy_single_language.sh 'som' 'so'
     - stage: docker-creation
       script:
-        - travis_retry npm config set unsafe-perm true
         - set -e
         - source ./.travis/travis_utils.sh
         - prepare_ci
