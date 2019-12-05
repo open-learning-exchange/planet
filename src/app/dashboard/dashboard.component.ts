@@ -27,7 +27,6 @@ export class DashboardComponent implements OnInit {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   roles: string[];
   planetName: string;
-  planetType = this.stateService.configuration.planetType;
 
   dateNow: any;
   visits = 0;
@@ -79,9 +78,11 @@ export class DashboardComponent implements OnInit {
         this.visits = res.length;
       });
 
-    if (this.userService.isBetaEnabled() && this.planetType === 'community' && this.myLifeItems.findIndex(item => item.title === 'Health') === -1) {
-      this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: '/myHealth' });
-    }
+    if (this.userService.isBetaEnabled()
+      && this.stateService.configuration.planetType === 'community'
+      && this.myLifeItems.findIndex(item => item.title === 'Health') === -1) {
+        this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: '/myHealth' });
+      }
 
   }
 
