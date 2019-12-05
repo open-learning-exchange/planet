@@ -1,11 +1,11 @@
-import { Component, OnChanges, AfterViewInit, ViewChild, Input } from '@angular/core';
+import { Component, OnChanges, AfterViewInit, ViewChild, Input, OnInit } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'planet-myplanet-table',
   templateUrl: './myplanet-table.component.html'
 })
-export class MyPlanetTableComponent implements OnChanges, AfterViewInit {
+export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() data = [];
   myPlanets = new MatTableDataSource();
@@ -14,14 +14,17 @@ export class MyPlanetTableComponent implements OnChanges, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  ngOnChanges() {
-    this.myPlanets.data = this.data;
+  ngOnInit() {
     this.myPlanets.sortingDataAccessor = (item: any, property) => {
       switch (property) {
         case 'name': return (item.customDeviceName || item.deviceName).toLowerCase();
         default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       }
     };
+  }
+
+  ngOnChanges() {
+    this.myPlanets.data = this.data;
   }
 
   ngAfterViewInit() {
