@@ -70,7 +70,14 @@
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
               <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ column === 'label' ? '' : (column | date) }}</mat-header-cell>
-              <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ row[column] }}</mat-cell>
+              <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
+                <ng-container *ngIf="column === 'label'; else dataCell">
+                  <planet-health-label [label]="row[column]"></planet-health-label>
+                </ng-container>
+                <ng-template #dataCell>
+                  {{ row[column] }}
+                </ng-template>
+              </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

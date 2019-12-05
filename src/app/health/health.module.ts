@@ -11,6 +11,7 @@ import { HealthComponent } from './health.component';
 import { HealthUpdateComponent } from './health-update.component';
 import { HealthEventComponent } from './health-event.component';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
+import { HealthLabelComponent } from './health-label.component';
 
 const routes: Routes = [
   { path: '', component: HealthComponent },
@@ -33,7 +34,8 @@ const routes: Routes = [
     HealthComponent,
     HealthUpdateComponent,
     HealthEventComponent,
-    HealthEventDialogComponent
+    HealthEventDialogComponent,
+    HealthLabelComponent
   ],
   entryComponents: [ HealthEventDialogComponent ]
 })
