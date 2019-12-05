@@ -210,4 +210,19 @@ export class CoursesService {
     return a.title.localeCompare(b.title);
   }
 
+  courseActivity(activity) {
+    const data = {
+      'resourceId': this.course._id,
+      'title': this.course.courseTitle,
+      'user': this.userService.get().name,
+      'type': activity,
+      'time': this.couchService.datePlaceholder,
+      'createdOn': this.stateService.configuration.code,
+      'parentCode': this.stateService.configuration.parentCode
+    };
+    this.couchService.updateDocument('course_activities', data)
+      .subscribe((response) => {
+      }, (error) => console.log('Error'));
+  }
+
 }
