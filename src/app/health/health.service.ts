@@ -21,13 +21,15 @@ export class HealthService {
     return `userdb-${stringToHex(this.stateService.configuration.code)}-${stringToHex(userId.split(':')[1])}`;
   }
 
-  getUserKey(userDb: string) {
+  getUserKey(userDb: string, createIfNone = false) {
     return this.couchService.findAll(userDb).pipe(
       switchMap((docs: any[]) => {
         const max = docs.reduce((maxDoc, doc) => doc.createdOn > maxDoc.createdOn ? doc : maxDoc, { createdOn: -Infinity });
         return max.key && max.iv ?
           of({ doc: max }) :
-          this.createUserKey(userDb);
+          createIfNone ?
+          this.createUserKey(userDb) :
+          of({ doc: {} });
       })
     );
   }
@@ -71,7 +73,7 @@ export class HealthService {
 
   postHealthData(data) {
     const userDb = this.userDatabaseName(data._id);
-    return this.getUserKey(userDb).pipe(
+    return this.getUserKey(userDb, true).pipe(
       switchMap(({ doc }: any) => forkJoin([ of(doc), this.getHealthDoc(data._id, doc) ])),
       switchMap(([ keyDoc, healthDoc ]: any[]) => {
         const newHealthDoc = { ...healthDoc, ...data, events: [ ...healthDoc.events, ...(data.events || []) ] };
