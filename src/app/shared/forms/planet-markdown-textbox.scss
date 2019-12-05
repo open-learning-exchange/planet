@@ -38,4 +38,11 @@ planet-markdown-textbox {
   .editor-statusbar {
     margin-bottom: -2.75em;
   }
+
+  .editor-preview, .editor-preview-side {
+    img {
+      width: 100%;
+      max-width: 40vw;
+    }
+  }
 }

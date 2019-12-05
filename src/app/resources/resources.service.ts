@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -102,6 +102,30 @@ export class ResourcesService {
       this.requestResourcesUpdate(false);
       return res;
     }));
+  }
+
+  updateResource(resourceInfo, file, { newTags, existingTags } = { newTags: [], existingTags: [] }) {
+    return this.couchService.updateDocument(this.dbName, { createdDate: this.couchService.datePlaceholder, ...resourceInfo }, ).pipe(
+      switchMap((resourceRes) =>
+        forkJoin([
+          of(resourceRes),
+          file ?
+            this.couchService.putAttachment(
+              this.dbName + '/' + resourceRes.id + '/' + file.name + '?rev=' + resourceRes.rev, file,
+              { headers: { 'Content-Type': file.type } }
+            ) :
+            of({}),
+          this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, existingTags))
+        ])
+      )
+    );
+  }
+
+  // Function which takes a MIME Type as a string and returns whether the file is an
+  // image, audio file, video, pdf, or zip.  If none of those five returns 'other'
+  simpleMediaType(mimeType: string) {
+    const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
+    return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
   }
 
 }

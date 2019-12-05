@@ -1,10 +1,12 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material';
+import { MatFormFieldControl, MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -21,6 +23,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
+  @ViewChild('editor', { static: false }) editor;
   @Input() _value = '';
   get value() {
     return this._value;
@@ -58,15 +61,18 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     return true;
   }
 
+  @Input() imageGroup: 'community' | { [db: string]: string };
   onTouched;
   stateChanges = new Subject<void>();
   focused = false;
   errorState = false;
+  options: any = { hideIcons: [ 'image' ] };
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -81,7 +87,29 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this.checkHighlight();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const imageToolbarIcon = {
+      name: 'custom',
+      action: this.addImage.bind(this),
+      className: 'fa fa-picture-o',
+      title: 'Add Image'
+    };
+    this.options = {
+      ...this.options,
+      ...(this.imageGroup ?
+        {
+          toolbar: [
+            'bold', 'italic', 'heading', '|',
+            'quote', 'unordered-list', 'ordered-list', '|',
+            'link', imageToolbarIcon, '|',
+            'preview', 'side-by-side', 'fullscreen', '|',
+            'guide'
+          ]
+        } :
+        {}
+      )
+    };
+  }
 
   ngOnDestroy() {
     this.stateChanges.complete();
@@ -122,6 +150,20 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     } else {
       this.errorState = false;
     }
+  }
+
+  addImage() {
+    this.dialog.open(DialogsImagesComponent, {
+      width: '500px',
+      data: {
+        imageGroup: this.imageGroup
+      }
+    }).afterClosed().subscribe(image => {
+      if (image) {
+        this.editor.options.insertTexts.image = [ `![](${environment.couchAddress}/resources/${image._id}/${image.filename}` , ')' ];
+        this.editor._simpleMDE.drawImage();
+      }
+    });
   }
 
 }

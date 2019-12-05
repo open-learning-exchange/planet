@@ -406,7 +406,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
-      'Add message', [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true } ], { message },
+      'Add message',
+      [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
+      { message },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }

@@ -51,7 +51,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
       'Add Story',
-      [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true } ],
+      [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true, imageGroup: 'community' } ],
       { message },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
