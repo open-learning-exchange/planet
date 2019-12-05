@@ -9,6 +9,7 @@ import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -23,7 +24,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private stateService: StateService,
     private resourcesService: ResourcesService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) { }
 
   private dbName = 'resources';
@@ -49,6 +51,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   // Use string rather than boolean for i18n select
   fullView = 'on';
   resourceId: string;
+  resourcesCount = 0;
 
   ngOnInit() {
     this.route.paramMap
@@ -57,13 +60,19 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         this.resourceId = params.get('id');
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
+    this.dialogsLoadingService.start();
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         if (this.resource === undefined) {
+          if (this.resourcesService.isActiveResourceFetch) {
+            this.resourcesCount = resources.length;
+            return;
+          }
           this.planetMessageService.showAlert('Resource does not exist in Library');
           this.router.navigate([ '/resources' ]);
         }
+        this.dialogsLoadingService.stop();
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = this.currentUser.isUserAdmin ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);

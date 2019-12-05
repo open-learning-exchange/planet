@@ -42,14 +42,15 @@ export class StateService {
     this.state[planetField] = this.state[planetField] || {};
     this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
     const currentData = this.state[planetField][db].docs;
-    const getData = currentData.length === 0 ?
-      this.getAll(db, opts, planetField, sort && [ sort ]) : this.getChanges(db, opts, planetField);
+    const isInitialFind = currentData.length === 0;
+    const getData = isInitialFind ? this.getAll(db, opts, planetField, sort && [ sort ]) : this.getChanges(db, opts, planetField);
     return getData.pipe(
       map((changes) => {
         const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
+        const inProgress = isInitialFind && changes.length > 0;
         this.state[planetField][db].docs = newData;
-        this.stateUpdated.next({ newData, db, planetField });
-        this.inProgress[planetField].set(db, false);
+        this.stateUpdated.next({ newData, db, planetField, inProgress });
+        this.inProgress[planetField].set(db, inProgress);
         return newData;
       })
     );
@@ -84,7 +85,7 @@ export class StateService {
   }
 
   couchStateListener(db: string) {
-    return this.stateUpdated.pipe(map((stateObj: { newData, db, planetField }) => db === stateObj.db ? stateObj : undefined));
+    return this.stateUpdated.pipe(map((stateObj: { newData, db, planetField, inProgress }) => db === stateObj.db ? stateObj : undefined));
   }
 
   combineChanges(docs: any[], changesDocs: any[], sort) {
