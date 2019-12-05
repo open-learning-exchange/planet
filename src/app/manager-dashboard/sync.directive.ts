@@ -65,44 +65,45 @@ export class SyncDirective {
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
+    const continous = this.planetConfiguration.alwaysOnline;
     const bothList = [
-      { db: 'submissions', selector: { source: this.planetConfiguration.code } },
-      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } },
-      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
-      { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } }
+      { db: 'submissions', selector: { source: this.planetConfiguration.code }, continous },
+      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code }, continous },
+      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code }, continous },
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code }, continous },
+      { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code }, continous },
+      { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code }, continous }
     ];
-    const pushList = [ ...this.pushList(), ...bothList ];
-    const pullList = [ ...this.pullList(), ...bothList ];
+    const pushList = [ ...this.pushList(continous), ...bothList ];
+    const pullList = [ ...this.pullList(continous), ...bothList ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
     ];
     return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
-  pushList() {
+  pushList(continous) {
     return [
-      { db: 'courses_progress' },
-      { db: 'feedback' },
-      { db: 'login_activities' },
-      { db: 'ratings' },
-      { db: 'resource_activities' },
-      { dbSource: 'replicator_users', dbTarget: 'child_users' },
-      { db: 'admin_activities' },
-      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
-      { db: 'apk_logs' },
-      { db: 'myplanet_activities' },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } },
-      { db: 'attachments', selector: { planetCode: this.planetConfiguration.code } }
+      { db: 'courses_progress', continous },
+      { db: 'feedback', continous },
+      { db: 'login_activities', continous },
+      { db: 'ratings', continous },
+      { db: 'resource_activities', continous },
+      { dbSource: 'replicator_users', dbTarget: 'child_users', continous },
+      { db: 'admin_activities', continous },
+      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code }, continous },
+      { db: 'apk_logs', continous },
+      { db: 'myplanet_activities', continous },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode }, continous },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.code }, continous }
     ];
   }
 
-  pullList() {
+  pullList(continous) {
     return [
-      { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } },
-      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode } }
+      { db: 'feedback', selector: { source: this.planetConfiguration.code }, continous },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code }, continous },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode }, continous }
     ];
   }
 
