@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../../resources/resources.service';
 import { UserService } from '../user.service';
@@ -26,6 +26,7 @@ export class DialogsImagesComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
+    private dialogRef: MatDialogRef<DialogsImagesComponent>,
     private resourcesService: ResourcesService,
     private userService: UserService,
     private stateService: StateService,
@@ -53,19 +54,23 @@ export class DialogsImagesComponent implements OnInit {
       this.planetMessageService.showAlert('File must be an image');
       return;
     }
-    this.resourcesService.updateResource(
-      {
-        title: file.name,
-        filename: file.name,
-        private: true,
-        privateFor: this.data.imageGroup,
-        sourcePlanet: planet,
-        resideOn: planet,
-        addedBy: this.userService.get().name,
-        mediaType
-      },
-      file
-    ).subscribe(() => {});
+    const newResource = {
+      title: file.name,
+      filename: file.name,
+      private: true,
+      privateFor: this.data.imageGroup,
+      sourcePlanet: planet,
+      resideOn: planet,
+      addedBy: this.userService.get().name,
+      mediaType
+    };
+    this.resourcesService.updateResource(newResource, file).subscribe(([ resourceResponse ]) => {
+      this.selectImage({ ...newResource, _id: resourceResponse.id });
+    });
+  }
+
+  selectImage(image) {
+    this.dialogRef.close(image);
   }
 
 }

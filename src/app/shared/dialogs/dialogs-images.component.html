@@ -1,6 +1,6 @@
 <mat-dialog-content>
   <mat-grid-list cols="3" rowHeight="1:1">
-    <mat-grid-tile *ngFor="let image of images">
+    <mat-grid-tile *ngFor="let image of images" (click)="selectImage(image)">
       <img [src]="urlPrefix + '/' + image._id + '/' + image.filename">
       <mat-grid-tile-footer>{{image.title}}</mat-grid-tile-footer>
     </mat-grid-tile>

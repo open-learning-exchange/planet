@@ -4,5 +4,6 @@
   [ngClass]="{ 'warn-text-color': errorState }"
   [ngModel]="value"
   (ngModelChange)="writeValue($event)"
-  (focusout)="onFocusOut()">
+  (focusout)="onFocusOut()"
+  #editor>
 </td-text-editor>
