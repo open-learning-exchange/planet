@@ -1,4 +1,4 @@
-<div class="view-container view-full-height view-table">
+<div [ngClass]="containerClass">
   <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort>
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>

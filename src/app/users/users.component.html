@@ -56,9 +56,9 @@
     </div>
   </mat-toolbar>
 
-  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
-    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState"></planet-users-table>
-  </div>
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table"></planet-users-table>
+  </ng-container>
   <ng-template #notFoundMessage>
     <div class="view-container">No User Found</div>
   </ng-template>

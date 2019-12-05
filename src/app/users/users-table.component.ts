@@ -43,6 +43,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   @Input() displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   @Input() users: any[];
+  @Input() containerClass: string;
   @Input()
   get search() {
     return this.usersTable.filter;
