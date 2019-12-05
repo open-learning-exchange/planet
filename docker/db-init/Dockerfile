@@ -1,9 +1,11 @@
 FROM node:10.16.0-alpine
 
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates;\
-    #CORS DOWNLOAD
-    npm install -g add-cors-to-couchdb
+    apk add --no-cache bash curl git jq ca-certificates
+
+RUN npm config set unsafe-perm true \
+    && npm install -g add-cors-to-couchdb \
+    && npm config set unsafe-perm false
 
 WORKDIR /root
 
