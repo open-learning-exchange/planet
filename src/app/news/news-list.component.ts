@@ -65,18 +65,22 @@ export class NewsListComponent implements OnChanges {
     } ];
     const formGroup = { message: [ initialValue, CustomValidators.required ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
-      onSubmit: (response: any) => {
-        if (response) {
-          this.newsService.postNews(
-            { ...news, ...response, viewableBy: this.viewableBy, viewableId: this.viewableId },
-            initialValue === '' ? 'Reply has been posted successfully.' : this.editSuccessMessage
-          ).subscribe(() => {
-            this.dialogsFormService.closeDialogsForm();
-            this.dialogsLoadingService.stop();
-          });
+      onSubmit: (newNews: any) => {
+        if (newNews) {
+          this.postNews(news, newNews);
         }
       },
       autoFocus: true
+    });
+  }
+
+  postNews(oldNews, newNews) {
+    this.newsService.postNews(
+      { ...oldNews, ...newNews, viewableBy: this.viewableBy, viewableId: this.viewableId },
+      oldNews._id ? this.editSuccessMessage : 'Reply has been posted successfully.'
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm();
+      this.dialogsLoadingService.stop();
     });
   }
 
