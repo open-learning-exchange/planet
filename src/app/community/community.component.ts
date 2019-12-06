@@ -11,6 +11,8 @@ import { TeamsService } from '../teams/teams.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/user.service';
+import { UsersService } from '../users/users.service';
 
 @Component({
   templateUrl: './community.component.html',
@@ -21,9 +23,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   configuration = this.stateService.configuration;
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   team = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
+  user = this.userService.get();
   news: any[] = [];
   links: any[] = [];
   finances: any[] = [];
+  councillors: any[] = [];
   showNewsButton = true;
   deleteMode = false;
   onDestroy$ = new Subject<void>();
@@ -36,13 +40,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
     this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
     this.getLinks();
+    this.usersService.requestUsers();
   }
 
   ngOnDestroy() {
@@ -78,6 +86,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.links = links;
       this.finances = finances;
     });
+  }
+
+  setCouncillors(users) {
+    this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1);
   }
 
   deleteLink(link) {

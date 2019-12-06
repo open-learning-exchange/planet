@@ -32,6 +32,34 @@
           <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
         </mat-tab>
         <mat-tab i18n-label label="Council">
+          <div class="card-grid">
+            <mat-card *ngFor="let councillor of councillors">
+              <mat-card-header>
+                <img mat-card-avatar [src]="councillor?.imageSrc || 'assets/image.png'">
+                <a mat-card-title [routerLink]="['/users/profile', councillor?.doc.name, configuration.code === councillor?.doc.planetCode ? {} : { planet: councillor?.doc.userPlanetCode }]">
+                  {{ councillor?.doc?.firstName || councillor?.doc?.name }}
+                </a>
+                <mat-card-subtitle>
+                  <p class="primary-text-color">{{councillor.cdcRole}}</p>
+                </mat-card-subtitle>
+                <!-- <button *ngIf="councillor?.doc?.isUserAdmin" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="councillorMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #resourceMenu="matMenu" *ngIf="actionMenu">
+                  <button mat-menu-item (click)="openDialogPrompt(member, 'remove', { changeType: 'remove', type: 'user' })" *ngIf="member?.userId !== currentUserId && currentUserId === leader">
+                    <mat-icon>clear</mat-icon>
+                    <span i18n>Remove</span>
+                  </button>
+                  <button *ngIf="member?.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader)"
+                    (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
+                    <mat-icon>person</mat-icon>
+                    <span i18n>Make Leader</span>
+                  </button>
+                </mat-menu> -->
+              </mat-card-header>
+              <mat-card-content></mat-card-content>
+            </mat-card>
+          </div>
         </mat-tab>
         <mat-tab i18n-label label="Finances">
           <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="getLinks()"></planet-teams-view-finances>
