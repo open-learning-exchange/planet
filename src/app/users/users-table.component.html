@@ -49,7 +49,10 @@
           <p><b i18n>Type:</b> {{element.health?.profile.emergencyContactType}}</p>
           <p>{{element.health?.profile.emergencyContact}}</p>
         </div>
-        <ng-template #noneBlock><span i18n>None</span></ng-template>
+        <ng-template #noneBlock>
+          <span *ngIf="element.health" i18n>None</span>
+          <mat-progress-bar mode="buffer" *ngIf="!element.health"></mat-progress-bar>
+        </ng-template>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="birthDate">
@@ -58,7 +61,11 @@
     </ng-container>
     <ng-container matColumnDef="lastVisit">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Examination</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{(element.health?.lastVisit | date: 'mediumDate') || 'Never'}}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        {{(element.health?.lastVisit | date: 'mediumDate')}}
+        <span *ngIf="element.health && !element.health?.lastVisit" i18n>Never</span>
+        <mat-progress-bar mode="buffer" *ngIf="!element.health"></mat-progress-bar>
+      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="roles">
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>

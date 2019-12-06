@@ -31,7 +31,7 @@ export class TableState {
     .mat-column-profile {
       max-width: 100px;
     }
-    .mat-column-birthDate, .mat-column-lastVisit {
+    .mat-column-birthDate, .mat-column-lastVisit, mat-progress-bar {
       max-width: 225px;
     }
     mat-cell p {

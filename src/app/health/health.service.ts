@@ -63,7 +63,7 @@ export class HealthService {
 
   private getHealthDoc(userId, { key, iv }) {
     return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key, iv }).pipe(
-      catchError(() => of({ profile: {}, events: [] }))
+      catchError(() => of({ _id: userId, profile: {}, events: [] }))
     );
   }
 
