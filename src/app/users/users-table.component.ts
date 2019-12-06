@@ -72,6 +72,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this._tableState = newState;
   }
   @Output() tableStateChange = new EventEmitter<TableState>();
+  @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   usersTable = new MatTableDataSource();
@@ -112,6 +113,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
       filterSpecificFieldsByWord([ 'fullName' ])
     ])(data, filter);
+    this.usersTable.connect().subscribe(data => {
+      if (this.usersTable.paginator) {
+        this.tableDataChange.emit(data);
+      }
+    });
   }
 
   ngOnChanges() {

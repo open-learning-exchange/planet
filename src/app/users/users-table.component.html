@@ -45,9 +45,9 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Emergency Contact</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div *ngIf="element.health?.profile?.emergencyContact; else noneBlock">
-          <p><b i18n>Name:</b> {{element.health.profile.emergencyContactName}}</p>
-          <p><b i18n>Type:</b> {{element.health.profile.emergencyContactType}}</p>
-          <p>{{element.health.profile.emergencyContact}}</p>
+          <p><b i18n>Name:</b> {{element.health?.profile.emergencyContactName}}</p>
+          <p><b i18n>Type:</b> {{element.health?.profile.emergencyContactType}}</p>
+          <p>{{element.health?.profile.emergencyContact}}</p>
         </div>
         <ng-template #noneBlock><span i18n>None</span></ng-template>
       </mat-cell>
@@ -58,7 +58,7 @@
     </ng-container>
     <ng-container matColumnDef="lastVisit">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Examination</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{(element.health.lastVisit | date: 'mediumDate') || 'Never'}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{(element.health?.lastVisit | date: 'mediumDate') || 'Never'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="roles">
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>

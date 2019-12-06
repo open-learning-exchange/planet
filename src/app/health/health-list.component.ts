@@ -26,20 +26,8 @@ export class HealthListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.usersService.usersUpdated.pipe(
-      switchMap(users => {
-        this.users = users;
-        return forkJoin(users.map(({ _id }) => this.healthService.getHealthData(_id)));
-      }),
-      takeUntil(this.onDestroy$)
-    ).subscribe((healthData: any[]) => {
-      this.users = this.users.map(user => {
-        const userHealth = healthData.find(data => data._id === user._id) || { events: [] };
-        return {
-          ...user,
-          health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
-        };
-      });
+    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      this.users = users;
       this.emptyData = this.users.length === 0;
     });
     this.usersService.requestUsers();
@@ -56,6 +44,25 @@ export class HealthListComponent implements OnInit, OnDestroy {
 
   resetFilter() {
     this.searchValue = '';
+  }
+
+  tableDataChange(newData) {
+    const usersWithoutHealth = newData.filter(user => !user.health);
+    if (usersWithoutHealth.length === 0) {
+      return;
+    }
+    forkJoin(usersWithoutHealth.map(({ _id }) => this.healthService.getHealthData(_id))).subscribe((healthData: any[]) => {
+      this.users = this.users.map(user => {
+        if (user.health || newData.findIndex(newUser => newUser._id === user._id) === -1) {
+          return user;
+        }
+        const userHealth = healthData.find(data => data._id === user._id) || { _id: user._id, events: [] };
+        return {
+          ...user,
+          health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
+        };
+      });
+    });
   }
 
 }
