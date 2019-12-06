@@ -23,7 +23,7 @@
   </mat-toolbar>
 
   <div class="primary-link-hover" *ngIf="!emptyData; else notFoundMessage" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table [dataSource]="teams" matSortActive="createdDate" matSortDirection="desc" matSort [matSortDisableClear]="true">
+    <mat-table #table [dataSource]="teams" matSortActive="lastVisit" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -33,10 +33,16 @@
           </h3>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created on</mat-header-cell>
+      <ng-container matColumnDef="lastVisit">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last visit</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{element.doc.createdDate | date: 'medium'}}
+          {{element.visitLog.lastVisit | date: 'medium'}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="visitCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Month visit</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.visitLog.visitCount}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="teamType">
