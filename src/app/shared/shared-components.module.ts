@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CovalentMarkdownModule } from '@covalent/markdown';
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
@@ -11,10 +12,11 @@ import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
 import { TasksComponent, FilterAssigneePipe } from '../tasks/tasks.component';
 import { PlanetRoleComponent } from './planet-role.component';
+import { PlanetMarkdownComponent } from './planet-markdown.component';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule
+    CommonModule, MaterialModule, CovalentMarkdownModule
   ],
   exports: [
     PlanetLocalStatusComponent,
@@ -27,7 +29,8 @@ import { PlanetRoleComponent } from './planet-role.component';
     FilteredAmountComponent,
     TasksComponent,
     FilterAssigneePipe,
-    PlanetRoleComponent
+    PlanetRoleComponent,
+    PlanetMarkdownComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -40,7 +43,8 @@ import { PlanetRoleComponent } from './planet-role.component';
     FilteredAmountComponent,
     TasksComponent,
     FilterAssigneePipe,
-    PlanetRoleComponent
+    PlanetRoleComponent,
+    PlanetMarkdownComponent
   ]
 })
 export class SharedComponentsModule {}
