@@ -109,7 +109,7 @@ jobs:
       script:
         - set -e
         - echo "Waiting for couchdb to finish initialization"; until [ $(docker ps -aq --filter "name=db-init" --filter "status=exited" | wc -c) -gt 0 ] || [ $WAIT_TIME -eq 600 ]; do echo "..."; sleep 5; WAIT_TIME=$(expr $WAIT_TIME + 5); done
-        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 38 ]; then exit 1; fi
+        - i=$(curl -X GET http://127.0.0.1:5984/_all_dbs | jq length); if [ $i -ne 39 ]; then exit 1; fi
         - webdriver-manager update --versions.chrome=$(google-chrome --version | cut -d ' ' -f 3)
         - npm run e2e
     - stage: automated-test-and-compose-languages

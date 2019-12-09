@@ -55,6 +55,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       (params: ParamMap) => {
         this.courseId = params.get('id');
         this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
+        this.coursesService.courseActivity('visit');
       }
     );
   }

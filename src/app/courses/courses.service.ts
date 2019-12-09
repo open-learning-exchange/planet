@@ -115,7 +115,7 @@ export class CoursesService {
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
     forkJoin(obs).subscribe(([ progress, course, ratings ]: [ any[], any, any ]) => {
       this.progress = progress;
-      this.updateCourse({ progress: progress, course: this.createCourseList([ course ], ratings)[0] });
+      this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
   }
 
@@ -173,10 +173,6 @@ export class CoursesService {
     }));
   }
 
-  createCourseList(courses, ratings) {
-    return this.ratingService.createItemList(courses, ratings);
-  }
-
   courseResignAdmission(courseId, type) {
     const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
@@ -208,6 +204,23 @@ export class CoursesService {
 
   stepResourceSort(a: { title: string }, b: { title: string }) {
     return a.title.localeCompare(b.title);
+  }
+
+  courseActivity(type: string, courseStep?: number) {
+    const data = {
+      'courseId': this.course._id,
+      'title': this.course.courseTitle,
+      'user': this.userService.get().name,
+      type,
+      courseStep,
+      'time': this.couchService.datePlaceholder,
+      'createdOn': this.stateService.configuration.code,
+      'parentCode': this.stateService.configuration.parentCode,
+      'session': this.userService.currentSession._id
+    };
+    this.couchService.updateDocument('course_activities', data)
+      .subscribe((response) => {
+      }, (error) => console.log('Error'));
   }
 
 }
