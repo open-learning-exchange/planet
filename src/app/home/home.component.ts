@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   animDisp: any;
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
+  planetType = this.stateService.configuration.planetType;
 
   private onDestroy$ = new Subject<void>();
 
