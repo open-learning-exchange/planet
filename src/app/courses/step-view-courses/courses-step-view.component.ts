@@ -57,7 +57,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.courseId = params.get('id');
       this.attempts = 0;
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
-      this.coursesService.courseActivity('visit');
+      this.coursesService.courseActivity('visit', this.stepNum);
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
   }

@@ -206,12 +206,13 @@ export class CoursesService {
     return a.title.localeCompare(b.title);
   }
 
-  courseActivity(type: string) {
+  courseActivity(type: string, courseStep?: number) {
     const data = {
       'courseId': this.course._id,
       'title': this.course.courseTitle,
       'user': this.userService.get().name,
       type,
+      courseStep,
       'time': this.couchService.datePlaceholder,
       'createdOn': this.stateService.configuration.code,
       'parentCode': this.stateService.configuration.parentCode,
