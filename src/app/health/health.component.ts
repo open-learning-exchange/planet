@@ -98,8 +98,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
         { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
       ]);
-    const self = this.events.map(val => val.selfExamination);
-    this.selfExamination = Object.assign.apply({}, this.events.map( (v, i) => ( { [v.date]: self[i] } ) ) );
+    this.selfExamination = this.events.reduce((selfExamObject, event) => ({ ...selfExamObject, [event.date]: event.selfExamination }), {});
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
