@@ -25,7 +25,7 @@ export class NewsListItemComponent implements AfterViewChecked {
   ) {}
 
   ngAfterViewChecked() {
-    const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].offsetHeight;
+    const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].children[0].offsetHeight;
     if (offsetHeight && offsetHeight !== this.contentHeight) {
       this.contentHeight = offsetHeight;
       this.cdRef.detectChanges();

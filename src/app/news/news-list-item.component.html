@@ -15,7 +15,7 @@
   </mat-card-header>
   <mat-card-content>
     <div [ngClass]="{'show-less': showLess}" #content>
-      <td-markdown [content]="item.message"></td-markdown>
+      <planet-markdown [content]="item.message"></planet-markdown>
     </div>
     <span class="primary-text-color cursor-pointer" *ngIf="contentHeight > content.clientHeight || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? "Show More" : "Show Less" }}</span>
   </mat-card-content>
