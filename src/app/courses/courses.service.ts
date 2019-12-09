@@ -212,7 +212,7 @@ export class CoursesService {
 
   courseActivity(activity) {
     const data = {
-      'resourceId': this.course._id,
+      'courseId': this.course._id,
       'title': this.course.courseTitle,
       'user': this.userService.get().name,
       'type': activity,
