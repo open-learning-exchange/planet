@@ -78,11 +78,13 @@ export class DashboardComponent implements OnInit {
         this.visits = res.length;
       });
 
-    if (this.userService.isBetaEnabled()
+    if (
+      this.userService.isBetaEnabled()
       && this.stateService.configuration.planetType === 'community'
-      && this.myLifeItems.findIndex(item => item.title === 'Health') === -1) {
-        this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: '/myHealth' });
-      }
+      && this.myLifeItems.findIndex(item => item.title === 'Health') === -1
+    ) {
+      this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: '/myHealth' });
+    }
 
   }
 
