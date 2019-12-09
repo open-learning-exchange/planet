@@ -81,10 +81,14 @@ export class MigrationComponent implements OnInit {
     this.couchService.get('_node/nonode@nohost/_config', { domain: this.cloneDomain, protocol: this.cloneProtocol }).pipe(
       switchMap(configuration => this.copyConfiguration(configuration)),
       switchMap(() => {
-        const [ name, password ] = Object.entries(this.admins)[0];
+        const [ name, password ] = Object.entries(this.admins).find(user => this.credential.name === user[0]);
         return this.couchService.put(`_node/nonode@nohost/_config/admins/${name}`, password);
       }),
       switchMap(() => this.couchService.post('_session', this.credential, { withCredentials: true })),
+      switchMap(() => {
+        return Object.entries(this.admins).filter(admin => admin[0] !== this.credential.name)
+          .map(admin => this.couchService.put(`_node/nonode@nohost/_config/admins/${admin[0]}`, admin[1]));
+      }),
       switchMap(() => this.getDatabaseNames()),
       switchMap((syncDatabases: string[]) => {
         return forkJoin(syncDatabases.map(db => this.syncService.sync(
