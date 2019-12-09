@@ -21,6 +21,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   events: any[] = [];
   eventTable = new MatTableDataSource();
   displayedColumns: string[] = [];
+  selfExamination: string[] = [];
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/_users/';
   initializeEvents = true;
@@ -97,6 +98,8 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
         { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
       ]);
+    const self = this.events.map(val =>val.selfExamination)
+    this.selfExamination =Object.assign.apply({}, this.events.map( (v, i) => ( {[v.date]: self[i]} ) ) )
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
