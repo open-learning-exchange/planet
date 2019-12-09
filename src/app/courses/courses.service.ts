@@ -214,7 +214,8 @@ export class CoursesService {
       'type': activity,
       'time': this.couchService.datePlaceholder,
       'createdOn': this.stateService.configuration.code,
-      'parentCode': this.stateService.configuration.parentCode
+      'parentCode': this.stateService.configuration.parentCode,
+      'session': this.userService.currentSession._id
     };
     this.couchService.updateDocument('course_activities', data)
       .subscribe((response) => {
