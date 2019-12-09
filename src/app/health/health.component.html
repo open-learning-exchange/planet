@@ -69,8 +69,11 @@
         <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
-              <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">{{ column === 'label' ? '' : (column | date) }}
-                <div *ngIf="selfExamination[column]===true" matTooltip="Self-Examination."><mat-icon>person</mat-icon></div>
+              <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
+                <div>
+                  {{ column === 'label' ? '' : (column | date) }}
+                  <div *ngIf="selfExamination[column]===true" class="primary-text-color" i18n>Self Examination</div>
+                </div>
               </mat-header-cell>
               <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
                 <ng-container *ngIf="column === 'label'; else dataCell">

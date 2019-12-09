@@ -23,6 +23,13 @@ $exam-table-col-width: 100px;
 
 mat-table {
   width: max-content;
+
+  mat-header-cell {
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+  }
+
 }
 
 .table-column {
