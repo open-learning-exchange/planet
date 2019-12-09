@@ -159,11 +159,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteSurveys(surveys) {
     const deleteArray = createDeleteArray(surveys);
 
-    let deleteReq = {
+    const deleteReq = {
       req: this.submissionDeleteReq
     };
 
-    let deleteReqFunct = this.deleteSurveys.bind(deleteReq.req);
+    const deleteReqFunct = this.deleteSurveys.bind(deleteReq.req);
 
     return {
       request: forkJoin([
