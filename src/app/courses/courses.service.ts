@@ -115,7 +115,7 @@ export class CoursesService {
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
     forkJoin(obs).subscribe(([ progress, course, ratings ]: [ any[], any, any ]) => {
       this.progress = progress;
-      this.updateCourse({ progress: progress, course: this.createCourseList([ course ], ratings)[0] });
+      this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
   }
 
@@ -171,10 +171,6 @@ export class CoursesService {
       'userId': userId || this.userService.get()._id,
       courseId
     }));
-  }
-
-  createCourseList(courses, ratings) {
-    return this.ratingService.createItemList(courses, ratings);
   }
 
   courseResignAdmission(courseId, type) {
