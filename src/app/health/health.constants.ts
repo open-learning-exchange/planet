@@ -18,3 +18,7 @@ export const conditions = [
   'Stroke',
   'Tuberculosis',
 ];
+
+export const conditionAndTreatmentFields = [
+  'notes', 'diagnosis', 'treatments', 'medications', 'immunizations', 'allergies', 'xrays', 'tests', 'referrals'
+];
