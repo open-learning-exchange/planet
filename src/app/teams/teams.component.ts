@@ -93,14 +93,18 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
-    const today = new Date();
-    const oneMonth = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 30).getTime();
+    const thirtyDaysAgo = time => {
+      const date = new Date(time);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
+    }
     this.dialogsLoadingService.start();
-    forkJoin([
-      this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
-      this.getMembershipStatus(),
-      this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': oneMonth } } })
-    ]).subscribe(([ teams, requests, activities ]: any[]) => {
+    this.couchService.currentTime().pipe(switchMap(time =>
+      forkJoin([
+        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
+        this.getMembershipStatus(),
+        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } })
+      ])
+    )).subscribe(([ teams, requests, activities ]: any[]) => {
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
