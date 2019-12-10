@@ -23,8 +23,8 @@
   </mat-toolbar>
 
   <div class="primary-link-hover" *ngIf="!emptyData; else notFoundMessage" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table [dataSource]="teams" matSortActive="createdDate" matSortDirection="desc" matSort [matSortDisableClear]="true">
-      <ng-container matColumnDef="name">
+    <mat-table #table [dataSource]="teams" matSortActive="lastVisit" matSortDirection="desc" matSort [matSortDisableClear]="true">
+      <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3>
@@ -33,13 +33,19 @@
           </h3>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created on</mat-header-cell>
+      <ng-container matColumnDef="visitLog.lastVisit">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Most recent visit</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{element.doc.createdDate | date: 'medium'}}
+          {{element.visitLog.lastVisit | date: 'medium'}}
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="teamType">
+      <ng-container matColumnDef="visitLog.visitCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Total visits from last 30 days</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.visitLog.visitCount}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="doc.teamType">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container [ngSwitch]="element.doc.teamType">

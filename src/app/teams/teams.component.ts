@@ -6,7 +6,9 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { filterSpecificFieldsByWord, sortNumberOrString, composeFilterFunctions, filterSpecificFields } from '../shared/table-helpers';
+import {
+  filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
+} from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -17,11 +19,15 @@ import { toProperCase } from '../shared/utils';
   templateUrl: './teams.component.html',
   styles: [ `
     /* Column Widths */
-    .mat-column-teamType {
+    .mat-column-doc-teamType {
       max-width: 150px;
       padding-right: 0.5rem;
     }
-    .mat-column-createdDate {
+    .mat-column-visitLog-visitCount {
+      max-width: 80px;
+      padding-right: 0.5rem;
+    }
+    .mat-column-visitLog-lastVisit {
       max-width: 180px;
       padding-right: 0.5rem;
     }
@@ -37,6 +43,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   userMembership: any[] = [];
+  teamActivities: any[] = [];
   dbName = 'teams';
   emptyData = false;
   user = this.userService.get();
@@ -61,9 +68,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Input() isDialog = false;
   @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
-  displayedColumns = this.isDialog ?
-    [ 'name', 'createdDate', 'teamType', 'action' ] :
-    [ 'name', 'createdDate', 'teamType' ];
+  displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
 
   constructor(
     private userService: UserService,
@@ -83,16 +88,27 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
+    this.teams.sortingDataAccessor = (item: any, property) => deepSortingDataAccessor(item, property);
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.displayedColumns = this.isDialog ?
+      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
+      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
   }
 
   getTeams() {
+    const thirtyDaysAgo = time => {
+      const date = new Date(time);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
+    };
     this.dialogsLoadingService.start();
-    forkJoin([
-      this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
-      this.getMembershipStatus()
-    ]).subscribe(([ teams, requests ]: any[]) => {
+    this.couchService.currentTime().pipe(switchMap(time =>
+      forkJoin([
+        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
+        this.getMembershipStatus(),
+        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } })
+      ])
+    )).subscribe(([ teams, requests, activities ]: any[]) => {
+      this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
         return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
@@ -125,10 +141,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   teamList(teamRes) {
+    const noVisit = { visitCount: 0, lastVisit: undefined };
     return teamRes.map((res: any) => {
       const doc = res.doc || res;
       const membershipDoc = this.userMembership.find(req => req.teamId === doc._id) || {};
-      const team = { doc, membershipDoc };
+      const visitLog = this.teamActivities.filter(activity => activity.teamId === doc._id).reduce(({ visitCount, lastVisit }, activity) =>
+        ({ visitCount: visitCount + 1, lastVisit: lastVisit && activity.time < lastVisit ? lastVisit : activity.time }), noVisit)
+        || noVisit;
+      const team = { doc, membershipDoc, visitLog };
       switch (membershipDoc.docType) {
         case 'membership':
           return { ...team, userStatus: 'member', isLeader: membershipDoc.isLeader };
