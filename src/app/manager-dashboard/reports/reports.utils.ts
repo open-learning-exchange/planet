@@ -10,3 +10,7 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   })),
   sandboxPlanets: planets.filter(planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1) === undefined)
 });
+
+export const sortPlanet = ((a, b) => {
+  return (a.nameDoc ? a.nameDoc.name : a.doc.name).toLowerCase() - (b.nameDoc ? b.nameDoc.name : b.doc.name).toLowerCase()
+});
