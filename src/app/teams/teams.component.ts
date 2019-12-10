@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { filterSpecificFieldsByWord, sortNumberOrString, composeFilterFunctions, filterSpecificFields } from '../shared/table-helpers';
+import { filterSpecificFieldsByWord, sortNumberOrString, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -17,15 +17,15 @@ import { toProperCase } from '../shared/utils';
   templateUrl: './teams.component.html',
   styles: [ `
     /* Column Widths */
-    .mat-column-teamType {
+    .mat-column-doc-teamType {
       max-width: 150px;
       padding-right: 0.5rem;
     }
-    .mat-column-visitCount {
+    .mat-column-visitLog-visitCount {
       max-width: 80px;
       padding-right: 0.5rem;
     }
-    .mat-column-lastVisit {
+    .mat-column-visitLog-lastVisit {
       max-width: 180px;
       padding-right: 0.5rem;
     }
@@ -67,8 +67,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
   displayedColumns = this.isDialog ?
-    [ 'name', 'lastVisit', 'visitCount', 'teamType', 'action' ] :
-    [ 'name', 'lastVisit', 'visitCount', 'teamType' ];
+    [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ] :
+    [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
 
   constructor(
     private userService: UserService,
@@ -88,7 +88,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item: any, property) => sortNumberOrString(item.doc, property);
+    this.teams.sortingDataAccessor = (item: any, property) => deepSortingDataAccessor(item, property);
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
   }
 
