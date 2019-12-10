@@ -66,9 +66,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Input() isDialog = false;
   @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
-  displayedColumns = this.isDialog ?
-    [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ] :
-    [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
+  displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
 
   constructor(
     private userService: UserService,
@@ -90,6 +88,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ]);
     this.teams.sortingDataAccessor = (item: any, property) => deepSortingDataAccessor(item, property);
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.displayedColumns = this.isDialog ?
+      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
+      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
   }
 
   getTeams() {
