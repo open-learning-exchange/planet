@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
+import { conditionAndTreatmentFields } from './health.constants';
 
 @Component({
   templateUrl: './health.component.html',
@@ -21,6 +22,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   events: any[] = [];
   eventTable = new MatTableDataSource();
   displayedColumns: string[] = [];
+  additionalInfo: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/_users/';
   initializeEvents = true;
@@ -97,6 +99,16 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         { label: 'temperature' }, { label: 'pulse' }, { label: 'bp' }, { label: 'height' },
         { label: 'weight' }, { label: 'vision' }, { label: 'hearing' }
       ]);
+    this.additionalInfo = this.events.reduce((additionalInfo, event) => ({
+      ...additionalInfo,
+      [event.date]: {
+        selfExamination: event.selfExamination,
+        hasInfo: Object.entries(event).find(
+          ([ key, value ]: [ string, string ]) => (conditionAndTreatmentFields.indexOf(key) > -1) &&
+          value !== ''
+        ) !== undefined
+      }
+    }), {});
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
   }
 
