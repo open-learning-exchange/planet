@@ -8,6 +8,6 @@ import { environment } from '../../environments/environment';
 export class PlanetMarkdownComponent {
 
   @Input() content: string;
-  couchAddress = environment.couchAddress;
+  couchAddress = `${environment.couchAddress}/`;
 
 }
