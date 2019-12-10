@@ -158,17 +158,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSurveys(surveys) {
     const deleteArray = createDeleteArray(surveys);
-
-    const deleteReq = {
-      req: this.submissionDeleteReq
-    };
-
-    const deleteReqFunct = this.deleteSurveys.bind(deleteReq.req);
-
     return {
       request: forkJoin([
         this.couchService.bulkDocs(this.dbName, deleteArray),
-        ...surveys.reduce(deleteReqFunct.req, [])
+        ...surveys.reduce(this.submissionDeleteReq.bind(this), [])
       ]),
       onNext: () => {
         this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === undefined);
