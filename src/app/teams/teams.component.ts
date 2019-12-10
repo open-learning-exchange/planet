@@ -6,7 +6,9 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { filterSpecificFieldsByWord, sortNumberOrString, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
+import {
+  filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
+} from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -97,7 +99,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     const thirtyDaysAgo = time => {
       const date = new Date(time);
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
-    }
+    };
     this.dialogsLoadingService.start();
     this.couchService.currentTime().pipe(switchMap(time =>
       forkJoin([
