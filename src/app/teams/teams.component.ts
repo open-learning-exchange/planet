@@ -67,8 +67,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
   displayedColumns = this.isDialog ?
-    [ 'name', 'visitCount', 'lastVisit', 'teamType', 'action' ] :
-    [ 'name', 'visitCount', 'lastVisit', 'teamType' ];
+    [ 'name', 'lastVisit', 'visitCount', 'teamType', 'action' ] :
+    [ 'name', 'lastVisit', 'visitCount', 'teamType' ];
 
   constructor(
     private userService: UserService,
