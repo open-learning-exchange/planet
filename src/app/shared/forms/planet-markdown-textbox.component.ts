@@ -8,6 +8,7 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
 
 interface ImageInfo { resourceId: string, filename: string, url: string };
+interface ValueWithImages { text: string, images: ImageInfo[] };
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -25,11 +26,11 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @ViewChild('editor', { static: false }) editor;
-  @Input() _value: { text: string, images: ImageInfo[] } = { text: '', images: [] };
-  get value() {
+  @Input() _value: ValueWithImages | string;
+  get value(): ValueWithImages | string {
     return this._value;
   }
-  set value(newValue: { text: string, images: ImageInfo[] }) {
+  set value(newValue: ValueWithImages | string) {
     this._value = newValue || { text: '', images: [] };
     this.onChange(this._value);
     this.stateChanges.next();
@@ -37,7 +38,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   @Output() valueChanges = new EventEmitter<string[]>();
 
   get empty() {
-    return this._value.text.length === 0;
+    return (typeof this._value === 'string' ? this._value : this._value.text).length === 0;
   }
 
   private _placeholder: string;
@@ -110,6 +111,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
         {}
       )
     };
+    this._value = this.imageGroup ? { text: '', images: [] } : '';
   }
 
   ngOnDestroy() {
@@ -117,7 +119,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   writeValue(val: string) {
-    this.value = { ...this.value, text: val };
+    this.value = typeof this._value === 'string' ? val : { ...this._value, text: val };
     this.setErrorState();
   }
 
@@ -136,7 +138,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   setErrorState() {
-    this.errorState = this.ngControl.touched && this.value.text === '';
+    this.errorState = this.ngControl.touched && (typeof this._value === 'string' ? this._value : this._value.text) === '';
   }
 
   onFocusOut() {
@@ -147,7 +149,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   checkHighlight() {
     if (this.ngControl.touched && this.ngControl.valid !== true) {
       this.errorState = true;
-      this.value.text = '';
+      this.value = typeof this.value === 'string' ? '' : { text: '', images: [] };
     } else {
       this.errorState = false;
     }
@@ -164,7 +166,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
         const url = `resources/${image._id}/${encodeURI(image.filename)}`;
         this.editor.options.insertTexts.image = [ `![](${url}` , ')' ];
         this.editor._simpleMDE.drawImage();
-        this.value = { ...this.value, images: [ ...this._value.images, { resourceId: image._id, filename: image.filename, url } ] };
+        this.value = {
+          ...<ValueWithImages>this._value,
+          images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, url } ]
+        };
       }
     });
   }
