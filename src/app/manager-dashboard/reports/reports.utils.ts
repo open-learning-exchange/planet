@@ -12,5 +12,6 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
 });
 
 export const sortPlanet = ((a, b) => {
-  return (a.nameDoc ? a.nameDoc.name : a.doc.name).toLowerCase() - (b.nameDoc ? b.nameDoc.name : b.doc.name).toLowerCase();
+  const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
+  return planetName(a).toLowerCase() - planetName(b).toLowerCase();
 });
