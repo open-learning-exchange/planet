@@ -49,7 +49,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
   planetType = this.planetConfiguration.planetType;
-  displayedColumns = [ 'select', 'rating' ];
+  displayedColumns = [ 'title', 'createdDate' ];
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
@@ -102,7 +102,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.myView === 'myPersonals') {
+    if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
     }
     this.titleSearch = this.dropdownsFill();
