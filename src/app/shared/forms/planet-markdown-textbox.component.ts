@@ -160,7 +160,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       }
     }).afterClosed().subscribe(image => {
       if (image) {
-        this.editor.options.insertTexts.image = [ `![](resources/${image._id}/${image.filename}` , ')' ];
+        this.editor.options.insertTexts.image = [ `![](resources/${image._id}/${encodeURI(image.filename)}` , ')' ];
         this.editor._simpleMDE.drawImage();
       }
     });
