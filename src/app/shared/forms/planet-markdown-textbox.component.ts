@@ -7,8 +7,8 @@ import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
 
-interface ImageInfo { resourceId: string, filename: string, url: string };
-interface ValueWithImages { text: string, images: ImageInfo[] };
+interface ImageInfo { resourceId: string; filename: string; markdown: string; }
+interface ValueWithImages { text: string; images: ImageInfo[]; }
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -174,12 +174,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       }
     }).afterClosed().subscribe(image => {
       if (image) {
-        const url = `resources/${image._id}/${encodeURI(image.filename)}`;
-        this.editor.options.insertTexts.image = [ `![](${url}` , ')' ];
+        const markdown = `![](resources/${image._id}/${encodeURI(image.filename)})`;
+        this.editor.options.insertTexts.image = [ markdown, '' ];
         this.editor._simpleMDE.drawImage();
         this.value = {
           ...<ValueWithImages>this._value,
-          images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, url } ]
+          images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, markdown } ]
         };
       }
     });
