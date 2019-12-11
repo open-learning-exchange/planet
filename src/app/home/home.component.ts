@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   animObs = interval(15).pipe(
     debug('Menu animation'),
     tap(() => {
-      this.mainContent._updateContentMargins();
+      this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
     }
   ));
