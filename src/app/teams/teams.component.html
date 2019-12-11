@@ -77,7 +77,8 @@
             </button>
             <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>Request pending</button>
           </ng-container>
-          <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': 'teams', 'item': element.doc._id}" (click)="$event.stopPropagation()" i18n><mat-icon>feedback</mat-icon> Feedback</button>
+          <button mat-raised-button color="primary" planetFeedback *ngIf="mode==='team'" [feedbackOf]="{'state' : 'teams', 'item': element.doc._id}" (click)="$event.stopPropagation()" i18n><mat-icon>feedback</mat-icon> Feedback</button>
+          <button mat-raised-button color="primary" planetFeedback *ngIf="mode==='enterprise'" [feedbackOf]="{'state' : 'enterprises', 'item': element.doc._id}" (click)="$event.stopPropagation()" i18n><mat-icon>feedback</mat-icon> Feedback</button>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
