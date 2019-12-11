@@ -44,7 +44,7 @@
             <span *ngIf="selectedNotAdded > 0"> ({{selectedNotAdded}})</span>
           </button>
           <button mat-button [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
-            <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
+            <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
             <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
           </button>
           <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles [disabled]="!selection.selected.length">Manager Actions</button>
