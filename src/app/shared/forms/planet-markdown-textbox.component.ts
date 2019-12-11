@@ -32,8 +32,19 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
   set value(newValue: ValueWithImages | string) {
     this._value = newValue || { text: '', images: [] };
+    this.textValue = typeof newValue === 'string' ? newValue : newValue.text;
     this.onChange(this._value);
     this.stateChanges.next();
+  }
+  private _textValue: string;
+  get textValue(): string {
+    return this._textValue;
+  }
+  set textValue(newText: string) {
+    this._textValue = newText;
+    if (newText !== (typeof this._value === 'string' ? this._value : this._value.text)) {
+      this.value = typeof this._value === 'string' ? newText : { ...this._value, text: newText };
+    }
   }
   @Output() valueChanges = new EventEmitter<string[]>();
 
