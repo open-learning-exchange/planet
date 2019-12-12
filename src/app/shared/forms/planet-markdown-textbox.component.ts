@@ -31,8 +31,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     return this._value;
   }
   set value(newValue: ValueWithImages | string) {
-    this._value = newValue || { text: '', images: [] };
-    this.textValue = typeof newValue === 'string' ? newValue : newValue.text;
+    this._value = newValue || (this.imageGroup ? { text: '', images: [] } : '');
+    this.textValue = typeof this._value === 'string' ? this._value : this._value.text;
     this.onChange(this._value);
     this.stateChanges.next();
   }
@@ -130,7 +130,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   writeValue(val: string) {
-    this.value = typeof this._value === 'string' ? val : { ...this._value, text: val };
+    this.value = typeof this._value === 'string' || this.imageGroup === undefined ? val : { ...this._value, text: val };
     this.setErrorState();
   }
 
