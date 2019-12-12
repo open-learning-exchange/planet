@@ -24,9 +24,9 @@ export class HealthService {
   getUserKey(userDb: string, createIfNone = false) {
     return this.couchService.findAll(userDb).pipe(
       switchMap((docs: any[]) => {
-        const max = docs.reduce((maxDoc, doc) => doc.createdOn > maxDoc.createdOn ? doc : maxDoc, { createdOn: -Infinity });
-        return max.key && max.iv ?
-          of({ doc: max }) :
+        const first = docs.reduce((minDoc, doc) => doc.createdOn < minDoc.createdOn ? doc : minDoc, { createdOn: Infinity });
+        return first.key && first.iv ?
+          of({ doc: first }) :
           createIfNone ?
           this.createUserKey(userDb) :
           of({ doc: {} });
