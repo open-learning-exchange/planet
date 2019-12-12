@@ -51,6 +51,10 @@ export class NewsService {
 
   postNews(post, successMessage = 'Thank you for submitting your news') {
     const configuration = this.stateService.configuration;
+    const message = typeof post.message === 'string' ? post.message : post.message.text;
+    const images = post.message.images ?
+      post.message.images.filter(image => message.indexOf(image.resourceId) > -1) :
+      [];
     const newPost = {
       docType: 'message',
       time: this.couchService.datePlaceholder,
@@ -58,6 +62,8 @@ export class NewsService {
       parentCode: configuration.parentCode,
       user: this.userService.get(),
       ...post,
+      message,
+      images,
       updatedDate: this.couchService.datePlaceholder
     };
     return this.couchService.updateDocument(this.dbName, newPost).pipe(map(() => {

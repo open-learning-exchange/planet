@@ -6,7 +6,9 @@ import { MatFormFieldControl, MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
-import { environment } from '../../../environments/environment';
+
+interface ImageInfo { resourceId: string; filename: string; markdown: string; }
+interface ValueWithImages { text: string; images: ImageInfo[]; }
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -24,19 +26,30 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @ViewChild('editor', { static: false }) editor;
-  @Input() _value = '';
-  get value() {
+  @Input() _value: ValueWithImages | string;
+  get value(): ValueWithImages | string {
     return this._value;
   }
-  set value(text: string) {
-    this._value = text || '';
-    this.onChange(text);
+  set value(newValue: ValueWithImages | string) {
+    this._value = newValue || { text: '', images: [] };
+    this.textValue = typeof newValue === 'string' ? newValue : newValue.text;
+    this.onChange(this._value);
     this.stateChanges.next();
+  }
+  private _textValue: string;
+  get textValue(): string {
+    return this._textValue;
+  }
+  set textValue(newText: string) {
+    this._textValue = newText;
+    if (newText !== (typeof this._value === 'string' ? this._value : this._value.text)) {
+      this.value = typeof this._value === 'string' ? newText : { ...this._value, text: newText };
+    }
   }
   @Output() valueChanges = new EventEmitter<string[]>();
 
   get empty() {
-    return this._value.length === 0;
+    return (typeof this._value === 'string' ? this._value : this._value.text).length === 0;
   }
 
   private _placeholder: string;
@@ -109,6 +122,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
         {}
       )
     };
+    this._value = this.imageGroup ? { text: '', images: [] } : '';
   }
 
   ngOnDestroy() {
@@ -116,7 +130,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   writeValue(val: string) {
-    this.value = val;
+    this.value = typeof this._value === 'string' ? val : { ...this._value, text: val };
     this.setErrorState();
   }
 
@@ -135,7 +149,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   setErrorState() {
-    this.errorState = this.ngControl.touched && this.value === '';
+    this.errorState = this.ngControl.touched && (typeof this._value === 'string' ? this._value : this._value.text) === '';
   }
 
   onFocusOut() {
@@ -146,7 +160,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   checkHighlight() {
     if (this.ngControl.touched && this.ngControl.valid !== true) {
       this.errorState = true;
-      this.value = '';
+      this.value = typeof this.value === 'string' ? '' : { text: '', images: [] };
     } else {
       this.errorState = false;
     }
@@ -160,8 +174,13 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       }
     }).afterClosed().subscribe(image => {
       if (image) {
-        this.editor.options.insertTexts.image = [ `![](resources/${image._id}/${encodeURI(image.filename)}` , ')' ];
+        const markdown = `![](resources/${image._id}/${encodeURI(image.filename)})`;
+        this.editor.options.insertTexts.image = [ markdown, '' ];
         this.editor._simpleMDE.drawImage();
+        this.value = {
+          ...<ValueWithImages>this._value,
+          images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, markdown } ]
+        };
       }
     });
   }
