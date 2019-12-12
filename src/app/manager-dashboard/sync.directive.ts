@@ -49,9 +49,9 @@ export class SyncDirective {
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
       map(([ res, users ]) => this.updateParentUsers(users)),
-      switchMap(() => this.getAchievementsAndTeamResources()),
-      switchMap(([ achievements, teamResources ]: any[]) =>
-        forkJoin(this.achievementResourceReplicator(achievements), this.teamResourcesReplicator(teamResources))
+      switchMap(() => this.getAchievementsAndTeamAndNewsResources()),
+      switchMap(([ achievements, teamResources, news ]: any[]) =>
+        forkJoin(this.achievementResourceReplicator(achievements), this.teamAndNewsResourcesReplicator(teamResources, news))
       ),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
@@ -188,18 +188,23 @@ export class SyncDirective {
     })).subscribe((res) => console.log(res));
   }
 
-  getAchievementsAndTeamResources() {
+  getAchievementsAndTeamAndNewsResources() {
     return forkJoin([
       this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code })),
       this.couchService.findAll(
         'teams', findDocuments({ docType: 'resourceLink', teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
-      )
+      ),
+      this.couchService.findAll('news', findDocuments({ images: { '$exists': true }, messageType: 'sync' }))
     ]);
   }
 
-  teamResourcesReplicator(teamResources: any[]) {
+  teamAndNewsResourcesReplicator(teamResources: any[], news: any[]) {
+    const replicator = linkDoc => ({ db: 'resources', item: { _id: linkDoc.resourceId } });
     return this.syncService.replicatorsArrayWithTags(
-      teamResources.map(linkDoc => ({ db: 'resources', item: { _id: linkDoc.resourceId } })),
+      [
+        ...teamResources.map(replicator),
+        ...news.map(post => post.images.map(replicator)).flat()
+      ],
       'push',
       'local'
     );
