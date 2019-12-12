@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, forkJoin, merge, concat } from 'rxjs';
+import { Subject, concat } from 'rxjs';
 import { UsersService } from '../users/users.service';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { TableState } from '../users/users-table.component';
 import { HealthService } from './health.service';
 
@@ -61,16 +61,6 @@ export class HealthListComponent implements OnInit, OnDestroy {
         } :
         user
       );
-      //   {
-      //   if (user.health || newData.findIndex(newUser => newUser._id === user._id) === -1) {
-      //     return user;
-      //   }
-      //   const userHealth = healthData.find(data => data._id === user._id) || { _id: user._id, events: [] };
-      //   return {
-      //     ...user,
-      //     health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
-      //   };
-      // });
     });
   }
 
