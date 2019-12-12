@@ -51,7 +51,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   // Use string rather than boolean for i18n select
   fullView = 'on';
   resourceId: string;
-  resourcesCount = 0;
 
   ngOnInit() {
     this.route.paramMap
@@ -66,7 +65,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
         if (this.resource === undefined) {
           if (this.resourcesService.isActiveResourceFetch) {
-            this.resourcesCount = resources.length;
             return;
           }
           this.planetMessageService.showAlert('Resource does not exist in Library');

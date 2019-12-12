@@ -77,9 +77,7 @@ export class ResourcesService {
   }
 
   updateResources(resources) {
-    if (!this.isActiveResourceFetch) {
-      this.resourcesUpdated.next(resources);
-    }
+    this.resourcesUpdated.next(resources);
   }
 
   getRatings(resourceIds: string[], opts: any) {
