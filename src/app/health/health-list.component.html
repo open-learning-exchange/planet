@@ -11,7 +11,7 @@
 
 <div class="space-container">
   <ng-container *ngIf="!emptyData; else notFoundMessage">
-    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns" containerClass="view-container view-full-height no-toolbar view-table"></planet-users-table>
+    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns" containerClass="view-container view-full-height no-toolbar view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>
   </ng-container>
   <ng-template #notFoundMessage>
     <div class="view-container">No User Found</div>

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject, concat } from 'rxjs';
 import { UsersService } from '../users/users.service';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { TableState } from '../users/users-table.component';
 import { HealthService } from './health.service';
 
@@ -17,6 +17,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
   displayedColumns = [ 'profile', 'name', 'contact', 'birthDate', 'lastVisit' ];
   tableState = new TableState();
   emptyData = true;
+  healthRequests: string[] = [];
 
   constructor(
     private router: Router,
@@ -26,20 +27,8 @@ export class HealthListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.usersService.usersUpdated.pipe(
-      switchMap(users => {
-        this.users = users;
-        return forkJoin(users.map(({ _id }) => this.healthService.getHealthData(_id)));
-      }),
-      takeUntil(this.onDestroy$)
-    ).subscribe((healthData: any[]) => {
-      this.users = this.users.map(user => {
-        const userHealth = healthData.find(data => data._id === user._id) || { events: [] };
-        return {
-          ...user,
-          health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
-        };
-      });
+    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      this.users = users;
       this.emptyData = this.users.length === 0;
     });
     this.usersService.requestUsers();
@@ -56,6 +45,23 @@ export class HealthListComponent implements OnInit, OnDestroy {
 
   resetFilter() {
     this.searchValue = '';
+  }
+
+  tableDataChange(newData) {
+    const usersWithoutHealth = newData.filter(user => !user.health && this.healthRequests.indexOf(user._id) === -1);
+    this.healthRequests = [ ...this.healthRequests, ...usersWithoutHealth.map(user => user._id) ];
+    if (usersWithoutHealth.length === 0) {
+      return;
+    }
+    concat.apply(null, usersWithoutHealth.map(({ _id }) => this.healthService.getHealthData(_id))).subscribe((userHealth: any) => {
+      this.users = this.users.map(user => user._id === userHealth._id ?
+        {
+          ...user,
+          health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
+        } :
+        user
+      );
+    });
   }
 
 }
