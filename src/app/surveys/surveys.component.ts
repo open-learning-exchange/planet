@@ -259,7 +259,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           })
         ],
         columns: [ ...childUsers.columns ],
-        labels: children.sort(sortPlanet).reduce((labelObj, child) =>
+        labels: children.reduce((labelObj, child) =>
           ({ ...labelObj, [child.doc.code]: child.nameDoc ? child.nameDoc.name : child.doc.name }),
           {}
         )

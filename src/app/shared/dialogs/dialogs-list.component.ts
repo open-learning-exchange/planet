@@ -153,7 +153,7 @@ export class DialogsListComponent implements AfterViewInit {
       return;
     }
     this.dropdownField = dropdownSettings.field;
-    this.dropdownOptions = this.reduceDropDown(dropdownSettings, labels);
+    this.dropdownOptions = this.sortDropDown(dropdownSettings, this.reduceDropDown(dropdownSettings, labels));
     const otherFilterPredicates = this.tableData.filterPredicate;
     this.dropdownFilter = dropdownSettings.startingValue.value ?
       { [dropdownSettings.field]: dropdownSettings.startingValue.value } : { [dropdownSettings.field]: '' };
@@ -169,6 +169,13 @@ export class DialogsListComponent implements AfterViewInit {
       }
       return values;
     }, dropdownSettings.startingValue ? [ dropdownSettings.startingValue ] : []);
+  }
+
+  sortDropDown(dropdownSettings, list) {
+    return list.sort((a, b) => (
+      (dropdownSettings.startingValue && dropdownSettings.startingValue.value === b.value) ||
+      b.text.toLowerCase() < a.text.toLowerCase()) ? 1 : -1
+    );
   }
 
   onFilterChange(filterValue: string, field: string) {
