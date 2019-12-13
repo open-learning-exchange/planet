@@ -185,7 +185,7 @@ export class SyncDirective {
       });
       const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
       return this.couchService.bulkDocs('parent_users', docs);
-    })).subscribe((res) => console.log(res));
+    })).subscribe();
   }
 
   getAchievementsAndTeamAndNewsResources() {
