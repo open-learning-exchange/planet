@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Subject, zip, combineLatest, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { forkJoin, Subject, zip, combineLatest, of, throwError } from 'rxjs';
+import { switchMap, map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -107,6 +107,7 @@ export class UsersService {
     const adminId = `org.couchdb.user:${adminName}`;
     const parentUser = {
       ...user,
+      _id: adminId,
       requestId,
       isUserAdmin: false,
       roles: [ 'learner' ],
@@ -115,12 +116,15 @@ export class UsersService {
       _attachments: undefined,
       _rev: undefined
     };
-    return forkJoin([
-      this.couchService.updateDocument(this.dbName, { ...parentUser, '_id': adminId }, { domain, withCredentials: false }),
-      this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
-      this.setRoles({ ...user, isUserAdmin: true }, []),
-      this.removeFromTabletUsers(user)
-    ]);
+    return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(
+      catchError(() => of(null)),
+      switchMap(oldDoc => forkJoin([
+        oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
+        this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
+        this.setRoles({ ...user, isUserAdmin: true }, []),
+        this.removeFromTabletUsers(user)
+      ]))
+    );
   }
 
   toggleManagerStatus(user) {
@@ -140,7 +144,9 @@ export class UsersService {
   }
 
   removeFromTabletUsers(user) {
-    return this.couchService.delete('tablet_users/' + user._id + '?rev=' + user._rev);
+    return this.couchService.delete('tablet_users/' + user._id + '?rev=' + user._rev).pipe(catchError((error) =>
+      error.status === 404 ? of({}) : throwError(error)
+    ));
   }
 
   userLoginCount(user: any, loginActivities: any[]) {
