@@ -7,9 +7,6 @@
   <div class="view-container view-full-height">
     <mat-toolbar class="action-buttons">
       <span class="scrolling">
-        <a routerLink="/resources" mat-button i18n>
-          Library
-        </a>
         <ng-container *ngFor="let link of links">
           <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
             {{link.title}}
