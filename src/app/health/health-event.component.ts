@@ -48,7 +48,12 @@ export class HealthEventComponent implements OnInit {
   onSubmit() {
     this.healthService.addEvent(
       this.route.snapshot.params.id,
-      { ...this.healthForm.value, date: Date.now(), selfExamination: this.route.snapshot.params.id === this.userService.get()._id }
+      {
+        ...this.healthForm.value,
+        date: Date.now(),
+        selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
+        recordedBy: this.userService.get()
+      }
     ).subscribe(() => {
       this.goBack();
     });
