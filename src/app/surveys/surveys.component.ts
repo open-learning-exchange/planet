@@ -252,7 +252,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       children = attachNamesToPlanets(children);
       return of({
         tableData: [
-          ...users.tableData,
+          ...users.tableData.filter(user => user.planetCode === this.configuration.code),
           ...childUsers.tableData.filter((user: any) => {
             const planet = children.find((child: any) => user.planetCode === child.doc.code);
             return planet && planet.registrationRequest !== 'pending';
