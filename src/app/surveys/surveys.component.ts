@@ -20,7 +20,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   'templateUrl': './surveys.component.html',

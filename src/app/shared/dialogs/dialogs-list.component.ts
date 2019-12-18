@@ -172,9 +172,8 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   sortDropDown(dropdownSettings, list) {
-    return list.sort((a, b) => (
-      (dropdownSettings.startingValue && dropdownSettings.startingValue.value === b.value) ||
-      b.text.toLowerCase() < a.text.toLowerCase()) ? 1 : -1
+    return list.sort(
+      (a, b) => (dropdownSettings.startingValue && dropdownSettings.startingValue.value === b.value) ? 1 : a.text.localeCompare(b.text)
     );
   }
 
