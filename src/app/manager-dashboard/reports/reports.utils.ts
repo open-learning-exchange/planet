@@ -13,5 +13,5 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
 
 export const sortPlanet = ((a, b) => {
   const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
-  return planetName(a).toLowerCase() - planetName(b).toLowerCase();
+  return planetName(a).localeCompare(planetName(b));
 });

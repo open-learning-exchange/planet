@@ -20,7 +20,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -259,7 +259,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           })
         ],
         columns: [ ...childUsers.columns ],
-        labels: children.sort(sortPlanet).reduce((labelObj, child) =>
+        labels: children.reduce((labelObj, child) =>
           ({ ...labelObj, [child.doc.code]: child.nameDoc ? child.nameDoc.name : child.doc.name }),
           {}
         )
