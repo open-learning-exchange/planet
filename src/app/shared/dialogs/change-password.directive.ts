@@ -180,7 +180,7 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   updatePasswordOnParent(userData) {
-    const adminName = 'org.couchdb.user:' + this.planetConfiguration.adminName;
+    const adminName = 'org.couchdb.user:' + userData.name + '@' + this.planetConfiguration.code;
     return this.couchService.get('_users/' + adminName , { domain: this.planetConfiguration.parentDomain })
       .pipe(catchError(this.passwordError('Error changing password in parent planet')),
       switchMap((data) => {
