@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions } from './health.constants';
 import { UserService } from '../shared/user.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -20,6 +21,7 @@ export class HealthEventComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
+    private stateService: StateService
   ) {
     this.healthForm = this.fb.group({
       temperature: [ '' ],
@@ -48,7 +50,13 @@ export class HealthEventComponent implements OnInit {
   onSubmit() {
     this.healthService.addEvent(
       this.route.snapshot.params.id,
-      { ...this.healthForm.value, date: Date.now(), selfExamination: this.route.snapshot.params.id === this.userService.get()._id }
+      {
+        ...this.healthForm.value,
+        date: Date.now(),
+        selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
+        createdBy: this.userService.get()._id,
+        planetCode: this.stateService.configuration.code
+      }
     ).subscribe(() => {
       this.goBack();
     });
