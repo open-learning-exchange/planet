@@ -37,7 +37,7 @@ export class CertificationsAddComponent {
       });
       return;
     }
-    this.certificationsService.addCertification({ ...this.certificateForm.value }).subscribe(() => {
+    this.certificationsService.addCertification({ ...this.certificateForm.value, courseIds: this.courseIds }).subscribe(() => {
       if (reroute) {
         this.goBack();
       }
