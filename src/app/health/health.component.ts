@@ -117,14 +117,10 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   exportCSV() {
-    const data = this.eventTable.data.map(h =>
-      Object.entries(h).reduce((object, [ key, value ]: [ any, any ]) => {
-        key = isNaN(key) ? key : this.datePipe.transform(key, 'shortDate');
-        return ({
-        ...object,
-        [key]: value
-      }); }, {})
-    );
+    const data = this.eventTable.data.map(h => Object.entries(h).reduce((object, [ key, value ]: [ any, any ]) => {
+      key = isNaN(key) ? key : (key / 86400 + 25569);
+      return ({ ...object, [key]: value });
+    }, {}));
     this.csvService.exportCSV({ data, title: 'Health Report' });
   }
 
