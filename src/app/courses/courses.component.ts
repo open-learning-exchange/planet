@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
@@ -59,7 +59,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
   ` ]
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
