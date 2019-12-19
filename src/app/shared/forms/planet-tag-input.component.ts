@@ -1,7 +1,7 @@
 import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -32,7 +32,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set value(tags: string[]) {
     this._value = tags || [];
-    if (this.mode === 'filter') {
+    if (this.mode === 'filter' && this.updateRouteParam) {
       this.filterReroute(tags);
     }
     this.onChange(tags);
@@ -68,6 +68,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() db;
   @Input() largeFont = false;
   @Input() selectMany = true;
+  @Input() updateRouteParam = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
@@ -85,7 +86,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     private elementRef: ElementRef,
     private tagsService: TagsService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;

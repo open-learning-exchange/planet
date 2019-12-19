@@ -17,7 +17,9 @@ export class DialogsAddCoursesComponent {
   ) {}
 
   ok() {
-    this.dialogsLoadingService.start();
+    if (!this.data.noSpinner) {
+      this.dialogsLoadingService.start();
+    }
     this.addExistingCourses();
   }
 
