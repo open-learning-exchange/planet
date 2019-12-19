@@ -114,9 +114,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       filterSpecificFieldsByWord([ 'fullName' ])
     ])(data, filter);
     this.usersTable.connect().subscribe(data => {
-      data.map((health: any) => health.sort((a, b) => b.lastVisit - a.lastVisit));
+      data.sort((a, b) => b.health.lastVisit - a.health.lastVisit);
       if (this.usersTable.paginator) {
-
         this.tableDataChange.emit(data);
       }
     });
