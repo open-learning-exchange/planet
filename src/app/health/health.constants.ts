@@ -11,6 +11,7 @@ export const conditions = [
   'Ischaemic heat disease',
   'Malaria',
   'Malnutrition',
+  'Measles',
   'Meningitis',
   'Neonatal sepsis and infections',
   'HIV/AIDS',
