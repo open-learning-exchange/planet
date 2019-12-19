@@ -51,12 +51,12 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       return data.date >= fromDate && data.date < toDate || data.date === 'Total';
     };
     this.table.connect().subscribe(financeData => {
-      if (financeData.length === 0) {
-        this.table.data[0] = { date: 'Total', credit: 0, debit: 0, balance: 0 };
+      if (financeData.length < 2) {
+        financeData[0] = { date: 'Total', credit: 0, debit: 0, balance: 0 };
         return;
       }
-      const { totalCredits: credit, totalDebits: debit, balance } = <any>financeData[0];
-      this.table.data[0] = { date: 'Total', credit, debit, balance };
+      const { totalCredits: credit, totalDebits: debit, balance } = <any>financeData[1];
+      financeData[0] = { date: 'Total', credit, debit, balance };
     });
   }
 
