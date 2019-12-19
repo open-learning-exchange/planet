@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError } from 'rxjs/operators';
-import { from, forkJoin, of } from 'rxjs';
+import { from, forkJoin, of, throwError } from 'rxjs';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -140,7 +140,8 @@ export class LoginFormComponent {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
       }),
-      switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId)))
+      switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
+      catchError(error => error.status === 404 ? of({}) : throwError(error))
     ).subscribe(() => {}, this.loginError.bind(this));
   }
 
