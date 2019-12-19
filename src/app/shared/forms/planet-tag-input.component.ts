@@ -32,7 +32,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set value(tags: string[]) {
     this._value = tags || [];
-    if (this.mode === 'filter') {
+    if (this.mode === 'filter' && this.updateRouteParam) {
       this.filterReroute(tags);
     }
     this.onChange(tags);
@@ -68,6 +68,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() db;
   @Input() largeFont = false;
   @Input() selectMany = true;
+  @Input() updateRouteParam = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
@@ -242,7 +243,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
    */
   filterReroute(tags: string[]) {
     const collections = tags.join(this.tagUrlDelimiter);
-    console.log(this.route.snapshot.params);
     this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
