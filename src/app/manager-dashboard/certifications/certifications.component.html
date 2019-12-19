@@ -18,9 +18,9 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <button mat-raised-button color="primary" (click)="addCertification(element)"i18n>
+            <a mat-raised-button color="primary" [routerLink]="[ 'update/' + element._id ]" i18n>
               <mat-icon>edit</mat-icon>Edit
-            </button>
+            </a>
           <button mat-raised-button color="warn" (click)="deleteClick(element)" i18n>
             <mat-icon>delete</mat-icon>Delete
           </button>

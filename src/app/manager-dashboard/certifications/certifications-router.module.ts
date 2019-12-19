@@ -5,7 +5,9 @@ import { CertificationsAddComponent } from './certifications-add.component';
 
 const routes: Routes = [
   { path: '', component: CertificationsComponent },
-  { path: 'add', component: CertificationsAddComponent }
+  { path: 'add', component: CertificationsAddComponent },
+  { path: 'update/:id', component: CertificationsAddComponent }
+
 ];
 
 @NgModule({

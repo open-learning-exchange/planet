@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
@@ -10,8 +10,9 @@ import { CoursesComponent } from '../../courses/courses.component';
 @Component({
   templateUrl: './certifications-add.component.html'
 })
-export class CertificationsAddComponent {
+export class CertificationsAddComponent implements OnInit {
 
+  certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup;
   courseIds: any[] = [];
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
@@ -26,8 +27,27 @@ export class CertificationsAddComponent {
     this.certificateForm = this.fb.group({ name: [ '', CustomValidators.required ] });
   }
 
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      const id = params.get('id');
+      if (id) {
+        this.certificateInfo._id = id;
+        this.certificationsService.getCertification(id).subscribe(certification => {
+          this.certificateForm.patchValue(certification);
+          this.certificateInfo._rev = certification._rev;
+          this.courseIds = certification.courseIds || [];
+        });
+      } else {
+        this.certificateInfo._id = undefined;
+        this.certificateForm.reset();
+        this.courseIds = [];
+      }
+    });
+  }
+
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    const navigation = this.certificateInfo._id ? '../..' : '..';
+    this.router.navigate([ navigation ], { relativeTo: this.route });
   }
 
   submitCertificate(reroute) {
@@ -37,7 +57,9 @@ export class CertificationsAddComponent {
       });
       return;
     }
-    this.certificationsService.addCertification({ ...this.certificateForm.value, courseIds: this.courseIds }).subscribe(() => {
+    this.certificationsService.addCertification({
+      ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
+    }).subscribe(() => {
       if (reroute) {
         this.goBack();
       }

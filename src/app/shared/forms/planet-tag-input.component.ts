@@ -1,7 +1,7 @@
 import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
 import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -85,7 +85,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     private elementRef: ElementRef,
     private tagsService: TagsService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -241,6 +242,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
    */
   filterReroute(tags: string[]) {
     const collections = tags.join(this.tagUrlDelimiter);
+    console.log(this.route.snapshot.params);
     this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
