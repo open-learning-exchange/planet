@@ -15,6 +15,7 @@ export class CertificationsAddComponent implements OnInit {
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup;
   courseIds: any[] = [];
+  showFormError = false;
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -52,11 +53,13 @@ export class CertificationsAddComponent implements OnInit {
 
   submitCertificate(reroute) {
     if (!this.certificateForm.valid) {
+      this.showFormError = true;
       Object.keys(this.certificateForm.controls).forEach(fieldName => {
         this.certificateForm.controls[fieldName].markAsTouched({ onlySelf: true });
       });
       return;
     }
+    this.showFormError = false;
     this.certificationsService.addCertification({
       ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
     }).subscribe(() => {
