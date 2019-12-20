@@ -47,7 +47,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   fetchItemCount = 0;
   pendingPushCount = 0;
-  isHub: boolean;
+  isHub: boolean = false;
 
   constructor(
     private userService: UserService,
