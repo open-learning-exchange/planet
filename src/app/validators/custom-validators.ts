@@ -9,18 +9,11 @@ export class CustomValidators {
     return isValidInt ? null : { invalidInt: true };
   }
 
-  static numberValidator(ac: AbstractControl): ValidationErrors {
-    if (!ac.value) {
-      return null;
-    }
-    return (ac.value > 0) ? null : { invalidInt : true };
-  }
-
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
     if (!ac.value) {
       return null;
     }
-    return (ac.value > 0) ? null : { invalidPositive : true };
+    return (ac.value > 0) ? null : (ac.value < 0) ?  { invalidPositive : true } : { invalidInt : true };
   }
 
   static choiceSelected(requireCorrect: boolean) {
