@@ -93,13 +93,13 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
             options: [ { value: 'credit', name: 'Credit' }, { value: 'debit', name: 'Debit' } ], required: true
           },
           { name: 'description', placeholder: 'Note', type: 'textbox', required: true },
-          { name: 'amount', placeholder: 'Amount', type: 'textbox', inputType: 'number', required: true },
+          { name: 'amount', placeholder: 'Amount', type: 'textbox', required: true },
           { name: 'date', placeholder: 'Date', type: 'date', required: true }
         ],
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
           description: [ transaction.description || '', CustomValidators.required ],
-          amount: [ transaction.amount || '', [ CustomValidators.required, Validators.min(0) ] ],
+          amount: [ transaction.amount || '', [ CustomValidators.numberValidator, Validators.min(0) ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {
