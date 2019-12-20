@@ -13,7 +13,7 @@ export class CustomValidators {
     if (!ac.value) {
       return null;
     }
-    return (ac.value > 0) ? null : (ac.value < 0) ?  { invalidPositive : true } : { invalidInt : true };
+    return (ac.value > 0) ? null : (ac.value < 0) ? { invalidPositive : true } : { invalidInt : true };
   }
 
   static choiceSelected(requireCorrect: boolean) {
