@@ -24,11 +24,15 @@ $exam-table-col-width: 100px;
 mat-table {
   width: max-content;
 
-  mat-header-cell .text {
+  mat-header-cell div .header-date {
     display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: center;
+    align-items: center;
+    
+    mat-icon {
+      margin-left: 0.25rem;
+      font-size: 1.4em;
+    }
+
   }
 
 }
