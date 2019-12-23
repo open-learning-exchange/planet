@@ -53,6 +53,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
+  linkId: any[];
+  teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
@@ -213,10 +215,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     return {
       request: this.teamsService.archiveTeam(team)(),
       onNext: () => {
-        this.deleteLink(link);
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
         this.removeTeamFromTable(team);
+        this.deleteCommunityLink(team);
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
     };
@@ -233,8 +235,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteLink(link) {
-    return this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+  deleteCommunityLink(team) {
+    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => {
+      this.linkId = links.filter(val => val.route === '/teams/view/' + team._id);
+      const link = this.linkId[0];
+      this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+    });
   }
 
   removeTeamFromTable(newTeam: any) {
