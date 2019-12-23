@@ -1,5 +1,5 @@
 <div [ngClass]="containerClass">
-  <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort>
+  <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort [matSortActive]="matSortActive" matSortDirection="desc">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -42,7 +42,7 @@
       <mat-cell *matCellDef="let element">{{element.lastLogin | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="contact">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Emergency Contact</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef i18n>Emergency Contact</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div *ngIf="element.health?.profile?.emergencyContact; else noneBlock">
           <p><b i18n>Name:</b> {{element.health?.profile.emergencyContactName}}</p>

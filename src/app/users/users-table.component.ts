@@ -44,6 +44,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   @Input() displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   @Input() users: any[];
   @Input() containerClass: string;
+  @Input() matSortActive = '';
   @Input()
   get search() {
     return this.usersTable.filter;
@@ -100,7 +101,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       if (item[property]) {
         return sortNumberOrString(item, property);
       }
-      if (item.health[property]) {
+      if (item.health && item.health[property]) {
         return sortNumberOrString(item.health, property);
       }
       return sortNumberOrString(item.doc, property);
