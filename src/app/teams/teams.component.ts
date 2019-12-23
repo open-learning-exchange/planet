@@ -213,6 +213,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     return {
       request: this.teamsService.archiveTeam(team)(),
       onNext: () => {
+        this.deleteLink(link);
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
         this.removeTeamFromTable(team);
@@ -230,6 +231,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         displayName: team.name
       }
     });
+  }
+
+  deleteLink(link) {
+    return this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
   }
 
   removeTeamFromTable(newTeam: any) {
