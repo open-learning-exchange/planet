@@ -107,6 +107,7 @@ export class ConfigurationComponent implements OnInit {
       ],
       createdDate: this.couchService.datePlaceholder,
       autoAccept: true,
+      alwaysOnline: false,
       betaEnabled: 'off'
     });
     this.contactFormGroup = this.formBuilder.group({

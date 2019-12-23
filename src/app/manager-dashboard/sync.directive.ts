@@ -55,6 +55,7 @@ export class SyncDirective {
       ),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
+        console.log(this.replicatorList(), this.replicatorList().concat(replicators.flat()));
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat()));
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
@@ -65,44 +66,45 @@ export class SyncDirective {
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ ...val, type })) {
+    const continuous = this.planetConfiguration.alwaysOnline;
     const bothList = [
-      { db: 'submissions', selector: { source: this.planetConfiguration.code } },
-      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } },
-      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
-      { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } }
+      { db: 'submissions', selector: { source: this.planetConfiguration.code }, continuous },
+      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code }, continuous },
+      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code }, continuous },
+      { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code }, continuous },
+      { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code }, continuous },
+      { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code }, continuous }
     ];
-    const pushList = [ ...this.pushList(), ...bothList ];
-    const pullList = [ ...this.pullList(), ...bothList ];
+    const pushList = [ ...this.pushList(continuous), ...bothList ];
+    const pullList = [ ...this.pullList(continuous), ...bothList ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
     ];
     return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
-  pushList() {
+  pushList(continuous) {
     return [
-      { db: 'courses_progress' },
-      { db: 'feedback' },
-      { db: 'login_activities' },
-      { db: 'ratings' },
-      { db: 'resource_activities' },
-      { dbSource: 'replicator_users', dbTarget: 'child_users' },
-      { db: 'admin_activities' },
-      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code } },
-      { db: 'apk_logs' },
-      { db: 'myplanet_activities' },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } },
-      { db: 'attachments', selector: { planetCode: this.planetConfiguration.code } }
+      { db: 'courses_progress', continuous },
+      { db: 'feedback', continuous },
+      { db: 'login_activities', continuous },
+      { db: 'ratings', continuous },
+      { db: 'resource_activities', continuous },
+      { dbSource: 'replicator_users', dbTarget: 'child_users', continuous },
+      { db: 'admin_activities', continuous },
+      { db: 'achievements', selector: { sendToNation: true, createdOn: this.planetConfiguration.code }, continuous },
+      { db: 'apk_logs', continuous },
+      { db: 'myplanet_activities', continuous },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode }, continuous },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.code }, continuous }
     ];
   }
 
-  pullList() {
+  pullList(continuous) {
     return [
-      { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } },
-      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode } }
+      { db: 'feedback', selector: { source: this.planetConfiguration.code }, continuous },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code }, continuous },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode }, continuous }
     ];
   }
 
