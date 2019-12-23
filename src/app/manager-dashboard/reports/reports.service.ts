@@ -7,6 +7,7 @@ import { dedupeShelfReduce } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
+import { StateService } from '../../shared/state.service';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -25,7 +26,8 @@ export class ReportsService {
   constructor(
     private couchService: CouchService,
     private usersService: UsersService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
@@ -71,11 +73,12 @@ export class ReportsService {
   }
 
   getTotalUsers(planetCode: string, local: boolean) {
+    const adminName = this.stateService.configuration.adminName.split('@')[0];
     const obs = local ?
       this.usersService.getAllUsers() :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
     return obs.pipe(map((users: any) => {
-      users = users.filter(user => user.name !== 'satellite' && user.roles.length);
+      users = users.filter(user => user.name !== 'satellite' && user.name !== adminName);
       this.users = users;
       return ({
         count: users.length,
