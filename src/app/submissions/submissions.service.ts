@@ -253,7 +253,7 @@ export class SubmissionsService {
           'Date': new Date(submission.lastUpdateTime).toString(),
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
-            [`Q${index + 1}: ${text}`]: answerIndexes[index] > -1 ? this.getAnswerText(submission.answers[index].value) : undefined
+            [`"Q${index + 1}: ${text.replace(/"/g, '""')}"`]: answerIndexes[index] > -1 ? this.getAnswerText(submission.answers[index].value) : undefined
           }), {})
         };
       });
