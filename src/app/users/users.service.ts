@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { forkJoin, Subject, zip, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -6,12 +6,14 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
 
+  @Input() link: any;
   private dbName = '_users';
   private adminConfig = '_node/nonode@nohost/_config/admins/';
   usersUpdated = new Subject<any>();
@@ -208,6 +210,27 @@ export class UsersService {
       }
       return observers;
     }, [])).pipe(map((responses) => this.requestUsers(true)));
+  }
+
+  sendNotifications(user){
+    const link = `/manager/users${this.link._users}`;
+    const notificationDoc = {
+      user: user._id,
+      'message': 'You were assigned a new role',
+      link,
+      linkParams: { activeTab: 'taskTab' },
+      'type': 'newRole',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: user.userPlanetCode
+    };
+    return this.couchService.findAll(
+      'notifications',
+      findDocuments({ link, type: 'newTask', status: 'unread', user: user.userId })
+    ).pipe(
+      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    );
   }
 
 }
