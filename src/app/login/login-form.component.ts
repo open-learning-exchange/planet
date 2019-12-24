@@ -133,8 +133,10 @@ export class LoginFormComponent {
     const configuration = this.stateService.configuration;
     const userId = `org.couchdb.user:${name}`;
     this.pouchAuthService.login(name, password).pipe(
-      switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
-      switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
+      switchMap((res: any) => of(
+        isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute()),
+        res.roles.indexOf('_admin') !== -1
+      )), switchMap((userIsAdmin) => forkJoin(of(userIsAdmin), this.pouchService.replicateFromRemoteDBs())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
@@ -180,9 +182,9 @@ export class LoginFormComponent {
 
   createSession(name, password) {
     const msg = this.stateService.configuration.planetType === 'community' ? 'nation' : 'center';
-    return () => {
+    return ([ userIsAdmin, res ]) => {
       // Post new session info to login_activity
-      const obsArr = this.loginObservables(name, password);
+      const obsArr = this.loginObservables(name, password, userIsAdmin);
       return forkJoin(obsArr).pipe(catchError(error => {
         // 401 is for Unauthorized
         if (error.status === 401) {
@@ -195,14 +197,13 @@ export class LoginFormComponent {
     };
   }
 
-  loginObservables(name, password) {
+  loginObservables(name, password, userIsAdmin) {
     const obsArr = [ this.userService.newSessionLog() ];
     const localConfig = this.stateService.configuration;
-    const localAdminName = localConfig.adminName.split('@')[0];
-    if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
+    if (environment.test || !userIsAdmin || localConfig.planetType === 'center') {
       return obsArr;
     }
-    obsArr.push(this.createParentSession({ 'name': localConfig.adminName, 'password': password }));
+    obsArr.push(this.createParentSession({ 'name': name + '@' + localConfig.code, 'password': password }));
     if (localConfig.registrationRequest === 'pending') {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
     }
