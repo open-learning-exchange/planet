@@ -239,7 +239,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => {
       this.linkId = links.filter(val => val.route === '/teams/view/' + team._id);
       const link = this.linkId[0];
-      this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+      this.couchService.delete(`teams/${link._id}?rev=${link._rev}`).subscribe();
     });
   }
 
