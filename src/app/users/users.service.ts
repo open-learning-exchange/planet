@@ -212,7 +212,7 @@ export class UsersService {
     }, [])).pipe(map((responses) => this.requestUsers(true)));
   }
 
-  sendNotifications(user){
+  sendNotifications(user) {
     const link = `/manager/users${this.link._users}`;
     const notificationDoc = {
       user: user._id,
