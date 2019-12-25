@@ -249,7 +249,10 @@ export class ConfigurationComponent implements OnInit {
     if (this.configurationType === 'update') {
       this.configurationService.updateConfiguration(configuration).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
-        err => this.planetMessageService.showAlert('There was an error updating the configuration'),
+        err => {
+          this.spinnerOn = false;
+          this.planetMessageService.showAlert('There was an error updating the configuration');
+        },
         () => {
           this.spinnerOn = false;
           // Navigate back to the manager dashboard
@@ -266,7 +269,6 @@ export class ConfigurationComponent implements OnInit {
       }, (error) => {
         this.spinnerOn = false;
         this.planetMessageService.showAlert('There was an error creating planet');
-        // this.spinnerOn = false;
       });
     }
   }
