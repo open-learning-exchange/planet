@@ -241,6 +241,7 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (!this.allValid()) {
+      this.spinnerOn = false;
       return;
     }
     this.spinnerOn = true;
@@ -250,6 +251,7 @@ export class ConfigurationComponent implements OnInit {
         () => this.stateService.requestData('configurations', 'local'),
         err => this.planetMessageService.showAlert('There was an error updating the configuration'),
         () => {
+          this.spinnerOn = false;
           // Navigate back to the manager dashboard
           this.router.navigate([ '/manager' ]);
           this.planetMessageService.showMessage('Configuration Updated Successfully');
@@ -258,11 +260,13 @@ export class ConfigurationComponent implements OnInit {
     } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
       this.configurationService.createPlanet(admin, configuration, credentials).subscribe((data) => {
+        this.spinnerOn = false;
         this.planetMessageService.showMessage('Admin created: ' + credentials.name);
         this.router.navigate([ '/login' ]);
       }, (error) => {
-        this.planetMessageService.showAlert('There was an error creating planet');
         this.spinnerOn = false;
+        this.planetMessageService.showAlert('There was an error creating planet');
+        // this.spinnerOn = false;
       });
     }
   }
