@@ -55,7 +55,6 @@ export class SyncDirective {
       ),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
-        console.log(this.replicatorList(), this.replicatorList().concat(replicators.flat()));
         return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat()));
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
