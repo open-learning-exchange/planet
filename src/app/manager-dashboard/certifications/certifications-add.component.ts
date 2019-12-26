@@ -26,7 +26,7 @@ export class CertificationsAddComponent implements OnInit {
     private dialog: MatDialog,
     private certificationsService: CertificationsService
   ) {
-    this.certificateForm = this.fb.group({ name: [ '', CustomValidators.required ] });
+    this.certificateForm = this.fb.group({ name: [ '', CustomValidators.required, this.certificationsService.nameValidator('') ] });
   }
 
   ngOnInit() {
@@ -35,6 +35,7 @@ export class CertificationsAddComponent implements OnInit {
       if (id) {
         this.certificateInfo._id = id;
         this.certificationsService.getCertification(id).subscribe(certification => {
+          this.certificateForm.controls.name.setAsyncValidators(this.certificationsService.nameValidator(certification.name));
           this.certificateForm.patchValue(certification);
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
