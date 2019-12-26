@@ -1,4 +1,4 @@
-import { Injectable, Input } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { forkJoin, Subject, zip, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -13,7 +13,6 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class UsersService {
 
-  @Input() link: any;
   private dbName = '_users';
   private adminConfig = '_node/nonode@nohost/_config/admins/';
   usersUpdated = new Subject<any>();
@@ -213,7 +212,7 @@ export class UsersService {
   }
 
   sendNotifications(user) {
-    const link = `/manager/users${this.link._users}`;
+    const link = `/users${user}`;
     const notificationDoc = {
       user: user._id,
       'message': 'You were assigned a new role',
@@ -227,7 +226,6 @@ export class UsersService {
     };
     return this.couchService.findAll(
       'notifications',
-      findDocuments({ link, type: 'newTask', status: 'unread', user: user.userId })
     ).pipe(
       switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
     );
