@@ -6,6 +6,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
 import { DialogsAddCoursesComponent } from '../../shared/dialogs/dialogs-add-courses.component';
 import { CoursesComponent } from '../../courses/courses.component';
+import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './certifications-add.component.html'
@@ -15,7 +16,7 @@ export class CertificationsAddComponent implements OnInit {
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup;
   courseIds: any[] = [];
-  showFormError = false;
+  pageType = 'Add';
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -37,6 +38,7 @@ export class CertificationsAddComponent implements OnInit {
           this.certificateForm.patchValue(certification);
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
+          this.pageType = 'Update';
         });
       } else {
         this.certificateInfo._id = undefined;
@@ -53,13 +55,9 @@ export class CertificationsAddComponent implements OnInit {
 
   submitCertificate(reroute) {
     if (!this.certificateForm.valid) {
-      this.showFormError = true;
-      Object.keys(this.certificateForm.controls).forEach(fieldName => {
-        this.certificateForm.controls[fieldName].markAsTouched({ onlySelf: true });
-      });
+      showFormErrors(this.certificateForm.controls);
       return;
     }
-    this.showFormError = false;
     this.certificationsService.addCertification({
       ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
     }).subscribe(() => {

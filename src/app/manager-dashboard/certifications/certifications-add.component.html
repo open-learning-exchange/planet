@@ -7,7 +7,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span i18n>Add Certification</span>
+    <span i18n>{{this.pageType}} Certification</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="action-buttons">
@@ -15,12 +15,11 @@
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(true)" i18n class="margin-lr-5">Save & Return</button>
       <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" i18n>Add Courses</button>
       <button mat-raised-button color="accent" type="button" (click)="removeCourses()" i18n>Remove Courses</button>
-      <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Required certificate name field is missing.</span>
     </div>
     <form [formGroup]="certificateForm" novalidate>
       <mat-form-field class="full-width">
         <input matInput i18n-placeholder placeholder="Certificate Name" formControlName="name" required>
-        <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="certificateForm.controls.name"></planet-form-error-messages></mat-error>
+        <mat-error><planet-form-error-messages [control]="certificateForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </form>
     <planet-courses *ngIf="courseIds.length > 0" [isForm]="true" [includeIds]="courseIds"></planet-courses>
