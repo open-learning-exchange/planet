@@ -75,9 +75,14 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       return this.managerService.getLogs(new Date(tillDate.getFullYear(), tillDate.getMonth(), tillDate.getDate() - 30).getTime());
     })).subscribe(logs => this.activityLogs = logs);
     this.countFetchItemAvailable();
-    this.couchService.findAll('send_items').subscribe((items: any) => {
+    forkJoin([
+      this.couchService.findAll('send_items'),
+      this.managerService.getChildPlanets(true)
+    ]).subscribe(([ items, child ]: [ any, any ]) => {
       this.pendingPushCount = items.reduce(
-        (planets, item) => planets.concat(planets.indexOf(item.sendTo) > -1 ? [] : [ item.sendTo ]), []
+        (planets, item) => planets.concat(
+          planets.indexOf(item.sendTo) > -1 || child.findIndex(p => p.code === items.sendTo) === -1 ? [] : [ item.sendTo ]
+        ), []
       ).length;
     });
   }
