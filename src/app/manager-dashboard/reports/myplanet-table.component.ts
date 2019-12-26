@@ -19,7 +19,8 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
       switch (property) {
         case 'versionName': return item.versionName.split('.').reduce((v, n) => v + n.padStart(3, '0'), '');
         case 'name': return (item.customDeviceName || item.deviceName).toLowerCase();
-        default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+        default: return typeof item[property] === undefined ? '' :
+          typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       }
     };
   }
