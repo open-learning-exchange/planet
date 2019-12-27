@@ -6,7 +6,10 @@ import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   selector: 'planet-news-list',
@@ -34,6 +37,8 @@ export class NewsListComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
+    private userService: UserService,
+    private couchService: CouchService,
     private planetMessageService: PlanetMessageService
   ) {}
 
@@ -82,6 +87,27 @@ export class NewsListComponent implements OnChanges {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
     });
+    this.sendNewsNotifications(oldNews);
+  }
+
+  sendNewsNotifications(oldNews) {
+    const userId = this.userService.get()._id;
+    const link = '/community';
+    const notificationDoc = {
+      user: userId,
+      'message': 'You have a new message in your community.',
+      link,
+      'type': 'newMessage',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: oldNews.messagePlanetCode
+    };
+    return this.couchService.findAll(
+      'notifications',
+    ).pipe(
+      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    );
   }
 
   openDeleteDialog(news) {
