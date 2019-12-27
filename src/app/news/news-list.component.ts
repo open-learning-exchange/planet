@@ -103,11 +103,9 @@ export class NewsListComponent implements OnChanges {
       'time': this.couchService.datePlaceholder,
       userPlanetCode: oldNews.messagePlanetCode
     };
-    return this.couchService.findAll(
-      'notifications',
-    ).pipe(
-      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-    );
+    return this.couchService.findAll( 'notifications', ).pipe(
+      switchMap((data: any[]) => data.length > 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    ).subscribe((news: any) => news);
   }
 
   openDeleteDialog(news) {
