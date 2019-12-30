@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
@@ -220,7 +220,9 @@ export class PlanetTagInputDialogComponent {
   }
 
   tagNameSyncValidator() {
-    return [ CustomValidators.required, ac => ac.value.match('_') ? { noUnderscore: true } : null ];
+    return [ CustomValidators.required,
+      ac => ac.value.match('_') ? { noUnderscore: true } : null,
+      ac => ac.value.length > 30 ? { maxLength: true } : null ];
   }
 
   tagNameAsyncValidator(ac, exception = '') {
