@@ -95,9 +95,9 @@ export class NewsListComponent implements OnChanges {
     const link = '/community';
     const notificationDoc = {
       user: userId,
-      'message': 'You have a new message in your community.',
+      'message': 'Someone replyed to your community message.',
       link,
-      'type': 'newMessage',
+      'type': 'replyMessage',
       'priority': 1,
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
