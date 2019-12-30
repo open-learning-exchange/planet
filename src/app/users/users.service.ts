@@ -132,6 +132,7 @@ export class UsersService {
       _attachments: undefined,
       _rev: undefined
     };
+    this.sendNotifications(user);
     return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(
       catchError(() => of(null)),
       switchMap(oldDoc => forkJoin([
@@ -212,7 +213,7 @@ export class UsersService {
   }
 
   sendNotifications(user) {
-    const link = `/users${user}`;
+    const link = '/manager/users';
     const notificationDoc = {
       user: user._id,
       'message': 'You were assigned a new role',
@@ -227,8 +228,8 @@ export class UsersService {
     return this.couchService.findAll(
       'notifications',
     ).pipe(
-      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-    );
+      switchMap((res: any[]) => res.length > 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    ).subscribe((users: any) => users);
   }
 
 }
