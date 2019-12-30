@@ -122,7 +122,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     const userIds = this.usersTable.selection.selected;
     this.usersService.setRolesForUsers(this.idsToUsers(userIds), roles).subscribe(
       () => {
-        this.usersService.requestUsers();
+        this.usersService.requestUsers(true);
         this.planetMessageService.showMessage('Roles updated');
       },
       () => this.planetMessageService.showAlert('There was an error adding role(s) to member(s)')

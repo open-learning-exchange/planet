@@ -53,8 +53,8 @@ export class UsersService {
     ));
   }
 
-  requestUsers() {
-    this.getAllUsers().subscribe(users => {
+  requestUsers(withPrivateDocs = false) {
+    this.getAllUsers(withPrivateDocs).subscribe(users => {
       this.data.users = users;
       this.updateUsers();
     });
@@ -180,7 +180,7 @@ export class UsersService {
           this.tasksService.removeAssigneeFromTasks(user._id)
         ]);
       }),
-      map(() => this.requestUsers())
+      map(() => this.requestUsers(true))
     );
   }
 
@@ -203,7 +203,7 @@ export class UsersService {
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
-    }, [])).pipe(map((responses) => this.requestUsers()));
+    }, [])).pipe(map((responses) => this.requestUsers(true)));
   }
 
 }

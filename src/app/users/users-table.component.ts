@@ -200,7 +200,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.usersService.toggleManagerStatus(user);
     request.subscribe(
       () => {
-        this.usersService.requestUsers();
+        this.usersService.requestUsers(true);
         this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
       },
       () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
@@ -210,7 +210,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   setRoles(user, roles, event) {
     event.stopPropagation();
     this.usersService.setRoles(user, roles).subscribe(() => {
-      this.usersService.requestUsers();
+      this.usersService.requestUsers(true);
       this.planetMessageService.showMessage(`${user.name} roles modified`);
     });
   }
