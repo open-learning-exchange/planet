@@ -211,7 +211,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   archiveTeam(team) {
     return {
-      request: this.teamsService.archiveTeam(team)().pipe(switchMap(this.deleteCommunityLink(team))),
+      request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
