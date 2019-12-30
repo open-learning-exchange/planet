@@ -42,13 +42,7 @@ export class UsersService {
         return;
       }
       this.data = { users, loginActivities, childUsers };
-      this.usersUpdated.next(
-        this.data.users.filter((user: any) => {
-          // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
-          // so this protects from that.  May need to unhide in the future.
-          return this.userService.get().name !== user.name && user.name !== 'satellite';
-        }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
-      );
+      this.updateUsers();
     });
   }
 
@@ -60,6 +54,23 @@ export class UsersService {
   }
 
   requestUsers() {
+    this.getAllUsers().subscribe(users => {
+      this.data.users = users;
+      this.updateUsers();
+    });
+  }
+
+  updateUsers() {
+    this.usersUpdated.next(
+      this.data.users.filter((user: any) => {
+        // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
+        // so this protects from that.  May need to unhide in the future.
+        return this.userService.get().name !== user.name && user.name !== 'satellite';
+      }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
+    );
+  }
+
+  requestActivitiesAndChildren() {
     this.stateService.requestData('login_activities', 'local');
     this.stateService.requestData('child_users', 'local');
   }
@@ -192,7 +203,7 @@ export class UsersService {
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
       }
       return observers;
-    }, [])).pipe(map((responses) => this.stateService.requestData(this.dbName, 'local')));
+    }, [])).pipe(map((responses) => this.requestUsers()));
   }
 
 }
