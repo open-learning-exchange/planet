@@ -20,50 +20,66 @@
           <img class="profile-image-large" src="assets/image.png">
         </ng-template>
       </div>
-      <mat-list>
-        <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Full Name</h4>
-          <p matLine><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
+      <div class="info-container">
+        <div>
+          <div>
+            <h4 class="primary-text-color" i18n>Full Name</h4>
+            <p><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Email</h4>
-          <p matLine><b>{{userDetail.email || 'N/A'}}</b></p>
+        </div>
+        <div>
+          <div>
+            <h4 class="primary-text-color" i18n>Email</h4>
+            <p><b>{{userDetail.email || 'N/A'}}</b></p>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Language</h4>
-          <p matLine><b>{{userDetail.language || 'N/A'}}</b></p>
+        </div>
+        <div>
+          <div>
+            <h4 class="primary-text-color" i18n>Language</h4>
+            <p><b>{{userDetail.language || 'N/A'}}</b></p>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>DOB</h4>
-          <p matLine><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>
+        </div>
+        <div>
+          <div>
+            <h4 class="primary-text-color" i18n>DOB</h4>
+            <p><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Birthplace</h4>
-          <p matLine><b>{{userDetail.birthplace || 'N/A'}}</b></p>
+        </div>
+        <div>
+          <div>
+            <h4 class="primary-text-color" i18n>Birthplace</h4>
+            <p><b>{{userDetail.birthplace || 'N/A'}}</b></p>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Emergency Contact</h4>
-          <p matLine><b>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
-          <p matLine><b>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
-          <p matLine><b>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+        </div>
+        <div>
+          <div>
+            <h4 class="primary-text-color" i18n>Emergency Contact</h4>
+            <p><b>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
+            <p><b>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
+            <p><b>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item class="full-width">
-          <h4 class="primary-text-color" matLine i18n>Special Needs</h4>
-          <p matLine><b>{{healthDetail?.specialNeeds || 'N/A'}}</b></p>
+        </div>
+        <div class="full-width">
+          <div>
+            <h4 class="primary-text-color" i18n>Special Needs</h4>
+            <td-markdown [content]="healthDetail?.specialNeeds || 'N/A'"></td-markdown>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-        <mat-list-item class="full-width">
-          <h4 class="primary-text-color" matLine i18n>Notes</h4>
-          <p matLine><b>{{healthDetail?.notes || 'N/A'}}</b></p>
+        </div>
+        <div class="full-width">
+          <div>
+            <h4 class="primary-text-color" i18n>Notes</h4>
+            <td-markdown [content]="healthDetail?.notes || 'N/A'"></td-markdown>
+          </div>
           <mat-divider></mat-divider>
-        </mat-list-item>
-      </mat-list>
+        </div>
+      </div>
       <ng-container *ngIf="events.length > 0">
         <h4 class="full-width">Examinations</h4>
         <div class="full-width table-container" #examsTable>

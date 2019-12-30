@@ -7,10 +7,24 @@ $exam-table-col-width: 100px;
   grid-auto-columns: $exam-table-col-width;
 }
 
-.profile-container mat-list {
+.profile-container .info-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, 200px);
   grid-column-gap: 0.5rem;
+
+  div > div {
+    padding: 1rem;
+    font-size: 0.875rem;
+
+    h4 {
+      font-size: 1rem;
+    }
+
+    h4, p {
+      margin: 0;
+      font-weight: 400;
+    }
+  }
 }
 
 .full-width {
@@ -27,7 +41,7 @@ mat-table {
   mat-header-cell div .header-date {
     display: flex;
     align-items: center;
-    
+
     mat-icon {
       margin-left: 0.25rem;
       font-size: 1.4em;
