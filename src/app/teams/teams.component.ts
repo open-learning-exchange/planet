@@ -216,6 +216,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
         this.removeTeamFromTable(team);
+        this.deleteCommunityLink(team);
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
     };
@@ -229,6 +230,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         type: 'team',
         displayName: team.name
       }
+    });
+  }
+
+  deleteCommunityLink(team) {
+    const communityId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+    this.teamsService.getTeamMembers(communityId, true).subscribe((links) => {
+      const link = links.find(val => val.route === '/teams/view/' + team._id);
+      this.couchService.delete(`teams/${link._id}?rev=${link._rev}`).subscribe();
     });
   }
 
