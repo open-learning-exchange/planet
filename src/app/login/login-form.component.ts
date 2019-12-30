@@ -133,8 +133,8 @@ export class LoginFormComponent {
     const configuration = this.stateService.configuration;
     const userId = `org.couchdb.user:${name}`;
     this.pouchAuthService.login(name, password).pipe(
-      switchMap((res: any) => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
-      switchMap(() => this.pouchService.replicateFromRemoteDBs()),
+      switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
+      switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
