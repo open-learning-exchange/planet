@@ -53,8 +53,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
-  linkId: any[];
-  teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
@@ -236,9 +234,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   deleteCommunityLink(team) {
-    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => {
-      this.linkId = links.filter(val => val.route === '/teams/view/' + team._id);
-      const link = this.linkId[0];
+    const communityId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+    this.teamsService.getTeamMembers(communityId, true).subscribe((links) => {
+      const link = links.find(val => val.route === '/teams/view/' + team._id);
       this.couchService.delete(`teams/${link._id}?rev=${link._rev}`).subscribe();
     });
   }
