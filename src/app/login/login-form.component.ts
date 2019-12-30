@@ -198,11 +198,10 @@ export class LoginFormComponent {
   loginObservables(name, password) {
     const obsArr = [ this.userService.newSessionLog() ];
     const localConfig = this.stateService.configuration;
-    const localAdminName = localConfig.adminName.split('@')[0];
-    if (environment.test || localAdminName !== name || localConfig.planetType === 'center') {
+    if (environment.test || this.userService.get().roles.indexOf('_admin') === -1 || localConfig.planetType === 'center') {
       return obsArr;
     }
-    obsArr.push(this.createParentSession({ 'name': localConfig.adminName, 'password': password }));
+    obsArr.push(this.createParentSession({ 'name': name + '@' + localConfig.code, 'password': password }));
     if (localConfig.registrationRequest === 'pending') {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
     }
