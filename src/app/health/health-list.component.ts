@@ -31,7 +31,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
       this.users = users;
       this.emptyData = this.users.length === 0;
     });
-    this.usersService.requestUsers();
+    this.usersService.requestActivitiesAndChildren();
   }
 
   ngOnDestroy() {
