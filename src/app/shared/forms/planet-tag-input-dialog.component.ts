@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
