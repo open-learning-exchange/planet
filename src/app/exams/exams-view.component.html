@@ -15,10 +15,10 @@
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(true)" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
-  <div class="view-container">
+  <div class="view-container view-full-height">
     <span class="mat-h2">{{question.title}}</span>
     <td-markdown [content]="question.body"></td-markdown>
-    <ng-container [ngSwitch]="mode">
+    <div [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question.type">
           <mat-form-field class="full-width" *ngSwitchCase="'input'">
@@ -54,7 +54,7 @@
         <p><b i18n>Response:</b></p>
         <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
       </ng-container>
-    </ng-container>
+    </div>
     <div class="v-align-center">
       <button
         *ngIf="mode !== 'view'"
