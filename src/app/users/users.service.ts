@@ -157,6 +157,7 @@ export class UsersService {
       roles: roles,
       oldRoles: [ ...user.roles ] || [ 'learner' ],
     };
+    this.sendNotifications(user);
     return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser);
   }
 
@@ -207,6 +208,7 @@ export class UsersService {
         // Make copy of user so UI doesn't change until DB change succeeds
         const tempUser = { ...user, roles: newRoles };
         observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
+        this.sendNotifications(user);
       }
       return observers;
     }, [])).pipe(map((responses) => this.requestUsers(true)));
