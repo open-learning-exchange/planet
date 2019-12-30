@@ -1,4 +1,14 @@
 :host {
+
+  .view-container {
+    display: grid;
+    grid-template-rows: min-content minmax(auto, min-content) max-content min-content;
+
+    td-markdown {
+      overflow-y: auto;
+    }
+  }
+
   .question-list {
     display: flex;
     flex-direction: column;
