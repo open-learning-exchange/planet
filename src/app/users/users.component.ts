@@ -75,7 +75,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.dialogsLoadingService.stop();
       this.users = users;
     });
-    this.usersService.requestUsers();
+    this.usersService.requestActivitiesAndChildren();
   }
 
   ngOnDestroy() {
@@ -121,7 +121,10 @@ export class UsersComponent implements OnInit, OnDestroy {
   roleSubmit(roles) {
     const userIds = this.usersTable.selection.selected;
     this.usersService.setRolesForUsers(this.idsToUsers(userIds), roles).subscribe(
-      () => this.planetMessageService.showMessage('Roles updated'),
+      () => {
+        this.usersService.requestUsers();
+        this.planetMessageService.showMessage('Roles updated');
+      },
       () => this.planetMessageService.showAlert('There was an error adding role(s) to member(s)')
     );
   }
