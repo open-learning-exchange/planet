@@ -51,6 +51,12 @@ mat-table {
 
 }
 
+.user-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .table-column {
   min-width: $exam-table-col-width;
 }
