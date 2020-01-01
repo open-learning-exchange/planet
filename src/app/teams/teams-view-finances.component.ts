@@ -99,7 +99,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
           description: [ transaction.description || '', CustomValidators.required ],
-          amount: [ transaction.amount || '', [ CustomValidators.integerValidator, CustomValidators.required,  Validators.min(0) ] ],
+          amount: [ transaction.amount || '', [ CustomValidators.integerValidator, CustomValidators.required, Validators.min(0) ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {
