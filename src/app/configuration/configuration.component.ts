@@ -242,18 +242,21 @@ export class ConfigurationComponent implements OnInit {
   onSubmitConfiguration() {
     if (!this.allValid()) {
       this.spinnerOn = false;
-      return; }
+      return;
+    }
     this.spinnerOn = true;
     const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
       this.configurationService.updateConfiguration(configuration).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
-        err => {this.spinnerOn = false;
-                this.planetMessageService.showAlert('There was an error updating the configuration');
-        }, () => {this.spinnerOn = false;
-                  // Navigate back to the manager dashboard
-                  this.router.navigate([ '/manager' ]);
-                  this.planetMessageService.showMessage('Configuration Updated Successfully');
+        err => {
+          this.spinnerOn = false;
+          this.planetMessageService.showAlert('There was an error updating the configuration');
+        }, () => {
+          this.spinnerOn = false;
+          // Navigate back to the manager dashboard
+          this.router.navigate([ '/manager' ]);
+          this.planetMessageService.showMessage('Configuration Updated Successfully');
         });
     } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
