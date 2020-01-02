@@ -93,8 +93,8 @@ export class MeetupsAddComponent implements OnInit {
       endDate: [ '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
-      startTime: '',
-      endTime: '',
+      startTime: [ '', CustomValidators.timeValidator() ],
+      endTime: [ '', CustomValidators.timeValidator() ],
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
@@ -110,12 +110,21 @@ export class MeetupsAddComponent implements OnInit {
       showFormErrors(this.meetupForm.controls);
       return;
     }
+    this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
+    this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
     const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
     if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
       this.addMeetup(meetup);
     }
+  }
+
+  changeTimeFormat(time: string): string {
+    if (time && time.length < 5) {
+      return '0' + time;
+    }
+    return time;
   }
 
   updateMeetup(meetupInfo) {
