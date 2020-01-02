@@ -7,7 +7,6 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { finalize, } from 'rxjs/operators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
-import { ValidatorService } from '../../validators/validator.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +21,7 @@ export class CertificationsService {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private validatorService: ValidatorService
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   getCertifications() {
@@ -90,10 +88,6 @@ export class CertificationsService {
     return {
       name: [ certification.name || '', CustomValidators.required, this.nameValidator(certification.name || '' ) ]
     };
-  }
-
-  nameValidator(exception = '') {
-    return ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { exceptions: [ exception ] });
   }
 
 }
