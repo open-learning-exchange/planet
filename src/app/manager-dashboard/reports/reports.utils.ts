@@ -8,7 +8,9 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
     ...hub,
     children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child)
   })),
-  sandboxPlanets: planets.filter(planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1) === undefined)
+  sandboxPlanets: planets.filter(
+    planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1 || planet.doc._id === hub.planetId) === undefined
+  )
 });
 
 export const sortPlanet = ((a, b) => {
