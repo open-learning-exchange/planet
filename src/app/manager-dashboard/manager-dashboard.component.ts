@@ -81,7 +81,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     ]).subscribe(([ items, child ]: [ any, any ]) => {
       this.pendingPushCount = items.reduce(
         (planets, item) => planets.concat(
-          planets.indexOf(item.sendTo) > -1 || child.findIndex(p => p.code === items.sendTo) === -1 ? [] : [ item.sendTo ]
+          planets.indexOf(item.sendTo) > -1 || child.findIndex(p => p.code === item.sendTo) === -1 ? [] : [ item.sendTo ]
         ), []
       ).length;
     });
