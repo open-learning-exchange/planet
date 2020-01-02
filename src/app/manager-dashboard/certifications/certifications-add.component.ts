@@ -29,7 +29,11 @@ export class CertificationsAddComponent implements OnInit {
     private certificationsService: CertificationsService,
     private validatorService: ValidatorService
   ) {
-    this.certificateForm = this.fb.group({ name: [ '', CustomValidators.required, this.nameValidator('') ] });
+    this.certificateForm = this.fb.group({ name: [
+      '',
+      CustomValidators.required,
+      ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { '$ne': this.certificateInfo._id || '' } } })
+    ] });
   }
 
   ngOnInit() {
@@ -38,7 +42,6 @@ export class CertificationsAddComponent implements OnInit {
       if (id) {
         this.certificateInfo._id = id;
         this.certificationsService.getCertification(id).subscribe(certification => {
-          this.certificateForm.controls.name.setAsyncValidators(this.nameValidator(certification.name));
           this.certificateForm.patchValue(certification);
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
@@ -46,14 +49,9 @@ export class CertificationsAddComponent implements OnInit {
         });
       } else {
         this.certificateInfo._id = undefined;
-        this.certificateForm.reset();
         this.courseIds = [];
       }
     });
-  }
-
-  nameValidator(exception = '') {
-    return ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { exceptions: [ exception ] });
   }
 
   goBack() {
