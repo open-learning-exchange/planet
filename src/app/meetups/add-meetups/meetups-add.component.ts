@@ -121,7 +121,7 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   changeTimeFormat(time: string): string {
-    if (time.length < 5) {
+    if (time && time.length < 5) {
       return '0' + time;
     }
     return time;
