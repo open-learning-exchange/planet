@@ -3,7 +3,6 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './certifications.component.html'
@@ -20,8 +19,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
-    private certificationsService: CertificationsService,
-    private planetMessageService: PlanetMessageService
+    private certificationsService: CertificationsService
   ) { }
 
   ngOnInit() {
@@ -52,14 +50,6 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   getCertifications() {
     this.certificationsService.getCertifications().subscribe((certifications: any) => {
       this.certifications.data = certifications;
-    });
-  }
-
-  addCertification(certification?) {
-    this.certificationsService.openAddDialog(certification, () => {
-      this.getCertifications();
-      const msg = certification ? 'certification updated successfully' : 'certification created successfully';
-      this.planetMessageService.showMessage(msg);
     });
   }
 

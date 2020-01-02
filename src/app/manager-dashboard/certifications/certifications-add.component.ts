@@ -7,12 +7,14 @@ import { CertificationsService } from './certifications.service';
 import { DialogsAddCoursesComponent } from '../../shared/dialogs/dialogs-add-courses.component';
 import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './certifications-add.component.html'
 })
 export class CertificationsAddComponent implements OnInit {
 
+  readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup;
   courseIds: any[] = [];
@@ -24,9 +26,14 @@ export class CertificationsAddComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private certificationsService: CertificationsService
+    private certificationsService: CertificationsService,
+    private validatorService: ValidatorService
   ) {
-    this.certificateForm = this.fb.group({ name: [ '', CustomValidators.required ] });
+    this.certificateForm = this.fb.group({ name: [
+      '',
+      CustomValidators.required,
+      ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { '$ne': this.certificateInfo._id || '' } } })
+    ] });
   }
 
   ngOnInit() {
@@ -42,7 +49,6 @@ export class CertificationsAddComponent implements OnInit {
         });
       } else {
         this.certificateInfo._id = undefined;
-        this.certificateForm.reset();
         this.courseIds = [];
       }
     });
