@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
+const showdown = require('showdown');
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class CsvService {
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...dataToDisplay }) =>
       Object.entries(dataToDisplay).reduce((object, [ key, value ]: [ string, any ]) => ({
         ...object,
-        [key]: !this.isDateKey(key) ? value : value ? new Date(value).toString() : ''
+        [this.plainText(key)]: !this.isDateKey(key) ? this.plainText(value) : value ? new Date(value).toString() : ''
       }), {}
     ));
     if (formattedData.length === 0) {
@@ -98,6 +99,13 @@ export class CsvService {
 
   isDateKey(key: string) {
     return key === 'loginTime' || key === 'time' || key === 'Date' || key === 'logoutTime';
+  }
+  
+  plainText(value) {
+    const converter = new showdown.Converter();
+    const html = document.createElement('div');
+    html.innerHTML = converter.makeHtml(value);
+    return html.textContent || html.innerText || '';
   }
 
 }
