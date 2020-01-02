@@ -5,7 +5,7 @@ import { startWith, pairwise } from 'rxjs/operators';
 @Directive({
   selector: 'input[planetTimeMask]'
 })
-export class TimeMaskDirective implements OnInit {
+export class PlanetTimeMaskDirective implements OnInit {
 
   constructor(private controlRef: NgControl) {}
 

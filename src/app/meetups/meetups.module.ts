@@ -11,7 +11,6 @@ import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { TimeMaskDirective } from './add-meetups/time-mask.directive';
 
 @NgModule({
   exports: [ MeetupsAddComponent, MeetupsViewComponent ],
@@ -20,7 +19,7 @@ import { TimeMaskDirective } from './add-meetups/time-mask.directive';
      MatDialogModule, SharedComponentsModule
   ],
   declarations: [
-    MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent, TimeMaskDirective
+    MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
   ],
   providers: [ MeetupService ]
 })
