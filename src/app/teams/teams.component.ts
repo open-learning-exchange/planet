@@ -5,7 +5,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
 } from '../shared/table-helpers';
@@ -211,12 +211,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   archiveTeam(team) {
     return {
-      request: this.teamsService.archiveTeam(team)(),
+      request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
         this.removeTeamFromTable(team);
-        this.deleteCommunityLink(team);
       },
       onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
     };
@@ -235,10 +234,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   deleteCommunityLink(team) {
     const communityId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
-    this.teamsService.getTeamMembers(communityId, true).subscribe((links) => {
+    return this.teamsService.getTeamMembers(communityId, true).pipe(switchMap((links) => {
       const link = links.find(val => val.route === '/teams/view/' + team._id);
-      this.couchService.delete(`teams/${link._id}?rev=${link._rev}`).subscribe();
-    });
+      return link ? this.couchService.delete(`teams/${link._id}?rev=${link._rev}`) : of({});
+    }));
   }
 
   removeTeamFromTable(newTeam: any) {
