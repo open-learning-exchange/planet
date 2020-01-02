@@ -241,8 +241,7 @@ export class ConfigurationComponent implements OnInit {
 
   onSubmitConfiguration() {
     if (!this.allValid()) {
-      this.spinnerOn = false;
-      return;
+      return this.spinnerOn = false;
     }
     this.spinnerOn = true;
     const { credentials, configuration } = this.createConfigurationDocs();
@@ -254,7 +253,6 @@ export class ConfigurationComponent implements OnInit {
           this.planetMessageService.showAlert('There was an error updating the configuration');
         }, () => {
           this.spinnerOn = false;
-          // Navigate back to the manager dashboard
           this.router.navigate([ '/manager' ]);
           this.planetMessageService.showMessage('Configuration Updated Successfully');
         });
