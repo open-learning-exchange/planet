@@ -527,6 +527,12 @@ body {
     grid-auto-flow: column;
   }
 
+  .ellipsis-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
   .ellipsis-title {
     white-space: pre;
     overflow: hidden;
