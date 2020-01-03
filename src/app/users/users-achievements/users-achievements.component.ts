@@ -22,7 +22,7 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   redirectUrl = '/';
   openAchievementIndex = -1;
-  @ViewChild('achievementBlock') achievementBlockElem: ElementRef;
+  @ViewChild('achievementBlock', { static: false }) achievementBlockElem: ElementRef;
 
   constructor(
     private couchService: CouchService,
