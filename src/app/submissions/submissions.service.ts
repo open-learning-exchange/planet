@@ -250,7 +250,7 @@ export class SubmissionsService {
           'Gender': submission.user.gender || 'N/A',
           'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
           'Planet': submission.source,
-          'Date': new Date(submission.lastUpdateTime).toString(),
+          'Date': submission.lastUpdateTime,
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
             [`"Q${index + 1}: ${text.replace(/"/g, '""')}"`]: answerIndexes[index] > -1 ?
