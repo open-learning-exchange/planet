@@ -65,7 +65,11 @@
             matTooltip="Record survey information from a person who is not a member of {{configuration.name}}">
             <mat-icon>fiber_manual_record</mat-icon> Record Survey
           </button>
-          <button mat-raised-button color="primary" (click)="exportCSV(element)"><mat-icon>move_to_inbox</mat-icon> Export Survey</button>
+          <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu"><mat-icon>move_to_inbox</mat-icon> Export Survey</button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>
+            <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
+          </mat-menu>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
