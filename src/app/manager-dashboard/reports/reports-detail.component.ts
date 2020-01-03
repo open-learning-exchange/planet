@@ -239,12 +239,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
       item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
     );
+    let headers = [];
     switch (reportType) {
       case 'logins':
-        this.csvService.exportCSV({ data: filterByDate(this.loginActivities, 'loginTime', dateRange), title: 'Member Visits' });
+        headers = [ 'user', 'loginTime', 'logoutTime', 'androidId' ];
+        this.csvService.exportCSV({ data: filterByDate(this.loginActivities, 'loginTime', dateRange), title: 'Member Visits', headers });
         break;
       case 'resourceViews':
-        this.csvService.exportCSV({ data: filterByDate(this.resourceActivities, 'time', dateRange), title: 'Resource Views' });
+        headers = [ 'user', 'title', 'time', 'androidId', 'deviceName' ];
+        this.csvService.exportCSV({ data: filterByDate(this.resourceActivities, 'time', dateRange), title: 'Resource Views', headers });
         break;
       case 'summary':
         this.csvService.exportSummaryCSV(
