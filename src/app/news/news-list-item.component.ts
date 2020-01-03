@@ -1,5 +1,8 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/couchdb.service';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -21,6 +24,7 @@ export class NewsListItemComponent implements AfterViewChecked {
 
   constructor(
     private userService: UserService,
+    private couchService: CouchService,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -48,6 +52,26 @@ export class NewsListItemComponent implements AfterViewChecked {
         messageType: news.messageType
       }
     });
+    this.sendNewsNotifications(news);
+  }
+
+  sendNewsNotifications(news) {
+    const replyBy = this.currentUser.name;
+    const userId = news.user._id;
+    const link = news.viewableBy;
+    const notification = {
+      user: userId,
+      'message': `${replyBy} replyed to your community message.`,
+      link,
+      'priority': 1,
+      'type': 'replyMessage',
+      'replyTo': news._id,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+    };
+    return this.couchService.findAllStream( 'notifications', ).pipe(
+      switchMap((data: any[]) => data.length > 0 ? this.couchService.updateDocument('notifications', notification) : of({}))
+    ).subscribe();
   }
 
   editNews(news) {
