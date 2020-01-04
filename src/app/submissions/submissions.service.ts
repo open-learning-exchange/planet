@@ -286,7 +286,7 @@ export class SubmissionsService {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
         return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
           questionTexts.map((question, index) => (
-            `**Question ${index + 1}:**  \n ${question}  \n` +
+            `**Question ${index + 1}:**  \n ${question}  \n\n` +
             `**Response ${index + 1}:**  \n ${this.getAnswerText(submission.answers, index, answerIndexes)}  \n`
           )).join('  \n');
       }).join('  \n');
