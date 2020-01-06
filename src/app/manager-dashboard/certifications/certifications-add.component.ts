@@ -66,7 +66,8 @@ export class CertificationsAddComponent implements OnInit {
     }
     this.certificationsService.addCertification({
       ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
-    }).subscribe(() => {
+    }).subscribe((res) => {
+      this.certificateInfo = { _id: res.id, _rev: res.rev };
       if (reroute) {
         this.goBack();
       }
