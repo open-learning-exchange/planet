@@ -262,9 +262,7 @@ export class ConfigurationComponent implements OnInit {
       this.configurationService.createPlanet(admin, configuration, credentials).pipe(finalize(spinnerOff)).subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + credentials.name);
         this.router.navigate([ '/login' ]);
-      }, (error) => {
-        this.planetMessageService.showAlert('There was an error creating planet');
-      });
+      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
   }
 
