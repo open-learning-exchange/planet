@@ -9,7 +9,7 @@ import { MatStepper } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { switchMap, mergeMap } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
@@ -240,30 +240,29 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onSubmitConfiguration() {
+    const spinnerOff = () => this.spinnerOn = false;
     if (!this.allValid()) {
+      spinnerOff();
       return;
     }
     this.spinnerOn = true;
     const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
-      this.configurationService.updateConfiguration(configuration).subscribe(
+      this.configurationService.updateConfiguration(configuration).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
-        err => this.planetMessageService.showAlert('There was an error updating the configuration'),
-        () => {
-          // Navigate back to the manager dashboard
+        err => {
+          this.planetMessageService.showAlert('There was an error updating the configuration');
+        }, () => {
           this.router.navigate([ '/manager' ]);
           this.planetMessageService.showMessage('Configuration Updated Successfully');
         }
       );
     } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
-      this.configurationService.createPlanet(admin, configuration, credentials).subscribe((data) => {
+      this.configurationService.createPlanet(admin, configuration, credentials).pipe(finalize(spinnerOff)).subscribe((data) => {
         this.planetMessageService.showMessage('Admin created: ' + credentials.name);
         this.router.navigate([ '/login' ]);
-      }, (error) => {
-        this.planetMessageService.showAlert('There was an error creating planet');
-        this.spinnerOn = false;
-      });
+      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
     }
   }
 
