@@ -8,6 +8,12 @@ import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { dedupeShelfReduce, toProperCase, ageFromBirthDate } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
+import htmlToPdfmake from 'html-to-pdfmake';
+
+const showdown = require('showdown');
+const pdfMake = require('pdfmake/build/pdfmake');
+const pdfFonts = require('pdfmake/build/vfs_fonts');
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
   providedIn: 'root'
@@ -239,13 +245,15 @@ export class SubmissionsService {
     }
   }
 
-  exportSubmissionsCsv(exam, type: 'exam' | 'survey') {
+  getSubmissionsExport(exam, type: 'exam' | 'survey') {
     const query = findDocuments({ parentId: exam._id, type, status: 'complete' });
-    const questionTexts = exam.questions.map(question => question.body);
-    return forkJoin([ this.getSubmissions(query), this.couchService.currentTime() ])
-    .pipe(tap(([ submissions, time ]: [ any[], number ]) => {
+    return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
+  }
+
+  exportSubmissionsCsv(exam, type: 'exam' | 'survey') {
+    return this.getSubmissionsExport(exam, type).pipe(tap(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
       const data = submissions.map((submission) => {
-        const answerIndexes = questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
+        const answerIndexes = this.answerIndexes(questionTexts, submission);
         return {
           'Gender': submission.user.gender || 'N/A',
           'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
@@ -253,8 +261,7 @@ export class SubmissionsService {
           'Date': submission.lastUpdateTime,
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
-            [`"Q${index + 1}: ${text.replace(/"/g, '""')}"`]: answerIndexes[index] > -1 ?
-              this.getAnswerText(submission.answers[index].value) : undefined
+            [`"Q${index + 1}: ${text.replace(/"/g, '""')}"`]: this.getAnswerText(submission.answers, index, answerIndexes)
           }), {})
         };
       });
@@ -262,8 +269,32 @@ export class SubmissionsService {
     }));
   }
 
-  getAnswerText(answer: any) {
-    return Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer;
+  answerIndexes(questionTexts: string[], submission: any) {
+    return questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
+  }
+
+  getAnswerText(answers: any[], index, answerIndexes: number[]) {
+    const answer = answerIndexes[index] > -1 ? answers[index].value : undefined;
+    return answer && (
+      Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
+    );
+  }
+
+  exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
+    this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
+      const markdown = submissions.map(submission => {
+        const answerIndexes = this.answerIndexes(questionTexts, submission);
+        return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
+          questionTexts.map((question, index) => (
+            `**Question ${index + 1}:**  \n ${question}  \n\n` +
+            `**Response ${index + 1}:**  \n ${this.getAnswerText(submission.answers, index, answerIndexes)}  \n`
+          )).join('  \n');
+      }).join('  \n');
+      const converter = new showdown.Converter();
+      pdfMake.createPdf(
+        { content: [ htmlToPdfmake(converter.makeHtml(markdown)) ] }
+      ).download();
+    });
   }
 
 }

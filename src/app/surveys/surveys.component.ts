@@ -295,4 +295,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  exportPdf(survey) {
+    this.submissionsService.exportSubmissionsPdf(survey, 'survey');
+  }
+
 }
