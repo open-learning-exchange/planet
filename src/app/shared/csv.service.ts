@@ -29,7 +29,7 @@ export class CsvService {
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...dataToDisplay }) =>
       Object.entries(dataToDisplay).reduce((object, [ key, value ]: [ string, any ]) => ({
         ...object,
-        [key]: key.toLowerCase().indexOf('time') === -1 ? value : value ? new Date(value).toString() : ''
+        [key]: !this.isDateKey(key) ? value : value ? new Date(value).toString() : ''
       }), {}
     ));
     if (formattedData.length === 0) {
@@ -94,6 +94,10 @@ export class CsvService {
       });
       return item;
     });
+  }
+
+  isDateKey(key: string) {
+    return key === 'loginTime' || key === 'time' || key === 'Date' || key === 'logoutTime';
   }
 
 }
