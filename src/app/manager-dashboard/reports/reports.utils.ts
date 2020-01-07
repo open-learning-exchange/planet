@@ -17,3 +17,7 @@ export const sortPlanet = ((a, b) => {
   const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
   return planetName(a).localeCompare(planetName(b));
 });
+
+export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
+  item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
+);

@@ -12,7 +12,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { attachNamesToPlanets } from './reports.utils';
+import { attachNamesToPlanets, filterByDate } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -236,18 +236,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   exportCSV(reportType: string, dateRange: { startDate, endDate }) {
-    const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-      item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
-    );
-    let headers = [];
     switch (reportType) {
       case 'logins':
-        headers = [ 'user', 'loginTime', 'logoutTime', 'androidId' ];
-        this.csvService.exportCSV({ data: filterByDate(this.loginActivities, 'loginTime', dateRange), title: 'Member Visits', headers });
+        this.csvService.exportCSV({
+          data: filterByDate(this.loginActivities, 'loginTime', dateRange)
+            .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
+          title: 'Member Visits'
+        });
         break;
       case 'resourceViews':
-        headers = [ 'user', 'title', 'time', 'androidId', 'deviceName' ];
-        this.csvService.exportCSV({ data: filterByDate(this.resourceActivities, 'time', dateRange), title: 'Resource Views', headers });
+        this.csvService.exportCSV({
+          data: filterByDate(this.resourceActivities, 'time', dateRange)
+            .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
+          title: 'Resource Views'
+        });
         break;
       case 'summary':
         this.csvService.exportSummaryCSV(
