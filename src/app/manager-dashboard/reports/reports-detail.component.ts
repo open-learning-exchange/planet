@@ -239,13 +239,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     switch (reportType) {
       case 'logins':
         this.csvService.exportCSV({
-          data: filterByDate(this.loginActivities, 'loginTime', dateRange).map(a => ({ androidId: '', ...a })),
+          data: filterByDate(this.loginActivities, 'loginTime', dateRange)
+            .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
           title: 'Member Visits'
         });
         break;
       case 'resourceViews':
         this.csvService.exportCSV({
-          data: filterByDate(this.resourceActivities, 'time', dateRange).map(a => ({ androidId: '', deviceName: '', ...a })),
+          data: filterByDate(this.resourceActivities, 'time', dateRange)
+            .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
           title: 'Resource Views'
         });
         break;
