@@ -69,7 +69,8 @@ export class CertificationsAddComponent implements OnInit {
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       if (reroute) {
-        this.goBack();
+        const navigation = this.pageType === 'Update' ? '../..' : '..';
+        this.router.navigate([ navigation ], { relativeTo: this.route });
       }
     });
   }
