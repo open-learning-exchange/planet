@@ -293,7 +293,7 @@ export class SubmissionsService {
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         { content: [ htmlToPdfmake(converter.makeHtml(markdown)) ] }
-      ).download();
+      ).download(`${toProperCase(type)} -  ${exam.name}.pdf`);
     });
   }
 
