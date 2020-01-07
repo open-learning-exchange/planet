@@ -227,11 +227,11 @@ export class UsersService {
       'time': this.couchService.datePlaceholder,
       userPlanetCode: user.userPlanetCode
     };
-    return this.couchService.findAll(
-      'notifications',
-    ).pipe(
-      switchMap((res: any[]) => res.length > 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-    ).subscribe((users: any) => users);
+    return this.couchService.post('newRole/_find',
+      findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' }))
+      .pipe(
+      switchMap((res: any[]) => res.length > 0 ? this.couchService.updateDocument('user', notificationDoc) : of({}))
+    );
   }
 
 }
