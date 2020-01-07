@@ -24,7 +24,7 @@ export class CsvService {
     }
   }
 
-  exportCSV({ data, title, headers }: { data: any[], title: string, headers?: any[] }) {
+  exportCSV({ data, title, headers = [] }: { data: any[], title: string, headers?: string[] }) {
     const options = {
       title,
       filename: `Report of ${title} on ${new Date().toDateString()}`,
