@@ -228,9 +228,9 @@ export class UsersService {
       userPlanetCode: user.userPlanetCode
     };
     return this.couchService.post('newRole/_find',
-      findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' }))
-      .pipe(
-      switchMap((res: any[]) => res.length > 0 ? this.couchService.updateDocument('user', notificationDoc) : of({}))
+      findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' })
+      ).pipe(
+      switchMap((res: any[]) => res.length > 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
     );
   }
 
