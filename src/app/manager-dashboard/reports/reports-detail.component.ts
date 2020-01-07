@@ -12,7 +12,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { attachNamesToPlanets } from './reports.utils';
+import { attachNamesToPlanets, filterByDate } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -236,9 +236,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   exportCSV(reportType: string, dateRange: { startDate, endDate }) {
-    const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-      item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
-    );
     switch (reportType) {
       case 'logins':
         this.csvService.exportCSV({
