@@ -8,8 +8,8 @@
 </div>
 <mat-dialog-content *ngIf="selectedLink?.db === 'teams'">
   <form [formGroup]="linkForm">
-    <mat-horizontal-stepper #linkStepper (selectionChange)="linkStepperChange($event)">
-      <mat-step i18n-label label="Select">
+    <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
+      <mat-step i18n-label completed="false" label="Select">
         <planet-teams [mode]="selectedLink?.selector?.type" [excludeIds]="data.excludeIds" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
       </mat-step>
       <mat-step i18n-label label="Title" [stepControl]="linkTitleForm">
