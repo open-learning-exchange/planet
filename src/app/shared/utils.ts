@@ -97,5 +97,5 @@ export const markdownToPlainText = (markdown: string) => {
   const converter = new showdown.Converter();
   const html = document.createElement('div');
   html.innerHTML = converter.makeHtml(markdown);
-  return html.textContent || html.innerText || '';
+  return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };

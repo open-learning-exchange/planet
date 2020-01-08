@@ -6,7 +6,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import htmlToPdfmake from 'html-to-pdfmake';
 
@@ -261,7 +261,8 @@ export class SubmissionsService {
           'Date': submission.lastUpdateTime,
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
-            [`"Q${index + 1}: ${text.replace(/"/g, '""')}"`]: this.getAnswerText(submission.answers, index, answerIndexes)
+            [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              this.getAnswerText(submission.answers, index, answerIndexes)
           }), {})
         };
       });
