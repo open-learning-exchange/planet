@@ -10,7 +10,7 @@
     <a i18n mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></a>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <mat-table *planetBeta #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
+    <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Certification Name</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
