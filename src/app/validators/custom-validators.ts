@@ -5,8 +5,13 @@ import { takeUntil } from 'rxjs/operators';
 export class CustomValidators {
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl): ValidationErrors {
-    const isValidInt = Number.isInteger(ac.value);
-    return isValidInt ? null : { invalidInt: true };
+    const error = { invalidInt: true };
+    const isValidInt = (number) => Number.isInteger(number) ? null : error;
+    if (typeof ac.value === 'string') {
+      // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
+      return ac.value.trim() === '' || ac.value.trim() !== ac.value ? error : isValidInt(Number(ac.value));
+    }
+    return isValidInt(ac.value);
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
