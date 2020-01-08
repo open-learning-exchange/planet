@@ -55,7 +55,7 @@ export class CertificationsAddComponent implements OnInit {
   }
 
   goBack() {
-    const navigation = this.certificateInfo._id ? '../..' : '..';
+    const navigation = this.certificateInfo._id && this.pageType === 'Update' ? '../..' : '..';
     this.router.navigate([ navigation ], { relativeTo: this.route });
   }
 
@@ -69,8 +69,7 @@ export class CertificationsAddComponent implements OnInit {
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       if (reroute) {
-        const navigation = this.pageType === 'Update' ? '../..' : '..';
-        this.router.navigate([ navigation ], { relativeTo: this.route });
+        this.goBack();
       }
     });
   }
