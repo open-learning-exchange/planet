@@ -50,13 +50,15 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
       return data.date >= fromDate && data.date < toDate || data.date === 'Total';
     };
-    this.table.connect().subscribe(financeData => {
-      if (financeData.length < 2) {
-        financeData[0] = { date: 'Total', credit: 0, debit: 0, balance: 0 };
+    this.table.connect().subscribe(connectData => {
+      connectData.map((transaction: any) => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
+        .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
+      if (connectData.length === 1) {
+        connectData[0] = { date: 'Total', credit: 0, debit: 0, balance: 0 };
         return;
       }
-      const { totalCredits: credit, totalDebits: debit, balance } = <any>financeData[1];
-      financeData[0] = { date: 'Total', credit, debit, balance };
+      const { totalCredits: credit, totalDebits: debit, balance } = <any>connectData[1];
+      connectData[0] = { date: 'Total', credit, debit, balance };
     });
   }
 
