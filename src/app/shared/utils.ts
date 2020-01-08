@@ -1,5 +1,7 @@
 import styleVars from '../_variables.scss';
 
+const showdown = require('showdown');
+
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
@@ -89,4 +91,11 @@ export const deepEqual = (item1: any, item2: any) => {
     return Object.entries(item1).reduce((isEqual, [ key1, value1 ]) => deepEqual(value1, item2[key1]), true);
   }
   return item1 === item2;
+};
+
+export const markdownToPlainText = (markdown: string) => {
+  const converter = new showdown.Converter();
+  const html = document.createElement('div');
+  html.innerHTML = converter.makeHtml(markdown);
+  return html.textContent || html.innerText || '';
 };
