@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil, finalize } from 'rxjs/operators';
+import { takeUntil, finalize, switchMap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -75,8 +75,33 @@ export class CommunityComponent implements OnInit, OnDestroy {
       messagePlanetCode: this.configuration.code,
       ...message
     }, 'Message has been posted successfully').pipe(
+      switchMap(() => this.usersService.getAllUsers()),
+      switchMap((data) => {
+        console.log(data);
+        const currentUser = this.userService.get()
+        const notifications = [];
+          data.forEach(user => {
+            if (currentUser._id !== user._id && user._id !== 'satellite') {
+                notifications.push(this.sendNotifications(user._id, currentUser._id))
+            }
+          })
+          return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
+      }),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => this.dialogsFormService.closeDialogsForm());
+  }
+
+  sendNotifications(user, currentUser) {
+    return {
+      'user': user,
+      'message': `${currentUser.split(':')[1]} posted a new story.`,
+      'link': 'community/',
+      'type': 'message',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: user.userPlanetCode
+    };
   }
 
   getLinks() {
