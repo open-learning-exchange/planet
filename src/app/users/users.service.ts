@@ -132,14 +132,14 @@ export class UsersService {
       _attachments: undefined,
       _rev: undefined
     };
-    this.sendNotifications(user);
     return this.couchService.get(this.dbName + '/' + adminId, { domain }).pipe(
       catchError(() => of(null)),
       switchMap(oldDoc => forkJoin([
         oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
         this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
         this.setRoles({ ...user, isUserAdmin: true }, []),
-        this.removeFromTabletUsers(user)
+        this.removeFromTabletUsers(user),
+        this.sendNotifications(user)
       ]))
     );
   }
@@ -147,7 +147,8 @@ export class UsersService {
   toggleManagerStatus(user) {
     return forkJoin([
       this.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
-      user.isUserAdmin ? of({}) : this.removeFromTabletUsers(user)
+      user.isUserAdmin ? of({}) : this.removeFromTabletUsers(user),
+      this.sendNotifications(user)
     ]);
   }
 
@@ -207,8 +208,7 @@ export class UsersService {
       if (user.isUserAdmin === false) {
         // Make copy of user so UI doesn't change until DB change succeeds
         const tempUser = { ...user, roles: newRoles };
-        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
-        this.sendNotifications(user);
+        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser), this.sendNotifications(user));
       }
       return observers;
     }, [])).pipe(map((responses) => this.requestUsers(true)));
@@ -230,8 +230,8 @@ export class UsersService {
     return this.couchService.post('newRole/_find',
       findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' })
       ).pipe(
-      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-      );
+        switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+      )
   }
 
 }
