@@ -159,7 +159,7 @@ export class UsersService {
       oldRoles: [ ...user.roles ] || [ 'learner' ],
     };
     return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
-      switchMap((user: any[]) => user.length >= 1 ? this.sendNotifications(user) : of({}))
+      switchMap((roles: any[]) => roles.length >= 1 ? this.sendNotifications(user) : of({}))
     );
   }
 
