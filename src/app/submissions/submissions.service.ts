@@ -9,6 +9,7 @@ import { UserService } from '../shared/user.service';
 import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import htmlToPdfmake from 'html-to-pdfmake';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -35,7 +36,8 @@ export class SubmissionsService {
     private stateService: StateService,
     private courseService: CoursesService,
     private userService: UserService,
-    private csvService: CsvService
+    private csvService: CsvService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -283,6 +285,10 @@ export class SubmissionsService {
 
   exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
+      if (!submissions.length) {
+        this.planetMessageService.showMessage('There is no survey response');
+        return;
+      }
       const markdown = submissions.map((submission, index) => {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
         return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
