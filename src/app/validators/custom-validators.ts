@@ -2,11 +2,11 @@ import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup }
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-export class CustomValidators {
+const isStringEdgeCase = (string: string) => {
+  return string.trim() === '' || string.trim() !== string;
+};
 
-  private static isStringEdgeCase(string: string) {
-    return string.trim() === '' || string.trim() !== string;
-  }
+export class CustomValidators {
 
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl): ValidationErrors {
@@ -15,7 +15,7 @@ export class CustomValidators {
     // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
     return typeof ac.value !== 'string' ?
       isValidInt(ac.value) :
-      this.isStringEdgeCase(ac.value) ?
+      isStringEdgeCase(ac.value) ?
       error :
       isValidInt(Number(ac.value));
   }
