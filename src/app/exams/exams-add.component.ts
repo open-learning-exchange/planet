@@ -19,6 +19,7 @@ import { UserService } from '../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { StateService } from '../shared/state.service';
+import { markdownToPlainText } from '../shared/utils';
 
 const showdown = require('showdown');
 
@@ -190,10 +191,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   plainText(value) {
-    const converter = new showdown.Converter();
-    const html = document.createElement('div');
-    html.innerHTML = converter.makeHtml(value);
-    return html.textContent || html.innerText || '';
+    markdownToPlainText(value);
   }
 
   goBack() {

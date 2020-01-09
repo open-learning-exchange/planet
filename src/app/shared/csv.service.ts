@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
+import { markdownToPlainText } from './utils';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class CsvService {
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...dataToDisplay }) =>
       Object.entries(dataToDisplay).reduce((object, [ key, value ]: [ string, any ]) => ({
         ...object,
-        [key]: !this.isDateKey(key) ? value : value ? new Date(value).toString() : ''
+        [markdownToPlainText(key)]: !this.isDateKey(key) ? markdownToPlainText(value) : value ? new Date(value).toString() : ''
       }), {}
     ));
     if (formattedData.length === 0) {
