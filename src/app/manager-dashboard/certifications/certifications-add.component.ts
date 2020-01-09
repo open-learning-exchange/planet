@@ -55,7 +55,7 @@ export class CertificationsAddComponent implements OnInit {
   }
 
   goBack() {
-    const navigation = this.certificateInfo._id ? '../..' : '..';
+    const navigation = this.pageType === 'Update' ? '../..' : '..';
     this.router.navigate([ navigation ], { relativeTo: this.route });
   }
 

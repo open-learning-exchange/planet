@@ -6,7 +6,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -263,7 +263,8 @@ export class SubmissionsService {
           'Date': submission.lastUpdateTime,
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
-            [`"Q${index + 1}: ${text.replace(/"/g, '""')}"`]: this.getAnswerText(submission.answers, index, answerIndexes)
+            [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              this.getAnswerText(submission.answers, index, answerIndexes)
           }), {})
         };
       });
@@ -288,17 +289,20 @@ export class SubmissionsService {
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
-      const markdown = submissions.map(submission => {
+      const markdown = submissions.map((submission, index) => {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
-        return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
-          questionTexts.map((question, index) => (
-            `**Question ${index + 1}:**  \n ${question}  \n\n` +
-            `**Response ${index + 1}:**  \n ${this.getAnswerText(submission.answers, index, answerIndexes)}  \n`
+        return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
+          questionTexts.map((question, questionIndex) => (
+            `**Question ${index + 1}:**  \n\n${question}  \n\n` +
+            `**Response ${index + 1}:**  \n\n${this.getAnswerText(submission.answers, index, answerIndexes)}  \n`
           )).join('  \n');
       }).join('  \n');
       const converter = new showdown.Converter();
       pdfMake.createPdf(
-        { content: [ htmlToPdfmake(converter.makeHtml(markdown)) ] }
+        {
+          content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
+          pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+        }
       ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
     });
   }
