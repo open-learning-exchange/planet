@@ -158,8 +158,9 @@ export class UsersService {
       roles: roles,
       oldRoles: [ ...user.roles ] || [ 'learner' ],
     };
-    this.sendNotifications(user);
-    return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser);
+    return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
+      switchMap((user: any[]) => user.length >= 1 ? this.sendNotifications(user) : of({}))
+    );
   }
 
   removeFromTabletUsers(user) {
@@ -231,7 +232,7 @@ export class UsersService {
       findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' })
       ).pipe(
         switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-      )
+      );
   }
 
 }
