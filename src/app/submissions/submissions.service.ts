@@ -282,14 +282,13 @@ export class SubmissionsService {
   }
 
   getAnswer(submission, index, answerIndexes: number[]) {
+    if(answerIndexes[index] < -1) {
+      return undefined;
+    }
     const questionType = submission.parent.questions[index].type === 'textarea';
-    const preOpen = '<pre>';
-    const preClose = '</pre>';
-    const answer = answerIndexes[index] > -1 ?
-      questionType === false ? preOpen.concat(submission.answers[index].value, preClose) : submission.answers[index].value :
-        undefined;
-    return answer && (
-      Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
+    const answer =  questionType === false ? '<pre>'.concat(submission.answers[index].value, '</pre>') : submission.answers[index].value;    
+    return answer && ( Array.isArray(answer) ?
+      '<pre>'.concat(answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1), '</pre>') : answer.text || answer
     );
   }
 
