@@ -78,14 +78,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
       switchMap(() => this.usersService.getAllUsers()),
       switchMap((data) => {
         console.log(data);
-        const currentUser = this.userService.get()
+        const currentUser = this.userService.get();
         const notifications = [];
-          data.forEach(user => {
-            if (currentUser._id !== user._id && user._id !== 'satellite') {
-                notifications.push(this.sendNotifications(user._id, currentUser._id))
-            }
-          })
-          return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
+        data.forEach(user => {
+          if (currentUser._id !== user._id && user._id !== 'satellite') {
+              notifications.push(this.sendNotifications(user._id, currentUser._id));
+          }
+        });
+        return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
       }),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => this.dialogsFormService.closeDialogsForm());
