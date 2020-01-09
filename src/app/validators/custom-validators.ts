@@ -3,10 +3,21 @@ import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export class CustomValidators {
+
+  private static isStringEdgeCase(string: string) {
+    return string.trim() === '' || string.trim() !== string;
+  }
+
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl): ValidationErrors {
-    const isValidInt = Number.isInteger(ac.value);
-    return isValidInt ? null : { invalidInt: true };
+    const error = { invalidInt: true };
+    const isValidInt = (number) => Number.isInteger(number) ? null : error;
+    // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
+    return typeof ac.value !== 'string' ?
+      isValidInt(ac.value) :
+      this.isStringEdgeCase(ac.value) ?
+      error :
+      isValidInt(Number(ac.value));
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
