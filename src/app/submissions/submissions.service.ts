@@ -282,11 +282,11 @@ export class SubmissionsService {
   }
 
   getAnswer(submission, index, answerIndexes: number[]) {
-    if(answerIndexes[index] < -1) {
+    if (answerIndexes[index] < -1) {
       return undefined;
     }
     const questionType = submission.parent.questions[index].type === 'textarea';
-    const answer =  questionType === false ? '<pre>'.concat(submission.answers[index].value, '</pre>') : submission.answers[index].value;    
+    const answer = questionType === false ? '<pre>'.concat(submission.answers[index].value, '</pre>') : submission.answers[index].value;
     return answer && ( Array.isArray(answer) ?
       '<pre>'.concat(answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1), '</pre>') : answer.text || answer
     );
