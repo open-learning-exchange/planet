@@ -281,6 +281,18 @@ export class SubmissionsService {
     );
   }
 
+  getAnswer(submission, index, answerIndexes: number[]) {
+    const questionType = submission.parent.questions[index].type === 'textarea';
+    const preOpen = '<pre>';
+    const preClose = '</pre>';
+    const answer = answerIndexes[index] > -1 ?
+      questionType === false ? preOpen.concat(submission.answers[index].value, preClose) : submission.answers[index].value :
+        undefined;
+    return answer && (
+      Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
+    );
+  }
+
   exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
       const markdown = submissions.map(submission => {
@@ -288,7 +300,7 @@ export class SubmissionsService {
         return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
           questionTexts.map((question, index) => (
             `**Question ${index + 1}:**  \n ${question}  \n\n` +
-            `**Response ${index + 1}:**  \n ${this.getAnswerText(submission.answers, index, answerIndexes)}  \n`
+            `**Response ${index + 1}:**  \n ${this.getAnswer(submission, index, answerIndexes)}  \n`
           )).join('  \n');
       }).join('  \n');
       const converter = new showdown.Converter();
