@@ -283,17 +283,20 @@ export class SubmissionsService {
 
   exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
-      const markdown = submissions.map(submission => {
+      const markdown = submissions.map((submission, index) => {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
-        return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
-          questionTexts.map((question, index) => (
-            `**Question ${index + 1}:**  \n ${question}  \n\n` +
-            `**Response ${index + 1}:**  \n ${this.getAnswerText(submission.answers, index, answerIndexes)}  \n`
+        return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
+          questionTexts.map((question, questionIndex) => (
+            `**Question ${questionIndex + 1}:**  \n ${question}  \n\n` +
+            `**Response ${questionIndex + 1}:**  \n ${this.getAnswerText(submission.answers, questionIndex, answerIndexes)}  \n`
           )).join('  \n');
       }).join('  \n');
       const converter = new showdown.Converter();
       pdfMake.createPdf(
-        { content: [ htmlToPdfmake(converter.makeHtml(markdown)) ] }
+        {
+          content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
+          pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+        }
       ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
     });
   }
