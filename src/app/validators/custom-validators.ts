@@ -7,11 +7,12 @@ export class CustomValidators {
   static integerValidator(ac: AbstractControl): ValidationErrors {
     const error = { invalidInt: true };
     const isValidInt = (number) => Number.isInteger(number) ? null : error;
-    if (typeof ac.value === 'string') {
+    return typeof ac.value !== 'string' ?
+      ac.value :
       // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
-      return ac.value.trim() === '' || ac.value.trim() !== ac.value ? error : isValidInt(Number(ac.value));
-    }
-    return isValidInt(ac.value);
+      ac.value.trim() === '' || ac.value.trim() !== ac.value ?
+      error :
+      isValidInt(Number(ac.value));
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
