@@ -73,18 +73,19 @@ export class HealthUpdateComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.profileForm.valid) {
+    if (this.profileForm.valid && this.healthForm.valid) {
+      forkJoin([
+        this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
+        this.healthService.postHealthData({
+          _id: this.existingData._id || this.userService.get()._id,
+          _rev: this.existingData._rev,
+          profile: this.healthForm.value
+        })
+      ]).subscribe(() => this.goBack());
+    } else {
       showFormErrors(this.profileForm.controls);
-      return;
+      showFormErrors(this.healthForm.controls);
     }
-    forkJoin([
-      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
-      this.healthService.postHealthData({
-        _id: this.existingData._id || this.userService.get()._id,
-        _rev: this.existingData._rev,
-        profile: this.healthForm.value
-      })
-    ]).subscribe(() => this.goBack());
   }
 
   goBack() {
