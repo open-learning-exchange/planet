@@ -93,7 +93,10 @@ export const deepEqual = (item1: any, item2: any) => {
   return item1 === item2;
 };
 
-export const markdownToPlainText = (markdown: string) => {
+export const markdownToPlainText = (markdown: any) => {
+  if (typeof markdown !== 'string') {
+    return markdown;
+  }
   const converter = new showdown.Converter();
   const html = document.createElement('div');
   html.innerHTML = converter.makeHtml(markdown);
