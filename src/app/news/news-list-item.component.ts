@@ -3,6 +3,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -69,8 +70,11 @@ export class NewsListItemComponent implements AfterViewChecked {
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
     };
-    return this.couchService.findAllStream( 'notifications', ).pipe(
-      switchMap((data: any[]) => data.length > 0 ? this.couchService.updateDocument('notifications', notification) : of({}))
+    return this.couchService.findAll(
+      'notifications',
+      findDocuments({ link, type: 'replyMessage', status: 'unread', user: news.user._id })
+    ).pipe(
+      switchMap((data: any[]) => data.length === 0 ? this.couchService.updateDocument('notifications', notification) : of({}))
     ).subscribe();
   }
 
