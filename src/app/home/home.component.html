@@ -7,12 +7,12 @@
     </a>
   </span>
   <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
-    <a *ngIf="configuration.planetType==='community'" mat-button routerLink="/community"
-      routerLinkActive="active"
-      i18n-title title="Community" i18n>Community</a>
-    <a mat-button routerLink="/"
+    <a *ngIf="configuration.planetType==='community'" mat-button routerLink="/"
       routerLinkActive="active"
       [routerLinkActiveOptions]="{exact:true}"
+      i18n-title title="Community" i18n>Community</a>
+    <a mat-button routerLink="/myDashboard"
+      routerLinkActive="active"
       i18n-title title="myDashboard" i18n>myDashboard</a>
     <a mat-button routerLink="/resources"
       routerLinkActive="active"

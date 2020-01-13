@@ -67,7 +67,8 @@ export class LoginFormComponent {
   }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newmember';
-  returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+  returnUrl = this.route.snapshot.queryParams['returnUrl'] ||
+    this.stateService.configuration.planetType === 'community' ? '/' : 'myDashboard';
 
   onSubmit() {
     if (!this.userForm.valid) {
