@@ -57,7 +57,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       if (finance.length === 0) {
         this.table.data = [];
         return;
-        }
+      }
       const { totalCredits: credit, totalDebits: debit, balance } = finance[0];
       connectData[0] = { date: 'Total', credit, debit, balance };
     });
