@@ -83,7 +83,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.teamsService.getTeamMembers(this.team, true).subscribe((docs) => {
       const { link: links, transaction: finances } = docs.reduce((docObject, doc) => ({
         ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
-      }));
+      }), { link: [], transaction: [] });
       this.links = links;
       this.finances = finances;
     });
