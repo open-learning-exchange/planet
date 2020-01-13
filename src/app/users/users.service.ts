@@ -138,8 +138,7 @@ export class UsersService {
         oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
         this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
         this.setRoles({ ...user, isUserAdmin: true }, []),
-        this.removeFromTabletUsers(user),
-        this.sendNotifications(user)
+        this.removeFromTabletUsers(user)
       ]))
     );
   }
@@ -147,8 +146,7 @@ export class UsersService {
   toggleManagerStatus(user) {
     return forkJoin([
       this.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
-      user.isUserAdmin ? of({}) : this.removeFromTabletUsers(user),
-      this.sendNotifications(user)
+      user.isUserAdmin ? of({}) : this.removeFromTabletUsers(user)
     ]);
   }
 
@@ -207,9 +205,7 @@ export class UsersService {
     return forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
-        // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = { ...user, roles: newRoles };
-        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser), this.sendNotifications(user));
+        observers.push(this.setRoles(user, roles));
       }
       return observers;
     }, [])).pipe(map((responses) => this.requestUsers(true)));
