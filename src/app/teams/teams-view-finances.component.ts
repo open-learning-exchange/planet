@@ -26,12 +26,13 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() team: any = {};
   @Input() getMembers;
   @Output() financesChanged = new EventEmitter<void>();
-  table = new MatTableDataSource();
+  table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
   deleteDialog: any;
   dateNow: any;
   startDate: Date;
   endDate: Date;
+  emptyTable = true;
 
   constructor(
     private teamsService: TeamsService,
@@ -48,21 +49,35 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.table.filterPredicate = (data: any, filter) => {
       const fromDate = this.startDate || -Infinity;
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-      return data.date >= fromDate && data.date < toDate;
+      return data.date >= fromDate && data.date < toDate || data.date === 'Total';
     };
+    this.table.connect().subscribe(transactions => {
+      if (transactions[0].filter !== this.filterString()) {
+        transactions[0] = this.setTransactionsTable(transactions)[0];
+      }
+    });
   }
 
   ngOnChanges() {
-    const financeData = this.finances.filter(transaction => transaction.status !== 'archived')
+    this.table.data = this.setTransactionsTable(this.finances);
+  }
+
+  private setTransactionsTable(transactions: any[]): any[] {
+    const financeData = transactions.filter(transaction => transaction.status !== 'archived' && transaction.date !== 'Total')
       // Overwrite values for credit and debit from early document versions on database
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
-      this.table.data = [];
-      return;
+      this.emptyTable = true;
+      return [ {} ];
     }
+    this.emptyTable = false;
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
-    this.table.data = [ { date: 'Total', credit, debit, balance }, ...financeData ];
+    return [ { date: 'Total', credit, debit, balance, filter: this.filterString() }, ...financeData ];
+  }
+
+  private filterString() {
+    return (this.startDate || '').toString() + (this.endDate || '').toString();
   }
 
   transactionFilter() {
@@ -82,6 +97,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       }
     ];
   }
+
 
   openEditTransactionDialog(transaction: any = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
