@@ -19,8 +19,8 @@ import { UserService } from '../shared/user.service';
 export class TeamsMemberComponent {
 
   @Input() member: any;
-  @Input() actionMenu: ('remove' | 'leader')[];
-  @Input() visits: { [_id: string]: number } = {};
+  @Input() actionMenu: ('remove' | 'leader' | 'title')[];
+  @Input() visits: { [_id: string]: number };
   @Input() userStatus = '';
   @Output() actionClick = new EventEmitter<any>();
   user = this.userService.get();
@@ -29,7 +29,11 @@ export class TeamsMemberComponent {
     private userService: UserService
   ) {}
 
-  openDialogPrompt(actionParams: { member, change: 'remove' | 'leader' }) {
+  ngOnInit() {
+    console.log(this.member);
+  }
+
+  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
     this.actionClick.emit(actionParams);
   }
 

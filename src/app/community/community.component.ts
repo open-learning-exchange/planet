@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -16,7 +16,8 @@ import { UsersService } from '../users/users.service';
 
 @Component({
   templateUrl: './community.component.html',
-  styleUrls: [ './community.scss' ]
+  styleUrls: [ './community.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
@@ -89,7 +90,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setCouncillors(users) {
-    this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1);
+    this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
+      .map(user => ({ avatar: user.imageSrc || 'assets/image.png', userDoc: user.doc, userId: user._id, ...user }));
   }
 
   deleteLink(link) {
@@ -132,6 +134,27 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   toggleDeleteMode() {
     this.deleteMode = !this.deleteMode;
+  }
+
+  openChangeTitleDialog({ member: councillor }) {
+    this.dialogsFormService.openDialogsForm(
+      'Change Leader Title',
+      [ { name: 'leadershipTitle', placeholder: 'Title', type: 'textbox', required: true } ],
+      { leadershipTitle: councillor.userDoc.leadershipTitle || '' },
+      { autoFocus: true, onSubmit: this.updateTitle(councillor).bind(this) }
+    );
+  }
+
+  updateTitle(councillor) {
+    return ({ leadershipTitle }) => {
+      this.userService.updateUser({ ...councillor.userDoc, leadershipTitle }).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage('Title updated');
+        this.usersService.requestUsers();
+      });
+    }
   }
 
 }

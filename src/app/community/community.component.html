@@ -4,7 +4,7 @@
   <span class="toolbar-fill"></span>
 </mat-toolbar>
 <div class="space-container">
-  <div class="view-container view-full-height">
+  <div class="view-container view-full-height community-view">
     <mat-toolbar class="action-buttons">
       <span class="scrolling">
         <ng-container *ngFor="let link of links">
@@ -31,33 +31,14 @@
           </h3>
           <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
         </mat-tab>
-        <mat-tab i18n-label label="Council">
+        <mat-tab i18n-label label="Community Leaders">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
-              <mat-card-header>
-                <img mat-card-avatar [src]="councillor?.imageSrc || 'assets/image.png'">
-                <a mat-card-title [routerLink]="['/users/profile', councillor?.doc.name, configuration.code === councillor?.doc.planetCode ? {} : { planet: councillor?.doc.userPlanetCode }]">
-                  {{ councillor?.doc?.firstName || councillor?.doc?.name }}
-                </a>
-                <mat-card-subtitle>
-                  <p class="primary-text-color">{{councillor.cdcRole}}</p>
-                </mat-card-subtitle>
-                <!-- <button *ngIf="councillor?.doc?.isUserAdmin" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="councillorMenu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #resourceMenu="matMenu" *ngIf="actionMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(member, 'remove', { changeType: 'remove', type: 'user' })" *ngIf="member?.userId !== currentUserId && currentUserId === leader">
-                    <mat-icon>clear</mat-icon>
-                    <span i18n>Remove</span>
-                  </button>
-                  <button *ngIf="member?.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader)"
-                    (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
-                    <mat-icon>person</mat-icon>
-                    <span i18n>Make Leader</span>
-                  </button>
-                </mat-menu> -->
-              </mat-card-header>
-              <mat-card-content></mat-card-content>
+              <planet-teams-member
+                [member]="councillor"
+                [actionMenu]="user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1 ? [ 'title' ] : []"
+                (actionClick)="openChangeTitleDialog($event)">
+              </planet-teams-member>
             </mat-card>
           </div>
         </mat-tab>
