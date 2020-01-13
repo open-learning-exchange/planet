@@ -611,7 +611,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">Auto accept Members</target>
+        <target state="translated">قبول أعضاء تلقائي</target>
       </trans-unit>
       <trans-unit id="a158c27700fb4b55974f72418e1e17f45662d3f6" datatype="html">
         <source>Show Advanced Options</source>
@@ -655,7 +655,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Contact Details</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> تفاصيل الاتصال</target>
       </trans-unit>
       <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
         <source>First Name</source>
@@ -887,7 +887,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">Get course</target>
+        <target state="translated">احصل على مسار تعليمي</target>
       </trans-unit>
       <trans-unit id="9883cb29ace06daf7eff455945ea6685cfbe1f23" datatype="html">
         <source>Send Courses</source>
@@ -903,7 +903,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Enroll in Selected</target>
+        <target state="translated">سجل في ما تم اختياره</target>
       </trans-unit>
       <trans-unit id="690085933308238b02e1e97d16a54a227d5e39c6" datatype="html">
         <source>Push To Child</source>
@@ -971,7 +971,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Your progress:</target>
+        <target state="translated">التقدم الخاص بك:</target>
       </trans-unit>
       <trans-unit id="0959cf719affa339c7223bcb273d12260028c47d" datatype="html">
         <source>Admission</source>
