@@ -32,6 +32,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   dateNow: any;
   startDate: Date;
   endDate: Date;
+  emptyTable = true;
 
   constructor(
     private teamsService: TeamsService,
@@ -67,9 +68,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
-      // this.table.data = [];
-      return;
+      this.emptyTable = true;
+      return [ {} ];
     }
+    this.emptyTable = false;
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
     return [ { date: 'Total', credit, debit, balance, filter: this.filterString() }, ...financeData ];
   }
