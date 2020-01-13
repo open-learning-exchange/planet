@@ -73,8 +73,9 @@ export class HealthUpdateComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.profileForm.valid) {
+    if (!(this.profileForm.valid && this.healthForm.valid)) {
       showFormErrors(this.profileForm.controls);
+      showFormErrors(this.healthForm.controls);
       return;
     }
     forkJoin([
