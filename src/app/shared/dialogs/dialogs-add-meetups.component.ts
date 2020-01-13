@@ -8,7 +8,11 @@ import { DialogsLoadingService } from './dialogs-loading.service';
       <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
         [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
       </planet-meetups-add>
-      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)" [editable]="editable">
+      <planet-meetups-view *ngSwitchCase="'view'"
+        [isDialog]="true"
+        [meetupDetail]="meetup"
+        [editable]="editable"
+        (switchView)="switchView($event)">
       </planet-meetups-view>
     </ng-container>
   `
