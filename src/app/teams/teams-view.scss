@@ -1,23 +1,11 @@
 @import '../mixins';
 @import '../variables';
 
-:host {
-
-  @include left-right-grid-areas;
+.teams-view {
 
   .view-container {
     mat-card {
       margin: 0.25rem;
-    }
-  }
-
-  .left-tile, .right-tile {
-    overflow: auto;
-  }
-
-  .request-list {
-    li {
-      margin-top: 0.5rem;
     }
   }
 

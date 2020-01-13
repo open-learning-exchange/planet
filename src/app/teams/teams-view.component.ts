@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
@@ -25,7 +25,8 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 
 @Component({
   templateUrl: './teams-view.component.html',
-  styleUrls: [ './teams-view.scss' ]
+  styleUrls: [ './teams-view.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -273,6 +274,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         ...dialogParams
       }
     });
+  }
+
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' }) {
+    this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
   }
 
   changeMembershipRequest(type, memberDoc?) {

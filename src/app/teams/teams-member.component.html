@@ -1,36 +1,34 @@
-<mat-card>
-  <mat-card-header>
-    <img mat-card-avatar [src]="member?.avatar">
-    <a mat-card-title [routerLink]="['/users/profile', member?.name, planetCode === member?.userPlanetCode ? {} : { planet: member?.userPlanetCode }]">
-      {{ member?.userDoc?.firstName || member?.name }}
-    </a>
-    <mat-card-subtitle>
-      <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
-      <span i18n *ngIf="member?.userId === currentUserId && member?.userPlanetCode === planetCode">(You)</span>{{' '}}
-      <span i18n *ngIf="member?.userId === leader && member?.userPlanetCode === planetCode">(Team Leader)</span>{{' '}}<span>({{ visits[member?.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
-      <p *ngIf="visits[member?.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member?.name]?.recentTime | date }}</p>
-    </mat-card-subtitle>
-    <button *ngIf="mode !== 'services' && member?.userId !== leader && (currentUserId === leader || (user.isUserAdmin && team.teamPlanetCode === user.planetCode))" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-      <mat-icon>more_vert</mat-icon>
+<mat-card-header>
+  <img mat-card-avatar [src]="member?.avatar">
+  <a mat-card-title [routerLink]="['/users/profile', member?.name, planetCode === member?.userPlanetCode ? {} : { planet: member?.userPlanetCode }]">
+    {{ member?.userDoc?.firstName || member?.name }}
+  </a>
+  <mat-card-subtitle>
+    <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
+    <span i18n *ngIf="member?.userId === currentUserId && member?.userPlanetCode === planetCode">(You)</span>{{' '}}
+    <span i18n *ngIf="member?.userId === leader && member?.userPlanetCode === planetCode">(Team Leader)</span>{{' '}}<span>({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+    <p *ngIf="visits && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits?.recentTime | date }}</p>
+  </mat-card-subtitle>
+  <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #memberMenu="matMenu">
+    <button mat-menu-item (click)="openDialogPrompt({ member: member, change: 'remove' })" *ngIf="actionMenu.indexOf('remove') > -1">
+      <mat-icon>clear</mat-icon>
+      <span i18n>Remove</span>
     </button>
-    <mat-menu #resourceMenu="matMenu" *ngIf="actionMenu">
-      <button mat-menu-item (click)="openDialogPrompt(member, 'remove', { changeType: 'remove', type: 'user' })" *ngIf="member?.userId !== currentUserId && currentUserId === leader">
-        <mat-icon>clear</mat-icon>
-        <span i18n>Remove</span>
-      </button>
-      <button *ngIf="member?.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader)"
-        (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
-        <mat-icon>person</mat-icon>
-        <span i18n>Make Leader</span>
-      </button>
-    </mat-menu>
-  </mat-card-header>
-  <mat-card-content *ngIf="member?.tasks && member?.tasks.length > 0">
-    <span class="mat-caption">Tasks</span>
-    <mat-selection-list (selectionChange)="toggleTask($event)">
-      <mat-list-option checkboxPosition="before" *ngFor="let task of member?.tasks" [selected]="task.completed" [value]="task">
-        <p class="ellipsis-title">{{task.title}}</p>
-      </mat-list-option>
-    </mat-selection-list>
-  </mat-card-content>
-</mat-card>
+    <button *ngIf="actionMenu.indexOf('leader') > -1"
+      (click)="openDialogPrompt({ member: member, change: 'leader' })" mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span i18n>Make Leader</span>
+    </button>
+  </mat-menu>
+</mat-card-header>
+<mat-card-content *ngIf="member?.tasks && member?.tasks.length > 0">
+  <span class="mat-caption">Tasks</span>
+  <mat-selection-list (selectionChange)="toggleTask($event)">
+    <mat-list-option checkboxPosition="before" *ngFor="let task of member?.tasks" [selected]="task.completed" [value]="task">
+      <p class="ellipsis-title">{{task.title}}</p>
+    </mat-list-option>
+  </mat-selection-list>
+</mat-card-content>

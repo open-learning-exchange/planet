@@ -19,13 +19,18 @@ import { UserService } from '../shared/user.service';
 export class TeamsMemberComponent {
 
   @Input() member: any;
-  @Input() actionMenu: boolean;
+  @Input() actionMenu: ('remove' | 'leader')[];
   @Input() visits: { [_id: string]: number } = {};
   @Input() userStatus = '';
+  @Output() actionClick = new EventEmitter<any>();
   user = this.userService.get();
 
   constructor(
     private userService: UserService
   ) {}
+
+  openDialogPrompt(actionParams: { member, change: 'remove' | 'leader' }) {
+    this.actionClick.emit(actionParams);
+  }
 
 }
