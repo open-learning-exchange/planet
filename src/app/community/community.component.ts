@@ -154,7 +154,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.planetMessageService.showMessage('Title updated');
         this.usersService.requestUsers();
       });
-    }
+    };
   }
 
 }
