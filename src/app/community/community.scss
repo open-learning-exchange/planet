@@ -1,6 +1,6 @@
 @import '../variables';
 
-.view-container {
+.view-container.community-view {
 
   &.view-full-height {
     height: $view-container-height-no-toolbar;
@@ -8,7 +8,7 @@
 
   display: grid;
   grid-template-columns: 4fr 3fr;
-  grid-template-rows: 64px auto;
+  grid-template-rows: 64px calc(100% - 64px - 0.5rem);
   grid-template-areas:
     "links calendar"
     "news calendar";
@@ -23,6 +23,7 @@
 .community-news {
 
   grid-area: news;
+  overflow-y: auto;
 
   h3 {
 
@@ -44,4 +45,17 @@ planet-calendar {
   overflow-x: auto;
   white-space: nowrap;
   display: inline-block;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-rows: repeat(auto-fill, 125px);
+  grid-column-gap: 0.25rem;
+  margin: 0 0.5rem;
+  .top-right-icon {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+  }
 }

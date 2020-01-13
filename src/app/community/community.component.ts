@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -11,17 +11,24 @@ import { TeamsService } from '../teams/teams.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserService } from '../shared/user.service';
+import { UsersService } from '../users/users.service';
 
 @Component({
   templateUrl: './community.component.html',
-  styleUrls: [ './community.scss' ]
+  styleUrls: [ './community.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration = this.stateService.configuration;
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+  team = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
+  user = this.userService.get();
   news: any[] = [];
   links: any[] = [];
+  finances: any[] = [];
+  councillors: any[] = [];
   showNewsButton = true;
   deleteMode = false;
   onDestroy$ = new Subject<void>();
@@ -34,13 +41,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
     this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
     this.getLinks();
+    this.usersService.requestUsers();
   }
 
   ngOnDestroy() {
@@ -69,7 +80,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getLinks() {
-    this.teamsService.getTeamMembers(this.teamId, true).subscribe((links) => this.links = links.filter(link => link.docType === 'link'));
+    this.teamsService.getTeamMembers(this.team, true).subscribe((docs) => {
+      const { link: links, transaction: finances } = docs.reduce((docObject, doc) => ({
+        ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
+      }), { link: [], transaction: [] });
+      this.links = links;
+      this.finances = finances;
+    });
+  }
+
+  setCouncillors(users) {
+    this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
+      .map(user => ({ avatar: user.imageSrc || 'assets/image.png', userDoc: user.doc, userId: user._id, ...user }));
   }
 
   deleteLink(link) {
@@ -112,6 +134,27 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   toggleDeleteMode() {
     this.deleteMode = !this.deleteMode;
+  }
+
+  openChangeTitleDialog({ member: councillor }) {
+    this.dialogsFormService.openDialogsForm(
+      'Change Leader Title',
+      [ { name: 'leadershipTitle', placeholder: 'Title', type: 'textbox', required: true } ],
+      { leadershipTitle: councillor.userDoc.leadershipTitle || '' },
+      { autoFocus: true, onSubmit: this.updateTitle(councillor).bind(this) }
+    );
+  }
+
+  updateTitle(councillor) {
+    return ({ leadershipTitle }) => {
+      this.userService.updateUser({ ...councillor.userDoc, leadershipTitle }).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(() => {
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage('Title updated');
+        this.usersService.requestUsers();
+      });
+    };
   }
 
 }

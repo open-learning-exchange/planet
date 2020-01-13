@@ -2,7 +2,7 @@
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>{ mode, select, team {Teams} enterprise {Enterprises} }</span>
 </mat-toolbar>
-<div class="space-container">
+<div class="space-container teams-view">
   <mat-toolbar class="primary-color font-size-1">
     <h3 *ngIf="team !== undefined" class="margin-lr-3 ellipsis-title">
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
@@ -63,40 +63,16 @@
         <ng-template #memberList>
           <div class="card-grid">
             <mat-card *ngFor="let member of members">
-              <mat-card-header>
-                <img mat-card-avatar [src]="member.avatar">
-                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
-                  {{ member.userDoc?.firstName || member.name }}
-                </a>
-                <mat-card-subtitle>
-                  <p class="primary-text-color" *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
-                  <span i18n *ngIf="member.userId === currentUserId && member.userPlanetCode === planetCode">(You)</span>{{' '}}
-                  <span i18n *ngIf="member.userId === leader && member.userPlanetCode === planetCode">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
-                  <p *ngIf="visits[member.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member.name]?.recentTime | date }}</p>
-                </mat-card-subtitle>
-                <button *ngIf="mode !== 'services' && member.userId !== leader && (currentUserId === leader || (user.isUserAdmin && team.teamPlanetCode === user.planetCode))" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(member, 'remove', { changeType: 'remove', type: 'user' })" *ngIf="member.userId !== currentUserId && currentUserId === leader">
-                    <mat-icon>clear</mat-icon>
-                    <span i18n>Remove</span>
-                  </button>
-                  <button *ngIf="member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader)"
-                    (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
-                    <mat-icon>person</mat-icon>
-                    <span i18n>Make Leader</span>
-                  </button>
-                </mat-menu>
-              </mat-card-header>
-              <mat-card-content *ngIf="member.tasks && member.tasks.length > 0">
-                <span class="mat-caption">Tasks</span>
-                <mat-selection-list (selectionChange)="toggleTask($event)">
-                  <mat-list-option checkboxPosition="before" *ngFor="let task of member.tasks" [selected]="task.completed" [value]="task">
-                    <p class="ellipsis-title">{{task.title}}</p>
-                  </mat-list-option>
-                </mat-selection-list>
-              </mat-card-content>
+              <planet-teams-member
+                [member]="member"
+                [actionMenu]="[]
+                  .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
+                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])"
+                [visits]="visits[member?.name]"
+                [userStatus]="userStatus"
+                [teamLeader]="leader"
+                (actionClick)="memberActionClick($event)">
+              </planet-teams-member>
             </mat-card>
           </div>
         </ng-template>
