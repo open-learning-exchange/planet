@@ -23,6 +23,7 @@ export class NewsListComponent implements OnChanges {
   @Input() editSuccessMessage = 'News has been updated successfully.';
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
+  @Input() editable = true;
   displayedItems: any[] = [];
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };

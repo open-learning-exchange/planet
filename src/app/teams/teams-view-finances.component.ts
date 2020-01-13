@@ -25,9 +25,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() finances: any[] = [];
   @Input() team: any = {};
   @Input() getMembers;
+  @Input() editable = true;
   @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource<any>();
-  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
+  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
   deleteDialog: any;
   dateNow: any;
   startDate: Date;
@@ -46,6 +47,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'actions' : [] ].flat();
     this.table.filterPredicate = (data: any, filter) => {
       const fromDate = this.startDate || -Infinity;
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;

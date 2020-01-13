@@ -8,7 +8,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
       <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
         [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
       </planet-meetups-add>
-      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)">
+      <planet-meetups-view *ngSwitchCase="'view'" [isDialog]="true" [meetupDetail]="meetup" (switchView)="switchView($event)" [editable]="editable">
       </planet-meetups-view>
     </ng-container>
   `
@@ -19,6 +19,7 @@ export class DialogsAddMeetupsComponent {
   view = 'add';
   meetup: any = {};
   sync: { type: 'local' | 'sync', planetCode: string };
+  editable = true;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
@@ -29,6 +30,7 @@ export class DialogsAddMeetupsComponent {
     this.sync = this.data.sync || this.sync;
     this.view = this.data.view || this.view;
     this.meetup = this.data.meetup || this.meetup;
+    this.editable = this.data.editable !== undefined && this.data.editable !== null ? this.data.editable : this.editable;
   }
 
   meetupsChange() {
