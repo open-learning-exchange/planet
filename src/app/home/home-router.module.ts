@@ -15,7 +15,8 @@ import { HealthListComponent } from '../health/health-list.component';
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', component: CommunityComponent },
+      { path: 'myDashboard', component: DashboardComponent },
       { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
       { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
@@ -51,7 +52,6 @@ const routes: Routes = [
       { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'health', component: HealthListComponent },
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
-      { path: 'community', component: CommunityComponent },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } }
     ]

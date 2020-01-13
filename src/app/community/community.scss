@@ -3,7 +3,7 @@
 .view-container.community-view {
 
   &.view-full-height {
-    height: $view-container-height-no-toolbar;
+    height: calc(#{$view-container-height-no-toolbar} + 64px);
   }
 
   display: grid;
