@@ -77,7 +77,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }, 'Message has been posted successfully').pipe(
       switchMap(() => this.usersService.getAllUsers()),
       switchMap((data) => {
-        console.log(data);
         const currentUser = this.userService.get();
         const notifications = [];
         data.forEach(user => {
