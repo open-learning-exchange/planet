@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { takeUntil, finalize, switchMap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
@@ -13,6 +13,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './community.component.html',
@@ -75,16 +76,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
       messagePlanetCode: this.configuration.code,
       ...message
     }, 'Message has been posted successfully').pipe(
-      switchMap(() => this.usersService.getAllUsers()),
-      switchMap((data) => {
+      switchMap(() => forkJoin([
+        this.usersService.getAllUsers(),
+        this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
+      ])),
+      switchMap(([ users, notifications ]: [ any[], any[] ]) => {
         const currentUser = this.userService.get();
-        const notifications = [];
-        data.forEach(user => {
-          if (currentUser._id !== user._id && user._id !== 'satellite') {
-              notifications.push(this.sendNotifications(user._id, currentUser._id));
+        const docs = [];
+        users.forEach(user => {
+          if (currentUser._id !== user._id && user._id !== 'satellite' && notifications.every(notification => notification.user !== user._id)) {
+            docs.push(this.sendNotifications(user._id, currentUser._id));
           }
         });
-        return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
+        return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => this.dialogsFormService.closeDialogsForm());
@@ -95,11 +99,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       'user': user,
       'message': `${currentUser.split(':')[1]} posted a new story.`,
       'link': 'community/',
-      'type': 'message',
+      'type': 'communityMessage',
       'priority': 1,
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
-      userPlanetCode: user.userPlanetCode
+      planetCode: user.userPlanetCode
     };
   }
 
