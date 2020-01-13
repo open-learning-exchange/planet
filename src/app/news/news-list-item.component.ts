@@ -1,9 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { findDocuments } from '../shared/mangoQueries';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -26,7 +24,8 @@ export class NewsListItemComponent implements AfterViewChecked {
   constructor(
     private userService: UserService,
     private couchService: CouchService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private notificationsService: NotificationsService
   ) {}
 
   ngAfterViewChecked() {
@@ -56,7 +55,7 @@ export class NewsListItemComponent implements AfterViewChecked {
     this.sendNewsNotifications(news);
   }
 
-  sendNewsNotifications(news) {
+  sendNewsNotifications(news: any = '') {
     const replyBy = this.currentUser.name;
     const userId = news.user._id;
     const link = news.viewableBy;
@@ -70,12 +69,7 @@ export class NewsListItemComponent implements AfterViewChecked {
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
     };
-    return this.couchService.findAll(
-      'notifications',
-      findDocuments({ link, type: 'replyMessage', status: 'unread', user: news.user._id })
-    ).pipe(
-      switchMap((data: any[]) => data.length === 0 ? this.couchService.updateDocument('notifications', notification) : of({}))
-    ).subscribe();
+    return this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {

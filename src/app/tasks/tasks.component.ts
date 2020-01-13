@@ -7,10 +7,10 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   selector: 'planet-tasks',
@@ -46,7 +46,8 @@ export class TasksComponent implements OnInit {
     private userService: UserService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private notificationsService: NotificationsService
   ) {}
 
   ngOnInit() {
@@ -152,12 +153,7 @@ export class TasksComponent implements OnInit {
       'time': this.couchService.datePlaceholder,
       userPlanetCode: assignee.userPlanetCode
     };
-    return this.couchService.findAll(
-      'notifications',
-      findDocuments({ link, type: 'newTask', status: 'unread', user: assignee.userId })
-    ).pipe(
-      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-    );
+    return this.notificationsService.sendNotificationToUser(notificationDoc);
   }
 }
 
