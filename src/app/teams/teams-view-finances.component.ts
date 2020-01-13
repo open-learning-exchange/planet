@@ -47,20 +47,22 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'actions' : [] ].flat();
     this.table.filterPredicate = (data: any, filter) => {
       const fromDate = this.startDate || -Infinity;
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
       return data.date >= fromDate && data.date < toDate || data.date === 'Total';
     };
     this.table.connect().subscribe(transactions => {
-      if (transactions[0].filter !== this.filterString()) {
+      if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
         transactions[0] = this.setTransactionsTable(transactions)[0];
       }
     });
   }
 
   ngOnChanges() {
+    if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
+      this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
+    }
     this.table.data = this.setTransactionsTable(this.finances);
   }
 
