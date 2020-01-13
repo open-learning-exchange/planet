@@ -97,7 +97,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   sendNotifications(user, currentUser) {
     return {
       'user': user,
-      'message': `${currentUser.split(':')[1]} posted a new story.`,
+      'message': `<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': 'community/',
       'type': 'communityMessage',
       'priority': 1,
