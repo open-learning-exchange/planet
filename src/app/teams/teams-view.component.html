@@ -70,6 +70,7 @@
                   .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
+                [teamLeader]="leader"
                 (actionClick)="memberActionClick($event)">
               </planet-teams-member>
             </mat-card>
