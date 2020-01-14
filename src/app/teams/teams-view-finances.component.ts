@@ -63,7 +63,9 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
       this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
     }
-    this.table.data = this.setTransactionsTable(this.finances);
+    if (this.finances) {
+      this.table.data = this.setTransactionsTable(this.finances);
+    }
   }
 
   private setTransactionsTable(transactions: any[]): any[] {
@@ -73,7 +75,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
       this.emptyTable = true;
-      return [ {} ];
+      return [ { date: 'Total' } ];
     }
     this.emptyTable = false;
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
@@ -178,6 +180,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.startDate = undefined;
     this.endDate = undefined;
     this.table.filter = '';
+    this.emptyTable = this.table.data.length <= 1;
   }
 
 }
