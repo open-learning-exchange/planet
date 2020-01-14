@@ -36,7 +36,7 @@
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef class="narrow-column">Actions</mat-header-cell>
     <mat-cell *matCellDef="let element" class="narrow-column">
-      <ng-container *ngIf="element.date !== 'Total'">
+      <ng-container *ngIf="element.date !== 'Total' && editable">
         <button mat-icon-button (click)="openEditTransactionDialog(element); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
         <button mat-icon-button (click)="openArchiveTransactionDialog(element); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
       </ng-container>
