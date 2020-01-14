@@ -12,6 +12,10 @@ export const dedupeShelfReduce = (ids, id) => {
     return ids.concat(id);
   };
 
+export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => {
+  return array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index;
+});
+
 export const removeFromArray = (startArray = [], removeArray = []) => {
   return startArray.filter(item => removeArray.indexOf(item) === -1);
 };
