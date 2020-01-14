@@ -168,7 +168,7 @@ export class DashboardComponent implements OnInit {
         return surveys.findIndex((s: any) => (s.parentId === survey.parentId)) === index;
       }).length;
       if (this.surveysCount > 0 && this.isLogin) {
-        this.openNotificationsDialog(surveys);
+        // this.openNotificationsDialog(surveys);
         this.isLogin = false;
       }
       this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: this.surveysCount } : item);
