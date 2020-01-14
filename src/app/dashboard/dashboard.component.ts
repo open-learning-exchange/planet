@@ -96,10 +96,10 @@ export class DashboardComponent implements OnInit {
     }
 
     forkJoin([
-      this.getData('resources', userShelf.resourceIds, { linkPrefix: 'resources/view/', addId: true }),
-      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: 'courses/view/', addId: true }),
-      this.getData('meetups', userShelf.meetupIds, { linkPrefix: 'meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: 'teams/view/', addId: true }),
+      this.getData('resources', userShelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }),
+      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true }),
+      this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
+      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
       this.getTeamMembership()
     ]).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
@@ -129,7 +129,7 @@ export class DashboardComponent implements OnInit {
     ).pipe(
       switchMap((memberships) => forkJoin([
         of(memberships),
-        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: 'teams/view/', addId: true })
+        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: '/teams/view/', addId: true })
       ])),
       map(([ memberships, teams ]: any[]) =>
         teams.filter(team => team.type === undefined || team.type === 'team').map(team => ({
