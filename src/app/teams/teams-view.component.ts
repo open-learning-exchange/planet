@@ -468,12 +468,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return () => this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.filter(c => c._id !== course._id) });
   }
 
-  toggleTask({ option }) {
-    this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
-      this.tasksService.getTasks();
-    });
-  }
-
   goBack() {
     if (this.mode === 'services') {
       this.router.navigate([ '../' ], { relativeTo: this.route });
