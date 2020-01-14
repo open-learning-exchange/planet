@@ -1,6 +1,7 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { TasksService } from '../tasks/tasks.service';
 
 @Component({
   selector: 'planet-teams-member',
@@ -19,11 +20,18 @@ export class TeamsMemberComponent {
 
   constructor(
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private tasksService: TasksService
   ) {}
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
     this.actionClick.emit(actionParams);
+  }
+
+  toggleTask({ option }) {
+    this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
+      this.tasksService.getTasks();
+    });
   }
 
 }
