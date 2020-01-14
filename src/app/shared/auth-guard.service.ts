@@ -34,7 +34,8 @@ export class AuthService {
           return this.userService.setUserAndShelf(sessionInfo.userCtx);
         }
         this.userService.unset();
-        this.router.navigate([ '/login' ], { queryParams: { returnUrl: url }, replaceUrl: true });
+        const returnUrl = url === '/' ? null : url;
+        this.router.navigate([ '/login' ], { queryParams: { returnUrl }, replaceUrl: true });
         return of(false);
       }),
       map(isLoggedIn => isLoggedIn)
