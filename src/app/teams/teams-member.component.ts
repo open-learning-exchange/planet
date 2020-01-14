@@ -5,6 +5,11 @@ import { StateService } from '../shared/state.service';
 @Component({
   selector: 'planet-teams-member',
   templateUrl: './teams-member.component.html',
+  styles: [ `
+    .mat-list-item-disabled {
+      background-color: white;
+    }
+  ` ]
 })
 export class TeamsMemberComponent {
 
