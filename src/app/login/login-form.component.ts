@@ -19,6 +19,7 @@ import { HealthService } from '../health/health.service';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { dedupeObjectArray } from '../shared/utils';
 
 const registerForm = {
   name: [],
@@ -152,8 +153,9 @@ export class LoginFormComponent {
       }),
       switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
       map((surveys) => {
-        if (surveys.length > 0) {
-          this.openNotificationsDialog(surveys);
+        const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
+        if (uniqueSurveys.length > 0) {
+          this.openNotificationsDialog(uniqueSurveys);
         }
       }),
       switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
