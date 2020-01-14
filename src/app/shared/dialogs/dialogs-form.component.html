@@ -70,6 +70,9 @@
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
+      <!-- Slide Toggle -->
+      <mat-slide-toggle *ngIf="field.type === 'toggle'" class="full-width" [formControl]="modalForm.controls[field.name]">{{field.label}}</mat-slide-toggle>
+
     </div>
   </mat-dialog-content>
   <mat-dialog-actions *ngIf="title !== 'Rating'">

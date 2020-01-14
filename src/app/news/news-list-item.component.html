@@ -20,7 +20,7 @@
     <span class="primary-text-color cursor-pointer" *ngIf="contentHeight > content.clientHeight || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? "Show More" : "Show Less" }}</span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
-    <button mat-button type="button" (click)="addReply(item)" i18n>Reply</button>
+    <button mat-button *ngIf="editable" type="button" (click)="addReply(item)" i18n>Reply</button>
     <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
     </button>

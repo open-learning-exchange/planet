@@ -25,9 +25,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() finances: any[] = [];
   @Input() team: any = {};
   @Input() getMembers;
+  @Input() editable = true;
   @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource<any>();
-  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance', 'action' ];
+  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
   deleteDialog: any;
   dateNow: any;
   startDate: Date;
@@ -52,13 +53,16 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       return data.date >= fromDate && data.date < toDate || data.date === 'Total';
     };
     this.table.connect().subscribe(transactions => {
-      if (transactions[0].filter !== this.filterString()) {
+      if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
         transactions[0] = this.setTransactionsTable(transactions)[0];
       }
     });
   }
 
   ngOnChanges() {
+    if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
+      this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
+    }
     this.table.data = this.setTransactionsTable(this.finances);
   }
 

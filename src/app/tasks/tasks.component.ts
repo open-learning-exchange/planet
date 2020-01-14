@@ -23,6 +23,7 @@ export class TasksComponent implements OnInit {
   @Input() mode: any;
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
+  @Input() editable = true;
   private _assigness: any[];
   @Input()
   get assignees() {
