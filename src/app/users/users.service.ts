@@ -159,7 +159,7 @@ export class UsersService {
       oldRoles: [ ...user.roles ] || [ 'learner' ],
     };
     return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
-      switchMap(this.sendNotifications(user))
+      switchMap(() => this.sendNotifications(user))
     );
   }
 
@@ -216,19 +216,17 @@ export class UsersService {
   }
 
   sendNotifications(user) {
-    const link = '/manager/users';
     const notificationDoc = {
       user: user._id,
       'message': 'You were assigned a new role',
-      link,
-      linkParams: { activeTab: 'taskTab' },
+      link: '/',
       'type': 'newRole',
       'priority': 1,
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
       userPlanetCode: user.userPlanetCode
     };
-    return this.couchService.post('newRole/_find',
+    return this.couchService.findAll('notifications/_find',
       findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' })
       ).pipe(
         switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
