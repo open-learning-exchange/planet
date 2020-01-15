@@ -120,6 +120,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   setCouncillors(users) {
     this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
       .map(user => ({ avatar: user.imageSrc || 'assets/image.png', userDoc: user.doc, userId: user._id, name: user.doc.name, ...user }));
+    if (this.user.isUserAdmin) {
+      this.councillors.push(
+        { avatar: this.user.imageSrc || 'assets/image.png', userDoc: this.user, doc: this.user, userId: this.user._id, ...this.user }
+      );
+    }
   }
 
   deleteLink(link) {
