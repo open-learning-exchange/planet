@@ -71,7 +71,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.managerService.getChildPlanets(true).pipe(map(
       (state) => attachNamesToPlanets(state)
     )).subscribe(childPlanets => this.children = childPlanets.sort(sortPlanet));
-    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+    this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
       this.users = users;
     });

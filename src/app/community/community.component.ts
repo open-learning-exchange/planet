@@ -51,7 +51,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
-    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
+    this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
     this.getLinks();
     this.usersService.requestUsers();
   }
@@ -120,11 +120,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   setCouncillors(users) {
     this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
       .map(user => ({ avatar: user.imageSrc || 'assets/image.png', userDoc: user.doc, userId: user._id, name: user.doc.name, ...user }));
-    if (this.user.isUserAdmin) {
-      this.councillors.push(
-        { avatar: this.user.imageSrc || 'assets/image.png', userDoc: this.user, doc: this.user, userId: this.user._id, ...this.user }
-      );
-    }
   }
 
   deleteLink(link) {
