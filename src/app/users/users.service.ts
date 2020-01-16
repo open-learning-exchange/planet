@@ -205,7 +205,7 @@ export class UsersService {
     return forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
-        observers.push(this.setRoles(user, roles));
+        observers.push(this.setRoles(user, newRoles));
       }
       return observers;
     }, [])).pipe(map((responses) => this.requestUsers(true)));
