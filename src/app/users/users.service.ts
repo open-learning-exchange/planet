@@ -224,7 +224,7 @@ export class UsersService {
     };
     return this.couchService.findAll(
       'notifications/_find',
-      findDocuments({ 'user': 'user._id', 'status': 'unread', 'type': 'newRole' })
+      findDocuments({ 'user': user._id, 'status': 'unread', 'type': 'newRole' })
     ).pipe(
       switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
     );
