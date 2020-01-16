@@ -1,13 +1,13 @@
-import { Component, Input, ViewChild, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { commonSortingDataAccessor } from '../../shared/table-helpers';
+import { commonSortingDataAccessor, deepSortingDataAccessor } from '../../shared/table-helpers';
 import { ReportsService } from './reports.service';
 
 @Component({
   selector: 'planet-reports-table',
   templateUrl: './reports-table.component.html'
 })
-export class ReportsTableComponent implements OnChanges, AfterViewInit {
+export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() planets = [];
   logs = new MatTableDataSource();
@@ -27,15 +27,19 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
     private reportsService: ReportsService
   ) {}
 
-  ngOnChanges() {
-    this.logs.data = this.planets;
-    this.logs.sortingDataAccessor = (item: any, property: string) =>
+  ngOnInit() {
+    this.logs.sortingDataAccessor = (item: any, property: string) => property === 'lastSync' ?
+      deepSortingDataAccessor(item, 'doc.lastSync.max.time') :
       commonSortingDataAccessor(
         property === 'name' ?
           item.nameDoc || item.doc :
           item,
         property
       );
+  }
+
+  ngOnChanges() {
+    this.logs.data = this.planets;
   }
 
   ngAfterViewInit() {
