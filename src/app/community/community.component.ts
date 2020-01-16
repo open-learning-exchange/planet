@@ -51,7 +51,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
-    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
+    this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
     this.getLinks();
     this.usersService.requestUsers();
   }

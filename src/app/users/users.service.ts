@@ -60,12 +60,16 @@ export class UsersService {
     });
   }
 
+  usersListener(includeSelf = false) {
+    // Option to remove current user from list. Users should not be able to change their own roles so this protects from that.
+    return this.usersUpdated.pipe(map(users => users.filter(user => includeSelf || this.userService.get().name !== user.doc.name)));
+  }
+
   updateUsers() {
     this.usersUpdated.next(
       this.data.users.filter((user: any) => {
-        // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
-        // so this protects from that.  May need to unhide in the future.
-        return this.userService.get().name !== user.name && user.name !== 'satellite';
+        // Removes special satellite user from list.
+        return user.name !== 'satellite';
       }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
     );
   }
