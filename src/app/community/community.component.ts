@@ -55,7 +55,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.planetCode = params.get('code');
-      this.getCommunityData(params.get('code'));
+      this.getCommunityData(this.planetCode);
+      this.getLinks(this.planetCode);
     })
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
@@ -69,7 +70,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.getLinks();
   }
 
   ngOnDestroy() {
@@ -134,8 +134,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
     };
   }
 
-  getLinks() {
-    this.teamsService.getTeamMembers(this.team, true).subscribe((docs) => {
+  teamObject(planetCode?: string) {
+    const code = planetCode || this.stateService.configuration.code;
+    const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
+    const teamId = `${code}@${parentCode}`;
+    return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
+  }
+
+  getLinks(planetCode?) {
+    const team = this.teamObject(planetCode);
+    this.teamId = team._id;
+    this.team = team;
+    this.teamsService.getTeamMembers(team, true).subscribe((docs) => {
       const { link: links, transaction: finances } = docs.reduce((docObject, doc) => ({
         ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
       }), { link: [], transaction: [] });
