@@ -16,6 +16,7 @@ import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
+  selector: 'planet-community',
   templateUrl: './community.component.html',
   styleUrls: [ './community.scss' ],
   encapsulation: ViewEncapsulation.None

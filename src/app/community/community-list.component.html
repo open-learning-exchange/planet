@@ -1,0 +1,14 @@
+<div class="space-container">
+  <div class="view-container view-full-height community-view">
+    <mat-list>
+      <ng-container *ngFor="let hub of planets.hubs">
+        <h3 mat-subheader>{{hub.name}}</h3>
+        <mat-list-item *ngFor="let planet of hub.children">
+          {{planet.nameDoc?.name || planet.doc.name}}
+        </mat-list-item>
+      </ng-container>
+      <h3 mat-subheader>sandboxPlanets</h3>
+      <mat-list-item *ngFor="let planet of planets.sandboxPlanets">{{planet.nameDoc?.name || planet.doc.name}}</mat-list-item>
+    </mat-list>
+  </div>
+</div>
