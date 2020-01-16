@@ -31,7 +31,7 @@
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
                 [member]="councillor"
-                [actionMenu]="user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1 ? [ 'title' ] : []"
+                [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
                 (actionClick)="openChangeTitleDialog($event)">
               </planet-teams-member>
             </mat-card>

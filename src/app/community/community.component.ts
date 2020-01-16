@@ -14,6 +14,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'planet-community',
@@ -35,9 +36,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deleteMode = false;
   onDestroy$ = new Subject<void>();
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
+  planetCode: string | null;
 
   constructor(
     private dialog: MatDialog,
+    private route: ActivatedRoute,
     private stateService: StateService,
     private newsService: NewsService,
     private dialogsFormService: DialogsFormService,
@@ -50,16 +53,39 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.planetCode = params.get('code');
+      this.getCommunityData(params.get('code'));
+    })
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
-    this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => this.setCouncillors(users));
+    this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      if (!this.planetCode) {
+        this.setCouncillors(users);
+      }
+    });
+    this.stateService.couchStateListener('child_users').pipe(takeUntil(this.onDestroy$)).subscribe(childUsers => {
+      if (this.planetCode && childUsers) {
+        const users = childUsers.newData.filter(user => user.planetCode === this.planetCode).map(user => ({ ...user, doc: user }));
+        this.setCouncillors(users);
+      }
+    });
     this.getLinks();
-    this.usersService.requestUsers();
   }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  getCommunityData(planetCode?: string) {
+    if (planetCode) {
+      this.newsService.requestNews({ createdOn: planetCode, viewableBy: 'community' });
+      this.stateService.requestData('child_users', 'local');
+      // this.usersService.requestUsers();
+      return;
+    }
+    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
+    this.usersService.requestUsers();
   }
 
   openAddMessageDialog(message = '') {
