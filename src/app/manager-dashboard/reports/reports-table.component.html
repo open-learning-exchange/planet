@@ -1,4 +1,4 @@
-<mat-table #table [dataSource]="logs" matSort>
+<mat-table #table [dataSource]="logs" matSortActive="lastSync" matSortDirection="desc" [matSortDisableClear]="true" matSort>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
@@ -27,7 +27,7 @@
     <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date:'medium'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSync">
-    <mat-header-cell *matHeaderCellDef i18n>Last Sync</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Sync</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date:'medium'}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

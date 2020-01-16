@@ -147,7 +147,7 @@ export const commonSortingDataAccessor = (item: any, property: string) => {
 export const deepSortingDataAccessor = (item: any, property: string) => {
   const keys = property.split('.');
   const simpleItem = keys.reduce((newItem, key, index) => {
-    if (index === keys.length - 1) {
+    if (index === keys.length - 1 || newItem[key] === undefined || newItem[key] === null) {
       return newItem;
     }
     return newItem[key];
