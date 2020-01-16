@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, finalize, switchMap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
@@ -24,7 +24,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  configuration = this.stateService.configuration;
+  configuration;
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   team = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -53,11 +53,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.planetCode = params.get('code');
-      this.getCommunityData(this.planetCode);
-      this.getLinks(this.planetCode);
-    })
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        this.planetCode = params.get('code');
+        this.getCommunityData(this.planetCode);
+        this.getLinks(this.planetCode);
+        if (this.planetCode) {
+          return this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } });
+        }
+        return of([ this.stateService.configuration ]);
+      })
+    ).subscribe(configurations => this.configuration = configurations[0]);
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -81,7 +87,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (planetCode) {
       this.newsService.requestNews({ createdOn: planetCode, viewableBy: 'community' });
       this.stateService.requestData('child_users', 'local');
-      // this.usersService.requestUsers();
       return;
     }
     this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
