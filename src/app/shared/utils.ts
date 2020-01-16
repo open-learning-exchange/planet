@@ -87,6 +87,9 @@ export const deepEqual = (item1: any, item2: any) => {
   if (typeof item1 !== typeof item2) {
     return false;
   }
+  if (item1 instanceof Array) {
+    return item1.length === item2.length && item1.reduce((isEqual, value) => item2.indexOf(value) > -1 && isEqual, true);
+  }
   if (item1 instanceof Object) {
     return Object.entries(item1).reduce((isEqual, [ key1, value1 ]) => deepEqual(value1, item2[key1]), true);
   }
