@@ -276,17 +276,13 @@ export class SubmissionsService {
   }
 
   getAnswerText(submission, index, answerIndexes: number[], exportType) {
-    if (answerIndexes[index] < -1) {
-      return undefined;
-    }
     if (exportType === 'csv') {
-      const answer = submission[index].value;
+      const answer = answerIndexes[index] > -1 ? submission[index].value : undefined;
       return answer && (
         Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
       );
-    }
-    if (exportType === 'pdf') {
-      const answer = submission.parent.questions[index].type === 'input' ?
+    } else {
+      const answer = answerIndexes[index] < -1 ? undefined : submission.parent.questions[index].type === 'input' ?
         '<pre>'.concat(submission.answers[index].value, '</pre>') : submission.answers[index].value;
       return answer && ( Array.isArray(answer) ?
         '<pre>'.concat(answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1), '</pre>') : answer.text || answer
