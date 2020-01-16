@@ -30,12 +30,7 @@ export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
   ngOnInit() {
     this.logs.sortingDataAccessor = (item: any, property: string) => property === 'lastSync' ?
       deepSortingDataAccessor(item, 'doc.lastSync.max.time') :
-      commonSortingDataAccessor(
-        property === 'name' ?
-          item.nameDoc || item.doc :
-          item,
-        property
-      );
+      commonSortingDataAccessor(this.sortingObject(item, property), property);
   }
 
   ngOnChanges() {
@@ -49,6 +44,12 @@ export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   viewDetails(planet: any) {
     this.reportsService.viewPlanetDetails(planet);
+  }
+
+  sortingObject(item, property) {
+    return property === 'name' ?
+      item.nameDoc || item.doc :
+      item;
   }
 
 }
