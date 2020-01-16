@@ -24,7 +24,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  configuration;
+  configuration = {};
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
   team = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
