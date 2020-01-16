@@ -298,6 +298,7 @@ export class TeamsService {
       'teamPlanetCode': `${code}`,
       'parentCode': `${parentCode}`,
       'docType': 'link',
+      'teamType': 'sync',
       title,
       route
     };

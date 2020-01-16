@@ -24,6 +24,8 @@ import { PlanetCalendarModule } from '../shared/calendar.module';
 import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
+import { CommunityListComponent } from '../community/community-list.component';
+import { PlanetComponent } from './planet.component';
 
 @NgModule({
   imports: [
@@ -53,6 +55,8 @@ import { UsersModule } from '../users/users.module';
     LogsMyPlanetComponent,
     CommunityComponent,
     CommunityLinkDialogComponent,
+    CommunityListComponent,
+    PlanetComponent,
     HealthListComponent
   ],
   entryComponents: [ CommunityLinkDialogComponent ]

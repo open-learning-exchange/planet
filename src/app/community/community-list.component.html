@@ -1,0 +1,22 @@
+<div class="space-container">
+  <div class="view-container view-full-height community-view">
+    <mat-list>
+      <ng-container *ngFor="let hub of planets.hubs">
+        <h3 mat-subheader>{{hub.name}}</h3>
+        <mat-list-item *ngFor="let planet of hub.children">
+          <div class="action-buttons">
+            <span>{{planet.nameDoc?.name || planet.doc.name}}</span>
+            <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code">View Exchange</a>
+          </div>
+        </mat-list-item>
+      </ng-container>
+      <h3 mat-subheader>sandboxPlanets</h3>
+      <mat-list-item *ngFor="let planet of planets.sandboxPlanets" class="action-button">
+        <div class="action-buttons">
+          <span>{{planet.nameDoc?.name || planet.doc.name}}</span>
+          <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code">View Exchange</a>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>
