@@ -215,7 +215,7 @@ export class UsersService {
     const notificationDoc = {
       user: user._id,
       'message': 'You were assigned a new role',
-      link: '/',
+      link: '/myDashboard',
       'type': 'newRole',
       'priority': 1,
       'status': 'unread',
