@@ -212,7 +212,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswer(event, option) {
-    this.answer.setValue(this.answer.value === null ? [] : this.answer.value);
+    this.answer.setValue(Array.isArray(this.answer.value) ? this.answer.value : []);
     const value = this.answer.value;
     if (event.checked === true) {
       value.push(option);
