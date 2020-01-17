@@ -1,0 +1,1 @@
+{"views":{"byPlanet":{"map":"function (doc) {\n        emit(doc.createdOn, 1);\n      }","reduce":"_count"}}}
