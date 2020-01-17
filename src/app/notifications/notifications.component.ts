@@ -37,6 +37,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.notifications.filterPredicate = filterDropdowns(this.filter);
     this.getNotifications();
+    this.notifications.connect().subscribe(notification => this.unreadNotification = notification
+      .filter((n: any) => n.status === 'unread').length);
   }
 
   ngAfterViewInit() {
@@ -60,7 +62,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     .subscribe(notification => {
        this.notifications.data = notification;
        this.emptyData = !this.notifications.data.length;
-       this.unreadNotification = notification.filter((n: any) => n.status === 'unread').length;
     }, (err) => console.log(err.error.reason));
   }
 
