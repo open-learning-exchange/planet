@@ -7,7 +7,7 @@ import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets } from './reports.utils';
 import { StateService } from '../../shared/state.service';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -16,6 +16,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   hubs = [];
   sandboxPlanets = [];
+  planets = [];
   hubId: string | null = null;
   configuration = this.stateService.configuration;
   onDestroy$ = new Subject<void>();
@@ -40,13 +41,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  countByPlanet(planet, logs) {
-    return logs.reduce((total, log: any) => {
-      if (log.createdOn === planet.code) {
-        return total + log.count;
-      }
-      return total;
-    }, 0);
+  findByPlanet({ rows }: { rows: any[] }, planetCode) {
+    return (rows.find(row => row.key === planetCode) || { value: 0 }).value;
   }
 
   getLogs() {
@@ -55,17 +51,24 @@ export class ReportsComponent implements OnInit, OnDestroy {
       { planetCode: undefined, domain: undefined };
     forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
-      this.activityService.getGroupedReport('resourceViews'),
-      this.activityService.getGroupedReport('logins'),
-      this.activityService.getAdminActivities(),
       this.couchService.findAll('hubs', undefined, domain ? { domain } : {})
-    ]).subscribe(([ planets, resourceVisits, loginActivities, adminActivities, hubs ]) => {
-      this.arrangePlanetData(planets.map((planet: any) => planet.docType === 'parentName' ? planet : ({
+    ]).pipe(
+      switchMap(([ planets, hubs ]) => {
+        this.planets = planets;
+        this.arrangePlanetData(planets, hubs);
+        return forkJoin([
+          this.activityService.getGroupedReport('resourceViews'),
+          this.activityService.getGroupedReport('logins'),
+          this.activityService.getAdminActivities()
+        ]);
+      })
+    ).subscribe(([ resourceVisits, loginActivities, adminActivities ]) => {
+      this.arrangePlanetData(this.planets.map((planet: any) => planet.docType === 'parentName' ? planet : ({
         ...planet,
-        resourceViews: this.countByPlanet(planet, resourceVisits.byResource),
-        userVisits: this.countByPlanet(planet, loginActivities.byUser),
-        ...this.activityService.mostRecentAdminActivities(planet, loginActivities.byUser, adminActivities)
-      })), hubs);
+        resourceViews: this.findByPlanet(resourceVisits, planet.code),
+        userVisits: this.findByPlanet(loginActivities, planet.code),
+        ...this.activityService.mostRecentAdminActivities(planet, [], adminActivities)
+      })), this.hubs);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting Activity Logs'));
   }
 
@@ -77,6 +80,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets.filter((planet: any) => planet.doc.docType !== 'parentName');
+  }
+
+  trackById(index, item) {
+    return item._id;
   }
 
 }

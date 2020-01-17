@@ -13,7 +13,7 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <ng-container *ngIf="hubId === null; else singleTable">
-      <mat-expansion-panel *ngFor="let hub of hubs">
+      <mat-expansion-panel *ngFor="let hub of hubs; trackBy: trackById">
         <mat-expansion-panel-header>
           <mat-panel-title>{{hub.name}}</mat-panel-title>
         </mat-expansion-panel-header>
