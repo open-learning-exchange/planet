@@ -15,6 +15,7 @@ import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   selector: 'planet-community',
@@ -97,7 +98,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Add Story',
       [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true, imageGroup: 'community' } ],
-      { message },
+      { message: [ message, CustomValidators.required ]},
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }

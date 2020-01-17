@@ -22,6 +22,7 @@ import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-course
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -413,7 +414,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Add message',
       [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
-      { message },
+      { message: [ message, CustomValidators.required ]},
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }
