@@ -16,6 +16,7 @@ import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'planet-community',
@@ -161,8 +162,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setCouncillors(users) {
-    this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
-      .map(user => ({ avatar: user.imageSrc || 'assets/image.png', userDoc: user.doc, userId: user._id, name: user.doc.name, ...user }));
+    this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
+      this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1).map(user => {
+        const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
+        const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
+        const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
+        const avatar = attachmentDoc ?
+          `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
+          (user.imageSrc || 'assets/image.png');
+        return { avatar, userDoc: user.doc, userId, name: user.doc.name, ...user };
+      });
+    });
   }
 
   deleteLink(link) {
