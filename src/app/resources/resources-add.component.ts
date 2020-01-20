@@ -189,7 +189,7 @@ export class ResourcesAddComponent implements OnInit {
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
       const message = newResource.title +
         (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-      if (JSON.stringify(existingData) !== JSON.stringify(newResource) || deepEqual(this.existingResource.tags, this.tags.value)) {
+      if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(this.existingResource.tags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
           (err) => this.planetMessageService.showAlert('There was an error with this resource')
