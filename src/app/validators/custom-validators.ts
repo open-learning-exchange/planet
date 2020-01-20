@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, FormControl } from '@angular/forms';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -262,12 +262,12 @@ export class CustomValidators {
     };
   }
 
-  static requiredMarkdown(ac: AbstractControl) {
-    return /\S/.test(ac.value.text) ? null : { 'required': true };
-  }
-
   static required(ac: AbstractControl) {
     return /\S/.test(ac.value) ? null : { 'required': true };
+  }
+
+  static requiredMarkdown(ac: AbstractControl) {
+    return CustomValidators.required(new FormControl(ac.value.text));
   }
 
   static fileMatch(ac: AbstractControl, fileList: string[]) {
