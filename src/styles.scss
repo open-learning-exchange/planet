@@ -542,20 +542,6 @@ body {
     }
   }
 
-  .overflow-ellipsis {
-    display: block;
-    display: -webkit-box;
-    width: 100px;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .overflow-ellipsis:hover {
-    overflow: visible;
-  }
-
   .action-buttons {
     margin: 0 0 0.5rem 0;
     & > * {
