@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ElementRef, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -13,7 +13,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
   templateUrl: './dashboard-tile.component.html',
   styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileComponent implements OnInit {
+export class DashboardTileComponent implements AfterViewChecked {
   @Input() cardTitle: string;
   @Input() color: string;
   @Input() itemData;
@@ -23,15 +23,29 @@ export class DashboardTileComponent implements OnInit {
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items', { static: false }) itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  tileLines = 2;
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cd: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {}
+  ngAfterViewChecked() {
+    const divHeight = this.itemDiv.nativeElement.offsetHeight;
+    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
+    const fontSize = +(itemStyle.fontSize.replace('px', ''));
+    const tileHeight = divHeight - tilePadding;
+    // line-height: normal varies by browser, but should be between 1-1.2
+    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
+    if (tileLines !== this.tileLines) {
+      this.tileLines = tileLines;
+      this.cd.detectChanges();
+    }
+  }
 
   removeFromShelf(event, item: any) {
     event.stopPropagation();
