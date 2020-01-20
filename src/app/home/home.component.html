@@ -96,8 +96,9 @@
             <a mat-button routerLink="/"
               routerLinkActive="active"
               planetPulsateIcon
-              i18n-title title="Community">
-              <mat-icon>business_center</mat-icon>
+              i18n-title title="Community"
+              [routerLinkActiveOptions]="{exact:true}">
+              <mat-icon svgIcon="home"></mat-icon>
               <label i18n>Community</label>
             </a>
           </li>
@@ -105,20 +106,20 @@
             <a mat-button routerLink="/"
               routerLinkActive="active"
               planetPulsateIcon
-              i18n-title title="Nation">
-              <mat-icon>business_center</mat-icon>
+              i18n-title title="Nation"
+              [routerLinkActiveOptions]="{exact:true}">
+              <mat-icon svgIcon="home"></mat-icon>
               <label i18n>Nation</label>
             </a>
           </li>
         </ng-container>
         <li>
-          <a mat-button routerLink="/"
+          <a mat-button routerLink="/myDashboard"
             routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact:true}"
             planetPulsateIcon
-            i18n-title title="Home">
-            <mat-icon svgIcon="home"></mat-icon>
-            <label i18n>Home</label>
+            i18n-title title="Dashboard">
+            <mat-icon>turned_in_not</mat-icon>
+            <label i18n>myDashboard</label>
           </a>
         </li>
         <li>
