@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, FormControl } from '@angular/forms';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -42,44 +42,11 @@ export class CustomValidators {
     };
   }
 
-  static hexValidator(ac: AbstractControl): ValidationErrors {
-
-    if (!ac.value) {
-      return null;
-    }
-
-    const isValidHex = /^#[A-F0-9]{6}$/i.test(ac.value);
-
-    return isValidHex ? null : { invalidHex: true };
-  }
-
   // Allows us to supply a different errorType for specific patterns
   static pattern(pattern, errorType = 'pattern') {
     return (ac: AbstractControl): ValidationErrors => {
       return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
     };
-  }
-
-  static dateValidator(ac: AbstractControl): ValidationErrors {
-
-    if (!ac.value) {
-      return null;
-    }
-
-    // the regex is for yyyy-mm-dd because input type=date always evaluates to this form regardless of how it may appear to the user
-    const dateRegEx = /^\d{4}-\d{2}-\d{2}/;
-
-    if (!ac.value.match(dateRegEx)) {
-      return { invalidDateFormat: true };
-    }
-
-    const date = new Date(ac.value);
-
-    if (!date.getTime()) {
-      return { invalidDate: true };
-    }
-
-    return null;
   }
 
   // for validating whether end date comes before start date or not
@@ -240,30 +207,12 @@ export class CustomValidators {
     }
   }
 
-  static isQuestionValid(hasCorrectAnswer) {
-    return (question) => {
-      if (question.type === 'select' || question.type === 'selectMultiple') {
-        return (
-          (question.correctChoice.length === 0 && hasCorrectAnswer) ||
-          question.choices.length === 0 ||
-          question.choices.find((choice: any) => choice.text === '') !== undefined
-        );
-      }
-      return question.body === '';
-    };
-  }
-
-  static questionValidator(hasCorrectAnswer): ValidatorFn {
-    return (ac: AbstractControl) => {
-      const invalidQuestion = ac.value.find(this.isQuestionValid(hasCorrectAnswer));
-      if (invalidQuestion !== undefined) {
-        return { questionError: true };
-      }
-    };
-  }
-
   static required(ac: AbstractControl) {
     return /\S/.test(ac.value) ? null : { 'required': true };
+  }
+
+  static requiredMarkdown(ac: AbstractControl) {
+    return CustomValidators.required(new FormControl(ac.value.text));
   }
 
   static fileMatch(ac: AbstractControl, fileList: string[]) {
