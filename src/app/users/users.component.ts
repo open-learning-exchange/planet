@@ -141,6 +141,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   onFilterChange(filterValue: string) {
+    this.tableState = { ...this.tableState, isAdmin: filterValue === 'admin' ? filterValue : '' };
     this.filter = { ...this.filter, 'doc.roles': filterValue === 'All' ? '' : filterValue };
     this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild);
   }
@@ -148,6 +149,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
+    this.tableState = { ...this.tableState, isAdmin: '' };
     this.applyFilter('');
   }
 }
