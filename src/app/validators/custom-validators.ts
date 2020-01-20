@@ -262,6 +262,10 @@ export class CustomValidators {
     };
   }
 
+  static markdownValidator(ac: AbstractControl) {
+    return /\S/.test(ac.value.text) ? null : { 'required': true };
+  }
+
   static required(ac: AbstractControl) {
     return /\S/.test(ac.value) ? null : { 'required': true };
   }
