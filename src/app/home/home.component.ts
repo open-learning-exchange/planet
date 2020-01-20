@@ -22,7 +22,7 @@ import { NotificationsService } from '../notifications/notifications.service';
         width: '72px'
       })),
       state('open', style({
-        width: '150px'
+        width: '175px'
       })),
       transition('closed <=> open', animate('500ms ease'))
     ])
