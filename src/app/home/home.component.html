@@ -96,8 +96,9 @@
             <a mat-button routerLink="/"
               routerLinkActive="active"
               planetPulsateIcon
-              i18n-title title="Community">
-              <mat-icon>business_center</mat-icon>
+              i18n-title title="Community"
+              [routerLinkActiveOptions]="{exact:true}">
+              <mat-icon svgIcon="home"></mat-icon>
               <label i18n>Community</label>
             </a>
           </li>
@@ -105,8 +106,9 @@
             <a mat-button routerLink="/"
               routerLinkActive="active"
               planetPulsateIcon
-              i18n-title title="Nation">
-              <mat-icon>business_center</mat-icon>
+              i18n-title title="Nation"
+              [routerLinkActiveOptions]="{exact:true}">
+              <mat-icon svgIcon="home"></mat-icon>
               <label i18n>Nation</label>
             </a>
           </li>
@@ -116,7 +118,7 @@
             routerLinkActive="active"
             planetPulsateIcon
             i18n-title title="Dashboard">
-            <mat-icon>dashboard</mat-icon>
+            <mat-icon>turned_in_not</mat-icon>
             <label i18n>myDashboard</label>
           </a>
         </li>
