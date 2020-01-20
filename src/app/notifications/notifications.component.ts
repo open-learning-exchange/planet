@@ -21,6 +21,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   emptyData = false;
   notificationStatus = [ 'All', 'Read', 'Unread' ];
   filter = { 'status': '' };
+  anyUnread = true;
 
   constructor(
     private couchService: CouchService,
@@ -56,8 +57,9 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       },
       0,
       [ { 'time': 'desc' } ]))
-    .subscribe(notification => {
-       this.notifications.data = notification;
+    .subscribe(notifications => {
+       this.notifications.data = notifications;
+       this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
        this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
   }
