@@ -62,7 +62,7 @@ export class TeamsService {
       description: team.description || '',
       requests: [ team.requests || [] ],
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
-      public: [ false ]
+      public: [ team.public || false ]
     };
     return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
       .pipe(
