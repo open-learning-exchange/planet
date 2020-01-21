@@ -49,9 +49,9 @@ export class SyncDirective {
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
       map(([ res, users ]) => this.updateParentUsers(users)),
-      switchMap(() => this.getAchievementsAndTeamAndNewsResources()),
-      switchMap(([ achievements, teamResources, news ]: any[]) =>
-        forkJoin(this.achievementResourceReplicator(achievements), this.teamAndNewsResourcesReplicator(teamResources, news))
+      switchMap(() => this.getAchievementsAndTeamResources()),
+      switchMap(([ achievements, teamResources ]: any[]) =>
+        forkJoin(this.achievementResourceReplicator(achievements), this.teamResourcesReplicator(teamResources))
       ),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
@@ -61,7 +61,7 @@ export class SyncDirective {
     ).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
       this.syncComplete.emit();
-    }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
+    }, error => this.planetMessageService.showMessage(error.error.reason));
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ continuous: this.planetConfiguration.alwaysOnline, ...val, type })) {
@@ -191,16 +191,15 @@ export class SyncDirective {
       });
       const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
       return this.couchService.bulkDocs('parent_users', docs);
-    })).subscribe();
+    })).subscribe((res) => console.log(res));
   }
 
-  getAchievementsAndTeamAndNewsResources() {
+  getAchievementsAndTeamResources() {
     return forkJoin([
       this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code })),
       this.couchService.findAll(
         'teams', findDocuments({ docType: 'resourceLink', teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
-      ),
-      this.couchService.findAll('news', findDocuments({ images: { '$exists': true }, messageType: 'sync' }))
+      )
     ]);
   }
 

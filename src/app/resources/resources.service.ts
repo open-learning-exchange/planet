@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
@@ -40,7 +40,7 @@ export class ResourcesService {
     });
     this.stateService.couchStateListener(this.dbName).subscribe(response => {
       if (response !== undefined) {
-        this.isActiveResourceFetch = response.inProgress;
+        this.isActiveResourceFetch = false;
         const resources = response.newData.map((resource: any) => ({ doc: resource, _id: resource._id, _rev: resource._rev }));
         this.setResources(resources, this.ratings[response.planetField], response.planetField);
       }
@@ -82,7 +82,9 @@ export class ResourcesService {
   }
 
   updateResources(resources) {
-    this.resourcesUpdated.next(resources);
+    if (!this.isActiveResourceFetch) {
+      this.resourcesUpdated.next(resources);
+    }
   }
 
   getRatings(resourceIds: string[], opts: any) {

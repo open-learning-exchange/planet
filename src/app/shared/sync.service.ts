@@ -1,24 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin, Observable, throwError, of } from 'rxjs';
-import { switchMap, map, takeWhile, catchError } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from './state.service';
 import { TagsService } from './forms/tags.service';
-import { DialogsFormService } from './dialogs/dialogs-form.service';
-import { ValidatorService } from '../validators/validator.service';
-import { UserService } from './user.service';
-
-const passwordFormFields = [
-  {
-    'label': 'Password',
-    'type': 'password',
-    'name': 'password',
-    'placeholder': 'Password',
-    'required': true
-  }
-];
 
 @Injectable({
   providedIn: 'root'
@@ -32,57 +19,17 @@ export class SyncService {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private tagsService: TagsService,
-    private dialogsFormService: DialogsFormService,
-    private validatorService: ValidatorService,
-    private userService: UserService
+    private managerService: ManagerService,
+    private tagsService: TagsService
   ) {}
 
-  createChildPullDoc(items: any[], db, planets: any[]) {
-    const itemsToSend = planets.map(
-      planet => items.map(item => ({ db, sendTo: planet.code, item, time: this.couchService.datePlaceholder }))
-    ).flat();
-    return this.couchService.bulkDocs('send_items', itemsToSend);
-  }
-
-  openPasswordConfirmation() {
-    const title = 'Admin Confirmation';
-    const formGroup = {
-      password: [ '', Validators.required, ac => this.validatorService.checkPassword$(ac) ]
-    };
-    return this.dialogsFormService
-    .confirm(title, passwordFormFields, formGroup, true)
-    .pipe(
-      switchMap((response: any): Observable<{ name, password, cancelled? }> => {
-        if (response !== undefined) {
-          return this.verifyPassword(response.password);
-        }
-        return of({ name: undefined, password: undefined, cancelled: true });
-      }),
-      takeWhile((value) => value.cancelled !== true),
-      catchError((err) => {
-        const errorMessage = err.error.reason;
-        return throwError(errorMessage === 'Name or password is incorrect.' ? 'Password is incorrect.' : errorMessage);
-      })
-    );
-  }
-
-  private verifyPassword(password) {
-    return forkJoin([
-      this.couchService.post('_session', { name: this.userService.get().name, password }),
-      this.couchService.post('_session',
-        { 'name': this.userService.get().name + '@' + this.stateService.configuration.code, 'password': password },
-        { withCredentials: true, domain: this.stateService.configuration.parentDomain })
-    ]).pipe(switchMap(([ localSession, parentSession ]) => {
-      if (!localSession.ok || !parentSession.ok) {
-        return throwError('Invalid password');
-      }
-      return of({ name: this.userService.get().name, password });
-    }));
+  createChildPullDoc(items: any[], db, planetCode, opts?: any) {
+    const itemsToSend = items.map(item => ({ db, sendTo: planetCode, item, time: this.couchService.datePlaceholder }));
+    return this.couchService.bulkDocs('send_items', itemsToSend, opts);
   }
 
   confirmPasswordAndRunReplicators(replicators) {
-    return this.openPasswordConfirmation().pipe(switchMap((credentials) => {
+    return this.managerService.openPasswordConfirmation().pipe(switchMap((credentials) => {
       return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
     }));
   }

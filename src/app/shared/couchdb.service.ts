@@ -125,8 +125,8 @@ export class CouchService {
     );
   }
 
-  bulkDocs(db: string, docs: any[]) {
-    return this.updateDocument(db + '/_bulk_docs', { docs });
+  bulkDocs(db: string, docs: any[], opts?: any) {
+    return this.updateDocument(db + '/_bulk_docs', { docs }, opts);
   }
 
   stream(method: string, db: string) {
