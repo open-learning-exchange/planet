@@ -25,6 +25,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   @Input() meetupDetail: any;
   @Input() isDialog = false;
+  @Input() editable = true;
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
   canManage = true;

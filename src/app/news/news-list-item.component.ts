@@ -11,6 +11,7 @@ export class NewsListItemComponent implements AfterViewChecked {
   @Input() item;
   @Input() replyObject;
   @Input() showRepliesButton = true;
+  @Input() editable = true;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();

@@ -1,9 +1,7 @@
 @import '../mixins';
 @import '../variables';
 
-:host {
-
-  @include left-right-grid-areas;
+.teams-view {
 
   .view-container {
     mat-card {
@@ -11,20 +9,10 @@
     }
   }
 
-  .left-tile, .right-tile {
-    overflow: auto;
-  }
-
-  .request-list {
-    li {
-      margin-top: 0.5rem;
-    }
-  }
-
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-template-rows: repeat(auto-fill, 250px);
+    grid-template-rows: repeat(auto-fill, 280px);
     grid-column-gap: 0.25rem;
     mat-card-content {
       max-height: 149px;

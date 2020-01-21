@@ -19,12 +19,13 @@ import { UsersAchievementsModule } from '../users/users-achievements/users-achie
 import { NewsModule } from '../news/news.module';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsModule } from '../teams/teams.module';
-import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
+import { CommunityListComponent } from '../community/community-list.component';
+import { PlanetComponent } from './planet.component';
 
 @NgModule({
   imports: [
@@ -48,15 +49,16 @@ import { UsersModule } from '../users/users.module';
     HomeComponent,
     DashboardComponent,
     DashboardTileComponent,
-    DashboardNotificationsDialogComponent,
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
     LogsMyPlanetComponent,
     CommunityComponent,
     CommunityLinkDialogComponent,
+    CommunityListComponent,
+    PlanetComponent,
     HealthListComponent
   ],
-  entryComponents: [ DashboardNotificationsDialogComponent, CommunityLinkDialogComponent ]
+  entryComponents: [ CommunityLinkDialogComponent ]
 })
 export class HomeModule {}

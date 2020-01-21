@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
@@ -22,10 +22,12 @@ import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-course
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: './teams-view.component.html',
-  styleUrls: [ './teams-view.scss' ]
+  styleUrls: [ './teams-view.scss' ],
+  encapsulation: ViewEncapsulation.None
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -275,6 +277,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' }) {
+    this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
+  }
+
   changeMembershipRequest(type, memberDoc?) {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
@@ -408,7 +414,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Add message',
       [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
-      { message },
+      { message: [ message, CustomValidators.requiredMarkdown ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }
@@ -461,12 +467,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       return of(true);
     }
     return () => this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.filter(c => c._id !== course._id) });
-  }
-
-  toggleTask({ option }) {
-    this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
-      this.tasksService.getTasks();
-    });
   }
 
   goBack() {

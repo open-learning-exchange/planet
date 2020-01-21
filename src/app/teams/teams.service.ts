@@ -24,6 +24,11 @@ const descriptionField = {
   'placeholder': 'Description',
   'required': false
 };
+const publicField = {
+  'type': 'toggle',
+  'name': 'public',
+  'label': 'Public'
+};
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +61,8 @@ export class TeamsService {
       ...nameControl,
       description: team.description || '',
       requests: [ team.requests || [] ],
-      teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ]
+      teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
+      public: [ team.public || false ]
     };
     return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
       .pipe(
@@ -84,7 +90,7 @@ export class TeamsService {
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
-    return [ type === 'services' ? [] : nameField, descriptionField, type === 'team' ? typeField : [] ].flat();
+    return [ type === 'services' ? [] : nameField, descriptionField, type === 'team' ? typeField : [], publicField ].flat();
   }
 
   updateTeam(team: any) {
@@ -292,6 +298,7 @@ export class TeamsService {
       'teamPlanetCode': `${code}`,
       'parentCode': `${parentCode}`,
       'docType': 'link',
+      'teamType': 'sync',
       title,
       route
     };

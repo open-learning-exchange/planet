@@ -6,6 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -60,12 +61,16 @@ export class UsersService {
     });
   }
 
+  usersListener(includeSelf = false) {
+    // Option to remove current user from list. Users should not be able to change their own roles so this protects from that.
+    return this.usersUpdated.pipe(map(users => users.filter(user => includeSelf || this.userService.get().name !== user.doc.name)));
+  }
+
   updateUsers() {
     this.usersUpdated.next(
       this.data.users.filter((user: any) => {
-        // Removes current user and special satellite user from list.  Users should not be able to change their own roles,
-        // so this protects from that.  May need to unhide in the future.
-        return this.userService.get().name !== user.name && user.name !== 'satellite';
+        // Removes special satellite user from list.
+        return user.name !== 'satellite';
       }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
     );
   }
@@ -151,7 +156,9 @@ export class UsersService {
       roles: roles,
       oldRoles: [ ...user.roles ] || [ 'learner' ],
     };
-    return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser);
+    return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
+      switchMap(() => this.sendNotifications(user))
+    );
   }
 
   removeFromTabletUsers(user) {
@@ -198,12 +205,29 @@ export class UsersService {
     return forkJoin(users.reduce((observers, user) => {
       // Do not allow an admin to be given another role
       if (user.isUserAdmin === false) {
-        // Make copy of user so UI doesn't change until DB change succeeds
-        const tempUser = { ...user, roles: newRoles };
-        observers.push(this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser));
+        observers.push(this.setRoles(user, newRoles));
       }
       return observers;
     }, [])).pipe(map((responses) => this.requestUsers(true)));
+  }
+
+  sendNotifications(user) {
+    const notificationDoc = {
+      user: user._id,
+      'message': 'You were assigned a new role',
+      link: '/myDashboard',
+      'type': 'newRole',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: user.userPlanetCode
+    };
+    return this.couchService.findAll(
+      'notifications/_find',
+      findDocuments({ 'user': user._id, 'status': 'unread', 'type': 'newRole' })
+    ).pipe(
+      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
+    );
   }
 
 }

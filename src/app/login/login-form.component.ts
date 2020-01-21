@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { UserService } from '../shared/user.service';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 import { from, forkJoin, of, throwError } from 'rxjs';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
@@ -15,6 +16,10 @@ import { PouchService } from '../shared/database/pouch.service';
 import { StateService } from '../shared/state.service';
 import { showFormErrors } from '../shared/table-helpers';
 import { HealthService } from '../health/health.service';
+import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
+import { SubmissionsService } from '../submissions/submissions.service';
+import { findDocuments } from '../shared/mangoQueries';
+import { dedupeObjectArray } from '../shared/utils';
 
 const registerForm = {
   name: [],
@@ -41,11 +46,13 @@ export class LoginFormComponent {
   public userForm: FormGroup;
   showPassword = false;
   showRepeatPassword = false;
+  notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
 
   constructor(
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private userService: UserService,
     private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService,
@@ -54,7 +61,8 @@ export class LoginFormComponent {
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private pouchService: PouchService,
-    private healthService: HealthService
+    private healthService: HealthService,
+    private submissionsService: SubmissionsService
   ) {
     registerForm.name = [ '', [
       Validators.required,
@@ -67,7 +75,10 @@ export class LoginFormComponent {
   }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newmember';
-  returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+  returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
+    'myDashboard' :
+    '/'
+  );
 
   onSubmit() {
     if (!this.userForm.valid) {
@@ -139,6 +150,13 @@ export class LoginFormComponent {
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
+      }),
+      switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
+      map((surveys) => {
+        const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
+        if (uniqueSurveys.length > 0) {
+          this.openNotificationsDialog(uniqueSurveys);
+        }
       }),
       switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
       catchError(error => error.status === 404 ? of({}) : throwError(error))
@@ -219,6 +237,15 @@ export class LoginFormComponent {
       }
     };
     return this.syncService.sync(replicators, credentials);
+  }
+
+  openNotificationsDialog(surveys) {
+    this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
+      data: { surveys },
+      width: '40vw',
+      maxHeight: '90vh',
+      autoFocus: false
+    });
   }
 
 }

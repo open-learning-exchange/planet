@@ -68,9 +68,13 @@ export class SyncService {
   }
 
   private verifyPassword(password) {
-    return this.couchService.post('_session', { name: this.userService.get().name, password })
-    .pipe(switchMap((data) => {
-      if (!data.ok) {
+    return forkJoin([
+      this.couchService.post('_session', { name: this.userService.get().name, password }),
+      this.couchService.post('_session',
+        { 'name': this.userService.get().name + '@' + this.stateService.configuration.code, 'password': password },
+        { withCredentials: true, domain: this.stateService.configuration.parentDomain })
+    ]).pipe(switchMap(([ localSession, parentSession ]) => {
+      if (!localSession.ok || !parentSession.ok) {
         return throwError('Invalid password');
       }
       return of({ name: this.userService.get().name, password });

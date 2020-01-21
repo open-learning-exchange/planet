@@ -14,9 +14,10 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { FormsModule } from '@angular/forms';
+import { TeamsMemberComponent } from './teams-member.component';
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent ],
+  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent ],
   imports: [
     TeamsRouterModule,
     CommonModule,
@@ -34,7 +35,8 @@ import { FormsModule } from '@angular/forms';
   declarations: [
     TeamsComponent,
     TeamsViewComponent,
-    TeamsViewFinancesComponent
+    TeamsViewFinancesComponent,
+    TeamsMemberComponent
   ]
 })
 export class TeamsModule {}

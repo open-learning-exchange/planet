@@ -27,7 +27,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.usersService.usersUpdated.pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+    this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.users = users;
       this.emptyData = this.users.length === 0;
     });

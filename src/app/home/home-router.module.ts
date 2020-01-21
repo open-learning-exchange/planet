@@ -9,13 +9,16 @@ import { UsersAchievementsUpdateComponent } from '../users/users-achievements/us
 import { NewsComponent } from '../news/news.component';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsViewComponent } from '../teams/teams-view.component';
-import { CommunityComponent } from '../community/community.component';
 import { HealthListComponent } from '../health/health-list.component';
+import { PlanetComponent } from './planet.component';
+import { CommunityComponent } from '../community/community.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', component: PlanetComponent },
+      { path: 'community/:code', component: CommunityComponent },
+      { path: 'myDashboard', component: DashboardComponent },
       { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
       { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
@@ -51,7 +54,6 @@ const routes: Routes = [
       { path: 'myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'health', component: HealthListComponent },
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
-      { path: 'community', component: CommunityComponent },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } }
     ]

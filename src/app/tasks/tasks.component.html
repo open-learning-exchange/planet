@@ -1,8 +1,9 @@
-<button i18n mat-stroked-button (click)="addTask()">Add a task</button>
+<button i18n mat-stroked-button (click)="addTask()" *ngIf="editable">Add a task</button>
 <mat-button-toggle-group
   class="margin-lr-5"
   (change)="setFilter($event.value)"
-  #filterGroup="matButtonToggleGroup">
+  #filterGroup="matButtonToggleGroup"
+  *ngIf="editable">
   <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
     myTasks
   </mat-button-toggle>
@@ -10,9 +11,9 @@
     All Tasks
   </mat-button-toggle>
 </mat-button-toggle-group>
-<mat-action-list>
-  <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="toggleTaskComplete(task)">
-    <mat-checkbox [checked]="task.completed"></mat-checkbox>
+<mat-action-list [disableRipple]="!editable">
+  <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="toggleTaskComplete(task)" [disabled]="!editable">
+    <mat-checkbox [checked]="task.completed" [disabled]="!editable"></mat-checkbox>
     <p matLine>{{task.title}}</p>
     <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</p>
     <p matLine *ngIf="task.completed"><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</p>
@@ -23,9 +24,11 @@
         imgUrlPrefix + task.assignee.avatar :
         'assets/image.png'
     ">
-    <button mat-icon-button (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
-    <button mat-icon-button (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
-    <button mat-icon-button [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
+    <ng-container *ngIf="editable">
+      <button mat-icon-button (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
+    </ng-container>
     <mat-menu #assigneeMenu="matMenu">
       <button *ngIf="task.assignee" (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee.name}}</button>
       <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee(task, assignee)">{{assignee.name}}</button>
