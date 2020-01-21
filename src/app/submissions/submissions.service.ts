@@ -253,7 +253,6 @@ export class SubmissionsService {
   exportSubmissionsCsv(exam, type: 'exam' | 'survey') {
     return this.getSubmissionsExport(exam, type).pipe(tap(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
       const data = submissions.map((submission) => {
-        const exportType = 'csv';
         const answerIndexes = this.answerIndexes(questionTexts, submission);
         return {
           'Gender': submission.user.gender || 'N/A',
@@ -263,7 +262,7 @@ export class SubmissionsService {
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
             [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
-              this.getAnswerText(submission.answers, index, answerIndexes, exportType)
+              this.getAnswerText(submission.answers, index, answerIndexes)
           }), {})
         };
       });
@@ -275,30 +274,27 @@ export class SubmissionsService {
     return questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
   }
 
-  getAnswerText(submission, index, answerIndexes: number[], exportType) {
-    if (exportType === 'csv') {
-      const answer = answerIndexes[index] > -1 ? submission[index].value : undefined;
-      return answer && (
-        Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
-      );
-    } else {
-      const answer = answerIndexes[index] < -1 ? undefined : submission.parent.questions[index].type === 'input' ?
-        '<pre>'.concat(submission.answers[index].value, '</pre>') : submission.answers[index].value;
-      return answer && ( Array.isArray(answer) ?
-        '<pre>'.concat(answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1), '</pre>') : answer.text || answer
-      );
-    }
+  getAnswerText(answers: any[], index, answerIndexes: number[]) {
+    const answer = answerIndexes[index] > -1 ? answers[index].value : undefined;
+    return answer && (
+      Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
+    );
+  }
+
+  addPreToAnswer(submission: any, index, answerIndexes: number[]) {
+    return submission.parent.questions[index].type !== 'textarea' ?
+      '<pre>'.concat(this.getAnswerText(submission.answers, index, answerIndexes), '</pre>') :
+      this.getAnswerText(submission.answers, index, answerIndexes);
   }
 
   exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
       const markdown = submissions.map(submission => {
-        const exportType = 'pdf';
         const answerIndexes = this.answerIndexes(questionTexts, submission);
         return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
           questionTexts.map((question, index) => (
             `**Question ${index + 1}:**  \n ${question}  \n\n` +
-            `**Response ${index + 1}:**  \n ${this.getAnswerText(submission, index, answerIndexes, exportType)}  \n`
+            `**Response ${index + 1}:**  \n ${console.log(this.addPreToAnswer(submission, index, answerIndexes))}  \n`
           )).join('  \n');
       }).join('  \n');
       const converter = new showdown.Converter();
