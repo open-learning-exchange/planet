@@ -7,6 +7,9 @@
           <div class="action-buttons">
             <span>{{planet.nameDoc?.name || planet.doc.name}}</span>
             <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code">View Exchange</a>
+            <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]">
+              View Report
+            </a>
           </div>
         </mat-list-item>
       </ng-container>
@@ -15,6 +18,9 @@
         <div class="action-buttons">
           <span>{{planet.nameDoc?.name || planet.doc.name}}</span>
           <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code">View Exchange</a>
+          <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]">
+            View Report
+          </a>
         </div>
       </mat-list-item>
     </mat-list>
