@@ -294,7 +294,7 @@ export class SubmissionsService {
         return `### Response from ${new Date(submission.lastUpdateTime).toString()}  \n` +
           questionTexts.map((question, index) => (
             `**Question ${index + 1}:**  \n ${question}  \n\n` +
-            `**Response ${index + 1}:**  \n ${console.log(this.addPreToAnswer(submission, index, answerIndexes))}  \n`
+            `**Response ${index + 1}:**  \n ${this.addPreToAnswer(submission, index, answerIndexes)}  \n`
           )).join('  \n');
       }).join('  \n');
       const converter = new showdown.Converter();
