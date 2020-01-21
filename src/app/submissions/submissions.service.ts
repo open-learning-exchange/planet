@@ -283,7 +283,7 @@ export class SubmissionsService {
 
   addPreToAnswer(submission: any, index, answerIndexes: number[]) {
     const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
-    return submission.parent.questions[index].type !== 'textarea' ?
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
       '<pre>'.concat(answerText, '</pre>') :
       answerText;
   }
