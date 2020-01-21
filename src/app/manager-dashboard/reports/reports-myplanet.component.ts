@@ -70,10 +70,21 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
   }
 
   getMyPlanetList() {
+    this.myPlanetRequest().subscribe(([ planets, myPlanets ]: [ any, any ]) => {
+      this.setAllPlanets(
+        [ { doc: this.configuration } ].concat(planets)
+          .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
+        myPlanets
+      );
+      this.planets = this.allPlanets;
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+  }
+
+  myPlanetRequest() {
     const { planetCode, domain } = this.configuration.planetType === 'community' ?
       { planetCode: this.configuration.parentCode, domain: this.configuration.parentDomain } :
       { planetCode: undefined, domain: undefined };
-    forkJoin([
+    return forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
       this.couchService.findAll('myplanet_activities')
     ]).pipe(switchMap(([ planets, myPlanets ]) => {
@@ -90,14 +101,7 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
           }));
         }
         return of([ planets, myPlanets ]);
-    })).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
-      this.setAllPlanets(
-        [ { doc: this.configuration } ].concat(planets)
-          .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
-        myPlanets
-      );
-      this.planets = this.allPlanets;
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+    }));
   }
 
 }
