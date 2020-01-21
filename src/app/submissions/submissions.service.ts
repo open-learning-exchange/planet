@@ -282,9 +282,10 @@ export class SubmissionsService {
   }
 
   addPreToAnswer(submission: any, index, answerIndexes: number[]) {
+    const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
     return submission.parent.questions[index].type !== 'textarea' ?
-      '<pre>'.concat(this.getAnswerText(submission.answers, index, answerIndexes), '</pre>') :
-      this.getAnswerText(submission.answers, index, answerIndexes);
+      '<pre>'.concat(answerText, '</pre>') :
+      answerText;
   }
 
   exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
