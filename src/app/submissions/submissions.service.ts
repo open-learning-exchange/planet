@@ -283,7 +283,7 @@ export class SubmissionsService {
     );
   }
 
-  addPreToAnswer(submission: any, index, answerIndexes: number[]) {
+  getPDFAnswerText(submission: any, index, answerIndexes: number[]) {
     const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
     return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
       '<pre>'.concat(answerText, '</pre>') :
@@ -301,7 +301,7 @@ export class SubmissionsService {
         return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
           questionTexts.map((question, questionIndex) => (
             `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n` +
-            `**Response ${questionIndex + 1}:**  \n\n${this.addPreToAnswer(submission, questionIndex, answerIndexes)}  \n`
+            `**Response ${questionIndex + 1}:**  \n\n${this.getPDFAnswerText(submission, questionIndex, answerIndexes)}  \n`
           )).join('  \n');
       }).join('  \n');
       const converter = new showdown.Converter();
