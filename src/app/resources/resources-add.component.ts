@@ -189,7 +189,7 @@ export class ResourcesAddComponent implements OnInit {
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
       const message = newResource.title +
         (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-      const currentTags = this.existingResource.tags.map(tag => tag._id);
+      const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
