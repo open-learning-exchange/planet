@@ -76,7 +76,7 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
     forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
       this.couchService.findAll('myplanet_activities')
-    ]).pipe(switchMap(([ planets, myPlanets ]: [ any, any ]) => {
+    ]).pipe(switchMap(([ planets, myPlanets ]) => {
         planets = attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
         if (this.hubId) {
           return this.couchService.findAll('hubs', { 'selector': { 'planetId': this.hubId } }, { domain })
@@ -85,11 +85,12 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
             const selector = { 'selector': { 'createdOn': { '$in': this.hub.spokes } } };
             return this.couchService.findAll('myplanet_activities', selector, { domain });
           }), switchMap((hubActivities: any) => {
-            return [ planets.filter(p => this.hub.spokes.indexOf(p.doc.code) > -1), myPlanets.concat(hubActivities) ];
+            console.log(planets, hubActivities);
+            return of([ planets.filter((p: any) => this.hub.spokes.indexOf(p.doc.code) > -1), myPlanets.concat(hubActivities) ]);
           }));
         }
         return of([ planets, myPlanets ]);
-    })).subscribe(([ planets, myPlanets ]) => {
+    })).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
       this.setAllPlanets(
         [ { doc: this.configuration } ].concat(planets)
           .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
