@@ -2,6 +2,7 @@
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
     <div *ngFor="let field of fields">
+      <mat-checkbox *ngIf="field.type === 'checkbox'" formControlName="{{field.name}}">{{field.placeholder}}</mat-checkbox>
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
         <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">

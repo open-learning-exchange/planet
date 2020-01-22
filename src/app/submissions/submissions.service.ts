@@ -290,20 +290,13 @@ export class SubmissionsService {
       answerText;
   }
 
-  exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
+  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportData) {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
-      if (!submissions.length) {
+      if (!submissions.length || (!exportData.answer && !exportData.question)) {
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
-      const markdown = submissions.map((submission, index) => {
-        const answerIndexes = this.answerIndexes(questionTexts, submission);
-        return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
-          questionTexts.map((question, questionIndex) => (
-            `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n` +
-            `**Response ${questionIndex + 1}:**  \n\n${this.getPDFAnswerText(submission, questionIndex, answerIndexes)}  \n`
-          )).join('  \n');
-      }).join('  \n');
+      const markdown = this.preparePDF(submissions, questionTexts, exportData);
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         {
@@ -312,6 +305,23 @@ export class SubmissionsService {
         }
       ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
     });
+  }
+
+  preparePDF(submissions, questionTexts, exportData) {
+    if(!exportData.answer) {
+      return questionTexts.map((question, questionIndex) => (
+        `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n`
+      )).join('  \n');
+    } else {
+      return submissions.map((submission, index) => {
+        const answerIndexes = this.answerIndexes(questionTexts, submission);
+        return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
+          questionTexts.map((question, questionIndex) => (
+            exportData.question ? `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n` : '' +
+            `**Response ${questionIndex + 1}:**  \n\n${this.getPDFAnswerText(submission, questionIndex, answerIndexes)}  \n`
+          )).join('  \n');
+      }).join('  \n');
+    }
   }
 
 }

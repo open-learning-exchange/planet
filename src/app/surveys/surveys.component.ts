@@ -21,6 +21,7 @@ import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -75,7 +76,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private dialogsFormService: DialogsFormService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -316,7 +318,16 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    this.submissionsService.exportSubmissionsPdf(survey, 'survey');
+    this.dialogsFormService.openDialogsForm(
+      'Records to Export',
+      [
+        { name: 'question', placeholder: 'Include Questions', type: 'checkbox' },
+        { name: 'answer', placeholder: 'Include Answers', type: 'checkbox' }
+      ],
+      { question: true, answer: true },
+      { autoFocus: true, onSubmit: (data: any) => this.submissionsService.exportSubmissionsPdf(survey, 'survey', data) }
+    );
+    ;
   }
 
 }
