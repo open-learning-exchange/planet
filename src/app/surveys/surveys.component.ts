@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -327,9 +328,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       { question: true, answer: true },
       {
         autoFocus: true,
+        disableIfInvalid: true,
         onSubmit: (data: any) => {
           this.dialogsFormService.closeDialogsForm();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', data)
+        },
+        formOptions: {
+          validator: (ac: FormGroup) => ac.controls.question.value || ac.controls.answer.value ? null : { required: true }
         }
       }
     );
