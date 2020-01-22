@@ -8,7 +8,7 @@
 
   display: grid;
   grid-template-columns: 4fr 3fr;
-  grid-template-rows: 128px calc(100% - 128px - 0.5rem);
+  grid-template-rows: 64px calc(100% - 64px - 0.5rem);
   grid-template-areas:
     "links calendar"
     "news calendar";
@@ -39,12 +39,6 @@
 
 planet-calendar {
   grid-template-areas: calendar;
-}
-
-.scrolling {
-  overflow-x: auto;
-  white-space: nowrap;
-  display: inline-block;
 }
 
 .card-grid {

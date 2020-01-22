@@ -28,7 +28,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = {};
   teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
-  team = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
+  team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
   news: any[] = [];
   links: any[] = [];
@@ -78,6 +78,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    this.couchService.get(`teams/${this.teamId}`).subscribe(team => this.team = team);
   }
 
   ngOnDestroy() {
@@ -236,6 +237,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.usersService.requestUsers();
       });
     };
+  }
+
+  openDescriptionDialog() {
+    const submitDescription = ({ description }) => {
+      this.teamsService.updateTeam({ ...this.team, description: description.text, images: description.images }).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe(newTeam => { this.team = newTeam; });
+      this.dialogsFormService.closeDialogsForm();
+    };
+    this.dialogsFormService.openDialogsForm(
+      'Edit Description',
+      [ { name: 'description', placeholder: 'Description', type: 'markdown', required: true, imageGroup: 'community' } ],
+      { description: { text: this.team.description || '', images: this.team.images || [] } },
+      { onSubmit: submitDescription }
+    );
   }
 
 }
