@@ -26,6 +26,10 @@
           </div>
         </mat-tab>
         <mat-tab i18n-label label="Services">
+          <planet-markdown [content]="team.description || ''"></planet-markdown>
+          <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
+            configuration.planetType, select, community {Community} nation {Nation} center {Earth}
+          } Description</button>
           <mat-nav-list>
             <mat-list-item *ngFor="let link of links">
               <a [routerLink]="link.route" i18n>
