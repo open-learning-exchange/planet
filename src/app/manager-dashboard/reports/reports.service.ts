@@ -62,6 +62,20 @@ export class ReportsService {
     );
   }
 
+  groupViewByMonth(rows: { key: any, value: any }[]) {
+    return this.groupBy(
+      this.appendGender(rows.map(row => ({
+        ...row,
+        user: row.key.user,
+        date: new Date(row.key.year, row.key.month, 1).valueOf(),
+        viewCount: row.value.count,
+        createdOn: row.key.createdOn
+      }))),
+      [ 'createdOn', 'date', 'gender' ],
+      { sumField: 'viewCount', uniqueField: 'user' }
+    );
+  }
+
   selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
     return planetCode ?
       findDocuments({
@@ -93,6 +107,17 @@ export class ReportsService {
 
   getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet') {
     return this.couchService.get(`${db}/_design/${db}/_view/${view}?group=true`);
+  }
+
+  getAllActivities(
+    db: 'login_activities' | 'resource_activities',
+    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
+  ) {
+    const dateField = db === 'login_activities' ? 'loginTime' : 'time';
+    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
+    .pipe(map((activities: any) => {
+      return this.filterAdmin(activities, filterAdmin);
+    }));
   }
 
   groupLoginActivities(loginActivities) {
