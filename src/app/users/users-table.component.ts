@@ -113,8 +113,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     });
     this.usersTable.filterPredicate = (data, filter) => composeFilterFunctions([
       filterDropdowns(this.filter),
-      filterFieldExists([ 'doc.isUserAdmin' ], this.tableState.isAdmin === 'admin'),
-      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
+      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated', this.tableState.isAdmin === 'admin'),
       filterSpecificFieldsByWord([ 'fullName' ])
     ])(data, filter);
     this.usersTable.connect().subscribe(data => {
@@ -126,6 +125,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   ngOnChanges() {
     this.usersTable.data = this.users;
+    console.log(this.tableState.isAdmin === 'admin')
   }
 
   ngOnDestroy() {
