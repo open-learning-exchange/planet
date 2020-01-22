@@ -1,6 +1,10 @@
 <div class="space-container">
   <div class="view-container view-full-height community-view">
     <mat-toolbar class="action-buttons">
+      <mat-toolbar-row>
+        <span>{{configuration?.name}}</span>
+      </mat-toolbar-row>
+      <mat-toolbar-row>
       <span class="scrolling">
         <ng-container *ngFor="let link of links">
           <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
@@ -14,6 +18,7 @@
         <button (click)="toggleDeleteMode()" mat-icon-button><mat-icon>delete</mat-icon></button>
         <button (click)="openAddLinkDialog()" mat-icon-button><mat-icon>add</mat-icon></button>
       </ng-container>
+      </mat-toolbar-row>
     </mat-toolbar>
     <div class="community-news">
       <mat-tab-group>
