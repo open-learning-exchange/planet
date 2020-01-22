@@ -18,10 +18,6 @@
     <mat-header-cell *matHeaderCellDef i18n>Member Visits</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.userVisits}}</mat-cell>
   </ng-container>
-  <ng-container matColumnDef="lastAdminLogin">
-    <mat-header-cell *matHeaderCellDef i18n>Last Admin Login</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.lastAdminLogin?.max?.loginTime | date:'medium'}}</mat-cell>
-  </ng-container>
   <ng-container matColumnDef="lastUpgrade">
     <mat-header-cell *matHeaderCellDef i18n>Last Upgrade</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date:'medium'}}</mat-cell>
