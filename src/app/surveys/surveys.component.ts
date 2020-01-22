@@ -327,7 +327,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       { question: true, answer: true },
       { autoFocus: true, onSubmit: (data: any) => this.submissionsService.exportSubmissionsPdf(survey, 'survey', data) }
     );
-    ;
   }
 
 }

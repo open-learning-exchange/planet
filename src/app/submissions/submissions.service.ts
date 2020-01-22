@@ -308,7 +308,7 @@ export class SubmissionsService {
   }
 
   preparePDF(submissions, questionTexts, exportData) {
-    if(!exportData.answer) {
+    if (!exportData.answer) {
       return questionTexts.map((question, questionIndex) => (
         `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n`
       )).join('  \n');
