@@ -1,24 +1,7 @@
 <div class="space-container">
   <div class="view-container view-full-height community-view">
     <mat-toolbar class="action-buttons">
-      <mat-toolbar-row>
-        <span>{{configuration?.name}}</span>
-      </mat-toolbar-row>
-      <mat-toolbar-row>
-      <span class="scrolling">
-        <ng-container *ngFor="let link of links">
-          <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
-            {{link.title}}
-          </a>
-          <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
-        </ng-container>
-      </span>
-      <span class="toolbar-fill"></span>
-      <ng-container *planetAuthorizedRoles>
-        <button (click)="toggleDeleteMode()" mat-icon-button><mat-icon>delete</mat-icon></button>
-        <button (click)="openAddLinkDialog()" mat-icon-button><mat-icon>add</mat-icon></button>
-      </ng-container>
-      </mat-toolbar-row>
+      <span>{{configuration?.name}}</span>
     </mat-toolbar>
     <div class="community-news">
       <mat-tab-group>
@@ -40,6 +23,23 @@
                 (actionClick)="openChangeTitleDialog($event)">
               </planet-teams-member>
             </mat-card>
+          </div>
+        </mat-tab>
+        <mat-tab i18n-label label="Services">
+          <mat-nav-list>
+            <mat-list-item *ngFor="let link of links">
+              <a [routerLink]="link.route" i18n>
+                {{link.title}}
+              </a>
+              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
+            </mat-list-item>
+          </mat-nav-list>
+          <div *planetAuthorizedRoles class="action-buttons">
+            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+            <button (click)="toggleDeleteMode()" mat-stroked-button>
+              <span *ngIf="!deleteMode" i18n>Remove Links</span>
+              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+            </button>
           </div>
         </mat-tab>
         <mat-tab i18n-label label="Finances">
