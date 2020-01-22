@@ -36,12 +36,11 @@ export class ManagerService {
     const configuration = this.configuration;
     return this.activityService.getTotalUsers(configuration.code, true).pipe(switchMap(() =>
       forkJoin([
-        this.activityService.getGroupedReport('logins', { planetCode: configuration.code, tillDate }),
         this.activityService.getAdminActivities(configuration.code, tillDate),
-        this.activityService.getGroupedReport('resourceViews', { planetCode: configuration.code, tillDate, filterAdmin: true }),
-        this.activityService.getRatingInfo({ planetCode: configuration.code, tillDate, filterAdmin: true })
+        this.activityService.getActivities('resource_activities', 'byPlanetRecent'),
+        this.activityService.getRatingInfo({ planetCode: configuration.code, tillDate, filterAdmin: true }),
       ])
-    )).pipe(map(([ loginActivities, adminActivities, resourceVisits, ratings ]) => {
+    )).pipe(map(([ adminActivities, resourceVisits, ratings ]) => {
       return ({
         resourceVisits: (resourceVisits.rows.find(row => row.key === configuration.code) || { value: 0 }).value,
         ratings: ratings.reduce((total, rating) => total + rating.count, 0),

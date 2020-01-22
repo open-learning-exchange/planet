@@ -91,12 +91,8 @@ export class ReportsService {
     }));
   }
 
-  getActivities(
-    db: 'login_activities' | 'resource_activities',
-    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
-  ) {
-    const dateField = db === 'login_activities' ? 'loginTime' : 'time';
-    return this.couchService.get(db + '/_design/' + db + '/_view/byPlanet?group=true');
+  getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet') {
+    return this.couchService.get(`${db}/_design/${db}/_view/${view}?group=true`);
   }
 
   groupLoginActivities(loginActivities) {
@@ -105,17 +101,6 @@ export class ReportsService {
         .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
       byMonth: this.groupByMonth(this.appendGender(loginActivities), 'loginTime', 'user')
     });
-  }
-
-  getGroupedReport(
-    type: 'logins' | 'resourceViews',
-    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
-  ): Observable<{ rows: any[] }> {
-    const { db, request, groupFunction } = {
-      logins: { db: 'login_activities', request: this.getActivities, groupFunction: this.groupLoginActivities },
-      resourceViews: { db: 'resource_activities', request: this.getActivities, groupFunction: this.groupResourceVisits }
-    }[type];
-    return request.bind(this)(db, { planetCode, tillDate, fromMyPlanet, filterAdmin });
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {

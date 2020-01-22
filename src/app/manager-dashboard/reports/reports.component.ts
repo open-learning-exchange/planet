@@ -57,8 +57,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.planets = planets;
         this.arrangePlanetData(planets, hubs);
         return forkJoin([
-          this.activityService.getGroupedReport('resourceViews'),
-          this.activityService.getGroupedReport('logins'),
+          this.activityService.getActivities('resource_activities', 'grouped'),
+          this.activityService.getActivities('login_activities', 'grouped'),
           this.activityService.getAdminActivities()
         ]);
       })
