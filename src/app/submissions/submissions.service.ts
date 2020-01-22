@@ -10,6 +10,7 @@ import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText 
 import { CsvService } from '../shared/csv.service';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -37,7 +38,8 @@ export class SubmissionsService {
     private courseService: CoursesService,
     private userService: UserService,
     private csvService: CsvService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -304,6 +306,7 @@ export class SubmissionsService {
           pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
         }
       ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
+      this.dialogsLoadingService.stop();
     });
   }
 

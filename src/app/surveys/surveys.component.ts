@@ -325,7 +325,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         { name: 'answer', placeholder: 'Include Answers', type: 'checkbox' }
       ],
       { question: true, answer: true },
-      { autoFocus: true, onSubmit: (data: any) => this.submissionsService.exportSubmissionsPdf(survey, 'survey', data) }
+      {
+        autoFocus: true,
+        onSubmit: (data: any) => {
+          this.dialogsFormService.closeDialogsForm();
+          this.submissionsService.exportSubmissionsPdf(survey, 'survey', data)
+        }
+      }
     );
   }
 
