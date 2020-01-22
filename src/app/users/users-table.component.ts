@@ -125,7 +125,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   ngOnChanges() {
     this.usersTable.data = this.users;
-    console.log(this.tableState.isAdmin === 'admin')
   }
 
   ngOnDestroy() {

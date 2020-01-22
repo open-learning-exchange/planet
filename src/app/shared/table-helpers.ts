@@ -58,7 +58,6 @@ export const filterDropdowns = (filterObj: any) => {
 // if false return true if it does not exist
 export const filterFieldExists = (filterFields: string[], trueIfExists: boolean, trueIfAdminExists: boolean): any => {
   return (data: any, filter: string) => {
-    console.log(trueIfAdminExists)
     for (let i = 0; i < filterFields.length; i++) {
       return trueIfExists === (getProperty(data, filterFields[i]) !== undefined) &&
       trueIfAdminExists === data.doc.isUserAdmin === true ? true : false ;
