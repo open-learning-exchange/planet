@@ -18,7 +18,7 @@ export class TableState {
   isOnlyManagerSelected = false;
   selectedChild: any = {};
   filterType = 'local';
-  isAdmin: any = '';
+  isAdmin = false;
 }
 
 @Component({
@@ -79,7 +79,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   usersTable = new MatTableDataSource();
   filterType = 'local';
-  isAdmin = '';
   isUserAdmin = false;
   selection = new SelectionModel(true, []);
   private onDestroy$ = new Subject<void>();
@@ -113,9 +112,14 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     });
     this.usersTable.filterPredicate = (data, filter) => composeFilterFunctions([
       filterDropdowns(this.filter),
-      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated', this.tableState.isAdmin === 'admin'),
+      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
       filterSpecificFieldsByWord([ 'fullName' ])
-    ])(data, filter);
+    ].concat(
+      this.tableState.isAdmin ? [
+        filterFieldExists([ 'doc.isUserAdmin' ], true),
+        filterDropdowns({ 'doc.roles' : 'manager' }, false)
+      ] : []
+    ))(data, filter);
     this.usersTable.connect().subscribe(data => {
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);

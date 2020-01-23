@@ -47,20 +47,28 @@ function getProperty(data: any, fields: string) {
   return propertyArray.reduce((obj, prop) => (obj && obj[prop]) ? obj[prop] : undefined, data);
 }
 
-export const filterDropdowns = (filterObj: any) => {
+export const filterDropdowns = (filterObj: any, trueIfMatch: boolean = true) => {
   return (data: any, filter: string) => {
     // Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
-    return Object.entries(filterObj).reduce(checkFilterItems(data), true);
+    return trueIfMatch === Object.entries(filterObj).reduce(checkFilterItems(data), true);
   };
 };
 
 // Takes array of field names and if trueIfExists is true, return true if field exists
 // if false return true if it does not exist
-export const filterFieldExists = (filterFields: string[], trueIfExists: boolean, trueIfAdminExists: boolean): any => {
+export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => {
   return (data: any, filter: string) => {
     for (let i = 0; i < filterFields.length; i++) {
-      return trueIfExists === (getProperty(data, filterFields[i]) !== undefined) &&
-      trueIfAdminExists === data.doc.isUserAdmin === true ? true : false ;
+      return trueIfExists === (getProperty(data, filterFields[i]) !== undefined);
+    }
+    return true;
+  };
+};
+
+export const filterIfAdmin = (filterFields: string[], trueIfExists: boolean): any => {
+  return (data: any, filter: string) => {
+    for (let i = 0; i < filterFields.length; i++) {
+      return trueIfExists === data.doc.isUserAdmin === true ? true : false;
     }
     return true;
   };
