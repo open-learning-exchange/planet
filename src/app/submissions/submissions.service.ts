@@ -315,7 +315,7 @@ export class SubmissionsService {
     const questionOutput = (submission?, answerIndexes?) => (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
       (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
-    const header = (includeAnswers: boolean, pageBreak: boolean, time: number) => includeAnswers ?
+    const header = (responseHeader: boolean, pageBreak: boolean, time: number) => responseHeader ?
       `<h3${pageBreak ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
       `### ${exam.name} Questions  \n`;
     return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {

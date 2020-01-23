@@ -331,7 +331,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         disableIfInvalid: true,
         onSubmit: (options: { includeQuestions, includeAnswers}) => {
           this.dialogsFormService.closeDialogsForm();
-          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options)
+          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options);
         },
         formOptions: {
           validator: (ac: FormGroup) => Object.values(ac.controls).some(({ value }) => value) ? null : { required: true }
