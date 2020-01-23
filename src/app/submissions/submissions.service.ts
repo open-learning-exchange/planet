@@ -21,6 +21,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class SubmissionsService {
 
+  readonly dbName = 'submissions';
   // Currently there are separate observables for the single submission for a specific exam
   // and an array of submissions for the list of submissions
   private submissionsUpdated = new Subject<any[]>();
@@ -56,7 +57,7 @@ export class SubmissionsService {
   }
 
   getSubmissions(query: any = { 'selector': {} }, opts: any = {}) {
-    return this.couchService.findAll('submissions', query, opts);
+    return this.couchService.findAll(this.dbName, query, opts);
   }
 
   setSubmission(id: string) {
@@ -86,12 +87,12 @@ export class SubmissionsService {
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }: any) {
     const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
-    const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
-    obs.subscribe((res) => {
-      let attempts = res.docs.length - 1;
-      const bestAttempt = res.docs.reduce((best: any, submission: any) =>
-        submission.grade > best.grade ? submission : best, res.docs[0]);
-      this.submission = res.docs.find(submission => submission.status === status || type === 'survey');
+    const obs = user.name || submissionId ? this.couchService.findAll(this.dbName, { selector }) : of([]);
+    obs.subscribe((docs: any[]) => {
+      let attempts = docs.length - 1;
+      const bestAttempt = docs.reduce((best: any, submission: any) =>
+        submission.grade > best.grade ? submission : best, docs[0]);
+      this.submission = docs.find(submission => submission.status === status || type === 'survey');
       if (this.submission === undefined) {
         attempts += 1;
         this.newSubmission({ parentId, parent, user, type });
@@ -159,7 +160,7 @@ export class SubmissionsService {
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
     submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
-    return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
+    return this.couchService.updateDocument(this.dbName, submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
       if (submission.status === 'complete' && takingExam) {
         attempts += 1;
@@ -187,25 +188,26 @@ export class SubmissionsService {
   }
 
   sendSubmissionRequests(users: string[], { parentId, parent }) {
-    return this.couchService.post('submissions/_find', findDocuments({
+    return this.couchService.findAll(this.dbName, findDocuments({
       parentId,
       'parent': { '_rev': parent._rev },
       '$or': users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }))
     })).pipe(
       switchMap((submissions: any) => {
         const newSubmissionUsers = users.filter((user: any) =>
-          submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
+          submissions.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
         const sender = this.userService.get().name;
-        return this.couchService.updateDocument('submissions/_bulk_docs', {
-          'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
-        });
+        return this.couchService.bulkDocs(
+          this.dbName,
+          newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
+        );
       })
     );
   }
 
   createSubmission(parent: any, type: string, user: any = '') {
-    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
+    return this.couchService.updateDocument(this.dbName, this.createNewSubmission({ parentId: parent._id, parent, user, type }));
   }
 
   submissionName(user) {
