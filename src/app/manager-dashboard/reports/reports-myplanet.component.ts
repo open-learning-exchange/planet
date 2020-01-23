@@ -50,9 +50,6 @@ export class ReportsMyPlanetComponent implements OnInit {
           [ 'androidId' ],
           { maxField: 'time' }
         ).map((child: any) => {
-          if (!child.androidId) {
-            console.log(child);
-          }
           return { count: child.count, ...child.max };
         })
       })
