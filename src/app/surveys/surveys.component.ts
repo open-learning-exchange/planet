@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -21,6 +22,7 @@ import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -75,7 +77,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private dialogsFormService: DialogsFormService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -316,7 +319,25 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    this.submissionsService.exportSubmissionsPdf(survey, 'survey');
+    this.dialogsFormService.openDialogsForm(
+      'Records to Export',
+      [
+        { name: 'includeQuestions', placeholder: 'Include Questions', type: 'checkbox' },
+        { name: 'includeAnswers', placeholder: 'Include Answers', type: 'checkbox' }
+      ],
+      { includeQuestions: true, includeAnswers: true },
+      {
+        autoFocus: true,
+        disableIfInvalid: true,
+        onSubmit: (options: { includeQuestions, includeAnswers}) => {
+          this.dialogsFormService.closeDialogsForm();
+          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options);
+        },
+        formOptions: {
+          validator: (ac: FormGroup) => Object.values(ac.controls).some(({ value }) => value) ? null : { required: true }
+        }
+      }
+    );
   }
 
 }
