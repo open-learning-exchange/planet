@@ -311,18 +311,21 @@ export class SubmissionsService {
   }
 
   preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
-    const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
-    const questionOutput = (submission?, answerIndexes?) => (question, questionIndex) =>
-      (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
-      (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
     const header = (responseHeader: boolean, pageBreak: boolean, time: number) => responseHeader ?
       `<h3${pageBreak ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
       `### ${exam.name} Questions  \n`;
     return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
       const answerIndexes = this.answerIndexes(questionTexts, submission);
       return header(includeAnswers, index === 0, submission.lastUpdateTime) +
-        questionTexts.map(questionOutput(submission, answerIndexes)).join('  \n');
+        questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers)).join('  \n');
     }).join('  \n');
+  }
+
+  questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
+    const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
+    return (question, questionIndex) =>
+      (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
+      (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
   }
 
 }
