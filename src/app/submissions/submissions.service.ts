@@ -292,13 +292,13 @@ export class SubmissionsService {
       answerText;
   }
 
-  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportData) {
+  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }) {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
-      if (!submissions.length || (!exportData.answer && !exportData.question)) {
+      if (!submissions.length) {
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
-      const markdown = this.preparePDF(exam, submissions, questionTexts, exportData);
+      const markdown = this.preparePDF(exam, submissions, questionTexts, exportOptions);
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         {
@@ -310,17 +310,17 @@ export class SubmissionsService {
     });
   }
 
-  preparePDF(exam, submissions, questionTexts, exportData) {
+  preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
     const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
     const questionOutput = (submission?, answerIndexes?) => (question, questionIndex) =>
-      (exportData.question ? exportText(question, questionIndex, 'Question') : '') +
-      (exportData.answer ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
+      (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
+      (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
     const header = (includeAnswers: boolean, pageBreak: boolean, time: number) => includeAnswers ?
       `<h3${pageBreak ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
       `### ${exam.name} Questions  \n`;
-    return (exportData.answer ? submissions : [ { parent: exam } ]).map((submission, index) => {
+    return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
       const answerIndexes = this.answerIndexes(questionTexts, submission);
-      return header(exportData.answer, index === 0, submission.lastUpdateTime) +
+      return header(includeAnswers, index === 0, submission.lastUpdateTime) +
         questionTexts.map(questionOutput(submission, answerIndexes)).join('  \n');
     }).join('  \n');
   }

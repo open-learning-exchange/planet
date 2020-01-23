@@ -322,19 +322,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Records to Export',
       [
-        { name: 'question', placeholder: 'Include Questions', type: 'checkbox' },
-        { name: 'answer', placeholder: 'Include Answers', type: 'checkbox' }
+        { name: 'includeQuestions', placeholder: 'Include Questions', type: 'checkbox' },
+        { name: 'includeAnswers', placeholder: 'Include Answers', type: 'checkbox' }
       ],
-      { question: true, answer: true },
+      { includeQuestions: true, includeAnswers: true },
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (data: any) => {
+        onSubmit: (options: { includeQuestions, includeAnswers}) => {
           this.dialogsFormService.closeDialogsForm();
-          this.submissionsService.exportSubmissionsPdf(survey, 'survey', data)
+          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options)
         },
         formOptions: {
-          validator: (ac: FormGroup) => ac.controls.question.value || ac.controls.answer.value ? null : { required: true }
+          validator: (ac: FormGroup) => Object.values(ac.controls).some(({ value }) => value) ? null : { required: true }
         }
       }
     );
