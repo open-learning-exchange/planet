@@ -65,15 +65,6 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
   };
 };
 
-export const filterIfAdmin = (filterFields: string[], trueIfExists: boolean): any => {
-  return (data: any, filter: string) => {
-    for (let i = 0; i < filterFields.length; i++) {
-      return trueIfExists === data.doc.isUserAdmin === true ? true : false;
-    }
-    return true;
-  };
-};
-
 const matchAllItems = (filterItems: string[], propItems: string[]) => {
   return filterItems.reduce((isMatch, filter) => isMatch && propItems.indexOf(filter) > -1, true);
 };
