@@ -131,7 +131,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       if (parentSurvey) {
         parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
       }
-      if (parentSurvey || submission.parent.sourcePlanet === this.stateService.configuration.code) {
+      if (parentSurvey || submission.parent.sourcePlanet === this.stateService.configuration.code || !submission.parent.sourcePlanet) {
         return parentSurveys;
       }
       return [ ...parentSurveys, { ...submission.parent, taken: submission.status !== 'pending' ? 1 : 0, parent: true } ];
