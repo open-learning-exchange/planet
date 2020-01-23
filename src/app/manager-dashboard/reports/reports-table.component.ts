@@ -16,7 +16,6 @@ export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
     // 'downloads',
     'views',
     'logins',
-    'lastAdminLogin',
     'lastUpgrade',
     'lastSync'
   ];

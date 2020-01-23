@@ -169,6 +169,9 @@ upsert_doc nations _design/nation-validators @./design/nations/nation-validators
 upsert_doc resources _design/resources @./design/resources/resources-design.json
 upsert_doc health _design/health @./design/health/health-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
+upsert_doc resource_activities _design/resource_activities @./design/activities/activities-design.json
+upsert_doc login_activities _design/login_activities @./design/activities/activities-design.json
+
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
 upsert_doc login_activities _index '{"index":{"fields":[{"loginTime":"desc"}]},"name":"time-index"}' POST

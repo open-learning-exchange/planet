@@ -62,6 +62,20 @@ export class ReportsService {
     );
   }
 
+  groupViewByMonth(rows: { key: any, value: any }[]) {
+    return this.groupBy(
+      this.appendGender(rows.map(row => ({
+        ...row,
+        user: row.key.user,
+        date: new Date(row.key.year, row.key.month, 1).valueOf(),
+        viewCount: row.value.count,
+        createdOn: row.key.createdOn
+      }))),
+      [ 'createdOn', 'date', 'gender' ],
+      { sumField: 'viewCount', uniqueField: 'user' }
+    );
+  }
+
   selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', fromMyPlanet }: any = { field: 'createdOn' }) {
     return planetCode ?
       findDocuments({
@@ -91,7 +105,11 @@ export class ReportsService {
     }));
   }
 
-  getActivities(
+  getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet') {
+    return this.couchService.get(`${db}/_design/${db}/_view/${view}?group=true`);
+  }
+
+  getAllActivities(
     db: 'login_activities' | 'resource_activities',
     { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
   ) {
@@ -108,19 +126,6 @@ export class ReportsService {
         .filter(loginActivity => loginActivity.user !== '' && loginActivity.user !== undefined).sort((a, b) => b.count - a.count),
       byMonth: this.groupByMonth(this.appendGender(loginActivities), 'loginTime', 'user')
     });
-  }
-
-  getGroupedReport(
-    type: 'logins' | 'resourceViews',
-    { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
-  ): Observable<{ byUser?, byResource?, byMonth }> {
-    const { db, request, groupFunction } = {
-      logins: { db: 'login_activities', request: this.getActivities, groupFunction: this.groupLoginActivities },
-      resourceViews: { db: 'resource_activities', request: this.getActivities, groupFunction: this.groupResourceVisits }
-    }[type];
-    return request.bind(this)(db, { planetCode, tillDate, fromMyPlanet, filterAdmin }).pipe(
-      map(response => groupFunction.bind(this)(response))
-    );
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
