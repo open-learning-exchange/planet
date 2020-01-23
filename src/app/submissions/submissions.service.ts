@@ -298,7 +298,7 @@ export class SubmissionsService {
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
-      const markdown = this.preparePDF(submissions, questionTexts, exportData);
+      const markdown = this.preparePDF(exam, submissions, questionTexts, exportData);
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         {
@@ -310,21 +310,19 @@ export class SubmissionsService {
     });
   }
 
-  preparePDF(submissions, questionTexts, exportData) {
-    if (!exportData.answer) {
-      return questionTexts.map((question, questionIndex) => (
-        `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n`
-      )).join('  \n');
-    } else {
-      return submissions.map((submission, index) => {
-        const answerIndexes = this.answerIndexes(questionTexts, submission);
-        return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
-          questionTexts.map((question, questionIndex) => (
-            exportData.question ? `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n` : '' +
-            `**Response ${questionIndex + 1}:**  \n\n${this.getPDFAnswerText(submission, questionIndex, answerIndexes)}  \n`
-          )).join('  \n');
-      }).join('  \n');
-    }
+  preparePDF(exam, submissions, questionTexts, exportData) {
+    const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
+    const questionOutput = (submission?, answerIndexes?) => (question, questionIndex) =>
+      (exportData.question ? exportText(question, questionIndex, 'Question') : '') +
+      (exportData.answer ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
+    const header = (includeAnswers: boolean, pageBreak: boolean, time: number) => includeAnswers ?
+      `<h3${pageBreak ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
+      `### ${exam.name} Questions  \n`;
+    return (exportData.answer ? submissions : [ { parent: exam } ]).map((submission, index) => {
+      const answerIndexes = this.answerIndexes(questionTexts, submission);
+      return header(exportData.answer, index === 0, submission.lastUpdateTime) +
+        questionTexts.map(questionOutput(submission, answerIndexes)).join('  \n');
+    }).join('  \n');
   }
 
 }
