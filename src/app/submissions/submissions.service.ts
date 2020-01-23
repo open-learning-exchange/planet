@@ -311,14 +311,17 @@ export class SubmissionsService {
   }
 
   preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
-    const header = (responseHeader: boolean, pageBreak: boolean, time: number) => responseHeader ?
-      `<h3${pageBreak ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
-      `### ${exam.name} Questions  \n`;
     return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
       const answerIndexes = this.answerIndexes(questionTexts, submission);
-      return header(includeAnswers, index === 0, submission.lastUpdateTime) +
+      return this.surveyHeader(includeAnswers, exam, index, submission.lastUpdateTime) +
         questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers)).join('  \n');
     }).join('  \n');
+  }
+
+  surveyHeader(responseHeader: boolean, exam, index: number, time: number) {
+    return responseHeader ?
+      `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
+      `### ${exam.name} Questions  \n`;
   }
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
