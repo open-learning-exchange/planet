@@ -42,7 +42,7 @@
       <ng-container matColumnDef="visitLog.visitCount">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Total visits from last 30 days</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{element.visitLog.visitCount || 'N/A'}}
+          {{element.visitLog.visitCount}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="doc.teamType">
