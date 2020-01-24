@@ -6,7 +6,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin, of } from 'rxjs';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -128,6 +128,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       return;
     }
     this.getTeam(teamId).pipe(
+      catchError(err => {
+        this.router.navigate([ '/' + this.mode + 's' ]);
+        this.planetMessageService.showMessage('This team no longer exists');
+        return throwError(err);
+      }),
       switchMap(() => {
         if (this.team.status === 'archived') {
           this.router.navigate([ '/teams' ]);
@@ -142,9 +147,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
-    }, err => {
-      this.router.navigate([ '/' + this.mode + 's' ]);
-      this.planetMessageService.showMessage('This team no longer exists');
     });
 
   }
