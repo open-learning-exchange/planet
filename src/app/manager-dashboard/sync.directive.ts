@@ -49,9 +49,9 @@ export class SyncDirective {
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
       map(([ res, users ]) => this.updateParentUsers(users)),
-      switchMap(() => this.getAchievementsAndTeamResources()),
-      switchMap(([ achievements, teamResources ]: any[]) =>
-        forkJoin(this.achievementResourceReplicator(achievements), this.teamResourcesReplicator(teamResources))
+      switchMap(() => this.getAchievementsAndTeamAndNewsResources()),
+      switchMap(([ achievements, teamResources, news ]: any[]) =>
+        forkJoin(this.achievementResourceReplicator(achievements), this.teamAndNewsResourcesReplicator(teamResources, news))
       ),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
@@ -61,7 +61,7 @@ export class SyncDirective {
     ).subscribe(data => {
       this.planetMessageService.showMessage('Syncing started');
       this.syncComplete.emit();
-    }, error => this.planetMessageService.showMessage(error.error.reason));
+    }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
   }
 
   replicatorList(mapFunc = (type) => (val) => ({ continuous: this.planetConfiguration.alwaysOnline, ...val, type })) {
@@ -76,15 +76,15 @@ export class SyncDirective {
       { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
       { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } }
     ];
-    const pushList = [ ...this.pushList(), ...bothList ];
-    const pullList = [ ...this.pullList(), ...bothList ];
+    const pushList = [ ...this.pushList(continuous), ...bothList ];
+    const pullList = [ ...this.pullList(continuous), ...bothList ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
     ];
     return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
-  pushList() {
+  pushList(continuous) {
     return [
       { db: 'courses_progress' },
       { db: 'feedback' },
@@ -103,11 +103,11 @@ export class SyncDirective {
     ];
   }
 
-  pullList() {
+  pullList(continuous) {
     return [
-      { db: 'feedback', selector: { source: this.planetConfiguration.code } },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } },
-      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode } }
+      { db: 'feedback', selector: { source: this.planetConfiguration.code }, continuous },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code }, continuous },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode }, continuous }
     ];
   }
 
@@ -191,15 +191,16 @@ export class SyncDirective {
       });
       const docs = [ ...deleteArray, ...updateArray ].map(({ _attachments, ...doc }) => doc);
       return this.couchService.bulkDocs('parent_users', docs);
-    })).subscribe((res) => console.log(res));
+    })).subscribe();
   }
 
-  getAchievementsAndTeamResources() {
+  getAchievementsAndTeamAndNewsResources() {
     return forkJoin([
       this.couchService.findAll('achievements', findDocuments({ sendToNation: true, createdOn: this.planetConfiguration.code })),
       this.couchService.findAll(
         'teams', findDocuments({ docType: 'resourceLink', teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
-      )
+      ),
+      this.couchService.findAll('news', findDocuments({ images: { '$exists': true }, messageType: 'sync' }))
     ]);
   }
 
