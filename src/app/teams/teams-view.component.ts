@@ -142,6 +142,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
+    }, err => {
+      this.router.navigate([ '/' + this.mode + 's' ]);
+      this.planetMessageService.showMessage('This team no longer exists');
     });
 
   }
