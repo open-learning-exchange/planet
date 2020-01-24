@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
@@ -12,7 +12,7 @@ import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
   dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf, trackById
+  selectedOutOfFilter, filterShelf, trackById, filterIds
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -35,7 +35,13 @@ import { SearchService } from '../shared/forms/search.service';
     .mat-column-select {
       max-width: 44px;
     }
-    .mat-column-info, .mat-column-rating {
+    .mat-column-info {
+      max-width: 200px;
+    }
+    .mat-column-createdDate {
+      max-width: 95px;
+    }
+    .mat-column-rating {
       max-width: 225px;
     }
     .column {
@@ -54,7 +60,7 @@ import { SearchService } from '../shared/forms/search.service';
   ` ]
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
@@ -66,6 +72,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() isForm = false;
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
+  @Input() includeIds: string[] = [];
   dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
@@ -81,6 +88,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
+  filterIds = { ids: [] };
   readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch; }
@@ -102,7 +110,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     filterDropdowns(this.filter),
     filterTags(this.tagFilter),
     filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
-    filterShelf(this.myCoursesFilter, 'admission')
+    filterShelf(this.myCoursesFilter, 'admission'),
+    filterIds(this.filterIds)
   ]);
   trackById = trackById;
 
@@ -165,6 +174,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  ngOnChanges() {
+    this.filterIds.ids = this.includeIds;
+    this.titleSearch = this.titleSearch;
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -188,7 +202,9 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
-    this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+    if (this.tagInputComponent) {
+      this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+    }
   }
 
   onPaginateChange(e: PageEvent) {
@@ -343,7 +359,8 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
       Object.entries(this.filter).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
-      this.myCoursesFilter.value === 'on' ?
+      this.myCoursesFilter.value === 'on' ||
+      this.includeIds.length > 0 ?
       ' ' : '';
   }
 
@@ -394,7 +411,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe((planet) => {
       const data = { okClick: this.sendCourse('courses').bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: false,
+        allowMulti: true,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data, maxHeight: '500px', width: '600px', autoFocus: false
@@ -405,8 +422,11 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   sendCourse(db: string) {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected[0].code).subscribe(() => {
-        const childType = this.planetType === 'center' ? 'nation' : 'community';
+      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
+        const childType = {
+          center: selected.length > 1 ? 'nations' : 'nation',
+          nation: selected.length > 1 ? 'communities' : 'community'
+        }[this.planetType];
         this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
