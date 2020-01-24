@@ -50,7 +50,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
   planetType = this.planetConfiguration.planetType;
-  displayedColumns = [ 'select', 'title', 'rating' ];
+  displayedColumns = [ 'title', 'createdDate' ];
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
@@ -66,7 +66,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.recordSearch();
     this.removeFilteredFromSelection();
   }
-  readonly myLibraryFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myLibrary === true ? 'on' : 'off' };
+  myView = this.route.snapshot.data.view;
   emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
@@ -79,7 +79,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       filterAdvancedSearch(this.searchSelection),
       filterTags(this.tagFilter),
       filterSpecificFieldsByWord([ 'doc.title' ]),
-      filterShelf(this.myLibraryFilter, 'libraryInfo')
+      filterShelf({ value: this.myView === 'myLibrary' ? 'on' : 'off' }, 'libraryInfo')
     ]
   );
   trackById = trackById;
@@ -332,9 +332,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }, planetField)
     .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
-      const data = { okClick: planetField === 'local' ? this.sendResource().bind(this) : this.sendResourceToParent(planetField).bind(this),
+      const data = { okClick: this.sendResource(planetField).bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: false,
+        allowMulti: true,
         ...planet };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data, maxHeight: '500px', width: '600px', autoFocus: false
@@ -342,26 +342,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  sendResourceToParent(planetField) {
-    return (selectedPlanet: any) => {
-      const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      const itemPush = this.selection.selected.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
-      this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(itemPush, 'push') ).pipe(
-        switchMap(() => this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code, this.stateService.optsFromPlanetField(planetField)))
-      ).subscribe((res) => {
-        this.planetMessageService.showMessage('Resources queued to push to ' + this.planetType + '.');
-        this.dialogRef.close();
-      }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
-    };
+  createObs(planetField) {
+    if (planetField === 'local') {
+      return of({});
+    }
+    const itemPush = this.selection.selected.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+    return this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(itemPush, 'push') );
   }
 
-
-  sendResource() {
-    return (selectedPlanet: any) => {
+  sendResource(planetField) {
+    return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanet[0].code).subscribe((res) => {
-        const msg = this.planetType === 'center' ? 'nation' : 'community';
-        this.planetMessageService.showMessage('Resources queued to push to ' + msg + '.');
+      this.createObs(planetField).pipe(
+        switchMap(() => this.syncService.createChildPullDoc(items, 'resources', selectedPlanets, this.stateService.optsFromPlanetField(planetField)))
+      ).subscribe(() => {
+        const childType = {
+          center: selectedPlanets.length > 1 ? 'nations' : 'nation',
+          nation: selectedPlanets.length > 1 ? 'communities' : 'community',
+          community: selectedPlanets.length > 1 ? 'communities' : 'community'
+        }[this.planetType];
+        this.planetMessageService.showMessage(`Resources queued to push to ${childType}.`);
         this.dialogRef.close();
       }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
     };
