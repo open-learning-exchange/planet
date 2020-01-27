@@ -148,7 +148,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
-    this.tableState = { ...this.tableState };
     this.applyFilter('');
   }
 }

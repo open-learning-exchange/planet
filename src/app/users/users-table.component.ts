@@ -18,7 +18,6 @@ export class TableState {
   isOnlyManagerSelected = false;
   selectedChild: any = {};
   filterType = 'local';
-  isAdmin = false;
 }
 
 @Component({
