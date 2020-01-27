@@ -129,14 +129,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.getTeam(teamId).pipe(
       catchError(err => {
-        this.router.navigate([ '/' + this.mode + 's' ]);
-        this.planetMessageService.showMessage('This team no longer exists');
+        this.goBack(true);
         return throwError(err);
       }),
       switchMap(() => {
         if (this.team.status === 'archived') {
-          this.router.navigate([ '/teams' ]);
-          this.planetMessageService.showMessage('This team no longer exists');
+          this.goBack(true);
         }
         return this.getMembers();
       }),
@@ -148,7 +146,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.setStatus(teamId, this.userService.get());
     });
-
   }
 
   initServices(teamId) {
@@ -474,7 +471,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return () => this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.filter(c => c._id !== course._id) });
   }
 
-  goBack() {
+  goBack(showMissingMessage = false) {
+    if (showMissingMessage) {
+      this.planetMessageService.showMessage('This team no longer exists');
+    }
     if (this.mode === 'services') {
       this.router.navigate([ '../' ], { relativeTo: this.route });
     } else {
