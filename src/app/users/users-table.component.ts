@@ -109,13 +109,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.selection.changed.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
-    this.usersTable.filterPredicate = (data, filter) => this.filter['doc.roles'] === 'admin' ?
-      filterAdmin(data, filter) :
-      composeFilterFunctions([
-        filterDropdowns(this.filter),
-        filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-        filterSpecificFieldsByWord([ 'fullName' ])
-      ])(data, filter);
+    this.usersTable.filterPredicate = this.filterPredicate();
     this.usersTable.connect().subscribe(data => {
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
@@ -166,6 +160,16 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   trackByFn(index, item) {
     return item._id;
+  }
+
+  filterPredicate() {
+    return (data, filter) => this.filter['doc.roles'] === 'admin' ?
+      filterAdmin(data, filter) :
+      composeFilterFunctions([
+        filterDropdowns(this.filter),
+        filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
+        filterSpecificFieldsByWord([ 'fullName' ])
+      ])(data, filter);
   }
 
   deleteClick(user, event) {
