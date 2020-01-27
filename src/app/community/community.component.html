@@ -32,7 +32,7 @@
           } Description</button>
           <mat-nav-list>
             <mat-list-item *ngFor="let link of links">
-              <a [routerLink]="link.route" i18n>
+              <a matLine [routerLink]="link.route" i18n>
                 {{link.title}}
               </a>
               <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
