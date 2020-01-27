@@ -141,15 +141,14 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   onFilterChange(filterValue: string) {
-    this.tableState = { ...this.tableState, isAdmin: filterValue === 'admin' };
-    this.filter = { ...this.filter, 'doc.roles': filterValue === 'All' || filterValue === 'admin' ? '' : filterValue };
+    this.filter = { ...this.filter, 'doc.roles': filterValue === 'All' ? '' : filterValue };
     this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild);
   }
 
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
-    this.tableState = { ...this.tableState, isAdmin: false };
+    this.tableState = { ...this.tableState };
     this.applyFilter('');
   }
 }

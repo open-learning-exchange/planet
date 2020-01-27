@@ -47,10 +47,10 @@ function getProperty(data: any, fields: string) {
   return propertyArray.reduce((obj, prop) => (obj && obj[prop]) ? obj[prop] : undefined, data);
 }
 
-export const filterDropdowns = (filterObj: any, trueIfMatch: boolean = true) => {
+export const filterDropdowns = (filterObj: any) => {
   return (data: any, filter: string) => {
     // Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
-    return trueIfMatch === Object.entries(filterObj).reduce(checkFilterItems(data), true);
+    return Object.entries(filterObj).reduce(checkFilterItems(data), true);
   };
 };
 
@@ -96,6 +96,9 @@ export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: s
     return filterOnOff.value === 'off' || data[filterField] === true;
   };
 };
+
+// Special filter for showing members that are admins
+export const filterAdmin = (data, filter) => data.doc.isUserAdmin && data.doc.roles.length === 0;
 
 // Takes an array of the above filtering functions and returns true if all match
 export const composeFilterFunctions = (filterFunctions: any[]) => {
