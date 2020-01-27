@@ -290,6 +290,10 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
+  teamLinkRoute(mode: 'team' | 'enterprise', teamId: string) {
+    return `/${mode}s/view/${teamId}`;
+  }
+
   createServicesLink({ title, route }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {

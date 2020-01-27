@@ -32,7 +32,7 @@ export class CommunityLinkDialogComponent {
   }
 
   teamSelect({ mode, teamId }) {
-    this.linkForm.controls.route.setValue(`/${mode}s/view/${teamId}`);
+    this.linkForm.controls.route.setValue(this.teamsService.teamLinkRoute(mode, teamId));
     this.linkForm.controls.linkId.setValue(teamId);
     this.linkForm.controls.linkType.setValue(mode);
     this.linkStepper.selected.completed = true;

@@ -234,7 +234,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   deleteCommunityLink(team) {
     const communityId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
-    const route = '/' + (team.type === 'enterprise' ? 'enterprises' : 'teams') + '/view/' + team._id;
+    const route = this.teamsService.teamLinkRoute(team.type, team._id);
     return this.teamsService.getTeamMembers(communityId, true).pipe(switchMap((links) => {
       const link = links.find(val => val.route === route);
       return link ? this.couchService.delete(`teams/${link._id}?rev=${link._rev}`) : of({});
