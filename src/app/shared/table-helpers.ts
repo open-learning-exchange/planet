@@ -97,6 +97,9 @@ export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: s
   };
 };
 
+// Special filter for showing members that are admins
+export const filterAdmin = (data, filter) => data.doc.isUserAdmin && data.doc.roles.length === 0;
+
 // Takes an array of the above filtering functions and returns true if all match
 export const composeFilterFunctions = (filterFunctions: any[]) => {
   return (data: any, filter: any) => {

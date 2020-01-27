@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, of, forkJoin, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
 } from '../shared/table-helpers';
 import { findByIdInArray } from '../shared/utils';
 import { UserService } from '../shared/user.service';
@@ -52,7 +52,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   set search(newSearch: string) {
     this.usersTable.filter = newSearch || ' ';
   }
-  private _filter: { 'doc.roles': string[] | '', 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
+  private _filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
   @Input()
   get filter() {
     return this._filter;
@@ -109,11 +109,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.selection.changed.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.tableState = { ...this.tableState, isOnlyManagerSelected: this.onlyManagerSelected() };
     });
-    this.usersTable.filterPredicate = (data, filter) => composeFilterFunctions([
-      filterDropdowns(this.filter),
-      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFieldsByWord([ 'fullName' ])
-    ])(data, filter);
+    this.usersTable.filterPredicate = this.filterPredicate();
     this.usersTable.connect().subscribe(data => {
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
@@ -164,6 +160,16 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   trackByFn(index, item) {
     return item._id;
+  }
+
+  filterPredicate() {
+    return (data, filter) => this.filter['doc.roles'] === 'admin' ?
+      filterAdmin(data, filter) :
+      composeFilterFunctions([
+        filterDropdowns(this.filter),
+        filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
+        filterSpecificFieldsByWord([ 'fullName' ])
+      ])(data, filter);
   }
 
   deleteClick(user, event) {
