@@ -6,7 +6,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin, of } from 'rxjs';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -128,10 +128,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       return;
     }
     this.getTeam(teamId).pipe(
+      catchError(err => {
+        this.goBack(true);
+        return throwError(err);
+      }),
       switchMap(() => {
         if (this.team.status === 'archived') {
-          this.router.navigate([ '/teams' ]);
-          this.planetMessageService.showMessage('This team no longer exists');
+          this.goBack(true);
         }
         return this.getMembers();
       }),
@@ -143,7 +146,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.setStatus(teamId, this.userService.get());
     });
-
   }
 
   initServices(teamId) {
@@ -469,7 +471,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return () => this.teamsService.updateTeam({ ...this.team, courses: this.team.courses.filter(c => c._id !== course._id) });
   }
 
-  goBack() {
+  goBack(showMissingMessage = false) {
+    if (showMissingMessage) {
+      this.planetMessageService.showAlert('This team was not found');
+    }
     if (this.mode === 'services') {
       this.router.navigate([ '../' ], { relativeTo: this.route });
     } else {
