@@ -473,7 +473,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   goBack(showMissingMessage = false) {
     if (showMissingMessage) {
-      this.planetMessageService.showMessage('This team no longer exists');
+      this.planetMessageService.showAlert('This team was not found');
     }
     if (this.mode === 'services') {
       this.router.navigate([ '../' ], { relativeTo: this.route });
