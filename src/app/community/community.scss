@@ -4,6 +4,7 @@
 
   &.view-full-height {
     height: calc(#{$view-container-height-no-toolbar} + 64px);
+    overflow-y: hidden;
   }
 
   display: grid;
