@@ -34,17 +34,10 @@
           </ng-container>
           <mat-nav-list>
             <mat-list-item *ngFor="let link of links">
-              <span
-                *ngIf="planetCode !== user.code && link.teamType === 'local'; else serviceLink"
-                matTooltip="Local team only available on community">
+              <a matLine [routerLink]="link.route" i18n>
                 {{link.title}}
-              </span>
-              <ng-template #serviceLink>
-                <a matLine *ngIf="link.teamType === 'sync'" [routerLink]="link.route" i18n>
-                  {{link.title}}
-                </a>
-                <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
-              </ng-template>
+              </a>
+              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
           <ng-container *ngIf="planetCode === user.code">

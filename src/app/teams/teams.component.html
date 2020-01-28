@@ -81,7 +81,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row (click)="teamClick(row.doc._id)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"

@@ -67,7 +67,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
   @Input() isDialog = false;
   @Input() excludeIds = [];
-  @Output() rowClick = new EventEmitter<{ mode: string, teamId: string }>();
+  @Output() rowClick = new EventEmitter<{ mode: string, teamId: string, teamType: string }>();
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
 
   constructor(
@@ -160,9 +160,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  teamClick(teamId) {
+  teamClick(teamId, teamType) {
     if (this.isDialog) {
-      this.rowClick.emit({ mode: this.mode, teamId });
+      this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }
     this.router.navigate([ 'view', teamId ], { relativeTo: this.route });
