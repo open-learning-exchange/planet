@@ -28,7 +28,7 @@
         <mat-tab i18n-label label="Services">
           <planet-markdown [content]="team.description || ''"></planet-markdown>
           <ng-container *ngIf="planetCode === user.code">
-            <button (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
+            <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
               configuration.planetType, select, community {Community} nation {Nation} center {Earth}
             } Description</button>
           </ng-container>
@@ -40,13 +40,15 @@
               <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
-          <div *ngIf="planetCode === user.code" class="action-buttons">
-            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-            <button (click)="toggleDeleteMode()" mat-stroked-button>
-              <span *ngIf="!deleteMode" i18n>Remove Links</span>
-              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-            </button>
-          </div>
+          <ng-container *ngIf="planetCode === user.code">
+            <div *planetAuthorizedRoles class="action-buttons">
+              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+              <button (click)="toggleDeleteMode()" mat-stroked-button>
+                <span *ngIf="!deleteMode" i18n>Remove Links</span>
+                <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+              </button>
+            </div>
+          </ng-container>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
