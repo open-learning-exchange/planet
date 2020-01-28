@@ -27,9 +27,11 @@
         </mat-tab>
         <mat-tab i18n-label label="Services">
           <planet-markdown [content]="team.description || ''"></planet-markdown>
-          <button *planetAuthorizedRoles="planetCode !== user.code ? 'only' : ''" (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
-            configuration.planetType, select, community {Community} nation {Nation} center {Earth}
-          } Description</button>
+          <ng-container *ngIf="planetCode === user.code">
+            <button (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
+              configuration.planetType, select, community {Community} nation {Nation} center {Earth}
+            } Description</button>
+          </ng-container>
           <mat-nav-list>
             <mat-list-item *ngFor="let link of links">
               <a [routerLink]="link.route" i18n>
@@ -38,7 +40,7 @@
               <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
-          <div *planetAuthorizedRoles="planetCode !== user.code ? 'only' : ''" class="action-buttons">
+          <div *ngIf="planetCode === user.code" class="action-buttons">
             <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
             <button (click)="toggleDeleteMode()" mat-stroked-button>
               <span *ngIf="!deleteMode" i18n>Remove Links</span>

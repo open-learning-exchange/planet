@@ -1,6 +1,5 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { UserService } from '../shared/user.service';
-import { StateService } from '../shared/state.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -20,12 +19,10 @@ export class NewsListItemComponent implements AfterViewChecked {
   contentHeight = 0;
   currentUser = this.userService.get();
   showLess = true;
-  planetCode = this.stateService.configuration.code;
 
   constructor(
     private userService: UserService,
-    private cdRef: ChangeDetectorRef,
-    private stateService: StateService
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngAfterViewChecked() {
