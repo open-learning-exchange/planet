@@ -171,7 +171,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const avatar = attachmentDoc ?
           `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
           (user.imageSrc || 'assets/image.png');
-        return { avatar, userDoc: user.doc, userId, name: user.doc.name, ...user };
+        return { avatar, userDoc: user.doc, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
       });
     });
   }
