@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Subject, forkJoin, of } from 'rxjs';
+import { Validators } from '@angular/forms';
 import { takeUntil, finalize, switchMap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
@@ -100,7 +101,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Add Story',
       [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true, imageGroup: 'community' } ],
-      { message: [ message, CustomValidators.requiredMarkdown ] },
+      { message: [ message,
+        Validators.compose([
+          CustomValidators.required,
+          CustomValidators.pattern(/\((\/|https?:\/\/\))|\(\s+(\/|https?:\/\/\))|\((\/|https?:\/\/\s+\))|\(\s+(\/|https?:\/\/\s+\))/g,
+            'invalidMarkdownLink') ])
+      ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }

@@ -212,13 +212,7 @@ export class CustomValidators {
   }
 
   static requiredMarkdown(ac: AbstractControl) {
-    if (!/\S/.test(ac.value.text)) {
-      if (ac.value.text !== '') {
-        return ac.value.text.replace(/\s/g, '').includes('http://') ? { 'invalidMarkdownLink': true } : null;
-      }
-      return { 'required': true };
-    }
-    return null;
+    return CustomValidators.required(new FormControl(ac.value.text));
   }
 
   static fileMatch(ac: AbstractControl, fileList: string[]) {
