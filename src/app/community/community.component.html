@@ -27,9 +27,11 @@
         </mat-tab>
         <mat-tab i18n-label label="Services">
           <planet-markdown [content]="team.description || ''"></planet-markdown>
-          <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
-            configuration.planetType, select, community {Community} nation {Nation} center {Earth}
-          } Description</button>
+          <ng-container *ngIf="planetCode === user.code">
+            <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
+              configuration.planetType, select, community {Community} nation {Nation} center {Earth}
+            } Description</button>
+          </ng-container>
           <mat-nav-list>
             <mat-list-item *ngFor="let link of links">
               <a matLine [routerLink]="link.route" i18n>
@@ -38,19 +40,21 @@
               <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
-          <div *planetAuthorizedRoles class="action-buttons">
-            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-            <button (click)="toggleDeleteMode()" mat-stroked-button>
-              <span *ngIf="!deleteMode" i18n>Remove Links</span>
-              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-            </button>
-          </div>
+          <ng-container *ngIf="planetCode === user.code">
+            <div *planetAuthorizedRoles class="action-buttons">
+              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+              <button (click)="toggleDeleteMode()" mat-stroked-button>
+                <span *ngIf="!deleteMode" i18n>Remove Links</span>
+                <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+              </button>
+            </div>
+          </ng-container>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
         </mat-tab>
         <mat-tab i18n-label label="Finances">
-          <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="getLinks()" [editable]="isCommunityLeader"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="getLinks()" [editable]="isCommunityLeader && planetCode === user.code"></planet-teams-view-finances>
         </mat-tab>
       </mat-tab-group>
     </div>
