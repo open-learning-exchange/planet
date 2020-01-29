@@ -21,7 +21,7 @@ export class TeamsMemberComponent {
   @Input() teamLeader;
   @Output() actionClick = new EventEmitter<any>();
   user = this.userService.get();
-  planetCode = this.stateService.configuration.planetCode;
+  planetCode = this.stateService.configuration.code;
 
   constructor(
     private userService: UserService,
