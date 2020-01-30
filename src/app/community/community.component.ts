@@ -58,10 +58,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.planetCode = params.get('code');
-        if (this.planetCode) {
-          return this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } });
-        }
-        return of([ this.stateService.configuration ]);
+        return this.planetCode ?
+          this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } }) :
+          of([ this.stateService.configuration ]);
       })
     ).subscribe(configurations => {
       this.configuration = configurations[0];
