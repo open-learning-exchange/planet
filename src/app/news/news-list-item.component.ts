@@ -1,5 +1,8 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/couchdb.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 
 @Component({
@@ -23,8 +26,11 @@ export class NewsListItemComponent implements AfterViewChecked {
   planetCode = this.stateService.configuration.code;
 
   constructor(
+    private router: Router,
     private userService: UserService,
+    private couchService: CouchService,
     private cdRef: ChangeDetectorRef,
+    private notificationsService: NotificationsService,
     private stateService: StateService
   ) {}
 
@@ -52,6 +58,24 @@ export class NewsListItemComponent implements AfterViewChecked {
         messageType: news.messageType
       }
     });
+    this.sendNewsNotifications(news);
+  }
+
+  sendNewsNotifications(news: any = '') {
+    const replyBy = this.currentUser.name;
+    const userId = news.user._id;
+    const link = this.router.url;
+    const notification = {
+      user: userId,
+      'message': `<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      link,
+      'priority': 1,
+      'type': 'replyMessage',
+      'replyTo': news._id,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+    };
+    return this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
