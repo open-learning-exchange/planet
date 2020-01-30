@@ -155,9 +155,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
   unlockUser(community) {
     return this.couchService.findAll('_users', findDocuments({ 'requestId': community._id })).pipe(
-      switchMap(data => forkJoin(data.map((user: any) =>
-        this.couchService.put('_users/' + user._id + '?rev=' + user._rev, { ...user, roles: [ 'learner' ] })
-      )))
+      switchMap((users: any[]) => this.couchService.bulkDocs('_users', users.map(user => ({ ...user, roles: [ 'learner' ] }))))
     );
   }
 
