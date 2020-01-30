@@ -65,7 +65,7 @@ export class NewsListItemComponent implements AfterViewChecked {
     const link = news.viewableBy;
     const notification = {
       user: userId,
-      'message': `${replyBy} replyed to your community message.`,
+      'message': `<b>${replyBy}</b> replied to your community message.`,
       link,
       'priority': 1,
       'type': 'replyMessage',
