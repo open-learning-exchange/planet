@@ -177,7 +177,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   deleteLink(link) {
-    return this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+    return this.couchService.updateDocument('teams', { ...link, _deleted: true });
   }
 
   openAddLinkDialog() {
