@@ -89,11 +89,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   getCommunityData(planetCode?: string) {
     if (planetCode) {
-      this.newsService.requestNews({ createdOn: planetCode, viewableBy: 'community' });
+      this.newsService.requestNews({ messagePlanetCode: planetCode, viewableBy: 'community' });
       this.stateService.requestData('child_users', 'local');
       return;
     }
-    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
+    this.newsService.requestNews({ messagePlanetCode: this.configuration.code, viewableBy: 'community' });
     this.usersService.requestUsers();
   }
 
