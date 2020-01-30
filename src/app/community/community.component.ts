@@ -133,7 +133,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return {
       'user': user,
       'message': `<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
-      'link': 'community/',
+      'link': '/',
       'type': 'communityMessage',
       'priority': 1,
       'status': 'unread',
