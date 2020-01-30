@@ -17,6 +17,7 @@ export class DialogsFormComponent {
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
+  disableIfInvalid = false;
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -36,10 +37,13 @@ export class DialogsFormComponent {
     private dialogsListService: DialogsListService
   ) {
     if (this.data && this.data.formGroup) {
-      this.modalForm = this.data.formGroup instanceof FormGroup ? this.data.formGroup : this.fb.group(this.data.formGroup);
+      this.modalForm = this.data.formGroup instanceof FormGroup ?
+        this.data.formGroup :
+        this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
       this.fields = this.data.fields;
       this.isSpinnerOk = false;
+      this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
   }
 

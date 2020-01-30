@@ -16,6 +16,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   selector: 'planet-requests-table',
@@ -153,12 +154,9 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
   unlockUser(community) {
-    return this.couchService.post('_users/_find', { 'selector': { 'requestId': community._id } })
-      .pipe(switchMap(data => {
-        const user = data.docs[0];
-        return this.couchService.put('_users/' + user._id + '?rev=' + user._rev,
-          { ...user, roles: [ 'learner' ] });
-      }));
+    return this.couchService.findAll('_users', findDocuments({ 'requestId': community._id })).pipe(
+      switchMap((users: any[]) => this.couchService.bulkDocs('_users', users.map(user => ({ ...user, roles: [ 'learner' ] }))))
+    );
   }
 
   view(planet) {

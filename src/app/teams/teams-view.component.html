@@ -2,7 +2,7 @@
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>{ mode, select, team {Teams} enterprise {Enterprises} }</span>
 </mat-toolbar>
-<div class="space-container">
+<div class="space-container teams-view">
   <mat-toolbar class="primary-color font-size-1">
     <h3 *ngIf="team !== undefined" class="margin-lr-3 ellipsis-title">
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
@@ -37,9 +37,9 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
-      <mat-tab i18n-label label="Chat" *ngIf="userStatus === 'member'">
-        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully"></planet-news-list>
+      <mat-tab i18n-label label="Chat" *ngIf="team?.public === true || userStatus === 'member'">
+        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot && userStatus === 'member'" i18n>New message</button>
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label i18n>
@@ -63,62 +63,38 @@
         <ng-template #memberList>
           <div class="card-grid">
             <mat-card *ngFor="let member of members">
-              <mat-card-header>
-                <img mat-card-avatar [src]="member.avatar">
-                <a mat-card-title [routerLink]="['/users/profile', member.name, planetCode === member.userPlanetCode ? {} : { planet: member.userPlanetCode }]">
-                  {{ member.userDoc?.firstName || member.name }}
-                </a>
-                <mat-card-subtitle>
-                  <p class="primary-text-color" *ngIf="member.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member.userPlanetCode}}</p>
-                  <span i18n *ngIf="member.userId === currentUserId && member.userPlanetCode === planetCode">(You)</span>{{' '}}
-                  <span i18n *ngIf="member.userId === leader && member.userPlanetCode === planetCode">(Team Leader)</span>{{' '}}<span>({{ visits[member.name]?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
-                  <p *ngIf="visits[member.name] && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits[member.name]?.recentTime | date }}</p>
-                </mat-card-subtitle>
-                <button *ngIf="mode !== 'services' && member.userId !== leader && (currentUserId === leader || (user.isUserAdmin && team.teamPlanetCode === user.planetCode))" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(member, 'remove', { changeType: 'remove', type: 'user' })" *ngIf="member.userId !== currentUserId && currentUserId === leader">
-                    <mat-icon>clear</mat-icon>
-                    <span i18n>Remove</span>
-                  </button>
-                  <button *ngIf="member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader)"
-                    (click)="openDialogPrompt(member, 'leader', { changeType: 'leader', type: 'user' })" mat-menu-item>
-                    <mat-icon>person</mat-icon>
-                    <span i18n>Make Leader</span>
-                  </button>
-                </mat-menu>
-              </mat-card-header>
-              <mat-card-content *ngIf="member.tasks && member.tasks.length > 0">
-                <span class="mat-caption">Tasks</span>
-                <mat-selection-list (selectionChange)="toggleTask($event)">
-                  <mat-list-option checkboxPosition="before" *ngFor="let task of member.tasks" [selected]="task.completed" [value]="task">
-                    <p class="ellipsis-title">{{task.title}}</p>
-                  </mat-list-option>
-                </mat-selection-list>
-              </mat-card-content>
+              <planet-teams-member
+                [member]="member"
+                [actionMenu]="[]
+                  .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
+                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])"
+                [visits]="visits[member?.name]"
+                [userStatus]="userStatus"
+                [teamLeader]="leader"
+                (actionClick)="memberActionClick($event)">
+              </planet-teams-member>
             </mat-card>
           </div>
         </ng-template>
       </mat-tab>
-      <ng-container *ngIf="userStatus === 'member'">
+      <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab #taskTab>
           <ng-template mat-tab-label>
             <ng-container i18n><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false">Tasks</span></ng-container>
           </ng-template>
-          <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"></planet-tasks>
+          <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members" [editable]="userStatus === 'member'"></planet-tasks>
         </mat-tab>
         <mat-tab #calendarTab>
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         </mat-tab>
         <mat-tab *ngIf="mode!=='team'">
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container>
           </ng-template>
-          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
         </mat-tab>
         <mat-tab label="Resources">
           <ng-template mat-tab-label>
@@ -138,9 +114,9 @@
                   </span>
                 </div>
                 <mat-card-content>
-                  <p>{{resource.resource.description}}</p>
+                  <planet-markdown [content]="resource.resource.description || ''"></planet-markdown>
                 </mat-card-content>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
+                <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
@@ -167,9 +143,9 @@
               <mat-card *ngFor="let course of team?.courses" [routerLink]="'/courses/view/' + course._id" class="cursor-pointer">
                 <div class="mat-subheading-2"><b>{{course.courseTitle}}</b></div>
                 <mat-card-content>
-                  <p>{{course.description}}</p>
+                  <planet-markdown [content]="course.description || ''"></planet-markdown>
                 </mat-card-content>
-                <button class="top-right-icon" mat-icon-button [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
+                <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #courseMenu="matMenu">
@@ -197,7 +173,7 @@
                     <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
                   </mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-actions>
+                <mat-card-actions *ngIf="userStatus === 'member'">
                   <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
                   <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
                 </mat-card-actions>

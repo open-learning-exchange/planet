@@ -27,6 +27,7 @@ export class PlanetCalendarComponent implements OnInit {
 
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
+  @Input() editable = true;
   options: OptionsInput;
   calendarPlugins = [ dayGridPlugin ];
   header = {
@@ -34,12 +35,7 @@ export class PlanetCalendarComponent implements OnInit {
     center: '',
     right: 'addEventButton today prev,next'
   };
-  buttons = {
-    addEventButton: {
-      text: 'Add Event',
-      click: this.openAddEventDialog.bind(this)
-    }
-  };
+  buttons = {};
   eventTimeFormat = {
     hour: '2-digit',
     minute: '2-digit',
@@ -58,6 +54,14 @@ export class PlanetCalendarComponent implements OnInit {
   ngOnInit() {
     this.getMeetups();
     this.getTasks();
+    this.buttons = this.editable ?
+      {
+        addEventButton: {
+          text: 'Add Event',
+          click: this.openAddEventDialog.bind(this)
+        }
+      } :
+      {};
   }
 
   getMeetups() {
@@ -137,7 +141,7 @@ export class PlanetCalendarComponent implements OnInit {
 
   openAddEventDialog() {
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this) }
+      data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });
   }
 
@@ -152,6 +156,7 @@ export class PlanetCalendarComponent implements OnInit {
         view: 'view',
         link: this.link,
         sync: this.sync,
+        editable: this.editable,
         onMeetupsChange: this.onMeetupsChange.bind(this)
       }
     });

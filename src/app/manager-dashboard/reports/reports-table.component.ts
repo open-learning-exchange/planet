@@ -1,13 +1,13 @@
-import { Component, Input, ViewChild, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { commonSortingDataAccessor } from '../../shared/table-helpers';
+import { commonSortingDataAccessor, deepSortingDataAccessor } from '../../shared/table-helpers';
 import { ReportsService } from './reports.service';
 
 @Component({
   selector: 'planet-reports-table',
   templateUrl: './reports-table.component.html'
 })
-export class ReportsTableComponent implements OnChanges, AfterViewInit {
+export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() planets = [];
   logs = new MatTableDataSource();
@@ -16,7 +16,6 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
     // 'downloads',
     'views',
     'logins',
-    'lastAdminLogin',
     'lastUpgrade',
     'lastSync'
   ];
@@ -27,15 +26,14 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
     private reportsService: ReportsService
   ) {}
 
+  ngOnInit() {
+    this.logs.sortingDataAccessor = (item: any, property: string) => property === 'lastSync' ?
+      deepSortingDataAccessor(item, 'doc.lastSync.max.time') :
+      commonSortingDataAccessor(this.sortingObject(item, property), property);
+  }
+
   ngOnChanges() {
     this.logs.data = this.planets;
-    this.logs.sortingDataAccessor = (item: any, property: string) =>
-      commonSortingDataAccessor(
-        property === 'name' ?
-          item.nameDoc || item.doc :
-          item,
-        property
-      );
   }
 
   ngAfterViewInit() {
@@ -45,6 +43,12 @@ export class ReportsTableComponent implements OnChanges, AfterViewInit {
 
   viewDetails(planet: any) {
     this.reportsService.viewPlanetDetails(planet);
+  }
+
+  sortingObject(item, property) {
+    return property === 'name' ?
+      item.nameDoc || item.doc :
+      item;
   }
 
 }

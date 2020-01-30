@@ -20,10 +20,10 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { languages } from '../shared/languages';
 import { ResourcesService } from './resources.service';
-import { TagsService } from '../shared/forms/tags.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { map, startWith } from 'rxjs/operators';
 import { showFormErrors } from '../shared/table-helpers';
+import { deepEqual } from '../shared/utils';
 
 @Component({
   selector: 'planet-resources-add',
@@ -70,7 +70,6 @@ export class ResourcesAddComponent implements OnInit {
     private route: ActivatedRoute,
     private stateService: StateService,
     private resourcesService: ResourcesService,
-    private tagsService: TagsService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
     // Adds the dropdown lists to this component
@@ -190,7 +189,8 @@ export class ResourcesAddComponent implements OnInit {
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
       const message = newResource.title +
         (this.pageType === 'Update' || this.existingResource.doc ? ' Updated Successfully' : ' Added');
-      if (JSON.stringify(existingData) !== JSON.stringify(newResource)) {
+      const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
+      if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
           (err) => this.planetMessageService.showAlert('There was an error with this resource')

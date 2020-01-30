@@ -10,6 +10,7 @@ import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText 
 import { CsvService } from '../shared/csv.service';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -37,7 +38,8 @@ export class SubmissionsService {
     private courseService: CoursesService,
     private userService: UserService,
     private csvService: CsvService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) { }
 
   updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
@@ -283,20 +285,20 @@ export class SubmissionsService {
     );
   }
 
-  exportSubmissionsPdf(exam, type: 'exam' | 'survey') {
+  getPDFAnswerText(submission: any, index, answerIndexes: number[]) {
+    const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
+      '<pre>'.concat(answerText, '</pre>') :
+      answerText;
+  }
+
+  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }) {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
       if (!submissions.length) {
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
-      const markdown = submissions.map((submission, index) => {
-        const answerIndexes = this.answerIndexes(questionTexts, submission);
-        return `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` +
-          questionTexts.map((question, questionIndex) => (
-            `**Question ${questionIndex + 1}:**  \n\n${question}  \n\n` +
-            `**Response ${questionIndex + 1}:**  \n\n${this.getAnswerText(submission.answers, questionIndex, answerIndexes)}  \n`
-          )).join('  \n');
-      }).join('  \n');
+      const markdown = this.preparePDF(exam, submissions, questionTexts, exportOptions);
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         {
@@ -304,7 +306,29 @@ export class SubmissionsService {
           pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
         }
       ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
+      this.dialogsLoadingService.stop();
     });
+  }
+
+  preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
+    return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
+      const answerIndexes = this.answerIndexes(questionTexts, submission);
+      return this.surveyHeader(includeAnswers, exam, index, submission.lastUpdateTime) +
+        questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers)).join('  \n');
+    }).join('  \n');
+  }
+
+  surveyHeader(responseHeader: boolean, exam, index: number, time: number) {
+    return responseHeader ?
+      `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
+      `### ${exam.name} Questions  \n`;
+  }
+
+  questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
+    const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
+    return (question, questionIndex) =>
+      (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
+      (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
   }
 
 }

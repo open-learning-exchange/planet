@@ -97,6 +97,9 @@ export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: s
   };
 };
 
+// Special filter for showing members that are admins
+export const filterAdmin = (data, filter) => data.doc.isUserAdmin && data.doc.roles.length === 0;
+
 // Takes an array of the above filtering functions and returns true if all match
 export const composeFilterFunctions = (filterFunctions: any[]) => {
   return (data: any, filter: any) => {
@@ -147,7 +150,7 @@ export const commonSortingDataAccessor = (item: any, property: string) => {
 export const deepSortingDataAccessor = (item: any, property: string) => {
   const keys = property.split('.');
   const simpleItem = keys.reduce((newItem, key, index) => {
-    if (index === keys.length - 1) {
+    if (index === keys.length - 1 || newItem[key] === undefined || newItem[key] === null) {
       return newItem;
     }
     return newItem[key];

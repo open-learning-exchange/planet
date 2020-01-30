@@ -43,7 +43,10 @@ export class ReportsMyPlanetComponent implements OnInit {
       ...planet,
       children:
         this.reportsService.groupBy(
-          myPlanets.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code),
+          myPlanets.filter(myPlanet => {
+            return myPlanet.type !== 'usages' && (myPlanet.usages || []).length === 0 &&
+              (myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code);
+          }),
           [ 'androidId' ],
           { maxField: 'time' }
         ).map((child: any) => {

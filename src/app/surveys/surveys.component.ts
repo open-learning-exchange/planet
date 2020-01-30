@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
 import { forkJoin, Subject, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -21,6 +22,7 @@ import { UserService } from '../shared/user.service';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -48,7 +50,7 @@ import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
-  surveys = new MatTableDataSource();
+  surveys = new MatTableDataSource<any>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
@@ -62,6 +64,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   message = '';
   configuration = this.stateService.configuration;
+  parentCount = 0;
 
   constructor(
     private couchService: CouchService,
@@ -74,7 +77,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private dialogsFormService: DialogsFormService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -82,27 +86,29 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
-    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, { 'selector': { 'type': type } });
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
     forkJoin([
       receiveData('exams', 'surveys'),
       receiveData('submissions', 'survey'),
       this.couchService.findAll('courses')
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
-      this.surveys.data = surveys.map(
-        (survey: any) => ({
+      this.surveys.data = [
+        ...surveys.map((survey: any) => ({
           ...survey,
           course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
           taken: submissions.filter(data => {
             return data.parentId.match(survey._id) && data.status !== 'pending';
           }).length
-        })
-      );
+        })),
+        ...this.createParentSurveys(submissions)
+      ];
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.surveys.connect().subscribe(surveys => this.parentCount = surveys.filter(survey => survey.parent === true).length);
   }
 
   ngAfterViewInit() {
@@ -119,6 +125,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  createParentSurveys(submissions) {
+    return submissions.reduce((parentSurveys, submission) => {
+      const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === submission.parent._id);
+      if (parentSurvey) {
+        parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
+      }
+      if (parentSurvey || submission.parent.sourcePlanet === this.stateService.configuration.code || !submission.parent.sourcePlanet) {
+        return parentSurveys;
+      }
+      return [ ...parentSurveys, { ...submission.parent, taken: submission.status !== 'pending' ? 1 : 0, parent: true } ];
+    }, []);
+  }
+
   goBack() {
     this.router.navigate([ '../' ], { relativeTo: this.route });
   }
@@ -133,7 +152,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.selection.selected.length === (itemsShown(this.paginator) - this.parentCount);
   }
 
   masterToggle() {
@@ -142,7 +161,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isAllSelected()) {
       this.selection.clear();
     } else {
-      this.surveys.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.surveys.filteredData.slice(start, end).forEach((row: any) => {
+        if (row.parent !== true) {
+          this.selection.select(row._id);
+        }
+      });
     }
   }
 
@@ -296,7 +319,25 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    this.submissionsService.exportSubmissionsPdf(survey, 'survey');
+    this.dialogsFormService.openDialogsForm(
+      'Records to Export',
+      [
+        { name: 'includeQuestions', placeholder: 'Include Questions', type: 'checkbox' },
+        { name: 'includeAnswers', placeholder: 'Include Answers', type: 'checkbox' }
+      ],
+      { includeQuestions: true, includeAnswers: true },
+      {
+        autoFocus: true,
+        disableIfInvalid: true,
+        onSubmit: (options: { includeQuestions, includeAnswers}) => {
+          this.dialogsFormService.closeDialogsForm();
+          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options);
+        },
+        formOptions: {
+          validator: (ac: FormGroup) => Object.values(ac.controls).some(({ value }) => value) ? null : { required: true }
+        }
+      }
+    );
   }
 
 }

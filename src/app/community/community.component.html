@@ -1,34 +1,63 @@
-<mat-toolbar>
-  <a mat-icon-button routerLink="/"><mat-icon>arrow_back</mat-icon></a>
-  <h3 class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
-  <span class="toolbar-fill"></span>
-</mat-toolbar>
 <div class="space-container">
-  <div class="view-container view-full-height">
+  <div class="view-container view-full-height community-view">
     <mat-toolbar class="action-buttons">
-      <span class="scrolling">
-        <ng-container *ngFor="let link of links">
-          <a *ngIf="!deleteMode" [routerLink]="link.route" mat-button i18n>
-            {{link.title}}
-          </a>
-          <button *ngIf="deleteMode" mat-flat-button (click)="openDeleteLinkDialog(link)" color="warn">{{link.title}} <mat-icon>delete</mat-icon></button>
-        </ng-container>
-      </span>
-      <span class="toolbar-fill"></span>
-      <ng-container *planetAuthorizedRoles>
-        <button (click)="toggleDeleteMode()" mat-icon-button><mat-icon>delete</mat-icon></button>
-        <button (click)="openAddLinkDialog()" mat-icon-button><mat-icon>add</mat-icon></button>
-      </ng-container>
+      <span>{{configuration?.name}}</span>
     </mat-toolbar>
     <div class="community-news">
-      <h3>
-        <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
-        <ng-container *planetAuthorizedRoles="'learner'">
-          <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
-        </ng-container>
-      </h3>
-      <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
+      <mat-tab-group>
+        <mat-tab i18n-label label="News">
+          <h3>
+            <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+            <ng-container *planetAuthorizedRoles="'learner'">
+              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
+            </ng-container>
+          </h3>
+          <planet-news-list [items]="news" (viewChange)="toggleShowButton($event)"></planet-news-list>
+        </mat-tab>
+        <mat-tab i18n-label label="Community Leaders">
+          <div class="card-grid">
+            <mat-card *ngFor="let councillor of councillors">
+              <planet-teams-member
+                [member]="councillor"
+                [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
+                (actionClick)="openChangeTitleDialog($event)">
+              </planet-teams-member>
+            </mat-card>
+          </div>
+        </mat-tab>
+        <mat-tab i18n-label label="Services">
+          <planet-markdown [content]="team.description || ''"></planet-markdown>
+          <ng-container *ngIf="planetCode === user.code">
+            <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
+              configuration.planetType, select, community {Community} nation {Nation} center {Earth}
+            } Description</button>
+          </ng-container>
+          <mat-nav-list>
+            <mat-list-item *ngFor="let link of links">
+              <a matLine [routerLink]="link.route" i18n>
+                {{link.title}}
+              </a>
+              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
+            </mat-list-item>
+          </mat-nav-list>
+          <ng-container *ngIf="planetCode === user.code">
+            <div *planetAuthorizedRoles class="action-buttons">
+              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+              <button (click)="toggleDeleteMode()" mat-stroked-button>
+                <span *ngIf="!deleteMode" i18n>Remove Links</span>
+                <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+              </button>
+            </div>
+          </ng-container>
+        </mat-tab>
+        <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
+          <planet-community-list></planet-community-list>
+        </mat-tab>
+        <mat-tab i18n-label label="Finances">
+          <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="getLinks()" [editable]="isCommunityLeader && planetCode === user.code"></planet-teams-view-finances>
+        </mat-tab>
+      </mat-tab-group>
     </div>
-    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: configuration.code }"></planet-calendar>
+    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>

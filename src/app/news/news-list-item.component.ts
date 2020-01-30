@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, A
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -13,6 +14,7 @@ export class NewsListItemComponent implements AfterViewChecked {
   @Input() item;
   @Input() replyObject;
   @Input() showRepliesButton = true;
+  @Input() editable = true;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
@@ -20,12 +22,14 @@ export class NewsListItemComponent implements AfterViewChecked {
   contentHeight = 0;
   currentUser = this.userService.get();
   showLess = true;
+  planetCode = this.stateService.configuration.code;
 
   constructor(
     private userService: UserService,
     private couchService: CouchService,
     private cdRef: ChangeDetectorRef,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private stateService: StateService
   ) {}
 
   ngAfterViewChecked() {

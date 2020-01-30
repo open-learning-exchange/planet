@@ -62,7 +62,7 @@
           justify-content: center;
           align-items: center;
           text-align: center;
-          padding: 0.5rem;
+          padding: 1rem 0.5rem;
           position: relative;
           word-break: break-word;
           .delete-item {
@@ -73,6 +73,14 @@
           p {
             margin: 0;
           }
+
+          .dashboard-text {
+            display: -webkit-box;
+            width: calc(125px - 1rem);
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
         }
       }
     }
