@@ -21,6 +21,7 @@
 
 .view-container mat-toolbar {
   grid-area: links;
+  overflow: hidden;
 }
 
 .community-news {
