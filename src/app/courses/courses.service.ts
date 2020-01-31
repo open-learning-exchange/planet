@@ -3,7 +3,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, forkJoin, of, combineLatest, zip } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, startWith, skip, debounceTime } from 'rxjs/operators';
+import { switchMap, map, startWith, skip, debounceTime, filter } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -28,6 +28,7 @@ export class CoursesService {
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
+  private progressUpdated = new Subject<{ parent: boolean, planetField: string, progress: any[] }>();
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
@@ -80,12 +81,17 @@ export class CoursesService {
       tags: this.tagsService.attachTagsToDocs(this.dbName, [ course ], tags)[0].tags
     }));
     this.coursesUpdated.next({ courses: data, planetField, parent });
+    this.progressUpdated.next({ progress: courses_progress, planetField, parent });
   }
 
   coursesListener$(reqParent = false) {
     return this.coursesUpdated.pipe(
       map(({ parent, planetField, courses }) => parent === reqParent && this.isReady[planetField] ? courses : undefined)
     );
+  }
+
+  progressListener$(reqParent = false) {
+    return this.progressUpdated.pipe(filter(res => res.parent === reqParent), map(res => res.progress));
   }
 
   progressLearnerListener$(parent = false) {

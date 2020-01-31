@@ -12,6 +12,7 @@ import { CertificationsAddComponent } from './certifications-add.component';
 import { CoursesModule } from '../../courses/courses.module';
 import { DialogsAddCoursesModule } from '../../shared/dialogs/dialogs-add-courses.module';
 import { CertificationsViewComponent } from './certifications-view.component';
+import { UsersModule } from '../../users/users.module';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { CertificationsViewComponent } from './certifications-view.component';
     SharedComponentsModule,
     PlanetDialogsModule,
     CoursesModule,
-    DialogsAddCoursesModule
+    DialogsAddCoursesModule,
+    UsersModule
   ]
 })
 export class CertificationsModule {}
