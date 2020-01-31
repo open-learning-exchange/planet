@@ -66,6 +66,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.configuration = configurations[0];
       this.getCommunityData(this.planetCode);
       this.getLinks(this.planetCode);
+      this.couchService.get(`teams/${this.teamId}`).subscribe(team => this.team = team);
     });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
@@ -79,7 +80,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.couchService.get(`teams/${this.teamId}`).subscribe(team => this.team = team);
   }
 
   ngOnDestroy() {
