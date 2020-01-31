@@ -10,6 +10,9 @@
   display: grid;
   grid-template-columns: 4fr 3fr;
   grid-template-rows: 64px calc(100% - 64px - 0.5rem);
+  > * {
+    overflow-y: auto;
+  }
   grid-template-areas:
     "links calendar"
     "news calendar";
@@ -18,7 +21,6 @@
 
 .view-container mat-toolbar {
   grid-area: links;
-  overflow: hidden;
 }
 
 .community-news {
@@ -38,8 +40,8 @@
 
 }
 
-planet-calendar {
-  grid-template-areas: calendar;
+.view-container planet-calendar {
+  grid-area: calendar;
 }
 
 .card-grid {
