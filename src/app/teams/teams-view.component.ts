@@ -258,7 +258,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     dialogParams: { changeType, type }
   ) {
     const config = this.dialogPromptConfig(item, change);
-    const displayName = config.name || item.name;
+    const displayName = config.name || item.userDoc.firstName ? item.userDoc.firstName + ' ' + item.userDoc.middleName + ' ' + item.userDoc.last : item.name;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -320,7 +320,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'added':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, memberDoc),
-          message: memberDoc.name + ' accepted'
+          message: memberDoc.userDoc.firstName ? memberDoc.userDoc.firstName + ' ' +memberDoc.userDoc.middleName + ' ' + memberDoc.userDoc.last : memberDoc.name + ' accepted'
         });
       case 'rejected':
         return ({
