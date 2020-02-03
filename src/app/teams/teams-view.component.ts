@@ -171,8 +171,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         if (member.attachmentDoc) {
           return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
         }
-        if (member.userDoc && member.userDoc._attachments) {
-          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc._attachments)[0]}`;
+        if (member.userDoc && member.userDoc.doc._attachments) {
+          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
         }
         return 'assets/image.png';
       };
@@ -245,7 +245,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: 'removed', errorMsg: 'removing' },
       remove: {
-        request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).firstName || item.name,
+        request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).fullName || item.name,
         successMsg: 'removed', errorMsg: 'removing'
       },
       leader: { request: this.makeLeader(item), successMsg: 'given leadership to', errorMsg: 'giving leadership to' }
@@ -258,8 +258,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     dialogParams: { changeType, type }
   ) {
     const config = this.dialogPromptConfig(item, change);
-    const displayName = config.name || item.userDoc.firstName ?
-      item.userDoc.firstName + ' ' + item.userDoc.middleName + ' ' + item.userDoc.last : item.name;
+    const displayName = config.name || (item.userDoc ? item.userDoc.fullName : item.name);
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -307,6 +306,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private changeObject(type, memberDoc?) {
+    const memberName = memberDoc && (memberDoc.userDoc.fullName || memberDoc.name);
     switch (type) {
       case 'request':
         return ({
@@ -316,18 +316,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'removed':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
-          message: memberDoc.name + ' removed from team'
+          message: memberName + ' removed from team'
         });
       case 'added':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, memberDoc),
-          message: memberDoc.userDoc.firstName ?
-            memberDoc.userDoc.firstName + ' ' + memberDoc.userDoc.middleName + ' ' + memberDoc.userDoc.last : memberDoc.name + ' accepted'
+          message: memberName + ' accepted'
         });
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
-          message: memberDoc.name + ' rejected'
+          message: memberName + ' rejected'
         });
     }
   }

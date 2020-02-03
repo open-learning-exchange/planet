@@ -1,7 +1,7 @@
 <mat-card-header>
   <img mat-card-avatar [src]="member?.avatar">
   <a mat-card-title [routerLink]="['/users/profile', member?.name, planetCode === member?.userPlanetCode ? {} : { planet: member?.userPlanetCode }]">
-    {{ member?.fullName || member?.userDoc?.firstName  || member?.name }}
+    {{ member?.userDoc?.fullName || member?.userDoc?.firstName  || member?.name }}
   </a>
   <mat-card-subtitle>
     <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
