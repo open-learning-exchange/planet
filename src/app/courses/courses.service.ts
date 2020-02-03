@@ -207,20 +207,20 @@ export class CoursesService {
   }
 
   courseActivity(type: string, courseStep?: number) {
-    const data = {
-      'courseId': this.course._id,
-      'title': this.course.courseTitle,
-      'user': this.userService.get().name,
-      type,
-      courseStep,
-      'time': this.couchService.datePlaceholder,
-      'createdOn': this.stateService.configuration.code,
-      'parentCode': this.stateService.configuration.parentCode,
-      'session': this.userService.currentSession._id
-    };
-    this.couchService.updateDocument('course_activities', data)
-      .subscribe((response) => {
-      }, (error) => console.log('Error'));
+    this.userService.getCurrentSession().pipe(switchMap(currentSession => {
+      const data = {
+        'courseId': this.course._id,
+        'title': this.course.courseTitle,
+        'user': this.userService.get().name,
+        type,
+        courseStep,
+        'time': this.couchService.datePlaceholder,
+        'createdOn': this.stateService.configuration.code,
+        'parentCode': this.stateService.configuration.parentCode,
+        'session': currentSession._id
+      };
+      return this.couchService.updateDocument('course_activities', data);
+    })).subscribe((response) => {}, (error) => console.log('Error'));
   }
 
 }
