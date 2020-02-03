@@ -30,6 +30,7 @@ export class TasksComponent implements OnInit {
     return this._assigness;
   }
   set assignees(newAssignees: any[]) {
+    console.log(newAssignees);
     this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
   dbName = 'tasks';
@@ -164,5 +165,14 @@ export class TasksComponent implements OnInit {
 export class FilterAssigneePipe implements PipeTransform {
   transform(assignees: any[], assignee: any) {
     return assignees.filter(a => a.userId !== assignee.userId);
+  }
+}
+
+@Pipe({
+  name: 'assigneeName'
+})
+export class AssigneeNamePipe implements PipeTransform {
+  transform(assignee) {
+    return (assignee.userDoc || {}).fullName || assignee.name;
   }
 }
