@@ -104,8 +104,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       { message: [ message,
         Validators.compose([
           CustomValidators.required,
-          CustomValidators.pattern(/\((\/|https?:\/\/\))|\(\s+(\/|https?:\/\/\))|\((\/|https?:\/\/\s+\))|\(\s+(\/|https?:\/\/\s+\))/g,
-            'invalidMarkdownLink') ])
+          CustomValidators.pattern(/(?![\(\s*https?:\/\/\s*\)]).*/g, 'invalidMarkdownLink') ])
       ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
