@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { of, empty, forkJoin } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, take } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -160,15 +160,16 @@ export class TeamsService {
 
   getTeamMembers(team, withAllLinks = false) {
     const typeObj = withAllLinks ? {} : { docType: 'membership' };
+    this.usersService.requestUsers();
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
-      this.usersService.getAllUsers(),
+      this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...[ ...(team.type === 'services' ? this.servicesMembers(team, users) : []), ...membershipDocs ].map(doc => ({
         ...doc,
-        userDoc: users.find(user => user._id === doc.userId && user.planetCode === doc.userPlanetCode),
+        userDoc: users.find(user => user._id === doc.userId && user.doc.planetCode === doc.userPlanetCode),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
