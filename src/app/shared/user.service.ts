@@ -98,18 +98,14 @@ export class UserService {
   }
 
   getCurrentSession() {
-    if (this.currentSession) {
-      return of(this.currentSession);
-    }
-    return this.couchService.post(this.logsDb + '/_find', findDocuments(
-      { 'user': this.get().name },
-      [ '_id', '_rev', 'loginTime' ],
-      [ { 'loginTime': 'desc' } ],
-      1
-    )).pipe(map(data => {
-      this.currentSession = data.docs[0];
-      return this.currentSession;
-    }));
+    return this.currentSession ? of(this.currentSession) :
+      this.couchService.post(
+        this.logsDb + '/_find',
+        findDocuments({ 'user': this.get().name }, [ '_id', '_rev', 'loginTime' ], [ { 'loginTime': 'desc' } ], 1)
+      ).pipe(map(data => {
+        this.currentSession = data.docs[0];
+        return this.currentSession;
+      }));
   }
 
   private setUserProperties(users) {
