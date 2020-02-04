@@ -45,7 +45,14 @@
         <ng-template mat-tab-label i18n>
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
-        <td-markdown *ngIf="team?.description; else emptyText" [content]="team.description"></td-markdown>
+        <ng-container *ngIf="(team?.description || team?.services || team?.rules); else emptyText">
+          <h3 class="header" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</h3>
+          <td-markdown [content]="team.description"></td-markdown>
+          <h3 class="header" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</h3>
+          <td-markdown [content]="team.services"></td-markdown>
+          <h3 class="header" *ngIf="team?.rules" i18n>What are the Rules of your enterprise?</h3>
+          <td-markdown [content]="team.rules"></td-markdown>
+        </ng-container>
         <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
