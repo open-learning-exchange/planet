@@ -76,7 +76,8 @@ export class UsersService {
     );
   }
 
-  requestActivitiesAndChildren() {
+  // Triggers state service for 'child_users' DB.  After that completes fetches '_users' and 'login_activities' data (see constructor).
+  requestUserData() {
     this.stateService.requestData('child_users', 'local');
   }
 
