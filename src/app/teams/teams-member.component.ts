@@ -15,7 +15,8 @@ import { TasksService } from '../tasks/tasks.service';
 export class TeamsMemberComponent {
 
   @Input() member: any;
-  @Input() actionMenu: ('remove' | 'leader' | 'title')[];
+  @Input() team: any;
+  @Input() actionMenu: ('remove' | 'leader' | 'role' | 'title')[];
   @Input() visits: { [_id: string]: number };
   @Input() userStatus = '';
   @Input() teamLeader;
@@ -29,7 +30,7 @@ export class TeamsMemberComponent {
     private tasksService: TasksService
   ) {}
 
-  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
+  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'role' | 'title' }) {
     this.actionClick.emit(actionParams);
   }
 

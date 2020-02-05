@@ -64,6 +64,7 @@
           <div class="card-grid member-cards">
             <mat-card *ngFor="let member of members">
               <planet-teams-member
+                [team] = "team"
                 [member]="member"
                 [actionMenu]="[]
                   .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
