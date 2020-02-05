@@ -125,7 +125,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: teamId });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(news => {
-      this.news = news
+      this.news = news;
       this.messageCount = this.news.length || this.messageCount;
     });
     if (this.mode === 'services') {
