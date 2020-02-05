@@ -28,15 +28,13 @@ export class CommunityLinkDialogComponent {
       route: [ '', CustomValidators.required ],
       linkId: '',
       linkType: '',
-      teamType: 'sync'
     });
   }
 
   teamSelect({ mode, teamId, teamType }) {
     this.linkForm.controls.route.setValue(this.teamsService.teamLinkRoute(mode, teamId));
     this.linkForm.controls.linkId.setValue(teamId);
-    this.linkForm.controls.linkType.setValue(mode);
-    this.linkForm.controls.teamType.setValue(teamType);
+    this.linkForm.controls.linkType.setValue(teamType);
     this.linkStepper.selected.completed = true;
     this.linkStepper.next();
   }
