@@ -9,7 +9,7 @@
     <span i18n *ngIf="member?.userId === teamLeader && member?.userPlanetCode === planetCode">(Team Leader)</span>{{' '}}<span *ngIf="visits">({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
     <p *ngIf="visits && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits?.recentTime | date }}</p>
     <p class="primary-text-color" *ngIf="member?.doc?.leadershipTitle">{{member?.doc?.leadershipTitle}}</p>
-    <p class="primary-text-color" *ngIf="team?.role">{{team?.role}}</p>
+    <p class="primary-text-color" *ngIf="member?.role">{{member?.role}}</p>
   </mat-card-subtitle>
   <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
     <mat-icon>more_vert</mat-icon>

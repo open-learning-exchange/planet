@@ -138,6 +138,16 @@ export class TeamsService {
     );
   }
 
+  updateMembership(team, memberInfo, role) {
+    const membershipProps = this.membershipProps(team, memberInfo, 'membership');
+    return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
+      map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
+      switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
+        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, role: role }))
+      ))
+    );
+  }
+
   changeTeamLeadership(oldLeader, newLeader) {
     return this.couchService.bulkDocs(this.dbName, [ { ...newLeader, isLeader: true }, { ...oldLeader, isLeader: false } ]);
   }

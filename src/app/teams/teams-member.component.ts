@@ -15,7 +15,6 @@ import { TasksService } from '../tasks/tasks.service';
 export class TeamsMemberComponent {
 
   @Input() member: any;
-  @Input() team: any;
   @Input() actionMenu: ('remove' | 'leader' | 'role' | 'title')[];
   @Input() visits: { [_id: string]: number };
   @Input() userStatus = '';

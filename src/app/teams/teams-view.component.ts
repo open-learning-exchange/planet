@@ -260,7 +260,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (change === 'role') {
       this.dialogsFormService.openDialogsForm(
         'Change role',
-        [ { name: 'teamRole', placeholder: 'Role', type: 'textbox', required: false } ],
+        [ { name: 'teamRole', placeholder: 'Role', type: 'textbox', required: true } ],
         { teamRole: '' },
         { autoFocus: true, onSubmit: this.updateRole(item).bind(this) }
       );
@@ -289,8 +289,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   updateRole(member) {
-    return ({ change }) => {
-      this.teamsService.updateTeam({ ...this.team, role: change }).pipe(
+    return ({ teamRole }) => {
+      this.teamsService.updateMembership(this.team, member, teamRole).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
@@ -299,7 +299,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     };
   }
 
-  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' }) {
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'role' }) {
     this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
   }
 
