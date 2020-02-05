@@ -37,7 +37,10 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
-      <mat-tab i18n-label label="Chat" *ngIf="team?.public === true || userStatus === 'member'">
+      <mat-tab *ngIf="team?.public === true || userStatus === 'member'">
+        <ng-template mat-tab-label>
+          <ng-container i18n><span [matBadge]="messageCount" [matBadgeHidden]="messageCount === 0" matBadgeOverlap="false">Chat</span></ng-container>
+        </ng-template>
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot && userStatus === 'member'" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
       </mat-tab>

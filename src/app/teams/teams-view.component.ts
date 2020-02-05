@@ -59,6 +59,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
+  messageCount = 1;
   configuration = this.stateService.configuration;
 
   constructor(
@@ -122,7 +123,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   initTeam(teamId: string) {
     this.newsService.requestNews({ viewableBy: 'teams', viewableId: teamId });
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+    .subscribe(news => {
+      this.news = news
+      this.messageCount = this.news.length || this.messageCount;
+    });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
