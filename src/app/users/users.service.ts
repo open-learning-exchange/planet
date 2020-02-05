@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Subject, zip, combineLatest, of, throwError } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { switchMap, map, catchError, auditTime } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -37,7 +37,8 @@ export class UsersService {
           dataToUse(this.data.loginActivities, loginActivities, loginLocal), dataToUse(this.data.childUsers, childUsers, childLocal)
         ];
         return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([]);
-      })
+      }),
+      auditTime(500)
     ).subscribe(([ users, loginActivities, childUsers ]) => {
       if (users === undefined) {
         return;
