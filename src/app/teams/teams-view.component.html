@@ -53,13 +53,13 @@
           <div class="mat-title" *ngIf="team?.rules" i18n>What are the Rules of your enterprise?</div>
           <td-markdown [content]="team.rules"></td-markdown>
         </ng-container>
-        <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
           <button mat-raised-button color="accent" *ngIf="currentUserId === leader || mode === 'services'" (click)="updateTeam()" i18n>
             { mode, select, team {Add Plan} enterprise {Add Mission & Services} services {Add Services} }
           </button>
         </ng-template>
+        <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <button mat-raised-button color="accent" *ngIf="team?.description && mode === 'services'" (click)="updateTeam()" i18n>Edit Services</button>
       </mat-tab>
       <mat-tab>
