@@ -86,7 +86,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     const dbName = this.planetCode === null ? this.dbName : `${relationship}_users`;
     const userId = this.planetCode === null || relationship === 'parent'
       ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.editable = this.userService.doesUserHaveRole([ '_admin' ]) && userId.indexOf('@') === -1 && relationship !== 'parent';
+    this.editable = (this.stateService.configuration.adminName !== this.urlName + '@' + this.stateService.configuration.code)
+      && this.userService.doesUserHaveRole([ '_admin' ]) && userId.indexOf('@') === -1 && relationship !== 'parent';
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;

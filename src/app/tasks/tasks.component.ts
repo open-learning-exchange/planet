@@ -30,7 +30,6 @@ export class TasksComponent implements OnInit {
     return this._assigness;
   }
   set assignees(newAssignees: any[]) {
-    console.log(newAssignees);
     this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
   dbName = 'tasks';

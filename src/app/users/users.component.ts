@@ -75,7 +75,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.dialogsLoadingService.stop();
       this.users = users;
     });
-    this.usersService.requestActivitiesAndChildren();
+    this.usersService.requestUserData();
   }
 
   ngOnDestroy() {

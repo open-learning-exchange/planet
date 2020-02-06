@@ -45,14 +45,21 @@
         <ng-template mat-tab-label i18n>
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
-        <td-markdown *ngIf="team?.description; else emptyText" [content]="team.description"></td-markdown>
-        <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
+        <ng-container *ngIf="(team?.description || team?.services || team?.rules); else emptyText">
+          <div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
+          <td-markdown [content]="team.description"></td-markdown>
+          <div class="mat-title" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</div>
+          <td-markdown [content]="team.services"></td-markdown>
+          <div class="mat-title" *ngIf="team?.rules" i18n>What are the Rules of your enterprise?</div>
+          <td-markdown [content]="team.rules"></td-markdown>
+        </ng-container>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
           <button mat-raised-button color="accent" *ngIf="currentUserId === leader || mode === 'services'" (click)="updateTeam()" i18n>
             { mode, select, team {Add Plan} enterprise {Add Mission & Services} services {Add Services} }
           </button>
         </ng-template>
+        <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
         <button mat-raised-button color="accent" *ngIf="team?.description && mode === 'services'" (click)="updateTeam()" i18n>Edit Services</button>
       </mat-tab>
       <mat-tab>
@@ -67,7 +74,8 @@
                 [member]="member"
                 [actionMenu]="[]
                   .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
-                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])"
+                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || currentUserId === leader ? [ 'title' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"
@@ -168,7 +176,7 @@
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
                   <img mat-card-avatar [src]="request.avatar">
-                  <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.firstName || request.name}}</a>
+                  <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.fullName || request.userDoc.doc?.firstName || request.name}}</a>
                   <mat-card-subtitle>
                     <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
                   </mat-card-subtitle>

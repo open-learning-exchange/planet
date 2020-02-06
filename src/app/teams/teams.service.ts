@@ -24,6 +24,24 @@ const descriptionField = {
   'placeholder': 'Description',
   'required': false
 };
+const enterpriseDescField = [
+  {
+    'type': 'markdown',
+    'name': 'description',
+    'placeholder': 'What is your enterprise\'s Mission?',
+    'required': false
+  }, {
+    'type': 'markdown',
+    'name': 'services',
+    'placeholder': 'What are the Services your enterprise provides?',
+    'required': false
+  }, {
+    'type': 'markdown',
+    'name': 'rules',
+    'placeholder': 'What are the Rules of your enterprise?',
+    'required': false
+  }
+];
 const publicField = {
   'type': 'toggle',
   'name': 'public',
@@ -60,6 +78,8 @@ export class TeamsService {
     const formGroup = {
       ...nameControl,
       description: team.description || '',
+      services: team.services || '',
+      rules: team.rules || '',
       requests: [ team.requests || [] ],
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
@@ -90,7 +110,12 @@ export class TeamsService {
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
-    return [ type === 'services' ? [] : nameField, descriptionField, type === 'team' ? typeField : [], publicField ].flat();
+    return [
+      type === 'services' ? [] : nameField,
+      type === 'enterprise' ? enterpriseDescField : descriptionField,
+      type === 'team' ? typeField : [],
+      publicField
+    ].flat();
   }
 
   updateTeam(team: any) {
@@ -133,7 +158,7 @@ export class TeamsService {
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...deleted }))
+        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
       ))
     );
   }

@@ -30,17 +30,17 @@ export class UsersService {
   ) {
     const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
     const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
-    combineLatest([ this.stateService.couchStateListener('login_activities'), this.stateService.couchStateListener('child_users') ]).pipe(
-      switchMap(([ loginActivities, childUsers ]) => {
-        const [ loginLocal, childLocal ]: boolean[] = [ checkIfLocal(loginActivities), checkIfLocal(childUsers) ];
-        const [ loginData, childData ]: any[] = [
-          dataToUse(this.data.loginActivities, loginActivities, loginLocal), dataToUse(this.data.childUsers, childUsers, childLocal)
-        ];
-        return loginLocal || childLocal ? forkJoin([ this.couchService.findAll(this.dbName), of(loginData), of(childData) ]) : of([]);
-      }),
-      auditTime(500)
-    ).subscribe(([ users, loginActivities, childUsers ]) => {
-      if (users === undefined) {
+    this.stateService.couchStateListener('child_users').pipe(
+      switchMap((childUsers) => {
+        const childLocal = checkIfLocal(childUsers);
+        return !childLocal ? of([ [], { rows: [] } ]) : forkJoin([
+          this.couchService.findAll(this.dbName),
+          this.couchService.get(`login_activities/_design/login_activities/_view/byUser?group=true`),
+          of(dataToUse(this.data.childUsers, childUsers, childLocal))
+        ]);
+      })
+    ).subscribe(([ users, { rows: loginActivities }, childUsers ]: [ any[], { rows: any[] }, any[] ]) => {
+      if (childUsers === undefined) {
         return;
       }
       this.data = { users, loginActivities, childUsers };
@@ -76,8 +76,8 @@ export class UsersService {
     );
   }
 
-  requestActivitiesAndChildren() {
-    this.stateService.requestData('login_activities', 'local');
+  // Triggers state service for 'child_users' DB.  After that completes fetches '_users' and 'login_activities' data (see constructor).
+  requestUserData() {
     this.stateService.requestData('child_users', 'local');
   }
 
@@ -87,8 +87,7 @@ export class UsersService {
       doc: user,
       imageSrc: '',
       fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name,
-      visitCount: this.userLoginCount(user, this.data.loginActivities),
-      lastLogin: this.userLastLogin(user, this.data.loginActivities)
+      ...this.userLoginActivities(user, this.data.loginActivities)
     };
     if (user._attachments) {
       userInfo.imageSrc = this.urlPrefix + 'org.couchdb.user:' + user.name + '/' + Object.keys(user._attachments)[0];
@@ -168,13 +167,11 @@ export class UsersService {
     ));
   }
 
-  userLoginCount(user: any, loginActivities: any[]) {
-    return loginActivities.filter((logItem: any) => logItem.user === user.name).length;
-  }
-
-  userLastLogin(user: any, loginActivities: any[]) {
-    return loginActivities.filter((logItem: any) => logItem.user === user.name)
-      .reduce((max: number, log: any) => log.loginTime > max ? log.loginTime : max, '');
+  userLoginActivities(user: any, loginActivities: any[]) {
+    const loginActivity = loginActivities.find(
+      ({ key: activity }: any) => activity.user === user.name && activity.createdOn === user.planetCode
+    ) || { value: { count: 0 } };
+    return { visitCount: loginActivity.value.count, lastLogin: loginActivity.value.max };
   }
 
   deleteUser(user) {
