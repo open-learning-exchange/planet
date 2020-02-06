@@ -108,7 +108,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   openEditTransactionDialog(transaction: any = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
       this.dialogsFormService.openDialogsForm(
-        transaction.title ? 'Edit Transaction' : 'Add Transaction',
+        transaction._id ? 'Edit Transaction' : 'Add Transaction',
         [
           {
             name: 'type', placeholder: 'Type', type: 'selectbox',
@@ -125,11 +125,19 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {
-          onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
-            this.planetMessageService.showMessage('Transaction added');
+          onSubmit: (newTransaction) => {
+            if (!transaction._id) {
+              this.submitTransaction(newTransaction, transaction).subscribe(() => {
+              this.planetMessageService.showMessage('Transaction Added');
+              });
+            } else {
+              this.submitTransaction(newTransaction, transaction).subscribe(() => {
+              this.planetMessageService.showMessage('Transaction Edited');
+              });
+            }
             this.dialogsFormService.closeDialogsForm();
-          })
         }
+      }
       );
     });
   }
