@@ -254,10 +254,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openDialogPrompt(
     { tasks, ...item },
-    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader' | 'role',
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader' | 'title',
     dialogParams: { changeType, type }
   ) {
-    if (change === 'role') {
+    if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
         'Change role',
         [ { name: 'teamRole', placeholder: 'Role', type: 'textbox', required: true } ],
@@ -299,7 +299,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     };
   }
 
-  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'role' }) {
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
     this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
   }
 
