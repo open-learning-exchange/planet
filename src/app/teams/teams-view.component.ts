@@ -254,7 +254,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openDialogPrompt(
     { tasks, ...item },
-    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader',
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader' | 'title',
     dialogParams: { changeType, type }
   ) {
     const config = this.dialogPromptConfig(item, change);
@@ -279,8 +279,29 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' }) {
-    this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
+  updateRole(member) {
+    return ({ teamRole }) => {
+      this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
+        finalize(() => this.dialogsLoadingService.stop()),
+        switchMap(() => this.getMembers())
+      ).subscribe(() => {
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage('Role has been updated.');
+      });
+    };
+  }
+
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
+    if (change === 'title') {
+      this.dialogsFormService.openDialogsForm(
+        'Change role',
+        [ { name: 'teamRole', placeholder: 'Role', type: 'textbox', required: true } ],
+        { teamRole: member.role || '' },
+        { autoFocus: true, onSubmit: this.updateRole(member).bind(this) }
+      );
+    } else {
+      this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
+    }
   }
 
   changeMembershipRequest(type, memberDoc?) {

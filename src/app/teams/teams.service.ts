@@ -158,7 +158,7 @@ export class TeamsService {
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...deleted }))
+        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
       ))
     );
   }
