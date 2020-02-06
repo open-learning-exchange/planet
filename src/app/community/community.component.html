@@ -33,11 +33,9 @@
             } Description</button>
           </ng-container>
           <mat-nav-list>
-            <mat-list-item *ngFor="let link of links">
-              <a matLine [routerLink]="link.route" i18n>
-                {{link.title}}
-              </a>
-              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
+            <mat-list-item *ngFor="let link of links" [routerLink]="link.route">
+              <span matLine>{{link.title}}</span>
+              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
           <ng-container *ngIf="!planetCode">
