@@ -282,7 +282,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateRole(member) {
     return ({ teamRole }) => {
       this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
-        finalize(() => this.dialogsLoadingService.stop())
+        finalize(() => this.dialogsLoadingService.stop()),
+        switchMap(() => this.getMembers())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage('Role has been updated.');
