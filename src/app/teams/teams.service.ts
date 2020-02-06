@@ -227,14 +227,16 @@ export class TeamsService {
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
-    const fullName = this.userService.get().firstName + ' ' + this.userService.get().middleName + ' ' + this.userService.get().lastName;
+    const user = this.userService.get().firstName ?
+      this.userService.get().firstName + ' ' + this.userService.get().middleName + ' ' + this.userService.get().lastName
+      : this.userService.get().name;
     const teamType = team.type || 'team';
     const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${team.name}"</b> ${teamType}.`;
     switch (type) {
       case 'message':
-        return `<b>${this.userService.get().firstName ? fullName : this.userService.get().name}</b> has posted a message on ${teamMessage}`;
+        return `<b>${user}</b> has posted a message on ${teamMessage}`;
       case 'request':
-        return `<b>${this.userService.get().firstName ? fullName : this.userService.get().name}</b> has requested to join ${teamMessage}`;
+        return `<b>${user}</b> has requested to join ${teamMessage}`;
       case 'added':
         return `You have been added to ${teamMessage}`;
       case 'rejected':
