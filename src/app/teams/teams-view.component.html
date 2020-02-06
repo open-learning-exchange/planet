@@ -74,7 +74,8 @@
                 [member]="member"
                 [actionMenu]="[]
                   .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
-                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])"
+                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || currentUserId === leader ? [ 'title' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"

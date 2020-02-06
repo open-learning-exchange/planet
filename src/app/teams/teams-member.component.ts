@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
@@ -12,7 +12,7 @@ import { TasksService } from '../tasks/tasks.service';
     }
   ` ]
 })
-export class TeamsMemberComponent {
+export class TeamsMemberComponent implements OnInit {
 
   @Input() member: any;
   @Input() actionMenu: ('remove' | 'leader' | 'title')[];
@@ -20,6 +20,7 @@ export class TeamsMemberComponent {
   @Input() userStatus = '';
   @Input() teamLeader;
   @Output() actionClick = new EventEmitter<any>();
+  memberType: 'community' | 'other' = 'other';
   user = this.userService.get();
   planetCode = this.stateService.configuration.code;
 
@@ -28,6 +29,10 @@ export class TeamsMemberComponent {
     private stateService: StateService,
     private tasksService: TasksService
   ) {}
+
+  ngOnInit() {
+    this.memberType = this.member.teamId === undefined ? 'community' : 'other';
+  }
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
     this.actionClick.emit(actionParams);
