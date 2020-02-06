@@ -133,17 +133,7 @@ export class TeamsService {
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...deleted }))
-      ))
-    );
-  }
-
-  updateMembership(team, memberInfo, role) {
-    const membershipProps = this.membershipProps(team, memberInfo, 'membership');
-    return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
-      map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
-      switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, role: role }))
+        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
       ))
     );
   }
