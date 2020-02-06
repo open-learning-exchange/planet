@@ -68,7 +68,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return this._tableState;
   }
   set tableState(newState: TableState) {
-    this.filter['doc.planetCode'] = newState.selectedChild.code;
+    this.filter['doc.planetCode'] = newState.selectedChild.code ||
+      (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
     this._tableState = newState;
   }

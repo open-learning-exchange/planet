@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Subject, zip, combineLatest, of, throwError } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
+import { switchMap, map, catchError, auditTime } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
