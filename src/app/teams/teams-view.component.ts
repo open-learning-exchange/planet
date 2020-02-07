@@ -294,7 +294,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
     if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
-        'Change role',
+        member.role ? 'Change Role' : 'Add Role',
         [ { name: 'teamRole', placeholder: 'Role', type: 'textbox', required: true } ],
         { teamRole: member.role || '' },
         { autoFocus: true, onSubmit: this.updateRole(member).bind(this) }
