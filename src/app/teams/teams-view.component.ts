@@ -327,7 +327,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private changeObject(type, memberDoc?) {
-    const memberName = memberDoc && (memberDoc.userDoc.fullName || memberDoc.name);
+    const memberName = memberDoc && memberDoc.userDoc && (memberDoc.userDoc.fullName || memberDoc.name);
     switch (type) {
       case 'request':
         return ({
