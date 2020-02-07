@@ -22,13 +22,18 @@ module.exports = {
       "map": function (doc) {
         var time = doc.loginTime || doc.time;
         var date = new Date(time);
-        emit({ createdOn: doc.createdOn, parentCode: doc.parentCode, month: date.getMonth(), year: date.getFullYear(), resourceId: doc.resourceId, title: doc.title, user: doc.user }, time);
+        if (typeof time === 'number') {
+          emit({ createdOn: doc.createdOn, parentCode: doc.parentCode, month: date.getMonth(), year: date.getFullYear(), resourceId: doc.resourceId, title: doc.title, user: doc.user }, time);
+        }
       },
       "reduce": "_stats"
     },
     "byUser": {
       "map": function (doc) {
-        emit({ createdOn: doc.createdOn, parentCode: doc.parentCode, user: doc.user }, doc.loginTime || doc.time || 0);
+        var time = doc.loginTime || doc.time;
+        if (typeof time === 'number') {
+          emit({ createdOn: doc.createdOn, parentCode: doc.parentCode, user: doc.user }, time);
+        }
       },
       "reduce": "_stats"
     }
