@@ -205,7 +205,7 @@ export class TeamsService {
     return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) =>
       linkDocs.map(linkDoc => ({
         linkDoc,
-        resource: resources.find(resource => resource._id === linkDoc.resourceId)
+        resource: resources.find(resource => resource._id === linkDoc.resourceId) || {}
       }))
         .filter(resource => resource.linkDoc.title || resource.resource && resource.resource.title)
         .sort((a, b) => (a.resource || a.linkDoc).title.toLowerCase() > (b.resource || b.linkDoc).title.toLowerCase() ? 1 : -1)
