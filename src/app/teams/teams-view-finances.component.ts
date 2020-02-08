@@ -125,19 +125,13 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {
-          onSubmit: (newTransaction) => {
-            if (!transaction._id) {
-              this.submitTransaction(newTransaction, transaction).subscribe(() => {
-              this.planetMessageService.showMessage('Transaction Added');
-              });
-            } else {
-              this.submitTransaction(newTransaction, transaction).subscribe(() => {
-              this.planetMessageService.showMessage('Transaction Edited');
-              });
-            }
+          onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
+            var message ='';
+            transaction._id ? message = 'Updated': message = 'Added';
+            this.planetMessageService.showMessage('Transaction ' + message);
             this.dialogsFormService.closeDialogsForm();
+          })
         }
-      }
       );
     });
   }
