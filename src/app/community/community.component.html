@@ -41,7 +41,7 @@
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles class="action-buttons">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" [disabled]="emptyLinks===0" mat-stroked-button>
+              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
                 <span *ngIf="!deleteMode" i18n>Remove Links</span>
                 <span *ngIf="deleteMode" i18n>Done Removing Links</span>
               </button>

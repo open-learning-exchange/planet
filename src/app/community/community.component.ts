@@ -39,7 +39,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
   planetCode: string | null;
-  emptyLinks: number;
 
   constructor(
     private dialog: MatDialog,
@@ -93,7 +92,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       switchMap(({ links, finances }) => {
         this.links = links;
-        this.emptyLinks = links.length;
         this.finances = finances;
         return this.couchService.get(`teams/${this.teamId}`);
       }),
