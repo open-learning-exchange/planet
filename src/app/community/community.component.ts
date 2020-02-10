@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError } from 'rxjs/operators';
+import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -90,9 +90,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.teamId = this.team._id;
         return this.getLinks(this.planetCode);
       }),
-      switchMap(({ links, finances }) => {
-        this.links = links;
-        this.finances = finances;
+      switchMap((res) => {
+        this.setLinksAndFinances(res);
         return this.couchService.get(`teams/${this.teamId}`);
       }),
       catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err))
@@ -173,6 +172,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }));
   }
 
+  setLinksAndFinances({ links, finances }) {
+    this.links = links;
+    this.finances = finances;
+  }
+
   setCouncillors(users) {
     this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
       this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1).map(user => {
@@ -196,7 +200,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       width: '50vw',
       maxHeight: '90vh',
       data: {
-        getLinks: this.getLinks.bind(this),
+        getLinks: () => this.getLinks().pipe(tap(res => this.setLinksAndFinances(res))),
         excludeIds: this.links.map(link => link.linkId || link.route.replace('/teams/view/', '').replace('/enterprises/view/', ''))
       }
     });
@@ -206,10 +210,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.deleteLink(link),
-          onNext: () => {
+          request: this.deleteLink(link).pipe(switchMap(() => this.getLinks())),
+          onNext: (res) => {
+            this.setLinksAndFinances(res);
             this.planetMessageService.showMessage(`${link.title} deleted`);
-            this.getLinks();
             deleteDialog.close();
           },
           onError: () => this.planetMessageService.showAlert(`There was an error deleting ${link.title}`)
