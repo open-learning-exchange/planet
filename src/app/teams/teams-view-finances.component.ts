@@ -108,7 +108,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   openEditTransactionDialog(transaction: any = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
       this.dialogsFormService.openDialogsForm(
-        transaction.title ? 'Edit Transaction' : 'Add Transaction',
+        transaction._id ? 'Edit Transaction' : 'Add Transaction',
         [
           {
             name: 'type', placeholder: 'Type', type: 'selectbox',
@@ -126,7 +126,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
         },
         {
           onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
-            this.planetMessageService.showMessage('Transaction added');
+            this.planetMessageService.showMessage(transaction._id ? 'Transaction Updated' : 'Transaction Added');
             this.dialogsFormService.closeDialogsForm();
           })
         }
