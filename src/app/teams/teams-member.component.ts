@@ -21,7 +21,8 @@ export class TeamsMemberComponent implements OnInit {
   @Input() teamLeader;
   @Output() actionClick = new EventEmitter<any>();
   memberType: 'community' | 'other' = 'other';
-  memberRole: string;
+  // i18n template only accepts strings, not boolean
+  hasRole: 'true' | 'false';
   user = this.userService.get();
   planetCode = this.stateService.configuration.code;
 
@@ -33,7 +34,7 @@ export class TeamsMemberComponent implements OnInit {
 
   ngOnInit() {
     this.memberType = this.member.teamId === undefined ? 'community' : 'other';
-    this.memberRole = this.member.role ? 'on' : 'off';
+    this.hasRole = this.member.role ? 'true' : 'false';
   }
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
