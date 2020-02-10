@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatStepper, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
@@ -46,8 +47,9 @@ export class CommunityLinkDialogComponent {
   }
 
   linkSubmit() {
-    this.teamsService.createServicesLink(this.linkForm.value).subscribe(() => {
-      this.data.getLinks();
+    this.teamsService.createServicesLink(this.linkForm.value).pipe(
+      switchMap(() => this.data.getLinks())
+    ).subscribe(() => {
       this.dialogRef.close();
     });
   }
