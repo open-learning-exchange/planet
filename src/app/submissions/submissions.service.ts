@@ -295,6 +295,7 @@ export class SubmissionsService {
   exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }) {
     this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
       if (!submissions.length) {
+        this.dialogsLoadingService.stop();
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
