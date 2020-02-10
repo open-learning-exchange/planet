@@ -67,7 +67,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
   @Input() isDialog = false;
   @Input() excludeIds = [];
-  @Output() rowClick = new EventEmitter<{ mode: string, teamId: string, teamType: string }>();
+  @Output() rowClick = new EventEmitter<{ mode: 'team' | 'enterprise', teamId: string, teamType: 'local' | 'sync' }>();
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
 
   constructor(
