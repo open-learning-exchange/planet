@@ -195,10 +195,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteLink(link) {
-    return this.couchService.updateDocument('teams', { ...link, _deleted: true });
-  }
-
   openAddLinkDialog() {
     this.dialog.open(CommunityLinkDialogComponent, {
       width: '50vw',
@@ -214,7 +210,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.deleteLink(link).pipe(switchMap(() => this.getLinks())),
+          request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
           onNext: (res) => {
             this.setLinksAndFinances(res);
             this.planetMessageService.showMessage(`${link.title} deleted`);
