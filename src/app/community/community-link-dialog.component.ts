@@ -27,7 +27,7 @@ export class CommunityLinkDialogComponent {
       title: [ '', CustomValidators.required ],
       route: [ '', CustomValidators.required ],
       linkId: '',
-      linkType: '',
+      linkType: ''
     });
   }
 
