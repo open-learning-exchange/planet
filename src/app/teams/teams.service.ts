@@ -317,7 +317,7 @@ export class TeamsService {
     return `/${mode}s/view/${teamId}`;
   }
 
-  createServicesLink({ title, route, linkType }) {
+  createServicesLink({ title, route, teamType }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
       'teamId': `${code}@${parentCode}`,
@@ -325,8 +325,7 @@ export class TeamsService {
       'teamPlanetCode': `${code}`,
       'parentCode': `${parentCode}`,
       'docType': 'link',
-      'teamType': 'sync',
-      linkType,
+      teamType,
       title,
       route
     };
