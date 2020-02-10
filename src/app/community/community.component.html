@@ -33,7 +33,7 @@
             } Description</button>
           </ng-container>
           <mat-nav-list>
-            <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : ''">
+            <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
               <span matLine>{{link.title}}</span>
               <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
