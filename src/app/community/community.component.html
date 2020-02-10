@@ -27,23 +27,21 @@
         </mat-tab>
         <mat-tab i18n-label label="Services">
           <planet-markdown [content]="team.description || ''"></planet-markdown>
-          <ng-container *ngIf="planetCode === user.code">
+          <ng-container *ngIf="!planetCode">
             <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
               configuration.planetType, select, community {Community} nation {Nation} center {Earth}
             } Description</button>
           </ng-container>
           <mat-nav-list>
-            <mat-list-item *ngFor="let link of links">
-              <a matLine [routerLink]="(link.linkType === 'sync') ? link.route : ''" i18n>
-                {{link.title}}
-              </a>
-              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link)"><mat-icon>delete</mat-icon></button>
+            <mat-list-item *ngFor="let link of links" [routerLink]="(link.linkType === 'sync') ? link.route : ''">
+              <span matLine>{{link.title}}</span>
+              <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
-          <ng-container *ngIf="planetCode === user.code">
+          <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles class="action-buttons">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" mat-stroked-button>
+              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
                 <span *ngIf="!deleteMode" i18n>Remove Links</span>
                 <span *ngIf="deleteMode" i18n>Done Removing Links</span>
               </button>
@@ -54,7 +52,7 @@
           <planet-community-list></planet-community-list>
         </mat-tab>
         <mat-tab i18n-label label="Finances">
-          <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="getLinks()" [editable]="isCommunityLeader && planetCode === user.code"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="getLinks()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
       </mat-tab-group>
     </div>

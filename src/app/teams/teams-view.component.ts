@@ -171,8 +171,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         if (member.attachmentDoc) {
           return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
         }
-        if (member.userDoc && member.userDoc._attachments) {
-          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc._attachments)[0]}`;
+        if (member.userDoc && member.userDoc.doc._attachments) {
+          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
         }
         return 'assets/image.png';
       };
@@ -245,7 +245,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: 'removed', errorMsg: 'removing' },
       remove: {
-        request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).firstName || item.name,
+        request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).fullName || item.name,
         successMsg: 'removed', errorMsg: 'removing'
       },
       leader: { request: this.makeLeader(item), successMsg: 'given leadership to', errorMsg: 'giving leadership to' }
@@ -254,11 +254,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openDialogPrompt(
     { tasks, ...item },
-    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader',
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader' | 'title',
     dialogParams: { changeType, type }
   ) {
     const config = this.dialogPromptConfig(item, change);
-    const displayName = config.name || item.name;
+    const displayName = config.name || (item.userDoc ? item.userDoc.fullName : item.name);
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -279,8 +279,29 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' }) {
-    this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
+  updateRole(member) {
+    return ({ teamRole }) => {
+      this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
+        finalize(() => this.dialogsLoadingService.stop()),
+        switchMap(() => this.getMembers())
+      ).subscribe(() => {
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage('Role has been updated.');
+      });
+    };
+  }
+
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
+    if (change === 'title') {
+      this.dialogsFormService.openDialogsForm(
+        member.role ? 'Change Role' : 'Add Role',
+        [ { name: 'teamRole', placeholder: 'Role', type: 'textbox', required: true } ],
+        { teamRole: member.role || '' },
+        { autoFocus: true, onSubmit: this.updateRole(member).bind(this) }
+      );
+    } else {
+      this.openDialogPrompt(member, change, { changeType: change, type: 'user' });
+    }
   }
 
   changeMembershipRequest(type, memberDoc?) {
@@ -306,6 +327,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private changeObject(type, memberDoc?) {
+    const memberName = memberDoc && memberDoc.userDoc && (memberDoc.userDoc.fullName || memberDoc.name);
     switch (type) {
       case 'request':
         return ({
@@ -315,17 +337,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'removed':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
-          message: memberDoc.name + ' removed from team'
+          message: memberName + ' removed from team'
         });
       case 'added':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, memberDoc),
-          message: memberDoc.name + ' accepted'
+          message: memberName + ' accepted'
         });
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
-          message: memberDoc.name + ' rejected'
+          message: memberName + ' rejected'
         });
     }
   }

@@ -97,6 +97,17 @@ export class UserService {
     return properties.reduce((object, key) => ({ ...object, [key]: user[key] }), {});
   }
 
+  getCurrentSession() {
+    return this.currentSession ? of(this.currentSession) :
+      this.couchService.post(
+        this.logsDb + '/_find',
+        findDocuments({ 'user': this.get().name }, [ '_id', '_rev', 'loginTime' ], [ { 'loginTime': 'desc' } ], 1)
+      ).pipe(map(data => {
+        this.currentSession = data.docs[0];
+        return this.currentSession;
+      }));
+  }
+
   private setUserProperties(users) {
     this.userProperties = users.reduce((properties: string[], user: any) => {
       const { requestId, _attachments, ...profile } = user;
@@ -150,17 +161,7 @@ export class UserService {
   }
 
   endSessionLog() {
-    let newObs: Observable<any> = of({});
-    if (this.currentSession === undefined) {
-      newObs = this.couchService.post(this.logsDb + '/_find', findDocuments(
-        { 'user': this.get().name },
-        [ '_id', '_rev', 'loginTime' ],
-        [ { 'loginTime': 'desc' } ]
-      )).pipe(map(data => {
-        this.currentSession = data.docs[0];
-      }));
-    }
-    return newObs.pipe(switchMap(() => {
+    return this.getCurrentSession().pipe(switchMap(() => {
       return this.couchService.updateDocument(this.logsDb, this.logObj(this.currentSession.loginTime, this.couchService.datePlaceholder));
     }), map((res: any) => {
       this.currentSession = res.doc;

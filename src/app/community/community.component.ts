@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, finalize, switchMap } from 'rxjs/operators';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { takeUntil, finalize, switchMap, map, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -55,17 +55,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.planetCode = params.get('code');
-        this.getCommunityData(this.planetCode);
-        this.getLinks(this.planetCode);
-        if (this.planetCode) {
-          return this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } });
-        }
-        return of([ this.stateService.configuration ]);
-      })
-    ).subscribe(configurations => this.configuration = configurations[0]);
+    this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -78,7 +68,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.couchService.get(`teams/${this.teamId}`).subscribe(team => this.team = team);
   }
 
   ngOnDestroy() {
@@ -86,13 +75,39 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getCommunityData(planetCode?: string) {
+  getCommunityData() {
+    this.route.paramMap.pipe(
+      switchMap((params: ParamMap) => {
+        this.planetCode = params.get('code');
+        return this.planetCode ?
+          this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } }) :
+          of([ this.stateService.configuration ]);
+      }),
+      switchMap(configurations => {
+        this.configuration = configurations[0];
+        this.requestNewsAndUsers(this.planetCode);
+        this.team = this.teamObject(this.planetCode);
+        this.teamId = this.team._id;
+        return this.getLinks(this.planetCode);
+      }),
+      switchMap(({ links, finances }) => {
+        this.links = links;
+        this.finances = finances;
+        return this.couchService.get(`teams/${this.teamId}`);
+      }),
+      catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err))
+    ).subscribe(team => {
+      this.team = team;
+    });
+  }
+
+  requestNewsAndUsers(planetCode?: string) {
     if (planetCode) {
-      this.newsService.requestNews({ createdOn: planetCode, viewableBy: 'community' });
+      this.newsService.requestNews({ messagePlanetCode: planetCode, viewableBy: 'community' });
       this.stateService.requestData('child_users', 'local');
       return;
     }
-    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
+    this.newsService.requestNews({ messagePlanetCode: this.configuration.code, viewableBy: 'community' });
     this.usersService.requestUsers();
   }
 
@@ -133,7 +148,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return {
       'user': user,
       'message': `<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
-      'link': 'community/',
+      'link': '/',
       'type': 'communityMessage',
       'priority': 1,
       'status': 'unread',
@@ -150,16 +165,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getLinks(planetCode?) {
-    const team = this.teamObject(planetCode);
-    this.teamId = team._id;
-    this.team = team;
-    this.teamsService.getTeamMembers(team, true).subscribe((docs) => {
+    return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
       const { link: links, transaction: finances } = docs.reduce((docObject, doc) => ({
         ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
       }), { link: [], transaction: [] });
-      this.links = links;
-      this.finances = finances;
-    });
+      return { links, finances };
+    }));
   }
 
   setCouncillors(users) {
@@ -171,13 +182,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const avatar = attachmentDoc ?
           `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
           (user.imageSrc || 'assets/image.png');
-        return { avatar, userDoc: user.doc, userId, name: user.doc.name, ...user };
+        return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
       });
     });
   }
 
   deleteLink(link) {
-    return this.couchService.delete(`teams/${link._id}?rev=${link._rev}`);
+    return this.couchService.updateDocument('teams', { ...link, _deleted: true });
   }
 
   openAddLinkDialog() {
@@ -222,14 +233,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Change Leader Title',
       [ { name: 'leadershipTitle', placeholder: 'Title', type: 'textbox', required: true } ],
-      { leadershipTitle: councillor.userDoc.leadershipTitle || '' },
+      { leadershipTitle: councillor.doc.leadershipTitle || '' },
       { autoFocus: true, onSubmit: this.updateTitle(councillor).bind(this) }
     );
   }
 
   updateTitle(councillor) {
     return ({ leadershipTitle }) => {
-      this.userService.updateUser({ ...councillor.userDoc, leadershipTitle }).pipe(
+      this.userService.updateUser({ ...councillor.userDoc.doc, leadershipTitle }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();

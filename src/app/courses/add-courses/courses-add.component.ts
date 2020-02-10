@@ -92,6 +92,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
     forkJoin([
       this.pouchService.getDocEditing(this.dbName, this.courseId),
       this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
@@ -103,11 +104,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
-      if (this.route.snapshot.params.continue !== 'true') {
+      if (!continued) {
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
       }
     });
-    if (this.route.snapshot.params.continue === 'true') {
+    if (continued) {
       this.documentInfo = { '_rev': this.coursesService.course._rev, '_id': this.coursesService.course._id };
       this.setFormAndSteps(this.coursesService.course);
       this.submitAddedExam();

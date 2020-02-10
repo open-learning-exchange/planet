@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject, forkJoin, of } from 'rxjs';
-import { map, flatMap, toArray, switchMap } from 'rxjs/operators';
+import { map, flatMap, toArray, switchMap, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -85,7 +85,7 @@ export class StateService {
   }
 
   couchStateListener(db: string) {
-    return this.stateUpdated.pipe(map((stateObj: { newData, db, planetField, inProgress }) => db === stateObj.db ? stateObj : undefined));
+    return this.stateUpdated.pipe(filter((stateObj: { newData, db, planetField, inProgress }) => db === stateObj.db));
   }
 
   combineChanges(docs: any[], changesDocs: any[], sort) {

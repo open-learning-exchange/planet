@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { of, empty, forkJoin } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, take } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -24,6 +24,24 @@ const descriptionField = {
   'placeholder': 'Description',
   'required': false
 };
+const enterpriseDescField = [
+  {
+    'type': 'markdown',
+    'name': 'description',
+    'placeholder': 'What is your enterprise\'s Mission?',
+    'required': false
+  }, {
+    'type': 'markdown',
+    'name': 'services',
+    'placeholder': 'What are the Services your enterprise provides?',
+    'required': false
+  }, {
+    'type': 'markdown',
+    'name': 'rules',
+    'placeholder': 'What are the Rules of your enterprise?',
+    'required': false
+  }
+];
 const publicField = {
   'type': 'toggle',
   'name': 'public',
@@ -60,6 +78,8 @@ export class TeamsService {
     const formGroup = {
       ...nameControl,
       description: team.description || '',
+      services: team.services || '',
+      rules: team.rules || '',
       requests: [ team.requests || [] ],
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
@@ -90,7 +110,12 @@ export class TeamsService {
         { 'value': 'local', 'name': 'Local team' }
       ]
     };
-    return [ type === 'services' ? [] : nameField, descriptionField, type === 'team' ? typeField : [], publicField ].flat();
+    return [
+      type === 'services' ? [] : nameField,
+      type === 'enterprise' ? enterpriseDescField : descriptionField,
+      type === 'team' ? typeField : [],
+      publicField
+    ].flat();
   }
 
   updateTeam(team: any) {
@@ -133,7 +158,7 @@ export class TeamsService {
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...deleted }))
+        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
       ))
     );
   }
@@ -160,31 +185,27 @@ export class TeamsService {
 
   getTeamMembers(team, withAllLinks = false) {
     const typeObj = withAllLinks ? {} : { docType: 'membership' };
+    this.usersService.requestUsers();
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
-      this.usersService.getAllUsers(),
+      this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
-      ...[ ...(team.type === 'services' ? this.servicesMembers(team, users) : []), ...membershipDocs ].map(doc => ({
+      ...membershipDocs.map(doc => ({
         ...doc,
-        userDoc: users.find(user => user._id === doc.userId && user.planetCode === doc.userPlanetCode),
+        userDoc: users.find(user => user._id === doc.userId && user.doc.planetCode === doc.userPlanetCode),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
     ]));
   }
 
-  servicesMembers(team, users) {
-    return users.filter(user => user.name !== 'satellite' && (user.roles.length > 0 || user.isUserAdmin === true))
-      .map(user => this.membershipProps(team, { userId: user._id, userPlanetCode: team.teamPlanetCode }, 'membership'));
-  }
-
   getTeamResources(linkDocs: any[]) {
     return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) =>
       linkDocs.map(linkDoc => ({
         linkDoc,
-        resource: resources.find(resource => resource._id === linkDoc.resourceId)
+        resource: resources.find(resource => resource._id === linkDoc.resourceId) || {}
       }))
         .filter(resource => resource.linkDoc.title || resource.resource && resource.resource.title)
         .sort((a, b) => (a.resource || a.linkDoc).title.toLowerCase() > (b.resource || b.linkDoc).title.toLowerCase() ? 1 : -1)
@@ -206,13 +227,15 @@ export class TeamsService {
   }
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
+    const user = this.userService.get();
+    const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
     const teamType = team.type || 'team';
     const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${team.name}"</b> ${teamType}.`;
     switch (type) {
       case 'message':
-        return `<b>${this.userService.get().name}</b> has posted a message on ${teamMessage}`;
+        return `<b>${fullName}</b> has posted a message on ${teamMessage}`;
       case 'request':
-        return `<b>${this.userService.get().name}</b> has requested to join ${teamMessage}`;
+        return `<b>${fullName}</b> has requested to join ${teamMessage}`;
       case 'added':
         return `You have been added to ${teamMessage}`;
       case 'rejected':

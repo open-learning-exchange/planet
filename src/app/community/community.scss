@@ -38,7 +38,8 @@
 }
 
 planet-calendar {
-  grid-template-areas: calendar;
+  grid-area: calendar;
+  overflow-y: auto;
 }
 
 .card-grid {

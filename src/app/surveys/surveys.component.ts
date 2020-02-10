@@ -130,11 +130,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === submission.parent._id);
       if (parentSurvey) {
         parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
+      } else if (submission.parent.sourcePlanet === this.stateService.configuration.parentCode) {
+        return [ ...parentSurveys, { ...submission.parent, taken: submission.status !== 'pending' ? 1 : 0, parent: true } ];
       }
-      if (parentSurvey || submission.parent.sourcePlanet === this.stateService.configuration.code || !submission.parent.sourcePlanet) {
-        return parentSurveys;
-      }
-      return [ ...parentSurveys, { ...submission.parent, taken: submission.status !== 'pending' ? 1 : 0, parent: true } ];
+      return parentSurveys;
     }, []);
   }
 

@@ -22,7 +22,10 @@ export class CommunityListComponent implements OnInit {
       this.managerService.getChildPlanets(true),
       this.couchService.findAll('hubs')
     ]).subscribe(([ children, hubs ]) => {
-      this.planets = arrangePlanetsIntoHubs(attachNamesToPlanets(children), hubs);
+      this.planets = arrangePlanetsIntoHubs(
+        attachNamesToPlanets(children).filter(planet => planet.doc.docType !== 'parentName'),
+        hubs
+      );
     });
   }
 
