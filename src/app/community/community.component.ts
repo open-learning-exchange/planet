@@ -177,6 +177,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.finances = finances;
   }
 
+  financesChanged() {
+    this.getLinks().subscribe(res => this.setLinksAndFinances(res));
+  }
+
   setCouncillors(users) {
     this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
       this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1).map(user => {
