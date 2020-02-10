@@ -5,7 +5,7 @@
       <mat-checkbox *ngIf="field.type === 'checkbox'" formControlName="{{field.name}}">{{field.placeholder}}</mat-checkbox>
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
-        <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" required="{{field.required}}">
+        <input matInput placeholder="{{field.placeholder}}" type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
