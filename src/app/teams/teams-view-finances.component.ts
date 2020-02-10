@@ -126,9 +126,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
         },
         {
           onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
-            var message ='';
-            transaction._id ? message = 'Updated': message = 'Added';
-            this.planetMessageService.showMessage('Transaction ' + message);
+            this.planetMessageService.showMessage(transaction._id ? 'Transaction Updated' : ' Transaction Added');
             this.dialogsFormService.closeDialogsForm();
           })
         }
