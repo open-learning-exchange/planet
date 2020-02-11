@@ -405,11 +405,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
-  openSendCourseDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+  openSendCourseDialog(planetField = 'local') {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }, planetField)
     .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
-      const data = { okClick: this.sendCourse('courses').bind(this),
+      const data = { okClick: this.sendCourse('courses', planetField).bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
         ...planet };
@@ -419,13 +419,26 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
-  sendCourse(db: string) {
+  createObs(planetField) {
+    if (planetField === 'local') {
+      return of({});
+    }
+    const itemPush = this.selection.selected.map(id => ({ item: this.courses.data.find((course: any) => course._id === id), db: this.dbName }));
+    return this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(itemPush, 'push') );
+  }
+
+  sendCourse(db: string, planetField) {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
-      this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
+      this.createObs(planetField).pipe(
+        switchMap(() => this.syncService.createChildPullDoc(
+          coursesToSend, 'courses', selected, this.stateService.optsFromPlanetField(planetField)
+        ))
+      ).subscribe(() => {
         const childType = {
           center: selected.length > 1 ? 'nations' : 'nation',
-          nation: selected.length > 1 ? 'communities' : 'community'
+          nation: selected.length > 1 ? 'communities' : 'community',
+          community: selected.length > 1 ? 'communities' : 'community'
         }[this.planetType];
         this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
