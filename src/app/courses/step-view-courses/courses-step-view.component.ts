@@ -48,7 +48,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
       this.canManage = this.userService.get().isUserAdmin ||
         course.creator !== undefined &&
-        (this.userService.get().currentUser.name === course.creator.slice(0, course.creator.indexOf('@')));
+        (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
     });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
