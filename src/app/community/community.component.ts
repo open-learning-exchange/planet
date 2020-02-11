@@ -174,6 +174,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   setLinksAndFinances({ links, finances }) {
     this.links = links;
+    if (this.links.length === 0) {
+      this.deleteMode = false;
+    }
     this.finances = finances;
   }
 
