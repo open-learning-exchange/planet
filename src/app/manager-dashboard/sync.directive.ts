@@ -67,7 +67,7 @@ export class SyncDirective {
   replicatorList(mapFunc = (type) => (val) => ({ continuous: this.planetConfiguration.alwaysOnline, ...val, type })) {
     const bothList = [
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
-      { db: 'teams', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
+      { db: 'teams', selector: { '$or': [ { teamType: 'sync' }, { docType: 'link' } ], teamPlanetCode: this.planetConfiguration.code } },
       { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } },
       { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
