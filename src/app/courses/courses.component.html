@@ -59,7 +59,7 @@
               <span i18n>Send Courses</span>
               <span *ngIf="selectedLocal > 0"> ({{selectedLocal}})</span>
             </button>
-            <button mat-menu-item (click)="openSendCourseDialog(planetType === 'community' ? 'parent' : null)"" [disabled]="!selection.selected.length">
+            <button mat-menu-item (click)="openSendCourseDialog(planetType === 'community' ? 'parent' : null)" [disabled]="!selection.selected.length">
               <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
               <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
               <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
