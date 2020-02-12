@@ -52,6 +52,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = [ 'title', 'createdDate' ];
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   currentUser = this.userService.get();
+  tags: string[] = [];
   tagFilter = new FormControl([]);
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
@@ -158,6 +159,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
     this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+    this.tags = this.tagInputComponent.tags;
   }
 
   ngOnDestroy() {

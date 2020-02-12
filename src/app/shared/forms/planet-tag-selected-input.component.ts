@@ -27,8 +27,10 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   }
 
   setTooltipLabels(selectedIds, allTags) {
-    const tagsNames = selectedIds.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
-    this.tooltipLabels = tagsNames.join(', ');
+    const tagsNames = selectedIds.map((tag: any) => {
+      return this.tagsService.findTag(tag, allTags).name
+    });
+    this.tooltipLabels =  tagsNames.join(', ');
   }
 
 }
