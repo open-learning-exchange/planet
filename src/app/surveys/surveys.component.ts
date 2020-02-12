@@ -39,7 +39,10 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
     }
     .btn:disabled{
       pointer-events: none;
-   }
+    }
+    ::ng-deep .mat-dialog-content {
+      overflow-y: hidden !important;
+    }
     .course-title {
       max-width: 200px;
       display: inline-block;
