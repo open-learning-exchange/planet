@@ -16,9 +16,11 @@ export class NewsListItemComponent implements AfterViewChecked {
   @Input() replyObject;
   @Input() showRepliesButton = true;
   @Input() editable = true;
+  @Input() shareTarget: 'community' | 'nation' | 'center';
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
+  @Output() shareNews = new EventEmitter<any>();
   @ViewChild('content', { static: false }) content;
   contentHeight = 0;
   currentUser = this.userService.get();
@@ -98,6 +100,10 @@ export class NewsListItemComponent implements AfterViewChecked {
 
   openDeleteDialog(news) {
     this.deleteNews.emit(news);
+  }
+
+  shareStory(news) {
+    this.shareNews.emit(news);
   }
 
 }

@@ -19,7 +19,9 @@
   [item]="item"
   [replyObject]="replyObject"
   [editable]="editable"
+  [shareTarget]="shareTarget"
   (changeReplyViewing)="showReplies($event)"
   (updateNews)="openUpdateDialog($event)"
-  (deleteNews)="openDeleteDialog($event)">
+  (deleteNews)="openDeleteDialog($event)"
+  (shareNews)="shareNews($event)">
 </planet-news-list-item>
