@@ -3,11 +3,13 @@ import { Subject, forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { UserService } from '../shared/user.service';
+import { UsersService } from '../users/users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { dedupeShelfReduce, arraySubField } from '../shared/utils';
 import { CouchService } from '../shared/couchdb.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,7 @@ export class ResourcesService {
   constructor(
     private ratingService: RatingService,
     private userService: UserService,
+    private usersService: UsersService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
@@ -126,6 +129,40 @@ export class ResourcesService {
   simpleMediaType(mimeType: string) {
     const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
     return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
+  }
+
+  sendResourceNotification(resource) {
+    const createdDate = resource.createdDate;
+    const currentUser = this.userService.get();
+    const resourceDocs = [];
+    const resourceNotification = forkJoin([
+      this.usersService.getAllUsers(),
+      this.couchService.findAll('notifications', findDocuments({ link: 'resources', type: 'newResource', status: 'unread' }))
+    ]).pipe(
+      switchMap(([ users, notifications ]: [ any[], any[] ]) => {
+        users.filter(user => {
+          return (currentUser.name !== user.name &&
+            user.name !== 'satellite' &&
+            notifications.every(notification => notification.user !== user._id));
+        }).map(user => resourceDocs.push(this.addResourceDoc(user, createdDate)));
+        return this.couchService.bulkDocs('notifications', resourceDocs );
+    }));
+    resourceNotification.subscribe();
+  }
+
+  addResourceDoc(user, createdDate) {
+    const resourceDoc = {
+    'user': user._id,
+    'message': 'There are new resources in the Library. Click to see them!',
+    'link' : 'resources',
+    'linkParams': { sort: createdDate },
+    'type': 'newResource',
+    'priority': 1,
+    'status': 'unread',
+    'time': this.couchService.datePlaceholder,
+    userPlanetCode: user.planetCode
+    };
+    return resourceDoc;
   }
 
 }

@@ -195,6 +195,7 @@ export class ResourcesAddComponent implements OnInit {
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
           (err) => this.planetMessageService.showAlert('There was an error with this resource')
         );
+        this.resourcesService.sendResourceNotification(newResource);
       } else {
         this.afterResourceUpdate(message);
       }
