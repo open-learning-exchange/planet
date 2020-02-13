@@ -59,7 +59,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
-  messageCount = 1;
+  messageCount = 0;
   configuration = this.stateService.configuration;
 
   constructor(
@@ -102,6 +102,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.initTab = activeTab.position === 0 ? '' : this.initTab;
       }, 0);
     }
+    if (activeTab && this.tabSelectedIndex === 0) {
+      this.messageCount = this.updateReadMessages();
+    }
   }
 
   getActiveTab(initTab: string) {
@@ -126,7 +129,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(news => {
       this.news = news;
-      this.messageCount = this.news.length || this.messageCount;
     });
     if (this.mode === 'services') {
       this.initServices(teamId);
@@ -166,6 +168,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  updateReadMessages() {
+    const messagesList = this.news.map(message => message._id);
+    const member = this.members.filter(item => item.userId === this.user._id);
+    this.couchService.updateDocument(`${this.dbName}/${member._id}`, { messagesList });
+  }
+
   getMembers() {
     if (this.team === undefined) {
       return of([]);
@@ -190,6 +198,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       this.setTasks(this.tasks);
+      this.messageCount = this.members[0].messagesList
+        ? this.news.filter(message => this.members[0].messagesList.find(message._id) === -1 && !message.replyTo).length
+        : this.news.filter(message => !message.replyTo).length;
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
   }
