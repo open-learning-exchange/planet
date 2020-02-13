@@ -68,11 +68,13 @@
               <mat-icon>fiber_manual_record</mat-icon> Record Survey
             </button>
           </ng-container>
-          <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu"><mat-icon>move_to_inbox</mat-icon> Export Survey</button>
-          <mat-menu #exportMenu="matMenu">
-            <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>
-            <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
-          </mat-menu>
+          <div matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
+            <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu"><mat-icon>move_to_inbox</mat-icon> Export Survey</button>
+            <mat-menu #exportMenu="matMenu">
+              <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>
+              <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
+            </mat-menu>
+          </div>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
