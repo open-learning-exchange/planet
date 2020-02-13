@@ -133,12 +133,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
       ])),
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const currentUser = this.userService.get();
         const docs = users.filter(user => {
-          return currentUser._id !== user._id &&
+          return this.user._id !== user._id &&
             user._id !== 'satellite' &&
             notifications.every(notification => notification.user !== user._id);
-        }).map(user => this.sendNotifications(user._id, currentUser._id));
+        }).map(user => this.sendNotifications(user._id, this.user.currentUser._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
