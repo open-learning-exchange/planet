@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Subject, forkJoin, of } from 'rxjs';
-import { Validators } from '@angular/forms';
 import { takeUntil, finalize, switchMap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
