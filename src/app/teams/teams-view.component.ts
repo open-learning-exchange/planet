@@ -341,7 +341,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
       case 'added':
         return ({
-          obs: this.teamsService.toggleTeamMembership(this.team, false, memberDoc),
+          obs: this.teamsService.toggleTeamMembership(this.team, false, { ...memberDoc, docType: 'membership' }),
           message: memberName + ' accepted'
         });
       case 'rejected':
