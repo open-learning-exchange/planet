@@ -29,5 +29,8 @@
       <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
     </ng-container>
+    <button mat-button i18n *ngIf="showShare" (click)="shareStory(item)">Share with {
+      shareTarget, select, community {Community} nation {Nation} center {Earth}
+    }</button>
   </mat-card-actions>
 </mat-card>

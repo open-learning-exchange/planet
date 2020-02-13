@@ -49,7 +49,7 @@ export class NewsService {
       'assets/image.png';
   }
 
-  postNews(post, successMessage = 'Thank you for submitting your news') {
+  postNews(post, successMessage = 'Thank you for submitting your news', isMessageEdit = true) {
     const configuration = this.stateService.configuration;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
     const images = post.message.images ?
@@ -64,7 +64,7 @@ export class NewsService {
       ...post,
       message,
       images,
-      updatedDate: this.couchService.datePlaceholder
+      updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate
     };
     return this.couchService.updateDocument(this.dbName, newPost).pipe(map(() => {
       this.planetMessageService.showMessage(successMessage);
@@ -78,6 +78,21 @@ export class NewsService {
 
   rearrangeRepliesForDelete(replies: any[] = [], newReplyToId: string) {
     return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply, replyTo: newReplyToId })));
+  }
+
+  shareNews(news) {
+    return this.postNews(
+      {
+        ...news,
+        messageType: 'sync',
+        viewIn: [
+          ...(news.viewIn || []),
+          { '_id': `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`, section: 'community' }
+        ]
+      },
+      'News has been successfully shared',
+      false
+    );
   }
 
 }

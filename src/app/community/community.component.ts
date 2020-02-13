@@ -85,9 +85,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       switchMap(configurations => {
         this.configuration = configurations[0];
-        this.requestNewsAndUsers(this.planetCode);
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
+        this.requestNewsAndUsers(this.planetCode);
         return this.getLinks(this.planetCode);
       }),
       switchMap((res) => {
@@ -101,13 +101,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   requestNewsAndUsers(planetCode?: string) {
+    this.newsService.requestNews({ '$or': [
+      { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
+      { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+    ]});
     if (planetCode) {
-      this.newsService.requestNews({ messagePlanetCode: planetCode, viewableBy: 'community' });
       this.stateService.requestData('child_users', 'local');
-      return;
+    } else {
+      this.usersService.requestUsers();
     }
-    this.newsService.requestNews({ messagePlanetCode: this.configuration.code, viewableBy: 'community' });
-    this.usersService.requestUsers();
   }
 
   openAddMessageDialog(message = '') {
@@ -121,7 +123,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewableBy: 'community',
+      viewIn: [ { '_id': this.teamId, section: 'community' } ],
       messageType: 'sync',
       messagePlanetCode: this.configuration.code,
       ...message
@@ -131,12 +133,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
       ])),
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const currentUser = this.userService.get();
         const docs = users.filter(user => {
-          return currentUser._id !== user._id &&
+          return this.user._id !== user._id &&
             user._id !== 'satellite' &&
             notifications.every(notification => notification.user !== user._id);
-        }).map(user => this.sendNotifications(user._id, currentUser._id));
+        }).map(user => this.sendNotifications(user._id, this.user.currentUser._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
