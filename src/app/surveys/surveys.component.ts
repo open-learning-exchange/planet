@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
@@ -40,8 +40,8 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
     .btn:disabled{
       pointer-events: none;
     }
-    ::ng-deep .mat-dialog-content {
-      overflow-y: hidden !important;
+    .mat-dialog-content {
+      overflow-y: hidden;
     }
     .course-title {
       max-width: 200px;
@@ -52,7 +52,8 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
       line-height: 15px;
       position: relative;
     }
-  ` ]
+  ` ],
+  encapsulation: ViewEncapsulation.None
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
