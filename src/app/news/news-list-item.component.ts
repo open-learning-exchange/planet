@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -10,7 +10,7 @@ import { StateService } from '../shared/state.service';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements AfterViewChecked {
+export class NewsListItemComponent implements OnInit, AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
@@ -25,6 +25,7 @@ export class NewsListItemComponent implements AfterViewChecked {
   contentHeight = 0;
   currentUser = this.userService.get();
   showLess = true;
+  showShare = false;
   planetCode = this.stateService.configuration.code;
 
   constructor(
@@ -35,6 +36,12 @@ export class NewsListItemComponent implements AfterViewChecked {
     private notificationsService: NotificationsService,
     private stateService: StateService
   ) {}
+
+  ngOnInit() {
+    const configuration = this.stateService.configuration;
+    this.showShare = this.shareTarget &&
+      (this.item.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`);
+  }
 
   ngAfterViewChecked() {
     const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].children[0].offsetHeight;
