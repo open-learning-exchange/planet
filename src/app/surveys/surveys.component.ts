@@ -41,7 +41,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
       pointer-events: none;
     }
     .mat-dialog-content {
-      overflow-y: hidden;
+      overflow-y: hidden !important;
     }
     .course-title {
       max-width: 200px;
