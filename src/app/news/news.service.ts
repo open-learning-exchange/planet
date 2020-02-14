@@ -80,14 +80,17 @@ export class NewsService {
     return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply, replyTo: newReplyToId })));
   }
 
-  shareNews(news) {
+  shareNews(news, planets?: any[]) {
+    const viewInObject = (planet) => ({ '_id': `${planet.code}@${planet.parentCode}`, section: 'community' });
+    // TODO: Filter newPlanets by ones currently existing in viewIn array
+    const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     return this.postNews(
       {
         ...news,
         messageType: 'sync',
         viewIn: [
           ...(news.viewIn || []),
-          { '_id': `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`, section: 'community' }
+          ...newPlanets
         ]
       },
       'News has been successfully shared',
