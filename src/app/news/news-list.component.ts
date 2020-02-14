@@ -124,4 +124,8 @@ export class NewsListComponent implements OnChanges {
     }
   }
 
+  addLabel({ news, label }: { news: any, label: string }) {
+    this.newsService.postNews({ ...news, labels: [ ...(news.labels || []), label ] }, 'Label added').subscribe();
+  }
+
 }
