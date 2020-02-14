@@ -14,8 +14,8 @@ import { StateService } from '../../shared/state.service';
 export class CertificationsViewComponent implements OnInit, OnDestroy {
 
   certification: any = { courseIds: [] };
-  eligibleMembers: any[] = [];
-  eligibleTableState = new TableState();
+  certifiedMembers: any[] = [];
+  certifiedTableState = new TableState();
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -60,7 +60,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     const certificateCourses = courses
       .filter(course => this.certification.courseIds.indexOf(course._id) > -1)
       .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
-    this.eligibleMembers = users.filter(user => certificateCourses.every(course => {
+    this.certifiedMembers = users.filter(user => certificateCourses.every(course => {
       const userMaxStep = course.progress.reduce((max, step) => (step.userId !== user._id || !step.passed) ? max : step.stepNum, 0);
       return userMaxStep === course.doc.steps.length;
     }));
