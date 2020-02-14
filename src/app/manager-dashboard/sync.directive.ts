@@ -68,7 +68,10 @@ export class SyncDirective {
     const bothList = [
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
       { db: 'teams', selector: { '$or': [ { teamType: 'sync' }, { docType: 'link' } ], teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'news', selector: { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code } },
+      { db: 'news', selector: { '$or': [
+        { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code },
+        { viewIn: { '$elemMatch': { '_id': `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } }
+      ] } },
       { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
       { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } }
