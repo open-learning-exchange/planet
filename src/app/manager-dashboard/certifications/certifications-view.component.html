@@ -15,7 +15,7 @@
         <planet-courses *ngIf="certification.courseIds.length > 0" [isForm]="true" [includeIds]="certification.courseIds"></planet-courses>
       </mat-tab>
       <mat-tab i18n-label label="Certified Members">
-        <planet-users-table [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" containerClass="view-container view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>
+        <planet-users-table [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" linkPrefix="/users/profile" containerClass="view-container view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>
       </mat-tab>
     </mat-tab-group>
   </div>

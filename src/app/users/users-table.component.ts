@@ -73,6 +73,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.filterType = newState.filterType;
     this._tableState = newState;
   }
+  @Input() linkPrefix: string;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -156,7 +157,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   gotoProfileView(userName: string) {
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
-    this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
+    this.router.navigate([ this.linkPrefix || 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
   trackByFn(index, item) {
