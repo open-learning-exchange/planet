@@ -246,4 +246,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
+  getTags() {
+    return this.tags;
+  }
+
 }

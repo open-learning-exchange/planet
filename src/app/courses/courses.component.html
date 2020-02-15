@@ -28,7 +28,7 @@
       <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
       <div class="column margin-lr-5">
         <planet-filtered-amount [table]="courses" labelFor="courses"></planet-filtered-amount>
-        <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tagInput?.tags"></planet-tag-selected-input>
+        <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="getTags()"></planet-tag-selected-input>
       </div>
       <span class="toolbar-fill"></span>
       <ng-container *ngIf="parent">
