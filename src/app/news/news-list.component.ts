@@ -24,6 +24,7 @@ export class NewsListComponent implements OnChanges {
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;
+  @Input() shareTarget: 'community' | 'nation' | 'center';
   displayedItems: any[] = [];
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };
@@ -108,6 +109,10 @@ export class NewsListComponent implements OnChanges {
         this.planetMessageService.showAlert('There was a problem deleting this news.');
       }
     };
+  }
+
+  shareNews(news) {
+    this.newsService.shareNews(news).subscribe();
   }
 
 }

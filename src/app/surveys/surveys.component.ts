@@ -37,6 +37,9 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
     .mat-column-createdDate {
       max-width: 130px;
     }
+    .btn:disabled{
+      pointer-events: none;
+   }
     .course-title {
       max-width: 200px;
       display: inline-block;
