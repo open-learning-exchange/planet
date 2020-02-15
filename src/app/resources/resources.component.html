@@ -24,11 +24,7 @@
       <button *ngIf="!parent && myView !== 'myPersonals'" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
       <div class="column margin-lr-5">
         <planet-filtered-amount [table]="resources"></planet-filtered-amount>
-<<<<<<< HEAD
         <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="getTags()"></planet-tag-selected-input>
-=======
-        <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="tags"></planet-tag-selected-input>
->>>>>>> 222afd76c7a3613214e27829211b324b8602275b
       </div>
       <span class="toolbar-fill"></span>
       <ng-container *ngIf="myView !== 'myPersonals'">
