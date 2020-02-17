@@ -154,8 +154,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   validLink() {
-    return /(^[\w\s]*)?\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#]+)\)([\w\s]*)?$/
-      .test(this.ngControl.value.text) ? null : this.errorState = false;
+    return /(^[\w\s]*)?\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#]+)\)([\w\s]*)?$/.test(this._value === 'string' ?
+      this._value : this._value.text) ? null : { 'invalidMarkdownLink': true };
   }
 
   onFocusOut() {
