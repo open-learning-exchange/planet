@@ -13,7 +13,7 @@
       <ng-container i18n>wrote on</ng-container> {{item.time | date: 'medium' }}
       <ng-container *ngIf="item.updatedDate !== item.time && item.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.updatedDate | date: 'medium'}}</ng-container>
       <mat-chip-list>
-        <mat-chip color="primary" selected [disableRipple]="true" class="planet-chip-label" *ngFor="let label of item.labels"><planet-news-label [label]="label"></planet-news-label></mat-chip>
+        <mat-chip color="primary" selected [disableRipple]="true" class="planet-chip-label" *ngFor="let label of item.labels"><planet-label [label]="label"></planet-label></mat-chip>
       </mat-chip-list>
     </mat-card-subtitle>
   </mat-card-header>
@@ -34,7 +34,7 @@
     </ng-container>
     <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
     <mat-menu #labelMenu="matMenu">
-      <button mat-menu-item *ngFor="let label of labels" (click)="labelClick(label)"><planet-news-label [label]="label"></planet-news-label></button>
+      <button mat-menu-item *ngFor="let label of labels" (click)="labelClick(label)"><planet-label [label]="label"></planet-label></button>
     </mat-menu>
     <button mat-button i18n *ngIf="showShare" (click)="shareStory(item)">Share with {
       shareTarget, select, community {Community} nation {Nation} center {Earth}

@@ -9,7 +9,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { NewsComponent } from './news.component';
 import { NewsListComponent } from './news-list.component';
-import { NewsListItemComponent, NewsLabelComponent } from './news-list-item.component';
+import { NewsListItemComponent } from './news-list-item.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 
 @NgModule({
@@ -27,7 +27,6 @@ import { CommunityListDialogComponent } from '../community/community-list-dialog
     NewsComponent,
     NewsListComponent,
     NewsListItemComponent,
-    NewsLabelComponent,
     CommunityListDialogComponent
   ],
   entryComponents: [ CommunityListDialogComponent ]

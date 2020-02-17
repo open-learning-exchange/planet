@@ -15,6 +15,7 @@ import { PlanetRoleComponent } from './planet-role.component';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { CommunityListComponent } from '../community/community-list.component';
 import { RouterModule } from '@angular/router';
+import { LabelComponent } from './label.component';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { RouterModule } from '@angular/router';
     AssigneeNamePipe,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
-    CommunityListComponent
+    CommunityListComponent,
+    LabelComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -50,7 +52,8 @@ import { RouterModule } from '@angular/router';
     AssigneeNamePipe,
     PlanetRoleComponent,
     PlanetMarkdownComponent,
-    CommunityListComponent
+    CommunityListComponent,
+    LabelComponent
   ]
 })
 export class SharedComponentsModule {}

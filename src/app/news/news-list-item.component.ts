@@ -123,13 +123,3 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   }
 
 }
-
-@Component({
-  selector: 'planet-news-label',
-  template: `<ng-container i18n>{ label, select, help {Help Wanted} }</ng-container>`
-})
-export class NewsLabelComponent {
-
-  @Input() label: string;
-
-}
