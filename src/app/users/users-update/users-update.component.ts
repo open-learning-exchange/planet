@@ -123,7 +123,9 @@ export class UsersUpdateComponent implements OnInit {
       this.appendToSurvey(this.editForm.value);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
-      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).subscribe(() => {
+      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).pipe(
+        switchMap(() => this.userService.addImageForReplication(true))
+      ).subscribe(() => {
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
