@@ -69,7 +69,9 @@
           <ng-container *ngFor="let visit of reports?.visits">
             <mat-grid-tile class="label">
               <mat-icon>chevron_right</mat-icon>
-              <a [routerLink]="['/users/profile', visit.user]">{{visit.user}}</a>
+              <a [routerLink]="['/users/profile', visit.user, codeParam === planetCode ? { planet: codeParam } : {}]">
+                {{visit.user}}
+              </a>
             </mat-grid-tile>
             <mat-grid-tile>{{visit.count}}</mat-grid-tile>
           </ng-container>
