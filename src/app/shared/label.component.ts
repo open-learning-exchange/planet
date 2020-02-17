@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'planet-health-label',
+  selector: 'planet-label',
   template: `
     <span i18n>{label, select,
       temperature {Temperature}
@@ -11,10 +11,13 @@ import { Component, Input } from '@angular/core';
       weight {Weight}
       vision {Vision}
       hearing {Hearing}
+      help {Help Wanted}
+      offer {Offer}
+      advice {Request for Advice}
     }</span>
   `
 })
-export class HealthLabelComponent {
+export class LabelComponent {
 
   @Input() label: string;
 

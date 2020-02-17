@@ -95,7 +95,7 @@
               </mat-header-cell>
               <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
                 <ng-container *ngIf="column === 'label'; else dataCell">
-                  <planet-health-label [label]="row[column]"></planet-health-label>
+                  <planet-label [label]="row[column]"></planet-label>
                 </ng-container>
                 <ng-template #dataCell>
                   {{ row[column] }}

@@ -8,6 +8,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { forkJoin } from 'rxjs';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
+import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   selector: 'planet-news-list',
@@ -122,6 +123,11 @@ export class NewsListComponent implements OnChanges {
         this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
       this.shareDialog = this.dialog.open(CommunityListDialogComponent, { data: { okClick } });
     }
+  }
+
+  addLabel({ news, label }: { news: any, label: string }) {
+    this.newsService.postNews({ ...news, labels: [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []) }, 'Label added')
+      .subscribe();
   }
 
 }

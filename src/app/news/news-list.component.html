@@ -11,7 +11,8 @@
     [editable]="editable"
     (changeReplyViewing)="showReplies($event)"
     (updateNews)="openUpdateDialog($event)"
-    (deleteNews)="openDeleteDialog($event)">
+    (deleteNews)="openDeleteDialog($event)"
+    (addLabel)="addLabel($event)">
   </planet-news-list-item>
   <mat-divider></mat-divider>
 </ng-container>
@@ -23,5 +24,6 @@
   (changeReplyViewing)="showReplies($event)"
   (updateNews)="openUpdateDialog($event)"
   (deleteNews)="openDeleteDialog($event)"
-  (shareNews)="shareNews($event)">
+  (shareNews)="shareNews($event)"
+  (addLabel)="addLabel($event)">
 </planet-news-list-item>
