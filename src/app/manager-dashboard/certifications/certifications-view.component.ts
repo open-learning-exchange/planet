@@ -7,6 +7,7 @@ import { TableState } from '../../users/users-table.component';
 import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';
 import { StateService } from '../../shared/state.service';
+import { dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
   templateUrl: './certifications-view.component.html'
@@ -40,7 +41,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
       auditTime(500),
       takeUntil(this.onDestroy$)
     ).subscribe(([ courses, users, progress ]: [ any[], any[], any ]) => {
-      this.setEligibleMembers(courses, users, progress);
+      this.setCertifiedMembers(courses, users, progress);
     });
     this.stateService.couchStateListener('courses_progress').subscribe(res => console.log(res));
     this.coursesService.requestCourses();
@@ -53,7 +54,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  setEligibleMembers(courses, users, progress) {
+  setCertifiedMembers(courses, users, progress) {
     if (this.certification.courseIds.length === 0 || !progress) {
       return;
     }
@@ -61,8 +62,15 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
       .filter(course => this.certification.courseIds.indexOf(course._id) > -1)
       .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
     this.certifiedMembers = users.filter(user => certificateCourses.every(course => {
-      const userMaxStep = course.progress.reduce((max, step) => (step.userId !== user._id || !step.passed) ? max : step.stepNum, 0);
-      return userMaxStep === course.doc.steps.length;
+      console.log(user._id);
+      console.log(course.progress
+        .filter(step => step.userId === user._id)
+        .map(step => step.stepNum)
+        .reduce(dedupeShelfReduce, []));
+      return course.doc.steps.length === course.progress
+        .filter(step => step.userId === user._id && step.passed)
+        .map(step => step.stepNum)
+        .reduce(dedupeShelfReduce, []).length;
     }));
   }
 
