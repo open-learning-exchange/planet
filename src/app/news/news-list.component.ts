@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -7,6 +7,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { forkJoin } from 'rxjs';
+import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 
 @Component({
   selector: 'planet-news-list',
@@ -29,6 +30,7 @@ export class NewsListComponent implements OnChanges {
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
+  shareDialog: MatDialogRef<CommunityListDialogComponent>;
   @Output() viewChange = new EventEmitter<any>();
 
   constructor(
@@ -111,8 +113,15 @@ export class NewsListComponent implements OnChanges {
     };
   }
 
-  shareNews(news) {
-    this.newsService.shareNews(news).subscribe();
+  shareNews({ news, local }: { news: any, local: boolean }) {
+    const share = () => this.newsService.shareNews(news).subscribe();
+    if (local) {
+      share();
+    } else {
+      const okClick = (planets) =>
+        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
+      this.shareDialog = this.dialog.open(CommunityListDialogComponent, { data: { okClick } });
+    }
   }
 
 }

@@ -1,0 +1,9 @@
+<div mat-dialog-title>
+  Select Communities
+</div>
+<mat-dialog-content>
+  <planet-community-list [selectMode]="true" (selectionChange)="selectionChange($event)"></planet-community-list>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" type="button" (click)="listSubmit()" [disabled]="false">OK</button>
+</mat-dialog-actions>

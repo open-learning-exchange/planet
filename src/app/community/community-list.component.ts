@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -11,6 +11,8 @@ import { arrangePlanetsIntoHubs, attachNamesToPlanets } from '../manager-dashboa
 export class CommunityListComponent implements OnInit {
 
   planets: { hubs: any[], sandboxPlanets: any[] } = { hubs: [], sandboxPlanets: [] };
+  @Input() selectMode = false;
+  @Output() selectionChange = new EventEmitter<any>();
 
   constructor(
     private couchService: CouchService,
@@ -27,6 +29,11 @@ export class CommunityListComponent implements OnInit {
         hubs
       );
     });
+  }
+
+  selectChange(planet) {
+    planet.selected = !planet.selected;
+    this.selectionChange.emit(planet);
   }
 
 }

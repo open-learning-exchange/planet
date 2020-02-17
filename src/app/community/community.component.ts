@@ -39,6 +39,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
   planetCode: string | null;
+  shareTarget: string;
 
   constructor(
     private dialog: MatDialog,
@@ -76,9 +77,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getCommunityData() {
+    const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.planetCode = params.get('code');
+        this.shareTarget = this.planetCode ? undefined : setShareTarget(this.stateService.configuration.planetType);
         return this.planetCode ?
           this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } }) :
           of([ this.stateService.configuration ]);

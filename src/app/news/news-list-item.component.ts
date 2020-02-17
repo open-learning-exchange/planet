@@ -20,13 +20,14 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
-  @Output() shareNews = new EventEmitter<any>();
+  @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @ViewChild('content', { static: false }) content;
   contentHeight = 0;
   currentUser = this.userService.get();
   showLess = true;
   showShare = false;
   planetCode = this.stateService.configuration.code;
+  targetLocalPlanet = true;
 
   constructor(
     private router: Router,
@@ -39,8 +40,10 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     const configuration = this.stateService.configuration;
+    this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget &&
-      (this.item.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`);
+      (!this.targetLocalPlanet ||
+      (this.item.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`));
   }
 
   ngAfterViewChecked() {
@@ -110,7 +113,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   }
 
   shareStory(news) {
-    this.shareNews.emit(news);
+    this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
 }

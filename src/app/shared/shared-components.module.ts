@@ -13,10 +13,12 @@ import { FilteredAmountComponent } from './planet-filtered-amount.component';
 import { TasksComponent, FilterAssigneePipe, AssigneeNamePipe } from '../tasks/tasks.component';
 import { PlanetRoleComponent } from './planet-role.component';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
+import { CommunityListComponent } from '../community/community-list.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, CovalentMarkdownModule
+    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule
   ],
   exports: [
     PlanetLocalStatusComponent,
@@ -31,7 +33,8 @@ import { PlanetMarkdownComponent } from './planet-markdown.component';
     FilterAssigneePipe,
     AssigneeNamePipe,
     PlanetRoleComponent,
-    PlanetMarkdownComponent
+    PlanetMarkdownComponent,
+    CommunityListComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -46,7 +49,8 @@ import { PlanetMarkdownComponent } from './planet-markdown.component';
     FilterAssigneePipe,
     AssigneeNamePipe,
     PlanetRoleComponent,
-    PlanetMarkdownComponent
+    PlanetMarkdownComponent,
+    CommunityListComponent
   ]
 })
 export class SharedComponentsModule {}
