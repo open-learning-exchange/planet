@@ -12,6 +12,8 @@ import { Component, Input } from '@angular/core';
       vision {Vision}
       hearing {Hearing}
       help {Help Wanted}
+      offer {Offer}
+      advice {Request for Advice}
     }</span>
   `
 })

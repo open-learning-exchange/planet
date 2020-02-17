@@ -29,7 +29,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
-  labels = [ 'help' ];
+  labels = [ 'help', 'offer', 'advice' ];
 
   constructor(
     private router: Router,
