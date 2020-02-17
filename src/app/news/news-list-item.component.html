@@ -32,7 +32,7 @@
       <button mat-icon-button type="button" (click)="editNews(item)" i18n><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item)" i18n><mat-icon>delete</mat-icon></button>
     </ng-container>
-    <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
+    <button mat-button i18n *ngIf="item.user.name === currentUser.name && editable" [matMenuTriggerFor]="labelMenu">Add Label</button>
     <mat-menu #labelMenu="matMenu">
       <button mat-menu-item *ngFor="let label of labels" (click)="labelClick(label)"><planet-label [label]="label"></planet-label></button>
     </mat-menu>
