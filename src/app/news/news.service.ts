@@ -81,7 +81,9 @@ export class NewsService {
   }
 
   shareNews(news, planets?: any[]) {
-    const viewInObject = (planet) => ({ '_id': `${planet.code}@${planet.parentCode}`, section: 'community' });
+    const viewInObject = (planet) => (
+      { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
+    );
     // TODO: Filter newPlanets by ones currently existing in viewIn array
     const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     return this.postNews(
