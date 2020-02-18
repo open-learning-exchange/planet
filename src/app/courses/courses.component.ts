@@ -166,7 +166,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.tagFilter.valueChanges.subscribe((tags) => {
-      this.courses.filter = this.courses.filter ? this.courses.filter : tags.length > 0 ? ' ' : '';
+      this.courses.filter = this.courses.filter || (tags.length > 0 ? ' ' : '');
       this.removeFilteredFromSelection();
     });
   }
