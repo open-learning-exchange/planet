@@ -21,7 +21,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Output() addLabel = new EventEmitter<{ label: string, news: any }>();
+  @Output() addLabel = new EventEmitter<{ label: string, removeType: string, news: any }>();
   @ViewChild('content', { static: false }) content;
   contentHeight = 0;
   currentUser = this.userService.get();
@@ -30,6 +30,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = [ 'help', 'offer', 'advice' ];
+  removeType: 'add' | 'remove' = 'add';
 
   constructor(
     private router: Router,
@@ -118,8 +119,8 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
-  labelClick(label) {
-    this.addLabel.emit({ label, news: this.item });
+  labelClick(label, removeType) {
+    this.addLabel.emit({ label, removeType, news: this.item });
   }
 
 }
