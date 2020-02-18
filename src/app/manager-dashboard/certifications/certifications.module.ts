@@ -11,11 +11,14 @@ import { PlanetDialogsModule } from '../../shared/dialogs/planet-dialogs.module'
 import { CertificationsAddComponent } from './certifications-add.component';
 import { CoursesModule } from '../../courses/courses.module';
 import { DialogsAddCoursesModule } from '../../shared/dialogs/dialogs-add-courses.module';
+import { CertificationsViewComponent } from './certifications-view.component';
+import { UsersModule } from '../../users/users.module';
 
 @NgModule({
   declarations: [
     CertificationsComponent,
-    CertificationsAddComponent
+    CertificationsAddComponent,
+    CertificationsViewComponent
   ],
   imports: [
     CommonModule,
@@ -28,7 +31,8 @@ import { DialogsAddCoursesModule } from '../../shared/dialogs/dialogs-add-course
     SharedComponentsModule,
     PlanetDialogsModule,
     CoursesModule,
-    DialogsAddCoursesModule
+    DialogsAddCoursesModule,
+    UsersModule
   ]
 })
 export class CertificationsModule {}
