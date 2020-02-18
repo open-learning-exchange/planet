@@ -130,4 +130,8 @@ export class NewsListComponent implements OnChanges {
       .subscribe();
   }
 
+  trackById(item) {
+    return item._id;
+  }
+
 }
