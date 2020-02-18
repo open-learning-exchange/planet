@@ -451,9 +451,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
-    }, 'Message has been posted successfully')
-    .pipe(switchMap(() => this.sendNotifications('message')))
-    .pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+    }, 'Message has been posted successfully').pipe(
+      switchMap(() => this.sendNotifications('message')),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
   }
 
   openResourcesDialog(resource?) {
