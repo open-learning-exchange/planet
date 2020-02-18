@@ -127,7 +127,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
-      this.resources.filter = this.resources.filter || tags.length > 0 ? ' ' : '';
+      this.resources.filter = this.resources.filter ? this.resources.filter : tags.length > 0 ? ' ' : '';
       this.removeFilteredFromSelection();
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
