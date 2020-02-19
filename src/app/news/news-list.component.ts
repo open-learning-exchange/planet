@@ -130,9 +130,11 @@ export class NewsListComponent implements OnChanges {
     }
   }
 
-  addLabel({ news, label }: { news: any, label: string }) {
-    this.newsService.postNews({ ...news, labels: [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []) }, 'Label added')
-      .subscribe();
+  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
+    const labels = action === 'remove' ?
+      news.labels.filter(existingLabel => existingLabel !== label) :
+      [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
+    this.newsService.postNews({ ...news, labels }, `Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 
 }
