@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { arrangePlanetsIntoHubs, attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-community-list',
@@ -27,9 +27,10 @@ export class CommunityListComponent implements OnInit {
     ]).subscribe(([ children, hubs ]) => {
       this.planets = arrangePlanetsIntoHubs(
         attachNamesToPlanets(children)
-          .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planet.doc._id) === -1),
+          .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planetAndParentId(planet.doc)) === -1),
         hubs
       );
+      console.log(this.planets);
     });
   }
 
