@@ -25,12 +25,12 @@ export class CommunityListComponent implements OnInit {
       this.managerService.getChildPlanets(true),
       this.couchService.findAll('hubs')
     ]).subscribe(([ children, hubs ]) => {
-      this.planets = arrangePlanetsIntoHubs(
+      const allHubs = arrangePlanetsIntoHubs(
         attachNamesToPlanets(children)
           .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planetAndParentId(planet.doc)) === -1),
         hubs
       );
-      console.log(this.planets);
+      this.planets = { hubs: allHubs.hubs.filter(hub => hub.children.length > 0), sandboxPlanets: allHubs.sandboxPlanets };
     });
   }
 
