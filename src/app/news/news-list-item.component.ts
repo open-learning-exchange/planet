@@ -21,7 +21,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Output() addLabel = new EventEmitter<{ label: string, removeType: string, news: any }>();
+  @Output() addLabel = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
   @ViewChild('content', { static: false }) content;
   contentHeight = 0;
   currentUser = this.userService.get();
@@ -118,8 +118,8 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
-  labelClick(label, removeType) {
-    this.addLabel.emit({ label, removeType, news: this.item });
+  labelClick(label, action) {
+    this.addLabel.emit({ label, action, news: this.item });
   }
 
 }
