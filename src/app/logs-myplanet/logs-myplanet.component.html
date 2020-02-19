@@ -12,11 +12,8 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-expansion-panel *ngFor="let apklog of apklogs">
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{apklog.type}}</mat-panel-title>
-      </mat-expansion-panel-header>
-      <p>{{apklog.error}}</p>
-    </mat-expansion-panel>
+    <div *ngFor="let apklog of apklogs">
+      <planet-myplanet-table [dataType]="logs" [data]="apklog"></planet-myplanet-table>
+    </div>
   </div>
 </div>
