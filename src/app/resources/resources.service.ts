@@ -134,24 +134,22 @@ export class ResourcesService {
   sendResourceNotification(resource) {
     const createdDate = resource.createdDate;
     const currentUser = this.userService.get();
-    const resourceDocs = [];
-    const resourceNotification = forkJoin([
+    return forkJoin([
       this.usersService.getAllUsers(),
       this.couchService.findAll('notifications', findDocuments({ link: 'resources', type: 'newResource', status: 'unread' }))
     ]).pipe(
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        users.filter(user => {
+        const resourceDocs = users.filter(user => {
           return (currentUser.name !== user.name &&
             user.name !== 'satellite' &&
             notifications.every(notification => notification.user !== user._id));
-        }).map(user => resourceDocs.push(this.addResourceDoc(user, createdDate)));
+        }).map(user => this.addResourceDoc(user, createdDate));
         return this.couchService.bulkDocs('notifications', resourceDocs );
     }));
-    resourceNotification.subscribe();
   }
 
   addResourceDoc(user, createdDate) {
-    const resourceDoc = {
+    return {
     'user': user._id,
     'message': 'There are new resources in the Library. Click to see them!',
     'link' : 'resources',
@@ -162,7 +160,6 @@ export class ResourcesService {
     'time': this.couchService.datePlaceholder,
     userPlanetCode: user.planetCode
     };
-    return resourceDoc;
   }
 
 }

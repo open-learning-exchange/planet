@@ -195,7 +195,6 @@ export class ResourcesAddComponent implements OnInit {
           (resourceRes) => this.afterResourceUpdate(message, resourceRes),
           (err) => this.planetMessageService.showAlert('There was an error with this resource')
         );
-        this.resourcesService.sendResourceNotification(newResource);
       } else {
         this.afterResourceUpdate(message);
       }
@@ -222,7 +221,8 @@ export class ResourcesAddComponent implements OnInit {
       file,
       { newTags: this.tags.value, existingTags: this.existingResource.tags }
     ).pipe(
-      switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`))
+      switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`)),
+      switchMap(( resourceRes ) => this.resourcesService.sendResourceNotification(resourceRes))
     );
   }
 
