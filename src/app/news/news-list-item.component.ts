@@ -45,7 +45,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget &&
       (!this.targetLocalPlanet ||
-      (this.item.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`));
+      (this.item.doc.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`));
   }
 
   ngAfterViewChecked() {
@@ -119,7 +119,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   }
 
   labelClick(label) {
-    this.addLabel.emit({ label, news: this.item });
+    this.addLabel.emit({ label, news: this.item.doc });
   }
 
 }

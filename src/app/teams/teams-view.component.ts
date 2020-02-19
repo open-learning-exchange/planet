@@ -122,7 +122,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   initTeam(teamId: string) {
     this.newsService.requestNews({
-      '$or': [ { viewableBy: 'teams', viewableId: teamId }, { viewIn: { '$elemMatch': { '_id': teamId, section: 'teams' } } } ]
+      selectors: {
+        '$or': [ { viewableBy: 'teams', viewableId: teamId }, { viewIn: { '$elemMatch': { '_id': teamId, section: 'teams' } } } ]
+      },
+      viewId: teamId
     });
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
     if (this.mode === 'services') {

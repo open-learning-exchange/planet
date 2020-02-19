@@ -56,8 +56,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.getCommunityData();
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
+      this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+    });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
         this.setCouncillors(users);
@@ -104,10 +107,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   requestNewsAndUsers(planetCode?: string) {
-    this.newsService.requestNews({ '$or': [
-      { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
-      { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
-    ]});
+    this.newsService.requestNews({
+      selectors: {
+        '$or': [
+          { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
+          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+        ]
+      },
+      viewId: this.teamId
+    });
     if (planetCode) {
       this.stateService.requestData('child_users', 'local');
     } else {
