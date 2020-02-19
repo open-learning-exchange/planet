@@ -14,6 +14,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -233,7 +234,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   deleteCommunityLink(team) {
-    const communityId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+    const communityId = planetAndParentId(this.stateService.configuration);
     const route = this.teamsService.teamLinkRoute(team.type, team._id);
     return this.teamsService.getTeamMembers(communityId, true).pipe(switchMap((links) => {
       const link = links.find(val => val.route === route);

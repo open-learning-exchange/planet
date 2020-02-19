@@ -4,6 +4,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -45,7 +46,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget &&
       (!this.targetLocalPlanet ||
-      (this.item.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`));
+      (this.item.viewIn || []).every(({ _id }) => _id !== planetAndParentId(configuration)));
   }
 
   ngAfterViewChecked() {

@@ -21,3 +21,5 @@ export const sortPlanet = ((a, b) => {
 export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
   item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
 );
+
+export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
