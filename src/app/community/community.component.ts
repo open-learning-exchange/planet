@@ -17,6 +17,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-community',
@@ -27,7 +28,7 @@ import { environment } from '../../environments/environment';
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = {};
-  teamId = `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+  teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
   news: any[] = [];

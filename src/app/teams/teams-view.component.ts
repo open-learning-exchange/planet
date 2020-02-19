@@ -23,6 +23,7 @@ import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 import { CustomValidators } from '../validators/custom-validators';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -81,7 +82,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.teamId = params.get('teamId') || `${this.stateService.configuration.code}@${this.stateService.configuration.parentCode}`;
+      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
       this.initTeam(this.teamId);
     });
     this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
