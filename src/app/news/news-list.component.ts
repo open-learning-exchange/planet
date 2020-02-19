@@ -48,6 +48,9 @@ export class NewsListComponent implements OnChanges {
       this.replyObject[item.replyTo || 'root'] = [ ...(this.replyObject[item.replyTo || 'root'] || []), item ];
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
+    if (this.replyViewing._id !== 'root') {
+      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
+    }
   }
 
   showReplies(news) {
