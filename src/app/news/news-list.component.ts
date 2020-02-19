@@ -121,7 +121,12 @@ export class NewsListComponent implements OnChanges {
     } else {
       const okClick = (planets) =>
         this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
-      this.shareDialog = this.dialog.open(CommunityListDialogComponent, { data: { okClick } });
+      this.shareDialog = this.dialog.open(CommunityListDialogComponent, {
+        data: {
+          okClick,
+          excludeIds: (news.viewIn || []).map(shared => shared._id)
+        }
+      });
     }
   }
 

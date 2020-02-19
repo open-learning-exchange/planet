@@ -13,6 +13,7 @@ export class CommunityListComponent implements OnInit {
   planets: { hubs: any[], sandboxPlanets: any[] } = { hubs: [], sandboxPlanets: [] };
   @Input() selectMode = false;
   @Output() selectionChange = new EventEmitter<any>();
+  @Input() excludeIds = [];
 
   constructor(
     private couchService: CouchService,
@@ -25,7 +26,8 @@ export class CommunityListComponent implements OnInit {
       this.couchService.findAll('hubs')
     ]).subscribe(([ children, hubs ]) => {
       this.planets = arrangePlanetsIntoHubs(
-        attachNamesToPlanets(children).filter(planet => planet.doc.docType !== 'parentName'),
+        attachNamesToPlanets(children)
+          .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planet.doc._id) === -1),
         hubs
       );
     });
