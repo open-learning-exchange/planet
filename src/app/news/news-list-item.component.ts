@@ -30,7 +30,6 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = [ 'help', 'offer', 'advice' ];
-  removeType: 'add' | 'remove' = 'add';
 
   constructor(
     private router: Router,
