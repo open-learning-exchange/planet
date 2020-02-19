@@ -125,7 +125,7 @@ export class NewsListComponent implements OnChanges {
     }
   }
 
-  addLabel({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
+  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
