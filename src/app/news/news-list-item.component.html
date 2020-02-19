@@ -15,7 +15,7 @@
       <mat-chip-list>
         <mat-chip color="primary" selected [disableRipple]="true" class="planet-chip-label" *ngFor="let label of item.labels">
           <planet-label [label]="label"></planet-label>
-          <mat-icon matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
+          <mat-icon *ngIf="item.user.name === currentUser.name && editable" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
         </mat-chip>
       </mat-chip-list>
     </mat-card-subtitle>
