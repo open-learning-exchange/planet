@@ -432,7 +432,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.tagInputComponent.addTag(tag);
   }
 
-  getTags({allTags}) {
+  getTags({ allTags }) {
     this.tags = allTags;
   }
 
