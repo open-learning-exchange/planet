@@ -29,6 +29,7 @@ export class CoursesService {
   courseUpdated$ = this.courseUpdated.asObservable();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
   private progressUpdated = new Subject<{ parent: boolean, planetField: string, progress: any[] }>();
+  progressUpdateInProgress = false;
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
@@ -132,22 +133,34 @@ export class CoursesService {
   }
 
   updateProgress({ courseId, stepNum, passed = true }, userId?) {
+    if (this.progressUpdateInProgress === true) {
+      return;
+    }
+    this.progressUpdateInProgress = true;
     const configuration = this.stateService.configuration;
     const newProgress = { stepNum, courseId, passed,
       userId: userId || this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
       updatedDate: this.couchService.datePlaceholder
     };
     this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
-      const currentProgress: any = progress.length > 0 ? progress.find((p: any) => p.stepNum === stepNum) : undefined;
-      if (currentProgress !== undefined && currentProgress.passed === newProgress.passed) {
+      const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) => p.stepNum === stepNum) : [];
+      if (currentProgress.length > 0 && currentProgress.every(current => current.passed === newProgress.passed)) {
         return of({});
       }
-      return this.couchService.updateDocument(
-        this.progressDb, { createdDate: this.couchService.datePlaceholder, ...currentProgress, ...newProgress }
-      );
+      return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));
     })).subscribe(() => {
+      this.progressUpdateInProgress = false;
       this.requestCourse({ courseId });
     });
+  }
+
+  newProgressDocs(currentProgressDocs: any[], newProgress: any) {
+    return currentProgressDocs.length === 0 ?
+      [ { createdDate: this.couchService.datePlaceholder, ...newProgress } ] :
+      currentProgressDocs.map((current, index) => index === 0 ?
+        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress } :
+        { ...current, _deleted: true }
+      );
   }
 
   attachedItemsOfCourses(courses: any[]) {
