@@ -30,7 +30,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
-  labels = [ 'help', 'offer', 'advice' ];
+  labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
 
   constructor(
     private router: Router,
@@ -47,6 +47,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.showShare = this.shareTarget &&
       (!this.targetLocalPlanet ||
       (this.item.viewIn || []).every(({ _id }) => _id !== planetAndParentId(configuration)));
+    this.labels.listed = this.labels.all.filter(label => (this.item.labels || []).indexOf(label) === -1);
   }
 
   ngAfterViewChecked() {
