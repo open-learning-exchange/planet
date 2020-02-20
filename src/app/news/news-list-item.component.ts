@@ -4,6 +4,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -21,7 +22,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Output() addLabel = new EventEmitter<{ label: string, news: any }>();
+  @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
   @ViewChild('content', { static: false }) content;
   contentHeight = 0;
   currentUser = this.userService.get();
@@ -29,7 +30,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
-  labels = [ 'help', 'offer', 'advice' ];
+  labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
 
   constructor(
     private router: Router,
@@ -45,7 +46,8 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget &&
       (!this.targetLocalPlanet ||
-      (this.item.doc.viewIn || []).every(({ _id }) => _id !== `${configuration.code}@${configuration.parentCode}`));
+      (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(configuration)));
+    this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
   }
 
   ngAfterViewChecked() {
@@ -118,8 +120,8 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
-  labelClick(label) {
-    this.addLabel.emit({ label, news: this.item.doc });
+  labelClick(label, action) {
+    this.changeLabels.emit({ label, action, news: this.item.doc });
   }
 
 }

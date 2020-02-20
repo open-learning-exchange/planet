@@ -48,6 +48,9 @@ export class NewsListComponent implements OnChanges {
       this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
+    if (this.replyViewing._id !== 'root') {
+      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
+    }
   }
 
   showReplies(news) {
@@ -121,13 +124,24 @@ export class NewsListComponent implements OnChanges {
     } else {
       const okClick = (planets) =>
         this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
-      this.shareDialog = this.dialog.open(CommunityListDialogComponent, { data: { okClick } });
+      this.shareDialog = this.dialog.open(CommunityListDialogComponent, {
+        data: {
+          okClick,
+          excludeIds: (news.viewIn || []).map(shared => shared._id)
+        }
+      });
     }
   }
 
-  addLabel({ news, label }: { news: any, label: string }) {
-    this.newsService.postNews({ ...news, labels: [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []) }, 'Label added')
-      .subscribe();
+  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
+    const labels = action === 'remove' ?
+      news.labels.filter(existingLabel => existingLabel !== label) :
+      [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
+    this.newsService.postNews({ ...news, labels }, `Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
+  }
+
+  trackById(item) {
+    return item._id;
   }
 
 }

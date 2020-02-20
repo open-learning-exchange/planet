@@ -12,11 +12,11 @@
     (changeReplyViewing)="showReplies($event)"
     (updateNews)="openUpdateDialog($event)"
     (deleteNews)="openDeleteDialog($event)"
-    (addLabel)="addLabel($event)">
+    (changeLabels)="changeLabels($event)">
   </planet-news-list-item>
   <mat-divider></mat-divider>
 </ng-container>
-<planet-news-list-item *ngFor="let item of displayedItems"
+<planet-news-list-item *ngFor="let item of displayedItems; trackBy: trackById"
   [item]="item"
   [replyObject]="replyObject"
   [editable]="editable"
@@ -25,5 +25,5 @@
   (updateNews)="openUpdateDialog($event)"
   (deleteNews)="openDeleteDialog($event)"
   (shareNews)="shareNews($event)"
-  (addLabel)="addLabel($event)">
+  (changeLabels)="changeLabels($event)">
 </planet-news-list-item>

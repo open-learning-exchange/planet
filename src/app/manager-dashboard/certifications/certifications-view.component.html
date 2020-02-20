@@ -1,0 +1,22 @@
+<mat-toolbar>
+  <button class="btnBack" mat-icon-button routerLink="/manager/certifications">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Certifications</span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    {{certification.name}}
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <mat-tab-group>
+      <mat-tab i18n-label label="Course Requirements">
+        <planet-courses *ngIf="certification.courseIds.length > 0" [isForm]="true" [includeIds]="certification.courseIds"></planet-courses>
+      </mat-tab>
+      <mat-tab i18n-label label="Certified Members">
+        <planet-users-table [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" linkPrefix="/users/profile" containerClass="view-container view-table"></planet-users-table>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
