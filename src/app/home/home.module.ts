@@ -17,7 +17,6 @@ import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
 import { NewsModule } from '../news/news.module';
-import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsModule } from '../teams/teams.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
@@ -51,7 +50,6 @@ import { PlanetComponent } from './planet.component';
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
-    LogsMyPlanetComponent,
     CommunityComponent,
     CommunityLinkDialogComponent,
     PlanetComponent,
