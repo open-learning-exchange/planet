@@ -16,7 +16,7 @@ export class NewsService {
   dbName = 'news';
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
-  currentSelector = {};
+  currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
 
   constructor(
     private couchService: CouchService,
@@ -25,16 +25,15 @@ export class NewsService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  requestNews(selectors = this.currentSelector) {
-    this.currentSelector = selectors;
+  requestNews({ selectors, viewId } = this.currentOptions) {
+    this.currentOptions = { selectors, viewId };
     forkJoin([
       this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
       this.couchService.findAll('attachments')
     ]).subscribe(([ newsItems, avatars ]) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => {
-        const avatar = this.findAvatar(item.user, avatars);
-        return { ...item, avatar };
-      }));
+      this.newsUpdated$.next(newsItems.map((item: any) => (
+        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatars), _id: item._id }
+      )));
     });
   }
 
@@ -47,6 +46,10 @@ export class NewsService {
       user._attachments ?
       `${this.imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
       'assets/image.png';
+  }
+
+  findShareDate(item, viewId) {
+    return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
   }
 
   postNews(post, successMessage = 'Thank you for submitting your news', isMessageEdit = true) {
@@ -81,7 +84,9 @@ export class NewsService {
   }
 
   shareNews(news, planets?: any[]) {
-    const viewInObject = (planet) => ({ '_id': `${planet.code}@${planet.parentCode}`, section: 'community' });
+    const viewInObject = (planet) => (
+      { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
+    );
     // TODO: Filter newPlanets by ones currently existing in viewIn array
     const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     return this.postNews(

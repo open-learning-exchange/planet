@@ -36,7 +36,10 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   getMessages() {
-    this.newsService.requestNews({ createdOn: this.configuration.code, viewableBy: 'community' });
+    this.newsService.requestNews({
+      selectors: { createdOn: this.configuration.code, viewableBy: 'community' },
+      viewId: ''
+    });
   }
 
   postMessage() {

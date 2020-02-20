@@ -45,7 +45,7 @@ export class NewsListComponent implements OnChanges {
   ngOnChanges() {
     this.replyObject = {};
     this.items.forEach(item => {
-      this.replyObject[item.replyTo || 'root'] = [ ...(this.replyObject[item.replyTo || 'root'] || []), item ];
+      this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
     if (this.replyViewing._id !== 'root') {
@@ -60,7 +60,7 @@ export class NewsListComponent implements OnChanges {
   }
 
   showPreviousReplies() {
-    this.showReplies(this.items.find(item => item._id === this.replyViewing.replyTo));
+    this.showReplies(this.items.find(item => item._id === this.replyViewing.doc.replyTo));
   }
 
   openUpdateDialog({ title, placeholder, initialValue = '', news = {} }) {
