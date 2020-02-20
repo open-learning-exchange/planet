@@ -31,7 +31,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
       }
     };
     if (this.dataType === 'logs') {
-      this.displayedColumns = ['name', 'last_synced', 'versionName', 'detail'];
+      this.displayedColumns = [ 'id', 'name', 'type', 'time', 'versionName', 'detail' ];
     }
   }
 
@@ -50,7 +50,8 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
       autoFocus: false,
       data: {
         allData: log,
-        title: 'myplanet crash log'
+        type: 'log',
+        title: log.type
       }
     });
   }

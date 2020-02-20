@@ -16,7 +16,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   private allPlanets: any[] = [];
   searchValue = '';
   planets: any[] = [];
-  report: string = 'report'
+  report = 'report';
   planetType = this.stateService.configuration.planetType;
   get childType() {
     return this.planetType === 'center' ? 'Community' : 'Nation';

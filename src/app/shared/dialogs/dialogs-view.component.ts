@@ -6,6 +6,10 @@ import { MAT_DIALOG_DATA } from '@angular/material';
   	.close {
       float: right;
     }
+    .content {
+      max-height: 55vh;
+      overflow-y: auto;
+    }
   ` ]
 })
 export class DialogsViewComponent {

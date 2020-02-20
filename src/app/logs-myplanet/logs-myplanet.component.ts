@@ -7,7 +7,7 @@ import { CouchService } from '../shared/couchdb.service';
 export class LogsMyPlanetComponent {
 
   apklogs = [];
-  logs: string = 'logs'
+  logs = 'logs';
 
   constructor(
     private couchService: CouchService,
