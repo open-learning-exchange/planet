@@ -70,6 +70,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   @Input() selectMany = true;
   @Input() updateRouteParam = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
+  @Output() allTagsList = new EventEmitter<{allTags: string[]}>();
 
   shouldLabelFloat = false;
   onTouched;
@@ -118,6 +119,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       const newValue = this.value.concat(editedId).filter(tagId => tags.some(tag => tag._id === tagId)).reduce(dedupeShelfReduce, []);
       this.value = newValue;
       this.resetDialogData();
+      this.allTagsList.emit({ allTags: this.tags });
     });
   }
 

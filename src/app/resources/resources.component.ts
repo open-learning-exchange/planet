@@ -54,6 +54,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
   tagFilterValue = [];
+  tags: string[] = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
@@ -278,6 +279,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  getTags({allTags}) {
+    this.tags = allTags;
+  }
+
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
     this.searchSelection._empty = Object.entries(this.searchSelection).every(([ field, val ]: any[]) => val.length === 0);
@@ -308,9 +313,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagInputComponent.addTag(tag);
   }
 
-  getTags() {
-    return this.tagInputComponent.getTags();
-  }
+  
 
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })

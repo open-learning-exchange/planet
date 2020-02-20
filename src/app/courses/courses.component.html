@@ -2,7 +2,7 @@
   <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
   <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
-    <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
+    <planet-tag-input #tagInput [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog" (allTagsList)="getTags($event)"></planet-tag-input>
   </mat-form-field>
   <span class="toolbar-fill"></span>
   <mat-form-field class="font-size-1 margin-lr-3">
@@ -28,7 +28,7 @@
       <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
       <div class="column margin-lr-5">
         <planet-filtered-amount [table]="courses" labelFor="courses"></planet-filtered-amount>
-        <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="getTags()"></planet-tag-selected-input>
+        <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tags"></planet-tag-selected-input>
       </div>
       <span class="toolbar-fill"></span>
       <ng-container *ngIf="parent">
