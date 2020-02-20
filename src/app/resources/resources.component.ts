@@ -308,6 +308,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagInputComponent.addTag(tag);
   }
 
+  getTags() {
+    return this.tagInputComponent.getTags();
+  }
+
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
     .pipe(takeUntil(this.onDestroy$))
