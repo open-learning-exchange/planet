@@ -144,20 +144,23 @@ export class CoursesService {
     };
     this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
       const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) => p.stepNum === stepNum) : [];
-      if (currentProgress.length === 0 && currentProgress.every(current => current.passed === newProgress.passed)) {
+      if (currentProgress.length > 0 && currentProgress.every(current => current.passed === newProgress.passed)) {
         return of({});
       }
-      return this.couchService.bulkDocs(
-        this.progressDb,
-        currentProgress.map((current, index) => index === 0 ?
-          { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress } :
-          { ...current, _deleted: true }
-        )
-      );
+      return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));
     })).subscribe(() => {
       this.progressUpdateInProgress = false;
       this.requestCourse({ courseId });
     });
+  }
+
+  newProgressDocs(currentProgressDocs: any[], newProgress: any) {
+    return currentProgressDocs.length === 0 ?
+      [ { createdDate: this.couchService.datePlaceholder, ...newProgress } ] :
+      currentProgressDocs.map((current, index) => index === 0 ?
+        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress } :
+        { ...current, _deleted: true }
+      );
   }
 
   attachedItemsOfCourses(courses: any[]) {
