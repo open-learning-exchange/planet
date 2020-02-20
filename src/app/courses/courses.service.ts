@@ -29,6 +29,7 @@ export class CoursesService {
   courseUpdated$ = this.courseUpdated.asObservable();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
   private progressUpdated = new Subject<{ parent: boolean, planetField: string, progress: any[] }>();
+  progressUpdateInProgress = false;
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
@@ -132,6 +133,10 @@ export class CoursesService {
   }
 
   updateProgress({ courseId, stepNum, passed = true }, userId?) {
+    if (this.progressUpdateInProgress === true) {
+      return;
+    }
+    this.progressUpdateInProgress = true;
     const configuration = this.stateService.configuration;
     const newProgress = { stepNum, courseId, passed,
       userId: userId || this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
@@ -146,6 +151,7 @@ export class CoursesService {
         this.progressDb, { createdDate: this.couchService.datePlaceholder, ...currentProgress, ...newProgress }
       );
     })).subscribe(() => {
+      this.progressUpdateInProgress = false;
       this.requestCourse({ courseId });
     });
   }
