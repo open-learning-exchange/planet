@@ -6,7 +6,6 @@ import { CertificationsService } from './certifications.service';
 import { TableState } from '../../users/users-table.component';
 import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';
-import { StateService } from '../../shared/state.service';
 import { dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
@@ -24,7 +23,6 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     private certificationsService: CertificationsService,
     private coursesService: CoursesService,
     private usersService: UsersService,
-    private stateService: StateService
   ) {}
 
   ngOnInit() {
