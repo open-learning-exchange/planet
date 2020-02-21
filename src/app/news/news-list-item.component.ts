@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -11,7 +11,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
@@ -42,11 +42,13 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit() {
-    const configuration = this.stateService.configuration;
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
+  }
+
+  ngOnChanges() {
     this.showShare = this.shareTarget &&
       (!this.targetLocalPlanet ||
-      (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(configuration)));
+      (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(this.stateService.configuration)));
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
   }
 
