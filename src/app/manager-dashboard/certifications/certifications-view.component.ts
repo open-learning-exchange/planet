@@ -43,10 +43,8 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     ).subscribe(([ courses, users, progress ]: [ any[], any[], any ]) => {
       this.setCertifiedMembers(courses, users, progress);
     });
-    this.stateService.couchStateListener('courses_progress').subscribe(res => console.log(res));
     this.coursesService.requestCourses();
     this.usersService.requestUsers();
-    this.stateService.requestData('courses_progress', 'local');
   }
 
   ngOnDestroy() {
@@ -62,11 +60,6 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
       .filter(course => this.certification.courseIds.indexOf(course._id) > -1)
       .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
     this.certifiedMembers = users.filter(user => certificateCourses.every(course => {
-      console.log(user._id);
-      console.log(course.progress
-        .filter(step => step.userId === user._id)
-        .map(step => step.stepNum)
-        .reduce(dedupeShelfReduce, []));
       return course.doc.steps.length === course.progress
         .filter(step => step.userId === user._id && step.passed)
         .map(step => step.stepNum)
