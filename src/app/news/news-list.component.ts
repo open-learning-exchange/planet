@@ -140,7 +140,7 @@ export class NewsListComponent implements OnChanges {
     this.newsService.postNews({ ...news, labels }, `Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 
-  trackById(item) {
+  trackById(index, item) {
     return item._id;
   }
 
