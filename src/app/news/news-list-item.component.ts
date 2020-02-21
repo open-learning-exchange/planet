@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, AfterViewChecked, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -11,7 +11,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, AfterViewChecked {
+export class NewsListItemComponent implements AfterViewChecked, OnChanges {
 
   @Input() item;
   @Input() replyObject;
@@ -41,7 +41,7 @@ export class NewsListItemComponent implements OnInit, AfterViewChecked {
     private stateService: StateService
   ) {}
 
-  ngOnInit() {
+  ngOnChanges() {
     const configuration = this.stateService.configuration;
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget &&
