@@ -140,10 +140,10 @@ export class ResourcesService {
       this.couchService.findAll('notifications', findDocuments({ link: 'resources', type: 'newResource', status: 'unread' }))
     ]).pipe(
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const resourceDocs = users
+        const notificationDocs = users
           .filter(user => currentUser.name !== user.name && user.name !== 'satellite' && userAlreadyNotified(user, notifications))
           .map(user => this.newResourceNotification(user, createdDate));
-        return this.couchService.bulkDocs('notifications', resourceDocs);
+        return this.couchService.bulkDocs('notifications', notificationDocs);
     }));
   }
 
