@@ -11,7 +11,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
@@ -41,11 +41,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     private stateService: StateService
   ) {}
 
-  ngOnInit() {
-    this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
-  }
-
   ngOnChanges() {
+    this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget &&
       (!this.targetLocalPlanet ||
       (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(this.stateService.configuration)));
