@@ -86,6 +86,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   initCourse(course, progress, resources) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
+    this.initResources(resources);
     // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
@@ -103,6 +104,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         user: this.userService.get(),
         type: 'exam' });
     }
+  }
+
+  initResources(resources) {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
