@@ -16,6 +16,7 @@ import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { CommunityListComponent } from '../community/community-list.component';
 import { RouterModule } from '@angular/router';
 import { LabelComponent } from './label.component';
+import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { LabelComponent } from './label.component';
     PlanetRoleComponent,
     PlanetMarkdownComponent,
     CommunityListComponent,
-    LabelComponent
+    LabelComponent,
+    MyPlanetTableComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -53,7 +55,8 @@ import { LabelComponent } from './label.component';
     PlanetRoleComponent,
     PlanetMarkdownComponent,
     CommunityListComponent,
-    LabelComponent
+    LabelComponent,
+    MyPlanetTableComponent
   ]
 })
 export class SharedComponentsModule {}

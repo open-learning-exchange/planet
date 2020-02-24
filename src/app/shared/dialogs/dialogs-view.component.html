@@ -2,7 +2,7 @@
   <mat-icon>close</mat-icon>
 </button>
 <h3>{{data.title}}</h3>
-<div>
+<div *ngIf="data?.type !== 'log'">
   <p i18n>Name: {{data.allData.name}} </p>
   <p i18n>Code: {{data.allData.code}}</p>
   <p i18n>Local URL: {{data.allData.localDomain}}</p>
@@ -13,4 +13,10 @@
   <p i18n>Status: {{data.allData.registrationRequest}}</p>
   <p i18n>Email: {{data.allData.email}}</p>
   <p i18n>Phone Number: {{data.allData.phoneNumber}}</p>
+</div>
+<div *ngIf="data.type === 'log'">
+  <p i18n>Name: {{data.allData.deviceName || data.allData.customDeviceName}} </p>
+  <p i18n>Version: {{data.allData.version}}</p>
+  <p i18n>Time: {{data.allData.time}}</p>
+  <p i18n class="content">Error: {{data.allData.error}}</p>
 </div>
