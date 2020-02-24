@@ -134,16 +134,15 @@ export class ResourcesService {
   sendResourceNotification(resource) {
     const createdDate = resource.createdDate;
     const currentUser = this.userService.get();
+    const userAlreadyNotified = (user, notifications) => notifications.every(notification => notification.user !== user._id);
     return forkJoin([
       this.usersService.getAllUsers(),
       this.couchService.findAll('notifications', findDocuments({ link: 'resources', type: 'newResource', status: 'unread' }))
     ]).pipe(
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const resourceDocs = users.filter(user => {
-          return (currentUser.name !== user.name &&
-            user.name !== 'satellite' &&
-            notifications.every(notification => notification.user !== user._id));
-        }).map(user => this.newResourceNotification(user, createdDate));
+        const resourceDocs = users
+          .filter(user => currentUser.name !== user.name && user.name !== 'satellite' && userAlreadyNotified(user, notifications))
+          .map(user => this.newResourceNotification(user, createdDate));
         return this.couchService.bulkDocs('notifications', resourceDocs);
     }));
   }
