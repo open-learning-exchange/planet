@@ -37,9 +37,7 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$))
-      .subscribe(params => this.hubId = params.get('hubId'));
-    this.getMyPlanetList();
+    this.getMyPlanetList(this.route.snapshot.params.hubId);
   }
 
   ngOnDestroy() {
@@ -70,8 +68,8 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
     );
   }
 
-  getMyPlanetList() {
-    this.myPlanetRequest().subscribe(([ planets, myPlanets ]: [ any, any ]) => {
+  getMyPlanetList(hubId) {
+    this.myPlanetRequest(hubId).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
       this.setAllPlanets(
         [ { doc: this.configuration } ].concat(planets)
           .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
@@ -81,15 +79,15 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
-  myPlanetRequest() {
+  myPlanetRequest(hubId) {
     const { planetCode, domain } = getDomainParams(this.configuration);
     return forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
       this.couchService.findAll('myplanet_activities')
     ]).pipe(switchMap(([ planets, myPlanets ]) => {
         planets = attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
-        if (this.hubId) {
-          return this.couchService.findAll('hubs', { 'selector': { 'planetId': this.hubId } }, { domain })
+        if (hubId) {
+          return this.couchService.findAll('hubs', { 'selector': { 'planetId': hubId } }, { domain })
           .pipe(switchMap((hubs: any) => {
             this.hub = hubs[0] || { spokes: [] };
             const selector = { 'selector': { 'createdOn': { '$in': this.hub.spokes } } };
