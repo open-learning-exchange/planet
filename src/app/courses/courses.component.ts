@@ -98,6 +98,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.removeFilteredFromSelection();
   }
   user = this.userService.get();
+  tags: string[] = [];
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
@@ -429,6 +430,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   addTag(tag: string) {
     this.tagInputComponent.addTag(tag);
+  }
+
+  getTags({ allTags }) {
+    this.tags = allTags;
   }
 
 }
