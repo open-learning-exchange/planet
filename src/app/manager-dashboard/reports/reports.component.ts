@@ -4,10 +4,10 @@ import { CouchService } from '../../shared/couchdb.service';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
-import { arrangePlanetsIntoHubs, attachNamesToPlanets } from './reports.utils';
+import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil, map, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -46,9 +46,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   getLogs() {
-    const { planetCode, domain } = this.configuration.planetType === 'community' ?
-      { planetCode: this.configuration.parentCode, domain: this.configuration.parentDomain } :
-      { planetCode: undefined, domain: undefined };
+    const { planetCode, domain } = getDomainParams(this.configuration);
     forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
       this.couchService.findAll('hubs', undefined, domain ? { domain } : {})
