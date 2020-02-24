@@ -144,7 +144,7 @@ export class ResourcesService {
             user.name !== 'satellite' &&
             notifications.every(notification => notification.user !== user._id));
         }).map(user => this.addResourceDoc(user, createdDate));
-        return this.couchService.bulkDocs('notifications', resourceDocs );
+        return this.couchService.bulkDocs('notifications', resourceDocs);
     }));
   }
 
