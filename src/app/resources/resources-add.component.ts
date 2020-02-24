@@ -222,7 +222,7 @@ export class ResourcesAddComponent implements OnInit {
       { newTags: this.tags.value, existingTags: this.existingResource.tags }
     ).pipe(
       switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`)),
-      switchMap(resourceRes => this.resourcesService.sendResourceNotification(resourceRes))
+      switchMap(() => resourceInfo._rev ? of({}) : this.resourcesService.sendResourceNotification())
     );
   }
 
