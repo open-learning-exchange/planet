@@ -8,6 +8,7 @@ import { DialogsAddCoursesComponent } from '../../shared/dialogs/dialogs-add-cou
 import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './certifications-add.component.html'
@@ -27,6 +28,7 @@ export class CertificationsAddComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private certificationsService: CertificationsService,
+    private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
     this.certificateForm = this.fb.group({ name: [
@@ -68,6 +70,8 @@ export class CertificationsAddComponent implements OnInit {
       ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
+      this.planetMessageService.showMessage(this.pageType === 'Add' ? 'New certification added' : 'Certification updated');
+      this.pageType = 'Update';
       if (reroute) {
         this.goBack();
       }
