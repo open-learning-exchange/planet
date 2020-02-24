@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { forkJoin, Subject, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
@@ -8,12 +8,12 @@ import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
 })
-export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
+export class ReportsMyPlanetComponent implements OnInit {
 
   private allPlanets: any[] = [];
   searchValue = '';
@@ -25,7 +25,6 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
   }
   hubId: string | null = null;
   hub = { spokes: [] };
-  onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -38,11 +37,6 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getMyPlanetList(this.route.snapshot.params.hubId);
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   filterData(filterValue: string) {
