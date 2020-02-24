@@ -17,7 +17,6 @@ import { CommunityListComponent } from '../community/community-list.component';
 import { RouterModule } from '@angular/router';
 import { LabelComponent } from './label.component';
 import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
-import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 
 @NgModule({
   imports: [
@@ -39,8 +38,7 @@ import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component'
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
-    MyPlanetTableComponent,
-    LogsMyPlanetComponent
+    MyPlanetTableComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -58,8 +56,7 @@ import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component'
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
-    MyPlanetTableComponent,
-    LogsMyPlanetComponent
+    MyPlanetTableComponent
   ]
 })
 export class SharedComponentsModule {}

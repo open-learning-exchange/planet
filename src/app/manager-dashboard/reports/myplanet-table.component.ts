@@ -12,7 +12,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
   @Input() data = [];
   @Input() dataType: 'logs' | 'report' = 'report';
   myPlanets = new MatTableDataSource();
-  displayedColumns = [ 'id', 'name', 'last_synced', 'versionName', 'count' ];
+  displayedColumns = [ 'id', 'name' ];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -31,7 +31,9 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
       }
     };
     if (this.dataType === 'logs') {
-      this.displayedColumns = [ 'id', 'name', 'type', 'time', 'versionName', 'detail' ];
+      this.displayedColumns = [ ...this.displayedColumns, ...[ 'type', 'time', 'versionName', 'detail' ] ];
+    } else {
+      this.displayedColumns = [ ...this.displayedColumns, ...[ 'last_synced', 'versionName', 'count' ] ];
     }
   }
 
