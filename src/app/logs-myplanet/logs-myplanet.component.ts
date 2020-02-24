@@ -58,7 +58,6 @@ export class LogsMyPlanetComponent implements OnInit {
           .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
           apklogs
       );
-      console.log(this.allPlanets);
       this.apklogs = this.allPlanets;
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
