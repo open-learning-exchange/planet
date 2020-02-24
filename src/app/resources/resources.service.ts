@@ -150,15 +150,15 @@ export class ResourcesService {
 
   addResourceDoc(user, createdDate) {
     return {
-    'user': user._id,
-    'message': 'There are new resources in the Library. Click to see them!',
-    'link' : 'resources',
-    'linkParams': { sort: createdDate },
-    'type': 'newResource',
-    'priority': 1,
-    'status': 'unread',
-    'time': this.couchService.datePlaceholder,
-    userPlanetCode: user.planetCode
+      'user': user._id,
+      'message': 'There are new resources in the Library. Click to see them!',
+      'link' : 'resources',
+      'linkParams': { sort: createdDate },
+      'type': 'newResource',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+      userPlanetCode: user.planetCode
     };
   }
 
