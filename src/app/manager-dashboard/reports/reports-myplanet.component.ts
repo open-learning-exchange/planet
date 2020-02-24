@@ -6,7 +6,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets } from './reports.utils';
+import { attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil, switchMap } from 'rxjs/operators';
 
@@ -37,7 +37,8 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(params => this.hubId = params.get('hubId'));
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$))
+      .subscribe(params => this.hubId = params.get('hubId'));
     this.getMyPlanetList();
   }
 
@@ -81,9 +82,7 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
   }
 
   myPlanetRequest() {
-    const { planetCode, domain } = this.configuration.planetType === 'community' ?
-      { planetCode: this.configuration.parentCode, domain: this.configuration.parentDomain } :
-      { planetCode: undefined, domain: undefined };
+    const { planetCode, domain } = getDomainParams(this.configuration);
     return forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
       this.couchService.findAll('myplanet_activities')
@@ -96,7 +95,6 @@ export class ReportsMyPlanetComponent implements OnInit, OnDestroy {
             const selector = { 'selector': { 'createdOn': { '$in': this.hub.spokes } } };
             return this.couchService.findAll('myplanet_activities', selector, { domain });
           }), switchMap((hubActivities: any) => {
-            console.log(planets, hubActivities);
             return of([ planets.filter((p: any) => this.hub.spokes.indexOf(p.doc.code) > -1), myPlanets.concat(hubActivities) ]);
           }));
         }
