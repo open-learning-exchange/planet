@@ -131,8 +131,7 @@ export class ResourcesService {
     return mediaTypes.find((type) => mimeType.indexOf(type) > -1) || 'other';
   }
 
-  sendResourceNotification(resource) {
-    const createdDate = resource.createdDate;
+  sendResourceNotification() {
     const currentUser = this.userService.get();
     const userAlreadyNotified = (user, notifications) => notifications.every(notification => notification.user !== user._id);
     return forkJoin([
@@ -142,17 +141,17 @@ export class ResourcesService {
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
         const notificationDocs = users
           .filter(user => currentUser.name !== user.name && user.name !== 'satellite' && userAlreadyNotified(user, notifications))
-          .map(user => this.newResourceNotification(user, createdDate));
+          .map(user => this.newResourceNotification(user));
         return this.couchService.bulkDocs('notifications', notificationDocs);
     }));
   }
 
-  newResourceNotification(user, createdDate) {
+  newResourceNotification(user) {
     return {
       'user': user._id,
       'message': 'There are new resources in the Library. Click to see them!',
       'link' : 'resources',
-      'linkParams': { sort: createdDate },
+      'linkParams': { sort: 'createdDate' },
       'type': 'newResource',
       'priority': 1,
       'status': 'unread',
