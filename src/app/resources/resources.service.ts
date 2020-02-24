@@ -143,12 +143,12 @@ export class ResourcesService {
           return (currentUser.name !== user.name &&
             user.name !== 'satellite' &&
             notifications.every(notification => notification.user !== user._id));
-        }).map(user => this.addResourceDoc(user, createdDate));
+        }).map(user => this.newResourceNotification(user, createdDate));
         return this.couchService.bulkDocs('notifications', resourceDocs);
     }));
   }
 
-  addResourceDoc(user, createdDate) {
+  newResourceNotification(user, createdDate) {
     return {
       'user': user._id,
       'message': 'There are new resources in the Library. Click to see them!',
