@@ -7,6 +7,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
+import { dedupeObjectArray } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -55,9 +56,7 @@ export class NewsService {
   postNews(post, successMessage = 'Thank you for submitting your news', isMessageEdit = true) {
     const configuration = this.stateService.configuration;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
-    const images = post.message.images ?
-      post.message.images.filter(image => message.indexOf(image.resourceId) > -1) :
-      [];
+    const images = this.createImagesArray(post, message);
     const newPost = {
       docType: 'message',
       time: this.couchService.datePlaceholder,
@@ -77,6 +76,13 @@ export class NewsService {
 
   deleteNews(post) {
     return this.postNews({ ...post, _deleted: true }, 'Post deleted');
+  }
+
+  createImagesArray(post, message) {
+    return dedupeObjectArray([
+      ...(post.images || ''),
+      ...(post.message.images ? post.message.images : [])
+    ].filter(image => message.indexOf(image.resourceId) > -1), [ 'resourceId' ]);
   }
 
   rearrangeRepliesForDelete(replies: any[] = [], newReplyToId: string) {
