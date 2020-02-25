@@ -81,7 +81,7 @@ export class NewsService {
   createImagesArray(post, message) {
     return dedupeObjectArray([
       ...(post.images || []),
-      ...(post.message.images ? post.message.images : [])
+      ...(post.message.images || [])
     ].filter(image => message.indexOf(image.resourceId) > -1), [ 'resourceId' ]);
   }
 
