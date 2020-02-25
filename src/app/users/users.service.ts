@@ -99,9 +99,10 @@ export class UsersService {
     return user.roles.length === 0 ? this.demoteFromAdmin(user) : this.promoteToAdmin(user);
   }
 
-  demoteFromAdmin(user) {
+  demoteFromAdmin(userDoc) {
+    const { adminName, ...user } = userDoc;
     const planetConfig = this.stateService.configuration;
-    const parentUserId = `org.couchdb.user:${user.name}@${planetConfig.code}`;
+    const parentUserId = `org.couchdb.user:${adminName}`;
     return this.couchService.findAll(
       this.dbName,
       { selector: { _id: parentUserId } },
@@ -119,7 +120,7 @@ export class UsersService {
   promoteToAdmin(user) {
     const { name, password_scheme, derived_key, salt, iterations } = user;
     const { code, _id: requestId, parentDomain: domain } = this.stateService.configuration;
-    const adminName = name + '@' + code;
+    const adminName = name + '@' + code + '@' + Date.now();
     const adminId = `org.couchdb.user:${adminName}`;
     const parentUser = {
       ...user,
@@ -137,7 +138,7 @@ export class UsersService {
       switchMap(oldDoc => forkJoin([
         oldDoc ? of({}) : this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false }),
         this.couchService.put(`${this.adminConfig}${name}`, `-${password_scheme}-${derived_key},${salt},${iterations}`),
-        this.setRoles({ ...user, isUserAdmin: true }, []),
+        this.setRoles({ ...user, isUserAdmin: true, adminName }, []),
         this.removeFromTabletUsers(user)
       ]))
     );
