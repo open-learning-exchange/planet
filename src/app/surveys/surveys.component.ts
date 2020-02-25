@@ -129,7 +129,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createParentSurveys(submissions) {
-    return submissions.reduce((parentSurveys, submission) => {
+    return submissions.filter(submission => submission.parent).reduce((parentSurveys, submission) => {
       const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === submission.parent._id);
       if (parentSurvey) {
         parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
