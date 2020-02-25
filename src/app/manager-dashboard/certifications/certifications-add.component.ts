@@ -71,10 +71,10 @@ export class CertificationsAddComponent implements OnInit {
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(this.pageType === 'Add' ? 'New certification added' : 'Certification updated');
-      this.pageType = 'Update';
       if (reroute) {
         this.goBack();
       }
+      this.pageType = 'Update';
     });
   }
 
