@@ -58,6 +58,7 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   addResources() {
+    console.log(this.activeStepIndex, this.steps[this.activeStepIndex], this.steps);
     this.dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
       data: {
