@@ -23,7 +23,7 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.setTooltipLabels(this.selectedIds, this.allTags);
+    this.setTooltipLabels(this.selectedIds, this.allTags || []);
   }
 
   setTooltipLabels(selectedIds, allTags) {
