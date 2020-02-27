@@ -74,7 +74,6 @@ export class CertificationsAddComponent implements OnInit {
       if (reroute) {
         this.goBack();
       }
-      this.pageType = 'Update';
     });
   }
 
