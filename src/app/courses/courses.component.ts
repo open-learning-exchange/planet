@@ -98,7 +98,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.removeFilteredFromSelection();
   }
   user = this.userService.get();
-  tags: string[] = [];
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;

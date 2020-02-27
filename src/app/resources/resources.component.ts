@@ -53,7 +53,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
-  tags: string[] = [];
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
