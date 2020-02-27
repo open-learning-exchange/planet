@@ -28,7 +28,7 @@
     <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="detail">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Details</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef i18n>Details</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
       <button (click)="viewDetails(element)" mat-stroked-button color="primary">Details</button>
     </mat-cell>

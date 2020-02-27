@@ -34,7 +34,7 @@ export class LogsMyPlanetComponent implements OnInit {
 
   filterData(filterValue: string) {
     this.searchValue = filterValue;
-    this.apklogs = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code', 'id' ])(planet, filterValue));
+    this.apklogs = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, filterValue));
   }
 
   setAllPlanets(planets: any[], apklogs: any[]) {
