@@ -114,9 +114,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resources.data = resources.filter(
         (resource: any) =>
           this.excludeIds.indexOf(resource._id) === -1 &&
-          this.myView === 'myPersonals' ?
+          (this.myView === 'myPersonals' ?
             (resource.doc.private === true && (resource.doc.privateFor || {}).users === this.userService.get()._id) :
-            resource.doc.private !== true
+            resource.doc.private !== true)
       );
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
