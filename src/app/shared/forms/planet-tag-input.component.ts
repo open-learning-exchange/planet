@@ -243,7 +243,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
    */
   filterReroute(tags: string[]) {
     const collections = tags.join(this.tagUrlDelimiter);
-    this.router.navigate([ this.router.url.split(';')[0], { ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
+    const [ url, ...params ] = this.router.url.split(';');
+    const newParams = params.filter(param => param.indexOf('collections') === -1).reduce((paramObj, param) => {
+      const [ key, value ] = param.split('=');
+      return { ...paramObj, [key]: value };
+    }, {});
+    this.router.navigate([ url, { ...newParams, ...(tags.length > 0 ? { collections } : {}) } ], { replaceUrl: true });
   }
 
 }
