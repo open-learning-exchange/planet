@@ -20,7 +20,7 @@ export class CertificationsAddComponent implements OnInit, DoCheck {
   certificateForm: FormGroup;
   courseIds: any[] = [];
   pageType = 'Add';
-  isButtonEnabled: boolean = false;
+  isButtonEnabled = false;
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -57,11 +57,11 @@ export class CertificationsAddComponent implements OnInit, DoCheck {
     });
   }
 
-  ngDoCheck(){
+  ngDoCheck() {
     if (this.courseTable) {
-      this.courseTable.selection.changed.subscribe(change=>{
+      this.courseTable.selection.changed.subscribe(change => {
         this.isButtonEnabled = this.courseTable.selection.selected.length > 0;
-      })
+      });
     }
   }
 
