@@ -1,7 +1,7 @@
 <mat-list>
   <ng-container *ngFor="let hub of planets.hubs">
     <h3 mat-subheader>{{hub.name}}</h3>
-    <mat-list-item *ngFor="let planet of hub.children" (click)="selectChange(planet)">
+    <mat-list-item *ngFor="let planet of hub.children" [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">
       <div class="action-buttons">
         <mat-checkbox *ngIf="selectMode" [checked]="planet.selected" (click)="$event.preventDefault()"></mat-checkbox>
         <span>{{planet.nameDoc?.name || planet.doc.name}}</span>
@@ -16,7 +16,7 @@
   </ng-container>
   <ng-container *ngIf="planets.sandboxPlanets.length > 0">
     <h3 mat-subheader i18n>Sandbox Planets</h3>
-    <mat-list-item *ngFor="let planet of planets.sandboxPlanets" class="action-button" (click)="selectChange(planet)">
+    <mat-list-item *ngFor="let planet of planets.sandboxPlanets" class="action-button" [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">
       <div class="action-buttons">
         <mat-checkbox *ngIf="selectMode" [checked]="planet.selected" (click)="$event.preventDefault()"></mat-checkbox>
         <span>{{planet.nameDoc?.name || planet.doc.name}}</span>
