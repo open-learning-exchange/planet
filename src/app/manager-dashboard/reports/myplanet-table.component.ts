@@ -24,7 +24,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
   ngOnInit() {
     this.myPlanets.sortingDataAccessor = (item: any, property) => {
       switch (property) {
-        case 'versionName': return (item.version || item.versionName || '').split('.').reduce((v, n) => v + n.padStart(3, '0'), '');
+        case 'versionName': return (item.versionName || item.version || '').split('.').reduce((v, n) => v + n.padStart(3, '0'), '');
         case 'name': return (item.customDeviceName || item.deviceName || '').toLowerCase();
         default: return typeof item[property] === undefined ? '' :
           typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
