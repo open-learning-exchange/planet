@@ -14,7 +14,7 @@ import { NotificationsService } from './notifications.service';
   templateUrl: './notifications.component.html',
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();

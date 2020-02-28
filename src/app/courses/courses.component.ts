@@ -66,8 +66,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   selectedEnrolled = 0;
   selectedLocal = 0;
   courses = new MatTableDataSource();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() isDialog = false;
   @Input() isForm = false;
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
@@ -115,7 +115,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   ]);
   trackById = trackById;
 
-  @ViewChild(PlanetTagInputComponent, { static: false })
+  @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(

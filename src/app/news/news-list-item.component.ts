@@ -25,7 +25,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
-  @ViewChild('content', { static: false }) content;
+  @ViewChild('content') content;
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;

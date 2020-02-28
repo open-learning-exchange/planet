@@ -31,8 +31,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @Output() submissionClick = new EventEmitter<any>();
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   initTable = true;
   statusOptions: any = [
     { text: 'Pending', value: 'pending' },

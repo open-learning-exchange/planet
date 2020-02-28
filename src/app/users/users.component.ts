@@ -27,7 +27,7 @@ import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/r
 })
 export class UsersComponent implements OnInit, OnDestroy {
 
-  @ViewChild('table', { static: false }) usersTable: UsersTableComponent;
+  @ViewChild('table') usersTable: UsersTableComponent;
   users: any[] = [];
   message = '';
   searchValue = '';

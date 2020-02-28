@@ -41,8 +41,8 @@ import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/rep
 export class TeamsComponent implements OnInit, AfterViewInit {
 
   teams = new MatTableDataSource<any>();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   userMembership: any[] = [];
   teamActivities: any[] = [];
   dbName = 'teams';

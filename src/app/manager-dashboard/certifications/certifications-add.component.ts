@@ -21,7 +21,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: any[] = [];
   pageType = 'Add';
   disableRemove = true;
-  @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
+  @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
   constructor(
     private fb: FormBuilder,

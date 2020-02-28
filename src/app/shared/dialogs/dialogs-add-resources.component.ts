@@ -9,8 +9,8 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 })
 export class DialogsAddResourcesComponent implements AfterViewInit {
 
-  @ViewChild(ResourcesComponent, { static: false }) resourcesComponent: ResourcesComponent;
-  @ViewChild(ResourcesAddComponent, { static: false }) resourcesAddComponent: ResourcesAddComponent;
+  @ViewChild(ResourcesComponent) resourcesComponent: ResourcesComponent;
+  @ViewChild(ResourcesAddComponent) resourcesAddComponent: ResourcesAddComponent;
   view: 'resources' | 'resourcesAdd' = 'resources';
   linkInfo: any;
   okDisabled = true;

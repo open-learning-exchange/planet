@@ -8,7 +8,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 })
 export class DialogsAddCoursesComponent implements AfterViewInit {
 
-  @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
+  @ViewChild(CoursesComponent) coursesComponent: CoursesComponent;
   okDisabled = true;
 
   constructor(

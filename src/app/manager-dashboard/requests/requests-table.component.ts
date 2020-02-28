@@ -44,8 +44,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private couchService: CouchService,

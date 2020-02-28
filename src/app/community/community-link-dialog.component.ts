@@ -10,7 +10,7 @@ import { switchMap } from 'rxjs/operators';
 })
 export class CommunityLinkDialogComponent {
 
-  @ViewChild('linkStepper', { static: false }) linkStepper: MatStepper;
+  @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink: { db, title, selector? };
   links: { db, title, selector? }[] = [
     { db: 'teams', title: 'Teams', selector: { type: 'team' } },

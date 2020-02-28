@@ -33,8 +33,8 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
-  @ViewChild('taskTab', { static: false }) taskTab: MatTab;
-  @ViewChild('applicantTab', { static: false }) applicantTab: MatTab;
+  @ViewChild('taskTab') taskTab: MatTab;
+  @ViewChild('applicantTab') applicantTab: MatTab;
   team: any;
   teamId: string;
   members = [];
