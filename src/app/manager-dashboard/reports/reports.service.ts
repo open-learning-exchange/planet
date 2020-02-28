@@ -139,19 +139,19 @@ export class ReportsService {
     }));
   }
 
-  groupResourceVisits(resourceActivites) {
-    return ({
-      byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
-        .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
-      byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
-    });
+  groupResourceVisits(resourceActivities) {
+    return this.groupDocVisits(resourceActivities, 'resourceId');
   }
 
   groupCourseVisits(courseActivites) {
+    return this.groupDocVisits(courseActivites, 'courseId');
+  }
+
+  groupDocVisits(activites, type) {
     return ({
-      byCourse: this.groupBy(courseActivites, [ 'parentCode', 'createdOn', 'courseId' ], { maxField: 'time' })
-        .filter(courseActivity => courseActivity.title !== '' && courseActivity !== undefined),
-      byMonth: this.groupByMonth(this.appendGender(courseActivites), 'time')
+      byDoc: this.groupBy(activites, [ 'parentCode', 'createdOn', type ], { maxField: 'time' })
+        .filter(activity => activity.title !== '' && activity !== undefined),
+      byMonth: this.groupByMonth(this.appendGender(activites), 'time')
     });
   }
 

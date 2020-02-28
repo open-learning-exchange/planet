@@ -27,3 +27,16 @@ export const planetAndParentId = (configuration) => `${configuration.code}@${con
 export const getDomainParams = (configuration) => configuration.planetType === 'community' ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :
   { planetCode: undefined, domain: undefined };
+
+export const setMonths = () => {
+  // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
+  const planetLaunchDate = new Date(2018, 6, 1).valueOf();
+  const now = new Date();
+  return Array(12).fill(1)
+    .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
+    .filter((month: number) => month > planetLaunchDate);
+};
+
+export const activityParams = () => {
+  return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
+};

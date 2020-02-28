@@ -11,8 +11,7 @@ import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { ValidatorService } from '../../validators/validator.service';
-import { attachNamesToPlanets, filterByDate } from './reports.utils';
+import { attachNamesToPlanets, filterByDate, setMonths } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -42,8 +41,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
-    private couchService: CouchService,
-    private validatorService: ValidatorService
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -115,20 +113,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getResourceVisits() {
     this.activityService.getAllActivities('resource_activities', this.activityParams()).subscribe((resourceActivities: any) => {
       this.resourceActivities = resourceActivities;
-      const { byResource, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
-      this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
-      this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
+      const { byDoc, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
+      this.reports.totalResourceViews = byDoc.reduce((total, resource: any) => total + resource.count, 0);
+      this.reports.resources = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
     });
   }
 
   getCourseVisits() {
     this.activityService.getAllActivities('course_activities', this.activityParams()).subscribe((courseActivities: any) => {
-      console.log(courseActivities);
       this.courseActivities = courseActivities;
-      const { byCourse, byMonth } = this.activityService.groupCourseVisits(courseActivities);
-      this.reports.totalCourseViews = byCourse.reduce((total, course: any) => total + course.count, 0);
-      this.reports.courses = byCourse.sort((a, b) => b.count - a.count).slice(0, 5);
+      const { byDoc, byMonth } = this.activityService.groupCourseVisits(courseActivities);
+      this.reports.totalCourseViews = byDoc.reduce((total, course: any) => total + course.count, 0);
+      this.reports.courses = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'courseViewChart' });
     });
   }
@@ -157,7 +154,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const months = this.setMonths();
+    const months = setMonths();
     const genderFilter = (gender: string) =>
       months.map((month) =>
         data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] }
@@ -212,15 +209,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return chartNames[chartName];
   }
 
-  setMonths() {
-    // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
-    const planetLaunchDate = new Date(2018, 6, 1).valueOf();
-    const now = new Date();
-    return Array(12).fill(1)
-      .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
-      .filter((month: number) => month > planetLaunchDate);
-  }
-
   activityParams(): { planetCode, filterAdmin?, fromMyPlanet? } {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
@@ -259,18 +247,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         });
         break;
       case 'resourceViews':
-        this.csvService.exportCSV({
-          data: filterByDate(this.resourceActivities, 'time', dateRange)
-            .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
-          title: 'Resource Views'
-        });
-        break;
       case 'courseViews':
-        this.csvService.exportCSV({
-          data: filterByDate(this.courseActivities, 'time', dateRange)
-            .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
-          title: 'Course Views'
-        });
+        this.exportDocView(reportType, dateRange);
         break;
       case 'summary':
         this.csvService.exportSummaryCSV(
@@ -283,6 +261,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportDocView(reportType, dateRange) {
+    this.csvService.exportCSV({
+      data: filterByDate(reportType === 'courseViews' ? this.courseActivities : this.resourceActivities, 'time', dateRange)
+        .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
+      title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
+    });
   }
 
 }
