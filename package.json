@@ -71,8 +71,8 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "0.803.21",
-    "@angular/cli": "^8.3.21",
+    "@angular-devkit/build-angular": "~0.803.25",
+    "@angular/cli": "^8.3.25",
     "@angular/compiler-cli": "8.2.14",
     "@angular/language-service": "8.2.14",
     "@fortawesome/fontawesome-free": "^5.13.0",
