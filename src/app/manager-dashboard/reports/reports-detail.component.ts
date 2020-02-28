@@ -32,6 +32,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   codeParam = '';
   loginActivities = [];
   resourceActivities = [];
+  courseActivities = [];
   today: Date;
 
   constructor(
@@ -80,6 +81,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getLoginActivities();
       this.getRatingInfo();
       this.getResourceVisits();
+      this.getCourseVisits();
       this.getPlanetCounts(local);
       this.dialogsLoadingService.stop();
     });
@@ -117,6 +119,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.reports.totalResourceViews = byResource.reduce((total, resource: any) => total + resource.count, 0);
       this.reports.resources = byResource.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
+    });
+  }
+
+  getCourseVisits() {
+    this.activityService.getAllActivities('course_activities', this.activityParams()).subscribe((courseActivities: any) => {
+      console.log(courseActivities);
+      this.courseActivities = courseActivities;
+      const { byCourse, byMonth } = this.activityService.groupCourseVisits(courseActivities);
+      this.reports.totalCourseViews = byCourse.reduce((total, course: any) => total + course.count, 0);
+      this.reports.courses = byCourse.sort((a, b) => b.count - a.count).slice(0, 5);
+      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'courseViewChart' });
     });
   }
 
@@ -192,6 +205,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   titleOfChartName(chartName: string) {
     const chartNames = {
       resourceViewChart: 'Resource Views by Month',
+      courseViewChart: 'Course Views by Month',
       visitChart: 'Total Member Visits by Month',
       uniqueVisitChart: 'Unique Member Visits by Month'
     };
@@ -211,7 +225,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'summary') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const fields = [
@@ -251,10 +265,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           title: 'Resource Views'
         });
         break;
+      case 'courseViews':
+        this.csvService.exportCSV({
+          data: filterByDate(this.courseActivities, 'time', dateRange)
+            .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
+          title: 'Course Views'
+        });
+        break;
       case 'summary':
         this.csvService.exportSummaryCSV(
           filterByDate(this.loginActivities, 'loginTime', dateRange),
           filterByDate(this.resourceActivities, 'time', dateRange),
+          filterByDate(this.courseActivities, 'time', dateRange),
           this.planetName
         );
         break;
