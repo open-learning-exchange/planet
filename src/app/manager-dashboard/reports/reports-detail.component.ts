@@ -11,7 +11,7 @@ import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { attachNamesToPlanets, filterByDate, setMonths } from './reports.utils';
+import { attachNamesToPlanets, filterByDate, setMonths, activityParams } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -93,7 +93,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getAllActivities('login_activities', this.activityParams()).subscribe((loginActivities: any) => {
+    this.activityService.getAllActivities('login_activities', activityParams()).subscribe((loginActivities: any) => {
       this.loginActivities = loginActivities;
       const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
       this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
@@ -104,14 +104,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(this.activityParams()).subscribe((averageRatings) => {
+    this.activityService.getRatingInfo(activityParams()).subscribe((averageRatings) => {
       this.reports.resourceRatings = averageRatings.filter(item => item.type === 'resource').slice(0, 5);
       this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
     });
   }
 
   getResourceVisits() {
-    this.activityService.getAllActivities('resource_activities', this.activityParams()).subscribe((resourceActivities: any) => {
+    this.activityService.getAllActivities('resource_activities', activityParams()).subscribe((resourceActivities: any) => {
       this.resourceActivities = resourceActivities;
       const { byDoc, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
       this.reports.totalResourceViews = byDoc.reduce((total, resource: any) => total + resource.count, 0);
@@ -121,7 +121,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseVisits() {
-    this.activityService.getAllActivities('course_activities', this.activityParams()).subscribe((courseActivities: any) => {
+    this.activityService.getAllActivities('course_activities', activityParams()).subscribe((courseActivities: any) => {
       this.courseActivities = courseActivities;
       const { byDoc, byMonth } = this.activityService.groupCourseVisits(courseActivities);
       this.reports.totalCourseViews = byDoc.reduce((total, course: any) => total + course.count, 0);
@@ -207,10 +207,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       uniqueVisitChart: 'Unique Member Visits by Month'
     };
     return chartNames[chartName];
-  }
-
-  activityParams(): { planetCode, filterAdmin?, fromMyPlanet? } {
-    return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
