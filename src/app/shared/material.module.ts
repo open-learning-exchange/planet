@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import {
   MatAutocompleteModule,
@@ -37,6 +37,7 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
 /** Adapts the native JS Date for use with cdk-based components that work with dates. */
+@Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
   getFirstDayOfWeek(): number {
     return 6;
