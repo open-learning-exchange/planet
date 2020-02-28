@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { CertificationsService } from './certifications.service';
-import { sortNumberOrString } from '../../shared/table-helpers';
+import { sortNumberOrString, composeFilterFunctions, filterSpecificFieldsByWord } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
@@ -17,6 +17,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   ];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  filter: string;
 
   constructor(
     private certificationsService: CertificationsService
@@ -24,6 +25,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCertifications();
+    this.certifications.filterPredicate = filterSpecificFieldsByWord([ 'name' ]);
   }
 
   ngAfterViewInit() {
@@ -51,6 +53,15 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
     this.certificationsService.getCertifications().subscribe((certifications: any) => {
       this.certifications.data = certifications;
     });
+  }
+
+  applyFilter(filterValue: string) {
+    this.certifications.filter = filterValue;
+  }
+
+  resetSearch() {
+    this.certifications.filter = '';
+    this.filter = '';
   }
 
 }
