@@ -36,6 +36,7 @@ export const setMonths = () => {
     .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
     .filter((month: number) => month > planetLaunchDate);
 };
-export const activityParams = (): { planetCode, filterAdmin?, fromMyPlanet? } => {
-  return { planetCode: this.planetCode, filterAdmin: true, ...(this.filter ? { fromMyPlanet: this.filter === 'myplanet' } : {}) };
+
+export const activityParams = (planetCode, filter): { planetCode, filterAdmin?, fromMyPlanet? } => {
+  return { planetCode: planetCode, filterAdmin: true, ...(filter ? { fromMyPlanet: filter === 'myplanet' } : {}) };
 };
