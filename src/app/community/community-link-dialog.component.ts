@@ -1,6 +1,7 @@
 import { Component, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatStepper, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';

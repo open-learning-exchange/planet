@@ -11,7 +11,7 @@
  * okClick - Optional.  Function to call when user clicks OK.
  */
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { timer, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 

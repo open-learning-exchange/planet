@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
-import { MatTableDataSource, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';

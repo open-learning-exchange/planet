@@ -1,8 +1,8 @@
 import { Component, Input, ViewChild } from '@angular/core';
 
 import { environment } from '../../../environments/environment';
-import { MatMenuTrigger } from '@angular/material';
-import { MatDialog } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 
 @Component({

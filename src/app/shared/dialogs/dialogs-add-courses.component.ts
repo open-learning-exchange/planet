@@ -1,5 +1,5 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 

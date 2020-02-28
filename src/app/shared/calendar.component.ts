@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { OptionsInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
