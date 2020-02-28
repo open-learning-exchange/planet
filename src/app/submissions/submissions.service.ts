@@ -147,7 +147,7 @@ export class SubmissionsService {
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
       this.courseService.updateProgress({
         courseId: res._id,
-        stepNum: res.steps.findIndex((step: any) => step.exam._id === examId) + 1,
+        stepNum: res.steps.findIndex((step: any) => step.exam && (step.exam._id === examId)) + 1,
         passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
       }, submission.user._id);
     }, error => console.log(error));
