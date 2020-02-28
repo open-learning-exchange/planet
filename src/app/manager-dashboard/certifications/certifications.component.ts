@@ -11,6 +11,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   certifications = new MatTableDataSource();
   selection = new SelectionModel(true, []);
+  emptyData = false;
   displayedColumns = [
     'name',
     'action'
@@ -50,6 +51,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   getCertifications() {
     this.certificationsService.getCertifications().subscribe((certifications: any) => {
       this.certifications.data = certifications;
+      this.emptyData = !this.certifications.data.length;
     });
   }
 

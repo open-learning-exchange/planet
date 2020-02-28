@@ -9,7 +9,7 @@
   <mat-toolbar class="primary-color font-size-1">
     <a i18n mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></a>
   </mat-toolbar>
-  <div class="view-container view-full-height view-table">
+  <div *ngIf="!emptyData; else notFoundMessage" class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Certification Name</mat-header-cell>
@@ -34,4 +34,7 @@
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>
   </div>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No Certifications Found</div>
+  </ng-template>
 </div>
