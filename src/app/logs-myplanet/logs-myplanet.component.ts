@@ -63,9 +63,10 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   checkEmptyLogs() {
-    this.apklogs.forEach(element => { 
-      if (element.children.length)
+    this.apklogs.forEach(element => {
+      if (element.children.length) {
         return false;
+      }
     });
     return true;
   }

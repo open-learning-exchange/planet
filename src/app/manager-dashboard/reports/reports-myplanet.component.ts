@@ -96,9 +96,10 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   checkEmptyPlanet() {
-    this.planets.forEach(element => { 
-      if (element.children.length)
+    this.planets.forEach(element => {
+      if (element.children.length) {
         return false;
+      }
     });
     return true;
   }
