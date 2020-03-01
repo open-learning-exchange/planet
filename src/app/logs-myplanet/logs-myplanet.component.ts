@@ -62,4 +62,12 @@ export class LogsMyPlanetComponent implements OnInit {
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
+  checkEmptyLogs() {
+    this.apklogs.forEach(element => { 
+      if (element.children.length)
+        return false;
+    });
+    return true;
+  }
+
 }
