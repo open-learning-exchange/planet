@@ -1,0 +1,19 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Members</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    {{ course }}
+    <span class="toolbar-fill"></span>
+  </mat-toolbar>
+
+  <ng-container *ngIf="!emptyData; else notFoundMessage">
+    <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="[ 'profile', 'name' ]" linkPrefix="/users/profile" containerClass="view-container view-full-height view-table"></planet-users-table>
+  </ng-container>
+  <ng-template #notFoundMessage>
+    <div class="view-container">No User Found</div>
+  </ng-template>
+</div>
