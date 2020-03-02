@@ -17,7 +17,6 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   ];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  filter: string;
 
   constructor(
     private certificationsService: CertificationsService
@@ -61,7 +60,6 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   resetSearch() {
     this.certifications.filter = '';
-    this.filter = '';
   }
 
 }
