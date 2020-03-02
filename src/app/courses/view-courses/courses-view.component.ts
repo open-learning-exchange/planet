@@ -68,15 +68,18 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   getSubmission(step) {
-    if (step.progress !== undefined) {
-    this.submissionsService.getSubmissions(findDocuments({
-      parentId: step.exam._id + '@' + step.progress.courseId,
-      'user.name': this.userService.get().name
-    })).subscribe(([ submissions ]) => {
-      this.examText = submissions.answers.length > 0 ? 'retake' : 'take';
-    });
-  }
-    this.examText = 'take';
+    if (step.progress !== undefined && step.exam && step.examText === undefined) {
+      this.submissionsService.getSubmissions(findDocuments({
+        parentId: step.exam._id + '@' + step.progress.courseId,
+        'user.name': this.userService.get().name
+      })).subscribe((submissions: any[]) => {
+        step.examText = submissions.some(submission => submission.status === 'pending') ?
+          'continue' :
+          submissions.length > 0 ?
+          'retake' :
+          'take';
+      });
+    }
   }
 
   viewStep() {
