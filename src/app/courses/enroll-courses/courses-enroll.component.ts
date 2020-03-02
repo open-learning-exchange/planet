@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subject, forkJoin, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../courses.service';
@@ -19,8 +19,10 @@ export class CoursesEnrollComponent implements OnDestroy {
   course: any;
   members: any[] = [];
   tableState = new TableState();
+  emptyData = false;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private couchService: CouchService,
     private usersService: UsersService,
@@ -39,12 +41,17 @@ export class CoursesEnrollComponent implements OnDestroy {
       this.course = this.coursesService.getCourseNameFromId(this.courseId);
       this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
         .map((user: any) => this.usersService.fullUserDoc(user));
+      this.emptyData = this.members.length === 0;
     });
   }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  back() {
+    this.router.navigate([ '../..' ], { relativeTo: this.route });
   }
 
 }
