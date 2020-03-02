@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { CertificationsService } from './certifications.service';
-import { sortNumberOrString, composeFilterFunctions, filterSpecificFieldsByWord } from '../../shared/table-helpers';
+import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
