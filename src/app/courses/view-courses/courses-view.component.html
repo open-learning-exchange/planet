@@ -41,7 +41,7 @@
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
-          <mat-expansion-panel hideToggle="true" (opened)="getSubmission(step)">
+          <mat-expansion-panel hideToggle="true" (opened)="getStepSubmission(step)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
