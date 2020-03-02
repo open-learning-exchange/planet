@@ -12,7 +12,7 @@ import { TableState } from '../../users/users-table.component';
   templateUrl: './courses-enroll.component.html'
 })
 
-export class CoursesEnrollComponent implements  OnDestroy {
+export class CoursesEnrollComponent implements OnDestroy {
 
   onDestroy$ = new Subject<void>();
   courseId: string;
@@ -35,7 +35,7 @@ export class CoursesEnrollComponent implements  OnDestroy {
         ]);
       }),
       takeUntil(this.onDestroy$)
-    ).subscribe(([shelfUsers, allUsers]) => {
+    ).subscribe(([ shelfUsers, allUsers ]) => {
       this.course = this.coursesService.getCourseNameFromId(this.courseId);
       this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
         .map((user: any) => this.usersService.fullUserDoc(user));

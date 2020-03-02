@@ -78,8 +78,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.getTotalUsers(local).subscribe(() => {
       this.getLoginActivities();
       this.getRatingInfo();
-      this.getResourceVisits();
-      this.getCourseVisits();
+      this.getDocVisits('resourceActivities');
+      this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
       this.dialogsLoadingService.stop();
     });
@@ -111,25 +111,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  getResourceVisits() {
-    this.activityService.getAllActivities('resource_activities', activityParams(this.planetCode, this.filter))
-    .subscribe((resourceActivities: any) => {
-      this.resourceActivities = resourceActivities;
-      const { byDoc, byMonth } = this.activityService.groupResourceVisits(resourceActivities);
-      this.reports.totalResourceViews = byDoc.reduce((total, resource: any) => total + resource.count, 0);
-      this.reports.resources = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
-      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'resourceViewChart' });
-    });
-  }
-
-  getCourseVisits() {
-    this.activityService.getAllActivities('course_activities', activityParams(this.planetCode, this.filter))
-    .subscribe((courseActivities: any) => {
-      this.courseActivities = courseActivities;
-      const { byDoc, byMonth } = this.activityService.groupCourseVisits(courseActivities);
-      this.reports.totalCourseViews = byDoc.reduce((total, course: any) => total + course.count, 0);
-      this.reports.courses = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
-      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'courseViewChart' });
+  getDocVisits(type) {
+    const params = {
+      courseActivities: { db: 'course_activities', views: 'totalCourseViews', record: 'courses', chartName: 'courseViewChart' },
+      resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
+    }[type];
+    this.activityService.getAllActivities(params.db, activityParams(this.planetCode, this.filter))
+    .subscribe((activities: any) => {
+        this[type] = activities;
+      const { byDoc, byMonth } = this.activityService.groupCourseVisits(activities);
+      this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
+      this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
+      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
     });
   }
 
