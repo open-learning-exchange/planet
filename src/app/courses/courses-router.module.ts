@@ -9,6 +9,7 @@ import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
+import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 
 const routes: Routes = [
   { path: '', component: CoursesComponent },
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'update/exam/:id', component: ExamsAddComponent },
   { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
-  { path: 'myProgress', component: CoursesProgressLearnerComponent }
+  { path: 'myProgress', component: CoursesProgressLearnerComponent },
+  { path: 'enrolled/:id', component: CoursesEnrollComponent }
 ];
 
 @NgModule({
