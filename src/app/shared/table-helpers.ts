@@ -44,7 +44,7 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
 // keys or undefined.
 function getProperty(data: any, fields: string) {
   const propertyArray = fields.split('.');
-  return propertyArray.reduce((obj, prop) => (obj && obj[prop]) ? obj[prop] : undefined, data);
+  return propertyArray.reduce((obj, prop) => (obj && obj[prop] !== undefined) ? obj[prop] : undefined, data);
 }
 
 export const filterDropdowns = (filterObj: any) => {
