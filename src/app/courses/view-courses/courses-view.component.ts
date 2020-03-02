@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -25,6 +26,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   canManage: boolean;
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
+  examText: 'retake' | 'take' = 'take';
 
   constructor(
     private router: Router,
@@ -63,6 +65,18 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  getSubmission(step) {
+    if (step.progress !== undefined) {
+    this.submissionsService.getSubmissions(findDocuments({
+      parentId: step.exam._id + '@' + step.progress.courseId,
+      'user.name': this.userService.get().name
+    })).subscribe(([ submissions ]) => {
+      this.examText = submissions.answers.length > 0 ? 'retake' : 'take';
+    });
+  }
+    this.examText = 'take';
   }
 
   viewStep() {
