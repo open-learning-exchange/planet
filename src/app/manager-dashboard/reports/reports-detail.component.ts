@@ -118,7 +118,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }[type];
     this.activityService.getAllActivities(params.db, activityParams(this.planetCode, this.filter))
     .subscribe((activities: any) => {
-        this[type] = activities;
+      this[type] = activities;
       const { byDoc, byMonth } = this.activityService.groupCourseVisits(activities);
       this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
       this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
