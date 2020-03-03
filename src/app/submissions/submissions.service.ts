@@ -122,9 +122,9 @@ export class SubmissionsService {
     });
   }
 
-  submitGrade(grade, index: number) {
+  submitGrade(grade, index: number, comment) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], gradeTime: this.couchService.datePlaceholder };
-    this.updateGrade(submission, grade, index);
+    this.updateGrade(submission, grade, index, comment);
     const nextQuestion = this.nextQuestion(submission, index, 'grade');
     return this.updateSubmission(submission, false, nextQuestion);
   }
@@ -134,8 +134,9 @@ export class SubmissionsService {
     return close ? -1 : this.findNextQuestion(submission, index + 1, field);
   }
 
-  updateGrade(submission, grade, index) {
+  updateGrade(submission, grade, index, comment?) {
     submission.answers[index].grade = grade;
+    submission.answers[index].comment = comment;
     submission.grade = this.calcTotalGrade(submission);
   }
 
