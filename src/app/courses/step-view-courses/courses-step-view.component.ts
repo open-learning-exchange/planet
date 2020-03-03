@@ -29,6 +29,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   examPassed = false;
   parent = false;
   canManage = false;
+  countActivity = true;
 
   constructor(
     private router: Router,
@@ -46,6 +47,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     ).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
       this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
+      if (this.countActivity) {
+        this.coursesService.courseActivity('visit', course, this.stepNum);
+        this.countActivity = false;
+      }
       this.canManage = this.userService.get().isUserAdmin ||
         course.creator !== undefined &&
         (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
@@ -57,7 +62,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.courseId = params.get('id');
       this.attempts = 0;
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
-      this.coursesService.courseActivity('visit', this.stepNum);
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
   }
@@ -116,6 +120,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   changeStep(direction) {
     this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
     this.resource = undefined;
+    this.countActivity = true;
   }
 
   backToCourseDetail() {
