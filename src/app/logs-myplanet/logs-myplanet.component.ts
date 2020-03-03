@@ -14,6 +14,7 @@ import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils
 export class LogsMyPlanetComponent implements OnInit {
 
   apklogs: any[] = [];
+  isEmpty = true;
   private allPlanets: any[] = [];
   searchValue = '';
   planetType = this.stateService.configuration.planetType;
@@ -65,10 +66,9 @@ export class LogsMyPlanetComponent implements OnInit {
   checkEmptyLogs() {
     this.apklogs.forEach(element => {
       if (element.children.length) {
-        return false;
+        this.isEmpty = false;
       }
     });
-    return true;
   }
 
 }

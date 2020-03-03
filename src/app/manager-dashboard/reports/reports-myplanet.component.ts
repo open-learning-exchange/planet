@@ -19,6 +19,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   private allPlanets: any[] = [];
   searchValue = '';
   planets: any[] = [];
+  isEmpty = true;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
   get childType() {
@@ -72,6 +73,7 @@ export class ReportsMyPlanetComponent implements OnInit {
         myPlanets
       );
       this.planets = this.allPlanets;
+      this.checkEmptyPlanet();
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
@@ -98,10 +100,9 @@ export class ReportsMyPlanetComponent implements OnInit {
   checkEmptyPlanet() {
     this.planets.forEach(element => {
       if (element.children.length) {
-        return false;
+        this.isEmpty = false;
       }
     });
-    return true;
   }
 
 }
