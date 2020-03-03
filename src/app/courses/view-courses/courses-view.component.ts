@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -25,6 +26,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   canManage: boolean;
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
+  examText: 'retake' | 'take' = 'take';
 
   constructor(
     private router: Router,
@@ -65,6 +67,20 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  getStepSubmission(step) {
+    if (step.exam && step.submission === undefined) {
+      this.submissionsService.openSubmission({
+        parentId: step.exam._id + '@' + this.courseDetail._id,
+        parent: step.exam,
+        user: this.userService.get(),
+        type: 'exam' });
+      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+        step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
+        step.submission = submission;
+      });
+    }
+  }
+
   viewStep() {
     const latestStep = this.progress.reduce((stepNum, prog) => {
       return prog.stepNum > stepNum ? prog.stepNum : stepNum;
@@ -79,17 +95,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  goToExam(stepDetail, stepNum, preview = false) {
-    this.submissionsService.openSubmission({
-      parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
-      parent: stepDetail.exam,
-      user: this.userService.get(),
-      type: 'exam' });
-    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
-      const questionNum = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
-      this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
-        { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
-    });
+  goToExam(step, stepNum, preview = false) {
+    const questionNum = this.submissionsService.nextQuestion(step.submission, step.submission.answers.length - 1, 'passed') + 1;
+    this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
+      { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
   }
 
   checkMyCourses(courseId: string) {
