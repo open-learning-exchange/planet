@@ -200,6 +200,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     if (shouldNavigate) {
       this.navigateBack();
+      return;
     }
     this.planetMessageService.showMessage(message);
     if (this.isDestroyed) {
@@ -210,6 +211,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
+    if (this.pageType === 'Add new') {
+      this.router.navigate([ '../update/', this.courseId ], { relativeTo: this.route, replaceUrl: true });
+    }
   }
 
   addStep() {
