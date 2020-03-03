@@ -42,6 +42,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
       this.courseDetail = course;
+      this.coursesService.courseActivity('visit', course);
       this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
         ...step,
         resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
@@ -57,7 +58,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       (params: ParamMap) => {
         this.courseId = params.get('id');
         this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
-        this.coursesService.courseActivity('visit');
       }
     );
   }
