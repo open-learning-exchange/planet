@@ -109,7 +109,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       }
     });
     if (continued) {
-      this.documentInfo = { '_rev': this.coursesService.course._rev, '_id': this.coursesService.course._id };
       this.setFormAndSteps(this.coursesService.course);
       this.submitAddedExam();
     }
