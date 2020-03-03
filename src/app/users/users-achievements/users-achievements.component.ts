@@ -18,7 +18,7 @@ export class UsersAchievementsComponent implements OnInit {
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
-  redirectUrl = '/';
+  redirectUrl = '/myDashboard';
   openAchievementIndex = -1;
 
   constructor(

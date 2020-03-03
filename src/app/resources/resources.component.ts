@@ -253,7 +253,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ this.myView === 'myPersonals' ? '/myDashboard' : '/' ]);
   }
 
   libraryToggle(resourceIds, type) {
