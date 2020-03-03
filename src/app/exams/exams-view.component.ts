@@ -89,7 +89,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.fromSubmission = true;
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
-      this.comment = mode === 'take' ? '' : undefined;
+      this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
     }
   }
