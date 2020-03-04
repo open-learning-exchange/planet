@@ -69,6 +69,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @Input() isDialog = false;
   @Input() isForm = false;
+  @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
   dialogRef: MatDialogRef<DialogsListComponent>;
@@ -78,7 +79,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   courseForm: FormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
-  displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   planetConfiguration = this.stateService.configuration;
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
   gradeOptions: any = constants.gradeLevels;

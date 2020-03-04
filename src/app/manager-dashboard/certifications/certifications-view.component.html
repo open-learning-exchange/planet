@@ -12,7 +12,7 @@
   <div class="view-container view-full-height">
     <mat-tab-group>
       <mat-tab i18n-label label="Course Requirements">
-        <planet-courses *ngIf="certification.courseIds.length > 0" [isForm]="true" [includeIds]="certification.courseIds"></planet-courses>
+        <planet-courses *ngIf="certification.courseIds.length > 0" [displayedColumns] = "[ 'courseTitle', 'info', 'createdDate', 'rating' ]" [isForm]="true" [includeIds]="certification.courseIds"></planet-courses>
       </mat-tab>
       <mat-tab i18n-label label="Certified Members">
         <planet-users-table [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" linkPrefix="/users/profile" containerClass="view-container view-table"></planet-users-table>
