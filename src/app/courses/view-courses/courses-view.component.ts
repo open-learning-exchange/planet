@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -25,6 +26,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   canManage: boolean;
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
+  examText: 'retake' | 'take' = 'take';
 
   constructor(
     private router: Router,
@@ -40,6 +42,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.onDestroy$))
     .subscribe(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
       this.courseDetail = course;
+      this.coursesService.courseActivity('visit', course);
       this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
         ...step,
         resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
@@ -55,7 +58,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       (params: ParamMap) => {
         this.courseId = params.get('id');
         this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
-        this.coursesService.courseActivity('visit');
       }
     );
   }
@@ -63,6 +65,20 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  getStepSubmission(step) {
+    if (step.exam && step.submission === undefined) {
+      this.submissionsService.openSubmission({
+        parentId: step.exam._id + '@' + this.courseDetail._id,
+        parent: step.exam,
+        user: this.userService.get(),
+        type: 'exam' });
+      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+        step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
+        step.submission = submission;
+      });
+    }
   }
 
   viewStep() {
@@ -79,17 +95,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  goToExam(stepDetail, stepNum, preview = false) {
-    this.submissionsService.openSubmission({
-      parentId: stepDetail.exam._id + '@' + this.courseDetail._id,
-      parent: stepDetail.exam,
-      user: this.userService.get(),
-      type: 'exam' });
-    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
-      const questionNum = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
-      this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
-        { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
-    });
+  goToExam(step, stepNum, preview = false) {
+    const questionNum = this.submissionsService.nextQuestion(step.submission, step.submission.answers.length - 1, 'passed') + 1;
+    this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
+      { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
   }
 
   checkMyCourses(courseId: string) {

@@ -225,11 +225,11 @@ export class CoursesService {
     return a.title.localeCompare(b.title);
   }
 
-  courseActivity(type: string, courseStep?: number) {
+  courseActivity(type: string, course: any, courseStep?: number) {
     this.userService.getCurrentSession().pipe(switchMap(currentSession => {
       const data = {
-        'courseId': this.course._id,
-        'title': this.course.courseTitle,
+        'courseId': course._id,
+        'title': course.courseTitle,
         'user': this.userService.get().name,
         type,
         courseStep,

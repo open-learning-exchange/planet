@@ -30,6 +30,7 @@
       <mat-menu #exportMenu="matMenu">
         <button mat-menu-item *ngIf="loginActivities" (click)="openExportDialog('logins')" i18n>Login Report</button>
         <button mat-menu-item *ngIf="resourceActivities" (click)="openExportDialog('resourceViews')" i18n>Resources View Report</button>
+        <button mat-menu-item *ngIf="courseActivities" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
     </mat-toolbar-row>
@@ -38,6 +39,7 @@
     <canvas id="uniqueVisitChart"></canvas>
     <canvas id="visitChart"></canvas>
     <canvas id="resourceViewChart"></canvas>
+    <canvas id="courseViewChart"></canvas>
     <div class="reports-table-container">
       <div>
         <h1 class="mat-title" i18n>Members</h1>
@@ -115,6 +117,20 @@
         <mat-grid-list cols="2" rowHeight="2rem">
           <mat-grid-tile class="label" i18n>Total Courses</mat-grid-tile>
           <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Total Views</mat-grid-tile>
+          <mat-grid-tile>{{reports?.totalCourseViews}}</mat-grid-tile>
+          <mat-grid-tile class="label" i18n>Most Visited</mat-grid-tile>
+          <mat-grid-tile i18n>Total Visits by Course</mat-grid-tile>
+          <ng-container *ngIf="!reports?.courses || reports?.courses.length === 0">
+            <mat-grid-tile colspan="2" i18n>No courses have been visited</mat-grid-tile>
+          </ng-container>
+          <ng-container *ngFor="let course of reports?.courses">
+            <mat-grid-tile class="label">
+              <mat-icon>chevron_right</mat-icon>
+              <a [routerLink]="['/courses/view', course.courseId]">{{course?.max?.title}}</a>
+            </mat-grid-tile>
+            <mat-grid-tile>{{course.count}}</mat-grid-tile>
+          </ng-container>
           <mat-grid-tile class="label" i18n>Highest Rated</mat-grid-tile>
           <mat-grid-tile i18n>Average Rating</mat-grid-tile>
           <ng-container *ngIf="!reports?.courseRatings || reports?.courseRatings.length === 0">

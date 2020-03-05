@@ -110,7 +110,7 @@ export class ReportsService {
   }
 
   getAllActivities(
-    db: 'login_activities' | 'resource_activities',
+    db: 'login_activities' | 'resource_activities' | 'course_activities',
     { planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}
   ) {
     const dateField = db === 'login_activities' ? 'loginTime' : 'time';
@@ -139,11 +139,19 @@ export class ReportsService {
     }));
   }
 
-  groupResourceVisits(resourceActivites) {
+  groupResourceVisits(resourceActivities) {
+    return this.groupDocVisits(resourceActivities, 'resourceId');
+  }
+
+  groupCourseVisits(courseActivites) {
+    return this.groupDocVisits(courseActivites, 'courseId');
+  }
+
+  groupDocVisits(activites, type) {
     return ({
-      byResource: this.groupBy(resourceActivites, [ 'parentCode', 'createdOn', 'resourceId' ], { maxField: 'time' })
-        .filter(resourceActivity => resourceActivity.title !== '' && resourceActivity !== undefined),
-      byMonth: this.groupByMonth(this.appendGender(resourceActivites), 'time')
+      byDoc: this.groupBy(activites, [ 'parentCode', 'createdOn', type ], { maxField: 'time' })
+        .filter(activity => activity.title !== '' && activity !== undefined),
+      byMonth: this.groupByMonth(this.appendGender(activites), 'time')
     });
   }
 

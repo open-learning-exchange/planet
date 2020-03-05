@@ -32,7 +32,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
         this.certification = certification;
         return combineLatest(
           this.coursesService.coursesListener$(),
-          this.usersService.usersListener(),
+          this.usersService.usersListener(true),
           this.coursesService.progressListener$()
         );
       }),
@@ -57,12 +57,8 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
     const certificateCourses = courses
       .filter(course => this.certification.courseIds.indexOf(course._id) > -1)
       .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
-    this.certifiedMembers = users.filter(user => certificateCourses.every(course => {
-      return course.doc.steps.length === course.progress
-        .filter(step => step.userId === user._id && step.passed)
-        .map(step => step.stepNum)
-        .reduce(dedupeShelfReduce, []).length;
-    }));
+    this.certifiedMembers = users
+      .filter(user => certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, user)));
   }
 
 }

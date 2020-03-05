@@ -40,6 +40,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isNewQuestion = true;
   answerCount = 0;
   isComplete = false;
+  comment: string;
 
   constructor(
     private router: Router,
@@ -88,6 +89,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.fromSubmission = true;
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
+      this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
     }
   }
@@ -198,6 +200,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.title = submission.parent.name;
         this.setQuestion(submission.parent.questions);
         this.grade = (ans && ans.grade !== undefined) ? ans.grade : this.grade;
+        this.comment = ans && ans.gradeComment;
       }
       if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
@@ -244,7 +247,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
         return { obs, correctAnswer };
       case 'grade':
-        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1) };
+        return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, this.comment) };
       default:
         return { obs: of({ nextQuestion: this.questionNum + 1 }) };
     }

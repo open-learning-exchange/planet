@@ -40,7 +40,7 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], planetName: string) {
+  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], planetName: string) {
     const options = {
       title: `Summary report for ${planetName}`,
       filename: `Report of ${planetName} on ${new Date().toDateString()}`,
@@ -50,11 +50,12 @@ export class CsvService {
     };
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupResourceVisits(resourceViews).byMonth;
-    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews);
+    const groupedCourseViews = this.reportsService.groupCourseVisits(courseViews).byMonth;
+    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews);
     this.generate(formattedData, options);
   }
 
-  summaryTable(groupedLogins, groupedResourceViews) {
+  summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews) {
     const monthLabels = (data, header: boolean) => data.reduce(
       (csvObj, { date }) => {
         const dateLabel = this.reportsService.monthDataLabels(date);
@@ -72,7 +73,10 @@ export class CsvService {
       ...this.fillRows(this.summaryDataToTable(groupedLogins), headerRow),
       { label: '', ...blankRow },
       { label: 'Resource Views by Month', ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow)
+      ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
+      { label: '', ...blankRow },
+      { label: 'Course Views by Month', ...headerRow },
+      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow)
     ];
   }
 

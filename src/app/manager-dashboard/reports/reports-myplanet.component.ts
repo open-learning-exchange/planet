@@ -8,7 +8,8 @@ import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
@@ -75,23 +76,22 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   myPlanetRequest(hubId) {
     const { planetCode, domain } = getDomainParams(this.configuration);
-    return forkJoin([
-      this.managerService.getChildPlanets(true, planetCode, domain),
-      this.couchService.findAll('myplanet_activities')
-    ]).pipe(switchMap(([ planets, myPlanets ]) => {
-        planets = attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
-        if (hubId) {
-          return this.couchService.findAll('hubs', { 'selector': { 'planetId': hubId } }, { domain })
-          .pipe(switchMap((hubs: any) => {
-            this.hub = hubs[0] || { spokes: [] };
-            const selector = { 'selector': { 'createdOn': { '$in': this.hub.spokes } } };
-            return this.couchService.findAll('myplanet_activities', selector, { domain });
-          }), switchMap((hubActivities: any) => {
-            return of([ planets.filter((p: any) => this.hub.spokes.indexOf(p.doc.code) > -1), myPlanets.concat(hubActivities) ]);
-          }));
-        }
-        return of([ planets, myPlanets ]);
-    }));
+    return (hubId ? this.couchService.findAll('hubs', findDocuments({ 'planetId': hubId }), { domain }) : of([])).pipe(
+      switchMap((hubs: any) => {
+        this.hub = hubs[0] || { spokes: [] };
+        const selector = findDocuments({ 'createdOn': { '$in': this.hub.spokes } });
+        return forkJoin([
+          this.managerService.getChildPlanets(true, planetCode, domain),
+          this.couchService.findAll('myplanet_activities'),
+          hubId ? this.couchService.findAll('myplanet_activities', selector, { domain }) : of([])
+        ]);
+      }),
+      map(([ planets, myPlanets, hubMyPlanets ]) => {
+        const filteredPlanets = attachNamesToPlanets(planets)
+          .filter((planet: any) => planet.doc.docType !== 'parentName' && (!hubId || this.hub.spokes.indexOf(planet.doc.code) > -1));
+        return [ filteredPlanets, myPlanets.concat(hubMyPlanets) ];
+      })
+    );
   }
 
 }

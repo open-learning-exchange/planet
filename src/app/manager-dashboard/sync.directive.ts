@@ -110,12 +110,13 @@ export class SyncDirective {
   }
 
   updateReplicatorUsers() {
+    const userProperties = this.userService.userProperties.filter(prop => prop !== 'requestId');
     return forkJoin([
       this.couchService.findAll('_users', findDocuments(
         { 'isUserAdmin': { '$exists': true }, 'requestId': { '$exists': false } },
-        this.userService.userProperties.filter(prop => prop !== 'requestId')
+        userProperties
       )),
-      this.couchService.findAll('replicator_users', { 'selector': {} })
+      this.couchService.findAll('replicator_users', findDocuments({}, [ ...userProperties, 'couchId', 'planetCode' ]))
     ]).pipe(
       switchMap(([ users, repUsers ]) => {
         const newRepUsers = this.createReplicatorUserDoc(users, repUsers);

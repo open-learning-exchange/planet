@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, DoCheck } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material';
@@ -13,14 +13,13 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 @Component({
   templateUrl: './certifications-add.component.html'
 })
-export class CertificationsAddComponent implements OnInit, DoCheck {
+export class CertificationsAddComponent implements OnInit {
 
   readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup;
   courseIds: any[] = [];
   pageType = 'Add';
-  isButtonEnabled = false;
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -55,14 +54,6 @@ export class CertificationsAddComponent implements OnInit, DoCheck {
         this.courseIds = [];
       }
     });
-  }
-
-  ngDoCheck() {
-    if (this.courseTable) {
-      this.courseTable.selection.changed.subscribe(change => {
-        this.isButtonEnabled = this.courseTable.selection.selected.length > 0;
-      });
-    }
   }
 
   goBack() {
@@ -103,7 +94,6 @@ export class CertificationsAddComponent implements OnInit, DoCheck {
 
   removeCourses() {
     this.courseIds = this.courseIds.filter(id => this.courseTable.selection.selected.indexOf(id) === -1);
-    this.isButtonEnabled = false;
   }
 
 }

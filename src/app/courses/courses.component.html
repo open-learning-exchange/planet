@@ -150,6 +150,10 @@
               <mat-icon>equalizer</mat-icon>
               <span i18n>Progress</span>
             </a>
+            <a mat-menu-item *ngIf="element.canManage" [routerLink]="['/courses/enrolled', element._id]">
+              <mat-icon>person</mat-icon>
+              <span i18n>Enroll List</span>
+            </a>
             <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element.doc)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>

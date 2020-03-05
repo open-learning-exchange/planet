@@ -18,7 +18,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   @Input() color: string;
   @Input() itemData;
   @Input() link;
-  @Input() emptyLink = '/';
+  @Input() emptyLink = [];
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items', { static: false }) itemDiv: ElementRef;
