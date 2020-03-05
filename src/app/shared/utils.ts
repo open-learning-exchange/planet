@@ -45,7 +45,7 @@ export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
 
 export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
   const iterable = map.entries();
-  const keyToArray = ({ value, done }, array: string[]) => {
+  const keyToArray = ({ value, done }: { value: any, done?: boolean }, array: string[]) => {
     if (done) {
       return array;
     }

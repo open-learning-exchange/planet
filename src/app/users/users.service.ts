@@ -192,7 +192,7 @@ export class UsersService {
   deleteUserFromTeams(user) {
     return this.couchService.findAll('teams', { selector: { userId: user._id } }).pipe(
       switchMap(teams => {
-        const docsWithUser = teams.map(doc => ({ ...doc, _deleted: true }));
+        const docsWithUser = teams.map((doc: any) => ({ ...doc, _deleted: true }));
         return this.couchService.bulkDocs('teams', docsWithUser);
       })
     );
