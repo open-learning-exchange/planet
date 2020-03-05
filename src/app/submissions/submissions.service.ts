@@ -136,7 +136,7 @@ export class SubmissionsService {
 
   updateGrade(submission, grade, index, comment?) {
     submission.answers[index].grade = grade;
-    submission.answers[index].comment = comment;
+    submission.answers[index].gradeComment = comment;
     submission.grade = this.calcTotalGrade(submission);
   }
 
