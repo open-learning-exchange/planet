@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: '', component: UsersComponent },
   { path: 'profile/:name', component: UsersProfileComponent },
   { path: 'update/:name', component: UsersUpdateComponent },
-  { path: 'achievements/:name', component: UsersAchievementsComponent },
+  { path: 'profile/:name/achievements', component: UsersAchievementsComponent },
   { path: 'submission', component: UsersUpdateComponent, data: { submission: true } }
 ];
 

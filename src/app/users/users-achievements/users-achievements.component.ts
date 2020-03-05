@@ -18,7 +18,6 @@ export class UsersAchievementsComponent implements OnInit {
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
-  redirectUrl = '/myDashboard';
   openAchievementIndex = -1;
 
   constructor(
@@ -40,7 +39,6 @@ export class UsersAchievementsComponent implements OnInit {
         this.user = currentUser;
         id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
-        this.redirectUrl = '/users/profile/' + name;
         name = name.split('@')[0];
         this.initUser(name, params.get('planet'));
         id = 'org.couchdb.user:' + name + '@' + params.get('planet');
@@ -78,7 +76,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ this.redirectUrl ]);
+    this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
   toggleOpenAchievementIndex(index) {

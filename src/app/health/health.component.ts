@@ -76,7 +76,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   goBack() {
     if (this.router.url.indexOf('profile') === -1) {
-      this.router.navigate([ '/myDashboard' ], { relativeTo: this.route });
+      this.router.navigate([ '..' ], { relativeTo: this.route });
     } else {
       this.router.navigate([ '../../' ], { relativeTo: this.route });
     }

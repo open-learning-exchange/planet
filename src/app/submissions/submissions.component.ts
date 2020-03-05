@@ -128,7 +128,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
-    this.router.navigate([ '/myDashboard' ]);
+    this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
   submissionAction(submission) {

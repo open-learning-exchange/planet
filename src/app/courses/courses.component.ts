@@ -280,7 +280,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+    this.router.navigate([ '..' ], { relativeTo: this.route.parent });
   }
 
   enrollLeaveToggle(courseIds, type) {
