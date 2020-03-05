@@ -32,7 +32,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
         this.certification = certification;
         return combineLatest(
           this.coursesService.coursesListener$(),
-          this.usersService.usersListener(),
+          this.usersService.usersListener(true),
           this.coursesService.progressListener$()
         );
       }),
