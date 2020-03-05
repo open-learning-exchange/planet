@@ -4,9 +4,11 @@ import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
-import { catchError } from 'rxjs/operators';
-import { of, throwError } from 'rxjs';
+import { catchError, auditTime } from 'rxjs/operators';
+import { throwError, combineLatest } from 'rxjs';
 import { StateService } from '../../shared/state.service';
+import { CoursesService } from '../../courses/courses.service';
+import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -20,6 +22,7 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   redirectUrl = '/';
   openAchievementIndex = -1;
+  certifications: any[] = [];
 
   constructor(
     private couchService: CouchService,
@@ -28,7 +31,9 @@ export class UsersAchievementsComponent implements OnInit {
     private route: ActivatedRoute,
     private planetMessageService: PlanetMessageService,
     private usersAchievementsService: UsersAchievementsService,
-    private stateService: StateService
+    private stateService: StateService,
+    private coursesService: CoursesService,
+    private certificationsService: CertificationsService
   ) { }
 
   ngOnInit() {
@@ -50,6 +55,12 @@ export class UsersAchievementsComponent implements OnInit {
       }
       this.initAchievements(id);
     });
+    combineLatest([
+      this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
+    ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
+      this.setCertifications(courses, progress, certifications);
+    });
+    this.coursesService.requestCourses();
   }
 
   initAchievements(id) {
@@ -88,6 +99,15 @@ export class UsersAchievementsComponent implements OnInit {
   isClickable(achievement) {
     return (achievement.resources.length > 0
             || achievement.description.length > 0);
+  }
+
+  setCertifications(courses = [], progress = [], certifications = []) {
+    this.certifications = certifications.filter(certification => {
+      const certificateCourses = courses
+        .filter(course => certification.courseIds.indexOf(course._id) > -1)
+        .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
+      return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
+    });
   }
 
 }
