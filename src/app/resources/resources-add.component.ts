@@ -221,8 +221,11 @@ export class ResourcesAddComponent implements OnInit {
       file,
       { newTags: this.tags.value, existingTags: this.existingResource.tags }
     ).pipe(
-      switchMap(([ res ]) => this.couchService.get(`resources/${res.id}`)),
-      switchMap(() => resourceInfo._rev ? of({}) : this.resourcesService.sendResourceNotification())
+      switchMap(([ res ]) => forkJoin([
+        this.couchService.get(`resources/${res.id}`),
+        resourceInfo._rev ? of({}) : this.resourcesService.sendResourceNotification()
+      ])),
+      switchMap(([ resource, notifications ]) => of(resource))
     );
   }
 
