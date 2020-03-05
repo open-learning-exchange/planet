@@ -31,11 +31,11 @@ export class DashboardComponent implements OnInit {
   leaderIds = [];
 
   myLifeItems: any[] = [
-    { firstLine: 'my', title: 'Submissions', link: '/submissions', authorization: 'leader,manager', badge: this.examsCount },
-    { firstLine: 'my', title: 'Personals', link: '/myPersonals' },
-    { firstLine: 'my', title: 'Achievements', link: '/myAchievements' },
-    { firstLine: 'our', title: 'News', link: '/news' },
-    { firstLine: 'my', title: 'Surveys', link: '/mySurveys', badge: this.surveysCount }
+    { firstLine: 'my', title: 'Submissions', link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { firstLine: 'my', title: 'Personals', link: 'myPersonals' },
+    { firstLine: 'my', title: 'Achievements', link: 'myAchievements' },
+    { firstLine: 'our', title: 'News', link: 'news' },
+    { firstLine: 'my', title: 'Surveys', link: 'mySurveys', badge: this.surveysCount }
   ];
 
   constructor(
@@ -74,7 +74,7 @@ export class DashboardComponent implements OnInit {
       && this.stateService.configuration.planetType === 'community'
       && this.myLifeItems.findIndex(item => item.title === 'Health') === -1
     ) {
-      this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: '/myHealth' });
+      this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: 'myHealth' });
     }
 
   }
