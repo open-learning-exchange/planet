@@ -43,7 +43,7 @@ export class CoursesEnrollComponent implements OnDestroy {
       this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
         .map((user: any) => ({
           ...this.usersService.fullUserDoc(user),
-          activity: this.userProgress(progresses.filter(progress => progress.userId === user._id))
+          activity: this.userProgress(progresses.filter((progress: any) => progress.userId === user._id))
         }));
       this.emptyData = this.members.length === 0;
     });
