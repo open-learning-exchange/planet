@@ -1,5 +1,5 @@
 
-<mat-toolbar>
+<mat-toolbar *ngIf="!isDialog">
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -32,8 +32,8 @@
   </mat-form-field>
 </mat-toolbar>
 
-<div class="space-container primary-link-hover">
-  <div class="view-container view-full-height no-toolbar view-table" *ngIf="!emptyData; else notFoundMessage">
+<div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
+  <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>

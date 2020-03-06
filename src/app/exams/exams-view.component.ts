@@ -8,6 +8,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   selector: 'planet-exams-view',
@@ -17,9 +18,11 @@ import { CustomValidators } from '../validators/custom-validators';
 
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
-  @Input() previewMode = false;
   @Input() isDialog = false;
   @Input() exam: any;
+  @Input() submission: any;
+  @Input() mode: 'take' | 'grade' | 'view' = 'take';
+  previewMode = false;
   onDestroy$ = new Subject<void>();
   question: any = { header: '', body: '', type: '', choices: [] };
   @Input() questionNum = 0;
@@ -28,7 +31,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   answer = new FormControl(null, this.answerValidator);
   statusMessage = '';
   spinnerOn = true;
-  mode = 'take';
   title = '';
   grade;
   submissionId: string;
@@ -55,10 +57,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.setCourseListener();
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.previewMode = params.get('preview') === 'true' || this.previewMode;
+      this.previewMode = params.get('preview') === 'true' || this.isDialog;
       this.questionNum = +params.get('questionNum') || this.questionNum;
       if (this.previewMode) {
-        (this.exam ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
+        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
           this.exam = this.exam || res;
           this.setExamPreview();
         });
@@ -79,6 +81,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const courseId = params.get('id');
     const submissionId = params.get('submissionId');
     const mode = params.get('mode');
+    this.mode = mode || this.mode;
     this.answer.setValue(null);
     this.spinnerOn = true;
     if (courseId) {
@@ -97,7 +100,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setExamPreview() {
     this.grade = 0;
     this.statusMessage = '';
-    this.setQuestion(this.exam.questions);
+    const exam = this.submission ? this.submission.parent : this.exam;
+    this.setQuestion(exam.questions);
+    if (this.submission) {
+      this.submittedBy = this.submission.user.name;
+      this.updatedOn = this.submission.lastUpdateTime;
+      this.setViewAnswerText(this.submission.answers[this.questionNum - 1]);
+    }
   }
 
   nextQuestion(nextClicked: boolean = false) {
@@ -131,7 +140,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   moveQuestion(direction: number) {
-    if (this.previewMode) {
+    if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
       this.answer.setValue(null);
@@ -160,10 +169,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.isNewQuestion = true;
   }
 
-  setTakingExam(exam, parentId, type, title) {
+  setTakingExam(exam, parentId, type) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
-    this.title = title;
     this.submissionsService.openSubmission({
       parentId,
       parent: exam,
@@ -184,7 +192,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       // To be readable by non-technical people stepNum & questionNum param will start at 1
       const step = course.steps[this.stepNum - 1];
       const type = this.examType;
-      this.setTakingExam(step[type], step[type]._id + '@' + course._id, type, step.stepTitle);
+      this.title = step.stepTitle;
+      this.setTakingExam(step[type], step[type]._id + '@' + course._id, type);
     });
   }
 
@@ -205,7 +214,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
       } else if (this.mode !== 'take') {
-        this.answer.setValue(Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value);
+        this.setViewAnswerText(ans);
       }
       this.isNewQuestion = false;
       if ((this.maxQuestions - 1) === this.answerCount) {
@@ -281,6 +290,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return CustomValidators.required(ac);
     }
     return ac.value !== null ? null : { required: true };
+  }
+
+  setViewAnswerText(answer: any) {
+    this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
+    this.grade = answer.grade;
   }
 
 }

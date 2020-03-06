@@ -4,7 +4,7 @@
   <span class="toolbar-fill"></span>
 </mat-toolbar>
 
-<div class="space-container">
+<div [ngClass]="{ 'space-container': !isDialog }">
   <mat-toolbar class="primary-color font-size-1">
     <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
     <span>
@@ -15,7 +15,7 @@
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(true)" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
-  <div class="view-container view-full-height">
+  <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     <span class="mat-h2">{{question.title}}</span>
     <td-markdown [content]="question.body"></td-markdown>
     <div [ngSwitch]="mode">
@@ -56,6 +56,11 @@
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
         <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+        <ng-container *ngIf="grade">
+          <p><b i18n>Grade:</b></p>
+          <p *ngIf="grade===1" i18n>Correct</p>
+          <p *ngIf="grade===0" i18n>Incorrect</p>
+        </ng-container>
       </ng-container>
     </div>
     <div class="v-align-center">
