@@ -295,6 +295,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setViewAnswerText(answer: any) {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
     this.grade = answer.grade;
+    this.comment = answer.gradeComment;
   }
 
 }

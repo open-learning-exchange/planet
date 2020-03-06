@@ -56,10 +56,14 @@
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
         <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
-        <ng-container *ngIf="grade">
+        <ng-container *ngIf="grade>=0">
           <p><b i18n>Grade:</b></p>
           <p *ngIf="grade===1" i18n>Correct</p>
           <p *ngIf="grade===0" i18n>Incorrect</p>
+        </ng-container>
+        <ng-container *ngIf="comment">
+          <p><b i18n>Feedback:</b></p>
+          <td-markdown [content]="comment"></td-markdown>
         </ng-container>
       </ng-container>
     </div>
