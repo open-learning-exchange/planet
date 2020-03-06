@@ -174,4 +174,11 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  routeToAssignee(assignedTo: string) {
+    this.router.navigate([ '/users/profile', assignedTo ]);
+    if (this.isDialog) {
+      this.dialogRef.close();
+    }
+  }
+
 }
