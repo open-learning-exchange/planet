@@ -71,12 +71,12 @@
                 <span i18n>The test has</span>
                 {{ ' ' + step?.exam.questions?.length + ' '}}
                 <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
+                {{' '}}
               </span>
               <span *ngIf= "step?.survey?.questions.length > 0">
-                <span i18n>{step.survey.questions.length, plural, =1 {There is} other {There are}}</span>
+                <span i18n>The survey has</span>
                 {{ ' ' + step?.survey?.questions.length + ' '}}
-                <span i18n>{step.survey.questions.length, plural, =1 {survey} other {surveys}}.</span>
-                {{' '}}
+                <span i18n>{step.survey.questions.length, plural, =1 {question} other {questions}}.</span>
               </span>
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
