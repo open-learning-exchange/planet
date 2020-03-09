@@ -19,7 +19,7 @@
 <planet-news-list-item *ngFor="let item of displayedItems; trackBy: trackById"
   [item]="item"
   [replyObject]="replyObject"
-  [editable]="editable"
+  [editable]="editable || item.public === true"
   [shareTarget]="shareTarget"
   (changeReplyViewing)="showReplies($event)"
   (updateNews)="openUpdateDialog($event)"
