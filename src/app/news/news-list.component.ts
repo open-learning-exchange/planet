@@ -63,7 +63,9 @@ export class NewsListComponent implements OnChanges {
     this.showReplies(this.items.find(item => item._id === this.replyViewing.doc.replyTo));
   }
 
-  openUpdateDialog({ title, placeholder, initialValue = '', news = {} }) {
+  openUpdateDialog(
+    { title, placeholder, initialValue = '', news = {} }: { title: string, placeholder: string, initialValue?: string, news?: any }
+  ) {
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
@@ -75,7 +77,7 @@ export class NewsListComponent implements OnChanges {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          this.postNews(news, newNews);
+          this.postNews({ ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId) }, newNews);
         }
       },
       autoFocus: true
@@ -84,7 +86,7 @@ export class NewsListComponent implements OnChanges {
 
   postNews(oldNews, newNews) {
     this.newsService.postNews(
-      { ...oldNews, ...newNews, viewableBy: this.viewableBy, viewableId: this.viewableId },
+      { ...oldNews, ...newNews },
       oldNews._id ? this.editSuccessMessage : 'Reply has been posted successfully.'
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
