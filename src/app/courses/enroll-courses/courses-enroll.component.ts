@@ -43,21 +43,17 @@ export class CoursesEnrollComponent implements OnDestroy {
       this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
         .map((user: any) => ({
           ...this.usersService.fullUserDoc(user),
-          activity: this.userProgress(progresses.filter((progress: any) => progress.userId === user._id))
+          activityDates: this.userProgress(progresses.filter((progress: any) => progress.userId === user._id))
         }));
       this.emptyData = this.members.length === 0;
     });
   }
 
   userProgress(progresses) {
-    return progresses.reduce((activity, progress) => {
-      return ({
-        startDate: (activity.startDate === undefined || activity.startDate > progress.createdDate)
-          ? progress.createdDate : activity.startDate,
-        recentDate: (activity.recentDate === undefined || activity.recentDate < progress.updatedDate)
-          ? progress.updatedDate : activity.recentDate
-      });
-    }, { startDate: undefined, recentDate: undefined });
+    return progresses.reduce((activityDates, progress) => ({
+      createdDate: Math.min(progress.createdDate, activityDates.createdDate),
+      updatedDate: Math.max(progress.updatedDate, activityDates.updatedDate)
+    }));
   }
 
   ngOnDestroy() {
