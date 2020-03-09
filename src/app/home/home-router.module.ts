@@ -13,7 +13,7 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 
-function dashboardPath(route): string {
+export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
 }
 
