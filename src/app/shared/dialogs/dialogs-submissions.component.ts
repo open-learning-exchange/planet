@@ -4,7 +4,8 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 @Component({
   template: `
     <mat-dialog-content>
-      <planet-submissions *ngIf="view==='list'" [isDialog]="true" [parentId]="data.parentId" (submissionClick)="showSubmission($event)"></planet-submissions>
+      <planet-submissions *ngIf="view==='list'" [isDialog]="true" [parentId]="data.parentId" (submissionClick)="showSubmission($event)">
+      </planet-submissions>
       <ng-container *ngIf="view==='submission'">
         <planet-exams-view [isDialog]="true" [submission]="submission" [questionNum]="1" mode="view"></planet-exams-view>
       </ng-container>

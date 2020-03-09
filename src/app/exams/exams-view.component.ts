@@ -263,13 +263,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
+    const setSelectMultipleAnswer = (answers: any[]) => {
+      answers.forEach(ans => {
+        this.setAnswer({ checked: true }, ans);
+      });
+    };
     this.answer.setValue(null);
     if (!answer.value) {
       return;
     }
     switch (this.question.type) {
       case 'selectMultiple':
-        this.setSelectMultipleAnswer(answer.value);
+        setSelectMultipleAnswer(answer.value);
         break;
       case 'select':
         this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
@@ -277,12 +282,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       default:
         this.answer.setValue(answer.value);
     }
-  }
-
-  setSelectMultipleAnswer(answers: any[]) {
-    answers.forEach(answer => {
-      this.setAnswer({ checked: true }, answer);
-    });
   }
 
   answerValidator(ac: AbstractControl) {
