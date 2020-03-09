@@ -13,6 +13,8 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 
+const dashboardPath = (route) => `${myDashboardRoute}/${route}`;
+
 const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
@@ -37,35 +39,35 @@ const routes: Routes = [
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: myDashboardRoute, component: DashboardComponent },
       {
-        path: `${myDashboardRoute}/mySurveys`,
+        path: dashboardPath('mySurveys'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule), data: { mySurveys: true }
       },
-      { path: `${myDashboardRoute}/news`, component: NewsComponent },
+      { path: dashboardPath('news'), component: NewsComponent },
       {
-        path: `${myDashboardRoute}/submissions`,
+        path: dashboardPath('submissions'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule)
       },
       {
-        path: `${myDashboardRoute}/submissions/:type`,
+        path: dashboardPath('submissions/:type'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule)
       },
       {
-        path: `${myDashboardRoute}/myTeams`,
+        path: dashboardPath('myTeams'),
         loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { myTeams: true }
       },
-      { path: `${myDashboardRoute}/myAchievements`, component: UsersAchievementsComponent },
-      { path: `${myDashboardRoute}/myAchievements/update`, component: UsersAchievementsUpdateComponent },
-      { path: `${myDashboardRoute}/myHealth`, loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
+      { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
+      { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent },
+      { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       {
-        path: `${myDashboardRoute}/myCourses`,
+        path: dashboardPath('myCourses'),
         loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true }
       },
       {
-        path: `${myDashboardRoute}/myLibrary`,
+        path: dashboardPath('myLibrary'),
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myLibrary' }
       },
       {
-        path: `${myDashboardRoute}/myPersonals`,
+        path: dashboardPath('myPersonals'),
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
       }
     ]
