@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material';
@@ -13,13 +13,14 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 @Component({
   templateUrl: './certifications-add.component.html'
 })
-export class CertificationsAddComponent implements OnInit {
+export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
   certificateForm: FormGroup;
   courseIds: any[] = [];
   pageType = 'Add';
+  disableRemove = true;
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -29,7 +30,8 @@ export class CertificationsAddComponent implements OnInit {
     private dialog: MatDialog,
     private certificationsService: CertificationsService,
     private planetMessageService: PlanetMessageService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.certificateForm = this.fb.group({ name: [
       '',
@@ -54,6 +56,14 @@ export class CertificationsAddComponent implements OnInit {
         this.courseIds = [];
       }
     });
+  }
+
+  ngAfterViewChecked() {
+    const disableRemove = !this.courseTable || !this.courseTable.selection.selected.length;
+    if (this.disableRemove !== disableRemove) {
+      this.disableRemove = disableRemove;
+      this.cdRef.detectChanges();
+    }
   }
 
   goBack() {
