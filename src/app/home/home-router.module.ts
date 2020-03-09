@@ -13,7 +13,9 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 
-const dashboardPath = (route) => `${myDashboardRoute}/${route}`;
+function dashboardPath(route): string {
+  return `${myDashboardRoute}/${route}`;
+}
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
