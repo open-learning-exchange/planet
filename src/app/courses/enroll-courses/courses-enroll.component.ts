@@ -33,16 +33,27 @@ export class CoursesEnrollComponent implements OnDestroy {
         this.courseId = paramMap.get('id');
         return forkJoin([
           this.couchService.findAll('shelf', { 'selector': { 'courseIds': { '$elemMatch': { '$eq': this.courseId } } } }),
-          this.usersService.getAllUsers()
+          this.usersService.getAllUsers(),
+          this.coursesService.findProgress([ this.courseId ], { allUsers : true })
         ]);
       }),
       takeUntil(this.onDestroy$)
-    ).subscribe(([ shelfUsers, allUsers ]) => {
+    ).subscribe(([ shelfUsers, allUsers, progresses ]) => {
       this.course = this.coursesService.getCourseNameFromId(this.courseId);
       this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
-        .map((user: any) => this.usersService.fullUserDoc(user));
+        .map((user: any) => ({
+          ...this.usersService.fullUserDoc(user),
+          activityDates: this.userProgress(progresses.filter((progress: any) => progress.userId === user._id))
+        }));
       this.emptyData = this.members.length === 0;
     });
+  }
+
+  userProgress(progresses) {
+    return progresses.reduce((activityDates, progress) => ({
+      createdDate: Math.min(progress.createdDate, activityDates.createdDate),
+      updatedDate: Math.max(progress.updatedDate, activityDates.updatedDate)
+    }));
   }
 
   ngOnDestroy() {

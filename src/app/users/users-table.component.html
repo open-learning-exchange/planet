@@ -41,6 +41,14 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Login</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.lastLogin | date: 'mediumDate'}}</mat-cell>
     </ng-container>
+    <ng-container matColumnDef="startDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Date Started</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.activityDates.createdDate | date: 'mediumDate'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="recentDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Most Recent Activity</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.activityDates.updatedDate | date: 'mediumDate'}}</mat-cell>
+    </ng-container>
     <ng-container matColumnDef="contact">
       <mat-header-cell *matHeaderCellDef i18n>Emergency Contact</mat-header-cell>
       <mat-cell *matCellDef="let element">
