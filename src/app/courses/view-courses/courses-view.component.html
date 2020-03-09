@@ -55,7 +55,7 @@
               <mat-icon *ngIf="step.progress && !step.progress.passed">rotate_right</mat-icon>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
-            <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
+            <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0; else contentMessage" i18n>
               There is no content for this step.
             </div>
             <ng-template #contentMessage>
@@ -71,6 +71,12 @@
                 <span i18n>The test has</span>
                 {{ ' ' + step?.exam.questions?.length + ' '}}
                 <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
+                {{' '}}
+              </span>
+              <span *ngIf= "step?.survey?.questions.length > 0">
+                <span i18n>The survey has</span>
+                {{ ' ' + step?.survey?.questions.length + ' '}}
+                <span i18n>{step.survey.questions.length, plural, =1 {question} other {questions}}.</span>
               </span>
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
