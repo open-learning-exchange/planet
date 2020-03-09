@@ -21,6 +21,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UsersModule } from '../users/users.module';
+import { CoursesIconComponent } from './view-courses/cousers-icon.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { UsersModule } from '../users/users.module';
     CoursesProgressLearnerComponent,
     CoursesProgressBarComponent,
     CoursesProgressChartComponent,
-    CoursesEnrollComponent
+    CoursesEnrollComponent,
+    CoursesIconComponent
   ],
   exports: [ CoursesComponent ]
 })

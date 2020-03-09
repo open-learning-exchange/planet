@@ -47,12 +47,12 @@
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
-                <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
-                <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
-                <mat-icon *ngIf="step?.survey?.questions.length">description</mat-icon>
+                <mat-icon *ngIf="step?.exam?.questions.length"><planet-course-icon [icon]='assignment'></planet-course-icon>assignment</mat-icon>
+                <mat-icon *ngIf="step?.resources?.length"><planet-course-icon [icon]='attach_file'></planet-course-icon>attach_file</mat-icon>
+                <mat-icon *ngIf="step?.survey?.questions.length"><planet-course-icon [icon]='description'></planet-course-icon>description</mat-icon>
               </mat-panel-description>
-              <mat-icon *ngIf="step.progress && step.progress.passed">done</mat-icon>
-              <mat-icon *ngIf="step.progress && !step.progress.passed">rotate_right</mat-icon>
+              <mat-icon *ngIf="step.progress && step.progress.passed"><planet-course-icon [icon]='done'></planet-course-icon>done</mat-icon>
+              <mat-icon *ngIf="step.progress && !step.progress.passed"><planet-course-icon [icon]='rotate_right'></planet-course-icon>rotate_right</mat-icon>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
             <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
