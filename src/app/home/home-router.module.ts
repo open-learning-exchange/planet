@@ -11,6 +11,11 @@ import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component'
 import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
+import { myDashboardRoute } from './router-constants';
+
+export function dashboardPath(route): string {
+  return `${myDashboardRoute}/${route}`;
+}
 
 const routes: Routes = [
   { path: '', component: HomeComponent,
@@ -34,34 +39,37 @@ const routes: Routes = [
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
-      { path: 'myDashboard', component: DashboardComponent },
+      { path: myDashboardRoute, component: DashboardComponent },
       {
-        path: 'myDashboard/mySurveys',
+        path: dashboardPath('mySurveys'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule), data: { mySurveys: true }
       },
-      { path: 'myDashboard/news', component: NewsComponent },
-      { path: 'myDashboard/submissions', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) },
+      { path: dashboardPath('news'), component: NewsComponent },
       {
-        path: 'myDashboard/submissions/:type',
+        path: dashboardPath('submissions'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule)
       },
       {
-        path: 'myDashboard/myTeams',
+        path: dashboardPath('submissions/:type'),
+        loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule)
+      },
+      {
+        path: dashboardPath('myTeams'),
         loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { myTeams: true }
       },
-      { path: 'myDashboard/myAchievements', component: UsersAchievementsComponent },
-      { path: 'myDashboard/myAchievements/update', component: UsersAchievementsUpdateComponent },
-      { path: 'myDashboard/myHealth', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
+      { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
+      { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent },
+      { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       {
-        path: 'myDashboard/myCourses',
+        path: dashboardPath('myCourses'),
         loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true }
       },
       {
-        path: 'myDashboard/myLibrary',
+        path: dashboardPath('myLibrary'),
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myLibrary' }
       },
       {
-        path: 'myDashboard/myPersonals',
+        path: dashboardPath('myPersonals'),
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
       }
     ]

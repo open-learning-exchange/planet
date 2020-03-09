@@ -3,7 +3,7 @@
   <mat-action-list>
     <button mat-list-item
       *ngFor="let survey of surveys; last as last"
-      [routerLink]="[ '/mySurveys/exam', { submissionId: survey._id, questionNum: survey.nextQuestion, status: 'pending', mode: 'take' } ]"
+      [routerLink]="[ myDashboardRoute, 'mySurveys', 'exam', { submissionId: survey._id, questionNum: survey.nextQuestion, status: 'pending', mode: 'take' } ]"
       mat-dialog-close>
       <span>{{ survey.parent.name }}</span>
       <span class="toolbar-fill"></span>
