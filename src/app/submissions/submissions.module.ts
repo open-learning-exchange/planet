@@ -22,6 +22,9 @@ const routes: Routes = [
 export class SubmissionsRouterModule {}
 
 @NgModule({
+  exports: [
+    SubmissionsComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns, dropdownsFill } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,6 +10,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 @Component({
+  selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
   styles: [ `
     /* Column Widths */
@@ -20,6 +21,9 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
+  @Input() isDialog = false;
+  @Input() parentId: string;
+  @Output() submissionClick = new EventEmitter<any>();
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -49,19 +53,18 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngOnInit() {
-    this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
-    let query: any;
+    this.setMode();
     this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
     if (this.mode === 'survey') {
       this.filter['type'] = 'survey';
-      query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
+    } else if (this.mode === 'review') {
+      this.filter.status = '';
     }
     if (this.filter['type'] === 'survey') {
       this.filter['status'] = '';
     }
-    this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((submissions) => {
+    this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions) => {
       submissions = submissions.filter(data => data.user).reduce((sList, s1) => {
         const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
         if (!s1.user._id || sIndex === -1) {
@@ -80,7 +83,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.applyFilter('');
       this.emptyData = !this.submissions.filteredData.length;
     });
-    this.submissionsService.updateSubmissions({ query });
+    this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
   }
 
@@ -95,6 +98,24 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setMode() {
+    this.mode = this.route.snapshot.data.mySurveys === true ?
+      'survey' :
+      this.parentId ?
+      'review' :
+      'grade';
+  }
+
+  submissionQuery() {
+    switch (this.mode) {
+      case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
+      case 'review': return findDocuments({
+        'user.name': this.userService.get().name, parentId: this.parentId, status: { '$ne': 'pending' }
+      });
+      default: return undefined;
+    }
   }
 
   setupTable() {
@@ -132,6 +153,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   submissionAction(submission) {
+    if (this.isDialog) {
+      this.submissionClick.emit(submission);
+      return;
+    }
     if (submission.status !== 'pending' || this.mode === 'survey') {
       this.router.navigate([
         './exam',
