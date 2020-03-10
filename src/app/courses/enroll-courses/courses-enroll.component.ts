@@ -51,9 +51,9 @@ export class CoursesEnrollComponent implements OnDestroy {
 
   userProgress(progresses) {
     return progresses.reduce((activityDates, progress) => ({
-      createdDate: Math.min(progress.createdDate, activityDates.createdDate),
-      updatedDate: Math.max(progress.updatedDate, activityDates.updatedDate)
-    }));
+      createdDate: Math.min(progress.createdDate, activityDates.createdDate || progress.createdDate),
+      updatedDate: Math.max(progress.updatedDate, activityDates.updatedDate || progress.updatedDate)
+    }), { createdDate: undefined, updatedDate: undefined });
   }
 
   ngOnDestroy() {
