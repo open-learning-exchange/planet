@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'planet-course-icon',
@@ -10,8 +10,12 @@ import { Component, Input } from '@angular/core';
     <span *ngIf="icon === rotate_right" matTooltip= "This step is not complet."></span>
   `
 })
-export class CoursesIconComponent {
+export class CoursesIconComponent implements OnInit {
 
   @Input() icon: string;
+
+  ngOnInit() {
+    console.log(this.icon);
+  }
 
 }
