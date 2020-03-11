@@ -12,7 +12,7 @@
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
             </ng-container>
           </h3>
-          <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)"></planet-news-list>
+          <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
         </mat-tab>
         <mat-tab i18n-label label="Community Leaders">
           <div class="card-grid">

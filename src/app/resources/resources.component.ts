@@ -81,6 +81,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     ]
   );
   trackById = trackById;
+  initialSort = '';
 
   @ViewChild(PlanetTagInputComponent, { static: false })
   private tagInputComponent: PlanetTagInputComponent;
@@ -132,6 +133,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
 
   setupList(resourcesRes, myLibrarys) {

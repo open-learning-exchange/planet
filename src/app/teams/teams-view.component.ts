@@ -127,13 +127,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initTeam(teamId: string) {
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [ { viewableBy: 'teams', viewableId: teamId }, { viewIn: { '$elemMatch': { '_id': teamId, section: 'teams' } } } ]
-      },
-      viewId: teamId
-    });
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(news => this.news = news.map(post => ({
+        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+      })));
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
@@ -156,6 +153,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
+      this.requestTeamNews(teamId);
     });
   }
 
@@ -169,6 +167,23 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(() => {
       this.leader = '';
       this.userStatus = 'member';
+    });
+  }
+
+  requestTeamNews(teamId) {
+    const showAll = this.userStatus === 'member' || this.team.public === true;
+    this.newsService.requestNews({
+      selectors: {
+        '$or': [
+          ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
+          {
+            viewIn: { '$elemMatch': {
+              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            } }
+          }
+        ],
+      },
+      viewId: teamId
     });
   }
 
@@ -466,7 +481,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams' } ],
+      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message

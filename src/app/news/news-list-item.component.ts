@@ -70,7 +70,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
       news: {
         replyTo: news._id,
         messagePlanetCode: news.messagePlanetCode,
-        messageType: news.messageType
+        messageType: news.messageType,
+        viewIn: news.viewIn
       }
     });
     this.sendNewsNotifications(news);

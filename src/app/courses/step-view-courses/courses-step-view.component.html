@@ -12,6 +12,14 @@
         mat-raised-button
         color="accent"
         class="margin-lr-10"
+        *ngIf="attempts > 0"
+        (click)="openReviewDialog()">
+        Review Attempts
+      </a>
+      <a
+        mat-raised-button
+        color="accent"
+        class="margin-lr-10"
         *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
         (click)="goToExam()">
         {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}

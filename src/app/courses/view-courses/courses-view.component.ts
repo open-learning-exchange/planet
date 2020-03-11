@@ -95,10 +95,16 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  goToExam(step, stepNum, preview = false) {
-    const questionNum = this.submissionsService.nextQuestion(step.submission, step.submission.answers.length - 1, 'passed') + 1;
-    this.router.navigate([ './step/' + (stepNum + 1) + '/exam',
-      { questionNum, preview, examId: this.courseDetail.steps[stepNum].exam._id } ], { relativeTo: this.route });
+  goToExam(step, stepIndex, preview = false) {
+    const questionNum = (this.submissionsService.nextQuestion(step.submission, step.submission.answers.length - 1, 'passed') + 1) || 1;
+    const stepNum = stepIndex + 1;
+    this.router.navigate(
+      [
+        `./step/${stepNum}/exam`,
+        { id: this.courseId, stepNum, questionNum, type: 'exam', preview, examId: this.courseDetail.steps[stepIndex].exam._id }
+      ],
+      { relativeTo: this.route }
+    );
   }
 
   checkMyCourses(courseId: string) {

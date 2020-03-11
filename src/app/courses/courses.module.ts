@@ -21,6 +21,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UsersModule } from '../users/users.module';
+import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.module';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { UsersModule } from '../users/users.module';
     ExamsModule,
     SharedComponentsModule,
     DialogsAddResourcesModule,
+    DialogsSubmissionsModule,
     UsersModule
   ],
   declarations: [

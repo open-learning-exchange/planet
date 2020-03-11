@@ -23,9 +23,9 @@
     }
   }
 
-  .v-align-center {
-      display: flex;
-      align-items: center;
+  .v-align-center, .v-align-center > * {
+    display: flex;
+    align-items: center;
   }
 
   .question-header {

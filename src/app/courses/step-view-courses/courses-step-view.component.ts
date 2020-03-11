@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
+import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -34,6 +36,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private coursesService: CoursesService,
     private userService: UserService,
     private submissionsService: SubmissionsService,
@@ -69,7 +72,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
+      this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
       this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
       this.attempts = attempts;
       const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
@@ -141,8 +144,17 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   goToExam(type = 'exam', preview = false) {
     this.router.navigate(
-      [ 'exam', { questionNum: type === 'survey' ? 1 : this.examStart, type, preview,
-      examId: type === 'survey' ? this.stepDetail.survey._id : this.stepDetail.exam._id } ],
+      [
+        'exam',
+        {
+          id: this.courseId,
+          stepNum: this.stepNum,
+          questionNum: type === 'survey' ? 1 : this.examStart,
+          type,
+          preview,
+          examId: type === 'survey' ? this.stepDetail.survey._id : this.stepDetail.exam._id,
+        }
+      ],
       { relativeTo: this.route }
     );
   }
@@ -152,6 +164,14 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     return step.resources ?
       step.resources.filter((resource) => resourceIds.indexOf(resource._id) !== -1 && resource._attachments) :
       [];
+  }
+
+  openReviewDialog() {
+    this.dialog.open(DialogsSubmissionsComponent, {
+      minWidth: '90vw',
+      maxHeight: '90vh',
+      data: { parentId: `${this.stepDetail.exam._id}@${this.courseId}` }
+    });
   }
 
 }

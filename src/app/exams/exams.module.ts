@@ -28,7 +28,8 @@ import { ExamsPreviewComponent } from './exams-preview.component';
     ExamsPreviewComponent
   ],
   exports: [
-    ExamsAddComponent
+    ExamsAddComponent,
+    ExamsViewComponent
   ],
   entryComponents: [ ExamsPreviewComponent ]
 })
