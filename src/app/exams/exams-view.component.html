@@ -91,7 +91,15 @@
           <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
         </div>
         <div *ngSwitchCase="'complete'" class="primary-text-color">
-          <mat-icon>check_circle</mat-icon><span i18n>Exam complete, you can close the preview</span>
+          <mat-icon>check_circle</mat-icon>
+          <span>
+            <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
+            {{' '}}
+            <ng-container i18n *ngIf="previewMode; else finishExam">You can close the preview.</ng-container>
+            <ng-template #finishExam>
+              <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
+            </ng-template>
+          </span>
         </div>
       </span>
     </div>
