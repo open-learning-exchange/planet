@@ -219,9 +219,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.setViewAnswerText(ans);
       }
       this.isNewQuestion = false;
-      if ((this.maxQuestions - 1) === this.answerCount) {
-        this.isComplete = !this.answer.value ? true : false;
-      }
+      this.isComplete = (this.maxQuestions - 1) <= this.answerCount;
     });
   }
 
