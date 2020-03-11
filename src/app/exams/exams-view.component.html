@@ -82,8 +82,9 @@
         mat-raised-button
         color="accent"
         (click)="examComplete()"
-        [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null">
-        Finish Test
+        [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null"
+        i18n>
+        {examType, select, survey {Finish Survey} exam {Finish Test}}
       </button>
       <span class="v-align-center small" [ngSwitch]="statusMessage">
         <div *ngSwitchCase="'incorrect'" class="warn-text-color">
