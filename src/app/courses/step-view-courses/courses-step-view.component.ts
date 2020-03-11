@@ -72,7 +72,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
+      this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
       this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
       this.attempts = attempts;
       const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
@@ -147,7 +147,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       [
         'exam',
         {
-          questionNum: type === 'survey' ? 1 : this.examStart, type,
+          id: this.courseId,
+          stepNum: this.stepNum,
+          questionNum: type === 'survey' ? 1 : this.examStart,
+          type,
           preview,
           examId: type === 'survey' ? this.stepDetail.survey._id : this.stepDetail.exam._id,
         }
