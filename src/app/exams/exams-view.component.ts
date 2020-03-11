@@ -134,7 +134,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.statusMessage = 'complete';
       return;
     }
-    this.planetMessageService.showMessage("Answer submitted");
+    this.planetMessageService.showMessage('Answer submitted');
     this.spinnerOn = false;
     if (this.examType === 'survey' && !this.previewMode) {
       this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
