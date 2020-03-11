@@ -141,8 +141,8 @@ export class SubmissionsService {
   }
 
   updateStatus(submission: any) {
-    if (submission.type === 'exam' && submission.status === 'pending') {
-      return submission.answers.findIndex(ans => ans.grade === undefined) === -1 ? 'complete' : 'requires grading';
+    if (submission.type === 'exam' && submission.answers.findIndex(ans => ans.grade === undefined) > -1) {
+      return 'requires grading';
     }
     const [ examId, getCourseId ] = this.submission.parentId.split('@');
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
