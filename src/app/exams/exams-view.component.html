@@ -67,12 +67,11 @@
         </ng-container>
       </ng-container>
     </div>
-    <div class="v-align-center">
+    <div class="v-align-center action-buttons">
       <button
         *ngIf="mode !== 'view'"
         mat-raised-button
         color="primary"
-        class="margin-lr-10"
         (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
         [disabled]="!answer.valid || grade === undefined || grade === null">
@@ -89,10 +88,10 @@
       </button>
       <span class="v-align-center small" [ngSwitch]="statusMessage">
         <div *ngSwitchCase="'incorrect'" class="warn-text-color">
-          <mat-icon class="margin-lr-3">error</mat-icon><span i18n>Incorrect answer, please try again</span>
+          <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
         </div>
         <div *ngSwitchCase="'complete'" class="primary-text-color">
-          <mat-icon class="margin-lr-3">check_circle</mat-icon><span i18n>Exam complete, you can close the preview</span>
+          <mat-icon>check_circle</mat-icon><span i18n>Exam complete, you can close the preview</span>
         </div>
       </span>
     </div>
