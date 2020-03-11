@@ -8,7 +8,6 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
-import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-exams-view',
@@ -49,7 +48,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private couchService: CouchService
   ) { }
