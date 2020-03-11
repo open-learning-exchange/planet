@@ -110,8 +110,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  nextQuestion(nextClicked: boolean = false) {
-    const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable();
+  nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
@@ -124,18 +124,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  routeToNext (nextQuestion) {
+  routeToNext(nextQuestion) {
+    this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
       return;
     }
     if (this.isDialog) {
       this.spinnerOn = false;
-      this.statusMessage = 'complete';
       return;
     }
-    this.planetMessageService.showMessage('Answer submitted');
-    this.spinnerOn = false;
+    this.examComplete();
     if (this.examType === 'survey' && !this.previewMode) {
       this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
     }
@@ -246,13 +245,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers[0].id === this.question.correctChoice;
   }
 
-  createAnswerObservable() {
+  createAnswerObservable(isFinish = false) {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         const obs = this.previewMode ?
           of({ nextQuestion: this.questionNum }) :
-          this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1);
+          this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, isFinish);
         this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
         return { obs, correctAnswer };
       case 'grade':

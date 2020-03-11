@@ -13,7 +13,7 @@
     </span>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion(true)" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
+    <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     <span class="mat-h2">{{question.title}}</span>
@@ -78,10 +78,10 @@
         <ng-container i18n>Submit Answer</ng-container>
       </button>
       <button
-        *ngIf="mode !== 'view'"
+        *ngIf="mode === 'take'"
         mat-raised-button
         color="accent"
-        (click)="examComplete()"
+        (click)="nextQuestion({ isFinish: true })"
         [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null"
         i18n>
         {examType, select, survey {Finish Survey} exam {Finish Test}}

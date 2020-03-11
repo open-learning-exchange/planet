@@ -103,11 +103,11 @@ export class SubmissionsService {
     });
   }
 
-  submitAnswer(answer, correct: boolean, index: number) {
+  submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
-    const nextQuestion = this.nextQuestion(submission, index, 'passed');
+    const nextQuestion = this.nextQuestion(submission, index, 'passed', isFinish);
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
@@ -129,9 +129,13 @@ export class SubmissionsService {
     return this.updateSubmission(submission, false, nextQuestion);
   }
 
-  nextQuestion(submission, index, field) {
+  nextQuestion(submission, index, field, isFinish = true) {
     const close = this.shouldCloseSubmission(submission, field);
-    return close ? -1 : this.findNextQuestion(submission, index + 1, field);
+    return !close ?
+      this.findNextQuestion(submission, index + 1, field) :
+      isFinish ?
+      -1 :
+      index;
   }
 
   updateGrade(submission, grade, index, comment?) {
