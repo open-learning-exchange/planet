@@ -8,7 +8,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
-import { findDocuments } from '../shared/mangoQueries';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-exams-view',
@@ -49,6 +49,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
+    private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private couchService: CouchService
   ) { }
@@ -133,7 +134,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.statusMessage = 'complete';
       return;
     }
-    this.examComplete();
+    this.planetMessageService.showMessage("Answer submitted");
+    this.spinnerOn = false;
     if (this.examType === 'survey' && !this.previewMode) {
       this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
     }

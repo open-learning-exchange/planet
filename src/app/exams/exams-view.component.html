@@ -72,11 +72,20 @@
         *ngIf="mode !== 'view'"
         mat-raised-button
         color="primary"
+        class="margin-lr-10"
         (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
         [disabled]="!answer.valid || grade === undefined || grade === null">
         <ng-container *ngIf="isComplete" i18n>Complete</ng-container>
         <ng-container *ngIf="!isComplete" i18n>Submit Answer</ng-container>
+      </button>
+      <button
+        *ngIf="mode !== 'view'"
+        mat-raised-button
+        color="accent"
+        (click)="examComplete()"
+        [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null">
+        Finish Test
       </button>
       <span class="v-align-center small" [ngSwitch]="statusMessage">
         <div *ngSwitchCase="'incorrect'" class="warn-text-color">
