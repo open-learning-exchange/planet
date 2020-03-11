@@ -75,8 +75,7 @@
         (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
         [disabled]="!answer.valid || grade === undefined || grade === null">
-        <ng-container *ngIf="isComplete" i18n>Complete</ng-container>
-        <ng-container *ngIf="!isComplete" i18n>Submit Answer</ng-container>
+        <ng-container i18n>Submit Answer</ng-container>
       </button>
       <button
         *ngIf="mode !== 'view'"
