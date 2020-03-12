@@ -97,6 +97,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setExamPreview() {
+    this.answer.setValue(null);
     this.grade = 0;
     this.statusMessage = '';
     const exam = this.submission ? this.submission.parent : this.exam;
@@ -142,7 +143,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
-      this.answer.setValue(null);
       this.spinnerOn = false;
       return;
     }
