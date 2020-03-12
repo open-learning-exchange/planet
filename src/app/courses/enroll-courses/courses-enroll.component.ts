@@ -1,6 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Subject, forkJoin, of } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { Component } from '@angular/core';
+import { zip } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
@@ -12,9 +12,8 @@ import { TableState } from '../../users/users-table.component';
   templateUrl: './courses-enroll.component.html'
 })
 
-export class CoursesEnrollComponent implements OnDestroy {
+export class CoursesEnrollComponent {
 
-  onDestroy$ = new Subject<void>();
   courseId: string;
   course: any;
   members: any[] = [];
@@ -28,16 +27,19 @@ export class CoursesEnrollComponent implements OnDestroy {
     private usersService: UsersService,
     private coursesService: CoursesService
   ) {
+    this.coursesService.requestCourses();
     this.route.paramMap.pipe(
       switchMap((paramMap: ParamMap) => {
         this.courseId = paramMap.get('id');
-        return forkJoin([
+        return zip(
           this.couchService.findAll('shelf', { 'selector': { 'courseIds': { '$elemMatch': { '$eq': this.courseId } } } }),
           this.usersService.getAllUsers(),
-          this.coursesService.findProgress([ this.courseId ], { allUsers : true })
-        ]);
+          this.coursesService.findProgress([ this.courseId ], { allUsers : true }),
+          // Include course listener to ensure requestCourses() is complete.  This updates courses in CoursesService.
+          this.coursesService.coursesListener$()
+        );
       }),
-      takeUntil(this.onDestroy$)
+      take(1)
     ).subscribe(([ shelfUsers, allUsers, progresses ]) => {
       this.course = this.coursesService.getCourseNameFromId(this.courseId);
       this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
@@ -54,11 +56,6 @@ export class CoursesEnrollComponent implements OnDestroy {
       createdDate: Math.min(progress.createdDate, activityDates.createdDate),
       updatedDate: Math.max(progress.updatedDate, activityDates.updatedDate)
     }), progresses[0] || {});
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   back() {

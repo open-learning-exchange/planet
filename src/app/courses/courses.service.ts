@@ -87,7 +87,8 @@ export class CoursesService {
 
   coursesListener$(reqParent = false) {
     return this.coursesUpdated.pipe(
-      map(({ parent, planetField, courses }) => parent === reqParent && this.isReady[planetField] ? courses : undefined)
+      filter(({ parent, planetField }) => parent === reqParent && this.isReady[planetField]),
+      map(({ courses }) => courses),
     );
   }
 
