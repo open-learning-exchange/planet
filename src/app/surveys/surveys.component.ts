@@ -40,9 +40,6 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
     .btn:disabled{
       pointer-events: none;
     }
-    .mat-dialog-content {
-      overflow-y: hidden !important;
-    }
     .course-title {
       max-width: 200px;
       display: inline-block;
@@ -52,8 +49,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
       line-height: 15px;
       position: relative;
     }
-  ` ],
-  encapsulation: ViewEncapsulation.None
+  ` ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
