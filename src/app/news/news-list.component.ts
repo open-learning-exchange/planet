@@ -27,6 +27,7 @@ export class NewsListComponent implements OnChanges {
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() userStatus = 'unrelated';
   displayedItems: any[] = [];
   replyObject: any = {};
   replyViewing: any = { _id: 'root' };
