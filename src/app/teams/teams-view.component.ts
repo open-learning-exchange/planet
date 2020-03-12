@@ -260,7 +260,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogPromptConfig(item, change) {
     return {
       leave: { request: this.toggleMembership(item, true), successMsg: 'left', errorMsg: 'leaving' },
-      archive: { request: this.teamsService.archiveTeam(item), successMsg: 'deleted', errorMsg: 'deleting' },
+      archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
+        successMsg: 'deleted', errorMsg: 'deleting' },
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
       },
@@ -288,7 +289,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
             this.team = change === 'course' ? res : this.team;
-            if (res.status === 'archived') {
+            if (change === 'archive') {
               this.goBack();
             }
           },
