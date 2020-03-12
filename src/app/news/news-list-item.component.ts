@@ -24,8 +24,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
   @ViewChild('content', { static: false }) content;
-  contentHeight = 0;
   currentUser = this.userService.get();
+  showExpand = false;
   showLess = true;
   showShare = false;
   planetCode = this.stateService.configuration.code;
@@ -51,8 +51,9 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   ngAfterViewChecked() {
     const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].children[0].offsetHeight;
-    if (offsetHeight && offsetHeight !== this.contentHeight) {
-      this.contentHeight = offsetHeight;
+    const showExpand = offsetHeight && (offsetHeight > this.content.nativeElement.clientHeight);
+    if (showExpand !== this.showExpand) {
+      this.showExpand = showExpand;
       this.cdRef.detectChanges();
     }
   }
