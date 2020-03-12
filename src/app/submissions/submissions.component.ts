@@ -3,11 +3,12 @@ import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/m
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns, dropdownsFill } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
   selector: 'planet-submissions',
@@ -16,6 +17,9 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
     /* Column Widths */
     .mat-column-name {
       max-width: 25vw;
+    }
+    .mat-column-stepNum {
+      max-width: 90px;
     }
   ` ]
 })
@@ -29,7 +33,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   initTable = true;
-  displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
+  displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ];
   statusOptions: any = [
     { text: 'Pending', value: 'pending' },
     { text: 'Not Graded', value: 'requires grading' },
@@ -47,6 +51,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private route: ActivatedRoute,
     private submissionsService: SubmissionsService,
     private userService: UserService,
+    private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dialogsLoadingService.start();
@@ -64,7 +69,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (this.filter['type'] === 'survey') {
       this.filter['status'] = '';
     }
-    this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions) => {
+    this.coursesService.requestCourses();
+    zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
+    .subscribe(([ submissions, courses ]) => {
       submissions = submissions.filter(data => data.user).reduce((sList, s1) => {
         const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
         if (!s1.user._id || sIndex === -1) {
@@ -73,7 +80,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
           sList[sIndex] = s1;
         }
         return sList;
-      }, []);
+      }, []).map(submission => this.appendCourseInfo(submission, courses));
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
@@ -183,6 +190,17 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (user.name) {
       event.stopPropagation();
     }
+  }
+
+  appendCourseInfo(submission, courses) {
+    const [ examId, courseId ] = submission.parentId.split('@');
+    if (!courseId) {
+      return submission;
+    }
+    const submissionCourse = courses.find(course => course._id === courseId) || { doc: { steps: [] } };
+    const stepNum = submissionCourse.doc.steps
+      .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
+    return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
   }
 
 }

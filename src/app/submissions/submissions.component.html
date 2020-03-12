@@ -39,6 +39,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
       </ng-container>
+      <ng-container matColumnDef="courseTitle">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.courseTitle}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="stepNum">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Step</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.stepNum || ''}}</mat-cell>
+      </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
