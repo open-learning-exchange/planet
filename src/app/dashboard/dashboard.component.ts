@@ -1,21 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, catchError, switchMap } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { of, forkJoin, Subject } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
@@ -23,12 +24,14 @@ export class DashboardComponent implements OnInit {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   roles: string[];
   planetName: string;
+  badgesCourses = [];
 
   dateNow: any;
   visits = 0;
   surveysCount = 0;
   examsCount = 0;
   leaderIds = [];
+  onDestroy$ = new Subject<void>();
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
@@ -42,6 +45,7 @@ export class DashboardComponent implements OnInit {
     private userService: UserService,
     private couchService: CouchService,
     private submissionsService: SubmissionsService,
+    private coursesService: CoursesService,
     private stateService: StateService
   ) {
     const currRoles = this.userService.get().roles;
@@ -51,6 +55,11 @@ export class DashboardComponent implements OnInit {
         this.ngOnInit();
       });
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+    this.coursesService.requestCourses();
+    this.coursesService.coursesListener$().pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(courses => {
+      this.badgesCourses = courses
+        .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length);
+    });
   }
 
   ngOnInit() {
@@ -77,6 +86,11 @@ export class DashboardComponent implements OnInit {
       this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: 'myHealth' });
     }
 
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   initDashboard() {
