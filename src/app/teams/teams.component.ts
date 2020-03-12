@@ -14,7 +14,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -212,7 +211,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   archiveTeam(team) {
     return {
-      request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.deleteCommunityLink(team))),
+      request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
@@ -231,15 +230,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         displayName: team.name
       }
     });
-  }
-
-  deleteCommunityLink(team) {
-    const communityId = planetAndParentId(this.stateService.configuration);
-    const route = this.teamsService.teamLinkRoute(team.type, team._id);
-    return this.teamsService.getTeamMembers(communityId, true).pipe(switchMap((links) => {
-      const link = links.find(val => val.route === route);
-      return link ? this.couchService.delete(`teams/${link._id}?rev=${link._rev}`) : of({});
-    }));
   }
 
   removeTeamFromTable(newTeam: any) {

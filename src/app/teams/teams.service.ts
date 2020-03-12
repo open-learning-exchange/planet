@@ -11,6 +11,7 @@ import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { toProperCase } from '../shared/utils';
 import { UsersService } from '../users/users.service';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 const nameField = {
   'type': 'textbox',
@@ -150,6 +151,15 @@ export class TeamsService {
 
   archiveTeam(team) {
     return () => this.updateTeam({ ...team, status: 'archived' });
+  }
+
+  deleteCommunityLink(team) {
+    const communityId = planetAndParentId(this.stateService.configuration);
+    const route = this.teamLinkRoute(team.type, team._id);
+    return this.getTeamMembers(communityId, true).pipe(switchMap((links) => {
+      const link = links.find(val => val.route === route);
+      return link ? this.couchService.delete(`teams/${link._id}?rev=${link._rev}`) : of({});
+    }));
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
