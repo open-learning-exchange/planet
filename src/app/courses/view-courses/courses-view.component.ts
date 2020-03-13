@@ -27,7 +27,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  icon: 'assignment'| 'attach_file' | 'description' | 'done' | 'rotate_right';
 
   constructor(
     private router: Router,

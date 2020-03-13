@@ -25,7 +25,6 @@ export class CoursesStepComponent implements OnDestroy {
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
-  icon: 'assignment'| 'attach_file' | 'description';
 
   constructor(
     private router: Router,
