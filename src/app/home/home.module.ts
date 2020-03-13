@@ -25,6 +25,7 @@ import { CommunityLinkDialogComponent } from '../community/community-link-dialog
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
 import { PlanetComponent } from './planet.component';
+import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ import { PlanetComponent } from './planet.component';
     NewsModule,
     TeamsModule,
     PlanetCalendarModule,
-    UsersModule
+    UsersModule,
+    CoursesViewDetailModule
   ],
   declarations: [
     HomeComponent,

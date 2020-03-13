@@ -31,13 +31,7 @@
     </div>
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-        <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="parent" [ratingType]="'course'"></planet-rating>
-        <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
-        <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
-        <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction || 'N/A'}}</p>
-        <p *ngIf="courseDetail.sourcePlanet !== planetConfiguration.code && courseDetail.sourcePlanet" i18n><b>Source:</b> {{courseDetail.sourcePlanet}}</p>
-        <p><b i18n>Description:</b></p>
-        <td-markdown [content]="courseDetail.description"></td-markdown>
+        <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">

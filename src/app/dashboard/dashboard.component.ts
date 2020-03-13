@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -11,6 +12,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -46,7 +48,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private submissionsService: SubmissionsService,
     private coursesService: CoursesService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialog: MatDialog
   ) {
     const currRoles = this.userService.get().roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
@@ -183,6 +186,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   teamRemoved(team: any) {
     this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
+  }
+
+  openCourseDialog(course: any) {
+    this.dialog.open(CoursesViewDetailDialogComponent, { data: { courseDetail: { ...course.doc, ...course } } });
   }
 
 }
