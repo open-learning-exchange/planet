@@ -17,6 +17,5 @@ import { Component, Input } from '@angular/core';
 export class CoursesIconComponent {
 
   @Input() icon: '';
-  @Input() step: any = {};
 
 }
