@@ -18,7 +18,6 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Input() showRepliesButton = true;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
-  @Input() userStatus = 'unrelated';
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
@@ -44,7 +43,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
-    this.showShare = this.shareTarget && (this.userStatus === 'member' || this.item.doc.user._id === this.currentUser._id) &&
+    this.showShare = this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet ||
       (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(this.stateService.configuration)));
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
