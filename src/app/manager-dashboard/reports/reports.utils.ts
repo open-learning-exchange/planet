@@ -40,3 +40,9 @@ export const setMonths = () => {
 export const activityParams = (planetCode, filter): { planetCode, filterAdmin?, fromMyPlanet? } => {
   return { planetCode: planetCode, filterAdmin: true, ...(filter ? { fromMyPlanet: filter === 'myplanet' } : {}) };
 };
+
+
+export const checkEmptyRecords = (record: any[]) => {
+  const checkEmpty = record.some(element => element.children.length);
+  return checkEmpty;
+};

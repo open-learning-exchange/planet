@@ -5,7 +5,7 @@ import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { filterSpecificFields } from '../shared/table-helpers';
-import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, checkEmptyRecords } from '../manager-dashboard/reports/reports.utils';
 
 
 @Component({
@@ -60,15 +60,11 @@ export class LogsMyPlanetComponent implements OnInit {
           apklogs
       );
       this.apklogs = this.allPlanets;
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
-  }
-
-  checkEmptyLogs() {
-    this.apklogs.forEach(element => {
-      if (element.children.length) {
+      if (checkEmptyRecords(this.apklogs)) {
         this.isEmpty = false;
       }
-    });
+
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
 }

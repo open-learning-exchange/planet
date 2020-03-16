@@ -6,7 +6,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets, getDomainParams } from './reports.utils';
+import { attachNamesToPlanets, getDomainParams, checkEmptyRecords } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -73,7 +73,9 @@ export class ReportsMyPlanetComponent implements OnInit {
         myPlanets
       );
       this.planets = this.allPlanets;
-      this.checkEmptyPlanet();
+      if (checkEmptyRecords(this.planets)) {
+        this.isEmpty = false;
+      }
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
@@ -96,13 +98,4 @@ export class ReportsMyPlanetComponent implements OnInit {
       })
     );
   }
-
-  checkEmptyPlanet() {
-    this.planets.forEach(element => {
-      if (element.children.length) {
-        this.isEmpty = false;
-      }
-    });
-  }
-
 }
