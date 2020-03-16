@@ -55,7 +55,7 @@ export class SyncDirective {
       ),
       switchMap((replicators: any) => {
         this.dialogsLoadingService.stop();
-        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat()));
+        return this.syncService.confirmPasswordAndRunReplicators(this.replicatorList().concat(replicators.flat(2)));
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
     ).subscribe(data => {
@@ -205,14 +205,21 @@ export class SyncDirective {
 
   teamAndNewsResourcesReplicator(teamResources: any[], news: any[]) {
     const replicator = linkDoc => ({ db: 'resources', item: { _id: linkDoc.resourceId } });
-    return this.syncService.replicatorsArrayWithTags(
-      [
-        ...teamResources.map(replicator),
-        ...news.map(post => post.images.map(replicator)).flat()
-      ],
-      'push',
-      'local'
-    );
+    return forkJoin([
+      this.syncService.replicatorsArrayWithTags(
+        [
+          ...teamResources.map(replicator),
+          ...news.map(post => post.images.map(replicator)).flat()
+        ],
+        'push',
+        'local'
+      ),
+      this.syncService.replicatorsArrayWithTags(
+        news.filter(post => post.createdOn !== this.planetConfiguration.code).map(post => post.images.map(replicator)).flat(),
+        'pull',
+        'parent'
+      )
+    ]);
   }
 
 }
