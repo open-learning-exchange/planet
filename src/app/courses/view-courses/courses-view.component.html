@@ -51,8 +51,8 @@
                 <planet-course-icon *ngIf="step?.resources?.length" [icon]="'attach_file'"></planet-course-icon>
                 <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
               </mat-panel-description>
-              <planet-course-icon *ngIf="step.progress && step.progress" [icon]="'done'"></planet-course-icon>
-              <planet-course-icon *ngIf="step.progress && !step.progress" [icon]="'rotate_right'"></planet-course-icon>
+              <planet-course-icon *ngIf="step.progress && step.progress.passed" [icon]="'done'"></planet-course-icon>
+              <planet-course-icon *ngIf="step.progress && !step.progress.passed" [icon]="'rotate_right'"></planet-course-icon>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
             <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
