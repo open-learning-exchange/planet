@@ -21,7 +21,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UsersModule } from '../users/users.module';
-import { CoursesIconComponent } from './cousers-icon.component';
+import { CoursesIconComponent } from './courses-icon.component';
 
 @NgModule({
   imports: [
