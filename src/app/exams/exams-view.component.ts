@@ -116,6 +116,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
+        this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
@@ -147,7 +148,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
-    if (!this.isComplete) {
+    if (direction !== 0) {
       this.checkboxState = {};
     }
     this.isNewQuestion = true;
@@ -252,9 +253,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const obs = this.previewMode ?
           of({ nextQuestion: this.questionNum }) :
           this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, isFinish);
-        if (!this.isComplete) {
-          this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
-        }
         return { obs, correctAnswer };
       case 'grade':
         return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, this.comment) };
