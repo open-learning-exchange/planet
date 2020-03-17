@@ -21,6 +21,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UsersModule } from '../users/users.module';
+import { CoursesIconComponent } from './courses-icon.component';
 import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.module';
 
 @NgModule({
@@ -49,7 +50,8 @@ import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.
     CoursesProgressLearnerComponent,
     CoursesProgressBarComponent,
     CoursesProgressChartComponent,
-    CoursesEnrollComponent
+    CoursesEnrollComponent,
+    CoursesIconComponent
   ],
   exports: [ CoursesComponent ]
 })
