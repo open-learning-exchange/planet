@@ -158,7 +158,7 @@ export class TeamsService {
     const route = this.teamLinkRoute(team.type, team._id);
     return this.getTeamMembers(communityId, true).pipe(switchMap((links) => {
       const link = links.find(val => val.route === route);
-      return link ? this.couchService.delete(`teams/${link._id}?rev=${link._rev}`) : of({});
+      return link ? this.couchService.updateDocument('teams', { ...link, _deleted: true }) : of({});
     }));
   }
 

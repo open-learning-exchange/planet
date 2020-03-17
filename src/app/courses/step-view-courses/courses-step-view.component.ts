@@ -97,13 +97,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
-    if (!this.parent && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
+    this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
+    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
       this.coursesService.updateProgress({
         courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed
       });
     }
     this.maxStep = course.steps.length;
-    this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
