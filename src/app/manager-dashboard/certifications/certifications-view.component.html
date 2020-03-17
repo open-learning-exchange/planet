@@ -8,6 +8,10 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1" >
    {{certification.name}}
+   <span class="empty-spacer"></span>
+   <button mat-stroked-button (click)="routeToEdit(certification?._id)">
+    <mat-icon>edit</mat-icon>Edit
+   </button>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-tab-group>

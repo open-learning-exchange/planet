@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, combineLatest } from 'rxjs';
 import { switchMap, takeUntil, debounceTime, auditTime } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
@@ -20,6 +20,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private certificationsService: CertificationsService,
     private coursesService: CoursesService,
     private usersService: UsersService,
@@ -59,6 +60,10 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
       .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
     this.certifiedMembers = users
       .filter(user => certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, user)));
+  }
+
+  routeToEdit(certificationId) {
+    this.router.navigate([ 'manager/certifications/update/', certificationId ])
   }
 
 }
