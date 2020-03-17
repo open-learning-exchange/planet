@@ -18,11 +18,11 @@
           <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
             Add Members
           </button>
-          <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
-            Add Courses
-          </button>
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
             { mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }
+          </button>
+          <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+            Add Courses
           </button>
           <ng-container *ngIf="currentUserId !== leader && mode !== 'services'">
             <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
@@ -40,8 +40,8 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
-      <mat-tab i18n-label label="Chat" *ngIf="team?.public === true || userStatus === 'member'">
-        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot && userStatus === 'member'" i18n>New message</button>
+      <mat-tab i18n-label label="Chat">
+        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
       </mat-tab>
       <mat-tab>

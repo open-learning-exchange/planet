@@ -22,6 +22,7 @@ import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resourc
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 import { UsersModule } from '../users/users.module';
 import { CoursesIconComponent } from './courses-icon.component';
+import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.module';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { CoursesIconComponent } from './courses-icon.component';
     ExamsModule,
     SharedComponentsModule,
     DialogsAddResourcesModule,
+    DialogsSubmissionsModule,
     UsersModule
   ],
   declarations: [

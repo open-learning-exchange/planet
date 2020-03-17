@@ -1,9 +1,9 @@
 PLANET_VERSION=$(cat package.json | jq -r .version)
-LATEST_APK_VERSION="v0.7.20"
-LATEST_APK_VER_CODE="720"
-MIN_APK_VERSION="v0.7.13"
-MIN_APK_VER_CODE="713"
-APK_PATH="https://github.com/open-learning-exchange/myplanet/releases/download/v0.7.20/myPlanet.apk"
+LATEST_APK_VERSION="v0.7.24"
+LATEST_APK_VER_CODE="724"
+MIN_APK_VERSION="v0.7.24"
+MIN_APK_VER_CODE="724"
+APK_PATH="https://github.com/open-learning-exchange/myplanet/releases/download/v0.7.24/myPlanet.apk"
 LOCAL_APK_PATH="/fs/myPlanet.apk"
 
 echo '{"appname":"planet","planetVersion":"'$PLANET_VERSION'","latestapk":"'$LATEST_APK_VERSION'","latestapkcode":'$LATEST_APK_VER_CODE',"minapk":"'$MIN_APK_VERSION'","minapkcode":'$MIN_APK_VER_CODE',"apkpath":"'$APK_PATH'","localapkpath":"'$LOCAL_APK_PATH'"}' > /usr/share/nginx/html/versions
