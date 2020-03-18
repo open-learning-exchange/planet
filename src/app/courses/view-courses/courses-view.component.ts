@@ -26,7 +26,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   canManage: boolean;
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
-  examText: 'retake' | 'take' = 'take';
+  examText= [];
 
   constructor(
     private router: Router,
@@ -48,6 +48,19 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
         progress: progress.find((p: any) => p.stepNum === (index + 1))
       }));
+      this.courseDetail.steps.forEach(step => {
+        if (step.exam && step.submission === undefined) {
+          this.submissionsService.openSubmission({
+            parentId: step.exam._id + '@' + this.courseDetail._id,
+            parent: step.exam,
+            user: this.userService.get(),
+            type: 'exam' });
+          this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+            this.examText.push(submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake')
+            step.submission = submission;
+          });
+        }
+      });
       this.progress = progress;
       this.isUserEnrolled = this.checkMyCourses(course._id);
       this.canManage = this.currentUser.isUserAdmin ||
@@ -65,20 +78,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  getStepSubmission(step) {
-    if (step.exam && step.submission === undefined) {
-      this.submissionsService.openSubmission({
-        parentId: step.exam._id + '@' + this.courseDetail._id,
-        parent: step.exam,
-        user: this.userService.get(),
-        type: 'exam' });
-      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
-        step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
-        step.submission = submission;
-      });
-    }
   }
 
   viewStep() {
