@@ -26,7 +26,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   canManage: boolean;
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
-  examText= [];
+  examText = [];
 
   constructor(
     private router: Router,
@@ -56,7 +56,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
             user: this.userService.get(),
             type: 'exam' });
           this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
-            this.examText.push(submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake')
+            this.examText.push(submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake');
             step.submission = submission;
           });
         }
