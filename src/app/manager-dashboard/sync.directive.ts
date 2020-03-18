@@ -76,15 +76,15 @@ export class SyncDirective {
       { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
       { db: 'meetups', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } }
     ];
-    const pushList = [ ...this.pushList(continuous), ...bothList ];
-    const pullList = [ ...this.pullList(continuous), ...bothList ];
+    const pushList = [ ...this.pushList(), ...bothList ];
+    const pullList = [ ...this.pullList(), ...bothList ];
     const internalList = [
       { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
     ];
     return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }
 
-  pushList(continuous) {
+  pushList() {
     return [
       { db: 'courses_progress' },
       { db: 'feedback' },
@@ -103,11 +103,11 @@ export class SyncDirective {
     ];
   }
 
-  pullList(continuous) {
+  pullList() {
     return [
-      { db: 'feedback', selector: { source: this.planetConfiguration.code }, continuous },
-      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code }, continuous },
-      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode }, continuous }
+      { db: 'feedback', selector: { source: this.planetConfiguration.code } },
+      { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.code } },
+      { db: 'attachments', selector: { planetCode: this.planetConfiguration.parentCode } }
     ];
   }
 
