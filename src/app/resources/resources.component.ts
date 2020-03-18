@@ -346,7 +346,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (planetField === 'local') {
       return of({});
     }
-    const itemPush = this.selection.selected.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+    const itemPush = this.selection.selected.map(id => ({
+      item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName
+    }));
     return this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(itemPush, 'push') );
   }
 
@@ -354,7 +356,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
       this.createObs(planetField).pipe(
-        switchMap(() => this.syncService.createChildPullDoc(items, 'resources', selectedPlanets, this.stateService.optsFromPlanetField(planetField)))
+        switchMap(() =>
+          this.syncService.createChildPullDoc(items, 'resources', selectedPlanets, this.stateService.optsFromPlanetField(planetField))
+        )
       ).subscribe(() => {
         const childType = {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',

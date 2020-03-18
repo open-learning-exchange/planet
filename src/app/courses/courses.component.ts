@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
@@ -10,9 +10,8 @@ import { UserService } from '../shared/user.service';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, 
-  filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf, trackById, filterIds
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord,
+  filterTags, commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -423,7 +422,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (planetField === 'local') {
       return of({});
     }
-    const itemPush = this.selection.selected.map(id => ({ item: this.courses.data.find((course: any) => course._id === id), db: this.dbName }));
+    const itemPush = this.selection.selected.map(id => ({
+      item: this.courses.data.find((course: any) => course._id === id), db: this.dbName
+    }));
     return this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(itemPush, 'push') );
   }
 
