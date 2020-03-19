@@ -28,25 +28,25 @@ export class CoursesEnrollComponent {
     private coursesService: CoursesService
   ) {
     this.coursesService.requestCourses();
+    this.usersService.requestUserData();
     this.route.paramMap.pipe(
       switchMap((paramMap: ParamMap) => {
         this.courseId = paramMap.get('id');
         return zip(
           this.couchService.findAll('shelf', { 'selector': { 'courseIds': { '$elemMatch': { '$eq': this.courseId } } } }),
-          this.usersService.getAllUsers(),
           this.coursesService.findProgress([ this.courseId ], { allUsers : true }),
           // Include course listener to ensure requestCourses() is complete.  This updates courses in CoursesService.
           this.coursesService.coursesListener$()
         );
       }),
       take(1)
-    ).subscribe(([ shelfUsers, allUsers, progresses ]) => {
+    ).subscribe(([ shelfUsers, progresses ]) => {
       this.course = this.coursesService.getCourseNameFromId(this.courseId);
-      this.members = allUsers.filter(user => shelfUsers.find((u: any) => u._id === user._id))
+      this.members = this.usersService.data.users.concat(this.usersService.data.childUsers)
         .map((user: any) => ({
           ...this.usersService.fullUserDoc(user),
           activityDates: this.userProgress(progresses.filter((progress: any) => progress.userId === user._id))
-        }));
+        })).filter(doc => doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id));
       this.emptyData = this.members.length === 0;
     });
   }
