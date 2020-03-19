@@ -95,7 +95,7 @@
         <target state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
-        <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
+        <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: &apos;fullDate&apos;}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
@@ -282,7 +282,7 @@
         <target state="needs-translation">Click here back to the app</target>
       </trans-unit>
       <trans-unit id="4190ceaecd39e4628edbe902e62673f57d981d36" datatype="html">
-        <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field is required as valid date} }</source>
+        <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn&apos;t valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field is required as valid date} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
@@ -488,7 +488,7 @@
         <target state="needs-translation">Next</target>
       </trans-unit>
       <trans-unit id="c221a0f624f0e3ede0e0fc080f42271f0ef2c45c" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuration</source>
+        <source><x id="INTERPOLATION" equiv-text="{{configurationType === &apos;new&apos; ? &apos;Set Up&apos; : &apos;Update&apos;}}"/> Configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">25</context>
@@ -624,7 +624,7 @@
         <target state="needs-translation">Back</target>
       </trans-unit>
       <trans-unit id="7245654afd5dd28a03f82283972e701bfe78bce1" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Contact Details</source>
+        <source><x id="INTERPOLATION" equiv-text="{{configurationType === &apos;new&apos; ? &apos;&apos; : &apos;Update&apos;}}"/> Contact Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">84</context>
@@ -1340,7 +1340,7 @@
         <target state="needs-translation">Incorrect answer, please try again</target>
       </trans-unit>
       <trans-unit id="0c133b7890efd3c4e62ec1c87570d3f39fdd5892" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + ' ' : ''}}"/>Course Progress</source>
+        <source><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + &apos; &apos; : &apos;&apos;}}"/>Course Progress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.ts</context>
           <context context-type="linenumber">7</context>
@@ -2399,7 +2399,7 @@
         <target state="needs-translation">Resources</target>
       </trans-unit>
       <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
+        <source><x id="INTERPOLATION" equiv-text="{{ planetType === &apos;community&apos; ? &apos;Nation&apos; : &apos;Center&apos; }}"/> List</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">38</context>
@@ -2843,7 +2843,7 @@
         <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/></target>
       </trans-unit>
       <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
-        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></source>
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: &apos;fullDate&apos;}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: &apos;fullDate&apos;}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">24</context>
@@ -2851,7 +2851,7 @@
         <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="23b0021caf8864daf9006a8d85f164e30b07867e" datatype="html">
-        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail.endTime ? '-' : '' }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail.endTime}}"/></source>
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail.endTime ? &apos;-&apos; : &apos;&apos; }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail.endTime}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">25</context>
