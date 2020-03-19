@@ -159,6 +159,7 @@ DBS=(
   "health"
   "messages"
   "course_activities"
+  "search_activities"
 )
 
 insert_dbs $DBS
