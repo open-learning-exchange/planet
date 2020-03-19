@@ -39,7 +39,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
   checkboxState: any = {};
   isNewQuestion = true;
-  answerCount = 0;
+  unansweredQuestions: number[];
   isComplete = false;
   comment: string;
 
@@ -203,7 +203,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-      this.answerCount = this.submissionsService.submission.answers.filter(answer => answer.value).length;
+      this.unansweredQuestions = submission.parent.questions.reduce((unanswered, q, index) => [
+        ...unanswered, ...((submission.answers[index] && submission.answers[index].value) ? [] : [ index + 1 ])
+      ], []);
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
@@ -219,7 +221,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.setViewAnswerText(ans);
       }
       this.isNewQuestion = false;
-      this.isComplete = (this.maxQuestions - 1) <= this.answerCount;
+      this.isComplete = this.unansweredQuestions && this.unansweredQuestions.every(number => this.questionNum === number);
     });
   }
 
