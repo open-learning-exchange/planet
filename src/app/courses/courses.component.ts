@@ -25,6 +25,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { SearchService } from '../shared/forms/search.service';
 
 @Component({
   selector: 'planet-courses',
@@ -95,6 +96,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+    this.recordSearch();
     this.removeFilteredFromSelection();
   }
   user = this.userService.get();
@@ -128,7 +130,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private syncService: SyncService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private searchService: SearchService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -139,7 +142,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
-    this.titleSearch = this.dropdownsFill();
+    this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
@@ -166,7 +169,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.tagFilter.valueChanges.subscribe((tags) => {
-      this.courses.filter = this.courses.filter || (tags.length > 0 ? ' ' : '');
+      this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
   }
@@ -179,6 +182,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.recordSearch(true);
   }
 
   setupList(courseRes, myCourses) {
@@ -323,13 +327,23 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   onFilterChange(filterValue: string, field: string) {
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
-    // Force filter to update by setting it to a space if empty
-    this.courses.filter = this.courses.filter ? this.courses.filter : ' ';
+    // titleSearch set runs dropdownsFill and recordSearch
+    this.titleSearch = this.titleSearch;
     this.removeFilteredFromSelection();
   }
 
   removeFilteredFromSelection() {
     this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
+  }
+
+  recordSearch(complete = false) {
+    if (this.courses.filter !== '') {
+      this.searchService.recordSearch({
+        text: this._titleSearch,
+        type: this.dbName,
+        filter: { ...this.filter, tags: this.tagFilter.value }
+      }, complete);
+    }
   }
 
   resetSearch() {
