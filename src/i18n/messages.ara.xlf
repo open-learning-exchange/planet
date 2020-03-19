@@ -294,26 +294,8 @@
           <context context-type="sourcefile">app/shared/forms/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">{هذا الحقل مطلوب}{This field is required}
- {هذا الرقم لايصلح ان يكون اقل من}{The number cannot be below}
- {الرقم لايمكن ان يتعدى} {The number cannot exceed}
-{القيمة موجودة بالفعل}{Value already exists}
- {من فضلك ادخل بريد الكتروني صالح} {Please enter a valid email}
-{كلمات المرور يجب ان تكون متطابقة}{Passwords must match}
-{من فضلك أدخل رقم} {Please enter a number}
-{الرقم لايصلح ان يكون سالب}{The number cannot be negative}
-{النظام السداسي غير صالح}{Hex is not valid}
-{الوقت غير صالح}{Time is invalid}
-{صيغة التاريخ غير صالحة}{Date is in incorrect format}
-{التاريخ غير صالح}{Date is invalid}
-{تاريخ النهاية لايمكن ان يكون قبل تاريخ البداية}{End date cannot be before start date}
-{وقت النهاية لايمكن ان يكون قبل وقت البداية}{End time cannot be before start time}
-{لايمكن ان يكون قبل التاريخ الحالي}{Cannot be before current date}
-{كلمة المرور القديمة غير صالحة}{Old password isn't valid}
-{مدخل غير صالح. مرر الماوس لمزيد من المعلومات}{Invalid input. Hover for more info}
-{يجب البدء بحرف او رقم}{Must start with letter or number}
-{لايمكن ان تكون بعد تاريخ اليوم}{Cannot be after current date}
-{هذا الحقل مطلوب كتاريخ صالح}{This field is required as valid date}</target>
+        <target state="translated">{VAR_SELECT, select, required {هذا الحقل مطلوب} min {هذا الرقم لايصلح ان يكون اقل من} max {الرقم لايمكن ان يتعدى} duplicate {القيمة موجودة بالفعل} email {من فضلك ادخل بريد الكتروني صالح} matchPassword {كلمات المرور يجب ان تكون متطابقة} invalidInt {من فضلك أدخل رقم} invalidPositive {الرقم لايصلح ان يكون سالب} invalidHex {النظام السداسي غير صالح} invalidTime {الوقت غير صالح} invalidDateFormat {صيغة التاريخ غير صالحة} invalidDate {التاريخ غير صالح} invalidEndDate {تاريخ النهاية لايمكن ان يكون قبل تاريخ البداية} invalidEndTime {وقت النهاية لايمكن ان يكون قبل وقت البداية} dateInPast {لايمكن ان يكون قبل التاريخ الحالي} invalidOldPassword {كلمة المرور القديمة غير صالحة} pattern {مدخل غير صالح. مرر الماوس لمزيد من المعلومات} invalidFirstCharacter {يجب البدء بحرف او رقم} invalidFutureDate {لايمكن ان تكون بعد تاريخ اليوم} dateRequired {هذا الحقل مطلوب كتاريخ صالح}
+        </target>
       </trans-unit>
       <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html">
         <source>Average</source>
