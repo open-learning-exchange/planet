@@ -63,7 +63,7 @@ export class CertificationsViewComponent implements OnInit, OnDestroy {
   }
 
   routeToEdit(certificationId) {
-    this.router.navigate([ 'manager/certifications/update/', certificationId ]);
+    this.router.navigate([ '../../update', certificationId ], { relativeTo: this.route });
   }
 
 }
