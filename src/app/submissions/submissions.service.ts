@@ -239,7 +239,7 @@ export class SubmissionsService {
     const data = {
       'message': `<b>${this.userService.get().name}</b> has
         ${isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
-      'link': '/submissions/exam',
+      'link': '/myDashboard/submissions/exam',
       'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
       'type': 'survey',
       'priority': 1,
