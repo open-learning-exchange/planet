@@ -22,6 +22,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 @Component({
   selector: 'planet-community',
   templateUrl: './community.component.html',
+  preserveWhitespaces: true,
   styleUrls: [ './community.scss' ],
   encapsulation: ViewEncapsulation.None
 })
