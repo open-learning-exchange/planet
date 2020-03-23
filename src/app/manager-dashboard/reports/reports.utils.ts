@@ -41,8 +41,4 @@ export const activityParams = (planetCode, filter): { planetCode, filterAdmin?, 
   return { planetCode: planetCode, filterAdmin: true, ...(filter ? { fromMyPlanet: filter === 'myplanet' } : {}) };
 };
 
-
-export const checkEmptyRecords = (record: any[]) => {
-  const checkEmpty = record.some(element => element.children.length);
-  return checkEmpty;
-};
+export const checkEmptyRecords = (record: any[]) => record.some(element => element.children.length);
