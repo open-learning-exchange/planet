@@ -45,7 +45,9 @@ export class CoursesEnrollComponent {
       this.members = this.usersService.data.users.concat(this.usersService.data.childUsers)
         .map((user: any) => ({
           ...this.usersService.fullUserDoc(user),
-          activityDates: this.userProgress(progresses.filter((progress: any) => progress.userId === user._id))
+          activityDates: this.userProgress(progresses.filter(
+            (progress: any) => progress.createdOn === user.planetCode && progress.userId === (user.couchId || user._id))
+          )
         })).filter(doc => doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id));
       this.emptyData = this.members.length === 0;
     });
