@@ -28,7 +28,7 @@
         <mat-tab i18n-label label="Services">
           <planet-markdown *ngIf="team.description" [content]="team.description || ''"></planet-markdown>
           <ng-container *ngIf="!planetCode">
-            <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>Edit {
+            <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>{ descType, select, Edit{Edit } Add{Add }} {
               configuration.planetType, select, community {Community} nation {Nation} center {Earth}
             } Description</button>
           </ng-container>
