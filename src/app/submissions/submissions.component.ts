@@ -27,13 +27,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
+  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ];
   @Output() submissionClick = new EventEmitter<any>();
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   initTable = true;
-  displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ];
   statusOptions: any = [
     { text: 'Pending', value: 'pending' },
     { text: 'Not Graded', value: 'requires grading' },

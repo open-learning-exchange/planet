@@ -386,7 +386,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
-      this.planetMessageService.showMessage(this.team.name || `${this.configuration.name} Services Directory` + ' updated successfully');
+      this.planetMessageService.showMessage((this.team.name || `${this.configuration.name} Services Directory`) + ' updated successfully');
     });
   }
 

@@ -24,6 +24,7 @@ import { findByIdInArray } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
+import { SearchService } from '../shared/forms/search.service';
 
 @Component({
   selector: 'planet-resources',
@@ -62,6 +63,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+    this.recordSearch();
     this.removeFilteredFromSelection();
   }
   myView = this.route.snapshot.data.view;
@@ -97,7 +99,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private syncService: SyncService,
     private dialogsListService: DialogsListService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private searchService: SearchService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -106,7 +109,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
     }
-    this.titleSearch = this.dropdownsFill();
+    this.titleSearch = '';
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
@@ -128,7 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
-      this.resources.filter = this.resources.filter || (tags.length > 0 ? ' ' : '');
+      this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
     this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
@@ -165,6 +168,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.recordSearch(true);
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -297,12 +301,22 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.titleSearch = '';
   }
 
+  recordSearch(complete = false) {
+    if (this.resources.filter !== '') {
+      this.searchService.recordSearch({
+        text: this._titleSearch,
+        type: this.dbName,
+        filter: { ...this.searchSelection, tags: this.tagFilter.value }
+      }, complete);
+    }
+  }
+
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
       Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
-      this.myView !== null ?
+      this.myView !== undefined ?
       ' ' : '';
   }
 
