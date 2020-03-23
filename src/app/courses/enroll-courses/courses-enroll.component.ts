@@ -35,18 +35,18 @@ export class CoursesEnrollComponent {
         return zip(
           this.couchService.findAll('shelf', { 'selector': { 'courseIds': { '$elemMatch': { '$eq': this.courseId } } } }),
           this.coursesService.findProgress([ this.courseId ], { allUsers : true }),
+          this.usersService.usersListener(true),
           // Include course listener to ensure requestCourses() is complete.  This updates courses in CoursesService.
           this.coursesService.coursesListener$()
         );
       }),
       take(1)
-    ).subscribe(([ shelfUsers, progresses ]) => {
+    ).subscribe(([ shelfUsers, progresses, users ]) => {
       this.course = this.coursesService.getCourseNameFromId(this.courseId);
-      this.members = this.usersService.data.users.concat(this.usersService.data.childUsers)
-        .map((user: any) => ({
-          ...this.usersService.fullUserDoc(user),
+      this.members = users.map((user: any) => ({
+          ...user,
           activityDates: this.userProgress(progresses.filter(
-            (progress: any) => progress.createdOn === user.planetCode && progress.userId === (user.couchId || user._id))
+            (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
           )
         })).filter(doc => doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id));
       this.emptyData = this.members.length === 0;
