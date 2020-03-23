@@ -139,14 +139,6 @@ export class ReportsService {
     }));
   }
 
-  groupResourceVisits(resourceActivities) {
-    return this.groupDocVisits(resourceActivities, 'resourceId');
-  }
-
-  groupCourseVisits(courseActivites) {
-    return this.groupDocVisits(courseActivites, 'courseId');
-  }
-
   groupDocVisits(activites, type: 'resourceId' | 'courseId') {
     return ({
       byDoc: this.groupBy(activites, [ 'parentCode', 'createdOn', type ], { maxField: 'time' })
