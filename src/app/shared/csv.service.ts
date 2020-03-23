@@ -49,8 +49,8 @@ export class CsvService {
       useKeysAsHeaders: false
     };
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
-    const groupedResourceViews = this.reportsService.groupResourceVisits(resourceViews).byMonth;
-    const groupedCourseViews = this.reportsService.groupCourseVisits(courseViews).byMonth;
+    const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
+    const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews);
     this.generate(formattedData, options);
   }
