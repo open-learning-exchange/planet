@@ -147,7 +147,7 @@ export class ReportsService {
     return this.groupDocVisits(courseActivites, 'courseId');
   }
 
-  groupDocVisits(activites, type) {
+  groupDocVisits(activites, type: 'resourceId' | 'courseId') {
     return ({
       byDoc: this.groupBy(activites, [ 'parentCode', 'createdOn', type ], { maxField: 'time' })
         .filter(activity => activity.title !== '' && activity !== undefined),
