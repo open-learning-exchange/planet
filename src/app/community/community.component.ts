@@ -22,6 +22,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 @Component({
   selector: 'planet-community',
   templateUrl: './community.component.html',
+  preserveWhitespaces: true,
   styleUrls: [ './community.scss' ],
   encapsulation: ViewEncapsulation.None
 })
@@ -41,6 +42,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
   planetCode: string | null;
   shareTarget: string;
+  servicesDescriptionLabel: 'Add' | 'Edit';
 
   constructor(
     private dialog: MatDialog,
@@ -104,6 +106,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err))
     ).subscribe(team => {
       this.team = team;
+      this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
     });
   }
 
@@ -272,11 +275,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const submitDescription = ({ description }) => {
       this.teamsService.updateTeam({ ...this.team, description: description.text, images: description.images }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
-      ).subscribe(newTeam => { this.team = newTeam; });
+      ).subscribe(newTeam => {
+        this.team = newTeam;
+        this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+      });
       this.dialogsFormService.closeDialogsForm();
     };
     this.dialogsFormService.openDialogsForm(
-      'Edit Description',
+      this.team.description ? 'Edit Description' : 'Add Description',
       [ { name: 'description', placeholder: 'Description', type: 'markdown', required: true, imageGroup: 'community' } ],
       { description: { text: this.team.description || '', images: this.team.images || [] } },
       { onSubmit: submitDescription }
