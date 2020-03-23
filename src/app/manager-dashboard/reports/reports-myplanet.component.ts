@@ -96,4 +96,5 @@ export class ReportsMyPlanetComponent implements OnInit {
       })
     );
   }
+
 }
