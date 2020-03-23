@@ -42,7 +42,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
   planetCode: string | null;
   shareTarget: string;
-  descType: 'Add' | 'Edit';
+  servicesDescriptionLabel: 'Add' | 'Edit';
 
   constructor(
     private dialog: MatDialog,
@@ -106,7 +106,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err))
     ).subscribe(team => {
       this.team = team;
-      this.descType = this.team.description ? 'Edit' : 'Add';
+      this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
     });
   }
 
@@ -277,7 +277,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(newTeam => {
         this.team = newTeam;
-        this.descType = newTeam.description ? 'Edit' : 'Add';
+        this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
       });
       this.dialogsFormService.closeDialogsForm();
     };
