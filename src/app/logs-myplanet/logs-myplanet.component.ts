@@ -60,10 +60,7 @@ export class LogsMyPlanetComponent implements OnInit {
           apklogs
       );
       this.apklogs = this.allPlanets;
-      if (checkEmptyRecords(this.apklogs)) {
-        this.isEmpty = false;
-      }
-
+      this.isEmpty = !checkEmptyRecords(this.apklogs);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 

@@ -73,9 +73,7 @@ export class ReportsMyPlanetComponent implements OnInit {
         myPlanets
       );
       this.planets = this.allPlanets;
-      if (checkEmptyRecords(this.planets)) {
-        this.isEmpty = false;
-      }
+      this.isEmpty = !checkEmptyRecords(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 
