@@ -19,7 +19,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   private allPlanets: any[] = [];
   searchValue = '';
   planets: any[] = [];
-  isEmpty = true;
+  isEmpty = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
   get childType() {

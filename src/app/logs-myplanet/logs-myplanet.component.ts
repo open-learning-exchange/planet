@@ -14,7 +14,7 @@ import { attachNamesToPlanets, checkEmptyRecords } from '../manager-dashboard/re
 export class LogsMyPlanetComponent implements OnInit {
 
   apklogs: any[] = [];
-  isEmpty = true;
+  isEmpty = false;
   private allPlanets: any[] = [];
   searchValue = '';
   planetType = this.stateService.configuration.planetType;
