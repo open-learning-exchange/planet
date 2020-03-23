@@ -40,3 +40,5 @@ export const setMonths = () => {
 export const activityParams = (planetCode, filter): { planetCode, filterAdmin?, fromMyPlanet? } => {
   return { planetCode: planetCode, filterAdmin: true, ...(filter ? { fromMyPlanet: filter === 'myplanet' } : {}) };
 };
+
+export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
