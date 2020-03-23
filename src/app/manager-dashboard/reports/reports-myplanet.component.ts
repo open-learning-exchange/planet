@@ -66,8 +66,9 @@ export class ReportsMyPlanetComponent implements OnInit {
   getMyPlanetList(hubId) {
     this.myPlanetRequest(hubId).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
       this.setAllPlanets(
-        [ { doc: this.configuration } ].concat(planets)
-          .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
+        [ { doc: this.configuration } ].concat(
+          planets.filter(planet => planet.doc.docType !== 'parentName')
+        ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
       this.planets = this.allPlanets;
