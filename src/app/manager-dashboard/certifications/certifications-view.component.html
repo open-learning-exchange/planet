@@ -6,9 +6,9 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 action-buttons">
+  <mat-toolbar class="primary-color font-size-1">
     <span>{{certification.name}}</span>
-    <button mat-stroked-button (click)="routeToEdit(certification?._id)">
+    <button mat-stroked-button class="margin-lr-3" (click)="routeToEdit(certification?._id)">
       <mat-icon>edit</mat-icon>Edit
     </button>
   </mat-toolbar>
