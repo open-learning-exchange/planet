@@ -6,6 +6,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../courses.service';
 import { TableState } from '../../users/users-table.component';
+import { StateService } from '../../shared/state.service';
 
 
 @Component({
@@ -19,13 +20,21 @@ export class CoursesEnrollComponent {
   members: any[] = [];
   tableState = new TableState();
   emptyData = false;
+  userTableColumns = [
+    'profile',
+    'name',
+    ...(this.stateService.configuration.planetType === 'community' ? [] : [ 'planet' ]),
+    'startDate',
+    'recentDate'
+  ];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private couchService: CouchService,
     private usersService: UsersService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private stateService: StateService
   ) {
     this.coursesService.requestCourses();
     this.usersService.requestUserData();

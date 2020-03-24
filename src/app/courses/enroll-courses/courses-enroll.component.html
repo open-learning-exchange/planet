@@ -11,7 +11,7 @@
   </mat-toolbar>
 
   <ng-container *ngIf="!emptyData; else notFoundMessage">
-    <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="[ 'profile', 'name', 'startDate', 'recentDate' ]" linkPrefix="/users/profile" containerClass="view-container view-full-height view-table"></planet-users-table>
+    <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" linkPrefix="/users/profile" containerClass="view-container view-full-height view-table"></planet-users-table>
   </ng-container>
   <ng-template #notFoundMessage>
     <div class="view-container">No User Found</div>
