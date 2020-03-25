@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { commonSortingDataAccessor } from '../../shared/table-helpers';
+import { commonSortingDataAccessor, sortNumberOrString } from '../../shared/table-helpers';
 import { ResourcesService } from '../../resources/resources.service';
 
 @Component({
@@ -31,7 +31,7 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
         this.resourceActivities.paginator = this.paginator;
       });
     this.resourceActivities.sortingDataAccessor = (item: any, property: string) =>
-      commonSortingDataAccessor(this.sortingObject(item, property), property);
+      sortNumberOrString(this.sortingObject(item, property), property);
   }
 
   ngOnChanges() {
