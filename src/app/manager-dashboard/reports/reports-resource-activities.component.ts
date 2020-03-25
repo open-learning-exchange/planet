@@ -9,7 +9,7 @@ import { ResourcesService } from '../../resources/resources.service';
 })
 export class ReportsReportActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 
-  @Input() activities = [];
+  @Input() activitiesByDoc = [];
   resourceActivities = new MatTableDataSource();
   displayedColumns = [
     'title',
@@ -25,7 +25,7 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnInit() {
     this.resourcesService.resourcesListener(false).subscribe((resources) => {
-        this.resourceActivities.data = this.activities.map(
+        this.resourceActivities.data = this.activitiesByDoc.map(
           activity => ({ ...activity, ...resources.find(res => res._id === activity.resourceId) })
         );
         this.resourceActivities.paginator = this.paginator;
