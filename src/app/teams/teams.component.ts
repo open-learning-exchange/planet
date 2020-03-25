@@ -14,7 +14,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
-import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -152,8 +152,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const visitLog = this.teamActivities.filter(activity => activity.teamId === doc._id).reduce(({ visitCount, lastVisit }, activity) =>
         ({ visitCount: visitCount + 1, lastVisit: lastVisit && activity.time < lastVisit ? lastVisit : activity.time }), noVisit)
         || noVisit;
-      const planet = this.childPlanets.find((p: any) => p.doc.code === doc.teamPlanetCode);
-      const teamPlanetName = planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : this.stateService.configuration.name;
+      const teamPlanetName = codeToPlanetName(doc.teamPlanetCode, this.stateService.configuration, this.childPlanets );
       const team = { doc, membershipDoc, visitLog, teamPlanetName };
       switch (membershipDoc.docType) {
         case 'membership':
