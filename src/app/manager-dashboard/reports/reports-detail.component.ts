@@ -30,8 +30,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   filter = '';
   codeParam = '';
   loginActivities = [];
-  resourceActivities = [];
-  courseActivities = [];
+  resourceActivities = { byDoc: [], total: [] };
+  courseActivities = { byDoc: [], total: [] };
   today: Date;
 
   constructor(
@@ -119,8 +119,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.getAllActivities(params.db, activityParams(this.planetCode, this.filter))
     .subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
-      this[type] = activities.filter(activity => activity.resourceId || activity.courseId);
-      const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type], type.replace('Activities', 'Id'));
+      this[type].total = activities.filter(activity => activity.resourceId || activity.courseId);
+      const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total, type.replace('Activities', 'Id'));
+      this[type].byDoc = byDoc;
       this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
       this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
@@ -246,8 +247,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'summary':
         this.csvService.exportSummaryCSV(
           filterByDate(this.loginActivities, 'loginTime', dateRange),
-          filterByDate(this.resourceActivities, 'time', dateRange),
-          filterByDate(this.courseActivities, 'time', dateRange),
+          filterByDate(this.resourceActivities.total, 'time', dateRange),
+          filterByDate(this.courseActivities.total, 'time', dateRange),
           this.planetName
         );
         break;
@@ -258,7 +259,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType, dateRange) {
     this.csvService.exportCSV({
-      data: filterByDate(reportType === 'courseViews' ? this.courseActivities : this.resourceActivities, 'time', dateRange)
+      data: filterByDate(reportType === 'courseViews' ? this.courseActivities.total : this.resourceActivities.total, 'time', dateRange)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
     });

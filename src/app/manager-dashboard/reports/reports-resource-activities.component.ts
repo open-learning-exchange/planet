@@ -2,7 +2,6 @@ import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit } from '@
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { commonSortingDataAccessor } from '../../shared/table-helpers';
 import { ResourcesService } from '../../resources/resources.service';
-import { ReportsService } from './reports.service';
 
 @Component({
   selector: 'planet-reports-resource-activities',
@@ -21,14 +20,14 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
-    private resourcesService: ResourcesService,
-    private reportsService: ReportsService
+    private resourcesService: ResourcesService
   ) {}
 
   ngOnInit() {
     this.resourcesService.resourcesListener(false).subscribe((resources) => {
-        const { byDoc, byMonth } = this.reportsService.groupDocVisits(this.activities, 'resourceId');
-        this.resourceActivities.data = byDoc.map(act => ({ ...act, ...resources.find(res => res._id === act.resourceId) }));
+        this.resourceActivities.data = this.activities.map(
+          activity => ({ ...activity, ...resources.find(res => res._id === activity.resourceId) })
+        );
         this.resourceActivities.paginator = this.paginator;
       });
     this.resourceActivities.sortingDataAccessor = (item: any, property: string) =>
