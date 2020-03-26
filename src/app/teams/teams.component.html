@@ -55,7 +55,7 @@
                 {planetType, select, community {Connected with Nation} nation {Connected with Earth}}
               </ng-container>
               <ng-container *ngIf="planetCode !== element.doc.teamPlanetCode">
-                <ng-container i18n>Connected with</ng-container> {{element.doc.teamPlanetCode}}
+                <ng-container i18n>Connected with</ng-container> {{element.teamPlanetName}}
               </ng-container>
             </ng-container>
           </ng-container>

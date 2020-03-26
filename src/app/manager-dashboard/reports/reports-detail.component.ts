@@ -11,7 +11,7 @@ import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { attachNamesToPlanets, filterByDate, setMonths, activityParams } from './reports.utils';
+import { attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -54,10 +54,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
       const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
       this.codeParam = params.get('code');
-      const planet = planets.find((p: any) => p.doc.code === this.codeParam);
       this.planetCode = this.codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.planetName = planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : this.stateService.configuration.name;
+      this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
       this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
