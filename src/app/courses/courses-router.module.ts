@@ -23,7 +23,6 @@ const routes: Routes = [
   { path: 'update/exam/:id', component: ExamsAddComponent },
   { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
-  { path: 'myProgress', component: CoursesProgressLearnerComponent },
   { path: 'enrolled/:id', component: CoursesEnrollComponent }
 ];
 
