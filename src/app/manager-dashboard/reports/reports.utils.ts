@@ -3,6 +3,11 @@ export const attachNamesToPlanets = (planetDocs: any[]) => {
   return planetDocs.map(doc => ({ doc, nameDoc: names.find((name: any) => name.planetId === doc._id) }));
 };
 
+export const codeToPlanetName = (code: string, configuration: any, childPlanets: any[]) => {
+  const planet = childPlanets.find((childPlanet: any) => childPlanet.doc.code === code);
+  return planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : configuration.name;
+};
+
 export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   hubs: hubs.map(hub => ({
     ...hub,
@@ -40,3 +45,5 @@ export const setMonths = () => {
 export const activityParams = (planetCode, filter): { planetCode, filterAdmin?, fromMyPlanet? } => {
   return { planetCode: planetCode, filterAdmin: true, ...(filter ? { fromMyPlanet: filter === 'myplanet' } : {}) };
 };
+
+export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);

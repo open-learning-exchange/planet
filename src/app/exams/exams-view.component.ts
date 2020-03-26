@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -189,14 +189,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setCourseListener() {
-    this.coursesService.courseUpdated$
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress }: { course: any, progress: any }) => {
-      // To be readable by non-technical people stepNum & questionNum param will start at 1
-      const step = course.steps[this.stepNum - 1];
+    this.coursesService.courseUpdated$.pipe(
+      takeUntil(this.onDestroy$),
+      switchMap(({ course, progress }: { course: any, progress: any }) => {
+        // To be readable by non-technical people stepNum & questionNum param will start at 1
+        const step = course.steps[this.stepNum - 1];
+        this.title = step.stepTitle;
+        return forkJoin([ of(course), of(step), this.couchService.get(`exams/${step[this.examType]._id}`).pipe(catchError(() => of(0))) ]);
+      })
+    ).subscribe(([ course, step, exam ]: any[]) => {
       const type = this.examType;
-      this.title = step.stepTitle;
-      this.setTakingExam(step[type], step[type]._id + '@' + course._id, type);
+      const takingExam = exam ? exam : step[type];
+      this.setTakingExam(takingExam, takingExam._id + '@' + course._id, type);
     });
   }
 

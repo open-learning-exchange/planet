@@ -1,0 +1,22 @@
+@import '../variables';
+
+:host {
+
+  mat-icon {
+    margin: 0.25rem;
+    height: 30px;
+    width: 30px;
+  }
+
+  @media (max-width: $screen-md) {
+    span {
+      font-size: 1rem;
+    }
+
+    mat-icon {
+      height: 1.25rem;
+      width: 1.25rem;
+    }
+  }
+
+}
