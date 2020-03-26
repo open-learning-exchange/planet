@@ -542,6 +542,10 @@ body {
     }
   }
 
+  mat-toolbar.action-buttons {
+    margin: 0;
+  }
+
   .action-buttons {
     margin: 0 0 0.5rem 0;
     & > * {
