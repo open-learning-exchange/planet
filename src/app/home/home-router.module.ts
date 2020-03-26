@@ -12,6 +12,7 @@ import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
+import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -64,6 +65,7 @@ const routes: Routes = [
         path: dashboardPath('myCourses'),
         loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true }
       },
+      { path: dashboardPath('myProgress'), component: CoursesProgressLearnerComponent },
       {
         path: dashboardPath('myLibrary'),
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myLibrary' }
