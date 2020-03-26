@@ -18,7 +18,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   @Input() color: string;
   @Input() itemData;
   @Input() link;
-  @Input() emptyLink = [];
+  @Input() emptyLink;
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items', { static: false }) itemDiv: ElementRef;
@@ -93,4 +93,18 @@ export class DashboardTileComponent implements AfterViewChecked {
       }
     );
   }
+}
+
+@Component({
+  selector: 'planet-dashboard-tile-title',
+  template: `
+    <mat-icon svgIcon={{cardTitle}}></mat-icon>
+    <span>{{cardTitle}}</span>
+  `,
+  styleUrls: [ './dashboard-tile-title.scss' ]
+})
+export class DashboardTileTitleComponent {
+
+  @Input() cardTitle;
+
 }

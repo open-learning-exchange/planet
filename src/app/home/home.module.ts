@@ -9,7 +9,7 @@ import { HomeRouterModule } from './home-router.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 
 import { MaterialModule } from '../shared/material.module';
-import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
+import { DashboardTileComponent, DashboardTileTitleComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
@@ -48,6 +48,7 @@ import { PlanetComponent } from './planet.component';
     HomeComponent,
     DashboardComponent,
     DashboardTileComponent,
+    DashboardTileTitleComponent,
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
