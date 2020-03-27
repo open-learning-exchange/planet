@@ -5,7 +5,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
 import { map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
-import { of, forkJoin, Subject } from 'rxjs';
+import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -14,6 +14,7 @@ import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { subjectLevels } from '../courses/constants';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -51,6 +52,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private coursesService: CoursesService,
     private stateService: StateService,
+    private certificationsService: CertificationsService,
     private dialog: MatDialog
   ) {
     const currRoles = this.userService.get().roles;
@@ -61,8 +63,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
     this.coursesService.requestCourses();
-    this.coursesService.coursesListener$().pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(courses => {
-      this.setBadgesCourses(courses);
+    combineLatest(
+      this.coursesService.coursesListener$(),
+      this.certificationsService.getCertifications()
+    ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
+      this.setBadgesCourses(courses, certifications);
     });
   }
 
@@ -197,9 +202,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  setBadgesCourses(courses) {
+  setBadgesCourses(courses, certifications) {
     this.badgesCourses = courses
       .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length)
+      .map(course => ({
+        ...course, inCertification: certifications.some(certification => certification.courseIds.indexOf(course._id) > -1)
+      }))
+      .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0)
       .reduce((badgesCourses, course) => ({
         ...badgesCourses, [course.doc.subjectLevel]: [ ...(badgesCourses[course.doc.subjectLevel] || []), course ]
       }), {});

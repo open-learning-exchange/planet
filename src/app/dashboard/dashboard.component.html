@@ -15,6 +15,7 @@
         *ngFor="let course of badgesCourses[badgeGroup]"
         class="cursor-pointer"
         [matTooltip]="course.doc.courseTitle"
+        [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
         (click)="openCourseDialog(course)">
         {{
           course.doc.subjectLevel === 'Beginner' ?

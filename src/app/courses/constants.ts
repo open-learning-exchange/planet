@@ -18,3 +18,14 @@ export const gradeLevels = [
 ];
 
 export const subjectLevels = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
+
+export const foundations = [
+  'literacy',
+  'numeracy',
+  'health',
+  'leadership',
+  'rights',
+  'purpose',
+  'roots',
+  'planet'
+];
