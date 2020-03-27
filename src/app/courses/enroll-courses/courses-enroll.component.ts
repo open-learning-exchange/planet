@@ -54,17 +54,8 @@ export class CoursesEnrollComponent {
         );
       }),
       take(1)
-    ).subscribe(([ shelfUsers, progresses, users, childPlanets ]) => {
-      this.course = this.coursesService.getCourseNameFromId(this.courseId);
-      const planets = [ { doc: this.stateService.configuration }, ...attachNamesToPlanets(childPlanets) ];
-      this.members = users.map((user: any) => ({
-          ...user,
-          activityDates: this.userProgress(progresses.filter(
-            (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
-          ),
-          planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
-        })).filter(doc => doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id));
-      this.emptyData = this.members.length === 0;
+    ).subscribe((responses) => {
+      this.setMembers(responses);
     });
   }
 
@@ -77,6 +68,19 @@ export class CoursesEnrollComponent {
 
   back() {
     this.router.navigate([ '../..' ], { relativeTo: this.route });
+  }
+
+  setMembers([ shelfUsers, progresses, users, childPlanets, courses ]) {
+    this.course = this.coursesService.getCourseNameFromId(this.courseId);
+    const planets = [ { doc: this.stateService.configuration }, ...attachNamesToPlanets(childPlanets) ];
+    this.members = users.map((user: any) => ({
+        ...user,
+        activityDates: this.userProgress(progresses.filter(
+          (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
+        ),
+        planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
+      })).filter(doc => doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id));
+    this.emptyData = this.members.length === 0;
   }
 
 }
