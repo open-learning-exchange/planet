@@ -13,6 +13,7 @@ import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
+import { subjectLevels } from '../courses/constants';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -26,7 +27,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   roles: string[];
   planetName: string;
-  badgesCourses = [];
+  badgesCourses: { [key: string]: any[] } = {};
+  badgeGroups = subjectLevels;
 
   dateNow: any;
   visits = 0;
@@ -60,8 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
     this.coursesService.requestCourses();
     this.coursesService.coursesListener$().pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(courses => {
-      this.badgesCourses = courses
-        .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length);
+      this.setBadgesCourses(courses);
     });
   }
 
@@ -194,6 +195,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
       minWidth: '600px',
       maxWidth: '90vw'
     });
+  }
+
+  setBadgesCourses(courses) {
+    this.badgesCourses = courses
+      .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length)
+      .reduce((badgesCourses, course) => ({
+        ...badgesCourses, [course.doc.subjectLevel]: [ ...(badgesCourses[course.doc.subjectLevel] || []), course ]
+      }), {});
   }
 
 }

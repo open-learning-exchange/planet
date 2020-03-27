@@ -10,17 +10,19 @@
     <p>{{dateNow | date:'longDate'}}</p>
   </div>
   <div class="badges">
-    <mat-icon
-      *ngFor="let course of badgesCourses"
-      class="cursor-pointer"
-      [matTooltip]="course.doc.courseTitle"
-      (click)="openCourseDialog(course)">
-      {{
-        course.doc.gradeLevel === 'College' ?
-          'favorite' :
-          'stars'
-      }}
-    </mat-icon>
+    <div *ngFor="let badgeGroup of badgeGroups">
+      <mat-icon
+        *ngFor="let course of badgesCourses[badgeGroup]"
+        class="cursor-pointer"
+        [matTooltip]="course.doc.courseTitle"
+        (click)="openCourseDialog(course)">
+        {{
+          course.doc.subjectLevel === 'Beginner' ?
+            'favorite' :
+            'stars'
+        }}
+      </mat-icon>
+    </div>
   </div>
 </mat-card>
 <planet-dashboard-tile
