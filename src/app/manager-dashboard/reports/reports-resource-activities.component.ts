@@ -7,14 +7,15 @@ import { ResourcesService } from '../../resources/resources.service';
   selector: 'planet-reports-resource-activities',
   templateUrl: './reports-resource-activities.component.html'
 })
-export class ReportsReportActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
+export class ReportsReportActivitiesComponent implements OnChanges, AfterViewInit {
 
   @Input() activitiesByDoc = [];
+  @Input() ratings = [];
   resourceActivities = new MatTableDataSource();
   displayedColumns = [
     'title',
     'count',
-    'averageRating'
+    'value'
   ];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -23,19 +24,10 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
     private resourcesService: ResourcesService
   ) {}
 
-  ngOnInit() {
-    this.resourcesService.resourcesListener(false).subscribe((resources) => {
-        this.resourceActivities.data = this.activitiesByDoc.map(
-          activity => ({ ...activity, ...resources.find(res => res._id === activity.resourceId) })
-        );
-        this.resourceActivities.paginator = this.paginator;
-      });
-    this.resourceActivities.sortingDataAccessor = (item: any, property: string) =>
-      sortNumberOrString(this.sortingObject(item, property), property);
-  }
-
   ngOnChanges() {
-    this.resourcesService.requestResourcesUpdate(false);
+    this.resourceActivities.data = this.activitiesByDoc.map(
+      activity => ({ ...(this.ratings.find((rating: any) => rating.item === activity.resourceId)), ...activity })
+    );
   }
 
   ngAfterViewInit() {
@@ -44,7 +36,7 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   sortingObject(item, property) {
-    return property === 'count' ? item : item.doc;
+    return property === 'title' ? item.max : item;
   }
 
 }
