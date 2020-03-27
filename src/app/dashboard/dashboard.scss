@@ -70,6 +70,14 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
       width: 100%;
       display: flex;
       justify-content: flex-end;
+
+      & > div {
+        margin-right: 0.5rem;
+      }
+
+      & > div:last-child {
+        margin: 0;
+      }
     }
 
     h1, h2, h3 {

@@ -11,18 +11,13 @@
   </div>
   <div class="badges">
     <div *ngFor="let badgeGroup of badgeGroups">
-      <mat-icon
-        *ngFor="let course of badgesCourses[badgeGroup]"
-        class="cursor-pointer"
-        [matTooltip]="course.doc.courseTitle"
-        [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
-        (click)="openCourseDialog(course)">
-        {{
-          course.doc.subjectLevel === 'Beginner' ?
-            'favorite' :
-            'stars'
-        }}
-      </mat-icon>
+      <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseDialog(course)" [matTooltip]="course.doc.courseTitle">
+        <mat-icon
+          [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
+          fontSet="fa"
+          [fontIcon]="badgeIcons[badgeGroup]">
+        </mat-icon>
+      </span>
     </div>
   </div>
 </mat-card>

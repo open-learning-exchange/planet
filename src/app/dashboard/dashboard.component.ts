@@ -13,7 +13,7 @@ import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { subjectLevels } from '../courses/constants';
+import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 @Component({
@@ -29,7 +29,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   roles: string[];
   planetName: string;
   badgesCourses: { [key: string]: any[] } = {};
-  badgeGroups = subjectLevels;
+  badgeGroups = [ ...foundations, 'none' ];
+  badgeIcons = foundationIcons;
 
   dateNow: any;
   visits = 0;
@@ -210,8 +211,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }))
       .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0)
       .reduce((badgesCourses, course) => ({
-        ...badgesCourses, [course.doc.subjectLevel]: [ ...(badgesCourses[course.doc.subjectLevel] || []), course ]
-      }), {});
+        ...badgesCourses, [course.doc.foundation || 'none']: [ ...(badgesCourses[course.doc.foundation || 'none'] || []), course ]
+      }), { none: [] });
+    this.badgeGroups = [ ...foundations, 'none' ].filter(group => this.badgesCourses[group] && this.badgesCourses[group].length);
   }
 
 }

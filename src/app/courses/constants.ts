@@ -29,3 +29,15 @@ export const foundations = [
   'roots',
   'planet'
 ];
+
+export const foundationIcons = {
+  'literacy': 'fa-book-reader',
+  'numeracy': 'fa-infinity',
+  'health': 'fa-medkit',
+  'leadership': 'fa-hands-helping',
+  'rights': 'fa-balance-scale',
+  'purpose': 'fa-flag',
+  'roots': 'fa-history',
+  'planet': '',
+  'none': 'fa-star'
+};
