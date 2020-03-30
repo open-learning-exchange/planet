@@ -15,7 +15,7 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
   displayedColumns = [
     'title',
     'count',
-    'value'
+    'averageRating'
   ];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -31,7 +31,10 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     this.resourceActivities.data = this.activitiesByDoc.map(
-      activity => ({ ...(this.ratings.find((rating: any) => rating.item === activity.resourceId)), ...activity })
+      activity => ({
+        averageRating: (this.ratings.find((rating: any) => rating.item === activity.resourceId) || {}).value,
+        ...activity
+      })
     );
   }
 
