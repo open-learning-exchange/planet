@@ -43,7 +43,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isComplete = false;
   comment: string;
 
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
