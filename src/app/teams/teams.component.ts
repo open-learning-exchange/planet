@@ -71,6 +71,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Output() rowClick = new EventEmitter<{ mode: 'team' | 'enterprise', teamId: string, teamType: 'local' | 'sync' }>();
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
+  filter: string;
 
   constructor(
     private userService: UserService,
@@ -252,6 +253,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.teams.data = this.teamList(this.teams.data);
       this.planetMessageService.showMessage('Request to join team sent');
     });
+  }
+
+  resetSearch() {
+    this.teams.filter = this.myTeamsFilter ? ' ' : '';
+    this.filter = '';
   }
 
   applyFilter(filterValue: string) {
