@@ -10,6 +10,7 @@ import { ResourcesService } from '../../resources/resources.service';
 export class ReportsReportActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() activitiesByDoc = [];
+  @Input() ratings = [];
   resourceActivities = new MatTableDataSource();
   displayedColumns = [
     'title',
@@ -24,18 +25,17 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
   ) {}
 
   ngOnInit() {
-    this.resourcesService.resourcesListener(false).subscribe((resources) => {
-        this.resourceActivities.data = this.activitiesByDoc.map(
-          activity => ({ ...activity, ...resources.find(res => res._id === activity.resourceId) })
-        );
-        this.resourceActivities.paginator = this.paginator;
-      });
     this.resourceActivities.sortingDataAccessor = (item: any, property: string) =>
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
   ngOnChanges() {
-    this.resourcesService.requestResourcesUpdate(false);
+    this.resourceActivities.data = this.activitiesByDoc.map(
+      activity => ({
+        averageRating: (this.ratings.find((rating: any) => rating.item === activity.resourceId) || {}).value,
+        ...activity
+      })
+    );
   }
 
   ngAfterViewInit() {
@@ -44,7 +44,7 @@ export class ReportsReportActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   sortingObject(item, property) {
-    return property === 'count' ? item : item.doc;
+    return property === 'title' ? item.max : item;
   }
 
 }

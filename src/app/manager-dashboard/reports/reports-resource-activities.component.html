@@ -2,7 +2,7 @@
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
-      <a [routerLink]="['/resources/view', element._id]">{{element?.doc?.title}}</a>
+      <a [routerLink]="['/resources/view', element.resourceId]">{{element?.max?.title}}</a>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
@@ -11,7 +11,7 @@
   </ng-container>
   <ng-container matColumnDef="averageRating">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Average Rating</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.doc?.averageRating}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.averageRating}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
