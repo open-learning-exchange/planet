@@ -116,7 +116,7 @@ export class SubmissionsService {
 
   newAnswer(answer, oldAnswer, correct) {
     return ({
-      value: answer,
+      value: correct === false ? '' : answer,
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false && this.validAnswer(answer)
     });
