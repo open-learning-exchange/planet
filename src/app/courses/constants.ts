@@ -31,13 +31,13 @@ export const foundations = [
 ];
 
 export const foundationIcons = {
-  'literacy': 'fa-book-reader',
-  'numeracy': 'fa-infinity',
-  'health': 'fa-medkit',
-  'leadership': 'fa-hands-helping',
-  'rights': 'fa-balance-scale',
-  'purpose': 'fa-flag',
-  'roots': 'fa-history',
-  'planet': '',
+  'literacy': 'fa-star',
+  'numeracy': 'fa-star',
+  'health': 'fa-star',
+  'leadership': 'fa-star',
+  'rights': 'fa-star',
+  'purpose': 'fa-star',
+  'roots': 'fa-star',
+  'planet': 'fa-star',
   'none': 'fa-star'
 };
