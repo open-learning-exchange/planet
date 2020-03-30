@@ -28,7 +28,7 @@
               "src/simplemde.scss",
               "node_modules/@fortawesome/fontawesome-free/css/all.css"
             ],
-            "scripts": [ "node_modules/@fortawesome/fontawesome-free/js/all.js" ],
+            "scripts": [],
             "poll": 2000
           },
           "configurations": {
