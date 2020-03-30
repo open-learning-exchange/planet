@@ -120,7 +120,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.getAllActivities(params.db, activityParams(this.planetCode, this.filter))
     .subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
-      this[type].total = activities.filter(activity => activity.resourceId || activity.courseId);
+      // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
+      this[type].total = activities.filter(
+        activity => activity.resourceId.indexOf('_design') === -1 && (activity.resourceId || activity.courseId)
+      );
       const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total, type.replace('Activities', 'Id'));
       this[type].byDoc = byDoc;
       this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
