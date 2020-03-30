@@ -13,7 +13,6 @@ import { findDocuments } from '../../shared/mangoQueries';
   templateUrl: './courses-view.component.html',
   styleUrls: [ 'courses-view.scss' ]
 })
-
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();

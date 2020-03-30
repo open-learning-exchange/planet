@@ -23,6 +23,7 @@ import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.componen
 import { UsersModule } from '../users/users.module';
 import { CoursesIconComponent } from './courses-icon.component';
 import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.module';
+import { CoursesViewDetailModule } from './view-courses/courses-view-detail.module';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.
     SharedComponentsModule,
     DialogsAddResourcesModule,
     DialogsSubmissionsModule,
-    UsersModule
+    UsersModule,
+    CoursesViewDetailModule
   ],
   declarations: [
     CoursesComponent,
