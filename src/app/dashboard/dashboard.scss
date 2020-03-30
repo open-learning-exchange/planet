@@ -78,6 +78,12 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
       & > div:last-child {
         margin: 0;
       }
+
+      & mat-icon.fa {
+        font-size: 20px;
+        display: inline;
+      }
+
     }
 
     h1, h2, h3 {
