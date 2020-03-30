@@ -7,7 +7,7 @@ import { ResourcesService } from '../../resources/resources.service';
   selector: 'planet-reports-resource-activities',
   templateUrl: './reports-resource-activities.component.html'
 })
-export class ReportsReportActivitiesComponent implements OnChanges, AfterViewInit {
+export class ReportsReportActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
@@ -23,6 +23,11 @@ export class ReportsReportActivitiesComponent implements OnChanges, AfterViewIni
   constructor(
     private resourcesService: ResourcesService
   ) {}
+
+  ngOnInit() {
+    this.resourceActivities.sortingDataAccessor = (item: any, property: string) =>
+      sortNumberOrString(this.sortingObject(item, property), property);
+  }
 
   ngOnChanges() {
     this.resourceActivities.data = this.activitiesByDoc.map(
