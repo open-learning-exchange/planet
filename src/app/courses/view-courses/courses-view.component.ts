@@ -55,19 +55,15 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
           (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
         return this.stateService.getCouchState('exams', 'local');
       }),
-      takeUntil(this.onDestroy$),
+      takeUntil(this.onDestroy$)
     ).subscribe((exams) => {
-      this.courseDetail.steps = this.courseDetail.steps.map(step => ({
-        ...step,
-        exam: step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam
-      }));
+      const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
+      this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
     });
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (params: ParamMap) => {
-        this.courseId = params.get('id');
-        this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
-      }
-    );
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
+      this.courseId = params.get('id');
+      this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
+    });
   }
 
   ngOnDestroy() {
