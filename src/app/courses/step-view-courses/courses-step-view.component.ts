@@ -8,6 +8,7 @@ import { UserService } from '../../shared/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -40,16 +41,18 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private userService: UserService,
     private submissionsService: SubmissionsService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
     combineLatest(
       this.coursesService.courseUpdated$,
-      this.resourcesService.resourcesListener(this.parent)
+      this.resourcesService.resourcesListener(this.parent),
+      this.stateService.getCouchState('exams', 'local')
     ).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
-      this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
+    .subscribe(([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+      this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
       if (this.countActivity) {
         this.coursesService.courseActivity('visit', course, this.stepNum);
         this.countActivity = false;
@@ -90,7 +93,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  initCourse(course, progress, resources) {
+  initCourse(course, progress, resources, exams) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.initResources(resources);
@@ -107,7 +110,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
-        parent: this.stepDetail.exam,
+        parent: exams.find(exam => exam._id === this.stepDetail.exam._id) || this.stepDetail.exam,
         user: this.userService.get(),
         type: 'exam' });
     }
