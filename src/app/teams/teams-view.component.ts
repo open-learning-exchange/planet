@@ -196,10 +196,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       this.setTasks(this.tasks);
-      const currentMember = this.members.filter(item => item.userId === this.user._id);
-      this.messageCounter = currentMember[0].messagesList
-        ? this.news.filter(message => currentMember[0].messagesList.findIndex(id => id === message._id) === -1 && !message.doc.replyTo).length
-        : this.news.filter(message => !!message.doc.replyTo).length;
+      this.setUnreadMessageCount();
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
   }
@@ -208,6 +205,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const messagesList = this.news.filter(message => !message.doc.replyTo).map(item => item._id);
     const member = this.members.filter(item => item.userId === this.user._id);
     return this.couchService.put(this.dbName + '/' + member[0]._id, { ...member[0], messagesList }).subscribe();
+  }
+
+  setUnreadMessageCount() {
+    const currentMember = this.members.filter(item => item.userId === this.user._id);
+    this.messageCounter = currentMember[0].messagesList
+      ? this.news.filter(message => currentMember[0]
+        .messagesList.findIndex(id => id === message._id) === -1 && !message.doc.replyTo).length
+      : this.news.filter(message => !!message.doc.replyTo).length;
   }
 
   setTasks(tasks = []) {
