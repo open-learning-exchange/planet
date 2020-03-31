@@ -122,7 +122,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
       // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
       this[type].total = activities.filter(
-        activity => (activity.resourceId || activity.courseId).indexOf('_design') === -1 && (activity.resourceId || activity.courseId)
+        activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
       );
       const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total, type.replace('Activities', 'Id'));
       this[type].byDoc = byDoc;
