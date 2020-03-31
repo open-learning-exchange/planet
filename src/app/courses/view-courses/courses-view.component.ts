@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -33,25 +34,33 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private stateService: StateService
+    private stateService: StateService,
+    private couchService: CouchService
   ) { }
 
   ngOnInit() {
-    this.coursesService.courseUpdated$
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
-      this.courseDetail = course;
-      this.coursesService.courseActivity('visit', course);
-      this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
+    this.coursesService.courseUpdated$.pipe(
+      switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
+        this.courseDetail = course;
+        this.coursesService.courseActivity('visit', course);
+        this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
+          ...step,
+          resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
+          progress: progress.find((p: any) => p.stepNum === (index + 1))
+        }));
+        this.progress = progress;
+        this.isUserEnrolled = this.checkMyCourses(course._id);
+        this.canManage = this.currentUser.isUserAdmin ||
+          this.courseDetail.creator !== undefined &&
+          (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
+        return this.stateService.getCouchState('exams', 'local');
+      }),
+      takeUntil(this.onDestroy$),
+    ).subscribe((exams) => {
+      this.courseDetail.steps = this.courseDetail.steps.map(step => ({
         ...step,
-        resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-        progress: progress.find((p: any) => p.stepNum === (index + 1))
+        exam: step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam
       }));
-      this.progress = progress;
-      this.isUserEnrolled = this.checkMyCourses(course._id);
-      this.canManage = this.currentUser.isUserAdmin ||
-        this.courseDetail.creator !== undefined &&
-        (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
     });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(
       (params: ParamMap) => {
