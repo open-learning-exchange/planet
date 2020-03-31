@@ -4,14 +4,14 @@ import { commonSortingDataAccessor, sortNumberOrString } from '../../shared/tabl
 import { ResourcesService } from '../../resources/resources.service';
 
 @Component({
-  selector: 'planet-reports-resource-activities',
-  templateUrl: './reports-resource-activities.component.html'
+  selector: 'planet-reports-course-activities',
+  templateUrl: './reports-course-activities.component.html'
 })
-export class ReportsResourceActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
+export class ReportsCourseActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
-  resourceActivities = new MatTableDataSource();
+  courseActivities = new MatTableDataSource();
   displayedColumns = [
     'title',
     'count',
@@ -25,22 +25,22 @@ export class ReportsResourceActivitiesComponent implements OnInit, OnChanges, Af
   ) {}
 
   ngOnInit() {
-    this.resourceActivities.sortingDataAccessor = (item: any, property: string) =>
+    this.courseActivities.sortingDataAccessor = (item: any, property: string) =>
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
   ngOnChanges() {
-    this.resourceActivities.data = this.activitiesByDoc.map(
+    this.courseActivities.data = this.activitiesByDoc.map(
       activity => ({
-        averageRating: (this.ratings.find((rating: any) => rating.item === activity.resourceId) || {}).value,
+        averageRating: (this.ratings.find((rating: any) => rating.item === activity.courseId) || {}).value,
         ...activity
       })
     );
   }
 
   ngAfterViewInit() {
-    this.resourceActivities.paginator = this.paginator;
-    this.resourceActivities.sort = this.sort;
+    this.courseActivities.paginator = this.paginator;
+    this.courseActivities.sort = this.sort;
   }
 
   sortingObject(item, property) {

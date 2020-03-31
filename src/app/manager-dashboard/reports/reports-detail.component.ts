@@ -34,6 +34,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   courseActivities = { byDoc: [], total: [] };
   today: Date;
   resourceRatings = [];
+  courseRatings = [];
 
   constructor(
     private activityService: ReportsService,
@@ -107,8 +108,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getRatingInfo() {
     this.activityService.getRatingInfo(activityParams(this.planetCode, this.filter)).subscribe((averageRatings) => {
       this.resourceRatings = averageRatings.filter(item => item.type === 'resource');
+      this.courseRatings = averageRatings.filter(item => item.type === 'course');
       this.reports.resourceRatings = this.resourceRatings.slice(0, 5);
-      this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
+      this.reports.courseRatings = this.courseRatings.slice(0, 5);
     });
   }
 
