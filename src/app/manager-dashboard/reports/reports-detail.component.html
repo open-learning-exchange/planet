@@ -150,10 +150,10 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <planet-reports-resource-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="resourceRatings"></planet-reports-resource-activities>
+        <planet-reports-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="ratings.resource" activityType="resource"></planet-reports-activities>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-reports-course-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="courseRatings"></planet-reports-course-activities>
+        <planet-reports-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.course" activityType="course"></planet-reports-activities>
       </mat-tab>
     </mat-tab-group>
   </div>
