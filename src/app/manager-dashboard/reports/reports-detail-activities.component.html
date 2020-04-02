@@ -1,8 +1,8 @@
-<mat-table #table [dataSource]="resourceActivities" [matSortDisableClear]="true" matSort>
+<mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort>
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="action-buttons">
-      <a [routerLink]="['/resources/view', element.resourceId]">{{element?.max?.title}}</a>
+    <mat-cell *matCellDef="let element">
+      <a [routerLink]="[ '/' + activityType + '/view', activityType === 'resources' ? element.resourceId : element.courseId ]">{{element?.max?.title}}</a>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
