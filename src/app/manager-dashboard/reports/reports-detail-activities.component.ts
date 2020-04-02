@@ -3,10 +3,10 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { sortNumberOrString } from '../../shared/table-helpers';
 
 @Component({
-  selector: 'planet-reports-activities',
-  templateUrl: './reports-activities.component.html'
+  selector: 'planet-reports-detail-activities',
+  templateUrl: './reports-detail-activities.component.html'
 })
-export class ReportsActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
+export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
