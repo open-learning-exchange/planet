@@ -33,7 +33,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resourceActivities = { byDoc: [], total: [] };
   courseActivities = { byDoc: [], total: [] };
   today: Date;
-  ratings = { resource: [], course: [] };
+  ratings = { resources: [], courses: [] };
 
   constructor(
     private activityService: ReportsService,
@@ -106,10 +106,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getRatingInfo() {
     this.activityService.getRatingInfo(activityParams(this.planetCode, this.filter)).subscribe((averageRatings) => {
-      this.ratings.resource = averageRatings.filter(item => item.type === 'resource');
-      this.ratings.course = averageRatings.filter(item => item.type === 'course');
-      this.reports.resourceRatings = this.ratings.resource.slice(0, 5);
-      this.reports.courseRatings = this.ratings.course.slice(0, 5);
+      this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
+      this.ratings.courses = averageRatings.filter(item => item.type === 'course');
+      this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
+      this.reports.courseRatings = this.ratings.courses.slice(0, 5);
     });
   }
 
