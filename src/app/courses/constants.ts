@@ -18,3 +18,26 @@ export const gradeLevels = [
 ];
 
 export const subjectLevels = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
+
+export const foundations = [
+  'literacy',
+  'numeracy',
+  'health',
+  'leadership',
+  'rights',
+  'purpose',
+  'roots',
+  'planet'
+];
+
+export const foundationIcons = {
+  'literacy': 'fa-star',
+  'numeracy': 'fa-star',
+  'health': 'fa-star',
+  'leadership': 'fa-star',
+  'rights': 'fa-star',
+  'purpose': 'fa-star',
+  'roots': 'fa-star',
+  'planet': 'fa-star',
+  'none': 'fa-star'
+};

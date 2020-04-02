@@ -101,7 +101,7 @@
         <target state="final">प्लानेट प्रकारः <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html" approved="yes">
-        <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></source>
+        <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: &apos;fullDate&apos;}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.ts</context>
           <context context-type="linenumber">11</context>
@@ -170,9 +170,14 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {user} }?
-      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} }?
+        <target state="translated">{VAR_SELECT_2, select, single {उल्लेखित {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {पुस्तक} meetup {भेला} user {सदस्य} }?
+      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {पुस्तकहरू} meetup {भेलाहरू} }?
       } }</target>
+        <alt-trans>
+          <target>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {पुस्तक} meetup {भेला} user {सदस्य} }?
+      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {पुस्तकहरू} meetup {भेलाहरू} }?
+      } }</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
@@ -203,7 +208,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
+        <target state="translated">{VAR_SELECT, select, yes {नछान्नु} no {छान्नु} }</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html" approved="yes">
         <source>Search</source>
@@ -295,7 +300,7 @@
         <target state="final">पछाडी एपमा जान यहाँ थिच्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4190ceaecd39e4628edbe902e62673f57d981d36" datatype="html">
-        <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn't valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field is required as valid date} }</source>
+        <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} duplicate {Value already exists} email {Please enter a valid email} matchPassword {Passwords must match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidOldPassword {Old password isn&apos;t valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field is required as valid date} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
@@ -429,9 +434,8 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">
-              
-              <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
+        <target state="translated">
+                            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>स्वीकार्नुहोस्
             
             </target>
       </trans-unit>
@@ -442,9 +446,8 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="needs-translation">
-            
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
+        <target state="translated">
+                        <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>हटाउनुहोस्
           
           </target>
       </trans-unit>
@@ -507,7 +510,7 @@
         <target state="final">अर्को</target>
       </trans-unit>
       <trans-unit id="c221a0f624f0e3ede0e0fc080f42271f0ef2c45c" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? 'Set Up' : 'Update'}}"/> Configuration</source>
+        <source><x id="INTERPOLATION" equiv-text="{{configurationType === &apos;new&apos; ? &apos;Set Up&apos; : &apos;Update&apos;}}"/> Configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">25</context>
@@ -649,7 +652,7 @@
         <target state="final">फर्कनुहाेस्</target>
       </trans-unit>
       <trans-unit id="7245654afd5dd28a03f82283972e701bfe78bce1" datatype="html" approved="yes">
-        <source><x id="INTERPOLATION" equiv-text="{{configurationType === 'new' ? '' : 'Update'}}"/> Contact Details</source>
+        <source><x id="INTERPOLATION" equiv-text="{{configurationType === &apos;new&apos; ? &apos;&apos; : &apos;Update&apos;}}"/> Contact Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">84</context>
@@ -1399,7 +1402,7 @@
         <target state="final">गलत जवाफ, कृपया फेरि प्रयास गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="0c133b7890efd3c4e62ec1c87570d3f39fdd5892" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + ' ' : ''}}"/>Course Progress</source>
+        <source><x id="INTERPOLATION" equiv-text="{{headingStart ? headingStart + &apos; &apos; : &apos;&apos;}}"/>Course Progress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.ts</context>
           <context context-type="linenumber">7</context>
@@ -1536,7 +1539,10 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target state="final">पुस्तकालयमा थप्नुहाेस्</target>
+        <target state="final">मेरो पुस्तकालयमा थप्नुहाेस्</target>
+        <alt-trans>
+          <target>पुस्तकालयमा थप्नुहाेस्</target>
+        </alt-trans>
         <alt-trans>
           <target>पुस्तकालयमा थप गर्नुहोस्</target>
         </alt-trans>
@@ -1547,7 +1553,10 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="final">पुस्तकालयबाट हटाउनुहोस्</target>
+        <target state="final">मेरो पुस्तकालयबाट हटाउनुहोस्</target>
+        <alt-trans>
+          <target>पुस्तकालयबाट हटाउनुहोस्</target>
+        </alt-trans>
         <alt-trans>
           <target>पुस्तकालय बाट हटाउनुहोस्</target>
         </alt-trans>
@@ -1595,9 +1604,14 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">
-        Add to myLibrary
+        <target state="translated">
+        मेरो पुस्तकालयमा थप्नुहाेस्
       </target>
+        <alt-trans>
+          <target>
+        पुस्तकालयमा थप्नुहाेस्
+      </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="2aa6486b4568333332ae6422735ed1a32e5e5214" datatype="html">
         <source>
@@ -1607,9 +1621,14 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">
-        Remove from myLibrary
+        <target state="translated">
+        मेरो पुस्तकालयबाट हटाउनुहोस्
       </target>
+        <alt-trans>
+          <target>
+        पुस्तकालयबाट हटाउनुहोस्
+      </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</source>
@@ -1932,7 +1951,10 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="final">प्रतिक्रिया सूची</target>
+        <target state="final">प्रतिक्रियाहरू</target>
+        <alt-trans>
+          <target>प्रतिक्रिया सूची</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="2b4943909f1e88357c5874b29637a57006c77a2f" datatype="html" approved="yes">
         <source>Type text to search...</source>
@@ -1956,7 +1978,13 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="final">तपाईंको हालको अनुरोध सूची</target>
+        <target state="final">तपाईंका प्रतिकृियाहरू</target>
+        <alt-trans>
+          <target>तपाईंको हालको प्रतिकृियाहरू</target>
+        </alt-trans>
+        <alt-trans>
+          <target>तपाईंको हालको अनुरोध सूची</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
         <source>Priority</source>
@@ -2063,7 +2091,10 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="final">प्रतिक्रिया शीर्षक</target>
+        <target state="final">प्रतिक्रियाकाे शीर्षक</target>
+        <alt-trans>
+          <target>प्रतिक्रिया शीर्षक</target>
+        </alt-trans>
         <alt-trans>
           <target>प्रतिक्रिया सूची</target>
         </alt-trans>
@@ -2095,7 +2126,7 @@
         </context-group>
         <target state="final">प्लानेट लर्निंग</target>
       </trans-unit>
-      <trans-unit id="8a6afcf38cbb3107a31ae8636805be7f65182dc8" datatype="html">
+      <trans-unit id="8a6afcf38cbb3107a31ae8636805be7f65182dc8" datatype="html" approved="yes">
         <source>Teams</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home-classic.component.ts</context>
@@ -2121,7 +2152,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Teams</target>
+        <target state="final">समूहहरू</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html" approved="yes">
         <source>Meetups</source>
@@ -2248,7 +2279,7 @@
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Change Password</target>
+        <target state="translated">पासवर्ड बदल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html" approved="yes">
         <source>Logout</source>
@@ -2310,7 +2341,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Mark as Read</target>
+        <target state="translated">पढिएको भनि चिन्ह लगाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="ea344b0d56cca460ce3e90a00c04fdff5dc05712" datatype="html">
         <source>{VAR_SELECT, select, survey {Surveys} grade {Submissions} }</source>
@@ -2508,7 +2539,7 @@
         <target state="final">स्रोतहरू</target>
       </trans-unit>
       <trans-unit id="086a4df526e4eba8b24aa9bf3cd4f0a7d5858968" datatype="html" approved="yes">
-        <source><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> List</source>
+        <source><x id="INTERPOLATION" equiv-text="{{ planetType === &apos;community&apos; ? &apos;Nation&apos; : &apos;Center&apos; }}"/> List</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">38</context>
@@ -2763,7 +2794,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>छोड्नुहोस्</target>
       </trans-unit>
       <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html" approved="yes">
         <source>Information</source>
@@ -2975,7 +3006,7 @@
         <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Category:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.category}}"/></target>
       </trans-unit>
       <trans-unit id="6e3dff71abf9d4d0b72eb3ce8f9dd5a0a163b6ec" datatype="html">
-        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></source>
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: &apos;fullDate&apos;}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: &apos;fullDate&apos;}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">24</context>
@@ -2983,7 +3014,7 @@
         <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Date:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail.startDate | date: 'fullDate'}}"/> - <x id="INTERPOLATION_1" equiv-text="{{meetupDetail.endDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="23b0021caf8864daf9006a8d85f164e30b07867e" datatype="html">
-        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail.endTime ? '-' : '' }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail.endTime}}"/></source>
+        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail.endTime ? &apos;-&apos; : &apos;&apos; }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail.endTime}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.ts</context>
           <context context-type="linenumber">25</context>
@@ -3072,7 +3103,7 @@
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">All Members</target>
+        <target state="translated">सबै सदस्यहरू</target>
       </trans-unit>
       <trans-unit id="4277bb6581c6db21c073b4c21de2a7bb30679d6a" datatype="html">
         <source>Request to Join</source>
@@ -3086,13 +3117,13 @@
         </context-group>
         <target state="needs-translation">Request to Join</target>
       </trans-unit>
-      <trans-unit id="863a216956e981ae8f2444071cc41c6dba7e0241" datatype="html">
+      <trans-unit id="863a216956e981ae8f2444071cc41c6dba7e0241" datatype="html" approved="yes">
         <source>View Team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">View Team</target>
+        <target state="final">समूहमा जानुहाेस्</target>
       </trans-unit>
       <trans-unit id="496c892a7b3a54d17702d71025c1927eaa6dfced" datatype="html">
         <source>
@@ -3102,8 +3133,8 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-      Add Members
+        <target state="translated">
+      सदस्य थप्नुहोस्
     </target>
       </trans-unit>
       <trans-unit id="43f1e3bb6d8760b33a50ded4d82640eae5716b7c" datatype="html">
@@ -3114,8 +3145,8 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">
-        Leave
+        <target state="translated">
+        छोड्नुहाेस्
       </target>
       </trans-unit>
       <trans-unit id="f8cdf6a93002350fe817a12f497299eb5a4e2e43" datatype="html">
@@ -3132,7 +3163,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">(You)</target>
+        <target state="translated">(तपाईं)</target>
       </trans-unit>
       <trans-unit id="466855df62605763e78d805760bcdbe992d74af7" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Requested Members: (<x id="INTERPOLATION" equiv-text="{{team?.requests.length}}"/>)<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
@@ -3231,7 +3262,7 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, 0 {Promote} 1 {Demote} }</target>
+        <target state="translated">{VAR_SELECT, select, 0 {प्राेमाेट} 1 {डिमाेट} }</target>
       </trans-unit>
       <trans-unit id="3076d1c40be7d031c8e8a92625b24e5eb92ce32a" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
@@ -3240,10 +3271,8 @@
           <context context-type="sourcefile">app/users/users.component.ts</context>
           <context context-type="linenumber">108</context>
         </context-group>
-        <target state="needs-translation">
-            
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>View Profile
-          
+        <target state="translated">
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>folder_open<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>प्राेफाइल हेर्नुहाेस्
           </target>
       </trans-unit>
       <trans-unit id="4d13a9cd5ed3dcee0eab22cb25198d43886942be" datatype="html" approved="yes">
@@ -3260,7 +3289,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Profile<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>प्राेफाइल अपडेट<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="739516c2ca75843d5aec9cf0e6b3e4335c4227b9" datatype="html">
         <source>Change password</source>
@@ -3268,7 +3297,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Change password</target>
+        <target state="translated">पासवर्ड बदल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html" approved="yes">
         <source>Full Name</source>
@@ -3311,7 +3340,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Survey Profile</target>
+        <target state="translated">सर्वेक्षण प्राेफाइल</target>
       </trans-unit>
       <trans-unit id="994363f08f9fbfa3b3994ff7b35c6904fdff18d8" datatype="html" approved="yes">
         <source>Profile</source>
@@ -3343,7 +3372,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="needs-translation">Male</target>
+        <target state="translated">पुरुष</target>
       </trans-unit>
       <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html">
         <source>Female</source>
@@ -3351,7 +3380,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="needs-translation">Female</target>
+        <target state="translated">महिला</target>
       </trans-unit>
       <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
@@ -3370,7 +3399,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target state="needs-translation">Update</target>
+        <target state="translated">अपडेट</target>
       </trans-unit>
     </body>
   </file>

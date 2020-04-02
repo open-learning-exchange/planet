@@ -9,7 +9,7 @@ import { HomeRouterModule } from './home-router.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 
 import { MaterialModule } from '../shared/material.module';
-import { DashboardTileComponent } from '../dashboard/dashboard-tile.component';
+import { DashboardTileComponent, DashboardTileTitleComponent } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
@@ -25,6 +25,7 @@ import { CommunityLinkDialogComponent } from '../community/community-link-dialog
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
 import { PlanetComponent } from './planet.component';
+import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
 
 @NgModule({
   imports: [
@@ -42,12 +43,14 @@ import { PlanetComponent } from './planet.component';
     NewsModule,
     TeamsModule,
     PlanetCalendarModule,
-    UsersModule
+    UsersModule,
+    CoursesViewDetailModule
   ],
   declarations: [
     HomeComponent,
     DashboardComponent,
     DashboardTileComponent,
+    DashboardTileTitleComponent,
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,

@@ -6,7 +6,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets, getDomainParams } from './reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -19,6 +19,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   private allPlanets: any[] = [];
   searchValue = '';
   planets: any[] = [];
+  isEmpty = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
   get childType() {
@@ -66,11 +67,13 @@ export class ReportsMyPlanetComponent implements OnInit {
   getMyPlanetList(hubId) {
     this.myPlanetRequest(hubId).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
       this.setAllPlanets(
-        [ { doc: this.configuration } ].concat(planets)
-          .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
+        [ { doc: this.configuration } ].concat(
+          planets.filter(planet => planet.doc.docType !== 'parentName')
+        ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
       this.planets = this.allPlanets;
+      this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
   }
 

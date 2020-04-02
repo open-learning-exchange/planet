@@ -37,6 +37,10 @@ body {
     color: $warn;
   }
 
+  .grey-text-color {
+    color: $grey;
+  }
+
   .bg-light-grey {
     background-color: $light-grey;
   }
@@ -540,6 +544,10 @@ body {
     & + button{
       min-width: auto;
     }
+  }
+
+  mat-toolbar.action-buttons {
+    margin: 0;
   }
 
   .action-buttons {

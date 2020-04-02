@@ -167,8 +167,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
-  routeToCreator(createdBy: string) {
-    this.router.navigate([ '/users/profile', createdBy ]);
+  routeToUser(username: string) {
+    this.router.navigate([ '/users/profile', username ]);
     if (this.isDialog) {
       this.dialogRef.close();
     }

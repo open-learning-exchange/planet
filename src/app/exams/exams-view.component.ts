@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,9 +17,11 @@ import { CustomValidators } from '../validators/custom-validators';
 
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
-  @Input() previewMode = false;
   @Input() isDialog = false;
   @Input() exam: any;
+  @Input() submission: any;
+  @Input() mode: 'take' | 'grade' | 'view' = 'take';
+  previewMode = false;
   onDestroy$ = new Subject<void>();
   question: any = { header: '', body: '', type: '', choices: [] };
   @Input() questionNum = 0;
@@ -28,7 +30,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   answer = new FormControl(null, this.answerValidator);
   statusMessage = '';
   spinnerOn = true;
-  mode = 'take';
   title = '';
   grade;
   submissionId: string;
@@ -38,7 +39,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
   checkboxState: any = {};
   isNewQuestion = true;
-  answerCount = 0;
+  unansweredQuestions: number[];
   isComplete = false;
   comment: string;
 
@@ -55,10 +56,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.setCourseListener();
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.previewMode = params.get('preview') === 'true' || this.previewMode;
+      this.previewMode = params.get('preview') === 'true' || this.isDialog;
       this.questionNum = +params.get('questionNum') || this.questionNum;
       if (this.previewMode) {
-        (this.exam ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
+        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
           this.exam = this.exam || res;
           this.setExamPreview();
         });
@@ -79,6 +80,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const courseId = params.get('id');
     const submissionId = params.get('submissionId');
     const mode = params.get('mode');
+    this.mode = mode || this.mode;
     this.answer.setValue(null);
     this.spinnerOn = true;
     if (courseId) {
@@ -95,18 +97,26 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setExamPreview() {
+    this.answer.setValue(null);
     this.grade = 0;
     this.statusMessage = '';
-    this.setQuestion(this.exam.questions);
+    const exam = this.submission ? this.submission.parent : this.exam;
+    this.setQuestion(exam.questions);
+    if (this.submission) {
+      this.submittedBy = this.submission.user.name;
+      this.updatedOn = this.submission.lastUpdateTime;
+      this.setViewAnswerText(this.submission.answers[this.questionNum - 1]);
+    }
   }
 
-  nextQuestion(nextClicked: boolean = false) {
-    const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable();
+  nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
+        this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
@@ -114,14 +124,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  routeToNext (nextQuestion) {
+  routeToNext(nextQuestion) {
+    this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
       return;
     }
     if (this.isDialog) {
       this.spinnerOn = false;
-      this.statusMessage = 'complete';
       return;
     }
     this.examComplete();
@@ -131,15 +141,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   moveQuestion(direction: number) {
-    if (this.previewMode) {
+    if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
-      this.answer.setValue(null);
       this.spinnerOn = false;
       return;
     }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
-    this.checkboxState = {};
+    if (direction !== 0) {
+      this.checkboxState = {};
+    }
     this.isNewQuestion = true;
     this.spinnerOn = false;
   }
@@ -160,10 +171,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.isNewQuestion = true;
   }
 
-  setTakingExam(exam, parentId, type, title) {
+  setTakingExam(exam, parentId, type) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
     this.setQuestion(exam.questions);
-    this.title = title;
     this.submissionsService.openSubmission({
       parentId,
       parent: exam,
@@ -178,13 +188,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setCourseListener() {
-    this.coursesService.courseUpdated$
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ course, progress }: { course: any, progress: any }) => {
-      // To be readable by non-technical people stepNum & questionNum param will start at 1
-      const step = course.steps[this.stepNum - 1];
+    this.coursesService.courseUpdated$.pipe(
+      takeUntil(this.onDestroy$),
+      switchMap(({ course, progress }: { course: any, progress: any }) => {
+        // To be readable by non-technical people stepNum & questionNum param will start at 1
+        const step = course.steps[this.stepNum - 1];
+        this.title = step.stepTitle;
+        return forkJoin([ of(course), of(step), this.couchService.get(`exams/${step[this.examType]._id}`).pipe(catchError(() => of(0))) ]);
+      })
+    ).subscribe(([ course, step, exam ]: any[]) => {
       const type = this.examType;
-      this.setTakingExam(step[type], step[type]._id + '@' + course._id, type, step.stepTitle);
+      const takingExam = exam ? exam : step[type];
+      this.setTakingExam(takingExam, takingExam._id + '@' + course._id, type);
     });
   }
 
@@ -192,7 +207,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-      this.answerCount = this.submissionsService.submission.answers.filter(answer => answer.value).length;
+      this.unansweredQuestions = submission.parent.questions.reduce((unanswered, q, index) => [
+        ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
+      ], []);
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
@@ -205,12 +222,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
       } else if (this.mode !== 'take') {
-        this.answer.setValue(Array.isArray(ans.value) ? ans.value.map((a: any) => a.text).join(', ').trim() : ans.value);
+        this.setViewAnswerText(ans);
       }
       this.isNewQuestion = false;
-      if ((this.maxQuestions - 1) === this.answerCount) {
-        this.isComplete = !this.answer.value ? true : false;
-      }
+      this.isComplete = this.unansweredQuestions && this.unansweredQuestions.every(number => this.questionNum === number);
     });
   }
 
@@ -237,14 +252,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers[0].id === this.question.correctChoice;
   }
 
-  createAnswerObservable() {
+  createAnswerObservable(isFinish = false) {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         const obs = this.previewMode ?
           of({ nextQuestion: this.questionNum }) :
-          this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1);
-        this.question.choices.forEach((choice: any) => this.checkboxState[choice.id] = false);
+          this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, isFinish);
         return { obs, correctAnswer };
       case 'grade':
         return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, this.comment) };
@@ -254,13 +268,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
+    const setSelectMultipleAnswer = (answers: any[]) => {
+      answers.forEach(ans => {
+        this.setAnswer({ checked: true }, ans);
+      });
+    };
     this.answer.setValue(null);
     if (!answer.value) {
       return;
     }
     switch (this.question.type) {
       case 'selectMultiple':
-        this.setSelectMultipleAnswer(answer.value);
+        setSelectMultipleAnswer(answer.value);
         break;
       case 'select':
         this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
@@ -270,17 +289,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  setSelectMultipleAnswer(answers: any[]) {
-    answers.forEach(answer => {
-      this.setAnswer({ checked: true }, answer);
-    });
-  }
-
   answerValidator(ac: AbstractControl) {
     if (typeof ac.value === 'string') {
       return CustomValidators.required(ac);
     }
     return ac.value !== null ? null : { required: true };
+  }
+
+  setViewAnswerText(answer: any) {
+    this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
+    this.grade = answer.grade;
+    this.comment = answer.gradeComment;
   }
 
 }

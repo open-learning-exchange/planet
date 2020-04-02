@@ -24,8 +24,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
   @ViewChild('content', { static: false }) content;
-  contentHeight = 0;
   currentUser = this.userService.get();
+  showExpand = false;
   showLess = true;
   showShare = false;
   planetCode = this.stateService.configuration.code;
@@ -43,7 +43,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
-    this.showShare = this.shareTarget &&
+    this.showShare = this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet ||
       (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(this.stateService.configuration)));
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
@@ -51,8 +51,9 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   ngAfterViewChecked() {
     const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].children[0].offsetHeight;
-    if (offsetHeight && offsetHeight !== this.contentHeight) {
-      this.contentHeight = offsetHeight;
+    const showExpand = offsetHeight && (offsetHeight > this.content.nativeElement.clientHeight);
+    if (showExpand !== this.showExpand) {
+      this.showExpand = showExpand;
       this.cdRef.detectChanges();
     }
   }
@@ -70,7 +71,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
       news: {
         replyTo: news._id,
         messagePlanetCode: news.messagePlanetCode,
-        messageType: news.messageType
+        messageType: news.messageType,
+        viewIn: news.viewIn
       }
     });
     this.sendNewsNotifications(news);

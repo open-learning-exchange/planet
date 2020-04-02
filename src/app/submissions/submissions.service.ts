@@ -103,11 +103,11 @@ export class SubmissionsService {
     });
   }
 
-  submitAnswer(answer, correct: boolean, index: number) {
+  submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
     submission.answers[index] = this.newAnswer(answer, oldAnswer, correct);
-    const nextQuestion = this.nextQuestion(submission, index, 'passed');
+    const nextQuestion = this.nextQuestion(submission, index, 'passed', isFinish);
     if (correct !== undefined) {
       this.updateGrade(submission, correct ? 1 : 0, index);
     }
@@ -116,7 +116,7 @@ export class SubmissionsService {
 
   newAnswer(answer, oldAnswer, correct) {
     return ({
-      value: answer,
+      value: correct === false ? '' : answer,
       mistakes: (oldAnswer ? oldAnswer.mistakes : 0) + (correct === false ? 1 : 0),
       passed: correct !== false && this.validAnswer(answer)
     });
@@ -129,9 +129,13 @@ export class SubmissionsService {
     return this.updateSubmission(submission, false, nextQuestion);
   }
 
-  nextQuestion(submission, index, field) {
+  nextQuestion(submission, index, field, isFinish = true) {
     const close = this.shouldCloseSubmission(submission, field);
-    return close ? -1 : this.findNextQuestion(submission, index + 1, field);
+    return !close ?
+      this.findNextQuestion(submission, index + 1, field) :
+      isFinish ?
+      -1 :
+      index;
   }
 
   updateGrade(submission, grade, index, comment?) {
@@ -141,8 +145,8 @@ export class SubmissionsService {
   }
 
   updateStatus(submission: any) {
-    if (submission.type === 'exam' && submission.status === 'pending') {
-      return submission.answers.findIndex(ans => ans.grade === undefined) === -1 ? 'complete' : 'requires grading';
+    if (submission.type === 'exam' && submission.answers.findIndex(ans => ans.grade === undefined) > -1) {
+      return 'requires grading';
     }
     const [ examId, getCourseId ] = this.submission.parentId.split('@');
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
@@ -235,7 +239,7 @@ export class SubmissionsService {
     const data = {
       'message': `<b>${this.userService.get().name}</b> has
         ${isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
-      'link': '/submissions/exam',
+      'link': '/myDashboard/submissions/exam',
       'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
       'type': 'survey',
       'priority': 1,

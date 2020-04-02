@@ -127,13 +127,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initTeam(teamId: string) {
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [ { viewableBy: 'teams', viewableId: teamId }, { viewIn: { '$elemMatch': { '_id': teamId, section: 'teams' } } } ]
-      },
-      viewId: teamId
-    });
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => this.news = news);
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(news => this.news = news.map(post => ({
+        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+      })));
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
@@ -156,6 +153,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.userService.get());
+      this.requestTeamNews(teamId);
     });
   }
 
@@ -169,6 +167,23 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(() => {
       this.leader = '';
       this.userStatus = 'member';
+    });
+  }
+
+  requestTeamNews(teamId) {
+    const showAll = this.userStatus === 'member' || this.team.public === true;
+    this.newsService.requestNews({
+      selectors: {
+        '$or': [
+          ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
+          {
+            viewIn: { '$elemMatch': {
+              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            } }
+          }
+        ],
+      },
+      viewId: teamId
     });
   }
 
@@ -264,7 +279,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogPromptConfig(item, change) {
     return {
       leave: { request: this.toggleMembership(item, true), successMsg: 'left', errorMsg: 'leaving' },
-      archive: { request: this.teamsService.archiveTeam(item), successMsg: 'deleted', errorMsg: 'deleting' },
+      archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
+        successMsg: 'deleted', errorMsg: 'deleting' },
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
       },
@@ -292,7 +308,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
             this.team = change === 'course' ? res : this.team;
-            if (res.status === 'archived') {
+            if (change === 'archive') {
               this.goBack();
             }
           },
@@ -389,7 +405,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
-      this.planetMessageService.showMessage(this.team.name || `${this.configuration.name} Services Directory` + ' updated successfully');
+      this.planetMessageService.showMessage((this.team.name || `${this.configuration.name} Services Directory`) + ' updated successfully');
     });
   }
 
@@ -470,7 +486,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams' } ],
+      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message

@@ -14,7 +14,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -70,6 +70,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: 'team' | 'enterprise', teamId: string, teamType: 'local' | 'sync' }>();
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
+  childPlanets = [];
+  filter: string;
 
   constructor(
     private userService: UserService,
@@ -106,9 +108,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       forkJoin([
         this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
         this.getMembershipStatus(),
-        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } })
+        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } }),
+        this.couchService.findAll('communityregistrationrequests')
       ])
-    )).subscribe(([ teams, requests, activities ]: any[]) => {
+    )).subscribe(([ teams, requests, activities, planets ]: any[]) => {
+      this.childPlanets = attachNamesToPlanets(planets);
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
@@ -149,7 +153,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const visitLog = this.teamActivities.filter(activity => activity.teamId === doc._id).reduce(({ visitCount, lastVisit }, activity) =>
         ({ visitCount: visitCount + 1, lastVisit: lastVisit && activity.time < lastVisit ? lastVisit : activity.time }), noVisit)
         || noVisit;
-      const team = { doc, membershipDoc, visitLog };
+      const teamPlanetName = codeToPlanetName(doc.teamPlanetCode, this.stateService.configuration, this.childPlanets );
+      const team = { doc, membershipDoc, visitLog, teamPlanetName };
       switch (membershipDoc.docType) {
         case 'membership':
           return { ...team, userStatus: 'member', isLeader: membershipDoc.isLeader };
@@ -212,7 +217,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   archiveTeam(team) {
     return {
-      request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.deleteCommunityLink(team))),
+      request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage('You have deleted a team.');
@@ -233,15 +238,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteCommunityLink(team) {
-    const communityId = planetAndParentId(this.stateService.configuration);
-    const route = this.teamsService.teamLinkRoute(team.type, team._id);
-    return this.teamsService.getTeamMembers(communityId, true).pipe(switchMap((links) => {
-      const link = links.find(val => val.route === route);
-      return link ? this.couchService.delete(`teams/${link._id}?rev=${link._rev}`) : of({});
-    }));
-  }
-
   removeTeamFromTable(newTeam: any) {
     this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
@@ -257,6 +253,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.teams.data = this.teamList(this.teams.data);
       this.planetMessageService.showMessage('Request to join team sent');
     });
+  }
+
+  resetSearch() {
+    this.teams.filter = this.myTeamsFilter ? ' ' : '';
+    this.filter = '';
   }
 
   applyFilter(filterValue: string) {

@@ -39,7 +39,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
     }
     .btn:disabled{
       pointer-events: none;
-   }
+    }
     .course-title {
       max-width: 200px;
       display: inline-block;

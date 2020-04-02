@@ -11,7 +11,7 @@ import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { attachNamesToPlanets, filterByDate, setMonths, activityParams } from './reports.utils';
+import { attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName } from './reports.utils';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -30,9 +30,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   filter = '';
   codeParam = '';
   loginActivities = [];
-  resourceActivities = [];
-  courseActivities = [];
+  resourceActivities = { byDoc: [], total: [] };
+  courseActivities = { byDoc: [], total: [] };
   today: Date;
+  ratings = { resources: [], courses: [] };
 
   constructor(
     private activityService: ReportsService,
@@ -54,10 +55,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
       const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
       this.codeParam = params.get('code');
-      const planet = planets.find((p: any) => p.doc.code === this.codeParam);
       this.planetCode = this.codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.planetName = planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : this.stateService.configuration.name;
+      this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
       this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
@@ -106,8 +106,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getRatingInfo() {
     this.activityService.getRatingInfo(activityParams(this.planetCode, this.filter)).subscribe((averageRatings) => {
-      this.reports.resourceRatings = averageRatings.filter(item => item.type === 'resource').slice(0, 5);
-      this.reports.courseRatings = averageRatings.filter(item => item.type === 'course').slice(0, 5);
+      this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
+      this.ratings.courses = averageRatings.filter(item => item.type === 'course');
+      this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
+      this.reports.courseRatings = this.ratings.courses.slice(0, 5);
     });
   }
 
@@ -119,8 +121,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.getAllActivities(params.db, activityParams(this.planetCode, this.filter))
     .subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
-      this[type] = activities.filter(activity => activity.resourceId || activity.courseId);
-      const { byDoc, byMonth } = this.activityService.groupCourseVisits(this[type]);
+      // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
+      this[type].total = activities.filter(
+        activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
+      );
+      const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total, type.replace('Activities', 'Id'));
+      this[type].byDoc = byDoc;
       this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
       this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
       this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
@@ -246,8 +252,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'summary':
         this.csvService.exportSummaryCSV(
           filterByDate(this.loginActivities, 'loginTime', dateRange),
-          filterByDate(this.resourceActivities, 'time', dateRange),
-          filterByDate(this.courseActivities, 'time', dateRange),
+          filterByDate(this.resourceActivities.total, 'time', dateRange),
+          filterByDate(this.courseActivities.total, 'time', dateRange),
           this.planetName
         );
         break;
@@ -258,7 +264,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType, dateRange) {
     this.csvService.exportCSV({
-      data: filterByDate(reportType === 'courseViews' ? this.courseActivities : this.resourceActivities, 'time', dateRange)
+      data: filterByDate(reportType === 'courseViews' ? this.courseActivities.total : this.resourceActivities.total, 'time', dateRange)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
     });

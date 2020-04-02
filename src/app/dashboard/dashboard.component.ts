@@ -1,21 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, catchError, switchMap } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
+import { CoursesService } from '../courses/courses.service';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
+import { foundations, foundationIcons } from '../courses/constants';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
@@ -23,12 +28,16 @@ export class DashboardComponent implements OnInit {
     this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
   roles: string[];
   planetName: string;
+  badgesCourses: { [key: string]: any[] } = {};
+  badgeGroups = [ ...foundations, 'none' ];
+  badgeIcons = foundationIcons;
 
   dateNow: any;
   visits = 0;
   surveysCount = 0;
   examsCount = 0;
   leaderIds = [];
+  onDestroy$ = new Subject<void>();
 
   myLifeItems: any[] = [
     { firstLine: 'my', title: 'Submissions', link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
@@ -42,7 +51,10 @@ export class DashboardComponent implements OnInit {
     private userService: UserService,
     private couchService: CouchService,
     private submissionsService: SubmissionsService,
-    private stateService: StateService
+    private coursesService: CoursesService,
+    private stateService: StateService,
+    private certificationsService: CertificationsService,
+    private dialog: MatDialog
   ) {
     const currRoles = this.userService.get().roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
@@ -51,6 +63,13 @@ export class DashboardComponent implements OnInit {
         this.ngOnInit();
       });
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
+    this.coursesService.requestCourses();
+    combineLatest(
+      this.coursesService.coursesListener$(),
+      this.certificationsService.getCertifications()
+    ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
+      this.setBadgesCourses(courses, certifications);
+    });
   }
 
   ngOnInit() {
@@ -77,6 +96,11 @@ export class DashboardComponent implements OnInit {
       this.myLifeItems.push({ firstLine: 'my', title: 'Health', link: 'myHealth' });
     }
 
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   initDashboard() {
@@ -169,6 +193,27 @@ export class DashboardComponent implements OnInit {
 
   teamRemoved(team: any) {
     this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
+  }
+
+  openCourseDialog(course: any) {
+    this.dialog.open(CoursesViewDetailDialogComponent, {
+      data: { courseDetail: { ...course.doc, ...course } },
+      minWidth: '600px',
+      maxWidth: '90vw'
+    });
+  }
+
+  setBadgesCourses(courses, certifications) {
+    this.badgesCourses = courses
+      .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length)
+      .map(course => ({
+        ...course, inCertification: certifications.some(certification => certification.courseIds.indexOf(course._id) > -1)
+      }))
+      .sort((a, b) => a.inCertification ? -1 : b.inCertification ? 1 : 0)
+      .reduce((badgesCourses, course) => ({
+        ...badgesCourses, [course.doc.foundation || 'none']: [ ...(badgesCourses[course.doc.foundation || 'none'] || []), course ]
+      }), { none: [] });
+    this.badgeGroups = [ ...foundations, 'none' ].filter(group => this.badgesCourses[group] && this.badgesCourses[group].length);
   }
 
 }

@@ -6,7 +6,12 @@ import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 
 @Component({
-  templateUrl: './dialogs-form.component.html'
+  templateUrl: './dialogs-form.component.html',
+  styles: [ `
+    .checkbox-wrapper:last-child {
+      margin: 0 0 20px 0;
+    }
+  ` ]
 })
 export class DialogsFormComponent {
 

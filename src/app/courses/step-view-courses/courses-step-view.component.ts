@@ -1,11 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
+import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -34,19 +37,22 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private coursesService: CoursesService,
     private userService: UserService,
     private submissionsService: SubmissionsService,
-    private resourcesService: ResourcesService
+    private resourcesService: ResourcesService,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
     combineLatest(
       this.coursesService.courseUpdated$,
-      this.resourcesService.resourcesListener(this.parent)
+      this.resourcesService.resourcesListener(this.parent),
+      this.stateService.getCouchState('exams', 'local')
     ).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ { course, progress = [] }, resources ]: [ { course: any, progress: any }, any[] ]) => {
-      this.initCourse(course, progress, resources.map((resource: any) => resource.doc));
+    .subscribe(([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+      this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
       if (this.countActivity) {
         this.coursesService.courseActivity('visit', course, this.stepNum);
         this.countActivity = false;
@@ -69,7 +75,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1;
+      this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
       this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
       this.attempts = attempts;
       const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
@@ -87,24 +93,24 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  initCourse(course, progress, resources) {
+  initCourse(course, progress, resources, exams) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.initResources(resources);
     // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
-    if (!this.parent && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
+    this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
+    if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
       this.coursesService.updateProgress({
         courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed
       });
     }
     this.maxStep = course.steps.length;
-    this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
     if (this.stepDetail.exam) {
       this.submissionsService.openSubmission({
         parentId: this.stepDetail.exam._id + '@' + course._id,
-        parent: this.stepDetail.exam,
+        parent: exams.find(exam => exam._id === this.stepDetail.exam._id) || this.stepDetail.exam,
         user: this.userService.get(),
         type: 'exam' });
     }
@@ -141,8 +147,17 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   goToExam(type = 'exam', preview = false) {
     this.router.navigate(
-      [ 'exam', { questionNum: type === 'survey' ? 1 : this.examStart, type, preview,
-      examId: type === 'survey' ? this.stepDetail.survey._id : this.stepDetail.exam._id } ],
+      [
+        'exam',
+        {
+          id: this.courseId,
+          stepNum: this.stepNum,
+          questionNum: type === 'survey' ? 1 : this.examStart,
+          type,
+          preview,
+          examId: type === 'survey' ? this.stepDetail.survey._id : this.stepDetail.exam._id,
+        }
+      ],
       { relativeTo: this.route }
     );
   }
@@ -152,6 +167,14 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     return step.resources ?
       step.resources.filter((resource) => resourceIds.indexOf(resource._id) !== -1 && resource._attachments) :
       [];
+  }
+
+  openReviewDialog() {
+    this.dialog.open(DialogsSubmissionsComponent, {
+      minWidth: '500px',
+      maxHeight: '90vh',
+      data: { parentId: `${this.stepDetail.exam._id}@${this.courseId}` }
+    });
   }
 
 }

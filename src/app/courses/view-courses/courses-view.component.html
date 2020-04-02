@@ -31,13 +31,7 @@
     </div>
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-        <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="parent" [ratingType]="'course'"></planet-rating>
-        <p i18n><b>Subject Level:</b> {{courseDetail.subjectLevel}}</p>
-        <p i18n><b>Grade Level:</b> {{courseDetail.gradeLevel}}</p>
-        <p i18n><b>Language of Instruction:</b> {{courseDetail.languageOfInstruction || 'N/A'}}</p>
-        <p *ngIf="courseDetail.sourcePlanet !== planetConfiguration.code && courseDetail.sourcePlanet" i18n><b>Source:</b> {{courseDetail.sourcePlanet}}</p>
-        <p><b i18n>Description:</b></p>
-        <td-markdown [content]="courseDetail.description"></td-markdown>
+        <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
@@ -47,15 +41,15 @@
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
-                <mat-icon *ngIf="step?.exam?.questions.length">assignment</mat-icon>
-                <mat-icon *ngIf="step?.resources?.length">attach_file</mat-icon>
-                <mat-icon *ngIf="step?.survey?.questions.length">description</mat-icon>
+                <planet-course-icon *ngIf="step?.exam?.questions.length" [icon]="'assignment'"></planet-course-icon>
+                <planet-course-icon *ngIf="step?.resources?.length" [icon]="'attach_file'"></planet-course-icon>
+                <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
               </mat-panel-description>
-              <mat-icon *ngIf="step.progress && step.progress.passed">done</mat-icon>
-              <mat-icon *ngIf="step.progress && !step.progress.passed">rotate_right</mat-icon>
+              <planet-course-icon *ngIf="step.progress && step.progress.passed" [icon]="'done'"></planet-course-icon>
+              <planet-course-icon *ngIf="step.progress && !step.progress.passed" [icon]="'rotate_right'"></planet-course-icon>
             </mat-expansion-panel-header>
             <td-markdown [content]="step.description"></td-markdown>
-            <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0; else contentMessage" i18n>
+            <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0; else contentMessage" i18n>
               There is no content for this step.
             </div>
             <ng-template #contentMessage>
@@ -71,6 +65,12 @@
                 <span i18n>The test has</span>
                 {{ ' ' + step?.exam.questions?.length + ' '}}
                 <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
+                {{' '}}
+              </span>
+              <span *ngIf= "step?.survey?.questions.length > 0">
+                <span i18n>The survey has</span>
+                {{ ' ' + step?.survey?.questions.length + ' '}}
+                <span i18n>{step.survey.questions.length, plural, =1 {question} other {questions}}.</span>
               </span>
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">

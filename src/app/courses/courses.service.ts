@@ -87,7 +87,8 @@ export class CoursesService {
 
   coursesListener$(reqParent = false) {
     return this.coursesUpdated.pipe(
-      map(({ parent, planetField, courses }) => parent === reqParent && this.isReady[planetField] ? courses : undefined)
+      filter(({ parent, planetField }) => parent === reqParent && this.isReady[planetField]),
+      map(({ courses }) => courses),
     );
   }
 
@@ -158,7 +159,7 @@ export class CoursesService {
     return currentProgressDocs.length === 0 ?
       [ { createdDate: this.couchService.datePlaceholder, ...newProgress } ] :
       currentProgressDocs.map((current, index) => index === 0 ?
-        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress } :
+        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress, passed: current.passed || newProgress.passed } :
         { ...current, _deleted: true }
       );
   }

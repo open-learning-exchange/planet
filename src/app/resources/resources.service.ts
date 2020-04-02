@@ -150,7 +150,7 @@ export class ResourcesService {
     return {
       'user': user._id,
       'message': 'There are new resources in the Library. Click to see them!',
-      'link' : 'resources',
+      'link' : '/resources',
       'linkParams': { sort: 'createdDate' },
       'type': 'newResource',
       'priority': 1,

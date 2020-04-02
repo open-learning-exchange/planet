@@ -1,31 +1,39 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
 import { filterSpecificFields, composeFilterFunctions, filterDropdowns, dropdownsFill } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { CoursesService } from '../courses/courses.service';
 
 @Component({
+  selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
   styles: [ `
     /* Column Widths */
     .mat-column-name {
       max-width: 25vw;
     }
+    .mat-column-stepNum {
+      max-width: 90px;
+    }
   ` ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
+  @Input() isDialog = false;
+  @Input() parentId: string;
+  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ];
+  @Output() submissionClick = new EventEmitter<any>();
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   initTable = true;
-  displayedColumns = [ 'name', 'status', 'user', 'lastUpdateTime' ];
   statusOptions: any = [
     { text: 'Pending', value: 'pending' },
     { text: 'Not Graded', value: 'requires grading' },
@@ -43,25 +51,27 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private route: ActivatedRoute,
     private submissionsService: SubmissionsService,
     private userService: UserService,
+    private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
     this.dialogsLoadingService.start();
   }
 
   ngOnInit() {
-    this.mode = this.route.snapshot.data.mySurveys === true ? 'survey' : 'grade';
-    let query: any;
+    this.setMode();
     this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
     if (this.mode === 'survey') {
       this.filter['type'] = 'survey';
-      query = findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
+    } else if (this.mode === 'review') {
+      this.filter.status = '';
     }
     if (this.filter['type'] === 'survey') {
       this.filter['status'] = '';
     }
-    this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((submissions) => {
+    this.coursesService.requestCourses();
+    zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
+    .subscribe(([ submissions, courses ]) => {
       submissions = submissions.filter(data => data.user).reduce((sList, s1) => {
         const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
         if (!s1.user._id || sIndex === -1) {
@@ -70,7 +80,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
           sList[sIndex] = s1;
         }
         return sList;
-      }, []);
+      }, []).map(submission => this.appendCourseInfo(submission, courses));
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
@@ -80,7 +90,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.applyFilter('');
       this.emptyData = !this.submissions.filteredData.length;
     });
-    this.submissionsService.updateSubmissions({ query });
+    this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
   }
 
@@ -95,6 +105,24 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setMode() {
+    this.mode = this.route.snapshot.data.mySurveys === true ?
+      'survey' :
+      this.parentId ?
+      'review' :
+      'grade';
+  }
+
+  submissionQuery() {
+    switch (this.mode) {
+      case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
+      case 'review': return findDocuments({
+        'user.name': this.userService.get().name, parentId: this.parentId, status: { '$ne': 'pending' }
+      });
+      default: return undefined;
+    }
   }
 
   setupTable() {
@@ -132,6 +160,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   submissionAction(submission) {
+    if (this.isDialog) {
+      this.submissionClick.emit(submission);
+      return;
+    }
     if (submission.status !== 'pending' || this.mode === 'survey') {
       this.router.navigate([
         './exam',
@@ -158,6 +190,17 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (user.name) {
       event.stopPropagation();
     }
+  }
+
+  appendCourseInfo(submission, courses) {
+    const [ examId, courseId ] = submission.parentId.split('@');
+    if (!courseId) {
+      return submission;
+    }
+    const submissionCourse = courses.find(course => course._id === courseId) || { doc: { steps: [] } };
+    const stepNum = submissionCourse.doc.steps
+      .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
+    return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
   }
 
 }
