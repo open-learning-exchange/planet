@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject, combineLatest } from 'rxjs';
@@ -78,7 +78,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         parent: step.exam,
         user: this.userService.get(),
         type: 'exam' });
-      this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, attempts }) => {
+      this.submissionsService.submissionUpdated$.pipe(take(1)).subscribe(({ submission, attempts }) => {
         step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         step.submission = submission;
       });
