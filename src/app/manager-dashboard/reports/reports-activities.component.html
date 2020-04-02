@@ -2,8 +2,7 @@
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
-      <a *ngIf="activityType === 'resource'" [routerLink]="['/resources/view', element.resourceId]">{{element?.max?.title}}</a>
-      <a *ngIf="activityType === 'course'" [routerLink]="['/courses/view', element.courseId]">{{element?.max?.title}}</a>
+      <a [routerLink]="[ '/' + activityType + '/view', activityType === 'resources' ? element.resourceId : element.courseId ]">{{element?.max?.title}}</a>
     </mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">

@@ -10,7 +10,7 @@ export class ReportsActivitiesComponent implements OnInit, OnChanges, AfterViewI
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
-  @Input() activityType: 'resource' | 'course' = 'resource';
+  @Input() activityType: 'resources' | 'courses' = 'resources';
   activities = new MatTableDataSource();
   displayedColumns = [
     'title',
