@@ -22,7 +22,7 @@ const nameField = {
 const descriptionField = {
   'type': 'markdown',
   'name': 'description',
-  'placeholder': 'Description',
+  'placeholder': 'What is your team\'s plan?',
   'required': false
 };
 const enterpriseDescField = [
