@@ -162,7 +162,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
-    this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+    if (this.tagInputComponent) {
+      this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+    }    
   }
 
   ngOnDestroy() {
