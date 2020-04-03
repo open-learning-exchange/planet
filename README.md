@@ -21,6 +21,7 @@ On the production vagrant there is production instance and hub instance. Hub ins
 To enable hub instance run following
 ```
 vagrant ssh prod
+sudo -i
 echo "true" > /srv/starthub
 ```
 Stop the production vagrant and start again, this time hub instance will also be activated which you can open at `localhost:3200`
@@ -28,6 +29,7 @@ Stop the production vagrant and start again, this time hub instance will also be
 To disable autostart of hub instance run following
 ```
 vagrant ssh prod
+sudo -i
 echo "false" > /srv/starthub
 ```
 Stop the production vagrant and start again.
