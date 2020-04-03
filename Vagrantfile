@@ -48,6 +48,9 @@ Vagrant.configure(2) do |config|
 
     # Start docker on every startup
     prod.vm.provision "shell", run: "always", inline: <<-SHELL
+      if [ ! -f /srv/starthub ]; then
+        echo "false" > /srv/starthub
+      fi
       if [ -f /srv/planet/pwd/credentials.yml ]; then
         docker-compose -f planet.yml -f volumes.yml -f /srv/planet/pwd/credentials.yml -p planet up -d
       else
@@ -55,12 +58,14 @@ Vagrant.configure(2) do |config|
         docker wait planet_db-init_1
         docker start planet_db-init_1
       fi
-      if [ -f /srv/hub/pwd/credentials.yml ]; then
-        docker-compose -f /vagrant/docker/hub.yml -f /vagrant/docker/volumes_hub.yml -f /srv/hub/pwd/credentials.yml -p hub up -d
-      else
-        docker-compose -f /vagrant/docker/hub.yml -f /vagrant/docker/volumes_hub.yml  -p hub up -d
-        docker wait hub_db-init_1
-        docker start hub_db-init_1
+      if [ -f /srv/starthub ] && [ $(cat /srv/starthub) == "true" ]; then
+        if [ -f /srv/hub/pwd/credentials.yml ]; then
+          docker-compose -f /vagrant/docker/hub.yml -f /vagrant/docker/volumes_hub.yml -f /srv/hub/pwd/credentials.yml -p hub up -d
+        else
+          docker-compose -f /vagrant/docker/hub.yml -f /vagrant/docker/volumes_hub.yml  -p hub up -d
+          docker wait hub_db-init_1
+          docker start hub_db-init_1
+        fi
       fi
     SHELL
   end

@@ -15,6 +15,23 @@ Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://mat
 
 The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up dev` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
 
+## Enable/Disable hub instance
+
+On the production vagrant there is production instance and hub instance. Hub instance is created to test hub features.
+To enable hub instance run following
+```
+vagrant ssh prod
+echo "true" > /srv/starthub
+```
+Stop the production vagrant and start again, this time hub instance will also be activated which you can open at `localhost:3200`
+
+To disable autostart of hub instance run following
+```
+vagrant ssh prod
+echo "false" > /srv/starthub
+```
+Stop the production vagrant and start again.
+
 ## Project guidelines
 
 * Please check out [the project page](https://waffle.io/ole-vi/planet) for available tasks to work on.
