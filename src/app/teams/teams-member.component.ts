@@ -25,6 +25,7 @@ export class TeamsMemberComponent implements OnInit {
   hasRole: 'true' | 'false';
   user = this.userService.get();
   planetCode = this.stateService.configuration.code;
+  leadershipTitleType: 'Add' | 'Change';
 
   constructor(
     private userService: UserService,
@@ -34,6 +35,7 @@ export class TeamsMemberComponent implements OnInit {
 
   ngOnInit() {
     this.memberType = this.member.teamId === undefined ? 'community' : 'other';
+    this.leadershipTitleType = this.member.doc.leadershipTitle === '' ? 'Add' : 'Change';
     this.hasRole = this.member.role ? 'true' : 'false';
   }
 
