@@ -105,8 +105,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     if (!step.exam) {
       return { number: '', fill: userProgress.stepNum > index };
     }
-    const submission =
-      submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
+    const submission = submissions.find((sub: any) => {
+      return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
+    });
     if (submission) {
       return this.totalSubmissionAnswers(submission);
     }
@@ -117,15 +118,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
-    const users = dedupeObjectArray(submissions.map((sub: any) => ({ name: sub.user.name, planet: sub.source })), [ 'name', 'planet' ]);
-    this.allChartData = users.map((user: { name: string, planet: string }) => {
+    const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
+    this.allChartData = users.map((user: any) => {
       const answers = this.course.steps.map((step: any, index: number) => {
-        return this.userCourseAnswers(user.name, step, index, submissions);
+        return this.userCourseAnswers(user, step, index, submissions);
       }).reverse();
       return ({
         items: answers,
         label: user.name,
-        planetCode: user.planet
+        planetCode: user.planetCode
       });
     });
     this.filterDataByPlanet();
@@ -164,7 +165,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   userProgress(user) {
     return (this.progress
-      .filter((p: any) => p.userId === 'org.couchdb.user:' + user)
+      .filter((p: any) => p.userId === user._id && p.createdOn === user.planetCode)
       .reduce((max: any, p: any) => p.stepNum > max.stepNum ? p : max, { stepNum: 0 }));
   }
 
