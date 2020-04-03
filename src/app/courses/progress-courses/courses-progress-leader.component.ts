@@ -65,6 +65,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.planetCodes = progress.map((activity: any) => activity.createdOn).reduce((codes: string[], code: string) => [
         ...codes, ...(codes.indexOf(code) === -1 ? [ code ] : [])
       ], []);
+      this.selectedPlanetCode = this.planetCodes.length === 1 ? this.planetCodes[0] : this.selectedPlanetCode;
       this.setSubmissions();
     });
   }
