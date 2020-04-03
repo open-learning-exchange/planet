@@ -16,6 +16,7 @@ import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.compon
 import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from './planet-tag-input-dialog.component';
 import { SharedComponentsModule } from '../shared-components.module';
 import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
+import { PlanetSelectorComponent } from './planet-selector.component';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
     PlanetTagSelectedInputComponent,
     CovalentTextEditorModule,
     CovalentMarkdownModule,
+    PlanetSelectorComponent,
     PlanetStepListComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,
@@ -42,7 +44,6 @@ import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
     PlanetStepListItemComponent,
     PlanetMarkdownTextboxComponent,
     PlanetTimeMaskDirective
-
   ],
   declarations: [
     FormErrorMessagesComponent,
@@ -53,6 +54,7 @@ import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
     PlanetTagSelectedInputComponent,
     PlanetTagInputDialogComponent,
     PlanetTagInputToggleIconComponent,
+    PlanetSelectorComponent,
     PlanetStackedBarComponent,
     PlanetStepListComponent,
     PlanetStepListFormDirective,
