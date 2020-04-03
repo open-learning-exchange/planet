@@ -244,8 +244,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const value = this.answer.value;
     const answers = value instanceof Array ? value : [ value ];
     const isMultiCorrect = (correctChoice, ans: any[]) => (
-      correctChoice.every(choice => ans.find((a: any) => a.id === choice)) &&
-      ans.every((a: any) => correctChoice.find(choice => a.id === choice))
+      correctChoice.every(choice => ans.find((a: any) => a && a.id === choice)) &&
+      ans.every((a: any) => correctChoice.find(choice => a && a.id === choice))
     );
     return this.question.correctChoice instanceof Array ?
       isMultiCorrect(this.question.correctChoice, answers) :
