@@ -146,10 +146,10 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
     
-    Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...}}"/>
-      the <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
+您确定要 <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...}}"/>
+ <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
   
   </target>
       </trans-unit>
@@ -306,7 +306,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Upto date</target>
+        <target state="translated">最新更新</target>
       </trans-unit>
       <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html">
         <source>Newer</source>
@@ -358,7 +358,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">Code</target>
+        <target state="translated">代码</target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
         <source>URL</source>
@@ -408,8 +408,8 @@
           <context context-type="sourcefile">app/community/community.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">
-              Communities
+        <target state="translated">
+              社区
             </target>
       </trans-unit>
       <trans-unit id="a64acab5663186b116de56a805ead03a3bf90e53" datatype="html">
@@ -504,7 +504,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">Nation</target>
+        <target state="translated">国家</target>
       </trans-unit>
       <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html">
         <source>Community</source>
@@ -512,7 +512,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="needs-translation">Community</target>
+        <target state="translated">社区</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html">
         <source>Select Nation/Community</source>
@@ -520,7 +520,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">Select Nation/Community</target>
+        <target state="translated">选择国家/社区</target>
       </trans-unit>
       <trans-unit id="4c5801cfafb0bf7b68021fe73093f522544fed30" datatype="html">
         <source>Nation(s)</source>
@@ -528,7 +528,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">Nation(s)</target>
+        <target state="translated">国家</target>
       </trans-unit>
       <trans-unit id="fc60c6126b9d7048411532b9bd15a83228a27f77" datatype="html">
         <source>Center</source>
@@ -536,7 +536,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="needs-translation">Center</target>
+        <target state="translated">中心</target>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html">
         <source>Name</source>
@@ -552,7 +552,7 @@
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Name</target>
+        <target state="translated">名字</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html">
         <source>Language</source>
@@ -956,7 +956,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">87</context>
         </context-group>
-        <target state="needs-translation">Admission</target>
+        <target state="translated">录取</target>
       </trans-unit>
       <trans-unit id="26987e0e2a2962641a3a60791741ea5137a0fa1c" datatype="html">
         <source>Resign</source>
@@ -964,7 +964,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="needs-translation">Resign</target>
+        <target state="translated">辞去</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html">
         <source>Feedback</source>
@@ -1016,7 +1016,7 @@
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">Feedback</target>
+        <target state="translated">反馈</target>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html">
         <source>Manage</source>
@@ -1036,7 +1036,7 @@
           <context context-type="sourcefile">app/teams/teams.component.ts</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Manage</target>
+        <target state="translated">管理</target>
       </trans-unit>
       <trans-unit id="beed332f1562199b0a99c6216be53aa1d7d2171b" datatype="html">
         <source>View Course</source>
@@ -1044,7 +1044,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">103</context>
         </context-group>
-        <target state="needs-translation">View Course</target>
+        <target state="translated">查看课程</target>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html">
         <source>Progress</source>
@@ -1052,7 +1052,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target state="needs-translation">Progress</target>
+        <target state="translated">进度</target>
       </trans-unit>
       <trans-unit id="30c21093bd539da428afa90407b8f780c147e64d" datatype="html">
         <source> Information </source>
@@ -1060,7 +1060,7 @@
           <context context-type="sourcefile">app/courses/courses.component.ts</context>
           <context context-type="linenumber">117</context>
         </context-group>
-        <target state="needs-translation"> Information </target>
+        <target state="translated"> 信息 </target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html">
         <source>Rating</source>
