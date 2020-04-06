@@ -18,6 +18,7 @@ export class TeamsMemberComponent implements OnInit {
   @Input() actionMenu: ('remove' | 'leader' | 'title')[];
   @Input() visits: { [_id: string]: number };
   @Input() userStatus = '';
+  @Input() leadershipTitleType = '';
   @Input() teamLeader;
   @Output() actionClick = new EventEmitter<any>();
   memberType: 'community' | 'other' = 'other';
@@ -25,7 +26,6 @@ export class TeamsMemberComponent implements OnInit {
   hasRole: 'true' | 'false';
   user = this.userService.get();
   planetCode = this.stateService.configuration.code;
-  leadershipTitleType: 'Add' | 'Change';
 
   constructor(
     private userService: UserService,
@@ -35,7 +35,7 @@ export class TeamsMemberComponent implements OnInit {
 
   ngOnInit() {
     this.memberType = this.member.teamId === undefined ? 'community' : 'other';
-    this.leadershipTitleType = this.member.doc.leadershipTitle === '' ? 'Add' : 'Change';
+    this.leadershipTitleType = this.leadershipTitleType === undefined ? 'Add' : this.leadershipTitleType === '' ? 'Add' : 'Change';
     this.hasRole = this.member.role ? 'true' : 'false';
   }
 
