@@ -27,7 +27,9 @@
     "starthub-false": "echo \"false\" > /srv/starthub",
     "hub-boot-on": "vagrant ssh prod -- -t 'cd /vagrant;npm run starthub-true'",
     "hub-boot-off": "vagrant ssh prod -- -t 'cd /vagrant;npm run starthub-false'",
-    "hub-boot-status": "vagrant ssh prod -- -t 'echo $(cat /srv/starthub)'"
+    "hub-boot-status": "vagrant ssh prod -- -t 'echo $(cat /srv/starthub)'",
+    "hub-on": "vagrant ssh prod -- -t 'cd /vagrant;./prod-docker.sh -hu'",
+    "hub-off": "vagrant ssh prod -- -t 'cd /vagrant;./prod-docker.sh -h'"
   },
   "private": true,
   "dependencies": {
