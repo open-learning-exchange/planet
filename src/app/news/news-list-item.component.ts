@@ -46,8 +46,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
-    this.showShare = this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
-      (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
+    this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
   }
 
@@ -125,6 +124,11 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   labelClick(label, action) {
     this.changeLabels.emit({ label, action, news: this.item.doc });
+  }
+
+  shouldShowShare() {
+    return this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
+      (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 
 }
