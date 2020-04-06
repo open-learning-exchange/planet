@@ -36,6 +36,19 @@ Open `localhost:9876` once this is done compiling
 `npm run v-e2e` (from host) or `ng e2e` (from vagrant) - End-to-end tests
 Results will appear in the console
 
+## Enabling the Hub
+
+On the production Vagrant there is an optional second Planet instance that can be run to test out "Hub" features.
+
+To start the hub: `npm run hub-on`
+The hub will be available at `localhost:3200`
+
+To stop the hub: `npm run hub-off`
+
+To set the hub to automatically start on `vagrant up`, run the following: `npm run hub-boot-on`
+
+To disable autostart run following: `npm run hub-boot-off`
+
 ### Additional commands
 
 Similarly, we have a few other npm commands that work from the host machine to run the `ng` commands from the [Angular CLI](https://cli.angular.io/)
