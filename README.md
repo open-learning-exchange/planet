@@ -15,25 +15,6 @@ Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://mat
 
 The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up dev` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
 
-## Enable/Disable hub instance
-
-On the production vagrant there is production instance and hub instance. Hub instance is created to test hub features.
-To enable hub instance run following
-```
-vagrant ssh prod
-sudo -i
-echo "true" > /srv/starthub
-```
-Stop the production vagrant and start again, this time hub instance will also be activated which you can open at `localhost:3200`
-
-To disable autostart of hub instance run following
-```
-vagrant ssh prod
-sudo -i
-echo "false" > /srv/starthub
-```
-Stop the production vagrant and start again.
-
 ## Project guidelines
 
 * Please check out [the project page](https://waffle.io/ole-vi/planet) for available tasks to work on.
@@ -54,6 +35,19 @@ Open `localhost:9876` once this is done compiling
 
 `npm run v-e2e` (from host) or `ng e2e` (from vagrant) - End-to-end tests
 Results will appear in the console
+
+## Enabling the Hub
+
+On the production Vagrant there is an optional second Planet instance that can be run to test out "Hub" features.
+
+To start the hub: `npm run hub-on`
+The hub will be available at `localhost:3200`
+
+To stop the hub: `npm run hub-off`
+
+To set the hub to automatically start on `vagrant up`, run the following: `npm run hub-boot-on`
+
+To disable autostart run following: `npm run hub-boot-off`
 
 ### Additional commands
 
