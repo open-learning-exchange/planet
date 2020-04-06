@@ -5,6 +5,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { NewsService } from './news.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -15,7 +16,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
-  @Input() parentObject;
+  @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
@@ -37,6 +38,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     private router: Router,
     private userService: UserService,
     private couchService: CouchService,
+    private newsService: NewsService,
     private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService
@@ -45,11 +47,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
-      (!this.targetLocalPlanet || (
-      (this.item.doc.viewIn || []).every(({ _id }) => _id !== planetAndParentId(this.stateService.configuration)) &&
-      (!this.parentObject || !this.parentObject.doc ||
-      (this.parentObject.doc.viewIn || []).findIndex(({ _id }) => _id === planetAndParentId(this.stateService.configuration)) > -1)
-    ));
+      (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
   }
 

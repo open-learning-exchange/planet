@@ -29,6 +29,7 @@ export class NewsListComponent implements OnChanges {
   @Input() shareTarget: 'community' | 'nation' | 'center';
   displayedItems: any[] = [];
   replyObject: any = {};
+  isMainPostShared = true;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
@@ -56,6 +57,7 @@ export class NewsListComponent implements OnChanges {
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
+    this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.viewChange.emit(this.replyViewing);
   }
 
