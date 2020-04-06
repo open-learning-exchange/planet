@@ -18,6 +18,7 @@
 </ng-container>
 <planet-news-list-item *ngFor="let item of displayedItems; trackBy: trackById"
   [item]="item"
+  [isMainPostShared]="isMainPostShared"
   [replyObject]="replyObject"
   [editable]="editable"
   [shareTarget]="shareTarget"

@@ -8,6 +8,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -107,6 +108,10 @@ export class NewsService {
       'News has been successfully shared',
       false
     );
+  }
+
+  postSharedWithCommunity(post) {
+    return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
 
 }
