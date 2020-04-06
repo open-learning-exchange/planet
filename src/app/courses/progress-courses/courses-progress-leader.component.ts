@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
-import { dedupeShelfReduce } from '../../shared/utils';
+import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
@@ -18,12 +18,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   headingStart = '';
   chartLabel = 'Steps';
   selectedStep: any;
+  allChartData: any[] = [];
   chartData: any[];
   submissions: any[] = [];
   progress: any[] = [];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
   submittedExamSteps: any[] = [];
+  planetCodes: string[] = [];
+  selectedPlanetCode: string;
 
   constructor(
     private router: Router,
@@ -59,6 +62,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setProgress(course) {
     this.coursesService.findProgress([ course._id ], { allUsers: true }).subscribe((progress) => {
       this.progress = progress;
+      this.planetCodes = progress.map((activity: any) => activity.createdOn).reduce((codes: string[], code: string) => [
+        ...codes, ...(codes.indexOf(code) === -1 ? [ code ] : [])
+      ], []);
+      this.selectedPlanetCode = this.planetCodes.length === 1 ? this.planetCodes[0] : this.selectedPlanetCode;
       this.setSubmissions();
     });
   }
@@ -98,8 +105,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     if (!step.exam) {
       return { number: '', fill: userProgress.stepNum > index };
     }
-    const submission =
-      submissions.find((sub: any) => sub.user.name === user && sub.parentId === (step.exam._id + '@' + this.course._id));
+    const submission = submissions.find((sub: any) => {
+      return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
+    });
     if (submission) {
       return this.totalSubmissionAnswers(submission);
     }
@@ -110,31 +118,35 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
-    const users = submissions.map((sub: any) => sub.user.name).reduce(dedupeShelfReduce, []);
-    this.chartData = users.map((user: string) => {
+    const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
+    this.allChartData = users.map((user: any) => {
       const answers = this.course.steps.map((step: any, index: number) => {
         return this.userCourseAnswers(user, step, index, submissions);
       }).reverse();
       return ({
         items: answers,
-        label: user
+        label: user.name,
+        planetCode: user.planetCode
       });
     });
+    this.filterDataByPlanet();
   }
 
   setSingleStep(submissions: any[]) {
     const step = this.selectedStep;
     this.headingStart = this.selectedStep.stepTitle;
     this.yAxisLength = this.selectedStep.exam.questions.length;
-    this.chartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
+    this.allChartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
       submission => {
         const answers = this.arraySubmissionAnswers(submission);
         return {
           items: answers,
-          label: submission.user.name
+          label: submission.user.name,
+          planetCode: submission.source
         };
       }
     );
+    this.filterDataByPlanet();
   }
 
   changeData({ index }) {
@@ -153,7 +165,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   userProgress(user) {
     return (this.progress
-      .filter((p: any) => p.userId === 'org.couchdb.user:' + user)
+      .filter((p: any) => p.userId === user._id && p.createdOn === user.planetCode)
       .reduce((max: any, p: any) => p.stepNum > max.stepNum ? p : max, { stepNum: 0 }));
   }
 
@@ -170,6 +182,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
           this.submittedExamSteps.push(step);
         }
       });
+  }
+
+  planetSelectionChange(planet) {
+    this.selectedPlanetCode = planet.doc.code;
+    this.filterDataByPlanet();
+  }
+
+  filterDataByPlanet() {
+    this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode);
   }
 
 }

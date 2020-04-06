@@ -3,13 +3,14 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="primary-color font-size-1 action-buttons">
     <span>
       {{headingStart ? headingStart + ' ' : ''}}
       <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
       <ng-container *ngIf="selectedStep !== undefined" i18n>Test Progress</ng-container>
     </span>
     <span class="toolbar-fill"></span>
+    <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
     <mat-form-field *ngIf="submittedExamSteps?.length > 1">
       <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
