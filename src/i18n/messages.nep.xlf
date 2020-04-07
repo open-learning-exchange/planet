@@ -21,9 +21,6 @@
           <context context-type="linenumber">103</context>
         </context-group>
         <target state="final">बुझाउनुहाेस्</target>
-        <alt-trans>
-          <target>बुझाउने</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
@@ -80,9 +77,6 @@
           <context context-type="linenumber">8</context>
         </context-group>
         <target state="final">स्थानिय URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
-        <alt-trans>
-          <target>लोकल URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="a773e23ee56a2fdee79cba8081bbba2a32a1f8ac" datatype="html">
         <source>Parent URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -173,11 +167,6 @@
         <target state="translated">{VAR_SELECT_2, select, single {उल्लेखित {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {पुस्तक} meetup {भेला} user {सदस्य} }?
       } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {पुस्तकहरू} meetup {भेलाहरू} }?
       } }</target>
-        <alt-trans>
-          <target>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {पुस्तक} meetup {भेला} user {सदस्य} }?
-      } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {पुस्तकहरू} meetup {भेलाहरू} }?
-      } }</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
@@ -269,10 +258,6 @@
         </context-group>
         <target state="final">
     ४०४ फेला परेन</target>
-        <alt-trans>
-          <target>
-    404 फेला परेन</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="75a93cb972b7454ff0ee229e226ed5a07ef9bf19" datatype="html" approved="yes">
         <source>
@@ -285,11 +270,6 @@
         <target state="final">
     क्षमा गर्नुहोस्, अनुरोध गरिएको पृष्ठ फेला परेन!
   </target>
-        <alt-trans>
-          <target>
-    क्षमा गर्नुहोस्, एक त्रुटि भयो, अनुरोध गरिएको पृष्ठ फेला परेन!
-  </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="a008bcc957d031735f52caa28f05b132266c960c" datatype="html" approved="yes">
         <source>Click here back to the app</source>
@@ -458,9 +438,6 @@
           <context context-type="linenumber">3</context>
         </context-group>
         <target state="final">व्यवस्थापक बनाउनु होस्</target>
-        <alt-trans>
-          <target>एड्मिन बनाउनु होस्</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html" approved="yes">
         <source>Username</source>
@@ -473,9 +450,6 @@
           <context context-type="linenumber">3</context>
         </context-group>
         <target state="final">प्रयाेगकर्ताकाे नाम</target>
-        <alt-trans>
-          <target>यूजर नेम</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html" approved="yes">
         <source>Password</source>
@@ -600,9 +574,6 @@
           <context context-type="linenumber">59</context>
         </context-group>
         <target state="final">स्थानिय URL</target>
-        <alt-trans>
-          <target>लोकल URL</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="29190bf0dba7ad1e01166a60083f5676b3d174b8" datatype="html">
         <source>Auto accept Members</source>
@@ -635,9 +606,6 @@
           <context context-type="linenumber">70</context>
         </context-group>
         <target state="final">म परिवर्तनहरूको पुष्टि गर्दछु।</target>
-        <alt-trans>
-          <target>मैले परिवर्तनहरूको पुष्टि गर्दछु।</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="cda31dbd724cf5f4fa7a4274d9120651490c8a8c" datatype="html" approved="yes">
         <source>Back</source>
@@ -950,9 +918,6 @@
           <context context-type="linenumber">78</context>
         </context-group>
         <target state="final">हटाउनुहाेस्</target>
-        <alt-trans>
-          <target>हटाउनु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="1c9f4ce85f463611a742ff1835a9878489d5104a" datatype="html" approved="yes">
         <source> Title </source>
@@ -985,9 +950,6 @@
           <context context-type="linenumber">87</context>
         </context-group>
         <target state="final">भर्ना हुनुहाेस्</target>
-        <alt-trans>
-          <target>भर्ना हुनु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="26987e0e2a2962641a3a60791741ea5137a0fa1c" datatype="html" approved="yes">
         <source>Resign</source>
@@ -996,9 +958,6 @@
           <context context-type="linenumber">91</context>
         </context-group>
         <target state="final">छाेड्नुहाेस्</target>
-        <alt-trans>
-          <target>छाेड्नु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html" approved="yes">
         <source>Feedback</source>
@@ -1071,9 +1030,6 @@
           <context context-type="linenumber">38</context>
         </context-group>
         <target state="final">व्यवस्थित गर्नुहाेस्</target>
-        <alt-trans>
-          <target>व्यवस्थित गर्नु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="beed332f1562199b0a99c6216be53aa1d7d2171b" datatype="html" approved="yes">
         <source>View Course</source>
@@ -1082,9 +1038,6 @@
           <context context-type="linenumber">103</context>
         </context-group>
         <target state="final">पाठ्यक्रम हेर्नुहोस्</target>
-        <alt-trans>
-          <target>पाठ्यक्रमहरू हेर्नुहोस्</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="15793f4cbc261bedbc60f7105533dde536a3f42b" datatype="html" approved="yes">
         <source>Progress</source>
@@ -1245,9 +1198,6 @@
           <context context-type="linenumber">15</context>
         </context-group>
         <target state="final">प्रश्न थप्नुहाेस्</target>
-        <alt-trans>
-          <target>प्रश्न थप्न</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
@@ -1284,11 +1234,6 @@
         <target state="final">
       स्रोत नयाँ ट्याबमा खाेल्नुहाेस्
     </target>
-        <alt-trans>
-          <target>
-      खुला स्रोत नयाँ ट्याब
-    </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html" approved="yes">
         <source>List of Resources</source>
@@ -1337,9 +1282,6 @@
           <context context-type="linenumber">21</context>
         </context-group>
         <target state="final">यहाँ उत्तर दिनुहाेस्</target>
-        <alt-trans>
-          <target>उत्तर दिनु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="73c34be23712a3b6418c7fa78133edcc6243aaf1" datatype="html" approved="yes">
         <source>Submitted answer:</source>
@@ -1356,9 +1298,6 @@
           <context context-type="linenumber">38</context>
         </context-group>
         <target state="final">सहि</target>
-        <alt-trans>
-          <target>सहि छ</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="8b42d54000704393a3c06e5f8b668880014f6986" datatype="html" approved="yes">
         <source>Incorrect</source>
@@ -1387,11 +1326,6 @@
         <target state="final">
         जवाफ पेश गर्नुहाेस्
       </target>
-        <alt-trans>
-          <target>
-        पेश गरिएको जवाफ
-      </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="e3b437177444483ae45895ed7db8dca06a1d7568" datatype="html" approved="yes">
         <source>Incorrect answer, please try again</source>
@@ -1540,12 +1474,6 @@
           <context context-type="linenumber">76</context>
         </context-group>
         <target state="final">मेरो पुस्तकालयमा थप्नुहाेस्</target>
-        <alt-trans>
-          <target>पुस्तकालयमा थप्नुहाेस्</target>
-        </alt-trans>
-        <alt-trans>
-          <target>पुस्तकालयमा थप गर्नुहोस्</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="95b8dfb6cc7200a7c8c8637c610ee8f40ff1a42d" datatype="html" approved="yes">
         <source>Remove from myLibrary</source>
@@ -1554,12 +1482,6 @@
           <context context-type="linenumber">79</context>
         </context-group>
         <target state="final">मेरो पुस्तकालयबाट हटाउनुहोस्</target>
-        <alt-trans>
-          <target>पुस्तकालयबाट हटाउनुहोस्</target>
-        </alt-trans>
-        <alt-trans>
-          <target>पुस्तकालय बाट हटाउनुहोस्</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html" approved="yes">
         <source>Download file</source>
@@ -1607,11 +1529,6 @@
         <target state="translated">
         मेरो पुस्तकालयमा थप्नुहाेस्
       </target>
-        <alt-trans>
-          <target>
-        पुस्तकालयमा थप्नुहाेस्
-      </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="2aa6486b4568333332ae6422735ed1a32e5e5214" datatype="html">
         <source>
@@ -1624,11 +1541,6 @@
         <target state="translated">
         मेरो पुस्तकालयबाट हटाउनुहोस्
       </target>
-        <alt-trans>
-          <target>
-        पुस्तकालयबाट हटाउनुहोस्
-      </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="f0406545894d8b6936dd679d6d23ded239ce8806" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> resource</source>
@@ -1693,9 +1605,6 @@
           <context context-type="linenumber">36</context>
         </context-group>
         <target state="final">लाइसेन्सकाे लिंक</target>
-        <alt-trans>
-          <target>लाइसेन्स लिंक</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html" approved="yes">
         <source>Subject(s)</source>
@@ -1736,9 +1645,6 @@
           <context context-type="linenumber">60</context>
         </context-group>
         <target state="final">अगुवा</target>
-        <alt-trans>
-          <target>प्रबन्धक</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html" approved="yes">
         <source>learner</source>
@@ -1747,9 +1653,6 @@
           <context context-type="linenumber">61</context>
         </context-group>
         <target state="final">विद्यार्थी</target>
-        <alt-trans>
-          <target>सिक्न</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -1806,10 +1709,6 @@
           <context context-type="linenumber">88</context>
         </context-group>
         <target state="final">कुन फाइल खोल्ने</target>
-        <alt-trans>
-          <target>कुन फाइल खोल्ने
-</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="ab2d402efd915ef9b8988853c468d37fec83a57d" datatype="html">
         <source>File Upload:</source>
@@ -1894,9 +1793,6 @@
           <context context-type="linenumber">32</context>
         </context-group>
         <target state="final">विकल्प थप्नुहाेस्</target>
-        <alt-trans>
-          <target>विकल्प जोड्नु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html">
         <source>Visits</source>
@@ -1941,9 +1837,6 @@
           <context context-type="linenumber">5</context>
         </context-group>
         <target state="final">सर्वेक्षणहरू</target>
-        <alt-trans>
-          <target>सर्वेक्षण</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html" approved="yes">
         <source>Feedback List</source>
@@ -1952,9 +1845,6 @@
           <context context-type="linenumber">4</context>
         </context-group>
         <target state="final">प्रतिक्रियाहरू</target>
-        <alt-trans>
-          <target>प्रतिक्रिया सूची</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="2b4943909f1e88357c5874b29637a57006c77a2f" datatype="html" approved="yes">
         <source>Type text to search...</source>
@@ -1979,12 +1869,6 @@
           <context context-type="linenumber">21</context>
         </context-group>
         <target state="final">तपाईंका प्रतिकृियाहरू</target>
-        <alt-trans>
-          <target>तपाईंको हालको प्रतिकृियाहरू</target>
-        </alt-trans>
-        <alt-trans>
-          <target>तपाईंको हालको अनुरोध सूची</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
         <source>Priority</source>
@@ -2053,10 +1937,6 @@
           <context context-type="linenumber">77</context>
         </context-group>
         <target state="final">श्रोत</target>
-        <alt-trans>
-          <target>श्रोत
-</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
@@ -2073,9 +1953,6 @@
           <context context-type="linenumber">98</context>
         </context-group>
         <target state="final">बन्द गर्नुहाेस्</target>
-        <alt-trans>
-          <target>बन्द गर्नु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html" approved="yes">
         <source>Re-open</source>
@@ -2092,12 +1969,6 @@
           <context context-type="linenumber">22</context>
         </context-group>
         <target state="final">प्रतिक्रियाकाे शीर्षक</target>
-        <alt-trans>
-          <target>प्रतिक्रिया शीर्षक</target>
-        </alt-trans>
-        <alt-trans>
-          <target>प्रतिक्रिया सूची</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html" approved="yes">
         <source>Type your reply here</source>
@@ -2106,9 +1977,6 @@
           <context context-type="linenumber">54</context>
         </context-group>
         <target state="final">तपाईंको जवाफ यहाँ लेख्नुहोस्</target>
-        <alt-trans>
-          <target>तपाईंको उत्तर यहाँ टाइप गर्नुहोस्</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html" approved="yes">
         <source>Planet Learning</source>
@@ -2241,9 +2109,6 @@
           <context context-type="linenumber">11</context>
         </context-group>
         <target state="final">सूचनाहरू छैनन्</target>
-        <alt-trans>
-          <target>सूचनाहरू छैनन्।</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html">
         <source>View Profile</source>
@@ -2300,9 +2165,6 @@
           <context context-type="linenumber">105</context>
         </context-group>
         <target state="final">बाहिरिनुहाेस्</target>
-        <alt-trans>
-          <target>लग अाउट</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html">
         <source>Menu</source>
@@ -2323,9 +2185,6 @@
           <context context-type="linenumber">48</context>
         </context-group>
         <target state="final">गृहपृष्ठ</target>
-        <alt-trans>
-          <target>गृह</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="c0313c8016bf778e8022d3464a9dac8051c02441" datatype="html" approved="yes">
         <source>Your Notifications</source>
@@ -2518,9 +2377,6 @@
           <context context-type="linenumber">3</context>
         </context-group>
         <target state="final">सदस्यहरू</target>
-        <alt-trans>
-          <target>सदस्य</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="b9ff3705ef6d1098028e6a6ea0805af2eaa91939" datatype="html">
         <source>Send On Accept</source>
@@ -2577,9 +2433,6 @@
           <context context-type="linenumber">43</context>
         </context-group>
         <target state="final">स्रोतहरू सूचीकृत गर्नुहाेस्</target>
-        <alt-trans>
-          <target>सूची स्रोतहरू</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="48469fc707f413372e269b73354211611bc7c4c4" datatype="html" approved="yes">
         <source>List Courses</source>
@@ -2588,9 +2441,6 @@
           <context context-type="linenumber">44</context>
         </context-group>
         <target state="final">पाठ्यक्रमहरू सूचीकृत गर्नुहाेस्</target>
-        <alt-trans>
-          <target>सूची पाठ्यक्रमहरू</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="7b852dc842920d8e515cad087e9a3aba54e6ccc1" datatype="html" approved="yes">
         <source>List Meetups</source>
@@ -2851,9 +2701,6 @@
           <context context-type="linenumber">8</context>
         </context-group>
         <target state="final"><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> भेला</target>
-        <alt-trans>
-          <target><x id="INTERPOLATION" equiv-text="{{this.pageType}}"/> भेलाहरू</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html" approved="yes">
         <source>Start Date</source>
@@ -2910,9 +2757,6 @@
           <context context-type="linenumber">51</context>
         </context-group>
         <target state="final">सुरूवात समय</target>
-        <alt-trans>
-          <target>सुरुहुने समय</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="e1f10d9bf4d3c37490cd5bf82007444ae7af46b1" datatype="html" approved="yes">
         <source>End Time</source>
@@ -2929,11 +2773,6 @@
           <context context-type="linenumber">61</context>
         </context-group>
         <target state="translated">श्रेणी</target>
-        <alt-trans>
-          <target>	
-श्रेणी
-</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html" approved="yes">
         <source>Location</source>
@@ -2958,9 +2797,6 @@
           <context context-type="linenumber">3</context>
         </context-group>
         <target state="final">भेला</target>
-        <alt-trans>
-          <target>भेलाहरू</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="1aa9d172b264a7bda3fe1c814ad938a2b2157a92" datatype="html" approved="yes">
         <source>Invite Member</source>
@@ -2977,9 +2813,6 @@
           <context context-type="linenumber">14</context>
         </context-group>
         <target state="final">छोड्नुहाेस्</target>
-        <alt-trans>
-          <target>छोड्नु</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="ef18d704b9e303d1dd72b0f56d5de8ea625c5311" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Meetup Title:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail.title}}"/></source>
@@ -3220,9 +3053,6 @@
           <context context-type="linenumber">37</context>
         </context-group>
         <target state="final">भूमिकाहरू थप्नुहाेस्</target>
-        <alt-trans>
-          <target>भूमिकाहरू थप गर्नुहोस्</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="fe29c5d80f15cf046e65d26f65f7a83bd8edf901" datatype="html" approved="yes">
         <source>Profile Image</source>
@@ -3330,9 +3160,6 @@
           <context context-type="linenumber">54</context>
         </context-group>
         <target state="final">तह</target>
-        <alt-trans>
-          <target>स्तर</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="a9aa4a447e7a64b1744ee9ec9581cdf5ba73501c" datatype="html">
         <source>Survey Profile</source>
@@ -3389,9 +3216,6 @@
           <context context-type="linenumber">72</context>
         </context-group>
         <target state="final">तह</target>
-        <alt-trans>
-          <target>स्तर</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html">
         <source>Update</source>
