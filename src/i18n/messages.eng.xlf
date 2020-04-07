@@ -1592,6 +1592,9 @@ Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accep
           <context context-type="linenumber">29</context>
         </context-group>
         <target state="final">Spanish</target>
+        <alt-trans>
+          <target>Español</target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html" approved="yes">
         <source>Publisher/Attribution</source>
