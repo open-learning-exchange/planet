@@ -144,8 +144,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const { byUser, byMonth } = this.activityService.groupLoginActivities(this.loginActivities.filteredData);
     this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
     this.reports.visits = byUser.slice(0, 5);
+    this.getMember();
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
     this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
+  }
+
+  getMember() {
+    this.couchService.get('_user' + '/org.couchdb.user:' + this.reports.visits.user)
+      .subscribe((data) => { console.log(data);
+      });
   }
 
   getRatingInfo() {
