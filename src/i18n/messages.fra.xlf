@@ -148,6 +148,13 @@
 Êtes-vous sûr de vouloir <x id="ICU" equiv-text="{data.changeType, sélectionner, accepter {...} rejeter {...} supprimer {...}}"/>
       le <x id="ICU_1" equiv-text="{data.amount, sélectionner, unique {...} plusieurs {...}}"/>  
   </target>
+        <alt-trans>
+          <target>
+    
+Êtes-vous sûr de vouloir <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...}}"/>
+      le <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>  
+  </target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="00c4e22fec4807de5423c76ce4aa933797852cd4" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} }</source>
