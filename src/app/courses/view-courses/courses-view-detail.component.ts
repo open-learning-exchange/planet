@@ -39,7 +39,7 @@ export class CoursesViewDetailDialogComponent {
 
     routeToCourses(courseId) {
       this.dialogRef.close();
-      this.router.navigate([ '../../courses/view/', courseId], { relativeTo: this.route });
+      this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
     }
 
 }
