@@ -50,6 +50,7 @@ Vagrant.configure(2) do |config|
     prod.vm.provision "shell", run: "always", inline: <<-SHELL
       if [ ! -f /srv/starthub ]; then
         echo "false" > /srv/starthub
+        chmod 0666 /srv/starthub
       fi
       /vagrant/prod-docker.sh -u
       if [ -f /srv/starthub ] && [ $(cat /srv/starthub) == "true" ]; then
