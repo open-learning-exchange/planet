@@ -223,9 +223,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">9</context>
         </context-group>
         <target state="final">Raadi</target>
-        <alt-trans>
-          <target>Saadi</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html">
         <source>Loading</source>
@@ -322,9 +319,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">5</context>
         </context-group>
         <target state="final">Ka weyn</target>
-        <alt-trans>
-          <target>Ka ween</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="84bbbe38f927eaeddf081648c8783d06b4348b24" datatype="html">
         <source>Does not match</source>
@@ -333,9 +327,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">6</context>
         </context-group>
         <target state="translated">Ma ciyaarin</target>
-        <alt-trans>
-          <target>Iskuma aadana</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="7c2fe53d437c5c9915174de6a0ed5aea0f83467a" datatype="html" approved="yes">
         <source>Requests List</source>
@@ -404,10 +395,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">73</context>
         </context-group>
         <target state="final">Eeeg</target>
-        <alt-trans>
-          <target>Eeeg
-</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="61e83c6fe4e946889a5768f38d3cf3c212b9291c" datatype="html" approved="yes">
         <source>
@@ -548,9 +535,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">41</context>
         </context-group>
         <target state="final">Xarun</target>
-        <alt-trans>
-          <target>Xarunta</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html" approved="yes">
         <source>Name</source>
@@ -587,9 +571,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">34</context>
         </context-group>
         <target state="final">Luuqad</target>
-        <alt-trans>
-          <target>Luuqada</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html" approved="yes">
         <source>Local URL</source>
@@ -598,9 +579,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">59</context>
         </context-group>
         <target state="final">URL Maxaliga</target>
-        <alt-trans>
-          <target>URL maxalliga ah</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="29190bf0dba7ad1e01166a60083f5676b3d174b8" datatype="html">
         <source>Auto accept Members</source>
@@ -877,9 +855,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">16</context>
         </context-group>
         <target state="final"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Dib u bilow<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
-        <alt-trans>
-          <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Dib u soo noqo<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="f77135899322784e9350a7e8fb715bdd7507c9e3" datatype="html">
         <source>Get course</source>
@@ -1228,9 +1203,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">15</context>
         </context-group>
         <target state="final">Ku dar su'aal</target>
-        <alt-trans>
-          <target>Suaal Kudar </target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
@@ -1622,9 +1594,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">29</context>
         </context-group>
         <target state="final">Ispanyol</target>
-        <alt-trans>
-          <target>Español</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html" approved="yes">
         <source>Publisher/Attribution</source>
@@ -1697,10 +1666,6 @@ Ma hubtaa inaad rabto<x id="ICU" equiv-text="{data.changeType, select, accept {.
           <context context-type="linenumber">58</context>
         </context-group>
         <target state="final">Khayraadka</target>
-        <alt-trans>
-          <target>
-Khayraadka</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="8a27a855a00b08d2ca981207638ea9097032412b" datatype="html" approved="yes">
         <source>Media</source>
@@ -2805,9 +2770,6 @@ Khayraadka</target>
           <context context-type="linenumber">55</context>
         </context-group>
         <target state="final">Dhameysta waqtiga</target>
-        <alt-trans>
-          <target>Waqtiga Dhamaadkiis</target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="607de17c2a755f65775881c19e276e7c933bcf94" datatype="html" approved="yes">
         <source>Category</source>
