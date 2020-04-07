@@ -16,5 +16,5 @@ export interface ExamQuestion {
   type: 'input' | 'textarea' | 'select' | 'selectMultiple';
   correctChoice: string[];
   marks: number;
-  choices: { text: string, id: string };
+  choices: { text: string, id: string }[];
 }
