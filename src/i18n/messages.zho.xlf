@@ -69,6 +69,9 @@
           <context context-type="linenumber">7</context>
         </context-group>
         <target state="translated">源代码 <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <alt-trans>
+          <target>代码 <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        </alt-trans>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
