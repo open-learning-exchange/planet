@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, Subject, forkJoin } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
@@ -19,6 +19,7 @@ import {
 import { MatDialog } from '@angular/material';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
+import { UsersService } from '../../users/users.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -33,6 +34,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   planetName = '';
   reports: any = {};
   charts: Chart[] = [];
+  users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', startDate: new Date(0), endDate: new Date() };
   codeParam = '';
@@ -52,6 +54,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
     private couchService: CouchService,
+    private usersService: UsersService,
     private dialog: MatDialog,
     private fb: FormBuilder
   ) {
@@ -132,8 +135,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getAllActivities('login_activities', activityParams(this.planetCode)).subscribe((loginActivities: any) => {
+    forkJoin([
+      this.usersService.getAllUsers(),
+      this.activityService.getAllActivities('login_activities', activityParams(this.planetCode))
+    ]).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
       this.loginActivities.data = loginActivities;
+      this.users = users;
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(this.minDate);
       this.setLoginActivities();
@@ -143,16 +150,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setLoginActivities() {
     const { byUser, byMonth } = this.activityService.groupLoginActivities(this.loginActivities.filteredData);
     this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
+    byUser.map((activity) => {
+      const userDoc = this.users.filter((user) => user.name === activity.user);
+      return activity = { activity, userDoc };
+    });
     this.reports.visits = byUser.slice(0, 5);
-    this.getMember();
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
     this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
-  }
-
-  getMember() {
-    this.couchService.get('_user' + '/org.couchdb.user:' + this.reports.visits.user)
-      .subscribe((data) => { console.log(data);
-      });
   }
 
   getRatingInfo() {
