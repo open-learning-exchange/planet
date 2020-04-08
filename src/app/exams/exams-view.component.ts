@@ -255,12 +255,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers[0].id === this.question.correctChoice;
   }
 
+  fixNextQuestion(isFinish) {
+    if (isFinish) {
+      return - 1;
+    }
+    if (this.maxQuestions === this.questionNum) {
+      return this.questionNum - 1;
+    } else {
+      return this.questionNum;
+    }
+  }
+
   createAnswerObservable(isFinish = false) {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         const obs = this.previewMode ?
-          of({ nextQuestion: this.questionNum}) :
+          of({ nextQuestion: this.fixNextQuestion(isFinish) }) :
           this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, isFinish);
         return { obs, correctAnswer };
       case 'grade':
