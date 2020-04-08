@@ -258,13 +258,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   createAnswerObservable(isFinish = false) {
     let forNextQuestion;
     if (this.previewMode) {
-      if (isFinish) {
-        forNextQuestion = - 1;
-      } else if (this.maxQuestions === this.questionNum) {
-        forNextQuestion = this.questionNum - 1;
-      } else {
-        forNextQuestion = this.questionNum;
-      }
+      forNextQuestion = isFinish
+        ? -1
+        : this.maxQuestions === this.questionNum
+          ? this.questionNum - 1
+          : this.questionNum
     }
     switch (this.mode) {
       case 'take':
