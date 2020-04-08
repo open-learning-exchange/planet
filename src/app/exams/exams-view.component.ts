@@ -185,6 +185,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.answer.markAsUntouched();
+    if (this.previewMode) {
+      this.isComplete = this.maxQuestions === this.questionNum;
+    };
   }
 
   setCourseListener() {
@@ -253,11 +256,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   createAnswerObservable(isFinish = false) {
+    let forNextQuestion;
+    if (this.previewMode) {
+      if (isFinish) {
+        forNextQuestion = - 1;
+      } else {
+        forNextQuestion = this.maxQuestions === this.questionNum ? this.questionNum - 1: this.questionNum;
+      }
+    };
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         const obs = this.previewMode ?
-          of({ nextQuestion: this.questionNum }) :
+          of({ nextQuestion: forNextQuestion }) :
           this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, isFinish);
         return { obs, correctAnswer };
       case 'grade':
