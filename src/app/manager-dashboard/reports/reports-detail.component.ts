@@ -160,9 +160,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setGenderDatasets(data, unique = false) {
     const months = setMonths();
     const genderFilter = (gender: string) =>
-      months.map((month) =>
-        data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] }
-      );
+      months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
       const monthlyData = data.filter((datum: any) => datum.date === month);
       return ({
