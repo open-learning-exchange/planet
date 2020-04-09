@@ -8,6 +8,7 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
+import { Exam, ExamQuestion } from './exams.model';
 
 @Component({
   selector: 'planet-exams-view',
@@ -18,12 +19,12 @@ import { CustomValidators } from '../validators/custom-validators';
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
   @Input() isDialog = false;
-  @Input() exam: any;
+  @Input() exam: Exam;
   @Input() submission: any;
   @Input() mode: 'take' | 'grade' | 'view' = 'take';
   previewMode = false;
   onDestroy$ = new Subject<void>();
-  question: any = { header: '', body: '', type: '', choices: [] };
+  question: ExamQuestion;
   @Input() questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
