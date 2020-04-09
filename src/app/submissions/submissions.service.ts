@@ -161,7 +161,7 @@ export class SubmissionsService {
 
   calcTotalGrade(submission: any) {
     return submission.answers.reduce((total: number, answer: any, index: number) =>
-      total + (submission.parent.questions[index].marks * (answer.grade || 0)), 0);
+      total + (submission.parent.questions[index].marks * (answer && answer.grade || 0)), 0);
   }
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
