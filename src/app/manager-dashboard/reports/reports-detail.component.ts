@@ -45,6 +45,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
+  activity = [];
 
   constructor(
     private activityService: ReportsService,
@@ -150,13 +151,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setLoginActivities() {
     const { byUser, byMonth } = this.activityService.groupLoginActivities(this.loginActivities.filteredData);
     this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
-    byUser.map((activity) => {
-      const userDoc = this.users.filter((user) => user.name === activity.user);
-      return activity = { activity, userDoc };
-    });
-    this.reports.visits = byUser.slice(0, 5);
+    this.getMembers(byUser, this.users);
+    this.reports.visits = this.activity.slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
     this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
+  }
+
+  getMembers(byUser, users) {
+    byUser.map((activity) => {
+      const userDoc = users.find((user) => user.name === activity.user && user.planetCode === this.planetCode);
+      this.activity.push({ ...activity, userDoc });
+    });
   }
 
   getRatingInfo() {
