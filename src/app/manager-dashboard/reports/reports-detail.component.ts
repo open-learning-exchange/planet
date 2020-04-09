@@ -12,6 +12,8 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName } from './reports.utils';
+import { MatDialog } from '@angular/material';
+import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -42,7 +44,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -267,6 +270,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
     });
+  }
+
+  openResourceView(resourceId) {
+    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
 }
