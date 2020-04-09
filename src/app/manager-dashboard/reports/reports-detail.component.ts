@@ -124,6 +124,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
       this[type].total = activities.filter(
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
+          && !activity.private
       );
       const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total, type.replace('Activities', 'Id'));
       this[type].byDoc = byDoc;
@@ -159,9 +160,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setGenderDatasets(data, unique = false) {
     const months = setMonths();
     const genderFilter = (gender: string) =>
-      months.map((month) =>
-        data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] }
-      );
+      months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
       const monthlyData = data.filter((datum: any) => datum.date === month);
       return ({
