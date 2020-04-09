@@ -1,4 +1,5 @@
-import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit } from '@angular/core';
+import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { sortNumberOrString } from '../../shared/table-helpers';
 
@@ -11,6 +12,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
   @Input() activityType: 'resources' | 'courses' = 'resources';
+  @Output() itemClick = new EventEmitter<any>();
   activities = new MatTableDataSource();
   displayedColumns = [
     'title',
@@ -20,7 +22,9 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  constructor() {}
+  constructor(
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.activities.sortingDataAccessor = (item: any, property: string) =>
@@ -43,6 +47,14 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   sortingObject(item, property) {
     return property === 'title' ? item.max : item;
+  }
+
+  rowClick(element) {
+    if (element.courseId) {
+      this.router.navigate([ `/courses/view/${element.courseId}` ]);
+    } else if (element.resourceId) {
+      this.itemClick.emit(element.resourceId);
+    }
   }
 
 }

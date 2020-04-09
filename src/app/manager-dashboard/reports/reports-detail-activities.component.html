@@ -1,9 +1,7 @@
 <mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort>
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element">
-      <a [routerLink]="[ '/' + activityType + '/view', activityType === 'resources' ? element.resourceId : element.courseId ]">{{element?.max?.title}}</a>
-    </mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Views</mat-header-cell>
@@ -14,7 +12,7 @@
     <mat-cell *matCellDef="let element">{{element?.averageRating}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>
 </mat-table>
 <mat-paginator #paginator
   [pageSize]="50"
