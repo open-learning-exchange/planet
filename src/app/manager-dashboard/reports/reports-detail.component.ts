@@ -38,7 +38,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   courseActivities = { byDoc: [], total: [] };
   today: Date;
   minDate: Date;
-  ratings = { resources: [], courses: [] };
+  ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
 
   constructor(
@@ -114,6 +114,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filter = { ...this.filter, ...value };
       this.loginActivities.filter(this.filter);
       this.setLoginActivities();
+      this.ratings.total.filter(this.filter);
+      this.setRatingInfo();
     });
   }
 
@@ -144,12 +146,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(activityParams(this.planetCode, this.filter)).subscribe((averageRatings) => {
-      this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
-      this.ratings.courses = averageRatings.filter(item => item.type === 'course');
-      this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
-      this.reports.courseRatings = this.ratings.courses.slice(0, 5);
+    this.activityService.getRatingInfo(activityParams(this.planetCode, '')).subscribe((ratings: any[]) => {
+      if (this.ratings.total.data.length === 0) {
+        this.ratings.total.data = ratings;
+        this.setRatingInfo();
+      }
     });
+  }
+
+  setRatingInfo() {
+    const averageRatings = this.activityService.groupRatings(this.ratings.total.filteredData);
+    this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
+    this.ratings.courses = averageRatings.filter(item => item.type === 'course');
+    this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
+    this.reports.courseRatings = this.ratings.courses.slice(0, 5);
   }
 
   getDocVisits(type) {
