@@ -23,8 +23,12 @@ export const sortPlanet = ((a, b) => {
   return planetName(a).localeCompare(planetName(b));
 });
 
+export const itemInDateRange = (item, dateField, startDate, endDate) => {
+  return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
+};
+
 export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-  item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
+  itemInDateRange(item, dateField, startDate, endDate)
 );
 
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
