@@ -12,7 +12,6 @@
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
-    <div>
       <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
         <ng-container *ngSwitchCase="'member'">
           <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
@@ -36,7 +35,6 @@
       <ng-container *ngIf="mode!=='services'">
         <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
       </ng-container>
-    </div>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
