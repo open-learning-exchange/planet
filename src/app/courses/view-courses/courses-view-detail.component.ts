@@ -1,7 +1,7 @@
 import { Component, Input, Inject } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA} from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'planet-courses-detail',
