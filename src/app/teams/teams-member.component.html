@@ -27,7 +27,8 @@
     <button *ngIf="actionMenu.indexOf('title') > -1"
       (click)="openDialog({ member: member, change: 'title' })" mat-menu-item>
       <mat-icon>edit</mat-icon>
-      <span i18n>{ memberType, select, community {Change Title} other {{ hasRole, select, true {Change Role} false {Add Role}}} }</span>
+      <span *ngIf="memberType === 'community'" i18n>{ titleChangeText, select, Add {Add Title} Change {Change Title}}</span>
+      <span *ngIf="memberType === 'other'" i18n>{ hasRole, select, true {Change Role} false {Add Role}}</span>
     </button>
   </mat-menu>
 </mat-card-header>
