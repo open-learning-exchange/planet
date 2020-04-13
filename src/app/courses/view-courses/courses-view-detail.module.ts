@@ -8,7 +8,7 @@ import { CoursesViewDetailComponent, CoursesViewDetailDialogComponent } from './
   imports: [
     CommonModule,
     PlanetFormsModule,
-    MaterialModule,
+    MaterialModule
   ],
   exports: [
     CoursesViewDetailComponent,
