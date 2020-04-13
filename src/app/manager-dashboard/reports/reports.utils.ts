@@ -51,3 +51,25 @@ export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPl
 };
 
 export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
+
+export const reportsDetailParams = (type) => ({
+  courseActivities: { db: 'course_activities', views: 'totalCourseViews', record: 'courses', chartName: 'courseViewChart' },
+  resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
+})[type];
+
+export const xyChartData = (data, unique) => data.map((visit: any) => ({
+  x: this.activityService.monthDataLabels(visit.date),
+  y: unique ? visit.unique.length : visit.count || 0
+}));
+
+export const datasetObject = (label, data, backgroundColor) => ({ label, data, backgroundColor });
+
+export const titleOfChartName = (chartName: string) => {
+  const chartNames = {
+    resourceViewChart: 'Resource Views by Month',
+    courseViewChart: 'Course Views by Month',
+    visitChart: 'Total Member Visits by Month',
+    uniqueVisitChart: 'Unique Member Visits by Month'
+  };
+  return chartNames[chartName];
+};

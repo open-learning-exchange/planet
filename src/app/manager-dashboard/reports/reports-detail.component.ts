@@ -12,7 +12,10 @@ import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName } from './reports.utils';
+import {
+  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
+  titleOfChartName
+} from './reports.utils';
 import { MatDialog } from '@angular/material';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -93,7 +96,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
-    this.getTotalUsers(local).subscribe(() => {
+    this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
+      this.reports.totalUsers = count;
+      this.reports.usersByGender = byGender;
+    })).subscribe(() => {
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
@@ -123,13 +129,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('resourceActivities');
     this.courseActivities.total.filter(this.filter);
     this.setDocVisits('courseActivities');
-  }
-
-  getTotalUsers(local: boolean) {
-    return this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    }));
   }
 
   getLoginActivities() {
@@ -165,7 +164,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getDocVisits(type) {
-    const params = this.docVisitParams(type);
+    const params = reportsDetailParams(type);
     this.activityService.getAllActivities(params.db, activityParams(this.planetCode))
     .subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
@@ -179,19 +178,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setDocVisits(type) {
-    const params = this.docVisitParams(type);
+    const params = reportsDetailParams(type);
     const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total.filteredData, type.replace('Activities', 'Id'));
     this[type].byDoc = byDoc;
     this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
     this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-  }
-
-  docVisitParams(type) {
-    return ({
-      courseActivities: { db: 'course_activities', views: 'totalCourseViews', record: 'courses', chartName: 'courseViewChart' },
-      resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
-    })[type];
   }
 
   getPlanetCounts(local: boolean) {
@@ -204,17 +196,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.reports.totalCourses = response.totalCourses;
       });
     }
-  }
-
-  xyChartData(data, unique) {
-    return data.map((visit: any) => ({
-      x: this.activityService.monthDataLabels(visit.date),
-      y: unique ? visit.unique.length : visit.count || 0
-    }));
-  }
-
-  datasetObject(label, data, backgroundColor) {
-    return { label, data, backgroundColor };
   }
 
   setGenderDatasets(data, unique = false) {
@@ -232,10 +213,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey),
-          this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
+          datasetObject('Male', xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
+          datasetObject('Female', xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
+          datasetObject('Did not specify', xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          datasetObject('Total', xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
       labels: months.map(month => this.activityService.monthDataLabels(month))
@@ -253,7 +234,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       type: 'bar',
       data,
       options: {
-        title: { display: true, text: this.titleOfChartName(chartName), fontSize: 16 },
+        title: { display: true, text: titleOfChartName(chartName), fontSize: 16 },
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
@@ -265,16 +246,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         }
       }
     }));
-  }
-
-  titleOfChartName(chartName: string) {
-    const chartNames = {
-      resourceViewChart: 'Resource Views by Month',
-      courseViewChart: 'Course Views by Month',
-      visitChart: 'Total Member Visits by Month',
-      uniqueVisitChart: 'Unique Member Visits by Month'
-    };
-    return chartNames[chartName];
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
