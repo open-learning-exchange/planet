@@ -12,31 +12,29 @@
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
-    <div>
-      <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
-        <ng-container *ngSwitchCase="'member'">
-          <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
-            Add Members
-          </button>
-          <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
-            { mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }
-          </button>
-          <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
-            Add Courses
-          </button>
-          <ng-container *ngIf="currentUserId !== leader && mode !== 'services'">
-            <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
-          </ng-container>
-        </ng-container>
-        <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
-          <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
+    <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
+      <ng-container *ngSwitchCase="'member'">
+        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+          Add Members
         </button>
-        <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
+        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
+          { mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }
+        </button>
+        <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+          Add Courses
+        </button>
+        <ng-container *ngIf="currentUserId !== leader && mode !== 'services'">
+          <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
+        </ng-container>
       </ng-container>
-      <ng-container *ngIf="mode!=='services'">
-        <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
-      </ng-container>
-    </div>
+      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
+        <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
+      </button>
+      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
+    </ng-container>
+    <ng-container *ngIf="mode!=='services'">
+      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+    </ng-container>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
