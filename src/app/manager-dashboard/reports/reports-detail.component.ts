@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { combineLatest, Subject, forkJoin } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { map, takeUntil, take } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
@@ -135,16 +135,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    forkJoin([
-      this.usersService.getAllUsers(),
+    combineLatest([
+      this.usersService.usersListener(true),
       this.activityService.getAllActivities('login_activities', activityParams(this.planetCode))
-    ]).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
+    ]).pipe(take(1)).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
       this.loginActivities.data = loginActivities;
       this.users = users;
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(this.minDate);
       this.setLoginActivities();
     });
+    this.usersService.requestUsers(false);
   }
 
   setLoginActivities() {
@@ -152,7 +153,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
     const byUserWithProfile = byUser.map((activity) => ({
       ...activity,
-      userDoc: this.users.find((user) => user.name === activity.user && user.planetCode === this.planetCode)
+      userDoc: this.users.find((user) => user.doc.name === activity.user && user.doc.planetCode === this.planetCode)
     }));
     this.reports.visits = byUserWithProfile.slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
