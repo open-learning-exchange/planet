@@ -26,7 +26,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   hasRole: 'true' | 'false';
   user = this.userService.get();
   planetCode = this.stateService.configuration.code;
-  leadershipTitleType: 'Add' | 'Change';
+  titleChangeText: 'Add' | 'Change';
 
   constructor(
     private userService: UserService,
@@ -40,7 +40,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.leadershipTitleType = this.leadershipTitle === undefined || this.leadershipTitle === '' ? 'Add' : 'Change';
+    this.titleChangeText = this.leadershipTitle === undefined || this.leadershipTitle === '' ? 'Add' : 'Change';
   }
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
