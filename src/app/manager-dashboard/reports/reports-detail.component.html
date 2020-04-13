@@ -1,10 +1,10 @@
-<mat-toolbar>
+<mat-toolbar class="action-buttons">
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
-  <form [formGroup]="dateFilterForm">
+  <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
     <mat-form-field>
       <mat-label>Start Date</mat-label>
       <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
@@ -19,7 +19,7 @@
     </mat-form-field>
   </form>
   <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
+    class="font-size-1"
     (change)="onFilterChange($event.value)"
     #filterGroup="matButtonToggleGroup">
     <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
