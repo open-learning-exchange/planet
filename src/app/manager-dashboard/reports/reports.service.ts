@@ -216,4 +216,22 @@ export class ReportsService {
     });
   }
 
+  getCourseProgress({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
+    return forkJoin([
+      this.couchService.findAll('courses'),
+      this.couchService.findAll('courses_progress', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
+    ]).pipe(map(([ courses, progresses ]) => {
+        return courses.map((course: any) => {
+          return {
+            doc: course,
+            progress: progresses.filter((progress: any) => progress.courseId === course._id)
+              .reduce((progArr, prog: any) => {
+                progArr[prog.userId] = progArr[prog.userId] || (prog.stepNum === course.steps.length && prog.passed) || false;
+                return progArr;
+              }, {})
+          };
+        });
+    }));
+  }
+
 }

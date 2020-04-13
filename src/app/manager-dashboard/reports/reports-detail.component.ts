@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { combineLatest, Subject } from 'rxjs';
-import { map, takeUntil, take } from 'rxjs/operators';
+import { combineLatest, Subject, of } from 'rxjs';
+import { map, takeUntil, take, switchMap } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
@@ -110,6 +110,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
+      this.getCourseProgress();
       this.getPlanetCounts(local);
       this.dialogsLoadingService.stop();
     });
@@ -180,6 +181,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.ratings.courses = averageRatings.filter(item => item.type === 'course');
     this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
     this.reports.courseRatings = this.ratings.courses.slice(0, 5);
+  }
+
+  getCourseProgress() {
+    this.activityService.getCourseProgress(activityParams(this.planetCode))
+    .subscribe((progress) => {
+      this.reports['progress'] = progress;
+    });
   }
 
   getDocVisits(type) {
