@@ -32,7 +32,8 @@ export class CoursesViewDetailDialogComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    @Inject(MAT_DIALOG_DATA) public data: any) {}
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
     routeToCourses(courseId) {
       this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
