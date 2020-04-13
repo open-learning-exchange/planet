@@ -69,9 +69,6 @@
           <context context-type="linenumber">7</context>
         </context-group>
         <target state="translated">源代码 <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
-        <alt-trans>
-          <target>代码 <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
-        </alt-trans>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -1256,7 +1253,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="7244b411f047aa7cc7a4018d1452a45b460ff0e4" datatype="html">
         <source>No description provided.</source>
@@ -1416,7 +1413,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-chart.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Steps</target>
+        <target state="translated">步骤</target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html">
         <source>Library</source>
@@ -1460,7 +1457,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">Get resource</target>
+        <target state="translated">获得资源</target>
       </trans-unit>
       <trans-unit id="14ade3e45e606c68892a9ba0c08ece0484efd7c9" datatype="html">
         <source>Send resource</source>
@@ -1468,7 +1465,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Send resource</target>
+        <target state="translated">发送资源</target>
       </trans-unit>
       <trans-unit id="8292faed3a05482dd8f2a9368bbe5bfcbe9a9a50" datatype="html">
         <source>Add to myLibrary</source>
@@ -1480,7 +1477,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">76</context>
         </context-group>
-        <target state="needs-translation">Add to myLibrary</target>
+        <target state="translated">添加至我的作品集</target>
       </trans-unit>
       <trans-unit id="95b8dfb6cc7200a7c8c8637c610ee8f40ff1a42d" datatype="html">
         <source>Remove from myLibrary</source>
@@ -1488,7 +1485,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="needs-translation">Remove from myLibrary</target>
+        <target state="translated">从媒体库中删除</target>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html">
         <source>Download file</source>
@@ -1496,7 +1493,7 @@
           <context context-type="sourcefile">app/resources/resources.component.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation">Download file</target>
+        <target state="translated">下载文件</target>
       </trans-unit>
       <trans-unit id="a35562563b046bb09e22a6599f2da51fa8111a83" datatype="html">
         <source><x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
@@ -1505,8 +1502,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-      <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
+        <target state="translated">
+      <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> 详细信息
     </target>
       </trans-unit>
       <trans-unit id="a022348c23dfe55278a1c0409a74d1cc151d1d2d" datatype="html">
@@ -1619,7 +1616,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">Subject(s)</target>
+        <target state="translated">主题</target>
       </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html">
         <source>Level(s)</source>
@@ -1635,7 +1632,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="needs-translation">Open</target>
+        <target state="translated">打开</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html">
         <source>Default</source>
@@ -1643,7 +1640,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">Default</target>
+        <target state="translated">默认</target>
       </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html">
         <source>Leader</source>
@@ -1651,7 +1648,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="needs-translation">Leader</target>
+        <target state="translated">领导者</target>
       </trans-unit>
       <trans-unit id="11aaa3a754eabb49b2ff16d7b4063944553f3e8b" datatype="html">
         <source>learner</source>
@@ -1659,7 +1656,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">learner</target>
+        <target state="translated">学生</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -1675,7 +1672,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="needs-translation">Media</target>
+        <target state="translated">媒体</target>
       </trans-unit>
       <trans-unit id="6dffc29e9f023bc83a3d5ac080c870c6af20bd46" datatype="html">
         <source>Article Date</source>
@@ -1747,7 +1744,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="needs-translation">Delete File</target>
+        <target state="translated">删除文件</target>
       </trans-unit>
       <trans-unit id="26bff472b6d1cdf6b0479ef9cb93cc0181fcab31" datatype="html">
         <source>Question Title</source>
@@ -1755,7 +1752,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Question Title</target>
+        <target state="translated">问题标题</target>
       </trans-unit>
       <trans-unit id="3e242f213dd1a0754aad9164aa80887d67708500" datatype="html">
         <source>Input</source>
@@ -1943,7 +1940,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="needs-translation">Source</target>
+        <target state="translated">来源</target>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
@@ -1951,7 +1948,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="needs-translation"> Action </target>
+        <target state="translated"> 操作/行动 </target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -1959,7 +1956,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="needs-translation">Close</target>
+        <target state="translated">关闭</target>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
         <source>Re-open</source>
@@ -1967,7 +1964,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.ts</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="needs-translation">Re-open</target>
+        <target state="translated">重新打开</target>
       </trans-unit>
       <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html">
         <source>Feedback title</source>
@@ -1975,7 +1972,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Feedback title</target>
+        <target state="translated">反馈标题</target>
       </trans-unit>
       <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html">
         <source>Type your reply here</source>
@@ -1983,7 +1980,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Type your reply here</target>
+        <target state="translated">请在此输入您的回复</target>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
         <source>Planet Learning</source>
@@ -2027,7 +2024,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Teams</target>
+        <target state="translated">团队</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html">
         <source>Meetups</source>
@@ -2051,7 +2048,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Meetups</target>
+        <target state="translated">见面会</target>
       </trans-unit>
       <trans-unit id="f354ea5d0c5bae1154e5e34f86e22abe7d668552" datatype="html">
         <source>
@@ -2061,8 +2058,8 @@
           <context context-type="sourcefile">app/home/home-classic.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">
-      Surveys
+        <target state="translated">
+      调查
     </target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html">
@@ -2075,7 +2072,7 @@
           <context context-type="sourcefile">app/home/home-modern.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Messages</target>
+        <target state="translated">信息</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html">
         <source>Manager Settings</source>
