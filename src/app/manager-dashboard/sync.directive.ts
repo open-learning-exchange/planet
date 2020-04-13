@@ -98,7 +98,8 @@ export class SyncDirective {
       { db: 'myplanet_activities' },
       { db: 'notifications', selector: { userPlanetCode: this.planetConfiguration.parentCode } },
       { db: 'attachments', selector: { planetCode: this.planetConfiguration.code } },
-      { db: 'course_activities' }
+      { db: 'course_activities' },
+      { db: 'search_activities' }
     ];
   }
 
