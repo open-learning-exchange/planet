@@ -84,9 +84,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
     this.filter.app = filterValue;
-    this.loginActivities.filter(this.filter);
-    this.setLoginActivities();
-    this.initializeData(!this.codeParam);
+    this.filterData();
   }
 
   setFilterDate(date: Date, field: 'startDate' | 'endDate') {
@@ -112,15 +110,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
       this.filter = { ...this.filter, ...value };
-      this.loginActivities.filter(this.filter);
-      this.setLoginActivities();
-      this.ratings.total.filter(this.filter);
-      this.setRatingInfo();
-      this.resourceActivities.total.filter(this.filter);
-      this.setDocVisits('resourceActivities');
-      this.courseActivities.total.filter(this.filter);
-      this.setDocVisits('courseActivities');
+      this.filterData();
     });
+  }
+
+  filterData() {
+    this.loginActivities.filter(this.filter);
+    this.setLoginActivities();
+    this.ratings.total.filter(this.filter);
+    this.setRatingInfo();
+    this.resourceActivities.total.filter(this.filter);
+    this.setDocVisits('resourceActivities');
+    this.courseActivities.total.filter(this.filter);
+    this.setDocVisits('courseActivities');
   }
 
   getTotalUsers(local: boolean) {
@@ -131,13 +133,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getLoginActivities() {
-    this.activityService.getAllActivities('login_activities', activityParams(this.planetCode, '')).subscribe((loginActivities: any) => {
-      if (this.loginActivities.data.length === 0) {
-        this.loginActivities.data = loginActivities;
-        this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
-        this.dateFilterForm.controls.startDate.setValue(this.minDate);
-        this.setLoginActivities();
-      }
+    this.activityService.getAllActivities('login_activities', activityParams(this.planetCode)).subscribe((loginActivities: any) => {
+      this.loginActivities.data = loginActivities;
+      this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
+      this.dateFilterForm.controls.startDate.setValue(this.minDate);
+      this.setLoginActivities();
     });
   }
 
@@ -150,11 +150,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(activityParams(this.planetCode, '')).subscribe((ratings: any[]) => {
-      if (this.ratings.total.data.length === 0) {
-        this.ratings.total.data = ratings;
-        this.setRatingInfo();
-      }
+    this.activityService.getRatingInfo(activityParams(this.planetCode)).subscribe((ratings: any[]) => {
+      this.ratings.total.data = ratings;
+      this.setRatingInfo();
     });
   }
 
@@ -168,17 +166,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getDocVisits(type) {
     const params = this.docVisitParams(type);
-    this.activityService.getAllActivities(params.db, activityParams(this.planetCode, ''))
+    this.activityService.getAllActivities(params.db, activityParams(this.planetCode))
     .subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
       // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
-      if (this[type].total.data.length === 0) {
-        this[type].total.data = activities.filter(
-          activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
-            && !activity.private
-        );
-        this.setDocVisits(type);
-      }
+      this[type].total.data = activities.filter(
+        activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
+          && !activity.private
+      );
+      this.setDocVisits(type);
     });
   }
 
