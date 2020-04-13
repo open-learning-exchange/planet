@@ -129,14 +129,15 @@ export class ReportsService {
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
-    .pipe(map((ratings: any) => {
-      ratings = this.filterAdmin(ratings, filterAdmin);
-      return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
-        .filter(rating => rating.title !== '' && rating.title !== undefined)
-        .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
-          ({ ...r, value: Math.round(10 * r.sum / r.count) / 10 }));
-    }));
+    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet })).pipe(
+      map((ratings: any) => this.filterAdmin(ratings, filterAdmin)));
+  }
+
+  groupRatings(ratings) {
+    return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
+      .filter(rating => rating.title !== '' && rating.title !== undefined)
+      .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
+        ({ ...r, value: Math.round(10 * r.sum / r.count) / 10 }));
   }
 
   groupDocVisits(activites, type: 'resourceId' | 'courseId') {
@@ -194,10 +195,6 @@ export class ReportsService {
 
   filterAdmin(records, filter) {
     return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
-  }
-
-  monthDataLabels(date) {
-    return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 
   minTime(activities, timeField) {

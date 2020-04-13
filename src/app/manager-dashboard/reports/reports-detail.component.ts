@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { combineLatest, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
@@ -11,9 +12,13 @@ import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName } from './reports.utils';
+import {
+  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
+  titleOfChartName, monthDataLabels
+} from './reports.utils';
 import { MatDialog } from '@angular/material';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
+import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -29,13 +34,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   reports: any = {};
   charts: Chart[] = [];
   onDestroy$ = new Subject<void>();
-  filter = '';
+  filter: ReportDetailFilter = { app: '', startDate: new Date(0), endDate: new Date() };
   codeParam = '';
-  loginActivities = [];
-  resourceActivities = { byDoc: [], total: [] };
-  courseActivities = { byDoc: [], total: [] };
+  loginActivities = new ReportsDetailData('loginTime');
+  resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
+  courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
   today: Date;
-  ratings = { resources: [], courses: [] };
+  minDate: Date;
+  ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
+  dateFilterForm: FormGroup;
 
   constructor(
     private activityService: ReportsService,
@@ -45,8 +52,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
     private couchService: CouchService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private fb: FormBuilder
+  ) {
+    this.initDateFilterForm();
+  }
 
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
@@ -64,7 +74,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.initializeData(!this.codeParam);
     });
     this.stateService.requestData(dbName, 'local');
-    this.couchService.currentTime().subscribe((currentTime: number) => this.today = new Date(currentTime));
+    this.couchService.currentTime().subscribe((currentTime: number) => {
+      this.today = new Date(currentTime);
+      this.dateFilterForm.controls.endDate.setValue(this.today);
+    });
   }
 
   ngOnDestroy() {
@@ -72,13 +85,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  onFilterChange(filterValue: string) {
-    this.filter = filterValue;
-    this.initializeData(!this.codeParam);
+  onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
+    this.filter.app = filterValue;
+    this.filterData();
+  }
+
+  setFilterDate(date: Date, field: 'startDate' | 'endDate') {
+    this.filter[field] = date;
+    this.loginActivities.filter(this.filter);
   }
 
   initializeData(local: boolean) {
-    this.getTotalUsers(local).subscribe(() => {
+    this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
+      this.reports.totalUsers = count;
+      this.reports.usersByGender = byGender;
+    })).subscribe(() => {
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
@@ -88,53 +109,81 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  getTotalUsers(local: boolean) {
-    return this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    }));
+  initDateFilterForm() {
+    this.dateFilterForm = this.fb.group({
+      startDate: new Date(),
+      endDate: new Date()
+    });
+    this.dateFilterForm.valueChanges.subscribe(value => {
+      this.filter = { ...this.filter, ...value };
+      this.filterData();
+    });
+  }
+
+  filterData() {
+    this.loginActivities.filter(this.filter);
+    this.setLoginActivities();
+    this.ratings.total.filter(this.filter);
+    this.setRatingInfo();
+    this.resourceActivities.total.filter(this.filter);
+    this.setDocVisits('resourceActivities');
+    this.courseActivities.total.filter(this.filter);
+    this.setDocVisits('courseActivities');
   }
 
   getLoginActivities() {
-    this.activityService.getAllActivities('login_activities', activityParams(this.planetCode, this.filter))
-    .subscribe((loginActivities: any) => {
-      this.loginActivities = loginActivities;
-      const { byUser, byMonth } = this.activityService.groupLoginActivities(loginActivities);
-      this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
-      this.reports.visits = byUser.slice(0, 5);
-      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
-      this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
+    this.activityService.getAllActivities('login_activities', activityParams(this.planetCode)).subscribe((loginActivities: any) => {
+      this.loginActivities.data = loginActivities;
+      this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
+      this.dateFilterForm.controls.startDate.setValue(this.minDate);
+      this.setLoginActivities();
     });
+  }
+
+  setLoginActivities() {
+    const { byUser, byMonth } = this.activityService.groupLoginActivities(this.loginActivities.filteredData);
+    this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
+    this.reports.visits = byUser.slice(0, 5);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'visitChart' });
+    this.setChart({ ...this.setGenderDatasets(byMonth, true), chartName: 'uniqueVisitChart' });
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(activityParams(this.planetCode, this.filter)).subscribe((averageRatings) => {
-      this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
-      this.ratings.courses = averageRatings.filter(item => item.type === 'course');
-      this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
-      this.reports.courseRatings = this.ratings.courses.slice(0, 5);
+    this.activityService.getRatingInfo(activityParams(this.planetCode)).subscribe((ratings: any[]) => {
+      this.ratings.total.data = ratings;
+      this.setRatingInfo();
     });
   }
 
+  setRatingInfo() {
+    const averageRatings = this.activityService.groupRatings(this.ratings.total.filteredData);
+    this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
+    this.ratings.courses = averageRatings.filter(item => item.type === 'course');
+    this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
+    this.reports.courseRatings = this.ratings.courses.slice(0, 5);
+  }
+
   getDocVisits(type) {
-    const params = {
-      courseActivities: { db: 'course_activities', views: 'totalCourseViews', record: 'courses', chartName: 'courseViewChart' },
-      resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
-    }[type];
-    this.activityService.getAllActivities(params.db, activityParams(this.planetCode, this.filter))
+    const params = reportsDetailParams(type);
+    this.activityService.getAllActivities(params.db, activityParams(this.planetCode))
     .subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
       // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
-      this[type].total = activities.filter(
+      this[type].total.data = activities.filter(
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
           && !activity.private
       );
-      const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total, type.replace('Activities', 'Id'));
-      this[type].byDoc = byDoc;
-      this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
-      this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
-      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
+      this.setDocVisits(type);
     });
+  }
+
+  setDocVisits(type) {
+    const params = reportsDetailParams(type);
+    const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total.filteredData, type.replace('Activities', 'Id'));
+    this[type].byDoc = byDoc;
+    this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
+    this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
   }
 
   getPlanetCounts(local: boolean) {
@@ -147,17 +196,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.reports.totalCourses = response.totalCourses;
       });
     }
-  }
-
-  xyChartData(data, unique) {
-    return data.map((visit: any) => ({
-      x: this.activityService.monthDataLabels(visit.date),
-      y: unique ? visit.unique.length : visit.count || 0
-    }));
-  }
-
-  datasetObject(label, data, backgroundColor) {
-    return { label, data, backgroundColor };
   }
 
   setGenderDatasets(data, unique = false) {
@@ -175,13 +213,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          this.datasetObject('Male', this.xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          this.datasetObject('Female', this.xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          this.datasetObject('Did not specify', this.xyChartData(genderFilter(undefined), unique), styleVariables.grey),
-          this.datasetObject('Total', this.xyChartData(totals(), unique), styleVariables.primary)
+          datasetObject('Male', xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
+          datasetObject('Female', xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
+          datasetObject('Did not specify', xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          datasetObject('Total', xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => this.activityService.monthDataLabels(month))
+      labels: months.map(month => monthDataLabels(month))
     });
   }
 
@@ -196,7 +234,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       type: 'bar',
       data,
       options: {
-        title: { display: true, text: this.titleOfChartName(chartName), fontSize: 16 },
+        title: { display: true, text: titleOfChartName(chartName), fontSize: 16 },
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
@@ -210,18 +248,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  titleOfChartName(chartName: string) {
-    const chartNames = {
-      resourceViewChart: 'Resource Views by Month',
-      courseViewChart: 'Course Views by Month',
-      visitChart: 'Total Member Visits by Month',
-      uniqueVisitChart: 'Unique Member Visits by Month'
-    };
-    return chartNames[chartName];
-  }
-
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
-    const minDate = new Date(this.activityService.minTime(this.loginActivities, 'loginTime')).setHours(0, 0, 0, 0);
+    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const fields = [
       {
@@ -248,7 +276,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     switch (reportType) {
       case 'logins':
         this.csvService.exportCSV({
-          data: filterByDate(this.loginActivities, 'loginTime', dateRange)
+          data: filterByDate(this.loginActivities.data, 'loginTime', dateRange)
             .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
           title: 'Member Visits'
         });
@@ -259,9 +287,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         break;
       case 'summary':
         this.csvService.exportSummaryCSV(
-          filterByDate(this.loginActivities, 'loginTime', dateRange),
-          filterByDate(this.resourceActivities.total, 'time', dateRange),
-          filterByDate(this.courseActivities.total, 'time', dateRange),
+          filterByDate(this.loginActivities.data, 'loginTime', dateRange),
+          filterByDate(this.resourceActivities.total.data, 'time', dateRange),
+          filterByDate(this.courseActivities.total.data, 'time', dateRange),
           this.planetName
         );
         break;
@@ -272,7 +300,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType, dateRange) {
     this.csvService.exportCSV({
-      data: filterByDate(reportType === 'courseViews' ? this.courseActivities.total : this.resourceActivities.total, 'time', dateRange)
+      data: filterByDate(reportType === 'courseViews' ? this.courseActivities.total : this.resourceActivities.total.data, 'time', dateRange)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
     });

@@ -1,20 +1,34 @@
-<mat-toolbar>
+<mat-toolbar class="action-buttons">
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
+  <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
+    <mat-form-field>
+      <mat-label>Start Date</mat-label>
+      <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
+      <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+      <mat-datepicker #startDate></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>End Date</mat-label>
+      <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
+      <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+      <mat-datepicker #endDate></mat-datepicker>
+    </mat-form-field>
+  </form>
   <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
+    class="font-size-1"
     (change)="onFilterChange($event.value)"
     #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="planet" [checked]="this.filter === 'planet'" i18n>
+    <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
       Planet
     </mat-button-toggle>
-    <mat-button-toggle value="myplanet" [checked]="this.filter === 'myplanet'" i18n>
+    <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>
       myPlanet
     </mat-button-toggle>
-    <mat-button-toggle value="" [checked]="this.filter === ''" i18n>
+    <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>
       Both
     </mat-button-toggle>
   </mat-button-toggle-group>

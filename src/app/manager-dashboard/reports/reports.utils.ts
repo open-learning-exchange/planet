@@ -23,8 +23,12 @@ export const sortPlanet = ((a, b) => {
   return planetName(a).localeCompare(planetName(b));
 });
 
+export const itemInDateRange = (item, dateField, startDate, endDate) => {
+  return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
+};
+
 export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-  item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime()
+  itemInDateRange(item, dateField, startDate, endDate)
 );
 
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
@@ -42,8 +46,32 @@ export const setMonths = () => {
     .filter((month: number) => month > planetLaunchDate);
 };
 
-export const activityParams = (planetCode, filter): { planetCode, filterAdmin?, fromMyPlanet? } => {
-  return { planetCode: planetCode, filterAdmin: true, ...(filter ? { fromMyPlanet: filter === 'myplanet' } : {}) };
+export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => {
+  return { planetCode: planetCode, filterAdmin: true };
 };
 
 export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
+
+export const reportsDetailParams = (type) => ({
+  courseActivities: { db: 'course_activities', views: 'totalCourseViews', record: 'courses', chartName: 'courseViewChart' },
+  resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
+})[type];
+
+export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+export const xyChartData = (data, unique) => data.map((visit: any) => ({
+  x: monthDataLabels(visit.date),
+  y: unique ? visit.unique.length : visit.count || 0
+}));
+
+export const datasetObject = (label, data, backgroundColor) => ({ label, data, backgroundColor });
+
+export const titleOfChartName = (chartName: string) => {
+  const chartNames = {
+    resourceViewChart: 'Resource Views by Month',
+    courseViewChart: 'Course Views by Month',
+    visitChart: 'Total Member Visits by Month',
+    uniqueVisitChart: 'Unique Member Visits by Month'
+  };
+  return chartNames[chartName];
+};

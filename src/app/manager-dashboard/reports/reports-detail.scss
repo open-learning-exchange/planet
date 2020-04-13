@@ -1,5 +1,12 @@
 @import '../../variables';
 
+mat-toolbar mat-form-field {
+  margin-top: 10px;
+  &.mat-form-field-type-no-underline {
+    margin-top: inherit;
+  }
+}
+
 .manager-reports-detail {
   mat-grid-tile.label figure {
     justify-content: start;
