@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MaterialModule } from '../../shared/material.module';
 import { CommonModule } from '@angular/common';
 import { PlanetFormsModule } from '../../shared/forms/planet-forms.module';
 import { CoursesViewDetailComponent, CoursesViewDetailDialogComponent } from './courses-view-detail.component';
@@ -6,7 +7,8 @@ import { CoursesViewDetailComponent, CoursesViewDetailDialogComponent } from './
 @NgModule({
   imports: [
     CommonModule,
-    PlanetFormsModule
+    PlanetFormsModule,
+    MaterialModule
   ],
   exports: [
     CoursesViewDetailComponent,
