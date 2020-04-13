@@ -3,6 +3,7 @@ import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
 import { markdownToPlainText } from './utils';
+import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,7 @@ export class CsvService {
   summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews) {
     const monthLabels = (data, header: boolean) => data.reduce(
       (csvObj, { date }) => {
-        const dateLabel = this.reportsService.monthDataLabels(date);
+        const dateLabel = monthDataLabels(date);
         return { ...csvObj, [dateLabel]: header ? dateLabel : '' };
       },
       {}
@@ -82,7 +83,7 @@ export class CsvService {
 
   summaryDataToTable (data, unique = false) {
     return data.reduce((table, item) => {
-      const dateLabel = this.reportsService.monthDataLabels(item.date);
+      const dateLabel = monthDataLabels(item.date);
       const itemIndex = item.gender === 'male' ? 0 :
         item.gender === 'female' ? 1 : 2;
       const value = unique === true ? item.unique.length : item.count;

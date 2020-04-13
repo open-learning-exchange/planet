@@ -14,7 +14,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName
+  titleOfChartName, monthDataLabels
 } from './reports.utils';
 import { MatDialog } from '@angular/material';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
@@ -219,7 +219,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           datasetObject('Total', xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => this.activityService.monthDataLabels(month))
+      labels: months.map(month => monthDataLabels(month))
     });
   }
 

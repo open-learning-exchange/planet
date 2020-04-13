@@ -57,8 +57,10 @@ export const reportsDetailParams = (type) => ({
   resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
 })[type];
 
+export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
-  x: this.activityService.monthDataLabels(visit.date),
+  x: monthDataLabels(visit.date),
   y: unique ? visit.unique.length : visit.count || 0
 }));
 
