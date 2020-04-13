@@ -288,7 +288,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
-    this.searchSelection._empty = Object.entries(this.searchSelection).every(([ field, val ]: any[]) => val.length === 0);
+    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+      ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
+    );
     this.titleSearch = this.titleSearch;
     this.removeFilteredFromSelection();
   }
