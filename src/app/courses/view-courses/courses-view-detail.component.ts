@@ -23,7 +23,7 @@ export class CoursesViewDetailComponent {
     <h3>{{data.courseDetail.courseTitle}}</h3>
     <planet-courses-detail [courseDetail]="data.courseDetail"></planet-courses-detail>
     <mat-dialog-actions>
-      <button mat-dialog-close mat-raised-button color="warn" i18n>Close</button>
+      <button mat-dialog-close mat-raised-button i18n>Close</button>
       <button mat-dialog-close mat-raised-button color="primary" (click)="routeToCourses(data?.courseDetail._id)" i18n>View Course</button>
     </mat-dialog-actions>
   `
