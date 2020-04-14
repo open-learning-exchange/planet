@@ -73,7 +73,7 @@
             <mat-card *ngFor="let member of members">
               <planet-teams-member
                 [member]="member"
-                [leadershipTitle]="member.userDoc.doc.leadershipTitle"
+                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
                 [actionMenu]="[]
                   .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
                   .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])
