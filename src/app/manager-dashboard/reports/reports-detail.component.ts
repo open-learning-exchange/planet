@@ -20,6 +20,8 @@ import { MatDialog } from '@angular/material';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
+import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
+import { CoursesService } from '../../courses/courses.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -56,6 +58,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
+    private coursesService: CoursesService,
     private fb: FormBuilder
   ) {
     this.initDateFilterForm();
@@ -308,6 +311,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  rowClick(element) {
+    this.coursesService.requestCourse({ courseId: element.courseId, forceLatest: true });
+    this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
+      this.dialog.open(CoursesViewDetailDialogComponent, {
+        data: { courseDetail: { ...element, ...course } },
+        minWidth: '600px',
+        maxWidth: '90vw',
+        autoFocus: false
+      });
+    });
   }
 
   exportDocView(reportType, dateRange) {

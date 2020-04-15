@@ -1,7 +1,11 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { take } from 'rxjs/operators';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { sortNumberOrString } from '../../shared/table-helpers';
+import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
+import { CoursesService } from '../../courses/courses.service';
 
 @Component({
   selector: 'planet-reports-detail-activities',
@@ -23,6 +27,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
+    private dialog: MatDialog,
+    private coursesService: CoursesService,
     private router: Router
   ) {}
 
@@ -51,7 +57,15 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   rowClick(element) {
     if (element.courseId) {
-      this.router.navigate([ `/courses/view/${element.courseId}` ]);
+      this.coursesService.requestCourse({ courseId: element.courseId, forceLatest: true });
+      this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
+        this.dialog.open(CoursesViewDetailDialogComponent, {
+          data: { courseDetail: { ...element, ...course } },
+          minWidth: '600px',
+          maxWidth: '90vw',
+          autoFocus: false
+        });
+      });
     } else if (element.resourceId) {
       this.itemClick.emit(element.resourceId);
     }
