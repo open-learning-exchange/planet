@@ -320,8 +320,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    const navigation = this.codeParam === null ? '../../' : '../';
-    this.router.navigate([ navigation ], { relativeTo: this.route });
+    const route = this.codeParam === null ? '../../' : '../';
+    this.router.navigate([ route ], { relativeTo: this.route });
   }
 
   openResourceView(resourceId) {
