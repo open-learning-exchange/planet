@@ -323,11 +323,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   resetDateFilter() {
-    this.getLoginActivities();
-    this.couchService.currentTime().subscribe((currentTime: number) => {
-      this.today = new Date(currentTime);
-      this.dateFilterForm.controls.endDate.setValue(this.today);
-    });
-    //this.initDateFilterForm();
+    this.dateFilterForm.controls.startDate.setValue(this.minDate);
+    this.dateFilterForm.controls.endDate.setValue(this.today);
   }
 }
