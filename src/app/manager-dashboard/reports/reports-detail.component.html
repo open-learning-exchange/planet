@@ -18,6 +18,7 @@
       <mat-datepicker #endDate></mat-datepicker>
     </mat-form-field>
   </form>
+  <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="this.filter === ''">Show All Time</button>
   <mat-button-toggle-group
     class="font-size-1"
     (change)="onFilterChange($event.value)"
