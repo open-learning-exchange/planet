@@ -142,7 +142,9 @@ export class ResourcesAddComponent implements OnInit {
       updatedDate: this.couchService.datePlaceholder,
       private: this.privateFor !== undefined
     });
-    this.resourceForm.patchValue(this.existingResource.doc || {});
+    if (this.existingResource.doc) {
+      this.setFormValues(this.existingResource);
+    }
   }
 
   setFormValues(resource) {
@@ -217,7 +219,7 @@ export class ResourcesAddComponent implements OnInit {
 
   updateResource(resourceInfo, file) {
     return this.resourcesService.updateResource(
-      { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: this.privateFor },
+      { ...resourceInfo, updatedDate: this.couchService.datePlaceholder, privateFor: resourceInfo.private ? this.privateFor : undefined },
       file,
       { newTags: this.tags.value, existingTags: this.existingResource.tags }
     ).pipe(
