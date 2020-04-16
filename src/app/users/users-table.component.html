@@ -34,7 +34,7 @@
       <mat-cell *matCellDef="let element">{{element.planet.nameDoc?.name || element.planet.doc.name}}
         <div class="margin-lr-5">
           <mat-chip-list>
-            <mat-chip color="accent" selected>{{element.planet.doc.planetType}}</mat-chip>
+            <mat-chip color="accent" selected>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
           </mat-chip-list>
         </div>
       </mat-cell>
