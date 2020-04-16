@@ -22,6 +22,7 @@ import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { CoursesService } from '../../courses/courses.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -59,7 +60,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private dialog: MatDialog,
     private coursesService: CoursesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private planetMessageService: PlanetMessageService
   ) {
     this.initDateFilterForm();
   }
@@ -313,11 +315,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.stop();
   }
 
-  openCourseView(element) {
-    this.coursesService.requestCourse({ courseId: element.courseId, forceLatest: true });
+  openCourseView(courseId) {
+    this.coursesService.requestCourse({ courseId: courseId, forceLatest: true });
     this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
       this.dialog.open(CoursesViewDetailDialogComponent, {
-        data: { courseDetail: { ...element, ...course } },
+        data: { courseDetail: course },
         minWidth: '600px',
         maxWidth: '90vw',
         autoFocus: false

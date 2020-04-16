@@ -143,7 +143,7 @@
               <ng-container *ngFor="let course of reports?.courses">
                 <mat-grid-tile class="label">
                   <mat-icon>chevron_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openCourseView(course)">{{course?.max?.title}}</span>
+                  <span class="cursor-pointer" (click)="openCourseView(course.courseId)">{{course?.max?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{course.count}}</mat-grid-tile>
               </ng-container>
@@ -155,7 +155,7 @@
               <ng-container *ngFor="let rating of reports?.courseRatings">
                 <mat-grid-tile class="label">
                   <mat-icon>chevron_right</mat-icon>
-                  <a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a>
+                  <span class="cursor-pointer" (click)="openCourseView(rating.item)">{{rating?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
               </ng-container>
