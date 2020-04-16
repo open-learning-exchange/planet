@@ -31,7 +31,10 @@
     </ng-container>
     <ng-container matColumnDef="planet">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.planet.nameDoc?.name || element.planet.doc.name}}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        {{element.planet.nameDoc?.name || element.planet.doc.name}}
+        <mat-chip class="planet-chip-label margin-lr-5" [disableRipple]="true">{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="visitCount">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No. of Visits</mat-header-cell>

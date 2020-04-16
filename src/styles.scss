@@ -460,6 +460,12 @@ body {
     align-items: center;
   }
 
+  .planet-chip-label {
+    padding: 4px 6px;
+    min-height: 24px;
+  }
+
+
   .form-container {
     width: calc(#{$form-width-3} + 20px);
   }
