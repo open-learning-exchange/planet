@@ -19,16 +19,33 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <ng-container *ngFor="let planet of planets">
-      <mat-expansion-panel *ngIf="planet.children.length">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
-        </mat-expansion-panel-header>
-        <planet-myplanet-table [data]="planet.children"></planet-myplanet-table>
-      </mat-expansion-panel>
-    </ng-container>
-    <ng-container *ngIf="isEmpty">
-      <mat-panel-title>No record was found</mat-panel-title>
-    </ng-container>
+    <mat-tab-group>
+      <mat-tab i18n-label label="Summary">
+      <ng-container *ngFor="let planet of planets">
+        <mat-expansion-panel *ngIf="planet.children.length">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
+          </mat-expansion-panel-header>
+          <planet-myplanet-table [data]="planet.children"></planet-myplanet-table>
+        </mat-expansion-panel>
+      </ng-container>
+      <ng-container *ngIf="isEmpty">
+        <mat-panel-title>No record was found</mat-panel-title>
+      </ng-container>
+      </mat-tab>
+      <mat-tab i18n-label label="Online Time">
+        <ng-container *ngFor="let planet of ppp">
+          <mat-expansion-panel *ngIf="planet.children.length">
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
+            </mat-expansion-panel-header>
+            <planet-myplanet-table [data2]="planet.children"></planet-myplanet-table>
+          </mat-expansion-panel>
+        </ng-container>
+        <ng-container *ngIf="isEmpty">
+          <mat-panel-title>No record was found</mat-panel-title>
+        </ng-container>
+      </mat-tab>
+  </mat-tab-group>
   </div>
 </div>

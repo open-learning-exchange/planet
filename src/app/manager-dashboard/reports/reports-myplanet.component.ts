@@ -17,11 +17,13 @@ import { findDocuments } from '../../shared/mangoQueries';
 export class ReportsMyPlanetComponent implements OnInit {
 
   private allPlanets: any[] = [];
+  private allUsages: any[] = [];
   searchValue = '';
   planets: any[] = [];
   isEmpty = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
+  ppp: any[];
   get childType() {
     return this.planetType === 'center' ? 'Community' : 'Nation';
   }
@@ -62,6 +64,16 @@ export class ReportsMyPlanetComponent implements OnInit {
         })
       })
     );
+    this.allUsages = planets.map(planet => ({
+      ...planet,
+      children:
+      this.reportsService.groupBy(
+        myPlanets.filter(myPlanet => { 
+          return myPlanet.type === 'usages' }),
+          [ 'androidId' ],
+          { maxField: 'time' }
+      )
+    }))
   }
 
   getMyPlanetList(hubId) {
@@ -72,6 +84,7 @@ export class ReportsMyPlanetComponent implements OnInit {
         ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
+      this.ppp = this.allUsages
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));

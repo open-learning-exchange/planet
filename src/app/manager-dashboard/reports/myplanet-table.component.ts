@@ -10,6 +10,7 @@ import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.componen
 export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() data = [];
+  @Input() data2 = [];
   @Input() dataType: 'logs' | 'report' = 'report';
   myPlanets = new MatTableDataSource();
   displayedColumns = [ 'id', 'name' ];
@@ -30,6 +31,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
           typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       }
     };
+    this.timeCalculation();
     if (this.dataType === 'logs') {
       this.displayedColumns = [ ...this.displayedColumns, ...[ 'type', 'time', 'versionName', 'detail' ] ];
     } else {
@@ -39,6 +41,15 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
 
   ngOnChanges() {
     this.myPlanets.data = this.data;
+  }
+
+  timeCalculation() {
+  const time = this.data2.map(data => {data.max.usages.filter(h =>
+    console.log(h)
+
+  )
+    
+  })
   }
 
   ngAfterViewInit() {
