@@ -1,5 +1,4 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { sortNumberOrString } from '../../shared/table-helpers';
 
@@ -22,9 +21,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  constructor(
-    private router: Router
-  ) {}
+  constructor() {}
 
   ngOnInit() {
     this.activities.sortingDataAccessor = (item: any, property: string) =>
@@ -50,11 +47,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   rowClick(element) {
-    if (element.courseId) {
-      this.router.navigate([ `/courses/view/${element.courseId}` ]);
-    } else if (element.resourceId) {
-      this.itemClick.emit(element.resourceId);
-    }
+    this.itemClick.emit(element.resourceId || element.courseId);
   }
 
 }

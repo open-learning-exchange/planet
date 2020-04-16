@@ -144,7 +144,7 @@
               <ng-container *ngFor="let course of reports?.courses">
                 <mat-grid-tile class="label">
                   <mat-icon>chevron_right</mat-icon>
-                  <a [routerLink]="['/courses/view', course.courseId]">{{course?.max?.title}}</a>
+                  <span class="cursor-pointer" (click)="openCourseView(course.courseId)">{{course?.max?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{course.count}}</mat-grid-tile>
               </ng-container>
@@ -156,7 +156,7 @@
               <ng-container *ngFor="let rating of reports?.courseRatings">
                 <mat-grid-tile class="label">
                   <mat-icon>chevron_right</mat-icon>
-                  <a [routerLink]="['/courses/view', rating.item]">{{rating?.title}}</a>
+                  <span class="cursor-pointer" (click)="openCourseView(rating.item)">{{rating?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
               </ng-container>
@@ -168,7 +168,7 @@
         <planet-reports-detail-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="ratings.resources" activityType="resources" (itemClick)="openResourceView($event)"></planet-reports-detail-activities>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" activityType="courses"></planet-reports-detail-activities>
+        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
       </mat-tab>
     </mat-tab-group>
   </div>
