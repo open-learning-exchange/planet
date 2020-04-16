@@ -313,7 +313,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.stop();
   }
 
-  rowClick(element) {
+  openCourseView(element) {
     this.coursesService.requestCourse({ courseId: element.courseId, forceLatest: true });
     this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
       this.dialog.open(CoursesViewDetailDialogComponent, {
