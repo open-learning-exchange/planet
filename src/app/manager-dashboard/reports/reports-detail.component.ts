@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { combineLatest, Subject } from 'rxjs';
 import { map, takeUntil, take } from 'rxjs/operators';
@@ -54,6 +54,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private activityService: ReportsService,
     private stateService: StateService,
     private route: ActivatedRoute,
+    private router: Router,
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
@@ -338,6 +339,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
     });
+  }
+
+  goBack() {
+    const route = this.codeParam === null ? '../../' : '../';
+    this.router.navigate([ route ], { relativeTo: this.route });
   }
 
   openResourceView(resourceId) {
