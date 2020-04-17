@@ -6,8 +6,7 @@
 export const environment = {
   production: false,
   test: false,
-  couchAddress: 'https://planet.dev.ole.org:2200',
-  // couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
+  couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
   centerAddress: 'planet.earth.ole.org/db',
   centerProtocol: 'https',
   parentProtocol: 'https',

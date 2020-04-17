@@ -68,12 +68,14 @@ export class ReportsMyPlanetComponent implements OnInit {
       ...planet,
       children:
       this.reportsService.groupBy(
-        myPlanets.filter(myPlanet => { 
-          return myPlanet.type === 'usages' }),
+        myPlanets.filter(myPlanet => {
+          return myPlanet.type === 'usages' && (myPlanet.usages || []).length !== 0 &&
+            (myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code);
+          }),
           [ 'androidId' ],
           { maxField: 'time' }
-      )
-    }))
+      )}
+    ));
   }
 
   getMyPlanetList(hubId) {
@@ -84,7 +86,7 @@ export class ReportsMyPlanetComponent implements OnInit {
         ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
-      this.ppp = this.allUsages
+      this.ppp = this.allUsages;
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));

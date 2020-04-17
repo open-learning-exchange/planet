@@ -33,6 +33,18 @@
       <button (click)="viewDetails(element)" mat-stroked-button color="primary">Details</button>
     </mat-cell>
   </ng-container>
+  <ng-container matColumnDef="usagename">
+    <mat-header-cell *matHeaderCellDef i18n>Name</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.max.usages[0].customDeviceName}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="usageid">
+    <mat-header-cell *matHeaderCellDef i18n>ID</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.max.usages[0].androidId}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="usagetime">
+    <mat-header-cell *matHeaderCellDef i18n>Used Time</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element.max.time | date: 'mediumDate'}}</mat-cell>
+  </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>

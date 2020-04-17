@@ -10,8 +10,8 @@ import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.componen
 export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() data = [];
-  @Input() data2 = [];
-  @Input() dataType: 'logs' | 'report' = 'report';
+  @Input() data2: any;
+  @Input() dataType: 'logs' | 'report' | 'time' = 'report';
   myPlanets = new MatTableDataSource();
   displayedColumns = [ 'id', 'name' ];
 
@@ -31,8 +31,9 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
           typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       }
     };
-    this.timeCalculation();
-    if (this.dataType === 'logs') {
+    if (this.dataType === 'time') {
+      this.displayedColumns = [ 'usagename', 'usageid', 'usagetime' ];
+    } else if (this.dataType === 'logs') {
       this.displayedColumns = [ ...this.displayedColumns, ...[ 'type', 'time', 'versionName', 'detail' ] ];
     } else {
       this.displayedColumns = [ ...this.displayedColumns, ...[ 'last_synced', 'versionName', 'count' ] ];
@@ -41,15 +42,12 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
 
   ngOnChanges() {
     this.myPlanets.data = this.data;
-  }
-
-  timeCalculation() {
-  const time = this.data2.map(data => {data.max.usages.filter(h =>
-    console.log(h)
-
-  )
-    
-  })
+    if (this.data2 !== undefined) {
+      this.data2.map(data => {
+        data.max.time = data.max.usages.reduce((total, time) => total + time.totalUsed, '');
+      });
+      this.myPlanets.data = this.data2;
+    }
   }
 
   ngAfterViewInit() {
