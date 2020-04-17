@@ -58,13 +58,20 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   setFeedback(result) {
     this.feedback = result.docs[0];
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
+    console.log(this.feedback.messages);
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
     this.showParamsButton = Object.keys(this.feedback.params).length > 0;
   }
 
   getFeedback(id) {
-    return this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }));
+    return forkJoin([
+      this.couchService.findAll('_users'),
+      this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }))
+    ]).pipe(switchMap(([ users, feedback ]: [any, any]) => {
+      console.log(feedback);
+      return of( { ...feedback, messages: feedback.messages.map(msg => ({ ...msg, user: users.find(u => u.name === msg.user) })) });
+    })); 
   }
 
   postMessage() {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { of, forkJoin } from 'rxjs';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { Validators } from '@angular/forms';
@@ -95,12 +96,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
-      .subscribe((data) => {
-        this.feedback.data = data;
+    forkJoin([
+      this.couchService.findAll('_users'),
+      this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
+    ]).subscribe(([ users, feedbacks ]: [any, any]) => {
+        this.feedback.data = feedbacks.map(feedback => ({ ...feedback, user: users.find(u => u.name === feedback.owner) }));
         this.emptyData = !this.feedback.data.length;
         this.dialogsLoadingService.stop();
-      }, (error) => this.message = 'There is a problem of getting data.');
+    }, (error) => this.message = 'There is a problem of getting data.');   
   }
 
   deleteClick(feedback) {
