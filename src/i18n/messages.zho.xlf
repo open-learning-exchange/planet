@@ -1608,7 +1608,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Link to License</target>
+        <target state="translated">许可协议的链接</target>
       </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html">
         <source>Subject(s)</source>
@@ -1624,7 +1624,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="needs-translation">Level(s)</target>
+        <target state="translated">等级</target>
       </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
@@ -1664,7 +1664,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="needs-translation">Resource For</target>
+        <target state="translated">资源</target>
       </trans-unit>
       <trans-unit id="8a27a855a00b08d2ca981207638ea9097032412b" datatype="html">
         <source>Media</source>
@@ -1680,7 +1680,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="needs-translation">Article Date</target>
+        <target state="translated">文章日期</target>
       </trans-unit>
       <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html">
         <source>Resource Type</source>
@@ -1688,7 +1688,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="needs-translation">Resource Type</target>
+        <target state="translated">资源类型</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
@@ -1696,7 +1696,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.ts</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="needs-translation">Added By</target>
+        <target state="translated">创建人</target>
       </trans-unit>
       <trans-unit id="e6cf591b31401e030391c1703785cec3430b56de" datatype="html">
         <source>Open URL</source>
