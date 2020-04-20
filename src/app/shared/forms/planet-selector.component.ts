@@ -30,9 +30,9 @@ export class PlanetSelectorComponent implements OnChanges {
       return;
     }
     const configuration = this.stateService.configuration;
-    const { planetCode: localCode, domain } = getDomainParams(configuration);
+    const { planetCode: localCode } = configuration;
     const name = (planet) => planet.nameDoc ? planet.nameDoc.name : planet.doc.name;
-    this.managerService.getChildPlanets(true, localCode, domain).subscribe(childPlanets => {
+    this.managerService.getChildPlanets(true, localCode).subscribe(childPlanets => {
       const planets = attachNamesToPlanets([ configuration, ...childPlanets ]);
       this.planets = this.planetCodes.map(planetCode => planets.find((planet: any) => planet.doc.code === planetCode))
         .filter(planet => planet)

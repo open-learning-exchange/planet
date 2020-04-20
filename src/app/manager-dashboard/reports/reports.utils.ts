@@ -33,7 +33,7 @@ export const filterByDate = (array, dateField, { startDate, endDate }) => array.
 
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
-export const getDomainParams = (configuration) => configuration.planetType === 'community' ?
+export const getDomainParams = (configuration, isHub) => isHub ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :
   { planetCode: undefined, domain: undefined };
 
