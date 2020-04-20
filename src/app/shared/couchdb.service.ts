@@ -114,9 +114,12 @@ export class CouchService {
 
   bulkGet(db: string, ids: string[], opts?: any) {
     const docs = ids.map(id => ({ id }));
+    const revNum = doc => +(doc._rev.split('-')[0]);
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
       map((response: any) => response.results
-        .map((result: any) => result.docs[0].ok)
+        .map((result: any) => {
+          return result.docs.reduce((maxDoc, { ok: doc }) => revNum(maxDoc) > revNum(doc) ? maxDoc : doc, { _rev: '0-0' });
+        })
         .filter((doc: any) => doc !== undefined && doc._deleted !== true)
       )
     );
