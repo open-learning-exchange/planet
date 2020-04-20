@@ -6,6 +6,7 @@ import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -77,7 +78,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   setSubmissions() {
     this.chartData = [];
-    this.submissionsService.updateSubmissions({ parentId: this.course._id });
+    this.submissionsService.updateSubmissions({
+      query: findDocuments({ parentId: { '$regex': this.course._id } }),
+      onlyBest: true
+    });
   }
 
   navigateBack() {
