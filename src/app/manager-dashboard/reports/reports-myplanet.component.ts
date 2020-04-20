@@ -78,7 +78,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   myPlanetRequest(hubId) {
-    const { planetCode, domain } = getDomainParams(this.configuration);
+    const { planetCode, domain } = getDomainParams(this.configuration, hubId !== undefined);
     return (hubId ? this.couchService.findAll('hubs', findDocuments({ 'planetId': hubId }), { domain }) : of([])).pipe(
       switchMap((hubs: any) => {
         this.hub = hubs[0] || { spokes: [] };

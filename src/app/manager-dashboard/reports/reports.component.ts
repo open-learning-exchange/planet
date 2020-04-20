@@ -46,7 +46,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   getLogs() {
-    const { planetCode, domain } = getDomainParams(this.configuration);
+    const { planetCode, domain } = getDomainParams(this.configuration, this.hubId !== undefined);
     forkJoin([
       this.managerService.getChildPlanets(true, planetCode, domain),
       this.couchService.findAll('hubs', undefined, domain ? { domain } : {})
