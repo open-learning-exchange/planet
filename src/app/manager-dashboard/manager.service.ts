@@ -43,7 +43,7 @@ export class ManagerService {
     )).pipe(map(([ adminActivities, resourceVisits, ratings ]) => {
       return ({
         resourceVisits: (resourceVisits.rows.find(row => row.key === configuration.code) || { value: 0 }).value,
-        ratings: ratings.reduce((total, rating) => total + rating.count, 0),
+        ratings: ratings.length,
         ...this.activityService.mostRecentAdminActivities(configuration, [], adminActivities)
       });
     }));
