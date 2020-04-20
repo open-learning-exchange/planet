@@ -42,12 +42,12 @@ export class SubmissionsService {
     private dialogsLoadingService: DialogsLoadingService
   ) { }
 
-  updateSubmissions({ query, opts = {}, parentId }: { parentId?: string, opts?: any, query?: any } = {}) {
+  updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
     forkJoin([
       this.getSubmissions(query, opts),
       this.courseService.findCourses([], opts)
     ]).subscribe(([ submissions, courses ]: [any, any]) => {
-      this.submissions = (parentId ? this.filterSubmissions(submissions, parentId) : submissions).filter(sub => {
+      this.submissions = (onlyBest ? this.filterBestSubmissions(submissions) : submissions).filter(sub => {
         if (sub.status !== 'pending' || sub.type !== 'exam') {
           return true;
         }
@@ -179,8 +179,8 @@ export class SubmissionsService {
     }));
   }
 
-  filterSubmissions(submissions, parentId) {
-    return submissions.filter(s => s.type !== 'photo' && s.parentId.indexOf(parentId) > -1).reduce((subs, submission) => {
+  filterBestSubmissions(submissions) {
+    return submissions.filter(s => s.type !== 'photo').reduce((subs, submission) => {
       const userSubmissionIndex = subs.findIndex((s) => s.user._id === submission.user._id && s.parentId === submission.parentId);
       if (userSubmissionIndex !== -1) {
         const oldSubmission = subs[userSubmissionIndex];
