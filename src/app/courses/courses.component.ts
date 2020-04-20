@@ -221,7 +221,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   deleteClick(course) {
-    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle);
+    this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle, 1);
   }
 
   deleteSelected() {
@@ -235,17 +235,18 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       okClick = this.deleteCourse(course);
       displayName = course.courseTitle;
     }
-    this.openDeleteDialog(okClick, amount, displayName);
+    this.openDeleteDialog(okClick, amount, displayName, selected.length);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '') {
+  openDeleteDialog(okClick, amount, displayName = '', count) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
         amount,
         changeType: 'delete',
         type: 'course',
-        displayName
+        displayName,
+        count
       }
     });
     // Reset the message when the dialog closes
