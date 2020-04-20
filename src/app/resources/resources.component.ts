@@ -198,7 +198,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteClick(resource) {
-    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.title, 1);
+    this.openDeleteDialog(this.deleteResource(resource), 'single', resource.doc.title, 1);
   }
 
   deleteSelected() {
