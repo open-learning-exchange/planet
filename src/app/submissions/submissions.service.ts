@@ -57,7 +57,7 @@ export class SubmissionsService {
     }, (err) => console.log(err));
   }
 
-  getSubmissions(query: any = { 'selector': {} }, opts: any = {}) {
+  getSubmissions(query: any = findDocuments({}), opts: any = {}) {
     return this.couchService.findAll('submissions', query, opts);
   }
 
