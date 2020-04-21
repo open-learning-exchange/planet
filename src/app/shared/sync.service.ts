@@ -38,11 +38,11 @@ export class SyncService {
     private userService: UserService
   ) {}
 
-  createChildPullDoc(items: any[], db, planets: any[]) {
+  createChildPullDoc(items: any[], db, planets: any[], opts?: any) {
     const itemsToSend = planets.map(
       planet => items.map(item => ({ db, sendTo: planet.code, item, time: this.couchService.datePlaceholder }))
     ).flat();
-    return this.couchService.bulkDocs('send_items', itemsToSend);
+    return this.couchService.bulkDocs('send_items', itemsToSend, opts);
   }
 
   openPasswordConfirmation() {

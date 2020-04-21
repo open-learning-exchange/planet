@@ -328,11 +328,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagInputComponent.addTag(tag);
   }
 
-  openSendResourceDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
+  openSendResourceDialog(planetField = 'local') {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }, planetField)
     .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
-      const data = { okClick: this.sendResource().bind(this),
+      const data = { okClick: this.sendResource(planetField).bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
         ...planet };
@@ -342,13 +342,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  sendResource() {
+  createObs(planetField) {
+    if (planetField === 'local') {
+      return of({});
+    }
+    const itemPush = this.selection.selected.map(id => ({
+      item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName
+    }));
+    return this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(itemPush, 'push') );
+  }
+
+  sendResource(planetField) {
     return (selectedPlanets: any) => {
       const items = this.selection.selected.map(id => findByIdInArray(this.resources.data, id));
-      this.syncService.createChildPullDoc(items, 'resources', selectedPlanets).subscribe(() => {
+      this.createObs(planetField).pipe(
+        switchMap(() =>
+          this.syncService.createChildPullDoc(items, 'resources', selectedPlanets, this.stateService.optsFromPlanetField(planetField))
+        )
+      ).subscribe(() => {
         const childType = {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',
-          nation: selectedPlanets.length > 1 ? 'communities' : 'community'
+          nation: selectedPlanets.length > 1 ? 'communities' : 'community',
+          community: selectedPlanets.length > 1 ? 'communities' : 'community'
         }[this.planetType];
         this.planetMessageService.showMessage(`Resources queued to push to ${childType}.`);
         this.dialogRef.close();
