@@ -206,7 +206,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   setBadgesCourses(courses, certifications) {
     this.badgesCourses = courses
-      .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length)
+      .filter(course => course.progress.filter(step => step.passed === true).length === course.doc.steps.length
+        && course.doc.steps.length > 0)
       .map(course => ({
         ...course, inCertification: certifications.some(certification => certification.courseIds.indexOf(course._id) > -1)
       }))
