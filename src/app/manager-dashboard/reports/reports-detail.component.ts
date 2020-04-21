@@ -334,8 +334,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   exportDocView(reportType, dateRange) {
+    const data = reportType === 'courseViews' ? this.courseActivities.total.data : this.resourceActivities.total.data;
     this.csvService.exportCSV({
-      data: filterByDate(reportType === 'courseViews' ? this.courseActivities.total : this.resourceActivities.total.data, 'time', dateRange)
+      data: filterByDate(data, 'time', dateRange)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
     });
