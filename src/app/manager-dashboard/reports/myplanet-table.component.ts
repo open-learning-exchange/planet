@@ -43,8 +43,13 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
   ngOnChanges() {
     this.myPlanets.data = this.data;
     if (this.data2 !== undefined) {
+      let total;
       this.data2.map(data => {
-        data.max.time = data.max.usages.reduce((total, time) => total + time.totalUsed, '');
+        data.max.usages.map((time) => {
+          const date = new Date(time.totalForegroundTime);
+          total =+ date;
+        });
+        data.max.totalUsedTime = total;
       });
       this.myPlanets.data = this.data2;
     }
