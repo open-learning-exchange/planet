@@ -38,6 +38,7 @@
           <mat-error><planet-form-error-messages [control]="healthForm.controls.hearing"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <h4 class="full-width primary-text-color">Condition and Treatment</h4>
+        <span class="small light-color" i18n>Diagnosis</span>
         <section class="full-width checkbox-group">
           <mat-checkbox *ngFor="let condition of conditions" [checked]="healthForm.controls.conditions.value[condition]" (change)="conditionChange(condition)">{{condition}}</mat-checkbox>
         </section>
