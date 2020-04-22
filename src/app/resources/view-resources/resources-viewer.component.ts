@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ResourcesService } from '../resources.service';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -104,9 +104,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   viewResources() {
-    console.log('View Resource');
-    console.log(this.resourceId);
-    this.isDialog = true;
     const route = 'resources/' + 'view/' + this.resourceId.toString();
     this.router.navigate([ route ], { relativeTo: this.route });
   }
