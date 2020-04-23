@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
-import { conditionAndTreatmentFields, conditions } from './health.constants';
+import { conditionAndTreatmentFields } from './health.constants';
 
 @Component({
   templateUrl: './health.component.html',
@@ -103,8 +103,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       ...additionalInfo,
       [event.date]: {
         selfExamination: event.selfExamination,
-        hasConditions: Object.entries(event.conditions).find(
-          ([ key, value ]: [ string, string ]) => (conditions.indexOf(key) > -1)) !== undefined,
+        hasConditions: event.conditions && Object.values(event.conditions).some(value => value === true),
         hasInfo: Object.entries(event).find(
           ([ key, value ]: [ string, string ]) => (conditionAndTreatmentFields.indexOf(key) > -1) &&
           value !== ''
