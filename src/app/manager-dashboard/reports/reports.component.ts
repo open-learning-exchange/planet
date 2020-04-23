@@ -28,12 +28,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private managerService: ManagerService,
     private stateService: StateService,
     private route: ActivatedRoute
-  ) {
-    this.getLogs();
-  }
+  ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(params => this.hubId = params.get('hubId'));
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(params => {
+      this.hubId = params.get('hubId');
+      this.getLogs();
+    });
   }
 
   ngOnDestroy() {
