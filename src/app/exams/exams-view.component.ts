@@ -97,6 +97,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setExamPreview() {
+    if (this.isComplete) return;
     this.answer.setValue(null);
     this.grade = 0;
     this.statusMessage = '';
@@ -110,6 +111,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    if (this.isDialog && isFinish) {
+      // need some code here
+      return;
+    }
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
