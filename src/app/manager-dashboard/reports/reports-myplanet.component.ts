@@ -23,7 +23,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   isEmpty = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
-  ppp: any[];
+  usages: any[];
   get childType() {
     return this.planetType === 'center' ? 'Community' : 'Nation';
   }
@@ -86,7 +86,7 @@ export class ReportsMyPlanetComponent implements OnInit {
         ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
-      this.ppp = this.allUsages;
+      this.usages = this.allUsages;
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
