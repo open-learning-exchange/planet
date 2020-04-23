@@ -105,8 +105,8 @@ export class ReportsService {
     }));
   }
 
-  getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet') {
-    return this.couchService.get(`${db}/_design/${db}/_view/${view}?group=true`);
+  getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet', domain?) {
+    return this.couchService.get(`${db}/_design/${db}/_view/${view}?group=true`, { domain });
   }
 
   getAllActivities(
@@ -161,8 +161,8 @@ export class ReportsService {
     return this.couchService.get('child_statistics/' + code);
   }
 
-  getAdminActivities(planetCode?: any, tillDate?: number) {
-    return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }))
+  getAdminActivities({ planetCode, tillDate, domain }: { planetCode?: string, tillDate?: number, domain?: string }) {
+    return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }), { domain })
     .pipe(map(adminActivities => {
       return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
     }));

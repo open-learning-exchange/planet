@@ -36,7 +36,7 @@ export class ManagerService {
     const configuration = this.configuration;
     return this.activityService.getTotalUsers(configuration.code, true).pipe(switchMap(() =>
       forkJoin([
-        this.activityService.getAdminActivities(configuration.code, tillDate),
+        this.activityService.getAdminActivities({ planetCode: configuration.code, tillDate }),
         this.activityService.getActivities('resource_activities', 'byPlanetRecent'),
         this.activityService.getRatingInfo({ planetCode: configuration.code, tillDate, filterAdmin: true }),
       ])
