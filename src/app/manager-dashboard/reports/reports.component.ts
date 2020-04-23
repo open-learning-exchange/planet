@@ -28,12 +28,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private managerService: ManagerService,
     private stateService: StateService,
     private route: ActivatedRoute
-  ) {
-    this.getLogs();
-  }
+  ) {}
 
   ngOnInit() {
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(params => this.hubId = params.get('hubId'));
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe(params => {
+      this.hubId = params.get('hubId');
+      this.getLogs();
+    });
   }
 
   ngOnDestroy() {
@@ -55,9 +56,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.planets = planets;
         this.arrangePlanetData(planets, hubs);
         return forkJoin([
-          this.activityService.getActivities('resource_activities', 'byPlanet'),
-          this.activityService.getActivities('login_activities', 'byPlanet'),
-          this.activityService.getAdminActivities()
+          this.activityService.getActivities('resource_activities', 'byPlanet', domain),
+          this.activityService.getActivities('login_activities', 'byPlanet', domain),
+          this.activityService.getAdminActivities({ domain })
         ]);
       })
     ).subscribe(([ resourceVisits, loginActivities, adminActivities ]) => {
@@ -73,7 +74,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   arrangePlanetData(planetDocs, hubData) {
     const { hubs, sandboxPlanets } = arrangePlanetsIntoHubs(attachNamesToPlanets(planetDocs), hubData);
     if (this.hubId !== null) {
-      this.sandboxPlanets = hubs.find(hub => hub.planetId === this.hubId).children;
+      this.hubs = [ hubs.find(hub => hub.planetId === this.hubId) ];
+      this.sandboxPlanets = this.hubs[0].children;
       return;
     }
     this.hubs = hubs;
