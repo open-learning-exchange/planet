@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError, take } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -24,6 +24,8 @@ import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { CoursesService } from '../courses/courses.service';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -76,7 +78,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private newsService: NewsService,
     private reportsService: ReportsService,
     private stateService: StateService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private coursesService: CoursesService,
   ) {}
 
   ngOnInit() {
@@ -524,6 +527,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     } else {
       this.router.navigate([ '../../' ], { relativeTo: this.route });
     }
+  }
+
+  openCourseView(courseId) {
+    this.coursesService.requestCourse({ courseId: courseId, forceLatest: true });
+    this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
+      this.dialog.open(CoursesViewDetailDialogComponent, {
+        data: { courseDetail: course },
+        minWidth: '600px',
+        maxWidth: '90vw',
+        autoFocus: false
+      });
+    });
   }
 
   openResource(resourceId) {
