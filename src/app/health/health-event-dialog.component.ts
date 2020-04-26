@@ -11,12 +11,14 @@ export class HealthEventDialogComponent {
   hasConditionAndTreatment = false;
   conditionAndTreatmentFields = conditionAndTreatmentFields;
   conditions: string;
+  hasVital = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).join(', ');
     this.hasConditionAndTreatment = this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
+    this.hasVital = Object.values(this.event || {}).slice(0, 7).some(value => value != '');
   }
 
 }
