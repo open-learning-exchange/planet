@@ -5,18 +5,21 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 @Component({
   template: `
-  <div mat-dialog-content>
-    <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
-  </div>
-  <div mat-dialog-actions style ="float:right">
-      <button mat-raised-button  color="primary"   (click) = "viewResources()">View Resource</button>
-  </div>
-    `
+    <div mat-dialog-content>
+      <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
+    </div>
+    <div mat-dialog-actions style="float:right">
+      <button mat-raised-button color="primary" (click)="viewResources()">View Resource</button>
+    </div>
+  `
 })
 export class DialogsResourcesViewerComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogsResourcesViewerComponent>,
-              private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any, 
+    private dialogRef: MatDialogRef<DialogsResourcesViewerComponent>,
+    private router: Router, private route: ActivatedRoute
+    ) {}
 
   viewResources() {
     this.dialogRef.close();
