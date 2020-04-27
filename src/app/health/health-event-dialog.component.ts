@@ -15,7 +15,7 @@ export class HealthEventDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
-      .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).join(', ');
+      .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
     this.hasConditionAndTreatment = this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
   }
 
