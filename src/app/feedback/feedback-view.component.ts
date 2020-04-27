@@ -50,7 +50,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         this.setCouchListener(result.docs[0]._id);
       }, error => console.log(error));
     this.user = this.userService.get();
-    this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+    this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.users = users.reduce((userObject, user) => ({
         ...userObject,
         [user.doc.name]: user.fullName || user.doc.name
