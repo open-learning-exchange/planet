@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
+import { combineLatest } from 'rxjs';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { Validators } from '@angular/forms';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -15,6 +14,7 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { UsersService } from '../users/users.service';
 
 
 @Component({
@@ -50,31 +50,35 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any = {};
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  users = [];
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService,
     private router: Router,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
-  ) {
+    private dialogsLoadingService: DialogsLoadingService,
+    private usersService: UsersService
+  ) {}
+
+  ngOnInit() {
     if (this.stateService.configuration.planetType === 'community') {
       // Remove source from displayed columns for communities
       this.displayedColumns.splice(this.displayedColumns.indexOf('source'), 1);
     }
-    this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+    combineLatest(this.usersService.usersListener(true), this.feedbackService.feedbackUpdate$).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(([ users = [] ]) => {
+      this.users = users;
       this.getFeedback();
     });
     this.dialogsLoadingService.start();
-  }
-
-  ngOnInit() {
     this.user = this.userService.get();
-    this.getFeedback();
+    this.usersService.requestUsers();
+    this.feedbackService.setFeedback();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
     this.feedback.sortingDataAccessor = sortNumberOrString;
   }
@@ -95,12 +99,11 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
-      .subscribe((data) => {
-        this.feedback.data = data;
-        this.emptyData = !this.feedback.data.length;
-        this.dialogsLoadingService.stop();
-      }, (error) => this.message = 'There is a problem of getting data.');
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
+      this.feedback.data = feedbackData.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
+      this.emptyData = !this.feedback.data.length;
+      this.dialogsLoadingService.stop();
+    }, (error) => this.message = 'There is a problem of getting data.');
   }
 
   deleteClick(feedback) {

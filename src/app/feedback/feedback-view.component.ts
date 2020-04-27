@@ -11,6 +11,7 @@ import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
 import { urlToParamObject } from '../shared/utils';
+import { UsersService } from '../users/users.service';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -26,6 +27,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   editTitleMode = false;
   showParams = 'off';
   showParamsButton = false;
+  users = {};
   @ViewChild('chatList', { static: false }) chatListElement: ElementRef;
 
   constructor(
@@ -36,7 +38,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private feedbackServive: FeedbackService,
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService,
-    private stateService: StateService
+    private stateService: StateService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
@@ -47,6 +50,13 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         this.setCouchListener(result.docs[0]._id);
       }, error => console.log(error));
     this.user = this.userService.get();
+    this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      this.users = users.reduce((userObject, user) => ({
+        ...userObject,
+        [user.doc.name]: user.fullName || user.doc.name
+      }));
+    });
+    this.usersService.requestUsers();
   }
 
   ngOnDestroy() {

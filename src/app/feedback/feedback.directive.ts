@@ -97,7 +97,7 @@ export class FeedbackDirective {
     this.couchService.updateDocument('feedback', {
       ...newFeedback, title: newFeedback.type + ' regarding ' + feedbackUrl })
     .subscribe((data) => {
-      this.feedbackService.setfeedback();
+      this.feedbackService.setFeedback();
       this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
     },
     (error) => {

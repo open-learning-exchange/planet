@@ -12,7 +12,7 @@ export class FeedbackService {
   private feedbackUpdate = new Subject<any[]>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
 
-  setfeedback() {
+  setFeedback() {
     this.feedbackUpdate.next();
   }
 

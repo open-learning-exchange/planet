@@ -58,7 +58,9 @@
       <!-- Owner Column -->
       <ng-container matColumnDef="owner">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Owner</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.owner}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <span >{{ element.user?.fullName || element.user?.doc.name || element.owner }}</span>
+        </mat-cell>
       </ng-container>
       <!-- Status Column -->
       <ng-container matColumnDef="status">
