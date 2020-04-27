@@ -126,7 +126,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
-    return this.couchService.bulkGet(db, shelf)
+    return this.couchService.bulkGet(db, shelf.filter(id => id))
       .pipe(
         catchError(() => {
           return of([]);
