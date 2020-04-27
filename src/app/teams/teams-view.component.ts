@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError, take } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../shared/table-helpers';
@@ -24,7 +24,6 @@ import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 @Component({
@@ -78,8 +77,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private newsService: NewsService,
     private reportsService: ReportsService,
     private stateService: StateService,
-    private tasksService: TasksService,
-    private coursesService: CoursesService,
+    private tasksService: TasksService
   ) {}
 
   ngOnInit() {
