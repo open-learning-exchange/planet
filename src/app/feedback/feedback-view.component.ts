@@ -51,7 +51,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       }, error => console.log(error));
     this.user = this.userService.get();
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
-      users.map(u => this.users[u.doc.name] = u.fullName || u.doc.name ); 
+      users.map(u => this.users[u.doc.name] = u.fullName || u.doc.name );
     });
     this.usersService.requestUsers();
   }
