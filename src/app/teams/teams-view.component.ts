@@ -530,14 +530,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openCourseView(courseId) {
-    this.coursesService.requestCourse({ courseId: courseId, forceLatest: true });
-    this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
-      this.dialog.open(CoursesViewDetailDialogComponent, {
-        data: { courseDetail: course },
-        minWidth: '600px',
-        maxWidth: '90vw',
-        autoFocus: false
-      });
+    this.dialog.open(CoursesViewDetailDialogComponent, {
+      data: { courseId: courseId },
+      minWidth: '600px',
+      maxWidth: '90vw',
+      autoFocus: false
     });
   }
 
