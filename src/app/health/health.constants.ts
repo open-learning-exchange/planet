@@ -23,3 +23,13 @@ export const conditions = [
 export const conditionAndTreatmentFields = [
   'notes', 'diagnosis', 'treatments', 'medications', 'immunizations', 'allergies', 'xrays', 'tests', 'referrals'
 ];
+
+export const vitals = [
+  'temperature',
+  'pulse',
+  'bp',
+  'height',
+  'weight',
+  'vision',
+  'hearing'
+];

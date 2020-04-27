@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { conditionAndTreatmentFields } from './health.constants';
+import { conditionAndTreatmentFields, vitals } from './health.constants';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -18,7 +18,7 @@ export class HealthEventDialogComponent {
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).join(', ');
     this.hasConditionAndTreatment = this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
-    this.hasVital = Object.values(this.event || {}).slice(0, 7).some(value => value !== '');
+    this.hasVital = vitals.some(vital => this.event[vital]);
   }
 
 }
