@@ -107,6 +107,8 @@ export class NewsListComponent implements OnChanges {
   }
 
   deleteNews(news) {
+    if(!this.replyObject[news._id]){
+      console.log('if');
     return {
       request: forkJoin([
         this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], this.replyViewing._id)
@@ -119,6 +121,24 @@ export class NewsListComponent implements OnChanges {
         this.planetMessageService.showAlert('There was a problem deleting this news.');
       }
     };
+    } else {
+    //console.log(this.replyViewing);
+    return {
+      request: forkJoin([
+        this.newsService.deleteNews(news)
+      ]),
+      onNext: (data) => {
+        // It's safer to remove the item from the array based on its id than to splice based on the index
+        //this.showReplies(this.replyViewing);
+        console.log(data);
+        this.viewChange.emit({_id:'root'});
+        this.deleteDialog.close();
+      },
+      onError: (error) => {
+        this.planetMessageService.showAlert('There was a problem deleting this news.');
+      }
+    };
+    }
   }
 
   shareNews({ news, local }: { news: any, local: boolean }) {
