@@ -24,6 +24,7 @@ import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -524,6 +525,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     } else {
       this.router.navigate([ '../../' ], { relativeTo: this.route });
     }
+  }
+
+  openCourseView(courseId) {
+    this.dialog.open(CoursesViewDetailDialogComponent, {
+      data: { courseId: courseId },
+      minWidth: '600px',
+      maxWidth: '90vw',
+      autoFocus: false
+    });
   }
 
   openResource(resourceId) {
