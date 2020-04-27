@@ -187,7 +187,6 @@ export class LoginFormComponent {
       'user': 'org.couchdb.user:' + userName,
       'message': `New member <b>${addedMember}</b> has joined.`,
       'link': '/manager/users/profile/' + addedMember,
-      //'linkParams': { 'search': addedMember },
       'type': 'new user',
       'priority': 1,
       'status': 'unread',
