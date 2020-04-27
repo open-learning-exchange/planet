@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, combineLatest } from 'rxjs';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { Validators } from '@angular/forms';
@@ -11,7 +11,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, startWith } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
@@ -65,24 +65,23 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private usersService: UsersService
-  ) {
+  ) {}
+
+  ngOnInit() {
     if (this.stateService.configuration.planetType === 'community') {
       // Remove source from displayed columns for communities
       this.displayedColumns.splice(this.displayedColumns.indexOf('source'), 1);
     }
-    this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.getFeedback();
-    });
-    this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+    combineLatest(this.usersService.usersListener(true), this.feedbackService.feedbackUpdate$).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(([ users = [] ]) => {
       this.users = users;
       this.getFeedback();
     });
     this.dialogsLoadingService.start();
-  }
-
-  ngOnInit() {
     this.user = this.userService.get();
     this.usersService.requestUsers();
+    this.feedbackService.setfeedback();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
     this.feedback.sortingDataAccessor = sortNumberOrString;
   }
