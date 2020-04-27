@@ -29,14 +29,15 @@ export class CoursesViewDetailComponent {
   `
 })
 export class CoursesViewDetailDialogComponent {
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
-    routeToCourses(courseId) {
-      this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
-    }
+  routeToCourses(courseId) {
+    this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
+  }
 
 }
