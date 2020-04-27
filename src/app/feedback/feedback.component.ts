@@ -1,17 +1,15 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { of, forkJoin, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { Validators } from '@angular/forms';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { UserService } from '../shared/user.service';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
-import { takeUntil, startWith } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
@@ -57,7 +55,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private feedbackService: FeedbackService,
@@ -81,7 +78,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.user = this.userService.get();
     this.usersService.requestUsers();
-    this.feedbackService.setfeedback();
+    this.feedbackService.setFeedback();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
     this.feedback.sortingDataAccessor = sortNumberOrString;
   }
