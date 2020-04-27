@@ -50,7 +50,9 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         this.setCouchListener(result.docs[0]._id);
       }, error => console.log(error));
     this.user = this.userService.get();
-    this.usersService.usersListener().subscribe(users => { users.map(u => this.users[u.doc.name] = u.fullName || u.doc.name ); });
+    this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      users.map(u => this.users[u.doc.name] = u.fullName || u.doc.name ); 
+    });
     this.usersService.requestUsers();
   }
 
@@ -63,7 +65,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   setFeedback(result) {
     this.feedback = result.docs[0];
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
-    console.log(this.feedback.messages);
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
     this.showParamsButton = Object.keys(this.feedback.params).length > 0;

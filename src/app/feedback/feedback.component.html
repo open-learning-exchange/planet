@@ -59,8 +59,7 @@
       <ng-container matColumnDef="owner">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Owner</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span *ngIf="element.user?.firstName; else elseBlock">{{ element.user.firstName}} {{element.user.middleName}} {{element.user.lastName }}</span>
-          <ng-template #elseBlock>{{ element.user.name }}</ng-template>
+          <span >{{ element.user?.fullName || element.user?.doc.name || element.owner }}</span>
         </mat-cell>
       </ng-container>
       <!-- Status Column -->

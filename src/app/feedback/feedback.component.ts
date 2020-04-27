@@ -16,6 +16,7 @@ import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { UsersService } from '../users/users.service';
 
 
 @Component({
@@ -51,6 +52,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   user: any = {};
   private onDestroy$ = new Subject<void>();
   emptyData = false;
+  users = [];
 
   constructor(
     private couchService: CouchService,
@@ -61,7 +63,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private feedbackService: FeedbackService,
     private router: Router,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private usersService: UsersService
   ) {
     if (this.stateService.configuration.planetType === 'community') {
       // Remove source from displayed columns for communities
@@ -70,12 +73,16 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedbackService.feedbackUpdate$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getFeedback();
     });
+    this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
+      this.users = users;
+      this.getFeedback();
+    });
     this.dialogsLoadingService.start();
   }
 
   ngOnInit() {
     this.user = this.userService.get();
-    this.getFeedback();
+    this.usersService.requestUsers();
     this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
     this.feedback.sortingDataAccessor = sortNumberOrString;
   }
@@ -96,14 +103,12 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    forkJoin([
-      this.couchService.findAll('_users'),
-      this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
-    ]).subscribe(([ users, feedbacks ]: [any, any]) => {
-        this.feedback.data = feedbacks.map(feedback => ({ ...feedback, user: users.find(u => u.name === feedback.owner) }));
-        this.emptyData = !this.feedback.data.length;
-        this.dialogsLoadingService.stop();
-    }, (error) => this.message = 'There is a problem of getting data.');   
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ]))
+    .subscribe((feedbacks: any) => {
+      this.feedback.data = feedbacks.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
+      this.emptyData = !this.feedback.data.length;
+      this.dialogsLoadingService.stop();
+    }, (error) => this.message = 'There is a problem of getting data.');
   }
 
   deleteClick(feedback) {
