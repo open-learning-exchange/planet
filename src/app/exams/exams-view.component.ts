@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
@@ -42,6 +42,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   unansweredQuestions: number[];
   isComplete = false;
   comment: string;
+  @Output() closePreview = new EventEmitter<any>();
 
   constructor(
     private router: Router,
@@ -97,7 +98,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setExamPreview() {
-    if (this.isComplete) return;
+    if (this.isComplete) {
+      return
+    };
     this.answer.setValue(null);
     this.grade = 0;
     this.statusMessage = '';
@@ -112,7 +115,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
     if (this.isDialog && isFinish) {
-      // need some code here
+      this.closePreview.next();
       return;
     }
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
