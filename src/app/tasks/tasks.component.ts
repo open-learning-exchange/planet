@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
 
 @Component({
   selector: 'planet-tasks',
@@ -156,6 +157,19 @@ export class TasksComponent implements OnInit {
     };
     return this.notificationsService.sendNotificationToUser(notificationDoc);
   }
+
+  openTaskDetail(task) {
+    this.dialog.open(DialogsAddMeetupsComponent, {
+      data: {
+        meetup: task,
+        view: 'view',
+        link: this.link,
+        sync: this.sync,
+        editable: false
+      }
+    });
+  }
+
 }
 
 @Pipe({
