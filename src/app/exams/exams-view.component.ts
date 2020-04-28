@@ -99,8 +99,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setExamPreview() {
     if (this.isComplete) {
-      return
-    };
+      return;
+    }
     this.answer.setValue(null);
     this.grade = 0;
     this.statusMessage = '';
