@@ -115,10 +115,11 @@ export class NewsListComponent implements OnChanges {
       ]),
       onNext: (data) => {
         // It's safer to remove the item from the array based on its id than to splice based on the index
-        if (!this.replyViewing.doc.replyTo || this.replyViewing.doc.replyTo === 'root') {
+        if (parent) {
+          this.showReplies({ _id: 'root' });
+        }
+        else if (!this.replyViewing.doc.replyTo || this.replyViewing.doc.replyTo === 'root') {
           this.viewChange.emit({ _id: 'root' });
-        } else if (parent) {
-          this.showPreviousReplies();
         }
         this.deleteDialog.close();
       },
