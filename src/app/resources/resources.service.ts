@@ -136,7 +136,7 @@ export class ResourcesService {
     const userAlreadyNotified = (user, notifications) => notifications.every(notification => notification.user !== user._id);
     return forkJoin([
       this.usersService.getAllUsers(),
-      this.couchService.findAll('notifications', findDocuments({ link: 'resources', type: 'newResource', status: 'unread' }))
+      this.couchService.findAll('notifications', findDocuments({ link: '/resources', type: 'newResource', status: 'unread' }))
     ]).pipe(
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
         const notificationDocs = users
