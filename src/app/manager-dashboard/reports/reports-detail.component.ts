@@ -291,7 +291,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportCSV(reportType: string, dateRange: { startDate, endDate }) {
+  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }) {
+    dateRange.endDate = new Date(dateRange.endDate.setHours(24));
     switch (reportType) {
       case 'logins':
         this.csvService.exportCSV({
