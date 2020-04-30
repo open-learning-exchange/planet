@@ -12,7 +12,7 @@ const listColumns = {
   'resources': [ 'title' ],
   'courses': [ 'courseTitle' ],
   '_users': [ 'name', 'full name' ],
-  'child_users': [ 'name' ],
+  'child_users': [ 'name', 'full name' ],
   'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
 };
 
