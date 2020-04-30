@@ -107,19 +107,15 @@ export class NewsListComponent implements OnChanges {
   }
 
   deleteNews(news) {
-    const parent = this.replyViewing._id === news._id;
-    const replyTo = parent ? this.replyViewing.doc.replyTo : this.replyViewing._id;
+    const isMainStory = this.replyViewing._id === news._id;
+    const parentId = isMainStory ? this.replyViewing.doc.replyTo || 'root' : this.replyViewing._id;
     return {
       request: forkJoin([
-        this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], replyTo)
+        this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
       ]),
       onNext: (data) => {
-        // It's safer to remove the item from the array based on its id than to splice based on the index
-        if (parent) {
-          this.showReplies({ _id: 'root' });
-        }
-        else if (!this.replyViewing.doc.replyTo || this.replyViewing.doc.replyTo === 'root') {
-          this.viewChange.emit({ _id: 'root' });
+        if (isMainStory) {
+          this.showReplies({ _id: parentId });
         }
         this.deleteDialog.close();
       },

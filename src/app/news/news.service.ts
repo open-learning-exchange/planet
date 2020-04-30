@@ -87,7 +87,7 @@ export class NewsService {
   }
 
   rearrangeRepliesForDelete(replies: any[] = [], newReplyToId: string) {
-    return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply, replyTo: newReplyToId })));
+    return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply.doc, replyTo: newReplyToId })));
   }
 
   shareNews(news, planets?: any[]) {
