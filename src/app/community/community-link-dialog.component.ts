@@ -54,4 +54,7 @@ export class CommunityLinkDialogComponent {
     });
   }
 
+  cancelForm() {
+    this.dialogRef.close();
+  }
 }
