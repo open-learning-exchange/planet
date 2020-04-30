@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material';
 import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output } from '@angular/core';
 
 import { DomSanitizer } from '@angular/platform-browser';
@@ -103,4 +102,5 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     // Emit resource src so parent component can use for links
     this.resourceUrl.emit(this.resourceSrc);
   }
+
 }
