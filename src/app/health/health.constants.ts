@@ -2,6 +2,7 @@ export const conditions = [
   'Cancer',
   'Cardiovascular disorders',
   'Cirrhosis of the liver',
+  'COVID-19',
   'Diabetes',
   'Diarrhoea diseases',
   'Ebola',
