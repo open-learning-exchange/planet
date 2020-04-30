@@ -245,9 +245,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyDialog(survey) {
     this.getUserData(this.requestUsers()).subscribe((userData: {tableData: [], columns: []}) => {
-      userData.tableData.forEach(row => {
-        row['full name'] = row.firstName || row.lastName ? row.firstName + ' ' + row.lastName : '';
-      });
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: {
           ...userData,
