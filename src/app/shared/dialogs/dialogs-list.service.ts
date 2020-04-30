@@ -11,7 +11,7 @@ import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.ut
 const listColumns = {
   'resources': [ 'title' ],
   'courses': [ 'courseTitle' ],
-  '_users': [ 'name', 'firstName', 'lastName' ],
+  '_users': [ 'name', 'full name' ],
   'child_users': [ 'name' ],
   'communityregistrationrequests': [ 'name', 'code', 'localDomain' ]
 };
