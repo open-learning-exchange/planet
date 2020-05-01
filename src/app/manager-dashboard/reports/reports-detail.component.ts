@@ -154,8 +154,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     if (this.stateService.configuration.planetType === 'nation') {
       this.usersService.requestUserData();
-    } else
+    } else {
         this.usersService.requestUsers(false);
+    }
   }
 
   setLoginActivities() {
