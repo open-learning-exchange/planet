@@ -38,3 +38,7 @@ $full-height: calc(#{$view-container-height} - 2rem);
   }
 
 }
+
+.shrink-image {
+  object-fit: contain;
+}
