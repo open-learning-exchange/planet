@@ -52,10 +52,10 @@ export class DialogsListComponent implements AfterViewInit {
     selectionOptional?: boolean,
     labels?: any
   }) {
-    const hasFullName = this.data.columns.some(column => column === 'full name');
+    const hasFullName = this.data.columns.some(column => column === 'fullName');
     if (hasFullName) {
       this.data.tableData.forEach(row => {
-        row['full name'] = row.firstName || row.lastName ? row.firstName + ' ' + row.lastName : '';
+        row['fullName'] = row.firstName || row.lastName ? row.firstName + ' ' + row.lastName : '';
       });
     }
     this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
