@@ -42,6 +42,12 @@ planet-calendar {
   overflow-y: auto;
 }
 
+.view-container {
+  mat-card {
+    margin: 0.25rem;
+  }
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
