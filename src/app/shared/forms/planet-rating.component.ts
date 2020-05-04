@@ -109,10 +109,10 @@ export class PlanetRatingComponent implements OnChanges {
     const newRating = Object.assign({
       type: this.ratingType,
       item: this.item._id,
-      title: this.item.title || this.item.courseTitle
+      title: this.item.title || this.item.courseTitle,
+      createdTime: this.couchService.datePlaceholder
     }, this.rating.userRating, form.value, {
       time: this.couchService.datePlaceholder,
-      createdTime: !this.rating.totalRating ? this.couchService.datePlaceholder : this.rating.userRating.createdTime,
       user: this.userService.get(),
       createdOn: configuration.code,
       parentCode: configuration.parentCode
