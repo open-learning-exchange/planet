@@ -222,6 +222,17 @@ export class TeamsService {
     ));
   }
 
+  getTeamCourses(linkDocs: any[]) {
+    return this.stateService.getCouchState('courses', 'local').pipe(map((courses: any[]) =>
+      linkDocs.map(linkDoc => ({
+        linkDoc,
+        course: courses.find(course => course._id === linkDoc.courseId)
+      }))
+        .filter(course => course.linkDoc.title || course.course && course.course.courseTitle)
+        .sort((a, b) => (a.course || a.linkDoc).courseTitle.toLowerCase() > (b.course || b.linkDoc).courseTitle.toLowerCase() ? 1 : -1)
+    ));
+  }
+
   isTeamEmpty(team) {
     return this.getTeamMembers(team).pipe(map((docs) => docs.length === 0));
   }
@@ -290,22 +301,26 @@ export class TeamsService {
     return this.couchService.updateDocument('team_activities', data);
   }
 
-  linkResourcesToTeam(resources, team) {
+  linkDocumentsToTeam(documents, team, type) {
     const { teamPlanetCode, teamType } = team;
-    const links = resources.map(
-      resource => ({
-        resourceId: resource.doc._id, sourcePlanet: resource.doc.sourcePlanet, title: resource.doc.title,
-        teamId: team._id, teamPlanetCode, teamType, docType: 'resourceLink'
+    const links = documents.map(
+      document => ({
+        sourcePlanet: document.doc.sourcePlanet,
+        ...(type === 'resource' ? { resourceId: document.doc._id, title: document.doc.title, docType: 'resourceLink' }
+          : { courseId: document.doc._id, courseTitle: document.doc.courseTitle, docType: 'courseLink' }),
+        teamId: team._id, teamPlanetCode, teamType
       })
     );
     if (teamPlanetCode !== this.stateService.configuration.code) {
-      this.updateSendDocs(resources, teamPlanetCode);
+      this.updateSendDocs(documents, teamPlanetCode, type);
     }
     return this.couchService.bulkDocs('teams', links);
   }
 
-  updateSendDocs(resources, sendTo) {
-    this.couchService.bulkDocs('send_items', resources.map(resource => ({ db: 'resources', sendTo, item: resource }))).subscribe();
+  updateSendDocs(documents, sendTo, type) {
+    this.couchService.bulkDocs('send_items', documents.map(doc => (
+      { db: type === 'resource' ? 'resources' : 'courses', sendTo, item: doc }
+    ))).subscribe();
   }
 
   createServicesDoc() {

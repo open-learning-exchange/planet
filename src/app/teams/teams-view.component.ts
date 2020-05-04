@@ -48,6 +48,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   user = this.userService.get();
   news: any[] = [];
   resources: any[] = [];
+  courses: any[] = [];
   isRoot = true;
   visits: any = {};
   leader: string;
@@ -207,8 +208,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       this.setTasks(this.tasks);
-      return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-    }), map(resources => this.resources = resources));
+      return forkJoin([
+        this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink')),
+        this.teamsService.getTeamCourses(docs.filter(doc => doc.docType === 'courseLink'))
+      ]);
+    }), switchMap(([resources, courses]) => {
+      this.resources = resources;
+      this.courses = courses;
+      return of({});
+    }));
   }
 
   setTasks(tasks = []) {
@@ -436,23 +444,19 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  openCourseDialog() {
-    const initialCourses = this.team.courses || [];
+  openCourseDialog(course?) {
     const dialogRef = this.dialog.open(DialogsAddCoursesComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {
-          const newCourses = courses.map(course => course.doc);
-          this.teamsService.updateTeam({
-            ...this.team,
-            courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
-          }).subscribe((updatedTeam) => {
-            this.team = updatedTeam;
+          this.teamsService.linkDocumentsToTeam(courses, this.team, 'course')
+          .pipe(switchMap(() => this.getMembers())).subscribe(() => {
             dialogRef.close();
             this.dialogsLoadingService.stop();
           });
         },
-        excludeIds: initialCourses.map(c => c._id)
+        excludeIds: this.courses.filter(c => c.course).map(c => c.course._id),
+        canAdd: true, db: this.dbName, linkId: this.teamId, course
       }
     });
   }
@@ -483,7 +487,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       width: '80vw',
       data: {
         okClick: (resources: any[]) => {
-          this.teamsService.linkResourcesToTeam(resources, this.team)
+          this.teamsService.linkDocumentsToTeam(resources, this.team, 'resource')
           .pipe(switchMap(() => this.getMembers())).subscribe(() => {
             dialogRef.close();
             this.dialogsLoadingService.stop();
