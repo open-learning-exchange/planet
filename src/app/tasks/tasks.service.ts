@@ -72,7 +72,10 @@ export class TasksService {
       ],
       formGroup: {
         title: [ task.title || '', CustomValidators.required ],
-        deadline: [
+        deadline: task.title ? [
+          deadline,
+          CustomValidators.dateValidRequired
+        ] : [
           deadline,
           CustomValidators.dateValidRequired,
           (ac) => this.validatorService.notDateInPast$(ac)
