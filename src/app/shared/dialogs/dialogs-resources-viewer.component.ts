@@ -9,9 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
         <mat-icon>clear</mat-icon>
       </button>
     </div>
-    <mat-dialog-content>
-      <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
-    </mat-dialog-content>
+    <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
     <mat-dialog-actions style="float:right">
       <button mat-raised-button color="primary" (click)="viewResources()">View Resource</button>
     </mat-dialog-actions>
