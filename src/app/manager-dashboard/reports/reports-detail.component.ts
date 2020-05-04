@@ -152,11 +152,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.dateFilterForm.controls.startDate.setValue(this.minDate);
       this.setLoginActivities();
     });
-    if (this.stateService.configuration.planetType === 'nation') {
-      this.usersService.requestUserData();
-    } else {
-        this.usersService.requestUsers(false);
-    }
+    this.usersService.requestUserData();
   }
 
   setLoginActivities() {
