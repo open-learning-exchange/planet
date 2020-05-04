@@ -25,6 +25,7 @@ const registerForm = {
   name: [],
   password: [ '', Validators.compose([
     Validators.required,
+    CustomValidators.spaceValidator,
     CustomValidators.matchPassword('repeatPassword', false)
   ]) ],
   repeatPassword: [ '', Validators.compose([

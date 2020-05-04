@@ -54,6 +54,7 @@ export class ChangePasswordDirective implements OnChanges {
       '',
       Validators.compose([
         Validators.required,
+        CustomValidators.spaceValidator,
         CustomValidators.matchPassword('confirmPassword', false)
       ])
     ],
@@ -79,6 +80,7 @@ export class ChangePasswordDirective implements OnChanges {
       '',
       Validators.compose([
         Validators.required,
+        CustomValidators.spaceValidator,
         CustomValidators.matchPassword('oldPassword', true, false),
         CustomValidators.matchPassword('confirmPassword', false)
       ])
