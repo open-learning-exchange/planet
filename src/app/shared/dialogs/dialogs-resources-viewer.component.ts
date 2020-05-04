@@ -23,8 +23,7 @@ export class DialogsResourcesViewerComponent {
 
   viewResources() {
     this.dialogRef.close();
-    const route = 'resources/' + 'view/' + this.data.resourceId.toString();
-    this.router.navigate([ route ], { relativeTo: this.route });
+    this.router.navigate([ `/resources/view/${this.data.resourceId}` ], { relativeTo: this.route });
   }
 
 }
