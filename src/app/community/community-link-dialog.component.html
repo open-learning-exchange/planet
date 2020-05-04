@@ -21,5 +21,6 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
+  <button type="button" mat-raised-button (click)="cancelForm()">Cancel</button>
   <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid">OK</button>
 </mat-dialog-actions>
