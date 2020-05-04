@@ -32,14 +32,14 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     this.activities.data = this.activitiesByDoc.map(activity => {
-      const progressCount = { enrolled: 0, passed: 0 };
-      /* if (this.activityType === 'courses') {
+      let progressCount = { enrolled: 0, passed: 0 };
+      if (this.activityType === 'courses' && this.progresses) {
         const progress = (this.progresses.find(p => p.doc._id === activity.courseId) || { progress: {} }).progress;
         progressCount = {
-          enrolled : progress.length,
-          passed: progress.length
-        };  
-      } */
+          enrolled : Object.values(progress).length,
+          passed: Object.values(progress).filter(p => p).length,
+        };
+      }
       return {
         averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
         ...activity,

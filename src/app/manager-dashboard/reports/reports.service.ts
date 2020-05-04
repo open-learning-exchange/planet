@@ -216,7 +216,7 @@ export class ReportsService {
     });
   }
 
-  getCourseProgress({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
+  getCourseProgress({ planetCode, tillDate, fromMyPlanet }: ActivityRequestObject = {}) {
     return forkJoin([
       this.couchService.findAll('courses'),
       this.couchService.findAll('courses_progress', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet }))
