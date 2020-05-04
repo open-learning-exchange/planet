@@ -20,6 +20,10 @@ export class CustomValidators {
       isValidInt(Number(ac.value));
   }
 
+  static spaceValidator(ac: AbstractControl) {
+    return ac.value.replace(/\s/g, '') === ac.value ? null : { whitespace: true };
+  }
+
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
     if (!ac.value) {
       return null;
