@@ -4,13 +4,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 @Component({
   template: `
+    <div mat-dialog-title>
+      <button mat-dialog-close mat-icon-button class="close-dialog" i18n>
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
     <mat-dialog-content>
       <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
     </mat-dialog-content>
     <mat-dialog-actions style="float:right">
       <button mat-raised-button color="primary" (click)="viewResources()">View Resource</button>
     </mat-dialog-actions>
-  `
+  `,
+  styleUrls: [ './dialogs-resources-viewer.scss' ]
 })
 export class DialogsResourcesViewerComponent {
 
