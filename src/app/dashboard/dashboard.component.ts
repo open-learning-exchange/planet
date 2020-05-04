@@ -197,7 +197,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openCourseDialog(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseDetail: { ...course.doc, ...course } },
+      data: { courseId: course._id },
       minWidth: '600px',
       maxWidth: '90vw',
       autoFocus: false
