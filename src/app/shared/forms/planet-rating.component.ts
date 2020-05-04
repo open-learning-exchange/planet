@@ -106,16 +106,18 @@ export class PlanetRatingComponent implements OnChanges {
   updateRating(form) {
     // Later parameters of Object.assign will overwrite values from previous objects
     const configuration = this.stateService.configuration;
-    const newRating = Object.assign({
+    const newRating = {
       type: this.ratingType,
       item: this.item._id,
-      title: this.item.title || this.item.courseTitle
-    }, this.rating.userRating, form.value, {
+      title: this.item.title || this.item.courseTitle,
+      createdTime: this.couchService.datePlaceholder,
+      ...this.rating.userRating,
+      ...form.value,
       time: this.couchService.datePlaceholder,
       user: this.userService.get(),
       createdOn: configuration.code,
       parentCode: configuration.parentCode
-    });
+    };
     // Use call because 'this' will be undefined otherwise
     return this.couchService.updateDocument(this.dbName, newRating).pipe(map((res: any) => {
       newRating._rev = res.rev;
