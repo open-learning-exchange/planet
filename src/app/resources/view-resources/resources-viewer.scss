@@ -25,9 +25,8 @@ $full-height: calc(#{$view-container-height} - 2rem);
     }
 
     img {
-      height: calc(#{$dashboard-height});
-      width: calc(#{$dashboard-height} + 20rem);
-      align-self: center;
+      max-height: calc(#{$dashboard-height});
+      max-width: calc(#{$dashboard-height} + 20rem);
     }
 
   }
@@ -37,4 +36,8 @@ $full-height: calc(#{$view-container-height} - 2rem);
     float: right;
   }
 
+}
+
+.image-fit {
+  object-fit: contain;
 }
