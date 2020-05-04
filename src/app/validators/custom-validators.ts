@@ -21,9 +21,7 @@ export class CustomValidators {
   }
 
   static spaceValidator(ac: AbstractControl) {
-    const valueNoWhiteSpace = ac.value.replace(/\s/g, '');
-    const isValid = valueNoWhiteSpace === ac.value;
-    return isValid ? null : { whitespace: true };
+    return ac.value.replace(/\s/g, '') === ac.value ? null : { whitespace: true };
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
