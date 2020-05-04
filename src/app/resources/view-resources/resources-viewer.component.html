@@ -1,6 +1,3 @@
-<button *ngIf="isDialog" mat-dialog-close mat-icon-button class="close-dialog" i18n>
-  <mat-icon>clear</mat-icon>
-</button>
 <div [ngClass]="{'dialog-view':isDialog}" [ngSwitch]="mediaType">
   <img [src]="resourceSrc" class="image-fit" *ngSwitchCase="'image'">
   <video controls *ngSwitchCase="'video'" [src]="resourceSrc">
