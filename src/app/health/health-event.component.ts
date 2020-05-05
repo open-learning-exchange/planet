@@ -5,6 +5,7 @@ import { HealthService } from './health.service';
 import { conditions } from './health.constants';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { CustomValidators } from '../validators/custom-validators';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -24,11 +25,11 @@ export class HealthEventComponent implements OnInit {
     private stateService: StateService
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '' ],
-      pulse: [ '' ],
-      bp: [ '' ],
-      height: [ '' ],
-      weight: [ '' ],
+      temperature: [ '', CustomValidators.positiveNumberValidator ],
+      pulse: [ '', CustomValidators.positiveNumberValidator ],
+      bp: [ '', CustomValidators.bpValidator ],
+      height: [ '', CustomValidators.positiveNumberValidator ],
+      weight: [ '', CustomValidators.positiveNumberValidator ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',
