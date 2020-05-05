@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HealthService } from './health.service';
@@ -10,7 +10,7 @@ import { StateService } from '../shared/state.service';
   templateUrl: './health-event.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthEventComponent implements OnInit {
+export class HealthEventComponent {
 
   healthForm: FormGroup;
   conditions = conditions;
@@ -42,9 +42,6 @@ export class HealthEventComponent implements OnInit {
       referrals: '',
       conditions: {}
     });
-  }
-
-  ngOnInit() {
   }
 
   onSubmit() {
