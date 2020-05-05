@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, throwError } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
@@ -74,12 +74,13 @@ export class ReportsMyPlanetComponent implements OnInit {
       );
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
   }
 
   myPlanetRequest(hubId) {
     const { planetCode, domain } = getDomainParams(this.configuration, hubId !== undefined);
     return (hubId ? this.couchService.findAll('hubs', findDocuments({ 'planetId': hubId }), { domain }) : of([])).pipe(
+      switchMap(() => throwError('error')),
       switchMap((hubs: any) => {
         this.hub = hubs[0] || { spokes: [] };
         const selector = findDocuments({ 'createdOn': { '$in': this.hub.spokes } });

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, throwError } from 'rxjs';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
@@ -50,6 +50,7 @@ export class LogsMyPlanetComponent implements OnInit {
 
   getApkLogs() {
     forkJoin([
+      throwError('error'),
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
     ]).subscribe(([ planets, apklogs ]) => {
@@ -61,7 +62,7 @@ export class LogsMyPlanetComponent implements OnInit {
       );
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
   }
 
 }
