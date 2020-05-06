@@ -416,8 +416,8 @@ module.exports = {
       // START DESIGN DOC
 
       var request = JSON.parse(req.body);
-      var newDoc = Object.keys(request).reduce(function(b, k) {
-        if (k !== '_id' && k !== 'key' && k !== '_rev' && k !== 'iv') {
+      var plainTextFields = Object.keys(request).reduce(function(b, k) {
+        if (k !== '_id' && k !== 'key' && k !== '_rev' && k !== 'iv' && k !== 'encryptData') {
           b[k] = request[k];
         }
         return b;
@@ -429,7 +429,7 @@ module.exports = {
       var key = convertHex.toBytes(request.key);
       var iv = convertHex.toBytes(request.iv);
 
-      var text = JSON.stringify(newDoc);
+      var text = JSON.stringify(request.encryptData);
       var blockLength = 16;
       var paddingChar = convertUtf8.fromBytes([ blockLength - (text.length % blockLength) ]);
       text = text + paddingChar;
@@ -450,7 +450,11 @@ module.exports = {
 
       // To print or store the binary data, you may convert it to hex
       var encryptedHex = convertHex.fromBytes(encryptedBytes);
-      return [ { '_id': request._id, '_rev': request._rev, 'data': encryptedHex }, '{"message":"Document updated"}' ];
+      var newDoc = Object.keys(plainTextFields).reduce(function(n, k) {
+        n[k] = plainTextFields[k];
+        return n;
+      }, { '_id': request._id, '_rev': request._rev, 'data': encryptedHex });
+      return [ newDoc, '{"message":"Document updated"}' ];
 
     }
   },
