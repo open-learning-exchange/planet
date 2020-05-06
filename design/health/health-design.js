@@ -453,7 +453,7 @@ module.exports = {
       var newDoc = Object.keys(plainTextFields).reduce(function(n, k) {
         n[k] = plainTextFields[k];
         return n;
-      }, { '_id': request._id, '_rev': request._rev, 'data': encryptedHex });
+      }, { '_id': request._id || req.uuid, '_rev': request._rev, 'data': encryptedHex });
       return [ newDoc, '{"message":"Document updated"}' ];
 
     }
