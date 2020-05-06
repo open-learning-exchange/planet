@@ -59,9 +59,9 @@ export class HealthService {
     }));
   }
 
-  getHealthData(userId, createKeyIfNone = false) {
+  getHealthData(userId, { docId = userId, createKeyIfNone = false } = {}) {
     return this.getUserKey(this.userDatabaseName(userId), createKeyIfNone).pipe(
-      switchMap(({ doc }: any) => forkJoin([ this.getHealthDoc(userId, doc), of(doc) ]))
+      switchMap(({ doc }: any) => forkJoin([ this.getHealthDoc(docId, doc), of(doc) ]))
     );
   }
 
@@ -87,7 +87,7 @@ export class HealthService {
 
   addEvent(userId: string, event: any) {
     return forkJoin([
-      this.getHealthData(userId),
+      this.getHealthData(userId, { createKeyIfNone: true }),
       this.couchService.currentTime()
     ]).pipe(
       switchMap(([ [ healthDoc, keyDoc ], time ]) => {
@@ -101,7 +101,7 @@ export class HealthService {
   }
 
   postHealthProfileData(data) {
-    return this.getHealthData(data._id, true).pipe(
+    return this.getHealthData(data._id, { createKeyIfNone: true }).pipe(
       switchMap(([ healthDoc, keyDoc ]: any[]) => this.postHealthDoc(healthDoc, data, keyDoc))
     );
   }

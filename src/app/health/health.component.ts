@@ -9,6 +9,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './health.component.html',
@@ -63,13 +64,18 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initData() {
-    this.healthService.getHealthData(this.userDetail._id).subscribe(([ { profile, events } ]: any[]) => {
-      this.userDetail = { ...profile, ...this.userDetail };
-      if (this.userDetail._attachments) {
-        this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
-      }
-      this.healthDetail = profile;
-      this.events = events || [];
+    this.healthService.getHealthData(this.userDetail._id).pipe(
+      switchMap(([ { profile, events, userKey } ]: any[]) => {
+        this.userDetail = { ...profile, ...this.userDetail };
+        if (this.userDetail._attachments) {
+          this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;
+        }
+        this.healthDetail = profile;
+        this.events = events || [];
+        return this.couchService.findAll('health', findDocuments({ profileId: userKey }));
+      })
+    ).subscribe(eventDocs => {
+      this.events = [ ...this.events, ...eventDocs ];
       this.setEventData();
     });
   }
@@ -84,10 +90,16 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   examClick(eventDate) {
     if (eventDate !== 'label') {
-      this.dialog.open(HealthEventDialogComponent, {
-        data: { event: this.events.find(event => event.date === +eventDate) },
-        width: '50vw',
-        maxHeight: '90vh'
+      const event = this.events.find(e => e.date === +eventDate);
+      (event._id ?
+        this.healthService.getHealthData(this.userDetail._id, { docId: event._id })
+        : of([ event ])
+      ).subscribe(([ eventDoc ]) => {
+        this.dialog.open(HealthEventDialogComponent, {
+          data: { event: eventDoc },
+          width: '50vw',
+          maxHeight: '90vh'
+        });
       });
     }
   }
