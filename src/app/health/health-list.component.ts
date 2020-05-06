@@ -53,7 +53,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
     if (usersWithoutHealth.length === 0) {
       return;
     }
-    concat.apply(null, usersWithoutHealth.map(({ _id }) => this.healthService.getHealthData(_id))).subscribe((userHealth: any) => {
+    concat.apply(null, usersWithoutHealth.map(({ _id }) => this.healthService.getHealthData(_id))).subscribe(([ userHealth ]: any[]) => {
       this.users = this.users.map(user => user._id === userHealth._id ?
         {
           ...user,

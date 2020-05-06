@@ -63,7 +63,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initData() {
-    this.healthService.getHealthData(this.userDetail._id).subscribe(({ profile, events }) => {
+    this.healthService.getHealthData(this.userDetail._id).subscribe(([ { profile, events } ]: any[]) => {
       this.userDetail = { ...profile, ...this.userDetail };
       if (this.userDetail._attachments) {
         this.imageSrc = `${this.urlPrefix}/${this.userDetail._id}/${Object.keys(this.userDetail._attachments)[0]}`;

@@ -56,9 +56,9 @@ export class HealthService {
     }));
   }
 
-  getHealthData(userId) {
-    return this.getUserKey(this.userDatabaseName(userId)).pipe(
-      switchMap(({ doc }: any) => this.getHealthDoc(userId, doc)),
+  getHealthData(userId, createKeyIfNone = false) {
+    return this.getUserKey(this.userDatabaseName(userId), createKeyIfNone).pipe(
+      switchMap(({ doc }: any) => forkJoin([ this.getHealthDoc(userId, doc), of(doc) ]))
     );
   }
 
@@ -69,14 +69,12 @@ export class HealthService {
   }
 
   addEvent(_id: string, event: any) {
-    return this.postHealthData({ _id, events: [ ...(this.healthData.events || []), event ] });
+    return this.postHealthProfileData({ _id, events: [ ...(this.healthData.events || []), event ] });
   }
 
-  postHealthData(data) {
-    const userDb = this.userDatabaseName(data._id);
-    return this.getUserKey(userDb, true).pipe(
-      switchMap(({ doc }: any) => forkJoin([ of(doc), this.getHealthDoc(data._id, doc) ])),
-      switchMap(([ keyDoc, healthDoc ]: any[]) => {
+  postHealthProfileData(data) {
+    return this.getHealthData(data._id, true).pipe(
+      switchMap(([ healthDoc, keyDoc ]: any[]) => {
         const { encryptData, ...newHealthDoc } = Object.entries({ ...healthDoc, ...data }).reduce((healthObj, [ key, value ]) => {
           const isEncryptField = this.encryptedFields.indexOf(key) > -1;
           return {
