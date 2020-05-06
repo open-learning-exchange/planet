@@ -11,7 +11,10 @@ import { stringToHex } from '../shared/utils';
 export class HealthService {
 
   healthData: any = {};
-  readonly encryptedFields = [ 'events', 'profile' ];
+  readonly encryptedFields = [
+    'events', 'profile', 'lastExamination', 'userKey',
+    'allergies', 'createdBy', 'diagnosis', 'immunizations', 'medications', 'notes', 'referrals', 'tests', 'treatments', 'xrays'
+   ];
 
   constructor(
     private couchService: CouchService,
@@ -68,25 +71,38 @@ export class HealthService {
     );
   }
 
-  addEvent(_id: string, event: any) {
-    return this.postHealthProfileData({ _id, events: [ ...(this.healthData.events || []), event ] });
+  private postHealthDoc(oldDoc, newDoc, keyDoc) {
+    const { encryptData, ...newHealthDoc } = Object.entries({ ...oldDoc, ...newDoc }).reduce((healthObj, [ key, value ]) => {
+      const isEncryptField = this.encryptedFields.indexOf(key) > -1;
+      return {
+        ...healthObj,
+        [isEncryptField ? 'encryptData' : key]: isEncryptField ? { ...healthObj.encryptData, [key]: value } : value
+      };
+    }, { encryptData: {} });
+    return this.couchService.put(
+      'health/_design/health/_update/encrypt',
+      { ...newHealthDoc, encryptData, key: keyDoc.key, iv: keyDoc.iv }
+    );
+  }
+
+  addEvent(userId: string, event: any) {
+    return forkJoin([
+      this.getHealthData(userId),
+      this.couchService.currentTime()
+    ]).pipe(
+      switchMap(([ [ healthDoc, keyDoc ], time ]) => {
+        const userKey = healthDoc.userKey || this.generateKey(32);
+        return forkJoin([
+          this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
+          this.postHealthDoc({}, { ...event, profileId: userKey }, keyDoc)
+        ]);
+      })
+    );
   }
 
   postHealthProfileData(data) {
     return this.getHealthData(data._id, true).pipe(
-      switchMap(([ healthDoc, keyDoc ]: any[]) => {
-        const { encryptData, ...newHealthDoc } = Object.entries({ ...healthDoc, ...data }).reduce((healthObj, [ key, value ]) => {
-          const isEncryptField = this.encryptedFields.indexOf(key) > -1;
-          return {
-            ...healthObj,
-            [isEncryptField ? 'encryptData' : key]: isEncryptField ? { ...healthObj.encryptData, [key]: value } : value
-          };
-        }, { encryptData: {} });
-        return this.couchService.put(
-          'health/_design/health/_update/encrypt',
-          { ...newHealthDoc, encryptData, key: keyDoc.key, iv: keyDoc.iv }
-        );
-      })
+      switchMap(([ healthDoc, keyDoc ]: any[]) => this.postHealthDoc(healthDoc, data, keyDoc))
     );
   }
 
