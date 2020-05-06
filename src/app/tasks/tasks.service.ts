@@ -90,7 +90,7 @@ export class TasksService {
     return this.couchService.updateDocument(this.dbName, {
       ...task,
       completed: task.completed || false,
-      completedTime: task.completed ? this.couchService.datePlaceholder : undefined
+      completedTime: task.completed ? task.completedTime : undefined
     });
   }
 
