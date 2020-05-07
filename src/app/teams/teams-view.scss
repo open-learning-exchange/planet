@@ -3,17 +3,10 @@
 
 .teams-view {
 
-  .view-container {
-    mat-card {
-      margin: 0.25rem;
-    }
-  }
-
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     grid-template-rows: repeat(auto-fill, 180px);
-    grid-column-gap: 0.25rem;
     &.member-cards {
       grid-template-rows: repeat(auto-fill, 280px);
       mat-card-content {
