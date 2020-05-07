@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HealthService } from './health.service';
-import { conditions } from './health.constants';
+import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 
@@ -55,7 +55,8 @@ export class HealthEventComponent implements OnInit {
         date: Date.now(),
         selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
         createdBy: this.userService.get()._id,
-        planetCode: this.stateService.configuration.code
+        planetCode: this.stateService.configuration.code,
+        hasInfo: conditionAndTreatmentFields.some(key => this.healthForm.value[key] !== '')
       }
     ).subscribe(() => {
       this.goBack();

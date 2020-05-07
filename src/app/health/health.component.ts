@@ -116,7 +116,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       [event.date]: {
         selfExamination: event.selfExamination,
         hasConditions: event.conditions && Object.values(event.conditions).some(value => value === true),
-        hasInfo: Object.entries(event).find(
+        hasInfo: event.hasInfo === true || Object.entries(event).find(
           ([ key, value ]: [ string, string ]) => (conditionAndTreatmentFields.indexOf(key) > -1) &&
           value !== ''
         ) !== undefined
