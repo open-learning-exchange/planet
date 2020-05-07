@@ -27,6 +27,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/_users/';
   initializeEvents = true;
+  isWaitingForEvents = true;
   isOwnUser = true;
   onDestroy$ = new Subject<void>();
 
@@ -51,7 +52,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (this.initializeEvents === false || this.examsTable === undefined) {
+    if (this.initializeEvents === false || this.isWaitingForEvents === true || this.examsTable === undefined) {
       return;
     }
     this.initializeEvents = false;
@@ -123,6 +124,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
     }), {});
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
+    this.isWaitingForEvents = false;
   }
 
 }
