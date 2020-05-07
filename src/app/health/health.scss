@@ -53,4 +53,7 @@ mat-table {
 
 .table-column {
   min-width: $exam-table-col-width;
+  &.mat-column-label {
+    min-width: 110px;
+  }
 }
