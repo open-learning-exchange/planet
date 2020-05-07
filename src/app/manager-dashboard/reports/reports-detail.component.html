@@ -4,7 +4,7 @@
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
-  <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
+  <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons" *ngIf="minDate">
     <mat-form-field>
       <mat-label>Start Date</mat-label>
       <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
