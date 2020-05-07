@@ -17,7 +17,9 @@ export class HealthEventDialogComponent {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
-    this.hasConditionAndTreatment = this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
+    this.hasConditionAndTreatment = this.event.hasInfo !== undefined ?
+      this.event.hasInfo === true :
+      this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
   }
 
