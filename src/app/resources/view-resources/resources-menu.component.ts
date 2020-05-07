@@ -12,7 +12,11 @@ import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-re
       <ng-content></ng-content>
     </button>
     <mat-menu #resourceList="matMenu">
-      <span *ngFor="let resource of resources;" mat-menu-item (click)="resource._attachments ? openResource(resource._id) : false" [ngClass]="{'cursor-pointer': resource._attachments}">{{resource.title}}</span>
+      <span *ngFor="let resource of resources;" mat-menu-item
+        (click)="resource._attachments ? openResource(resource._id) : false"
+        [ngClass]="{'cursor-pointer': resource._attachments}">
+        {{resource.title}}
+      </span>
     </mat-menu>
   `
 })
