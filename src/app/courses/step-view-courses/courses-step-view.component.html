@@ -52,7 +52,7 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="stepDetail.resources.length !== 0"
-        [href]="resource._id"
+        [routerLink]="['/resources/view', resource._id]"
         target="_blank"
         i18n>
         View Resource Details
