@@ -4,7 +4,7 @@
   .view-container {
     display: grid;
     grid-template-rows: min-content auto 42px;
-    > * {
+    > .form-container {
       overflow-y: auto;
     }
     grid-row-gap: 0.25rem;
