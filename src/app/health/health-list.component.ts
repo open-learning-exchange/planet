@@ -49,6 +49,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
 
   tableDataChange(newData) {
     const usersWithoutHealth = newData.filter(user => !user.health && this.healthRequests.indexOf(user._id) === -1);
+    const maxEventDate = (events) => events.reduce((max, { date }) => date > max ? date : max, null);
     this.healthRequests = [ ...this.healthRequests, ...usersWithoutHealth.map(user => user._id) ];
     if (usersWithoutHealth.length === 0) {
       return;
@@ -57,7 +58,10 @@ export class HealthListComponent implements OnInit, OnDestroy {
       this.users = this.users.map(user => user._id === userHealth._id ?
         {
           ...user,
-          health: { ...userHealth, lastVisit: userHealth.events.reduce((max, { date }) => date > max ? date : max, null) }
+          health: {
+            ...userHealth,
+            lastVisit: Math.max(maxEventDate(userHealth.events), userHealth.lastExamination || 0) || ''
+          }
         } :
         user
       );
