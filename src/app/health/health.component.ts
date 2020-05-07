@@ -73,7 +73,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
         this.healthDetail = profile;
         this.events = events || [];
-        return this.couchService.findAll('health', findDocuments({ profileId: userKey }));
+        return userKey ? this.couchService.findAll('health', findDocuments({ profileId: userKey })) : of([]);
       })
     ).subscribe(eventDocs => {
       this.events = [ ...this.events, ...eventDocs ];
