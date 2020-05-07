@@ -38,7 +38,7 @@ export class ResourcesMenuComponent {
   }
 
   openResource(resourceId) {
-        this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
+    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
   buttonClick(resources) {
