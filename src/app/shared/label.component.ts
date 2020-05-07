@@ -4,11 +4,11 @@ import { Component, Input } from '@angular/core';
   selector: 'planet-label',
   template: `
     <span i18n>{label, select,
-      temperature {Temperature}
-      pulse {Pulse}
+      temperature {Temperature (°C)}
+      pulse {Pulse (bpm)}
       bp {Blood Pressure}
-      height {Height}
-      weight {Weight}
+      height {Height (cm)}
+      weight {Weight (kg)}
       vision {Vision}
       hearing {Hearing}
       help {Help Wanted}

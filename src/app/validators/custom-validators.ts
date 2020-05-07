@@ -24,6 +24,10 @@ export class CustomValidators {
     return ac.value.replace(/\s/g, '') === ac.value ? null : { whitespace: true };
   }
 
+  static bpValidator(ac: AbstractControl) {
+    return /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
+  }
+
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
     if (!ac.value) {
       return null;
