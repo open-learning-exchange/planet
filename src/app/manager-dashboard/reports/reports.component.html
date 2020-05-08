@@ -16,6 +16,7 @@
       <mat-expansion-panel *ngFor="let hub of hubs; trackBy: trackById">
         <mat-expansion-panel-header>
           <mat-panel-title>{{hub.name}}</mat-panel-title>
+          <a mat-button class="margin-lr-10" (click)="viewReport(hub.doc, $event)" i18n>Report</a>
         </mat-expansion-panel-header>
         <planet-reports-table [planets]="hub.children"></planet-reports-table>
       </mat-expansion-panel>
