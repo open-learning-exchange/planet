@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
@@ -7,7 +7,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   templateUrl: 'dialogs-add-resources.component.html'
 })
-export class DialogsAddResourcesComponent {
+export class DialogsAddResourcesComponent implements AfterViewChecked {
 
   @ViewChild(ResourcesComponent, { static: false }) resourcesComponent: ResourcesComponent;
   @ViewChild(ResourcesAddComponent, { static: false }) resourcesAddComponent: ResourcesAddComponent;
@@ -32,10 +32,10 @@ export class DialogsAddResourcesComponent {
   }
 
   ngAfterViewChecked() {
-    const okDisabled =  (!this.resourcesComponent || !this.resourcesComponent.selection.selected.length) &&
+    const okDisabled = (!this.resourcesComponent || !this.resourcesComponent.selection.selected.length) &&
       (!this.resourcesAddComponent || !this.resourcesAddComponent.resourceForm.valid);
     if (this.okDisabled !== okDisabled) {
-      this.okDisabled =  okDisabled;
+      this.okDisabled = okDisabled;
       this.cdRef.detectChanges();
     }
   }

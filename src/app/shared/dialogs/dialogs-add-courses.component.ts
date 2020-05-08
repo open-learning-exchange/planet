@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -6,7 +6,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   templateUrl: 'dialogs-add-courses.component.html'
 })
-export class DialogsAddCoursesComponent {
+export class DialogsAddCoursesComponent implements AfterViewChecked {
 
   @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
   okDisabled = true;
@@ -19,9 +19,9 @@ export class DialogsAddCoursesComponent {
   ) {}
 
   ngAfterViewChecked() {
-    const okDisabled =  !this.coursesComponent || !this.coursesComponent.selection.selected.length;
+    const okDisabled = !this.coursesComponent || !this.coursesComponent.selection.selected.length;
     if (this.okDisabled !== okDisabled) {
-      this.okDisabled =  okDisabled;
+      this.okDisabled = okDisabled;
       this.cdRef.detectChanges();
     }
   }
