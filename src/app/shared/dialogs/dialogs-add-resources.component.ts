@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
@@ -13,19 +13,30 @@ export class DialogsAddResourcesComponent {
   @ViewChild(ResourcesAddComponent, { static: false }) resourcesAddComponent: ResourcesAddComponent;
   view: 'resources' | 'resourcesAdd' = 'resources';
   linkInfo: any;
+  okDisabled = true;
   updateResource = false;
   existingResource: any = {};
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
       this.updateResource = true;
       this.view = 'resourcesAdd';
       this.existingResource = { doc: this.data.resource, _id: this.data.resource._id, _rev: this.data.resource._rev };
+    }
+  }
+
+  ngAfterViewChecked() {
+    const okDisabled =  (!this.resourcesComponent || !this.resourcesComponent.selection.selected.length) &&
+      (!this.resourcesAddComponent || !this.resourcesAddComponent.resourceForm.valid);
+    if (this.okDisabled !== okDisabled) {
+      this.okDisabled =  okDisabled;
+      this.cdRef.detectChanges();
     }
   }
 

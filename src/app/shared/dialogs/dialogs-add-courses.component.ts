@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -9,12 +9,22 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 export class DialogsAddCoursesComponent {
 
   @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
+  okDisabled = true;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddCoursesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private cdRef: ChangeDetectorRef
   ) {}
+
+  ngAfterViewChecked() {
+    const okDisabled =  !this.coursesComponent || !this.coursesComponent.selection.selected.length;
+    if (this.okDisabled !== okDisabled) {
+      this.okDisabled =  okDisabled;
+      this.cdRef.detectChanges();
+    }
+  }
 
   ok() {
     if (!this.data.noSpinner) {
