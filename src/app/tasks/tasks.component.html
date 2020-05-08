@@ -13,7 +13,7 @@
 </mat-button-toggle-group>
 <mat-action-list [disableRipple]="!editable">
   <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="openTaskDetail(task)" [disabled]="!editable">
-    <mat-checkbox [checked]="task.completed" [disabled]="!editable" (click)="toggleTaskComplete(task); $event.stopPropagation()"></mat-checkbox>
+    <mat-checkbox [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
     <p matLine>{{task.title}}</p>
     <p matLine><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</p>
     <p matLine *ngIf="task.completed"><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</p>
