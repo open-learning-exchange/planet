@@ -25,7 +25,7 @@ export class CustomValidators {
   }
 
   static bpValidator(ac: AbstractControl) {
-    return /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
+    return !ac.value || /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
