@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -6,15 +6,22 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   templateUrl: 'dialogs-add-courses.component.html'
 })
-export class DialogsAddCoursesComponent {
+export class DialogsAddCoursesComponent implements AfterViewInit {
 
   @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
+  okDisabled = true;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddCoursesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
+
+  ngAfterViewInit() {
+    this.coursesComponent.selection.onChange.subscribe((selection) => {
+      this.okDisabled = selection.source.selected.length === 0;
+    });
+  }
 
   ok() {
     if (!this.data.noSpinner) {
