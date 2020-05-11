@@ -46,7 +46,7 @@ export class HealthEventComponent {
   }
 
   onSubmit() {
-    if (!this.allValid()) {
+    if (!this.healthForm.valid) {
       return;
     }
     this.healthService.addEvent(
@@ -62,10 +62,6 @@ export class HealthEventComponent {
     ).subscribe(() => {
       this.goBack();
     });
-  }
-
-  allValid() {
-    return Object.values(this.healthForm.controls).every((control: any) => (control.status === 'INVALID' && control.touched) === false);
   }
 
   isEmptyForm() {
