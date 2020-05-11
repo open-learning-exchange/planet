@@ -65,7 +65,8 @@ export class HealthEventComponent {
   }
 
   isEmptyForm() {
-    return Object.values(this.healthForm.controls).every(control => control.value === '');
+    const isConditionsEmpty = (values) => typeof values === 'object' && Object.values(values).every(value => !value);
+    return Object.values(this.healthForm.controls).every(({ value }) => value === '' || value === null || isConditionsEmpty(value));
   }
 
   goBack() {
