@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 @Component({
   template: `
     <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
-    <mat-dialog-actions style="float:right">
+    <mat-dialog-actions>
       <button mat-dialog-close mat-raised-button i18n>Close</button>
       <button mat-raised-button color="primary" (click)="viewResources()">View Resource</button>
     </mat-dialog-actions>
