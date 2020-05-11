@@ -43,7 +43,7 @@ export class ResourcesMenuComponent {
 
   buttonClick(resources) {
     if (resources.length === 1) {
-      window.open(this.resourceUrl(resources[0]), '_blank');
+      this.openResource(resources[0]._id);
       this.resourceButton.closeMenu();
     }
   }
