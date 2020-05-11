@@ -52,10 +52,10 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="stepDetail.resources.length !== 0"
-        [href]="resourceUrl"
+        [routerLink]="['/resources/view', resource._id]"
         target="_blank"
         i18n>
-        Open resource new tab
+        View Resource Details
       </a>
       <mat-form-field *ngIf="stepDetail.resources.length > 1">
         <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (selectionChange)="onResourceChange($event.value)">
