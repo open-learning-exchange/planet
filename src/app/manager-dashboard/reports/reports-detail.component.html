@@ -4,21 +4,23 @@
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
-  <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons" *ngIf="minDate">
-    <mat-form-field>
-      <mat-label>Start Date</mat-label>
-      <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
-      <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-      <mat-datepicker #startDate></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>End Date</mat-label>
-      <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
-      <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
-      <mat-datepicker #endDate></mat-datepicker>
-    </mat-form-field>
-  </form>
-  <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime">Show All Time</button>
+  <ng-container *ngIf="minDate">
+    <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
+      <mat-form-field>
+        <mat-label>Start Date</mat-label>
+        <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+        <mat-datepicker #startDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>End Date</mat-label>
+        <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+        <mat-datepicker #endDate></mat-datepicker>
+      </mat-form-field>
+    </form>
+    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime">Show All Time</button>
+  </ng-container>
   <mat-button-toggle-group
     class="font-size-1"
     (change)="onFilterChange($event.value)"
