@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
@@ -7,7 +7,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 @Component({
   templateUrl: 'dialogs-add-resources.component.html'
 })
-export class DialogsAddResourcesComponent implements AfterViewChecked {
+export class DialogsAddResourcesComponent implements AfterViewInit {
 
   @ViewChild(ResourcesComponent, { static: false }) resourcesComponent: ResourcesComponent;
   @ViewChild(ResourcesAddComponent, { static: false }) resourcesAddComponent: ResourcesAddComponent;
@@ -20,8 +20,7 @@ export class DialogsAddResourcesComponent implements AfterViewChecked {
   constructor(
     public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogsLoadingService: DialogsLoadingService,
-    private cdRef: ChangeDetectorRef
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
@@ -31,13 +30,8 @@ export class DialogsAddResourcesComponent implements AfterViewChecked {
     }
   }
 
-  ngAfterViewChecked() {
-    const okDisabled = (!this.resourcesComponent || !this.resourcesComponent.selection.selected.length) &&
-      (!this.resourcesAddComponent || !this.resourcesAddComponent.resourceForm.valid);
-    if (this.okDisabled !== okDisabled) {
-      this.okDisabled = okDisabled;
-      this.cdRef.detectChanges();
-    }
+  ngAfterViewInit() {
+    this.initOkDisableChange();
   }
 
   ok() {
@@ -69,6 +63,21 @@ export class DialogsAddResourcesComponent implements AfterViewChecked {
 
   toggleNewOrExisting() {
     this.view = this.view === 'resources' ? 'resourcesAdd' : 'resources';
+    // Use setTimeout to wait for Angular building the component being switched to
+    setTimeout(() => this.initOkDisableChange());
+  }
+
+  initOkDisableChange() {
+    switch (this.view) {
+      case 'resources':
+        this.resourcesComponent.selection.changed.subscribe((selection) => this.okDisabled = selection.source.selected.length === 0);
+        break;
+      case 'resourcesAdd':
+        this.resourcesAddComponent.resourceForm.valueChanges.subscribe(
+          () => this.okDisabled = !this.resourcesAddComponent.resourceForm.valid
+        );
+        break;
+    }
   }
 
 }
