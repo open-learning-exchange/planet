@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 @Component({
   template: `
-    <planet-exams-view [isDialog]="true" [questionNum]="1" [exam]="data.exam" (closePreview)="closeDialog($event)"></planet-exams-view>
+    <planet-exams-view [isDialog]="true" [questionNum]="1" [exam]="data.exam" (closePreview)="closeDialog()"></planet-exams-view>
     <mat-dialog-actions>
       <button color="primary" mat-raised-button mat-dialog-close i18n>Close Preview</button>
     </mat-dialog-actions>
