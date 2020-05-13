@@ -4,15 +4,20 @@ import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, itemInDateRange } from './reports.utils';
 import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
+import { dedupeShelfReduce } from '../../shared/utils';
+import { conditions } from '../../health/health.constants';
 
 @Component({
   selector: 'planet-reports-health',
-  template: `
-    <planet-reports-detail-activities
-      [activitiesByDoc]="weeklyHealthData"
-      activityType="health">
-    </planet-reports-detail-activities>
-  `
+  templateUrl: './reports-health.component.html',
+  styles: [ `
+    div {
+      display: grid;
+      margin: 0.5rem 0;
+      grid-gap: 0.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+  ` ]
 })
 export class ReportsHealthComponent implements OnChanges {
 
@@ -20,6 +25,8 @@ export class ReportsHealthComponent implements OnChanges {
   @Input() dateRange: { startDate: Date, endDate: Date };
   examinations;
   weeklyHealthData = [];
+  headlineData: { total: number, unique: string[], conditions: any };
+  conditions = conditions;
 
   constructor(
     private reportsService: ReportsService,
@@ -51,6 +58,16 @@ export class ReportsHealthComponent implements OnChanges {
       [ 'weekOf' ],
       { uniqueField: 'profileId', includeDocs: true }
     );
+    this.headlineData = filteredExaminations.reduce((data, examination) => ({
+      ...data,
+      unique: [ ...data.unique, examination.profileId ].reduce(dedupeShelfReduce, []),
+      conditions: conditions.reduce(
+        (conditionObj, condition) => ({
+          ...conditionObj, [condition]: (conditionObj[condition] || 0) + (examination.conditions[condition] === true ? 1 : 0)
+        }),
+        data.conditions
+      )
+    }), { total: filteredExaminations.length, unique: [], conditions: {} });
   }
 
 }
