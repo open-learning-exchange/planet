@@ -10,7 +10,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
-  @Input() activityType: 'resources' | 'courses' = 'resources';
+  @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
   activities = new MatTableDataSource();
   displayedColumns = [
@@ -24,11 +24,15 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   constructor() {}
 
   ngOnInit() {
-    this.activities.sortingDataAccessor = (item: any, property: string) =>
+    this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?
+      item.unique.length :
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
   ngOnChanges() {
+    this.displayedColumns = this.activityType === 'health' ?
+      [ 'weekOf', 'count', 'unique' ] :
+      [ 'title', 'count', 'averageRating' ];
     this.activities.data = this.activitiesByDoc.map(
       activity => ({
         averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
