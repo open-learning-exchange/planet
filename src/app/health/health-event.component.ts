@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
@@ -25,11 +25,11 @@ export class HealthEventComponent {
     private stateService: StateService
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', CustomValidators.positiveNumberValidator ],
-      pulse: [ '', CustomValidators.positiveNumberValidator ],
+      temperature: [ '', [ CustomValidators.positiveNumberValidator, Validators.min(1) ] ],
+      pulse: [ '', [ CustomValidators.positiveNumberValidator, Validators.min(1) ] ],
       bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', CustomValidators.positiveNumberValidator ],
-      weight: [ '', CustomValidators.positiveNumberValidator ],
+      height: [ '', [ CustomValidators.positiveNumberValidator, Validators.min(1) ] ],
+      weight: [ '', [ CustomValidators.positiveNumberValidator, Validators.min(1) ] ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',
