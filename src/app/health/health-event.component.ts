@@ -25,11 +25,11 @@ export class HealthEventComponent {
     private stateService: StateService
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', CustomValidators.positiveNumberValidator ],
-      pulse: [ '', CustomValidators.positiveNumberValidator ],
+      temperature: [ '', CustomValidators.temperatureValidator ],
+      pulse: [ '', CustomValidators.pulseValidator ],
       bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', CustomValidators.positiveNumberValidator ],
-      weight: [ '', CustomValidators.positiveNumberValidator ],
+      height: [ '', CustomValidators.heightValidator ],
+      weight: [ '', CustomValidators.weightValidator ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',
