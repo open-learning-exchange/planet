@@ -51,7 +51,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   rowClick(element) {
-    this.itemClick.emit(element.resourceId || element.courseId);
+    this.itemClick.emit(element.resourceId || element.courseId || element.weekOf);
   }
 
 }

@@ -13,5 +13,6 @@
 <h1 class="mat-title" i18n>Weekly Data</h1>
 <planet-reports-detail-activities
   [activitiesByDoc]="weeklyHealthData"
-  activityType="health">
+  activityType="health"
+  (itemClick)="showWeek($event)">
 </planet-reports-detail-activities>

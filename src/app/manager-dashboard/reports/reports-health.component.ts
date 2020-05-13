@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, itemInDateRange } from './reports.utils';
@@ -23,6 +23,7 @@ export class ReportsHealthComponent implements OnChanges {
 
   @Input() planetCode = this.stateService.configuration.code;
   @Input() dateRange: { startDate: Date, endDate: Date };
+  @Output() changeDateRange = new EventEmitter<{ startDate: Date, endDate: Date }>();
   examinations;
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };
@@ -68,6 +69,10 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
+  }
+
+  showWeek(weekOf) {
+    this.changeDateRange.emit({ startDate: new Date(weekOf), endDate: new Date(weekOf + (millisecondsToDay * 6)) });
   }
 
 }
