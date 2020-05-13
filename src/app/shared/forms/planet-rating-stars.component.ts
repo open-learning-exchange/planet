@@ -10,6 +10,7 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
   styles: [ `
     .stars mat-icon {
       cursor: default;
+      margin: 0;
     }
     .stars.stars-enabled mat-icon {
       cursor: pointer;
