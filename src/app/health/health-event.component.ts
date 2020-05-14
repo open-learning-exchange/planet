@@ -84,25 +84,7 @@ export class HealthEventComponent {
   }
 
   valueChange(type, value) {
-    let valid = true;
-    switch (type) {
-      case 'temperature':
-        valid = value >= 30 && value <= 40;
-        break;
-      case 'bp':
-        valid = /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
-        break;
-      case 'pulse':
-        valid = value >= 40 && value <= 120;
-        break;
-      case 'height':
-        valid = value > 0 && value <= 250;
-        break;
-      case 'weight':
-        valid = value > 0 && value <= 150;
-        break;
-    }
-    if (!valid) {
+    if (!this.validateMeasure(type, value)) {
       const displayName = 'Measure of ' + type + ' seems to be off.';
       this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
         data: {
@@ -117,6 +99,22 @@ export class HealthEventComponent {
         }
       });
     }
+  }
+
+  validateMeasure(type, value) {
+    switch (type) {
+      case 'temperature':
+        return value >= 30 && value <= 40;
+      case 'bp':
+        return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
+      case 'pulse':
+        return value >= 40 && value <= 120;
+      case 'height':
+        return value > 0 && value <= 250;
+      case 'weight':
+        return value > 0 && value <= 150;
+    }
+    return true;
   }
 
 }
