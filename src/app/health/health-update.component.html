@@ -46,8 +46,9 @@
         </mat-form-field>
       </form>
       <form class="form-spacing" [formGroup]="healthForm">
+        <span class="full-width primary-text-color mat-body-2">Emergency Contact</span>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Emergency Contact" formControlName="emergencyContactName">
+          <input matInput i18n-placeholder placeholder="Name" formControlName="emergencyContactName">
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Contact Type" formControlName="emergencyContactType">
