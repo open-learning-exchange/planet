@@ -8,6 +8,7 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -25,6 +26,7 @@ export class HealthEventComponent {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
+    private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private dialog: MatDialog
   ) {
@@ -103,12 +105,14 @@ export class HealthEventComponent {
     }
     if (!valid) {
       const displayName = 'Measure of ' + type + ' seems to be off.';
+      const healthView = true;
       this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
         data: {
           spinnerOn: false,
           showMainParagraph: false,
           displayName,
-          cancelable: false
+          cancelable: false,
+          healthView
         }
       });
     }

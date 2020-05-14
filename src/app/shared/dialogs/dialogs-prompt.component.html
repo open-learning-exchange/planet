@@ -32,6 +32,7 @@
   <b>{{data.displayName}}</b>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="primary" mat-raised-button (click)="ok()" [planetSubmit]="spinnerOn" i18n>OK</button>
+  <button color="primary" mat-raised-button (click)="ok()" *ngIf="!healthView" [planetSubmit]="spinnerOn" i18n>OK</button>
   <button color="warn" mat-raised-button mat-dialog-close *ngIf="cancelable" i18n>Cancel</button>
+  <button color="primary" mat-raised-button mat-dialog-close *ngIf="healthView" i18n>OK</button>
 </mat-dialog-actions>
