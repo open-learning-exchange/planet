@@ -14,19 +14,19 @@
           <mat-error><planet-form-error-messages [control]="healthForm.controls.temperature"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Pulse in bpm" formControlName="pulse" type="number" min="0">
+          <input matInput i18n-placeholder placeholder="Pulse in bpm" formControlName="pulse" type="number" min="0" (change)="valueChange('pulse', $event.target.value)">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.pulse"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Blood Pressure" formControlName="bp">
+          <input matInput i18n-placeholder placeholder="Blood Pressure" formControlName="bp" (change)="valueChange('bp', $event.target.value)">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.bp"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Height in cm" formControlName="height" type="number" min="0">
+          <input matInput i18n-placeholder placeholder="Height in cm" formControlName="height" type="number" min="0" (change)="valueChange('height', $event.target.value)">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.height"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Weight in kg" formControlName="weight" type="number" min="0">
+          <input matInput i18n-placeholder placeholder="Weight in kg" formControlName="weight" type="number" min="0" (change)="valueChange('weight', $event.target.value)">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.weight"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
