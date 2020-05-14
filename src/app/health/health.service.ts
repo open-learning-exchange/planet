@@ -4,6 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { stringToHex } from '../shared/utils';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -116,6 +117,10 @@ export class HealthService {
     window.crypto.getRandomValues(keyArray);
 
     return keyArray.reduce((hexString, number) => `${hexString}${hexDigits[Math.floor(number / 16)]}${hexDigits[number % 16]}`, '');
+  }
+
+  getExaminations(planetCode) {
+    return this.couchService.findAll('health', findDocuments({ planetCode }));
   }
 
 }

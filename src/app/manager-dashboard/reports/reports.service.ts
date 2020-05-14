@@ -30,7 +30,7 @@ export class ReportsService {
     private stateService: StateService
   ) {}
 
-  groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '' } = {}) {
+  groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
     return array.reduce((group, item) => {
       const currentValue = group.find((groupItem) => fields.every(field => groupItem[field] === item[field]));
       if (currentValue) {
@@ -40,12 +40,15 @@ export class ReportsService {
           (currentValue.max[maxField] < item[maxField] ? item : currentValue.max) :
           {};
         currentValue.unique = uniqueField ? currentValue.unique.concat([ item[uniqueField] ]).reduce(dedupeShelfReduce, []) : [];
+        currentValue.docs = includeDocs ? [ ...currentValue.docs, item ] : currentValue.docs;
       } else {
         const newEntry = fields.reduce((newObj, field) => {
           newObj[field] = item[field];
           return newObj;
         }, {});
-        group.push({ ...newEntry, count: 1, sum: sumField ? item[sumField] : 0, max: item, unique: [ item[uniqueField] ] });
+        group.push({
+          ...newEntry, count: 1, sum: sumField ? item[sumField] : 0, max: item, unique: [ item[uniqueField] ], docs: [ item ]
+        });
       }
       return group;
     }, []);

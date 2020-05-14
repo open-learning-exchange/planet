@@ -345,8 +345,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
-  resetDateFilter() {
-    this.dateFilterForm.controls.startDate.setValue(this.minDate);
-    this.dateFilterForm.controls.endDate.setValue(this.today);
+  resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
+    this.dateFilterForm.controls.startDate.setValue(startDate || this.minDate);
+    this.dateFilterForm.controls.endDate.setValue(endDate || this.today);
   }
 }
