@@ -24,7 +24,7 @@ export class CustomValidators {
     return ac.value.replace(/\s/g, '') === ac.value ? null : { whitespace: true };
   }
 
-  static bpValidator(ac: AbstractControl) {  // 60-300/40-200
+  static bpValidator(ac: AbstractControl) {
     return !ac.value || /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
   }
 
