@@ -17,13 +17,11 @@ import { findDocuments } from '../../shared/mangoQueries';
 export class ReportsMyPlanetComponent implements OnInit {
 
   private allPlanets: any[] = [];
-  private allUsages: any[] = [];
   searchValue = '';
   planets: any[] = [];
   isEmpty = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
-  usages: any[];
   get childType() {
     return this.planetType === 'center' ? 'Community' : 'Nation';
   }
@@ -64,18 +62,9 @@ export class ReportsMyPlanetComponent implements OnInit {
         })
       })
     );
-    this.allUsages = planets.map(planet => ({
-      ...planet,
-      children:
-      this.reportsService.groupBy(
-        myPlanets.filter(myPlanet => {
-          return myPlanet.type === 'usages' && (myPlanet.usages || []).length !== 0 &&
-            (myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code);
-          }),
-          [ 'androidId' ],
-          { maxField: 'time' }
-      )}
-    ));
+    const data: any = myPlanets.filter(myPlanet => myPlanet.type === 'usages').forEach(usage => usage)
+    console.log(data)
+    // this.allPlanets.map(v => v.children.filter(child => child.customDeviceName === data.usages.find()))
   }
 
   getMyPlanetList(hubId) {
@@ -86,7 +75,6 @@ export class ReportsMyPlanetComponent implements OnInit {
         ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
-      this.usages = this.allUsages;
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
