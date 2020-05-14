@@ -6,6 +6,8 @@ import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -15,6 +17,7 @@ export class HealthEventComponent {
 
   healthForm: FormGroup;
   conditions = conditions;
+  dialogPrompt: MatDialogRef<DialogsPromptComponent>;
 
   constructor(
     private fb: FormBuilder,
@@ -22,14 +25,15 @@ export class HealthEventComponent {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialog: MatDialog
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', CustomValidators.temperatureValidator ],
-      pulse: [ '', CustomValidators.pulseValidator ],
+      temperature: [ '', CustomValidators.positiveNumberValidator ],
+      pulse: [ '', CustomValidators.positiveNumberValidator ],
       bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', CustomValidators.heightValidator ],
-      weight: [ '', CustomValidators.weightValidator ],
+      height: [ '', CustomValidators.positiveNumberValidator ],
+      weight: [ '', CustomValidators.positiveNumberValidator ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',
@@ -76,6 +80,38 @@ export class HealthEventComponent {
   conditionChange(condition) {
     const currentConditions = this.healthForm.controls.conditions.value;
     this.healthForm.controls.conditions.setValue({ ...currentConditions, [condition]: currentConditions[condition] !== true });
+  }
+
+  valueChange(type, value) {
+    let valid = true;
+    switch (type) {
+      case 'temperature':
+        valid = value >= 30 && value <= 40;
+        break;
+      case 'bp':
+        valid = /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
+        break;
+      case 'pulse':
+        valid = value >= 40 && value <= 120;
+        break;
+      case 'height':
+        valid = value > 0 && value <= 250;
+        break;
+      case 'weight':
+        valid = value > 0 && value <= 150;
+        break;
+    }
+    if (!valid) {
+      const displayName = 'Measure of ' + type + ' seems to be off.';
+      this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          spinnerOn: false,
+          showMainParagraph: false,
+          displayName,
+          cancelable: false
+        }
+      });
+    }
   }
 
 }

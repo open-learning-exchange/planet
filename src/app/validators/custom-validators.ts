@@ -25,9 +25,7 @@ export class CustomValidators {
   }
 
   static bpValidator(ac: AbstractControl) {  // 60-300/40-200
-    // return !ac.value || /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
-    return !ac.value ||
-            /^([6-9])(\d)|^(2)([0-9])([0-9])|^(300)\/^([4-9])(\d)|^(1)([0-9])([0-9])|^(200)$/.test(ac.value) ? null : { bp: true };
+    return !ac.value || /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
@@ -35,34 +33,6 @@ export class CustomValidators {
       return null;
     }
     return (ac.value > 0) ? null : { invalidPositive : true };
-  }
-
-   static temperatureValidator(ac: AbstractControl): ValidationErrors { // 30-40 range
-    if (!ac.value) {
-      return null;
-    }
-    return (ac.value >= 30 && ac.value <= 40) ? null : { invalidTemperature : true };
-  }
-
-  static pulseValidator(ac: AbstractControl): ValidationErrors { // 40-120 range
-    if (!ac.value) {
-      return null;
-    }
-    return (ac.value >= 40 && ac.value <= 120) ? null : { invalidPulse : true };
-  }
-
-  static heightValidator(ac: AbstractControl): ValidationErrors { // max 250cm
-    if (!ac.value) {
-      return null;
-    }
-    return (ac.value > 0 && ac.value <= 250) ? null : { invalidHeight : true };
-  }
-
-  static weightValidator(ac: AbstractControl): ValidationErrors { // max 150kg
-    if (!ac.value) {
-      return null;
-    }
-    return (ac.value > 0 && ac.value <= 150) ? null : { invalidWeight : true };
   }
 
   static choiceSelected(requireCorrect: boolean) {
