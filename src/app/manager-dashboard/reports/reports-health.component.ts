@@ -24,6 +24,7 @@ export class ReportsHealthComponent implements OnChanges {
   @Input() planetCode = this.stateService.configuration.code;
   @Input() dateRange: { startDate: Date, endDate: Date };
   @Output() changeDateRange = new EventEmitter<{ startDate: Date, endDate: Date }>();
+  @Output() updateHealthData = new EventEmitter<any[]>();
   examinations;
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };

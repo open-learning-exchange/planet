@@ -28,12 +28,12 @@ export class CsvService {
 
   exportCSV({ data, title }: { data: any[], title: string }) {
     const options = { title, filename: `Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
-    const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, ...dataToDisplay }) =>
-      Object.entries(dataToDisplay).reduce((object, [ key, value ]: [ string, any ]) => ({
-        ...object,
-        [markdownToPlainText(key)]: !this.isDateKey(key) ? markdownToPlainText(value) : value ? new Date(value).toString() : ''
-      }), {}
-    ));
+    const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
+      return Object.entries(dataToDisplay).reduce(
+        (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
+        {}
+      );
+    });
     if (formattedData.length === 0) {
       this.planetMessageService.showAlert('There was no data during that period to export');
       return;
@@ -102,8 +102,22 @@ export class CsvService {
     });
   }
 
+  formatValue(key: string, value: string) {
+    return key === 'conditions' ?
+      this.formatHealthConditions(value) :
+      !this.isDateKey(key) ?
+      markdownToPlainText(value) :
+      value ?
+      new Date(value).toString() :
+      '';
+  }
+
   isDateKey(key: string) {
-    return key === 'loginTime' || key === 'time' || key === 'Date' || key === 'logoutTime';
+    return key === 'loginTime' || key === 'time' || key === 'Date' || key === 'logoutTime' || key === 'date';
+  }
+
+  formatHealthConditions(conditions: any) {
+    return Object.entries(conditions).filter(([ key, value ]) => value === true).map(([ key, value ]) => key).join(', ');
   }
 
 }
