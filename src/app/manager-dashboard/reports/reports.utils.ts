@@ -29,9 +29,10 @@ export const itemInDateRange = (item, dateField, startDate, endDate) => {
   return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
 };
 
-export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-  itemInDateRange(item, dateField, startDate, endDate)
-);
+export const filterByDate = (array, dateField, { startDate, endDate, isEndInclusive = true, additionalFilterFunction = (i?) => true }) => {
+  const endTime = isEndInclusive ? new Date(new Date(endDate).setHours(24)) : endDate;
+  return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
+};
 
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
