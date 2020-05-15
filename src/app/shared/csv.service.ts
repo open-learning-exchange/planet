@@ -102,14 +102,13 @@ export class CsvService {
     });
   }
 
-  formatValue(key: string, value: string) {
+  formatValue(key: string, value: any) {
+    const dateString = (date: number | undefined) => date ? new Date(date).toString() : '';
     return key === 'conditions' ?
       this.formatHealthConditions(value) :
-      !this.isDateKey(key) ?
-      markdownToPlainText(value) :
-      value ?
-      new Date(value).toString() :
-      '';
+      this.isDateKey(key) ?
+      dateString(value) :
+      markdownToPlainText(value);
   }
 
   isDateKey(key: string) {
