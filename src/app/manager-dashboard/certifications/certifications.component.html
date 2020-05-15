@@ -18,8 +18,8 @@
   <div *ngIf="!emptyData; else notFoundMessage" class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Certification Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-header-cell i18n *matHeaderCellDef mat-sort-header>Certification Name</mat-header-cell>
+        <mat-cell i18n *matCellDef="let element">{{element.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
@@ -41,6 +41,6 @@
     </mat-paginator>
   </div>
   <ng-template #notFoundMessage>
-    <div class="view-container">No Certifications Found</div>
+    <div i18n class="view-container">No Certifications Found</div>
   </ng-template>
 </div>
