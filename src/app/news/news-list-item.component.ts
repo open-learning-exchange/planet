@@ -137,12 +137,12 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   shouldShowIndication() {
     if (this.shareTarget === this.planetCode) {
       this.userListeners.forEach(listener => {
-        const user_id = listener._id;
+        const userId = listener._id;
         const joinDate = listener.joinDate;
-        if (this.currentUser._id === user_id && this.currentUser.joinDate === joinDate) {
+        if (this.currentUser._id === userId && this.currentUser.joinDate === joinDate) {
           return true;
         }
-      })
+      });
       return false;
     }
     return false;
