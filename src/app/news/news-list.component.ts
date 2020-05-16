@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
+import { UsersService } from '../users/users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -29,6 +30,7 @@ export class NewsListComponent implements OnChanges {
   @Input() shareTarget: 'community' | 'nation' | 'center';
   displayedItems: any[] = [];
   replyObject: any = {};
+  activeMembers: any[] = [];
   isMainPostShared = true;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
@@ -40,6 +42,7 @@ export class NewsListComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
+    private usersService: UsersService,
     private planetMessageService: PlanetMessageService
   ) {}
 
@@ -52,6 +55,8 @@ export class NewsListComponent implements OnChanges {
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
+    this.usersService.requestUsers();
+    this.activeMembers = this.usersService.usersListener();
   }
 
   showReplies(news) {
