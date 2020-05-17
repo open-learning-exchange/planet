@@ -137,7 +137,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   shouldShowIndication() {
     if (this.shareTarget === this.planetCode) {
       return this.activeMembers.user.findIndex(this.item.doc.user._id) !== -1 &&
-        this.activeMembers.loginActivities.findIndex(this.item.doc.user.joinDate) !== -1
+        this.activeMembers.loginActivities.findIndex(this.item.doc.user.joinDate) !== -1;
     }
     return false;
   }
