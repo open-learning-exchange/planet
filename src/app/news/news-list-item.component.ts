@@ -19,7 +19,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
-  @Input() userListeners: any[] = [];
+  @Input() activeMembers: any = {};
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
@@ -136,14 +136,13 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   shouldShowIndication() {
     if (this.shareTarget === this.planetCode) {
-      this.userListeners.forEach(listener => {
-        const userId = listener._id;
-        const joinDate = listener.joinDate;
-        if (this.currentUser._id === userId && this.currentUser.joinDate === joinDate) {
-          return true;
-        }
-      });
-      return false;
+      if (this.activeMembers.user.findIndex(this.item.doc.user._id) === -1) {
+        return false;
+      }
+      if (this.activeMembers.loginActivities.findIndex(this.item.doc.user.joinDate) === -1) {
+        return false;
+      }
+      return true;
     }
     return false;
   }

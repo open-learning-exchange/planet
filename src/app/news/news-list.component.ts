@@ -30,7 +30,7 @@ export class NewsListComponent implements OnChanges {
   @Input() shareTarget: 'community' | 'nation' | 'center';
   displayedItems: any[] = [];
   replyObject: any = {};
-  activeMembers: any[] = [];
+  activeMembers: any = {};
   isMainPostShared = true;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
@@ -56,7 +56,7 @@ export class NewsListComponent implements OnChanges {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
     this.usersService.requestUsers();
-    this.activeMembers = this.usersService.usersListener();
+    this.activeMembers = this.usersService.data;
   }
 
   showReplies(news) {

@@ -7,7 +7,7 @@
           item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
           item.doc.user.name}}
       </a>
-      <span *ngIf=!isActiveMember >(no longer member)</span>
+      <span *ngIf=!isActiveMember>(no longer member)</span>
     </mat-card-title>
     <mat-card-subtitle>
       <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
