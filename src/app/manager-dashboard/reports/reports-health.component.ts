@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
-import { generateWeeksArray, itemInDateRange } from './reports.utils';
+import { generateWeeksArray, filterByDate } from './reports.utils';
 import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce } from '../../shared/utils';
@@ -50,9 +50,7 @@ export class ReportsHealthComponent implements OnChanges {
   }
 
   setHealthData(weeks: number[]) {
-    const filteredExaminations = this.examinations.filter(
-      examination => itemInDateRange(examination, 'date', this.dateRange.startDate, this.dateRange.endDate)
-    );
+    const filteredExaminations = filterByDate(this.examinations, 'date', this.dateRange);
     this.weeklyHealthData = this.reportsService.groupBy(
       filteredExaminations.map(examination => ({
         ...examination, weekOf: weeks.find(week => week > (examination.date - (millisecondsToDay * 7)))
