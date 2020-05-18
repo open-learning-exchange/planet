@@ -46,6 +46,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     status: 'requires grading'
   };
 
+  searchByField = 'name';
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -71,25 +73,25 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     }
     this.coursesService.requestCourses();
     zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ submissions, courses ]) => {
-      submissions = submissions.filter(data => data.user && data.type !== 'photo' && data.parent).reduce((sList, s1) => {
-        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-        if (!s1.user._id || sIndex === -1) {
-          sList.push(s1);
-        } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
-          sList[sIndex] = s1;
-        }
-        return sList;
-      }, []).map(submission => this.appendCourseInfo(submission, courses));
-      // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
-      submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
-      this.submissions.data = submissions.map(submission => ({
-        ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
-      }));
-      this.dialogsLoadingService.stop();
-      this.applyFilter('');
-      this.emptyData = !this.submissions.filteredData.length;
-    });
+      .subscribe(([ submissions, courses ]) => {
+        submissions = submissions.filter(data => data.user && data.type !== 'photo' && data.parent).reduce((sList, s1) => {
+          const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
+          if (!s1.user._id || sIndex === -1) {
+            sList.push(s1);
+          } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
+            sList[sIndex] = s1;
+          }
+          return sList;
+        }, []).map(submission => this.appendCourseInfo(submission, courses));
+        // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
+        submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
+        this.submissions.data = submissions.map(submission => ({
+          ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
+        }));
+        this.dialogsLoadingService.stop();
+        this.applyFilter('');
+        this.emptyData = !this.submissions.filteredData.length;
+      });
     this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
   }
@@ -111,8 +113,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.mode = this.route.snapshot.data.mySurveys === true ?
       'survey' :
       this.parentId ?
-      'review' :
-      'grade';
+        'review' :
+        'grade';
   }
 
   submissionQuery() {
@@ -137,6 +139,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   applyFilter(filterValue: string) {
+    this.filter[this.searchByField] = filterValue;
     this.submissions.filter = filterValue || this.dropdownsFill();
   }
 
@@ -168,7 +171,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.router.navigate([
         './exam',
         { submissionId: submission._id, questionNum: 1, status: submission.status, mode: this.surveyMode(this.mode, submission.type) }
-      ], { relativeTo: this.route });
+      ] , { relativeTo: this.route });
     }
   }
 
@@ -201,6 +204,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     const stepNum = submissionCourse.doc.steps
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
     return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
+  }
+
+  searchByChange(field: string) {
+    this.searchByField = field;
   }
 
 }
