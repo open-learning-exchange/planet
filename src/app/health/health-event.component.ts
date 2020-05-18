@@ -54,19 +54,13 @@ export class HealthEventComponent {
     if (!this.healthForm.valid) {
       return;
     }
-    this.healthService.addEvent(
-      this.route.snapshot.params.id,
-      {
-        ...this.healthForm.value,
-        date: Date.now(),
-        selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
-        createdBy: this.userService.get()._id,
-        planetCode: this.stateService.configuration.code,
-        hasInfo: conditionAndTreatmentFields.some(key => this.healthForm.value[key] !== '')
-      }
-    ).subscribe(() => {
-      this.goBack();
-    });
+    const fields = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
+    const invalidFields = fields.reduce((invalid, field) => this.validateMeasure(field) ? invalid : invalid.concat([ field ]), []);
+    if (invalidFields.length) {
+      this.showWarning(invalidFields);
+    } else {
+      this.saveEvent().subscribe(() => this.goBack());
+    }
   }
 
   isEmptyForm() {
@@ -83,38 +77,54 @@ export class HealthEventComponent {
     this.healthForm.controls.conditions.setValue({ ...currentConditions, [condition]: currentConditions[condition] !== true });
   }
 
-  valueChange(type, value) {
-    if (!this.validateMeasure(type, value)) {
-      const displayName = 'Measure of ' + type + ' seems to be off.';
+  showWarning(invalidFields) {
+      const displayName = invalidFields.join(', ');
+      const extraMessage = 'Following measurement has odd value. Click cancel to fix measurement or click ok to submit.';
       this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
         data: {
           okClick: {
-            request: from(of(true)),
-            onNext: this.dialogPrompt.close()
+            request: this.saveEvent(),
+            onNext: (data) => {
+              this.dialogPrompt.close();
+              this.goBack();
+            }
           },
-          spinnerOn: false,
           showMainParagraph: false,
           displayName,
-          cancelable: false
+          extraMessage
         }
       });
-    }
   }
 
-  validateMeasure(type, value) {
+  validateMeasure(type) {
+    const value = this.healthForm.controls[type].value;
     switch (type) {
       case 'temperature':
-        return value >= 30 && value <= 40;
+        return !value || (value >= 30 && value <= 40);
       case 'bp':
-        return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
+        return !value || /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
       case 'pulse':
-        return value >= 40 && value <= 120;
+        return !value || (value >= 40 && value <= 120);
       case 'height':
-        return value > 0 && value <= 250;
+        return !value || (value > 0 && value <= 250);
       case 'weight':
-        return value > 0 && value <= 150;
+        return !value || (value > 0 && value <= 150);
     }
     return true;
+  }
+
+  saveEvent() {
+    return this.healthService.addEvent(
+      this.route.snapshot.params.id,
+      {
+        ...this.healthForm.value,
+        date: Date.now(),
+        selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
+        createdBy: this.userService.get()._id,
+        planetCode: this.stateService.configuration.code,
+        hasInfo: conditionAndTreatmentFields.some(key => this.healthForm.value[key] !== '')
+      }
+    );
   }
 
 }

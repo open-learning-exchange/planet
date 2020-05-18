@@ -10,23 +10,23 @@
       <form class="form-spacing" [formGroup]="healthForm">
         <h4 class="full-width primary-text-color">Vitals</h4>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Temperature in °C" formControlName="temperature" type="number" min="0" (change)="valueChange('temperature', $event.target.value)">
+          <input matInput i18n-placeholder placeholder="Temperature in °C" formControlName="temperature" type="number" min="0">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.temperature"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Pulse in bpm" formControlName="pulse" type="number" min="0" (change)="valueChange('pulse', $event.target.value)">
+          <input matInput i18n-placeholder placeholder="Pulse in bpm" formControlName="pulse" type="number" min="0">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.pulse"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Blood Pressure" formControlName="bp" (change)="valueChange('bp', $event.target.value)">
+          <input matInput i18n-placeholder placeholder="Blood Pressure" formControlName="bp">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.bp"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Height in cm" formControlName="height" type="number" min="0" (change)="valueChange('height', $event.target.value)">
+          <input matInput i18n-placeholder placeholder="Height in cm" formControlName="height" type="number" min="0">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.height"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Weight in kg" formControlName="weight" type="number" min="0" (change)="valueChange('weight', $event.target.value)">
+          <input matInput i18n-placeholder placeholder="Weight in kg" formControlName="weight" type="number" min="0">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.weight"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
