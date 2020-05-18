@@ -78,8 +78,7 @@ export class HealthEventComponent {
   }
 
   showWarning(invalidFields) {
-      const displayName = invalidFields.join(', ');
-      const extraMessage = 'Following measurement has odd value. Click cancel to fix measurement or click ok to submit.';
+      const extraMessage = 'The following measurement(s) may be incorrect. Click cancel to fix or click ok to submit.';
       this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
         data: {
           okClick: {
@@ -90,8 +89,8 @@ export class HealthEventComponent {
             }
           },
           showMainParagraph: false,
-          displayName,
-          extraMessage
+          extraMessage,
+          showLabels: invalidFields
         }
       });
   }
