@@ -97,22 +97,20 @@ export class HealthEventComponent {
 
   validateMeasure(type) {
     const value = this.healthForm.controls[type].value;
-    if (!value) {
+    const limits = {
+      'temperature': { min: 30, max: 40 },
+      'pulse': { min: 40, max: 120 },
+      'height': { min: 1, max: 250 },
+      'weight': { min: 1, max: 150 },
+      'bp': 'n/a'
+    };
+    if (!value || !limits[type]) {
       return true;
     }
-    switch (type) {
-      case 'temperature':
-        return value >= 30 && value <= 40;
-      case 'bp':
-        return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
-      case 'pulse':
-        return value >= 40 && value <= 120;
-      case 'height':
-        return value > 0 && value <= 250;
-      case 'weight':
-        return value > 0 && value <= 150;
+    if (type === 'bp') {
+      return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
     }
-    return true;
+    return value >= limits[type].min && value <= limits[type].max;
   }
 
   saveEvent() {
