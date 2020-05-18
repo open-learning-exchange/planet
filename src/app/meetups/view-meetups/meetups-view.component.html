@@ -57,5 +57,7 @@
       </ng-template>
     </div>
   </div>
-  <button mat-raised-button type="button" mat-dialog-close i18n>Close</button>
 </div>
+<mat-dialog-actions *ngIf="isDialog">
+  <button mat-raised-button type="button" mat-dialog-close i18n>Close</button>
+</mat-dialog-actions>
