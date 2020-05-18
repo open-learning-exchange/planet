@@ -98,17 +98,20 @@ export class HealthEventComponent {
 
   validateMeasure(type) {
     const value = this.healthForm.controls[type].value;
+    if (!value) {
+      return true;
+    }
     switch (type) {
       case 'temperature':
-        return !value || (value >= 30 && value <= 40);
+        return value >= 30 && value <= 40;
       case 'bp':
-        return !value || /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
+        return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
       case 'pulse':
-        return !value || (value >= 40 && value <= 120);
+        return value >= 40 && value <= 120;
       case 'height':
-        return !value || (value > 0 && value <= 250);
+        return value > 0 && value <= 250;
       case 'weight':
-        return !value || (value > 0 && value <= 150);
+        return value > 0 && value <= 150;
     }
     return true;
   }
