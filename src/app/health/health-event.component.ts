@@ -8,7 +8,6 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { from, of } from 'rxjs';
 
 @Component({
   templateUrl: './health-event.component.html',
