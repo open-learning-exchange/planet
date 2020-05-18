@@ -53,10 +53,10 @@ export class HealthEventComponent {
     if (!this.healthForm.valid) {
       return;
     }
-    const fields = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
-    const invalidFields = fields.reduce((invalid, field) => this.validateMeasure(field) ? invalid : invalid.concat([ field ]), []);
-    if (invalidFields.length) {
-      this.showWarning(invalidFields);
+    const checkFields = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
+    const promptFields = checkFields.filter((field) => !this.isFieldValueExpected(field));
+    if (promptFields.length) {
+      this.showWarning(promptFields);
     } else {
       this.saveEvent().subscribe(() => this.goBack());
     }
@@ -94,8 +94,8 @@ export class HealthEventComponent {
       });
   }
 
-  validateMeasure(type) {
-    const value = this.healthForm.controls[type].value;
+  isFieldValueExpected(field) {
+    const value = this.healthForm.controls[field].value;
     const limits = {
       'temperature': { min: 30, max: 40 },
       'pulse': { min: 40, max: 120 },
@@ -103,13 +103,13 @@ export class HealthEventComponent {
       'weight': { min: 1, max: 150 },
       'bp': 'n/a'
     };
-    if (!value || !limits[type]) {
+    if (!value || !limits[field]) {
       return true;
     }
-    if (type === 'bp') {
+    if (field === 'bp') {
       return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
     }
-    return value >= limits[type].min && value <= limits[type].max;
+    return value >= limits[field].min && value <= limits[field].max;
   }
 
   saveEvent() {
