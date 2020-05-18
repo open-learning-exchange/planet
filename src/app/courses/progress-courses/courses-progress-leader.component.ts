@@ -7,6 +7,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { environment } from '../../../environments/environment';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -128,10 +129,18 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       const answers = this.course.steps.map((step: any, index: number) => {
         return this.userCourseAnswers(user, step, index, submissions);
       }).reverse();
+      const attachmentId = `${user._id}@${user.planetCode}`;
+      const extractFilename = (object) => Object.keys(object._attachments)[0];
+      const imgUrlPrefix = environment.couchAddress;
       return ({
         items: answers,
         label: user.name,
-        planetCode: user.planetCode
+        planetCode: user.planetCode,
+        avatar: user.attachmentDoc ?
+          `${imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(user.attachmentDoc)}` :
+          user._attachments ?
+          `${imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
+          'assets/image.png'
       });
     });
     this.filterDataByPlanet();
