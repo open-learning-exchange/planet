@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { combineLatest, Subject } from 'rxjs';
@@ -21,6 +21,7 @@ import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-re
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
+import { ReportsHealthComponent } from './reports-health.component';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -30,6 +31,7 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') readonly hostClass = 'manager-reports-detail';
+  @ViewChild(ReportsHealthComponent, { static: false }) healthComponent: ReportsHealthComponent;
   parentCode = '';
   planetCode = '';
   planetName = '';
@@ -303,6 +305,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         break;
       case 'resourceViews':
       case 'courseViews':
+      case 'health':
         this.exportDocView(reportType, dateRange);
         break;
       case 'summary':
@@ -328,11 +331,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   exportDocView(reportType, dateRange) {
-    const data = reportType === 'courseViews' ? this.courseActivities.total.data : this.resourceActivities.total.data;
+    const data = {
+      'resourceViews': this.resourceActivities.total.data,
+      'courseViews': this.courseActivities.total.data,
+      'health': this.healthComponent.examinations
+    }[reportType];
+    const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
     this.csvService.exportCSV({
-      data: filterByDate(data, 'time', dateRange)
+      data: filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
-      title: reportType === 'courseViews' ? 'Course Views' : 'Resource Views'
+      title
     });
   }
 
