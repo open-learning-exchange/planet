@@ -77,21 +77,21 @@ export class HealthEventComponent {
   }
 
   showWarning(invalidFields) {
-      const extraMessage = 'The following measurement(s) may be incorrect. Click cancel to fix or click ok to submit.';
-      this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          okClick: {
-            request: this.saveEvent(),
-            onNext: (data) => {
-              this.dialogPrompt.close();
-              this.goBack();
-            }
-          },
-          showMainParagraph: false,
-          extraMessage,
-          showLabels: invalidFields
-        }
-      });
+    const extraMessage = 'The following measurement(s) may be incorrect. Click cancel to fix or click ok to submit.';
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.saveEvent(),
+          onNext: (data) => {
+            this.dialogPrompt.close();
+            this.goBack();
+          }
+        },
+        showMainParagraph: false,
+        extraMessage,
+        showLabels: invalidFields
+      }
+    });
   }
 
   isFieldValueExpected(field) {
