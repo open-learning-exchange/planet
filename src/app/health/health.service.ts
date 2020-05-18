@@ -86,16 +86,19 @@ export class HealthService {
     );
   }
 
-  addEvent(userId: string, event: any) {
+  addEvent(userId: string, creatorId: string, event: any) {
     return forkJoin([
       this.getHealthData(userId, { createKeyIfNone: true }),
+      this.getHealthData(creatorId, { createKeyIfNone: true }),
       this.couchService.currentTime()
     ]).pipe(
-      switchMap(([ [ healthDoc, keyDoc ], time ]) => {
+      switchMap(([ [ healthDoc, keyDoc ], [ creatorHealthDoc, creatorKeyDoc ], time ]) => {
         const userKey = healthDoc.userKey || this.generateKey(32);
+        const creatorKey = creatorHealthDoc.userKey || this.generateKey(32);
         return forkJoin([
           this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
-          this.postHealthDoc({}, { ...event, profileId: userKey }, keyDoc)
+          this.postHealthDoc(creatorHealthDoc, { userKey: creatorKey }, creatorKeyDoc),
+          this.postHealthDoc({}, { ...event, profileId: userKey, creatorId: creatorKey }, keyDoc)
         ]);
       })
     );
