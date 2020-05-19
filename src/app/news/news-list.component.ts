@@ -60,7 +60,8 @@ export class NewsListComponent implements OnChanges {
     this.displayedItems = this.replyObject[news._id];
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.isSharedAlready = this.replyViewing._id === 'root' || !this.replyViewing.doc.replyTo
-    || this.newsService.postSharedWithCommunity(this.replyViewing);
+    || (!this.newsService.postSharedWithCommunity(this.replyViewing) &&
+    this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo)));
     this.viewChange.emit(this.replyViewing);
   }
 
