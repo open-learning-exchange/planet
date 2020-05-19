@@ -38,13 +38,11 @@
   </div>
 </div>
 <div class="errors-container errors-user-total" #errorsUserTotal>
-  <div class="errors" *ngFor="let set of sets">
+  <div *ngFor="let set of sets">
     <div>{{set.total}}</div>
-    <div class="wrap-content" [matTooltip]="set.label?.length > 3 ? set.label : null ">
-      <img *ngIf="set.avatar; else showLabel" class="profile-image-large" [matTooltip]="set.label" [src]="set.avatar">
-      <ng-template #showLabel>
-        <p>{{set.label}}</p>
-      </ng-template>
+    <div class="wrap-content">
+      <div><img class="profile-image-large" [src]="set.avatar"></div>
+      <div [matTooltip]="set.label?.length > 3 ? set.label : null ">{{set.label}}</div>
     </div>
   </div>
 </div>
