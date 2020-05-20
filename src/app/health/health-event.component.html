@@ -10,7 +10,7 @@
       <form class="form-spacing" [formGroup]="healthForm">
         <h4 class="full-width primary-text-color">Vitals</h4>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Temperature in °C" formControlName="temperature" type="number" min="1">
+          <input matInput i18n-placeholder placeholder="Temperature in °C" formControlName="temperature" type="number" pattern="[0-9]+\.?[0-9]{0,2}?" min="1">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.temperature"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
