@@ -161,11 +161,26 @@ export class ExamsAddComponent implements OnInit {
       if (reRoute) {
         this.goBack();
       }
+      if (this.pageType === 'update') {
+      this.sendSurveyNotification(res);
+      }
       this.planetMessageService.showMessage(this.successMessage);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+  }
+
+  sendSurveyNotification(info) {
+    const data = {
+      'message': `<b>${this.userService.get().name}</b> has updated the survey <b>${info.doc.name}</b>`,
+      'link': '/surveys',
+      'type': 'survey',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    this.couchService.bulkDocs('notifications', [ { ...data, user: 'org.couchdb.user:' + info.doc.createdBy } ]).subscribe();
   }
 
   appendToCourse(info, type: 'exam' | 'survey') {
