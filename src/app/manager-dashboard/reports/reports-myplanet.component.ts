@@ -6,7 +6,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, hasChildrenId } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -62,9 +62,16 @@ export class ReportsMyPlanetComponent implements OnInit {
         })
       })
     );
-    const data: any = myPlanets.filter(myPlanet => myPlanet.type === 'usages').forEach(usage => usage)
-    console.log(data)
-    // this.allPlanets.map(v => v.children.filter(child => child.customDeviceName === data.usages.find()))
+      myPlanets.filter(myPlanet => { return myPlanet.type === 'usages' && (myPlanet.usages || []).length !== 0 }).map(myPlanetUsage => {
+        this.allPlanets.map(allPlanet => { allPlanet.children.map(element => {
+          if ( hasChildrenId(element, myPlanetUsage) ) {
+            const total = myPlanetUsage.usages.reduce((accumulator, currentValue) => accumulator + currentValue.lastTimeUsed);
+            return {...element, totalUsedTime:total}
+          }
+        })
+      }) 
+      console.log(this.allPlanets)
+    })
   }
 
   getMyPlanetList(hubId) {
@@ -75,6 +82,7 @@ export class ReportsMyPlanetComponent implements OnInit {
         ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
+      // console.log(this.allPlanets)
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
