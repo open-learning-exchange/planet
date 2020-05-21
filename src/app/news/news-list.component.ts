@@ -30,6 +30,7 @@ export class NewsListComponent implements OnChanges {
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
+  showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
@@ -58,6 +59,11 @@ export class NewsListComponent implements OnChanges {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
+    this.showMainPostShare = !this.replyViewing.doc.replyTo ||
+      (
+        !this.newsService.postSharedWithCommunity(this.replyViewing) &&
+        this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
+      );
     this.viewChange.emit(this.replyViewing);
   }
 
@@ -126,9 +132,10 @@ export class NewsListComponent implements OnChanges {
   }
 
   shareNews({ news, local }: { news: any, local: boolean }) {
-    const share = () => this.newsService.shareNews(news).subscribe();
     if (local) {
-      share();
+      this.newsService.shareNews(news).subscribe(() => {
+        this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
+      });
     } else {
       const okClick = (planets) =>
         this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
