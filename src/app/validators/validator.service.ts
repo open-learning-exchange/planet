@@ -8,6 +8,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
+import { deepEqual } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,24 @@ export class ValidatorService {
         return null;
       })
     ).pipe(debug('Checking uniqueness of ' + fieldName + ' in ' + dbName));
+  }
+
+  public checkUniqueResourceTitle$(ac: AbstractControl, id: string, privateFor: any = null) {
+    return timer(500).pipe(
+      switchMap(
+        () => this.couchService.get(`resources/_design/resources/_view/titles?key="${encodeURIComponent(ac.value.toLowerCase().trim())}"`)
+      ),
+      map(({ rows }) => {
+        if (
+          rows.length === 0 ||
+          rows.every(({ id: rowId }) => rowId === id) ||
+          rows.every(({ value }) => value && !deepEqual(value, privateFor))
+        ) {
+          return null;
+        }
+        return { duplicate: true };
+      })
+    );
   }
 
   /**

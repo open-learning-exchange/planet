@@ -111,15 +111,7 @@ export class ResourcesAddComponent implements OnInit {
         '',
         CustomValidators.required,
         // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.isUnique$(
-          this.dbName, 'title', ac,
-          {
-            selectors: {
-              '_id': this.existingResource._id && { '$ne': this.existingResource._id },
-              'privateFor': { '$or': [ this.privateFor, { '$exists': false } ] }
-            }
-          }
-        )
+        ac => this.validatorService.checkUniqueResourceTitle$(ac, this.existingResource._id, this.privateFor)
       ],
       author: '',
       year: '',
