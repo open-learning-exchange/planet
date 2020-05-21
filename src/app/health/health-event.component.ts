@@ -115,6 +115,7 @@ export class HealthEventComponent {
   saveEvent() {
     return this.healthService.addEvent(
       this.route.snapshot.params.id,
+      this.userService.get()._id,
       {
         ...this.healthForm.value,
         date: Date.now(),

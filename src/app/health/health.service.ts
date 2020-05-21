@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { of, forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
-import { stringToHex } from '../shared/utils';
+import { UsersService } from '../users/users.service';
+import { stringToHex, ageFromBirthDate } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
@@ -19,7 +20,8 @@ export class HealthService {
 
   constructor(
     private couchService: CouchService,
-    private stateService: StateService
+    private stateService: StateService,
+    private usersService: UsersService
   ) {}
 
   userDatabaseName(userId: string) {
@@ -86,16 +88,24 @@ export class HealthService {
     );
   }
 
-  addEvent(userId: string, event: any) {
+  addEvent(userId: string, creatorId: string, event: any) {
+    this.usersService.requestUsers();
     return forkJoin([
       this.getHealthData(userId, { createKeyIfNone: true }),
+      this.getHealthData(creatorId, { createKeyIfNone: true }),
+      this.couchService.get(`_users/${userId}`),
       this.couchService.currentTime()
     ]).pipe(
-      switchMap(([ [ healthDoc, keyDoc ], time ]) => {
+      switchMap(([ [ healthDoc, keyDoc ], [ creatorHealthDoc, creatorKeyDoc ], user, time ]: [ any, any, any, number ]) => {
         const userKey = healthDoc.userKey || this.generateKey(32);
+        const creatorKey = event.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
+        const age = ageFromBirthDate(time, user.birthDate);
         return forkJoin([
           this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
-          this.postHealthDoc({}, { ...event, profileId: userKey }, keyDoc)
+          this.postHealthDoc({}, { ...event, profileId: userKey, creatorId: creatorKey, gender: user.gender, age }, keyDoc),
+          creatorHealthDoc.userKey || event.selfExamination ?
+            of({}) :
+            this.postHealthDoc(creatorHealthDoc, { userKey: creatorKey }, creatorKeyDoc)
         ]);
       })
     );
