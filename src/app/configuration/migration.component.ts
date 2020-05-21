@@ -9,6 +9,7 @@ import { switchMap, takeWhile, map } from 'rxjs/operators';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { ConfigurationService } from './configuration.service';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and last character
@@ -50,7 +51,8 @@ export class MigrationComponent implements OnInit {
     private couchService: CouchService,
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private configurationService: ConfigurationService
   ) { }
 
   ngOnInit() {
@@ -90,27 +92,43 @@ export class MigrationComponent implements OnInit {
           .map(admin => this.couchService.put(`_node/nonode@nohost/_config/admins/${admin[0]}`, admin[1]));
       }),
       switchMap(() => this.getDatabaseNames()),
-      switchMap((syncDatabases: string[]) => {
-        return forkJoin(syncDatabases.map(db => this.syncService.sync(
-          { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' }, this.credential
-        )));
-      })
+      switchMap((syncDatabases: string[]) => forkJoin(syncDatabases.map(db => this.syncService.sync(this.syncDoc(db), this.credential))))
     ).subscribe(() => {
       this.planetMessageService.showMessage(`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
       this.dialogsLoadingService.start();
-      this.replicationCompletionCheck();
+      this.replicationCompletionCheck(() => this.cloneUserDbs());
     });
   }
 
-  replicationCompletionCheck() {
+  replicationCompletionCheck(callback = () => {}) {
     interval(1000).pipe(
       switchMap(() => this.couchService.findAll('_replicator')),
       takeWhile((res: any[]) => res.some(r => r._replication_state !== 'completed'))
     ).subscribe(() => {}, () => {}, () => {
-      this.router.navigate([ '/' ]);
-      this.dialogsLoadingService.stop();
-      this.planetMessageService.showMessage(`Cloning "${this.cloneDomain}" complete.`);
+      callback();
     });
+  }
+
+  cloneUserDbs() {
+    this.couchService.findAll('configurations').pipe(
+      switchMap((configurations: any[]) => this.configurationService.setCouchPerUser(configurations[0])),
+      switchMap(() => this.getDatabaseNames()),
+      switchMap((allDatabases: string[]) => forkJoin(
+        allDatabases.filter(db => db.indexOf('userdb-') > -1).map(db => this.syncService.sync(this.syncDoc(db), this.credential))
+      ))
+    ).subscribe(() => {
+      this.replicationCompletionCheck(() => this.completeMigration());
+    });
+  }
+
+  completeMigration() {
+    this.router.navigate([ '/' ]);
+    this.dialogsLoadingService.stop();
+    this.planetMessageService.showMessage(`Cloning "${this.cloneDomain}" complete.`);
+  }
+
+  syncDoc(db: string) {
+    return { db, parentDomain: this.cloneDomain, code: '', parentProtocol: this.cloneProtocol, type: 'pull' };
   }
 
   copyConfiguration(configuration) {
