@@ -33,10 +33,10 @@
       <button (click)="viewDetails(element)" mat-stroked-button color="primary">Details</button>
     </mat-cell>
   </ng-container>
-  <!-- <ng-container matColumnDef="usagetime">
+  <ng-container matColumnDef="usagetime">
     <mat-header-cell *matHeaderCellDef i18n>Used Time</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.max.totalUsedTime | date:'HH:mm:ss'}}</mat-cell>
-  </ng-container> -->
+    <mat-cell *matCellDef="let element">{{element.totalUsedTime | date:'HH:mm:ss'}}</mat-cell>
+  </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>

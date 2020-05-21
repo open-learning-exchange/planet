@@ -55,7 +55,8 @@ export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPl
 
 export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
 
-export const hasChildrenId = (myPlanetUsage, allPlanet) => allPlanet.usages.every(usage => usage.customDeviceName === myPlanetUsage.customDeviceName);
+export const hasChildrenId = (myPlanetUsage, allPlanet) => allPlanet.usages
+  .every(usage => usage.customDeviceName === myPlanetUsage.customDeviceName);
 
 
 export const reportsDetailParams = (type) => ({

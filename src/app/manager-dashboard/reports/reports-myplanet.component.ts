@@ -62,16 +62,18 @@ export class ReportsMyPlanetComponent implements OnInit {
         })
       })
     );
-      myPlanets.filter(myPlanet => { return myPlanet.type === 'usages' && (myPlanet.usages || []).length !== 0 }).map(myPlanetUsage => {
-        this.allPlanets.map(allPlanet => { allPlanet.children.map(element => {
+    myPlanets.filter(myPlanet => {
+      return (myPlanet.type === 'usages' && (myPlanet.usages || []).length !== 0);
+    }).map(myPlanetUsage => {
+      this.allPlanets.map(allPlanet => {
+        allPlanet.children.map(element => {
           if ( hasChildrenId(element, myPlanetUsage) ) {
-            const total = myPlanetUsage.usages.reduce((accumulator, currentValue) => accumulator + currentValue.lastTimeUsed);
-            return {...element, totalUsedTime:total}
+            const total = myPlanetUsage.usages.reduce((accumulator, currentValue) => accumulator + new Date(currentValue.lastTimeUsed));
+            return ({ ...element, totalUsedTime: total });
           }
-        })
-      }) 
-      console.log(this.allPlanets)
-    })
+        });
+      });
+    });
   }
 
   getMyPlanetList(hubId) {
