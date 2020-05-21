@@ -84,7 +84,6 @@ export class ReportsMyPlanetComponent implements OnInit {
         ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
         myPlanets
       );
-      // console.log(this.allPlanets)
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
