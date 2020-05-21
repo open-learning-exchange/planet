@@ -7,6 +7,11 @@ module.exports = {
         }
       },
       "reduce": "_count"
+    },
+    "titles": {
+      "map": function (doc) {
+        emit(doc.title.toLowerCase().trim(), doc.privateFor);
+      }
     }
   }
 }
