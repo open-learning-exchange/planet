@@ -30,7 +30,7 @@ export class NewsListComponent implements OnChanges {
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
-  isSharedAlready = false;
+  showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
@@ -59,8 +59,7 @@ export class NewsListComponent implements OnChanges {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
-    this.isSharedAlready = this.replyViewing._id === 'root' ||
-      !this.replyViewing.doc.replyTo ||
+    this.showMainPostShare = !this.replyViewing.doc.replyTo ||
       (
         !this.newsService.postSharedWithCommunity(this.replyViewing) &&
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
