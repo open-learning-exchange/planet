@@ -133,9 +133,10 @@ export class NewsListComponent implements OnChanges {
   }
 
   shareNews({ news, local }: { news: any, local: boolean }) {
-    const share = () => this.newsService.shareNews(news).subscribe();
     if (local) {
-      share();
+      this.newsService.shareNews(news).subscribe(() => {
+        this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
+      });
     } else {
       const okClick = (planets) =>
         this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
