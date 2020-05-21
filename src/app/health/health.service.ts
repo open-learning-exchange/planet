@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { of, forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
-import { switchMap, catchError, take } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { UsersService } from '../users/users.service';
 import { stringToHex, ageFromBirthDate } from '../shared/utils';
