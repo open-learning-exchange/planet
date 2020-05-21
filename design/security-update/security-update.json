@@ -195,7 +195,7 @@
     }
   },
   {
-  "dbName": "courses_progress",
+    "dbName": "courses_progress",
     "json": {
       "admins": {
         "names": [],
@@ -208,7 +208,7 @@
     }
   },
   {
-  "dbName": "exams",
+    "dbName": "exams",
     "json": {
       "admins": {
         "names": [],
@@ -221,7 +221,7 @@
     }
   },
   {
-  "dbName": "hubs",
+    "dbName": "hubs",
     "json": {
       "admins": {
         "names": [],
@@ -234,7 +234,7 @@
     }
   },
   {
-  "dbName": "submissions",
+    "dbName": "submissions",
     "json": {
       "admins": {
         "names": [],
@@ -247,7 +247,7 @@
     }
   },
   {
-  "dbName": "surveys",
+    "dbName": "surveys",
     "json": {
       "admins": {
         "names": [],
@@ -260,7 +260,7 @@
     }
   },
   {
-  "dbName": "teams",
+    "dbName": "teams",
     "json": {
       "admins": {
         "names": [],
@@ -274,15 +274,15 @@
   },
   {
     "dbName": "health",
-      "json": {
-        "admins": {
-          "names": [],
-          "roles": []
-        },
-        "members": {
-          "names": [],
-          "roles": ["learner"]
-        }
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": []
+      },
+      "members": {
+        "names": [],
+        "roles": ["learner"]
       }
     }
+  }
 ]
