@@ -30,6 +30,9 @@
   </p>
   <p>{{data.extraMessage}}</p>
   <b>{{data.displayName}}</b>
+  <ng-container *ngFor="let label of labels; last as last">
+    <b><planet-label [label]="label"></planet-label><span *ngIf="!last">, </span></b>
+  </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button color="primary" mat-raised-button (click)="ok()" [planetSubmit]="spinnerOn" i18n>OK</button>
