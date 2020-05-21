@@ -239,9 +239,10 @@ export class SubmissionsService {
   }
 
   sendSubmissionNotification(isRecorded: boolean) {
+    const isUpdated = this.userService.get().isUserAdmin;
     const data = {
       'message': `<b>${this.userService.get().name}</b> has
-        ${isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
+        ${isUpdated ? 'updated' : isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
       'link': '/myDashboard/submissions/exam',
       'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
       'type': 'survey',
