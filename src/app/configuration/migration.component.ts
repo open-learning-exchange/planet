@@ -111,7 +111,7 @@ export class MigrationComponent implements OnInit {
 
   cloneUserDbs() {
     this.couchService.findAll('configurations').pipe(
-      switchMap((configurations: any[]) => this.configurationService.setCouchPerUser(configurations[0])),
+      switchMap((configurations: any[]) => this.configurationService.setCouchPerUser({ doc: configurations[0] })),
       switchMap(() => this.getDatabaseNames()),
       switchMap((allDatabases: string[]) => forkJoin(
         allDatabases.filter(db => db.indexOf('userdb-') > -1).map(db => this.syncService.sync(this.syncDoc(db), this.credential))
