@@ -29,7 +29,10 @@ export class CustomValidators {
   }
 
   static singleDecimalValidation(ac: AbstractControl) {
-    return !ac.value || /^\d+(\.\d{0,1})?$/.test(ac.value) ? null : { decimal: true };
+    if (!ac.value) {
+      return null;
+    }
+    return /^\d+(\.\d{0,1})?$/.test(ac.value) ? null : { decimal: true };
   }
 
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
