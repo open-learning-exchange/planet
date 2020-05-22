@@ -30,7 +30,7 @@ download_apk(){
   echo "$(curl -# "$downloadUrl" -o "$apkName" -L)"
 }
 
-cd fs
+cd /usr/share/nginx/html/fs
 curl -s "$repoUrl/releases/download/$tag/$sha256File" -o "$sha256File" -L
 echo "Getting SHA256 file"
 if [ -f "$apkName" ] && [ -f "$sha256File" ]; then

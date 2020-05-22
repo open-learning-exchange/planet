@@ -250,6 +250,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resetPin() {
+    const opts = {
+      responseType: 'text',
+      withCredentials: false,
+      headers: { 'Content-Type': 'text/plain' }
+    };
     const userName = 'org.couchdb.user:satellite';
     this.couchService.get('_users/' + userName)
     .pipe(switchMap((data) => {
@@ -257,7 +262,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       satelliteProfile.password = this.managerService.createPin();
       return forkJoin([
         this.couchService.put('_users/' + userName, satelliteProfile),
-        this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password)
+        this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password),
+        this.couchService.getUrl('updatepin?p=' + satelliteProfile.password, opts)
       ]);
     })).subscribe((res) => {
       this.getSatellitePin();
