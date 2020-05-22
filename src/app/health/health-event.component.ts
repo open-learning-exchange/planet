@@ -29,11 +29,11 @@ export class HealthEventComponent {
     private dialog: MatDialog
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', Validators.min(1) ],
+      temperature: [ '', [ Validators.min(1), CustomValidators.singleDecimalValidation ] ],
       pulse: [ '', Validators.min(1) ],
       bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', Validators.min(1) ],
-      weight: [ '', Validators.min(1) ],
+      height: [ '', [ Validators.min(1), CustomValidators.singleDecimalValidation ] ],
+      weight: [ '', [ Validators.min(1), CustomValidators.singleDecimalValidation ] ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',

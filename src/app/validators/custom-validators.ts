@@ -28,6 +28,10 @@ export class CustomValidators {
     return !ac.value || /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
   }
 
+  static singleDecimalValidation(ac: AbstractControl) {
+    return !ac.value || /^\d+(\.\d{0,1})?$/.test(ac.value) ? null : { decimal: true };
+  }
+
   static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
     if (!ac.value) {
       return null;
