@@ -33,6 +33,7 @@ export class NewsListComponent implements OnChanges {
   showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
+  replyTo: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   @Output() viewChange = new EventEmitter<any>();
 
@@ -59,10 +60,11 @@ export class NewsListComponent implements OnChanges {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
-    this.showMainPostShare = !this.replyViewing.doc.replyTo ||
+    this.replyTo = this.replyViewing.doc ? this.replyViewing.doc.replyTo : null;
+    this.showMainPostShare = !this.replyTo ||
       (
         !this.newsService.postSharedWithCommunity(this.replyViewing) &&
-        this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
+        this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
   }
