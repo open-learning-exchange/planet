@@ -25,18 +25,6 @@
         Surveys
       </mat-button-toggle>
     </mat-button-toggle-group>
-
-    <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
-    (change)="searchByChange($event.value, 'name')"
-    #searchBy="matButtonToggleGroup">
-    <mat-button-toggle value="name" [checked]="searchByField === 'name'" i18n>
-      Search by Name
-    </mat-button-toggle>
-    <mat-button-toggle value="user" [checked]="searchByField === 'user'" i18n>
-      Search by User
-    </mat-button-toggle>
-  </mat-button-toggle-group>
   </ng-container>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
