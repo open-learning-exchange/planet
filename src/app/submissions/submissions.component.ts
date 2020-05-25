@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
-import { filterSpecificFields, composeFilterFunctions, filterDropdowns, dropdownsFill, filterTags, filterAdvancedSearch,
-        filterShelf, filterSpecificFieldsByWord } from '../shared/table-helpers';
-
+import {
+  filterSpecificFields, composeFilterFunctions, filterDropdowns,
+  dropdownsFill, filterTags, filterAdvancedSearch,
+  filterShelf, filterSpecificFieldsByWord
+} from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
@@ -11,7 +13,6 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
-
 
 @Component({
   selector: 'planet-submissions',
@@ -129,10 +130,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   setupTable() {
-    this.submissions.filterPredicate = composeFilterFunctions(
-      [
-        filterSpecificFieldsByWord([ 'parent.name' ]),
-        filterDropdowns(this.filter), filterSpecificFields([ 'parent.name' ])
+    this.submissions.filterPredicate = composeFilterFunctions([
+      filterSpecificFieldsByWord([ 'parent.name' ]),
+      filterDropdowns(this.filter)
       ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
       switch (property) {
