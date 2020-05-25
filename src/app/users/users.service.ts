@@ -20,7 +20,7 @@ export class UsersService {
   data: { users: any[], loginActivities: any[], childUsers: any[] } = { users: [], loginActivities: [], childUsers: [] };
   // List of all possible roles to add to users
   roleList: string[] = [ ...[ 'leader', 'monitor' ], ...[ this.userService.isBetaEnabled ? [ 'health' ] : [] ].flat() ];
-  allRolesList: string[] = [ ...this.roleList, 'learner', 'manager', 'admin' ].sort();
+  allRolesList: string[] = [ ...this.roleList, 'learner', 'admin' ].sort();
 
   constructor(
     private couchService: CouchService,
@@ -141,13 +141,6 @@ export class UsersService {
         this.removeFromTabletUsers(user)
       ]))
     );
-  }
-
-  toggleManagerStatus(user) {
-    return forkJoin([
-      this.setRoles({ ...user, isUserAdmin: !user.isUserAdmin }, user.isUserAdmin ? user.oldRoles : [ 'manager' ]),
-      user.isUserAdmin ? of({}) : this.removeFromTabletUsers(user)
-    ]);
   }
 
   setRoles(user, roles) {
