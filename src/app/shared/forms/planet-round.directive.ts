@@ -6,7 +6,7 @@ import { NgControl } from '@angular/forms';
 })
 export class PlanetRoundDirective {
 
-  @Input('planetRound') precision = 0;
+  @Input('planetRound') precision;
 
   constructor(
     private ngControl: NgControl
@@ -16,7 +16,9 @@ export class PlanetRoundDirective {
     if (typeof this.ngControl.value !== 'number') {
       return;
     }
-    this.ngControl.control.setValue(this.ngControl.value.toFixed(this.precision));
+    const precision = this.precision || 0;
+    const rounded = Math.round(+((this.ngControl.value + Number.EPSILON) + `e${precision}`)) + `e${-precision}`;
+    this.ngControl.control.setValue(+rounded);
   }
 
 }
