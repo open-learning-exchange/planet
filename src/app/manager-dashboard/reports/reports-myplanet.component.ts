@@ -6,7 +6,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, hasChildrenId } from './reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.utils';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
