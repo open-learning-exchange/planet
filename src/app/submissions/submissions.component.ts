@@ -210,5 +210,4 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
   }
 
-
 }
