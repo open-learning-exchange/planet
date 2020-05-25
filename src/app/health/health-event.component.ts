@@ -112,14 +112,6 @@ export class HealthEventComponent {
     return value >= limits[field].min && value <= limits[field].max;
   }
 
-  onFocusOut(controlName) {
-    const field = this.healthForm.controls[controlName];
-    if (controlName === 'pulse') {
-      field.setValue(Math.round(field.value));
-    }
-    field.setValue(field.value.toFixed(1));
-  }
-
   saveEvent() {
     return this.healthService.addEvent(
       this.route.snapshot.params.id,
