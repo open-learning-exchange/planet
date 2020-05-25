@@ -206,7 +206,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.usersService.toggleAdminStatus(user).subscribe(
       () => {
         this.usersService.requestUsers(true);
-        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} admin`);
       },
       () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
