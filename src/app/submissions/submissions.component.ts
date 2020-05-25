@@ -1,10 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, MatDialog } from '@angular/material';
-import {
-  filterSpecificFields, composeFilterFunctions, filterDropdowns,
-  dropdownsFill, filterTags, filterAdvancedSearch,
-  filterShelf, filterSpecificFieldsByWord
-} from '../shared/table-helpers';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
