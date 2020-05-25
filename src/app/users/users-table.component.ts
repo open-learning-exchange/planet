@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, 
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, of, forkJoin, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
@@ -201,7 +201,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       .subscribe(() => {}, () => this.planetMessageService.showAlert('There was an error removing the member\'s role'));
   }
 
-  toggleStatus(event, user, type: 'admin', isDemotion: boolean) {
+  toggleStatus(event, user, isDemotion: boolean) {
     event.stopPropagation();
     this.usersService.toggleAdminStatus(user).subscribe(
       () => {
