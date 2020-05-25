@@ -29,11 +29,11 @@ export class HealthEventComponent {
     private dialog: MatDialog
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', [ Validators.min(1), CustomValidators.singleDecimalValidation ] ],
+      temperature: [ '', Validators.min(1) ],
       pulse: [ '', Validators.min(1) ],
       bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', [ Validators.min(1), CustomValidators.singleDecimalValidation ] ],
-      weight: [ '', [ Validators.min(1), CustomValidators.singleDecimalValidation ] ],
+      height: [ '', Validators.min(1) ],
+      weight: [ '', Validators.min(1) ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',
@@ -110,6 +110,14 @@ export class HealthEventComponent {
       return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
     }
     return value >= limits[field].min && value <= limits[field].max;
+  }
+
+  onFocusOut(controlName) {
+    const field = this.healthForm.controls[controlName];
+    if (controlName === 'pulse') {
+      field.setValue(Math.round(field.value));
+    }
+    field.setValue(field.value.toFixed(1));
   }
 
   saveEvent() {
