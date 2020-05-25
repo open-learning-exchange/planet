@@ -96,7 +96,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
     };
-    return this.notificationsService.sendNotificationToUser(notification).subscribe();
+    this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
