@@ -115,8 +115,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.mode = this.route.snapshot.data.mySurveys === true ?
       'survey' :
       this.parentId ?
-        'review' :
-        'grade';
+      'review' :
+      'grade';
   }
 
   submissionQuery() {
