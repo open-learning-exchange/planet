@@ -120,6 +120,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
+        if (this.previewMode) {
+          this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
+        }
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
       }
     });
