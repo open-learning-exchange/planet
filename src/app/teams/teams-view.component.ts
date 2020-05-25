@@ -396,7 +396,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       res.tableData = res.tableData.filter((user: any) => this.members.findIndex((member) => member.name === user.name) === -1);
       const data = {
         okClick: this.addMembers.bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
+        filterPredicate: filterSpecificFields([ 'name' , 'Full Name' ]),
         allowMulti: true,
         itemDescription: 'members',
         nameProperty: 'name',
