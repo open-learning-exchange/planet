@@ -33,7 +33,6 @@ export class NewsListComponent implements OnChanges {
   showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
-  replyTo: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   @Output() viewChange = new EventEmitter<any>();
 
