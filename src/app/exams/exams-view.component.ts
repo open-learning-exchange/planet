@@ -99,6 +99,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setExamPreview() {
     this.answer.setValue(null);
+    this.checkboxState = {};
     this.grade = 0;
     this.statusMessage = '';
     const exam = this.submission ? this.submission.parent : this.exam;
@@ -120,9 +121,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
-        if (this.previewMode) {
-          this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
-        }
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
       }
     });
