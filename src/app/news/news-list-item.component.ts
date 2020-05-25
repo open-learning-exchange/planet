@@ -82,20 +82,21 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   sendNewsNotifications(news: any = '') {
     const replyBy = this.currentUser.name;
     const userId = news.user._id;
-    if (replyBy !== news.user.name) {
-      const link = this.router.url;
-      const notification = {
-        user: userId,
-        'message': `<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
-        link,
-        'priority': 1,
-        'type': 'replyMessage',
-        'replyTo': news._id,
-        'status': 'unread',
-        'time': this.couchService.datePlaceholder,
-      };
-      return this.notificationsService.sendNotificationToUser(notification).subscribe();
+    if (replyBy === news.user.name) {
+      return;
     }
+    const link = this.router.url;
+    const notification = {
+      user: userId,
+      'message': `<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      link,
+      'priority': 1,
+      'type': 'replyMessage',
+      'replyTo': news._id,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder,
+    };
+    return this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {
