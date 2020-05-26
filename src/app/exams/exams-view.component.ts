@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
@@ -43,6 +43,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   unansweredQuestions: number[];
   isComplete = false;
   comment: string;
+  @Output() closePreview = new EventEmitter<any>();
 
   constructor(
     private router: Router,
@@ -98,6 +99,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setExamPreview() {
+    if (this.isComplete) {
+      return;
+    }
     this.answer.setValue(null);
     this.checkboxState = {};
     this.grade = 0;
@@ -112,6 +116,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    if (this.isDialog && isFinish) {
+      this.closePreview.next();
+      return;
+    }
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
@@ -187,6 +195,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.answer.markAsUntouched();
+    if (this.previewMode) {
+      this.isComplete = this.maxQuestions === this.questionNum;
+    }
   }
 
   setCourseListener() {
@@ -257,12 +268,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       answers[0].id === this.question.correctChoice;
   }
 
+  fixNextQuestion(isFinish) {
+    if (isFinish) {
+      return - 1;
+    }
+    if (this.maxQuestions === this.questionNum) {
+      return this.questionNum - 1;
+    } else {
+      return this.questionNum;
+    }
+  }
+
   createAnswerObservable(isFinish = false) {
     switch (this.mode) {
       case 'take':
         const correctAnswer = this.question.correctChoice.length > 0 ? this.calculateCorrect() : undefined;
         const obs = this.previewMode ?
-          of({ nextQuestion: this.questionNum }) :
+          of({ nextQuestion: this.fixNextQuestion(isFinish) }) :
           this.submissionsService.submitAnswer(this.answer.value, correctAnswer, this.questionNum - 1, isFinish);
         return { obs, correctAnswer };
       case 'grade':
