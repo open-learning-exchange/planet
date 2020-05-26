@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, 
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
@@ -203,7 +203,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   toggleStatus(event, user, isDemotion: boolean) {
     event.stopPropagation();
-    this.usersService.toggleAdminStatus(user).subscribe(
+    const request: Observable<any> = this.usersService.toggleAdminStatus(user);
+    request.subscribe(
       () => {
         this.usersService.requestUsers(true);
         this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} admin`);
