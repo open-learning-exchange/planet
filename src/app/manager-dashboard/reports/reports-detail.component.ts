@@ -234,10 +234,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          datasetObject('Male', xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          datasetObject('Female', xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          datasetObject('Did not specify', xyChartData(genderFilter(undefined), unique), styleVariables.grey),
-          datasetObject('Total', xyChartData(totals(), unique), styleVariables.primary)
+          datasetObject('Male', xyChartData(genderFilter('male'), unique), styleVariables('primaryLighter')),
+          datasetObject('Female', xyChartData(genderFilter('female'), unique), styleVariables('accentLighter')),
+          datasetObject('Did not specify', xyChartData(genderFilter(undefined), unique), styleVariables('grey')),
+          datasetObject('Total', xyChartData(totals(), unique), styleVariables('primary'))
         ]
       },
       labels: months.map(month => monthDataLabels(month))

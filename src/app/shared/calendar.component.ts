@@ -89,9 +89,9 @@ export class PlanetCalendarComponent implements OnInit {
     this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
       this.tasks = tasks.filter(task => task.status !== 'archived').map(task => {
         const taskColors = task.completed ? {
-          backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: styleVariables.greyText
+          backgroundColor: styleVariables('grey'), borderColor: styleVariables('grey'), textColor: styleVariables('greyText')
         } : {
-          backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
+          backgroundColor: styleVariables('accent'), borderColor: styleVariables('accent'), textColor: styleVariables('accentText')
         };
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
@@ -104,7 +104,7 @@ export class PlanetCalendarComponent implements OnInit {
     startDate = meetup.startDate,
     endDate = meetup.endDate || startDate,
     otherProps: any = {
-      backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText
+      backgroundColor: styleVariables('primary'), borderColor: styleVariables('primary'), textColor: styleVariables('primaryText')
     }
   ) {
     const allDay = !meetup.isTask && meetup.startTime === undefined || meetup.startTime === '';
