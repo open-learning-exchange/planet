@@ -123,16 +123,11 @@ export class ConfigurationService {
       'joinDate': this.couchService.datePlaceholder,
       'planetCode': configuration.code
     };
-    const opts = {
-      responseType: 'text',
-      withCredentials: false,
-      headers: { 'Content-Type': 'text/plain' }
-    };
     const pin = this.managerService.createPin();
     return forkJoin([
       this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin),
-      this.couchService.getUrl('updatepin?p=' + pin, opts)
+      this.updatePin(pin)
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
       switchMap(() => this.postConfiguration(configuration)),
@@ -150,6 +145,15 @@ export class ConfigurationService {
         this.addPlanetToParent({ ...configuration, _id: conf.id }, true, userDetail)
       ]))
     );
+  }
+
+  updatePin(pin) {
+    const opts = {
+      responseType: 'text',
+      withCredentials: false,
+      headers: { 'Content-Type': 'text/plain' }
+    };
+    return this.couchService.getUrl('updatepin?p=' + pin, opts);
   }
 
   updateConfiguration(configuration) {
