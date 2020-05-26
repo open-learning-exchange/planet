@@ -203,7 +203,7 @@ body {
     width: $stars-width;
 
     mat-icon {
-      padding: 0 1px;
+      padding: 0 $stars-margin;
     }
 
     span {
