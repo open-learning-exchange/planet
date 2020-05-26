@@ -125,8 +125,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dateFilterForm.valueChanges.subscribe(value => {
       this.filter = { ...this.filter, ...value };
       if (this.minDate && this.today) {
-        this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
-          value.endDate.getTime() === this.today.setHours(0, 0, 0, 0);
+        this.disableShowAllTime = this.minDate.getTime() === value.startDate.getTime() &&
+          value.endDate === this.today;
       }
       this.filterData();
     });
