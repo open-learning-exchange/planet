@@ -151,8 +151,11 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   changePasswordRequest(userData) {
+    if (this.isLoggedInUser && this.userService.get().roles.indexOf('_admin') > -1) {
+      userData = { ...userData, adminName : userData.name + '@' + this.planetConfiguration.code + '@' + Date.now() };
+    }
     return this.userService.updateUser(userData).pipe(switchMap((res) => {
-      if (this.isLoggedInUser && this.userService.get().roles.indexOf('_admin') > -1) {
+      if (this.userService.get().roles.indexOf('_admin') > -1) {
         return forkJoin([
           of(res), this.updateAdminPassword(userData), this.updatePasswordOnParent(userData),
           this.managerService.updateCredentialsYml(userData)
@@ -182,17 +185,34 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   updatePasswordOnParent(userData) {
-    const adminName = 'org.couchdb.user:' + userData.name + '@' + this.planetConfiguration.code;
-    return this.couchService.get('_users/' + adminName , { domain: this.planetConfiguration.parentDomain })
-      .pipe(catchError(this.passwordError('Error changing password in parent planet')),
-      switchMap((data) => {
-        if (data.ok === false) {
-          return of(data);
-        }
-        const { derived_key, iterations, password_scheme, salt, ...profile } = data;
-        return this.couchService.put(this.dbName + '/' + profile._id, { ...profile, password: userData.password, type: 'user' },
-          { domain: this.planetConfiguration.parentDomain });
-      }));
+    const { adminName } = userData;
+    const adminId = `org.couchdb.user:${adminName}`;
+    if (this.isLoggedInUser) {
+      return this.couchService.get('_users/' + adminId , { domain: this.planetConfiguration.parentDomain })
+        .pipe(catchError(this.passwordError('Error changing password in parent planet')),
+        switchMap((data) => {
+          if (data.ok === false) {
+            return of(data);
+          }
+          const { derived_key, iterations, password_scheme, salt, ...profile } = data;
+          return this.couchService.put(this.dbName + '/' + profile._id, { ...profile, password: userData.password, type: 'user' },
+            { domain: this.planetConfiguration.parentDomain });
+        }));
+    }
+    const { code, _id: requestId, parentDomain: domain } = this.stateService.configuration;
+    const parentUser = {
+      ...userData,
+      _id: adminId,
+      requestId,
+      isUserAdmin: false,
+      roles: [ 'learner' ],
+      name: adminName,
+      sync: true,
+      _attachments: undefined,
+      _rev: undefined
+    };
+    return this.couchService.updateDocument(this.dbName, parentUser, { domain, withCredentials: false })
+      .pipe(catchError(this.passwordError('Error changing password in parent planet')));
   }
 
   updateAdminPassword(userData) {
