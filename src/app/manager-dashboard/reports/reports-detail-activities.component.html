@@ -8,7 +8,7 @@
     <mat-cell *matCellDef="let element">{{element?.weekOf | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
       <ng-container *ngIf="activityType==='health'; else views" i18n>Examinations</ng-container>
       <ng-template #views i18n>Views</ng-template>
     </mat-header-cell>

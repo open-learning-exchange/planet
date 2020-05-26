@@ -6,7 +6,7 @@ import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({

@@ -18,7 +18,7 @@ export class DialogsAddCoursesComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    this.coursesComponent.selection.onChange.subscribe((selection) => {
+    this.coursesComponent.selection.changed.subscribe((selection) => {
       this.okDisabled = selection.source.selected.length === 0;
     });
   }
