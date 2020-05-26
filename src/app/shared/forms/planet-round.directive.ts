@@ -1,5 +1,6 @@
 import { Directive, Input, HostListener } from '@angular/core';
 import { NgControl } from '@angular/forms';
+import { round } from 'mathjs';
 
 @Directive({
   selector: 'input[planetRound]'
@@ -17,7 +18,7 @@ export class PlanetRoundDirective {
       return;
     }
     const precision = this.precision || 0;
-    const rounded = Math.round(+((this.ngControl.value + Number.EPSILON) + `e${precision}`)) + `e${-precision}`;
+    const rounded = round(+((this.ngControl.value + Number.EPSILON) + `e${precision}`)) + `e${-precision}`;
     this.ngControl.control.setValue(+rounded);
   }
 
