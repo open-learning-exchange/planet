@@ -135,7 +135,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   }
 
   shouldShowIndication() {
-    return this.planetCode === this.item.doc.user.planetCode && 
+    return this.planetCode === this.item.doc.user.planetCode &&
       !this.activeMembers.find(user => this.item.doc.user._id === user._id && this.item.doc.user.joinDate === user.doc.joinDate);
   }
 
