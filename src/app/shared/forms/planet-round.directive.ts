@@ -13,7 +13,7 @@ export class PlanetRoundDirective {
   ) {}
 
   @HostListener('focusout') onFocusOut() {
-    if (typeof this.ngControl.value !== 'number') {
+    if (typeof this.ngControl.value !== 'number' || this.ngControl.value === 0 ) {
       return;
     }
     const precision = this.precision || 0;
