@@ -177,4 +177,21 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  surveyExists(): boolean {
+     const exists = this.stepDetail && this.stepDetail.survey &&
+     this.stepDetail.survey.questions && this.stepDetail.survey.questions.length > 0;
+     return exists;
+  }
+
+  examExists(): boolean {
+    const exists = this.stepDetail && this.stepDetail.exam &&
+    this.stepDetail.exam.questions && this.stepDetail.exam.questions.length > 0;
+    return exists;
+  }
+
+ examAndSurveyExist(): boolean {
+   const both = this.surveyExists() && this.examExists();
+   return both;
+  }
+
 }

@@ -138,4 +138,23 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
+
+  surveyExists(step: any): boolean {
+    // tslint:disable-next-line:whitespace
+    const exists = step && step.survey && step.survey.questions && step.survey.questions.length > 0;
+    return exists;
+ }
+
+ examExists(step: any): boolean {
+   // tslint:disable-next-line:whitespace
+   const exists = step && step.exam && step.exam.questions && step.exam.questions.length > 0;
+   return exists;
+ }
+
+examAndSurveyExist(step: any): boolean {
+  // step?.exam?.questions.length || step?.survey?.questions.length
+  const both = this.surveyExists(step) && this.examExists(step);
+  return both;
+ }
+
 }
