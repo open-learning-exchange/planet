@@ -58,9 +58,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   leaderDialog: any;
   finances: any[];
   tasks: any[];
-  tabSelectedIndex = 0;
+  tabSelectedIndex = 1;
   initTab;
   taskCount = 0;
+  messageCounter = 0;
   configuration = this.stateService.configuration;
 
   constructor(
@@ -106,6 +107,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   getActiveTab(initTab: string) {
+    if (this.tabSelectedIndex === 0 && this.messageCounter !== 0) {
+      this.updateMessagesList();
+      this.messageCounter = 0;
+    }
     const activeTabs = {
       'taskTab' : this.taskTab,
       'applicantTab' : this.applicantTab
@@ -200,15 +205,29 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       };
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
       this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
-      this.members = docsWithName.filter(mem => mem.docType === 'membership')
-        .sort((a, b) => a.userId === this.leader ? -1 : 0);
+      this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => a.userId === this.leader ? -1 : 0);
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.setStatus(this.team, this.userService.get());
       this.setTasks(this.tasks);
+      this.setUnreadMessageCount();
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
+  }
+
+  updateMessagesList() {
+    const messagesList = this.news.filter(message => !message.doc.replyTo).map(item => item._id);
+    const member = this.members.filter(item => item.userId === this.user._id);
+    return this.couchService.put(this.dbName + '/' + member[0]._id, { ...member[0], messagesList }).subscribe();
+  }
+
+  setUnreadMessageCount() {
+    const currentMember = this.members.filter(item => item.userId === this.user._id);
+    this.messageCounter = currentMember[0].messagesList
+      ? this.news.filter(message => currentMember[0]
+        .messagesList.findIndex(id => id === message._id) === -1 && !message.doc.replyTo).length
+      : this.news.filter(message => !!message.doc.replyTo).length;
   }
 
   setTasks(tasks = []) {
@@ -475,7 +494,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }, 'Message has been posted successfully').pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm();
+      this.updateMessagesList();
+    });
   }
 
   openResourcesDialog(resource?) {
