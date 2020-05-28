@@ -126,7 +126,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filter = { ...this.filter, ...value };
       if (this.minDate && this.today) {
         this.disableShowAllTime = this.minDate.getTime() === value.startDate.getTime() &&
-          value.endDate.setHours(0,0,0,0) === this.today.setHours(0,0,0,0);
+          value.endDate.setHours(0, 0, 0, 0) === this.today.setHours(0, 0, 0, 0);
       }
       this.filterData();
     });
