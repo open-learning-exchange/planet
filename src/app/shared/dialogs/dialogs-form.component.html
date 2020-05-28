@@ -1,7 +1,7 @@
 <form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
-    <div *ngFor="let field of fields" [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' }">
+    <div *ngFor="let field of fields" [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' || field.type === 'toggle' || field.type === 'markdown' }">
       <mat-checkbox *ngIf="field.type === 'checkbox'" formControlName="{{field.name}}">{{field.placeholder}}</mat-checkbox>
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">

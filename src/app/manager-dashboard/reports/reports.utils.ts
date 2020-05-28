@@ -1,3 +1,5 @@
+import { millisecondsToDay } from '../../meetups/constants';
+
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
   return planetDocs.map(doc => ({ doc, nameDoc: names.find((name: any) => name.planetId === doc._id) }));
@@ -27,9 +29,10 @@ export const itemInDateRange = (item, dateField, startDate, endDate) => {
   return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
 };
 
-export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-  itemInDateRange(item, dateField, startDate, endDate)
-);
+export const filterByDate = (array, dateField, { startDate, endDate, isEndInclusive = true, additionalFilterFunction = (i?) => true }) => {
+  const endTime = isEndInclusive ? new Date(new Date(endDate).setHours(24)) : endDate;
+  return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
+};
 
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
@@ -74,4 +77,15 @@ export const titleOfChartName = (chartName: string) => {
     uniqueVisitChart: 'Unique Member Visits by Month'
   };
   return chartNames[chartName];
+};
+
+export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }, startWeekOffset = 1) => {
+  const { startDate, endDate } = { startDate: new Date(dateRange.startDate), endDate: new Date(dateRange.endDate) };
+  let weekStart = startDate.setDate(startDate.getDate() - ((startDate.getDay() + startWeekOffset) % 7));
+  const weeks: number[] = [];
+  while (weekStart < endDate.getTime()) {
+    weeks.push(weekStart);
+    weekStart = weekStart + (millisecondsToDay * 7);
+  }
+  return weeks;
 };

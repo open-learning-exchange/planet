@@ -84,7 +84,7 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   onStarClick(form = this.rateForm) {
-    if (this.disabled) {
+    if (this.disabled || form.controls.rate.value === 0) {
       return;
     }
     this.updateRating(form).subscribe(res => {

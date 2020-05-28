@@ -44,7 +44,7 @@
       <ng-container *ngSwitchCase="'grade'">
         <p><b i18n>Submitted answer:</b></p>
         <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
-        <mat-radio-group [(ngModel)]="grade">
+        <mat-radio-group [(ngModel)]="grade" [disabled]="question?.type === 'select' || question?.type === 'selectMultiple'">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
         </mat-radio-group>

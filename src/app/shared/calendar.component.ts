@@ -18,6 +18,7 @@ import { addDateAndTime, styleVariables } from './utils';
       [plugins]="calendarPlugins"
       [firstDay]="6"
       [header]="header"
+      [buttonText]="buttonText"
       [customButtons]="buttons"
       (eventClick)="eventClick($event)">
     </full-calendar>
@@ -34,6 +35,9 @@ export class PlanetCalendarComponent implements OnInit {
     left: 'title',
     center: '',
     right: 'addEventButton today prev,next'
+  };
+  buttonText = {
+    today: 'Today'
   };
   buttons = {};
   eventTimeFormat = {

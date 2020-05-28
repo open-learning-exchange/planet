@@ -1,0 +1,18 @@
+<div>
+  <span><b i18n>Total Examinations:</b> {{headlineData?.total}}</span>
+</div>
+<div>
+  <span><b i18n>Patients Seen:</b> {{headlineData?.unique.length}}</span>
+</div>
+<h1 class="mat-title" i18n>Diagnoses</h1>
+<div>
+  <span *ngFor="let condition of conditions">
+    <planet-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
+  </span>
+</div>
+<h1 class="mat-title" i18n>Weekly Data</h1>
+<planet-reports-detail-activities
+  [activitiesByDoc]="weeklyHealthData"
+  activityType="health"
+  (itemClick)="showWeek($event)">
+</planet-reports-detail-activities>
