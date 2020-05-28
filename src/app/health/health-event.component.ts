@@ -54,7 +54,8 @@ export class HealthEventComponent {
       return;
     }
     const checkFields = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
-    const promptFields = checkFields.filter((field) => !this.isFieldValueExpected(field));
+    const promptFields = checkFields.filter((field) => !this.isFieldValueExpected(field))
+      .map(field => ({ field, value: this.healthForm.controls[field].value }));
     if (promptFields.length) {
       this.showWarning(promptFields);
     } else {
