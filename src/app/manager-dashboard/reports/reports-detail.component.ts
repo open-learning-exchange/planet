@@ -333,7 +333,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
-      'health': this.healthComponent.examinations
+      'health': this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
     this.csvService.exportCSV({
