@@ -6,6 +6,7 @@ import { NgControl } from '@angular/forms';
 })
 export class PlanetRoundDirective {
 
+  // Maximum precision value is 9. Values are truncated before rounding to avoid incorrect values.
   @Input('planetRound') precision;
 
   constructor(
@@ -15,6 +16,10 @@ export class PlanetRoundDirective {
 
   @HostListener('focusout') onFocusOut() {
     if (typeof this.ngControl.value !== 'number') {
+      return;
+    }
+    if (this.precision > 9) {
+      console.error('planetRound has a maximum precision of 9. Numbers will not round correctly if precision set above 9');
       return;
     }
     const [ integer, decimals ] = this.elementRef.nativeElement.value.split('.');
