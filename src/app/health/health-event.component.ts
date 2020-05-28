@@ -103,7 +103,7 @@ export class HealthEventComponent {
       'weight': { min: 1, max: 150 },
       'bp': 'n/a'
     };
-    if (!value || !limits[field]) {
+    if (value === null || value === '' || !limits[field]) {
       return true;
     }
     if (field === 'bp') {
