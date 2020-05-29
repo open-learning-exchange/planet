@@ -147,46 +147,6 @@ menuTriggerButtonClick(step, stepNum): void {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   checkMyCourses(courseId: string) {
     return this.userService.shelf.courseIds.includes(courseId);
   }
