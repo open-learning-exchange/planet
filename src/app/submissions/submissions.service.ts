@@ -326,7 +326,7 @@ export class SubmissionsService {
 
   surveyHeader(responseHeader: boolean, exam, index: number, time: number) {
     return responseHeader ?
-      `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${new Date(time).toString()}</h3>  \n` :
+      `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${this.stateService.configuration.name} on ${new Date(time).toString()}</h3>  \n` :
       `### ${exam.name} Questions  \n`;
   }
 
