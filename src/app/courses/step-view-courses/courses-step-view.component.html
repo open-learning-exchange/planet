@@ -32,10 +32,7 @@
         (click)="goToExam('survey')">
         Take Survey
       </a>
-      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" 
-          class="margin-lr-10" color="accent" mat-raised-button 
-          [matMenuTriggerFor]="previewMenu"
-          (click)="menuTriggerButtonClick()">
+      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)"class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()">
         Preview
       </button>
 
