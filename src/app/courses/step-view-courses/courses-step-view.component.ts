@@ -210,6 +210,4 @@ menuTriggerButtonClick(): void {
     }
   }
 }
-
-
 }
