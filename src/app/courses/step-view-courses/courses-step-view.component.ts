@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatMenuTrigger } from '@angular/material';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -33,6 +33,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
+  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,
@@ -178,20 +179,37 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   surveyExists(): boolean {
-     const exists = this.stepDetail && this.stepDetail.survey &&
-     this.stepDetail.survey.questions && this.stepDetail.survey.questions.length > 0;
-     return exists;
-  }
-
-  examExists(): boolean {
-    const exists = this.stepDetail && this.stepDetail.exam &&
-    this.stepDetail.exam.questions && this.stepDetail.exam.questions.length > 0;
+    const exists = this.stepDetail && this.stepDetail.survey &&
+    this.stepDetail.survey.questions && this.stepDetail.survey.questions.length > 0;
     return exists;
-  }
+ }
 
- examAndSurveyExist(): boolean {
-   const both = this.surveyExists() && this.examExists();
-   return both;
+ examExists(): boolean {
+   const exists = this.stepDetail && this.stepDetail.exam &&
+   this.stepDetail.exam.questions && this.stepDetail.exam.questions.length > 0;
+   return exists;
+ }
+
+examAndSurveyExist(): boolean {
+  const both = this.surveyExists() && this.examExists();
+  return both;
+ }
+
+menuTriggerButtonClick(): void {
+
+  if (!this.examAndSurveyExist()) {
+    if (this.examExists()) {
+      this.goToExam('exam', true);
+      this.previewButton.closeMenu();
+      return;
+    }
+
+    if (this.surveyExists()) {
+      this.goToExam('survey', true);
+      this.previewButton.closeMenu();
+    }
   }
+}
+
 
 }

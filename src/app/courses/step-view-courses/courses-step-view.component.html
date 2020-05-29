@@ -32,26 +32,21 @@
         (click)="goToExam('survey')">
         Take Survey
       </a>
-
-      <button *ngIf="examExists() && !surveyExists() && canManage" class="margin-lr-10" color="accent" mat-raised-button 
-              (click)="goToExam('exam', true)">
-        Preview
-      </button>
-      
-      <button *ngIf="!examExists() && surveyExists() && canManage" class="margin-lr-10" color="accent" mat-raised-button 
-              (click)="goToExam('survey', true)">
+      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" 
+          class="margin-lr-10" color="accent" mat-raised-button 
+          [matMenuTriggerFor]="previewMenu"
+          (click)="menuTriggerButtonClick()">
         Preview
       </button>
 
-      <button *ngIf="examAndSurveyExist() && canManage" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu">
-        Preview
-      </button>
       <mat-menu #previewMenu="matMenu">
-        <a mat-menu-item          
+        <a mat-menu-item
+          *ngIf="stepDetail?.exam?.questions.length"
           (click)="goToExam('exam', true)">
           Preview Test
         </a>
-        <a mat-menu-item          
+        <a mat-menu-item
+          *ngIf="stepDetail?.survey?.questions.length"
           (click)="goToExam('survey', true)">
           Preview Survey
         </a>
