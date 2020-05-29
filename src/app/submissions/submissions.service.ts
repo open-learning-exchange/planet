@@ -31,6 +31,7 @@ export class SubmissionsService {
   private submissionUpdated = new Subject<any>();
   submissionUpdated$ = this.submissionUpdated.asObservable();
   submissionAttempts = 0;
+  configuration = this.stateService.configuration;
 
   constructor(
     private couchService: CouchService,
@@ -74,9 +75,8 @@ export class SubmissionsService {
   private createNewSubmission({ parentId, parent, user, type, sender }: { parentId, parent, user, type, sender? }) {
     const date = this.couchService.datePlaceholder;
     const times = { startTime: date, lastUpdateTime: date };
-    const configuration = this.stateService.configuration;
     return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', sender,
-      ...this.submissionSource(configuration, user), ...times };
+      ...this.submissionSource(this.configuration, user), ...times };
   }
 
   private submissionSource(configuration, user) {
@@ -326,7 +326,7 @@ export class SubmissionsService {
 
   surveyHeader(responseHeader: boolean, exam, index: number, time: number) {
     return responseHeader ?
-      `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${this.stateService.configuration.name} on ${new Date(time).toString()}</h3>  \n` :
+      `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${this.configuration.name} on ${new Date(time).toString()}</h3>  \n` :
       `### ${exam.name} Questions  \n`;
   }
 
