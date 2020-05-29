@@ -1,8 +1,8 @@
 PLANET_VERSION=$(cat package.json | jq -r .version)
-LATEST_APK_VERSION="v0.7.82"
-LATEST_APK_VER_CODE="782"
-MIN_APK_VERSION="v0.7.77"
-MIN_APK_VER_CODE="777"
+LATEST_APK_VERSION="v0.7.88"
+LATEST_APK_VER_CODE="788"
+MIN_APK_VERSION="v0.7.82"
+MIN_APK_VER_CODE="782"
 APK_PATH="https://github.com/open-learning-exchange/myplanet/releases/download/v0.7.82/myPlanet.apk"
 LOCAL_APK_PATH="/fs/myPlanet.apk"
 
