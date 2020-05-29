@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -9,6 +9,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { CouchService } from '../../shared/couchdb.service';
+import { MatMenuTrigger } from '@angular/material';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -27,6 +28,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
+  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,
@@ -111,6 +113,80 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
+  surveyExists(step: any): boolean {
+    // tslint:disable-next-line:whitespace
+    const exists = step && step.survey && step.survey.questions && step.survey.questions.length > 0;
+    return exists;
+ }
+
+ examExists(step: any): boolean {
+   // tslint:disable-next-line:whitespace
+   const exists = step && step.exam && step.exam.questions && step.exam.questions.length > 0;
+   return exists;
+ }
+
+examAndSurveyExist(step: any): boolean {
+  // step?.exam?.questions.length || step?.survey?.questions.length
+  const both = this.surveyExists(step) && this.examExists(step);
+  return both;
+ }
+
+menuTriggerButtonClick(step, stepNum): void {
+
+  if (!this.examAndSurveyExist(step)) {
+    if (this.examExists(step)) {
+      this.goToExam(step, stepNum, true);
+      this.previewButton.closeMenu();
+      return;
+    }
+
+    if (this.surveyExists(step)) {
+      this.goToSurvey(stepNum, true);
+      this.previewButton.closeMenu();
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   checkMyCourses(courseId: string) {
     return this.userService.shelf.courseIds.includes(courseId);
   }
@@ -138,23 +214,4 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
-
-  surveyExists(step: any): boolean {
-    // tslint:disable-next-line:whitespace
-    const exists = step && step.survey && step.survey.questions && step.survey.questions.length > 0;
-    return exists;
- }
-
- examExists(step: any): boolean {
-   // tslint:disable-next-line:whitespace
-   const exists = step && step.exam && step.exam.questions && step.exam.questions.length > 0;
-   return exists;
- }
-
-examAndSurveyExist(step: any): boolean {
-  // step?.exam?.questions.length || step?.survey?.questions.length
-  const both = this.surveyExists(step) && this.examExists(step);
-  return both;
- }
-
 }
