@@ -270,7 +270,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
-    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
+    let minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
+
+    const startDateFromForm: Date = new Date(this.dateFilterForm.controls.startDate.value);
+    if (startDateFromForm !== this.minDate) {
+      minDate = startDateFromForm.setHours(0, 0, 0, 0);
+    }
+
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const fields = [
       {
