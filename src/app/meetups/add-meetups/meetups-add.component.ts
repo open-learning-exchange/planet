@@ -19,19 +19,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   selector: 'planet-meetups-add',
-  templateUrl: './meetups-add.component.html',
-  styles: [ `
-    form.form-spacing {
-      width: inherit;
-    }
-    .actions-container {
-      align-self: center;
-    }
-    .view-container form {
-      min-width: 385px;
-      max-width: 750px;
-    }
-  ` ]
+  templateUrl: './meetups-add.component.html'
 })
 export class MeetupsAddComponent implements OnInit {
 
