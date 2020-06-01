@@ -270,13 +270,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
-    let minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
-
-    const startDateFromForm: Date = new Date(this.dateFilterForm.controls.startDate.value);
-    if (startDateFromForm !== this.minDate) {
-      minDate = startDateFromForm.setHours(0, 0, 0, 0);
-    }
-
+    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
+    const startDateFromForm: Date = this.dateFilterForm.controls.startDate.value;
+    const endDateFromForm: Date = this.dateFilterForm.controls.endDate.value;
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const fields = [
       {
@@ -291,8 +287,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     ];
     const formGroup = {
-      startDate: new Date(minDate),
-      endDate: [ new Date(this.today), CustomValidators.endDateValidator() ]
+      startDate: new Date(startDateFromForm.setHours(0, 0, 0, 0)),
+      endDate: [ new Date(endDateFromForm.setHours(0, 0, 0, 0)), CustomValidators.endDateValidator() ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
