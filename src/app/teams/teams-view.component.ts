@@ -25,6 +25,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
+import { DialogsAddUsersComponent } from '../shared/dialogs/dialogs-add-users.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -375,15 +376,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  openDialog(data) {
-    this.dialogRef = this.dialog.open(DialogsListComponent, {
-      data,
-      maxHeight: '500px',
-      width: '600px',
-      autoFocus: false
-    });
-  }
-
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
@@ -392,17 +384,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
-      res.tableData = res.tableData.filter((user: any) => this.members.findIndex((member) => member.name === user.name) === -1);
-      const data = {
+    console.log(this.team);
+    this.dialogRef = this.dialog.open(DialogsAddUsersComponent, {
+      width: '80vw',
+      data: {
         okClick: this.addMembers.bind(this),
-        filterPredicate: filterSpecificFields([ 'name' , 'Full Name' ]),
-        allowMulti: true,
-        itemDescription: 'members',
-        nameProperty: 'name',
-        ...res
-      };
-      this.openDialog(data);
+        excludeIds: this.members.map(user => user.userId)
+      }
     });
   }
 

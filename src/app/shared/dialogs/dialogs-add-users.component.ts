@@ -1,24 +1,24 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { CoursesComponent } from '../../courses/courses.component';
+import { UsersComponent } from '../../users/users.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 
 @Component({
-  templateUrl: 'dialogs-add-courses.component.html'
+  templateUrl: 'dialogs-add-users.component.html'
 })
-export class DialogsAddCoursesComponent implements AfterViewInit {
+export class DialogsAddUsersComponent implements AfterViewInit {
 
-  @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
+  @ViewChild(UsersComponent, { static: false }) usersComponent: UsersComponent;
   okDisabled = true;
 
   constructor(
-    public dialogRef: MatDialogRef<DialogsAddCoursesComponent>,
+    public dialogRef: MatDialogRef<DialogsAddUsersComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngAfterViewInit() {
-    this.coursesComponent.selection.onChange.subscribe((selection) => {
+    this.usersComponent.usersTable.selection.onChange.subscribe((selection) => {
       this.okDisabled = selection.source.selected.length === 0;
     });
   }
@@ -27,14 +27,14 @@ export class DialogsAddCoursesComponent implements AfterViewInit {
     if (!this.data.noSpinner) {
       this.dialogsLoadingService.start();
     }
-    this.addExistingCourses();
+    this.addExistingUsers();
   }
 
-  addExistingCourses() {
-    const tableData = this.coursesComponent.courses.data;
-    const selection = this.coursesComponent.selection.selected;
-    const courses = tableData.filter((course: any) => selection.indexOf(course._id) > -1);
-    this.data.okClick(courses);
+  addExistingUsers() {
+    const tableData = this.usersComponent.usersTable.usersTable.data;
+    const selection = this.usersComponent.usersTable.selection.selected;
+    const users = tableData.filter((user: any) => selection.indexOf(user._id) > -1);
+    this.data.okClick(users);
   }
 
 }

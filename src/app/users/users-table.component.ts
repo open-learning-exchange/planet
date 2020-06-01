@@ -45,6 +45,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   @Input() users: any[];
   @Input() containerClass: string;
   @Input() matSortActive = '';
+  @Input() isDialog = false;
   @Input()
   get search() {
     return this.usersTable.filter;

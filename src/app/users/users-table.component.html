@@ -101,7 +101,7 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <span *ngIf="isUserAdmin && filterType === 'local'">
+        <span *ngIf="isUserAdmin && filterType === 'local' && !isDialog">
           <span *ngIf="!element.doc.isUserAdmin">
             <button mat-raised-button color="primary" *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
               <mat-icon>lock_open</mat-icon><ng-container i18n>Activate</ng-container>

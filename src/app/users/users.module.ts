@@ -16,7 +16,7 @@ import { UsersTableComponent } from './users-table.component';
 
 @NgModule({
   exports: [
-    UsersTableComponent
+    UsersTableComponent, UsersComponent
   ],
   imports: [
     NgxImgModule,

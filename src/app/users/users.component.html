@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+  <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Members</span>
   <span class="toolbar-fill"></span>
   <ng-container *ngIf="planetType !== 'community'">
@@ -38,7 +38,7 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3" *ngIf="tableState.filterType==='local'">
       <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
@@ -57,7 +57,7 @@
   </mat-toolbar>
 
   <ng-container *ngIf="!emptyData; else notFoundMessage">
-    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table"></planet-users-table>
+    <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog"></planet-users-table>
   </ng-container>
   <ng-template #notFoundMessage>
     <div class="view-container">No User Found</div>

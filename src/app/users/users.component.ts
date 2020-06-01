@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
+  selector: 'planet-users',
   templateUrl: './users.component.html',
   styles: [ `
     /* Column Widths */
@@ -28,6 +29,8 @@ import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/r
 export class UsersComponent implements OnInit, OnDestroy {
 
   @ViewChild('table', { static: false }) usersTable: UsersTableComponent;
+  @Input() isDialog = false;
+  @Input() excludeIds = [];
   users: any[] = [];
   message = '';
   searchValue = '';
@@ -73,7 +76,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     )).subscribe(childPlanets => this.children = childPlanets.sort(sortPlanet));
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
-      this.users = users;
+      this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
     });
     this.usersService.requestUserData();
   }
