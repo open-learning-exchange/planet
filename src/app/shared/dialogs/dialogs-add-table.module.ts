@@ -1,24 +1,26 @@
 import { MaterialModule } from '../material.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CoursesModule } from '../../courses/courses.module';
 import { UsersModule } from '../../users/users.module';
-import { DialogsAddUsersComponent } from './dialogs-add-users.component';
+import { DialogsAddTableComponent } from './dialogs-add-table.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
     MaterialModule,
+    CoursesModule,
     UsersModule
   ],
   exports: [
-    DialogsAddUsersComponent
+    DialogsAddTableComponent
   ],
   declarations: [
-    DialogsAddUsersComponent
+    DialogsAddTableComponent
   ],
   entryComponents: [
-    DialogsAddUsersComponent
+    DialogsAddTableComponent
   ]
 })
-export class DialogsAddUsersModule {}
+export class DialogsAddTableModule {}

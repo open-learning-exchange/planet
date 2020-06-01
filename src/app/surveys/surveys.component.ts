@@ -23,7 +23,7 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { DialogsAddUsersComponent } from '../shared/dialogs/dialogs-add-users.component';
+import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -60,7 +60,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
     [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
   );
-  dialogRef: MatDialogRef<DialogsAddUsersComponent>;
+  dialogRef: MatDialogRef<DialogsAddTableComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   emptyData = false;
@@ -245,24 +245,24 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendSurveyDialog(survey) {
-    this.dialogRef = this.dialog.open(DialogsAddUsersComponent, {
+    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
       data: {
-        okClick: this.sendSurvey(survey).bind(this),
-        excludeIds: [ this.userService.get()._id ]
+        okClick: (selection: any[]) => this.sendSurvey(survey, selection.map(item => item.doc)),
+        excludeIds: [ this.userService.get()._id ],
+        mode: 'users'
       }
     });
   }
 
-  sendSurvey(survey: any) {
-    return (selectedUsers: string[]) => {
-      this.submissionsService.sendSubmissionRequests(selectedUsers, {
-        'parentId': survey._id, 'parent': survey }
-      ).subscribe(() => {
-        this.planetMessageService.showMessage('Survey requests sent');
-        this.dialogRef.close();
-      });
-    };
+  sendSurvey(survey: any, users: any[]) {
+    this.submissionsService.sendSubmissionRequests(users, {
+      'parentId': survey._id, 'parent': survey }
+    ).subscribe(() => {
+      this.planetMessageService.showMessage('Survey requests sent');
+      this.dialogsLoadingService.stop();
+      this.dialogRef.close();
+    });
   }
 
   recordSurvey(survey: any) {

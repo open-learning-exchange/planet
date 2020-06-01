@@ -74,6 +74,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.filterType = newState.filterType;
     this._tableState = newState;
   }
+  get tableData() {
+    return this.usersTable;
+  }
   @Input() linkPrefix: string;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
