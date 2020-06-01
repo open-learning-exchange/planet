@@ -11,6 +11,8 @@ import { CsvService } from '../shared/csv.service';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { ManagerService } from '../manager-dashboard/manager.service';
+import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -39,7 +41,8 @@ export class SubmissionsService {
     private userService: UserService,
     private csvService: CsvService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private managerService: ManagerService
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
@@ -298,13 +301,21 @@ export class SubmissionsService {
   }
 
   exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }) {
-    this.getSubmissionsExport(exam, type).subscribe(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
+    forkJoin([
+      this.getSubmissionsExport(exam, type),
+      this.managerService.getChildPlanets(true)
+    ]).subscribe(([ [ submissions, time, questionTexts ], planets ]: [ [ any[], number, string[] ], any[] ]) => {
       if (!submissions.length) {
         this.dialogsLoadingService.stop();
         this.planetMessageService.showMessage('There is no survey response');
         return;
       }
-      const markdown = this.preparePDF(exam, submissions, questionTexts, exportOptions);
+      const planetsWithName = attachNamesToPlanets(planets);
+      const submissionsWithPlanetName = submissions.map(submission => ({
+        ...submission,
+        planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
+      }));
+      const markdown = this.preparePDF(exam, submissionsWithPlanetName, questionTexts, exportOptions);
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         {
@@ -325,8 +336,10 @@ export class SubmissionsService {
   }
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission) {
-    return responseHeader ? `<h3${index === 0 ? '' :
-      'class="pdf-break"'}>Response from ${submission.parent.sourcePlanet} on ${new Date(submission.lastUpdateTime).toString()}</h3>  \n` :
+    return responseHeader ?
+      `<h3${index === 0 ? '' : ' class="pdf-break"'}>
+        Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toString()}
+      </h3>  \n` :
       `### ${exam.name} Questions  \n`;
   }
 
