@@ -5,7 +5,6 @@ import { CoursesModule } from '../../courses/courses.module';
 import { UsersModule } from '../../users/users.module';
 import { DialogsAddTableComponent } from './dialogs-add-table.component';
 
-
 @NgModule({
   imports: [
     CommonModule,
