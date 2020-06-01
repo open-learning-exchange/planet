@@ -2,7 +2,7 @@
   <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Members</span>
   <span class="toolbar-fill"></span>
-  <ng-container *ngIf="planetType !== 'community'">
+  <ng-container *ngIf="planetType !== 'community' && !hideChildren">
     <mat-button-toggle-group
       class="margin-lr-5 font-size-1"
       (change)="changePlanetFilter(filterGroup.value)"

@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="mode">
   <planet-courses *ngSwitchCase="'courses'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-courses>
-  <planet-users *ngSwitchCase="'users'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-users>
+  <planet-users *ngSwitchCase="'users'" [isDialog]="true" [hideChildren]="data.hideChildren" [excludeIds]="data.excludeIds"></planet-users>
 </ng-container>
 <mat-dialog-actions>
   <button mat-raised-button mat-dialog-close i18n>Cancel</button>

@@ -30,6 +30,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   @ViewChild('table', { static: false }) usersTable: UsersTableComponent;
   @Input() isDialog = false;
+  @Input() hideChildren = false;
   @Input() excludeIds = [];
   users: any[] = [];
   message = '';
