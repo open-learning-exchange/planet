@@ -101,8 +101,7 @@ export class UsersUpdateComponent implements OnInit {
       ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      betaEnabled: false,
-      birthplace: ''
+      betaEnabled: false
     });
   }
 
