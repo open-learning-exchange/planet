@@ -83,7 +83,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     this.stateService.requestData(dbName, 'local');
     this.couchService.currentTime().subscribe((currentTime: number) => {
-      this.today = new Date(currentTime);
+      this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
       this.dateFilterForm.controls.endDate.setValue(this.today);
     });
   }
@@ -125,8 +125,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dateFilterForm.valueChanges.subscribe(value => {
       this.filter = { ...this.filter, ...value };
       if (this.minDate && this.today) {
-        this.disableShowAllTime = this.minDate.getTime() === value.startDate.getTime() &&
-          value.endDate.setHours(0, 0, 0, 0) === this.today.setHours(0, 0, 0, 0);
+        this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
+          value.endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
