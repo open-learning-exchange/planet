@@ -27,7 +27,7 @@ export class CommunityLinkDialogComponent {
     private validatorService: ValidatorService
   ) {
     this.linkForm = this.fb.group({
-      title: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, { } ) ],
+      title: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
       route: [ '', CustomValidators.required ],
       linkId: '',
       teamType: ''
