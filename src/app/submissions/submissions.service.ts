@@ -196,7 +196,7 @@ export class SubmissionsService {
     }, []);
   }
 
-  sendSubmissionRequests(users: string[], { parentId, parent }) {
+  sendSubmissionRequests(users: any[], { parentId, parent }) {
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
       'parent': { '_rev': parent._rev },
