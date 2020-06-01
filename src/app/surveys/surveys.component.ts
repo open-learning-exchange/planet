@@ -23,6 +23,7 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogsAddUsersComponent } from '../shared/dialogs/dialogs-add-users.component';
 
 @Component({
   'templateUrl': './surveys.component.html',
@@ -59,7 +60,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
     [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
   );
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsAddUsersComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   emptyData = false;
@@ -244,52 +245,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendSurveyDialog(survey) {
-    this.getUserData(this.requestUsers()).subscribe((userData: {tableData: [], columns: []}) => {
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: {
-          ...userData,
-          allowMulti: true,
-          itemDescription: 'members',
-          nameProperty: 'name',
-          okClick: this.sendSurvey(survey).bind(this),
-          dropdownSettings: {
-            field: 'planetCode', startingValue: { value: this.stateService.configuration.code, text: 'Local' }
-          },
-          filterPredicate: filterSpecificFields([ 'name' ])
-        },
-        maxHeight: '500px',
-        width: '600px',
-        autoFocus: false
-      });
+    this.dialogRef = this.dialog.open(DialogsAddUsersComponent, {
+      width: '80vw',
+      data: {
+        okClick: this.sendSurvey(survey).bind(this),
+        excludeIds: [ this.userService.get()._id ]
+      }
     });
-  }
-
-  requestUsers() {
-    return forkJoin([
-      this.dialogsListService.getListAndColumns('_users'),
-      this.dialogsListService.getListAndColumns('child_users'),
-      this.couchService.findAll('communityregistrationrequests')
-    ]);
-  }
-
-  getUserData(obs: any) {
-    return obs.pipe(switchMap(([ users, childUsers, children ]) => {
-      children = attachNamesToPlanets(children);
-      return of({
-        tableData: [
-          ...users.tableData.filter(user => user.planetCode === this.configuration.code),
-          ...childUsers.tableData.filter((user: any) => {
-            const planet = children.find((child: any) => user.planetCode === child.doc.code);
-            return planet && planet.registrationRequest !== 'pending';
-          })
-        ],
-        columns: [ ...childUsers.columns ],
-        labels: children.reduce((labelObj, child) =>
-          ({ ...labelObj, [child.doc.code]: child.nameDoc ? child.nameDoc.name : child.doc.name }),
-          {}
-        )
-      });
-    }));
   }
 
   sendSurvey(survey: any) {

@@ -45,7 +45,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
   currentUserId = this.userService.get()._id;
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsAddUsersComponent>;
   user = this.userService.get();
   news: any[] = [];
   resources: any[] = [];
@@ -384,7 +384,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    console.log(this.team);
     this.dialogRef = this.dialog.open(DialogsAddUsersComponent, {
       width: '80vw',
       data: {

@@ -89,9 +89,11 @@ export class UsersComponent implements OnInit, OnDestroy {
   changePlanetFilter(type, child: any = {}) {
     this.filterDisplayColumns(type);
     this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
-    this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
-      this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
-    });
+    if (this.isDialog) {
+      this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
+        this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
+      });
+    }
   }
 
   filterDisplayColumns(type: string) {
@@ -111,7 +113,11 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   searchChanged(searchText: string) {
-    this.searchChange.next(searchText);
+    if (this.isDialog) {
+      this.applyFilter(searchText);
+    } else {
+      this.searchChange.next(searchText);
+    }
   }
 
   idsToUsers(userIds: any[]) {
