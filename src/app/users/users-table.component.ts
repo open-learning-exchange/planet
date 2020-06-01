@@ -157,6 +157,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   gotoProfileView(userName: string) {
+    if (this.isDialog) {
+      return;
+    }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
     this.router.navigate([ this.linkPrefix || 'profile', userName, optParams ], { relativeTo: this.route });
   }
