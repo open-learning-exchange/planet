@@ -4,7 +4,7 @@
     <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="weekOf">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Week Starting</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef [start]="desc" mat-sort-header i18n>Week Starting</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.weekOf | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
