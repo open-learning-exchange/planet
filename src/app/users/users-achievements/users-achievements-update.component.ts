@@ -119,7 +119,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       achievement.title !== '' ? 'Edit Achievement' : 'Add Achievement',
       [
-        { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title' },
+        { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title', required: true },
         { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': 'Description', 'required': false },
         { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources' }
@@ -144,7 +144,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       reference.name !== '' ? 'Edit Reference' : 'Add Reference',
       [
-        { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name' },
+        { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', required: true },
         { 'type': 'textbox', 'name': 'relationship', 'placeholder': 'Relationship', 'required': false },
         { 'type': 'textbox', 'name': 'phone', 'placeholder': 'Phone Number', 'required': false },
         { 'type': 'textbox', 'name': 'email', 'placeholder': 'Email', 'required': false }
