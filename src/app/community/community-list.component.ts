@@ -31,6 +31,15 @@ export class CommunityListComponent implements OnInit {
         hubs
       );
       this.planets = { hubs: allHubs.hubs.filter(hub => hub.children.length > 0), sandboxPlanets: allHubs.sandboxPlanets };
+      this.planets.hubs.forEach(hub => {
+        if (hub.planetId) {
+          const doc = children.find(child => child._id === hub.planetId);
+          if (doc) {
+            hub.children.push({ doc, nameDoc: undefined });
+            hub.spokes.push(doc.code);
+          }
+        }
+      });
     });
   }
 
