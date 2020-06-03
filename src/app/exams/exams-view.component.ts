@@ -64,7 +64,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
           this.exam = this.exam || res;
           this.examType = params.get('type') || this.previewExamType;
-          console.log(this.examType);
           this.setExamPreview();
         });
         return;
