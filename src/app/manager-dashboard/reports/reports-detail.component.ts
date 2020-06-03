@@ -287,8 +287,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     ];
     const formGroup = {
-      startDate: new Date(startDateFromForm.setHours(0, 0, 0, 0)),
-      endDate: [ new Date(endDateFromForm.setHours(0, 0, 0, 0)), CustomValidators.endDateValidator() ]
+      startDate: startDateFromForm,
+      endDate: [ endDateFromForm, CustomValidators.endDateValidator() ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
