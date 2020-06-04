@@ -75,22 +75,22 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
-    this.setWeeklyChart();
+    this.setWeeklyChart('COVID-19');
   }
 
   showWeek(weekOf) {
     this.changeDateRange.emit({ startDate: new Date(weekOf), endDate: new Date(weekOf + (millisecondsToDay * 6)) });
   }
 
-  setWeeklyChart() {
+  setWeeklyChart(diagnosis: string) {
     if (this.weeklyHealthData.length === 0) {
       return;
     }
     this.weeklyHealthData.sort((a, b) => a.weekOf - b.weekOf);
-    const data = this.weeklyHealthData.map(week => week.docs.filter(doc => doc.conditions['COVID-19'] === true).length);
+    const data = this.weeklyHealthData.map(week => week.docs.filter(doc => doc.conditions[diagnosis] === true).length);
     const labels = this.weeklyHealthData.map(week => weekDataLabels(week.weekOf));
     this.setChart({
-      data: { labels, datasets: [ { label: 'COVID-19', data, borderColor: styleVariables.primary, lineTension: 0 } ] },
+      data: { labels, datasets: [ { label: diagnosis, data, borderColor: styleVariables.primary, lineTension: 0 } ] },
       chartName: 'diagnosesTrend'
     });
   }
