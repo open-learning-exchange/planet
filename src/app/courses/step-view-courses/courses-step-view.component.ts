@@ -178,36 +178,32 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  surveyExists(): boolean {
-    const exists = this.stepDetail && this.stepDetail.survey &&
-    this.stepDetail.survey.questions && this.stepDetail.survey.questions.length > 0;
-    return exists;
- }
-
- examExists(): boolean {
-   const exists = this.stepDetail && this.stepDetail.exam &&
-   this.stepDetail.exam.questions && this.stepDetail.exam.questions.length > 0;
-   return exists;
- }
+examOrSurveyExists(stepDetailItem: 'exam' | 'survey') {
+  return stepDetailItem === 'exam'
+    ? this.stepDetail && this.stepDetail.exam &&
+    this.stepDetail.exam.questions && this.stepDetail.exam.questions.length > 0
+    :
+    this.stepDetail && this.stepDetail.survey &&
+      this.stepDetail.survey.questions && this.stepDetail.survey.questions.length > 0;
+}
 
 examAndSurveyExist(): boolean {
-  const both = this.surveyExists() && this.examExists();
-  return both;
+  return this.examOrSurveyExists('survey') && this.examOrSurveyExists('exam');
  }
 
 menuTriggerButtonClick(): void {
-
   if (!this.examAndSurveyExist()) {
-    if (this.examExists()) {
-      this.goToExam('exam', true);
-      this.previewButton.closeMenu();
-      return;
+    let stepDetailItem: string;
+
+    if (this.examOrSurveyExists('exam')) {
+      stepDetailItem = 'exam';
     }
 
-    if (this.surveyExists()) {
-      this.goToExam('survey', true);
-      this.previewButton.closeMenu();
-    }
+    if (this.examOrSurveyExists('survey')) {
+      stepDetailItem = 'survey';
+  }
+    this.goToExam(stepDetailItem, true);
+    this.previewButton.closeMenu();
   }
 }
 }

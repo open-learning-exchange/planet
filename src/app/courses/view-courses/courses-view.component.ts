@@ -113,37 +113,26 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  surveyExists(step: any): boolean {
-    // tslint:disable-next-line:whitespace
-    const exists = step && step.survey && step.survey.questions && step.survey.questions.length > 0;
-    return exists;
- }
+  examOrSurveyExists(step: any, courseDetail: 'exam' | 'survey') {
+    return courseDetail === 'exam'
+      ? step && step.exam && step.exam.questions && step.exam.questions.length > 0
+      : step && step.survey && step.survey.questions && step.survey.questions.length > 0;
+  }
 
- examExists(step: any): boolean {
-   // tslint:disable-next-line:whitespace
-   const exists = step && step.exam && step.exam.questions && step.exam.questions.length > 0;
-   return exists;
- }
-
-examAndSurveyExist(step: any): boolean {
-  // step?.exam?.questions.length || step?.survey?.questions.length
-  const both = this.surveyExists(step) && this.examExists(step);
-  return both;
- }
+  examAndSurveyExist(step: any): boolean {
+    return this.examOrSurveyExists(step, 'survey') && this.examOrSurveyExists(step, 'exam');
+   }
 
 menuTriggerButtonClick(step, stepNum): void {
 
   if (!this.examAndSurveyExist(step)) {
-    if (this.examExists(step)) {
+    if (this.examOrSurveyExists(step, 'exam')) {
       this.goToExam(step, stepNum, true);
-      this.previewButton.closeMenu();
-      return;
     }
-
-    if (this.surveyExists(step)) {
+    if (this.examOrSurveyExists(step, 'survey')) {
       this.goToSurvey(stepNum, true);
-      this.previewButton.closeMenu();
     }
+    this.previewButton.closeMenu();
   }
 }
 
