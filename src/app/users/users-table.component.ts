@@ -41,7 +41,7 @@ export class TableState {
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
-  @Input() displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles' ];
+  @Input() displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   @Input() users: any[];
   @Input() containerClass: string;
   @Input() matSortActive = '';
