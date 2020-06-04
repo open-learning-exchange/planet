@@ -207,7 +207,7 @@ export class ExamsAddComponent implements OnInit {
     return this.newExamName(existingExams, namePrefix, tryNumber + 1);
   }
 
-  showPreviewDialog(params) {
+  showPreviewDialog() {
     if (this.examForm.value.questions.length === 0) {
       this.showPreviewError = true;
       return;
@@ -216,7 +216,6 @@ export class ExamsAddComponent implements OnInit {
       this.showErrorMessage();
       return;
     }
-    this.examType = params;
     this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value, examType: this.examType }, minWidth: '75vw' });
   }
 
