@@ -10,6 +10,9 @@
     <planet-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
   </span>
 </div>
+<div class="chart-container">
+  <canvas id="diagnosesTrend" #diagnosesChart></canvas>
+</div>
 <h1 class="mat-title" i18n>Weekly Data</h1>
 <planet-reports-detail-activities
   [activitiesByDoc]="weeklyHealthData"
