@@ -62,6 +62,8 @@ export const reportsDetailParams = (type) => ({
 
 export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
+export const weekDataLabels = (date) => new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),
   y: unique ? visit.unique.length : visit.count || 0
