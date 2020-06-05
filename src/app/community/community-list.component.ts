@@ -30,6 +30,17 @@ export class CommunityListComponent implements OnInit {
           .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planetAndParentId(planet.doc)) === -1),
         hubs
       );
+      this.planets = {
+        hubs: allHubs.hubs.filter(hub => hub.planetId).map(hub => {
+          const planet = children.find(child => child._id === hub.planetId);
+          if (!planet) {
+            console.log(hub);
+            return hub;
+          }
+          return { ...hub, children: [ { doc: planet }, ...hub.children ] };
+        }),
+        sandboxPlanets: allHubs.sandboxPlanets
+      };
     });
   }
 
