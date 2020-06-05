@@ -22,11 +22,12 @@ mat-toolbar mat-form-field {
     grid-template-columns: repeat(3, 1fr);
     grid-column-gap: 1vw;
     margin: 3vh 0;
-    h1 {
-      display: block;
-      margin: 0.4rem 0 0;
-      color: $primary;
-    }
+  }
+
+  h1 {
+    display: block;
+    margin: 0.4rem 0 0;
+    color: $primary;
   }
 
   @media(max-width:1000px) {

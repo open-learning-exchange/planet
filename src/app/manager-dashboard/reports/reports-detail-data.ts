@@ -1,4 +1,4 @@
-import { itemInDateRange } from './reports.utils';
+import { filterByDate } from './reports.utils';
 
 export interface ReportDetailFilter {
   app: 'planet' | 'myplanet' | '';
@@ -27,9 +27,10 @@ export class ReportsDetailData {
 
   filter({ app, startDate, endDate }: ReportDetailFilter) {
     const isCorrectApp = item => app === '' || ((app === 'myplanet') !== (item.androidId === undefined));
-    const endTime = new Date(endDate || new Date()).setHours(24);
-    this.filteredData = this.data.filter(
-      item => isCorrectApp(item) && itemInDateRange(item, this.dateField, startDate || new Date(0), new Date(endTime))
+    this.filteredData = filterByDate(
+      this.data,
+      this.dateField,
+      { startDate: startDate || new Date(0), endDate, additionalFilterFunction: (item) => isCorrectApp(item) }
     );
   }
 

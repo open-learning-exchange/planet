@@ -156,7 +156,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   appendToCourse(info, type: 'exam' | 'survey') {
-    const courseExam = { ...this.documentInfo, ...info, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
+    const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
   }
 

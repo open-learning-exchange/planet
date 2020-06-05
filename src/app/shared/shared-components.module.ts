@@ -17,6 +17,7 @@ import { CommunityListComponent } from '../community/community-list.component';
 import { RouterModule } from '@angular/router';
 import { LabelComponent } from './label.component';
 import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
+import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 
 @NgModule({
   imports: [
@@ -56,7 +57,8 @@ import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-ta
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
-    MyPlanetTableComponent
+    MyPlanetTableComponent,
+    TimePipe
   ]
 })
 export class SharedComponentsModule {}

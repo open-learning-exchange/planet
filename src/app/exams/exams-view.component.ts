@@ -99,6 +99,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setExamPreview() {
     this.answer.setValue(null);
+    this.checkboxState = {};
     this.grade = 0;
     this.statusMessage = '';
     const exam = this.submission ? this.submission.parent : this.exam;

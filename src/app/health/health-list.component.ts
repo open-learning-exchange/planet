@@ -60,7 +60,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
           ...user,
           health: {
             ...userHealth,
-            lastVisit: Math.max(maxEventDate(userHealth.events), userHealth.lastExamination || 0) || ''
+            lastVisit: Math.max(maxEventDate(userHealth.events || []), userHealth.lastExamination || 0) || ''
           }
         } :
         user
