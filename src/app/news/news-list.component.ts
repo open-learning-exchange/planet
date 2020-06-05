@@ -137,8 +137,12 @@ export class NewsListComponent implements OnChanges {
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
       });
     } else {
-      const okClick = (planets) =>
-        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
+      const okClick = (planets) => {
+        if (planets.length !== 0) {
+          this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
+        }
+        this.shareDialog.close();
+      };
       this.shareDialog = this.dialog.open(CommunityListDialogComponent, {
         data: {
           okClick,
