@@ -18,10 +18,10 @@
       <mat-header-cell *matHeaderCellDef i18n>Profile Image</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <div *ngIf="element.imageSrc; else noImage">
-          <img class="profile-image cursor-pointer" [src]="element.imageSrc">
+          <img class="profile-image" [src]="element.imageSrc">
         </div>
         <ng-template #noImage>
-          <img class="profile-image cursor-pointer" src="assets/avatar.png">
+          <img class="profile-image" src="assets/avatar.png">
         </ng-template>
       </mat-cell>
     </ng-container>
@@ -88,9 +88,9 @@
         <mat-chip-list>
           <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
           <ng-container *ngFor="let role of element.doc.roles; index as i">
-            <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin" (removed)="removeRole(element.doc,i)">
+            <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
               <planet-role [role]="role"></planet-role>
-              <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin">cancel</mat-icon>
+              <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>
           </ng-container>
           <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">Admin</mat-chip>
@@ -127,8 +127,8 @@
         </a>
       </mat-cell>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef="let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:selection.isSelected(row.doc._id)}"></mat-row>
+    <mat-header-row *matHeaderRowDef= "displayedColumns"></mat-header-row>
+    <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef= "let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:selection.isSelected(row.doc._id)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="50"

@@ -125,6 +125,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   ngOnChanges() {
     this.usersTable.data = this.users;
+    if (this.isDialog) {
+      this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles' ];
+    }
   }
 
   ngOnDestroy() {
