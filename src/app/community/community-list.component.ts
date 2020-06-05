@@ -31,9 +31,10 @@ export class CommunityListComponent implements OnInit {
         hubs
       );
       this.planets = {
-        hubs: allHubs.hubs.filter(hub => hub.children.length > 0).map(hub => {
+        hubs: allHubs.hubs.filter(hub => hub.planetId).map(hub => {
           const planet = children.find(child => child._id === hub.planetId);
           if (!planet) {
+            console.log(hub);
             return hub;
           }
           return { ...hub, children: [ { doc: planet }, ...hub.children ] };
