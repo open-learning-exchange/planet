@@ -123,18 +123,18 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return this.examOrSurveyExists(step, 'survey') && this.examOrSurveyExists(step, 'exam');
    }
 
-menuTriggerButtonClick(step, stepNum): void {
+  menuTriggerButtonClick(step: any, stepNum: any): void {
 
-  if (!this.examAndSurveyExist(step)) {
-    if (this.examOrSurveyExists(step, 'exam')) {
-      this.goToExam(step, stepNum, true);
+    if (!this.examAndSurveyExist(step)) {
+      if (this.examOrSurveyExists(step, 'exam')) {
+        this.goToExam(step, stepNum, true);
+      }
+      if (this.examOrSurveyExists(step, 'survey')) {
+        this.goToSurvey(stepNum, true);
+      }
+      this.previewButton.closeMenu();
     }
-    if (this.examOrSurveyExists(step, 'survey')) {
-      this.goToSurvey(stepNum, true);
-    }
-    this.previewButton.closeMenu();
   }
-}
 
   checkMyCourses(courseId: string) {
     return this.userService.shelf.courseIds.includes(courseId);
