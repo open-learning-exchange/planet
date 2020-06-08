@@ -31,13 +31,15 @@ export class CommunityListComponent implements OnInit {
         hubs
       );
       this.planets = {
-        hubs: allHubs.hubs.filter(hub => hub.children.length > 0).map(hub => {
-          const planet = children.find(child => child._id === hub.planetId);
-          if (!planet) {
-            return hub;
-          }
-          return { ...hub, children: [ { doc: planet }, ...hub.children ] };
-        }),
+        hubs: allHubs.hubs
+          .map(hub => {
+            const planet = children.find(child => child._id === hub.planetId);
+            if (!planet || this.excludeIds.indexOf(planetAndParentId(planet)) > -1) {
+              return hub;
+            }
+            return { ...hub, children: [ { doc: planet }, ...hub.children ] };
+          })
+          .filter(hub => hub.children.length > 0),
         sandboxPlanets: allHubs.sandboxPlanets
       };
     });
