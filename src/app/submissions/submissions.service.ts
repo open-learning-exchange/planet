@@ -258,7 +258,7 @@ export class SubmissionsService {
   }
 
   getSubmissionsExport(exam, type: 'exam' | 'survey') {
-    const query = findDocuments({ parentId: exam._id, type, status: 'complete' });
+    const query = findDocuments({ 'parent._id': exam._id, type, status: 'complete' });
     return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
   }
 
