@@ -6,11 +6,16 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
+  styles: [ `
+    mat-panel-title {
+      align-items: center;
+    }
+  ` ]
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 
@@ -27,7 +32,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private stateService: StateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -84,6 +90,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   trackById(index, item) {
     return item._id;
+  }
+
+  viewReport(planet, event) {
+    this.router.navigate([ 'detail', { parentCode: planet.parentCode, code: planet.code } ], { relativeTo: this.route });
+    event.stopPropagation();
   }
 
 }

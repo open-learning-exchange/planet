@@ -13,7 +13,8 @@ export const codeToPlanetName = (code: string, configuration: any, childPlanets:
 export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   hubs: hubs.map(hub => ({
     ...hub,
-    children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child)
+    children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child),
+    hubPlanetDoc: (planets.find(planet => planet.doc._id === hub.planetId) || {}).doc
   })),
   sandboxPlanets: planets.filter(
     planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1 || planet.doc._id === hub.planetId) === undefined
