@@ -36,6 +36,7 @@ export class ReportsHealthComponent implements OnChanges {
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };
   conditions = conditions;
+  initialSelectedCondition = 'COVID-19';
 
   constructor(
     private reportsService: ReportsService,
@@ -106,7 +107,8 @@ export class ReportsHealthComponent implements OnChanges {
       type: 'line',
       data,
       options: {
-        title: { display: true, text: 'Diagnosis Trend', fontSize: 16 },
+        title: { display: false },
+        legend: { display: false },
         maintainAspectRatio: false,
         scales: {
           yAxes: [ {
@@ -116,6 +118,10 @@ export class ReportsHealthComponent implements OnChanges {
         }
       }
     }));
+  }
+
+  onSelectedConditionChange(condition) {
+    this.setWeeklyChart(condition);
   }
 
 }
