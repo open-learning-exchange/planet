@@ -11,7 +11,8 @@ RUN apk add --no-cache \
       libcurl=7.64.0-r3 \
     curl=7.64.0-r3 \
       oniguruma=6.9.4-r0 \
-    jq=1.6-r0
+    jq=1.6-r0 \
+      openssl=1.1.1g-r0
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 COPY package.json ./
