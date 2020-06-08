@@ -22,11 +22,12 @@ export class PlanetRoundDirective {
       console.error('planetRound has a maximum precision of 9. Numbers will not round correctly if precision set above 9');
       return;
     }
-    const [ integer, decimals ] = this.elementRef.nativeElement.value.split('.');
-    const value = [ integer, (decimals || '0').substring(0, 10) ].join('.');
+    const [ num, exponent ] = this.elementRef.nativeElement.value.split('e');
+    const [ integer, decimals ] = num.split('.');
+    const value = [ integer, (decimals || '0').substring(0, 10) ].join('.') + (exponent ? `e${exponent}` : '');
     const precision = this.precision || 0;
-    const rounded = Math.round(+((+value + Number.EPSILON) + `e${precision}`)) + `e${-precision}`;
-    this.ngControl.control.setValue(+rounded);
+    const rounded = Math.round((+value + Number.EPSILON) * Math.pow(10, precision)) / Math.pow(10, precision);
+    this.ngControl.control.setValue(rounded);
   }
 
 }
