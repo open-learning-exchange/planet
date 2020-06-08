@@ -73,6 +73,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @Input() isDialog = false;
   @Input() isForm = false;
+  @Input() containerClass = '';
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
