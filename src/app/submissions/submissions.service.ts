@@ -239,7 +239,7 @@ export class SubmissionsService {
   }
 
   sendSubmissionNotification(isRecorded: boolean) {
-    const isUpdated = this.userService.get().isUserAdmin;
+    const isUpdated = this.submission.status === "complete";
     const data = {
       'message': `<b>${this.userService.get().name}</b> has
         ${isUpdated ? 'updated' : isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
