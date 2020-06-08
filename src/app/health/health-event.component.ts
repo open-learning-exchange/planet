@@ -78,7 +78,6 @@ export class HealthEventComponent {
   }
 
   showWarning(invalidFields) {
-    const extraMessage = 'The following measurement(s) may be incorrect. Click cancel to fix or click ok to submit.';
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -89,7 +88,7 @@ export class HealthEventComponent {
           }
         },
         showMainParagraph: false,
-        extraMessage,
+        extraMessage: 'The following measurement(s) may be incorrect. Click <b>Cancel</b> to fix or click <b>OK</b> to submit.',
         showLabels: invalidFields
       }
     });
