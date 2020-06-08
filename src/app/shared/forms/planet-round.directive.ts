@@ -24,7 +24,7 @@ export class PlanetRoundDirective {
     }
     const [ num, exponent ] = this.elementRef.nativeElement.value.split('e');
     const [ integer, decimals ] = num.split('.');
-    const value = [ [ integer, (decimals || '0').substring(0, 10) ].join('.'), exponent ].join('e');
+    const value = [ integer, (decimals || '0').substring(0, 10) ].join('.') + (exponent ? `e${exponent}` : '');
     const precision = this.precision || 0;
     const rounded = Math.round((+value + Number.EPSILON) * Math.pow(10, precision)) / Math.pow(10, precision);
     this.ngControl.control.setValue(rounded);
