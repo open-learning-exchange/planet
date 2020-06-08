@@ -12,7 +12,7 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   hubs: hubs.map(hub => ({
     ...hub,
     children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child),
-    doc: hub.planetId ? { ...(planets.find(planet => planet.doc._id === hub.planetId).doc) } : {}
+    hubPlanetDoc: (planets.find(planet => planet.doc._id === hub.planetId) || {}).doc
   })),
   sandboxPlanets: planets.filter(
     planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1 || planet.doc._id === hub.planetId) === undefined

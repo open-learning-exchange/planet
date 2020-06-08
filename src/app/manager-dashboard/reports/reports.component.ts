@@ -11,6 +11,11 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
+  styles: [ `
+    mat-panel-title {
+      align-items: center;
+    }
+  ` ]
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 
