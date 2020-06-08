@@ -85,6 +85,7 @@ export class ReportsHealthComponent implements OnChanges {
 
   setWeeklyChart(diagnosis: string) {
     if (this.weeklyHealthData.length === 0) {
+      this.charts = [];
       return;
     }
     this.weeklyHealthData.sort((a, b) => a.weekOf - b.weekOf);
@@ -101,6 +102,10 @@ export class ReportsHealthComponent implements OnChanges {
     if (updateChart) {
       updateChart.data = data;
       updateChart.update();
+      return;
+    }
+    if (!this.diagnosesChart) {
+      setTimeout(() => this.setChart({ data, chartName }));
       return;
     }
     this.charts.push(new Chart(this.diagnosesChart.nativeElement.getContext('2d'), {
