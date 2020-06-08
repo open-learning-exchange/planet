@@ -97,7 +97,7 @@ export class NewsService {
     // TODO: Filter newPlanets by ones currently existing in viewIn array
     const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     if (newPlanets.length === 0) {
-      return of({});
+      return of(undefined);
     }
     return this.postNews(
       {
