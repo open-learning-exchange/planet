@@ -4,7 +4,7 @@
 <div>
   <span><b i18n>Patients Seen:</b> {{headlineData?.unique.length}}</span>
 </div>
-<span *ngIf="headlineData?.total !== 0">
+<ng-container *ngIf="headlineData?.total !== 0">
   <h1 class="mat-title" i18n>Diagnoses</h1>
   <div>
     <span *ngFor="let condition of conditions">
@@ -22,7 +22,9 @@
     <canvas id="diagnosesTrend" #diagnosesChart></canvas>
   </div>
   <h1 class="mat-title" i18n>Weekly Data</h1>
-  <planet-reports-detail-activities [activitiesByDoc]="weeklyHealthData" activityType="health"
+  <planet-reports-detail-activities
+    [activitiesByDoc]="weeklyHealthData"
+    activityType="health"
     (itemClick)="showWeek($event)">
   </planet-reports-detail-activities>
-</span>
+</ng-container>
