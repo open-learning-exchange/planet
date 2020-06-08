@@ -216,7 +216,7 @@ export class ExamsAddComponent implements OnInit {
       this.showErrorMessage();
       return;
     }
-    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
+    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value, examType: this.examType }, minWidth: '75vw' });
   }
 
 }
