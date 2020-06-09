@@ -120,14 +120,14 @@ export class ReportsHealthComponent implements OnChanges {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
           } ],
-          xAxes: [{
+          xAxes: [ {
             scaleLabel: {
               display: true,
               labelString: 'Week Of',
               fontSize: 12,
               fontStyle: 'bold'
             }
-          }]
+          } ]
         }
       }
     }));
