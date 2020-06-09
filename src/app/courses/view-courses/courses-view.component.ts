@@ -27,6 +27,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
+  takeTest = true;
 
   constructor(
     private router: Router,
@@ -71,7 +72,19 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getStepSubmission(step) {
+  getStepSubmission(step, stepNum) {
+    const steps = this.courseDetail.steps;
+    if (stepNum > 0) {
+      const priorStep = steps[stepNum-1];
+      this.submissionsService.getSubmissions(findDocuments({
+        type: 'exam',
+        user: this.userService.get(),
+        parentId: priorStep.exam._id + '@' + this.courseDetail._id
+      })).subscribe((exams) => step.takeTest = exams.length > 0 ? true: false
+        );
+    } else {
+      step.takeTest = this.takeTest;
+    }
     if (step.exam && step.submission === undefined) {
       this.submissionsService.openSubmission({
         parentId: step.exam._id + '@' + this.courseDetail._id,
@@ -84,7 +97,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       });
     }
   }
-
+  
   viewStep() {
     const latestStep = this.progress.reduce((stepNum, prog) => {
       return prog.stepNum > stepNum ? prog.stepNum : stepNum;
