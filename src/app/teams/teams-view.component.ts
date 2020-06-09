@@ -18,7 +18,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
-import { DialogsAddCoursesComponent } from '../shared/dialogs/dialogs-add-courses.component';
+import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { environment } from '../../environments/environment';
 import { TasksService } from '../tasks/tasks.service';
 import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resources-viewer.component';
@@ -44,7 +44,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   userStatus = 'unrelated';
   onDestroy$ = new Subject<void>();
   currentUserId = this.userService.get()._id;
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsAddTableComponent>;
   user = this.userService.get();
   news: any[] = [];
   resources: any[] = [];
@@ -375,15 +375,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  openDialog(data) {
-    this.dialogRef = this.dialog.open(DialogsListComponent, {
-      data,
-      maxHeight: '500px',
-      width: '600px',
-      autoFocus: false
-    });
-  }
-
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
@@ -392,17 +383,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
-      res.tableData = res.tableData.filter((user: any) => this.members.findIndex((member) => member.name === user.name) === -1);
-      const data = {
-        okClick: this.addMembers.bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        itemDescription: 'members',
-        nameProperty: 'name',
-        ...res
-      };
-      this.openDialog(data);
+    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+      width: '80vw',
+      data: {
+        okClick: (selected: any[]) => this.addMembers(selected.map(item => item.doc)),
+        excludeIds: this.members.map(user => user.userId),
+        hideChildren: true,
+        mode: 'users'
+      }
     });
   }
 
@@ -438,7 +426,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseDialog() {
     const initialCourses = this.team.courses || [];
-    const dialogRef = this.dialog.open(DialogsAddCoursesComponent, {
+    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {
@@ -452,6 +440,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
             this.dialogsLoadingService.stop();
           });
         },
+        mode: 'courses',
         excludeIds: initialCourses.map(c => c._id)
       }
     });

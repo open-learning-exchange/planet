@@ -48,7 +48,7 @@
         } selected
       </span>
     </span>
-    <button mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
     <button mat-button mat-dialog-close i18n>Cancel</button>
+    <button color="primary" mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
   </mat-dialog-actions>
 </ng-container>

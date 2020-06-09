@@ -4,15 +4,27 @@
 <div>
   <span><b i18n>Patients Seen:</b> {{headlineData?.unique.length}}</span>
 </div>
-<h1 class="mat-title" i18n>Diagnoses</h1>
-<div>
-  <span *ngFor="let condition of conditions">
-    <planet-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
-  </span>
-</div>
-<h1 class="mat-title" i18n>Weekly Data</h1>
-<planet-reports-detail-activities
-  [activitiesByDoc]="weeklyHealthData"
-  activityType="health"
-  (itemClick)="showWeek($event)">
-</planet-reports-detail-activities>
+<ng-container *ngIf="headlineData?.total !== 0">
+  <h1 class="mat-title" i18n>Diagnoses</h1>
+  <div>
+    <span *ngFor="let condition of conditions">
+      <planet-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
+    </span>
+  </div>
+  <h1 class="mat-title" i18n>Diagnosis Trend</h1>
+  <div>
+    <span i18n>Select diagnosis to view trend:</span>
+    <mat-select [value]="initialSelectedCondition" (selectionChange)="onSelectedConditionChange($event.value)">
+      <mat-option *ngFor="let condition of conditions" value={{condition}}>{{condition}}</mat-option>
+    </mat-select>
+  </div>
+  <div class="chart-container">
+    <canvas id="diagnosesTrend" #diagnosesChart></canvas>
+  </div>
+  <h1 class="mat-title" i18n>Weekly Data</h1>
+  <planet-reports-detail-activities
+    [activitiesByDoc]="weeklyHealthData"
+    activityType="health"
+    (itemClick)="showWeek($event)">
+  </planet-reports-detail-activities>
+</ng-container>

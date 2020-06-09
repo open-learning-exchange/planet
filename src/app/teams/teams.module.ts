@@ -8,7 +8,7 @@ import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
-import { DialogsAddCoursesModule } from '../shared/dialogs/dialogs-add-courses.module';
+import { DialogsAddTableModule } from '../shared/dialogs/dialogs-add-table.module';
 import { DialogsResourcesViewerModule } from '../shared/dialogs/dialogs-resources-viewer.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
@@ -25,12 +25,12 @@ import { TeamsMemberComponent } from './teams-member.component';
     PlanetDialogsModule,
     NewsModule,
     DialogsAddResourcesModule,
-    DialogsAddCoursesModule,
+    DialogsAddTableModule,
     DialogsResourcesViewerModule,
     CovalentMarkdownModule,
     SharedComponentsModule,
     PlanetCalendarModule,
-    FormsModule
+    FormsModule,
   ],
   declarations: [
     TeamsComponent,

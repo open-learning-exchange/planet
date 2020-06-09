@@ -4,6 +4,7 @@ import { MatStepper, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
+import { ValidatorService } from '../validators/validator.service';
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
@@ -22,10 +23,11 @@ export class CommunityLinkDialogComponent {
     private dialogRef: MatDialogRef<CommunityLinkDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private validatorService: ValidatorService
   ) {
     this.linkForm = this.fb.group({
-      title: [ '', CustomValidators.required ],
+      title: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
       route: [ '', CustomValidators.required ],
       linkId: '',
       teamType: ''

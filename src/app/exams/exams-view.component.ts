@@ -38,6 +38,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   updatedOn = '';
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
+  @Input() previewExamType: any;
   checkboxState: any = {};
   isNewQuestion = true;
   unansweredQuestions: number[];
@@ -62,6 +63,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.previewMode) {
         ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
           this.exam = this.exam || res;
+          this.examType = params.get('type') || this.previewExamType;
           this.setExamPreview();
         });
         return;
@@ -99,6 +101,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setExamPreview() {
     this.answer.setValue(null);
+    this.checkboxState = {};
     this.grade = 0;
     this.statusMessage = '';
     const exam = this.submission ? this.submission.parent : this.exam;

@@ -49,18 +49,19 @@ export class ReportsMyPlanetComponent implements OnInit {
   setAllPlanets(planets: any[], myPlanets: any[]) {
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children:
-        this.reportsService.groupBy(
-          myPlanets.filter(myPlanet => {
-            return myPlanet.type !== 'usages' && (myPlanet.usages || []).length === 0 &&
-              (myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code);
-          }),
-          [ 'androidId' ],
-          { maxField: 'time' }
-        ).map((child: any) => {
-          return { count: child.count, ...child.max };
-        })
-      })
+      children: this.myPlanetGroups(planet, myPlanets)
+        .map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max }))
+    }));
+  }
+
+  myPlanetGroups(planet: any, myPlanets: any[]) {
+    return this.reportsService.groupBy(
+      myPlanets
+        .filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
+        .map(myPlanet => (myPlanet.type === 'usages' || (myPlanet.usages || []) > 0) ? myPlanet.usages : myPlanet)
+        .flat(),
+      [ 'androidId' ],
+      { maxField: 'time', sumField: 'totalUsed' }
     );
   }
 

@@ -24,9 +24,6 @@ import { showFormErrors } from '../../shared/table-helpers';
     form.form-spacing {
       width: inherit;
     }
-    .actions-container {
-      align-self: center;
-    }
     .view-container form {
       min-width: 385px;
       max-width: 750px;
