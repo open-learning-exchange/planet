@@ -20,6 +20,8 @@ import { switchMap } from 'rxjs/operators';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
+import { SubmissionsService } from './../submissions/submissions.service';
+import { findDocuments } from '../shared/mangoQueries';
 
 const showdown = require('showdown');
 
@@ -67,7 +69,8 @@ export class ExamsAddComponent implements OnInit {
     private planetStepListService: PlanetStepListService,
     private userService: UserService,
     private dialog: MatDialog,
-    private stateService: StateService
+    private stateService: StateService,
+    private submissionsService: SubmissionsService
   ) {
     this.createForm();
   }
@@ -91,6 +94,12 @@ export class ExamsAddComponent implements OnInit {
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
       this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Test updated successfully';
+      this.submissionsService.getSubmissions(findDocuments({ 'parent._id': this.route.snapshot.paramMap.get('id') }))
+      .subscribe((data) => {
+        console.log(data);
+      }, (error) => {
+        console.log(error);
+      });
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
       .subscribe((data) => {
         this.pageType = 'Update';
