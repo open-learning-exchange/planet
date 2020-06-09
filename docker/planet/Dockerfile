@@ -6,7 +6,7 @@ RUN apk add --no-cache \
     fcgiwrap=1.1.0-r3 \
     spawn-fcgi=1.6.4-r3 \
       ca-certificates=20191127-r2 \
-      nghttp2-libs=1.35.1-r1 \
+      nghttp2-libs=1.35.1-r2 \
       libssh2=1.9.0-r1 \
       libcurl=7.64.0-r3 \
     curl=7.64.0-r3 \
