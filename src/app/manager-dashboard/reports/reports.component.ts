@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, Subject, of } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -7,7 +7,7 @@ import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError, of } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -61,6 +61,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
       switchMap(([ planets, hubs ]) => {
         this.planets = planets;
         this.arrangePlanetData(planets, hubs);
+        return forkJoin(planets.filter(p => p.docType !== 'parentName').map(p =>
+          this.couchService.getUrl('db', { domain: p.localDomain, protocol: 'http', usePort: true })
+          .pipe(catchError(err => of({ [p.code] : false })), switchMap(() => of({ [p.code]: true })))
+        ));
+      }),
+      switchMap((onlinePlanets) => {
+        this.arrangePlanetData(this.planets.map(planet => ({
+          ...planet, isOnline: this.findByPlanet(onlinePlanets, planet.code)
+        })), this.hubs);
         return forkJoin([
           this.activityService.getActivities('resource_activities', 'byPlanet', domain),
           this.activityService.getActivities('login_activities', 'byPlanet', domain),

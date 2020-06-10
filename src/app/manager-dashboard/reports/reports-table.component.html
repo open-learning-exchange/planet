@@ -3,6 +3,7 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
       <a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a>
+      <a *ngIf="element.doc.isOnline" [href]="element.doc.localDomain">Visit</a>
       <button (click)="viewDetails(element.doc)" mat-stroked-button color="primary">Details</button>
     </mat-cell>
   </ng-container>
