@@ -34,6 +34,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   startDate: Date;
   endDate: Date;
   emptyTable = true;
+  totalBalance: number;
 
   constructor(
     private teamsService: TeamsService,
@@ -79,6 +80,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     }
     this.emptyTable = false;
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
+    this.totalBalance = balance;
     return [ { date: 'Total', credit, debit, balance, filter: this.filterString() }, ...financeData ];
   }
 
@@ -183,4 +185,9 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.emptyTable = this.table.data.length <= 1;
   }
 
+  isTotalBalanceNegative(): boolean {
+    const isViewingAllTransactions = this.table.filter === '';
+    const isBalanceNegative = this.totalBalance < 0;
+    return isBalanceNegative && isViewingAllTransactions;
+  }
 }
