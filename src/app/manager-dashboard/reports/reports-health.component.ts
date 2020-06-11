@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, EventEmitter, Output, ViewChild } from '@a
 import { Chart } from 'chart.js';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
-import { generateWeeksArray, filterByDate, weekDataLabels } from './reports.utils';
+import { generateWeeksArray, filterByDate, weekDataLabels, scaleLabel } from './reports.utils';
 import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
@@ -120,14 +120,7 @@ export class ReportsHealthComponent implements OnChanges {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
           } ],
-          xAxes: [ {
-            scaleLabel: {
-              display: true,
-              labelString: 'Week Of',
-              fontSize: 12,
-              fontStyle: 'bold'
-            }
-          } ]
+          xAxes: [ { scaleLabel: scaleLabel('Week of') } ]
         }
       }
     }));
