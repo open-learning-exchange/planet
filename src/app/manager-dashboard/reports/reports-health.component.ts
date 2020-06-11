@@ -116,10 +116,7 @@ export class ReportsHealthComponent implements OnChanges {
         legend: { display: false },
         maintainAspectRatio: false,
         scales: {
-          yAxes: [ {
-            type: 'linear',
-            ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
-          } ],
+          yAxes: [ { type: 'linear', ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 } } ],
           xAxes: [ { scaleLabel: scaleLabel('Week of') } ]
         }
       }
