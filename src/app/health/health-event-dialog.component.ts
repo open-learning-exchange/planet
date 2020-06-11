@@ -15,6 +15,7 @@ export class HealthEventDialogComponent {
   conditions: string;
   hasVital = false;
   canUpdate: any;
+  performedBy = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -28,6 +29,7 @@ export class HealthEventDialogComponent {
       this.event.hasInfo === true :
       this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
+    this.performedBy = this.event.createdBy.substring(this.event.createdBy.indexOf(':') + 1);
   }
 
   editExam(event) {
