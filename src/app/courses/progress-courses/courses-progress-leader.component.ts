@@ -74,6 +74,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onStepChange(value: any) {
     this.selectedStep = value;
     this.setSingleStep(this.submissions);
+    this.chartLabel = 'Quest.';
   }
 
   setSubmissions() {
