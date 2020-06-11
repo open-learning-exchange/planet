@@ -21,6 +21,12 @@ import { conditions } from '../../health/health.constants';
     .chart-container {
       height: 30vh;
     }
+    .trend-filters {
+      margin: -1rem 0;
+    }
+    .trend-filters > span {
+      align-self: center;
+    }
   ` ]
 })
 export class ReportsHealthComponent implements OnChanges {
