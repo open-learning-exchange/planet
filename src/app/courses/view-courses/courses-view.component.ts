@@ -121,7 +121,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   examAndSurveyExist(step: any): boolean {
     return this.examOrSurveyExists(step, 'survey') && this.examOrSurveyExists(step, 'exam');
-   }
+  }
 
   menuTriggerButtonClick(step: any, stepNum: any): void {
 
