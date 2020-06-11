@@ -14,7 +14,10 @@ export class HealthEventDialogComponent {
   conditionAndTreatmentFields = conditionAndTreatmentFields;
   conditions: string;
   hasVital = false;
+<<<<<<< HEAD
   canUpdate: any;
+=======
+>>>>>>> Update provider info (fixes #6515)
   performedBy = '';
 
   constructor(
@@ -30,10 +33,13 @@ export class HealthEventDialogComponent {
       this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
     this.performedBy = this.event.createdBy.substring(this.event.createdBy.indexOf(':') + 1);
+<<<<<<< HEAD
   }
 
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
+=======
+>>>>>>> Update provider info (fixes #6515)
   }
 
 }
