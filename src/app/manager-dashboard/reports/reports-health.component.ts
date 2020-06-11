@@ -38,6 +38,7 @@ export class ReportsHealthComponent implements OnChanges {
   @Output() updateHealthData = new EventEmitter<any[]>();
   @ViewChild('diagnosesChart', { static: false }) diagnosesChart;
   charts: any[] = [];
+  showChart: boolean;
   examinations;
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };
@@ -97,6 +98,11 @@ export class ReportsHealthComponent implements OnChanges {
     this.weeklyHealthData.sort((a, b) => a.weekOf - b.weekOf);
     const data = this.weeklyHealthData.map(week => week.docs.filter(doc => doc.conditions[diagnosis] === true).length);
     const labels = this.weeklyHealthData.map(week => weekDataLabels(week.weekOf));
+    if (data[0] === 0) {
+      this.showChart = false;
+      return;
+    }
+    this.showChart = true;
     this.setChart({
       data: { labels, datasets: [ { label: diagnosis, data, borderColor: styleVariables.primary, lineTension: 0 } ] },
       chartName: 'diagnosesTrend'
