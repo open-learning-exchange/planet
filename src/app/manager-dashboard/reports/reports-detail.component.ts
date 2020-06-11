@@ -83,7 +83,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     this.stateService.requestData(dbName, 'local');
     this.couchService.currentTime().subscribe((currentTime: number) => {
-      this.today = new Date(currentTime);
+      this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
       this.dateFilterForm.controls.endDate.setValue(this.today);
     });
   }
@@ -126,7 +126,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filter = { ...this.filter, ...value };
       if (this.minDate && this.today) {
         this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
-          value.endDate.getTime() === this.today.setHours(0, 0, 0, 0);
+          value.endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -285,8 +285,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     ];
     const formGroup = {
-      startDate: new Date(minDate),
-      endDate: [ new Date(this.today), CustomValidators.endDateValidator() ]
+      startDate: this.dateFilterForm.controls.startDate.value,
+      endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
       onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
@@ -333,7 +333,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
-      'health': this.healthComponent.examinations
+      'health': this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
     this.csvService.exportCSV({

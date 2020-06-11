@@ -82,6 +82,9 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   sendNewsNotifications(news: any = '') {
     const replyBy = this.currentUser.name;
     const userId = news.user._id;
+    if (replyBy === news.user.name) {
+      return;
+    }
     const link = this.router.url;
     const notification = {
       user: userId,
@@ -93,7 +96,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
     };
-    return this.notificationsService.sendNotificationToUser(notification).subscribe();
+    this.notificationsService.sendNotificationToUser(notification).subscribe();
   }
 
   editNews(news) {

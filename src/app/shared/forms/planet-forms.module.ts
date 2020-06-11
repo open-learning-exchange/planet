@@ -18,6 +18,7 @@ import { SharedComponentsModule } from '../shared-components.module';
 import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
 import { PlanetSelectorComponent } from './planet-selector.component';
 import { PlanetNumberValidatorDirective } from './planet-number-validator.directive';
+import { PlanetRoundDirective } from './planet-round.directive';
 
 @NgModule({
   imports: [
@@ -45,7 +46,8 @@ import { PlanetNumberValidatorDirective } from './planet-number-validator.direct
     PlanetStepListItemComponent,
     PlanetMarkdownTextboxComponent,
     PlanetTimeMaskDirective,
-    PlanetNumberValidatorDirective
+    PlanetNumberValidatorDirective,
+    PlanetRoundDirective
   ],
   declarations: [
     FormErrorMessagesComponent,
@@ -65,7 +67,8 @@ import { PlanetNumberValidatorDirective } from './planet-number-validator.direct
     PlanetStepListItemComponent,
     PlanetMarkdownTextboxComponent,
     PlanetTimeMaskDirective,
-    PlanetNumberValidatorDirective
+    PlanetNumberValidatorDirective,
+    PlanetRoundDirective
   ],
   entryComponents: [ PlanetTagInputDialogComponent ]
 })

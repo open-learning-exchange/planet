@@ -94,7 +94,7 @@ export const deepEqual = (item1: any, item2: any) => {
   if (item1 instanceof Array) {
     return item1.length === item2.length && item1.every(value1 => item2.find(value2 => deepEqual(value1, value2)) !== undefined);
   }
-  if (item1 instanceof Object) {
+  if (item1 && item2 && item1 instanceof Object) {
     return Object.keys({ ...item1, ...item2 }).every((key) => deepEqual(item1[key], item2[key])) ;
   }
   return item1 === item2;

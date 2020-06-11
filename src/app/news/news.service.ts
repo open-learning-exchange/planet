@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
@@ -96,6 +96,9 @@ export class NewsService {
     );
     // TODO: Filter newPlanets by ones currently existing in viewIn array
     const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
+    if (newPlanets.length === 0) {
+      return of(undefined);
+    }
     return this.postNews(
       {
         ...news,

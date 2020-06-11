@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -9,6 +9,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { CouchService } from '../../shared/couchdb.service';
+import { MatMenuTrigger } from '@angular/material';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -28,6 +29,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
   takeTest = true;
+  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,
@@ -122,6 +124,20 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       ],
       { relativeTo: this.route }
     );
+  }
+
+  previewButtonClick(step: any, stepNum: any): void {
+    const stepType = this.coursesService.stepHasExamSurveyBoth(step);
+    if (stepType === 'both' || stepType === undefined) {
+      return;
+    }
+    this.previewButton.closeMenu();
+    if (stepType === 'exam') {
+      this.goToExam(step, stepNum, true);
+    }
+    if (stepType === 'survey') {
+      this.goToSurvey(stepNum, true);
+    }
   }
 
   checkMyCourses(courseId: string) {

@@ -12,6 +12,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @Input() ratings = [];
   @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
+  matSortActive = '';
   activities = new MatTableDataSource();
   displayedColumns = [
     'title',
@@ -30,6 +31,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   ngOnChanges() {
+    this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = this.activityType === 'health' ?
       [ 'weekOf', 'count', 'unique' ] :
       [ 'title', 'count', 'averageRating' ];

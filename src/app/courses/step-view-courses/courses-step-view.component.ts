@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatMenuTrigger } from '@angular/material';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -33,6 +33,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
+  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,
@@ -177,4 +178,12 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  menuTriggerButtonClick(): void {
+    const stepType = this.coursesService.stepHasExamSurveyBoth(this.stepDetail);
+    if (stepType === 'both' || stepType === undefined) {
+      return;
+    }
+    this.previewButton.closeMenu();
+    this.goToExam(stepType, true);
+  }
 }

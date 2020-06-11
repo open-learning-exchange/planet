@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
@@ -29,11 +29,11 @@ export class HealthEventComponent {
     private dialog: MatDialog
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ '', CustomValidators.positiveNumberValidator ],
-      pulse: [ '', CustomValidators.positiveNumberValidator ],
+      temperature: [ '', Validators.min(1) ],
+      pulse: [ '', Validators.min(1) ],
       bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', CustomValidators.positiveNumberValidator ],
-      weight: [ '', CustomValidators.positiveNumberValidator ],
+      height: [ '', Validators.min(1) ],
+      weight: [ '', Validators.min(1) ],
       vision: [ '' ],
       hearing: [ '' ],
       notes: '',
@@ -54,7 +54,8 @@ export class HealthEventComponent {
       return;
     }
     const checkFields = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
-    const promptFields = checkFields.filter((field) => !this.isFieldValueExpected(field));
+    const promptFields = checkFields.filter((field) => !this.isFieldValueExpected(field))
+      .map(field => ({ field, value: this.healthForm.controls[field].value }));
     if (promptFields.length) {
       this.showWarning(promptFields);
     } else {
@@ -77,7 +78,6 @@ export class HealthEventComponent {
   }
 
   showWarning(invalidFields) {
-    const extraMessage = 'The following measurement(s) may be incorrect. Click cancel to fix or click ok to submit.';
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
@@ -88,7 +88,7 @@ export class HealthEventComponent {
           }
         },
         showMainParagraph: false,
-        extraMessage,
+        extraMessage: 'The following measurement(s) may be incorrect. Click <b>Cancel</b> to fix or click <b>OK</b> to submit.',
         showLabels: invalidFields
       }
     });
@@ -103,7 +103,7 @@ export class HealthEventComponent {
       'weight': { min: 1, max: 150 },
       'bp': 'n/a'
     };
-    if (!value || !limits[field]) {
+    if (value === null || value === '' || !limits[field]) {
       return true;
     }
     if (field === 'bp') {
@@ -115,6 +115,7 @@ export class HealthEventComponent {
   saveEvent() {
     return this.healthService.addEvent(
       this.route.snapshot.params.id,
+      this.userService.get()._id,
       {
         ...this.healthForm.value,
         date: Date.now(),
