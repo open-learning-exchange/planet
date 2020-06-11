@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, BehaviorSubject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -17,6 +17,8 @@ export class HealthService {
     'events', 'profile', 'lastExamination', 'userKey',
     'allergies', 'createdBy', 'diagnosis', 'immunizations', 'medications', 'notes', 'referrals', 'tests', 'treatments', 'xrays'
    ];
+   private eventDetail = new BehaviorSubject({});
+   shareEventDetail = this.eventDetail.asObservable();
 
   constructor(
     private couchService: CouchService,
@@ -39,6 +41,11 @@ export class HealthService {
           of({ doc: {} });
       })
     );
+  }
+
+
+  nextEvent({ events, eventDate, userDetail }) {
+    this.eventDetail.next({ events, eventDate, userDetail });
   }
 
   createUserKey(userDb) {

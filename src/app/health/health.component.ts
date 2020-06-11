@@ -51,6 +51,11 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  editExam(events, eventDate, userDetail) {
+    this.healthService.nextEvent({ events, eventDate, userDetail });
+    this.router.navigate([ 'event', { id: userDetail._id } ], { relativeTo: this.route });
+  }
+
   ngAfterViewChecked() {
     if (this.initializeEvents === false || this.isWaitingForEvents === true || this.examsTable === undefined) {
       return;
@@ -116,6 +121,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       ...additionalInfo,
       [event.date]: {
         selfExamination: event.selfExamination,
+        canUpdate: new Date(Date.now()).getTime() - new Date(event.date).getTime() <= 5 * 6000,
         hasConditions: event.conditions && Object.values(event.conditions).some(value => value === true),
         hasInfo: event.hasInfo === true || Object.entries(event).find(
           ([ key, value ]: [ string, string ]) => (conditionAndTreatmentFields.indexOf(key) > -1) &&

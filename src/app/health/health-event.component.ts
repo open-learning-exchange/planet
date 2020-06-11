@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
@@ -8,16 +8,19 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './health-event.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthEventComponent {
+export class HealthEventComponent implements OnInit {
 
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  eventDoc: [];
+  event: any;
 
   constructor(
     private fb: FormBuilder,
@@ -46,6 +49,16 @@ export class HealthEventComponent {
       tests: '',
       referrals: '',
       conditions: {}
+    });
+  }
+
+  ngOnInit() {
+    this.healthService.shareEventDetail.subscribe((data: any) => {
+      this.event = data.events.find(e => e.date.toString() === data.eventDate);
+      (this.event._id ?
+        this.healthService.getHealthData(data.userDetail._id, { docId: this.event._id })
+        : of([ this.event ])
+      ).subscribe(([ eventDoc ]) => console.log(eventDoc));
     });
   }
 
