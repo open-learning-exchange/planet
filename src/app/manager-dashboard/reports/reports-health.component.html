@@ -12,8 +12,8 @@
     </span>
   </div>
   <h1 class="mat-title" i18n>Diagnosis Trend</h1>
-  <div>
-    <span i18n class="diagnosis-trend">Select diagnosis to view trend:</span>
+  <div class="trend-filters">
+    <span i18n>Select diagnosis to view trend:</span>
     <mat-form-field>
       <mat-select mat-select [value]="initialSelectedCondition" (selectionChange)="onSelectedConditionChange($event.value)">
        <mat-option *ngFor="let condition of conditions" value={{condition}}>{{condition}}</mat-option>
