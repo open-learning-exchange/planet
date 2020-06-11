@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, 
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, of, forkJoin, Observable } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
@@ -211,15 +211,13 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       .subscribe(() => {}, () => this.planetMessageService.showAlert('There was an error removing the member\'s role'));
   }
 
-  toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
+  toggleStatus(event, user, isDemotion: boolean) {
     event.stopPropagation();
-    const request: Observable<any> = type === 'admin' ?
-      this.usersService.toggleAdminStatus(user) :
-      this.usersService.toggleManagerStatus(user);
+    const request: Observable<any> = this.usersService.toggleAdminStatus(user);
     request.subscribe(
       () => {
         this.usersService.requestUsers(true);
-        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} admin`);
       },
       () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
