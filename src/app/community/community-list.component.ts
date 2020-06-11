@@ -26,7 +26,7 @@ export class CommunityListComponent implements OnInit {
       this.couchService.findAll('hubs')
     ]).subscribe(([ children, hubs ]: any[]) => {
       const childPlanets = attachNamesToPlanets(children)
-          .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planetAndParentId(planet.doc)) === -1);
+        .filter(planet => planet.doc.docType !== 'parentName' && this.excludeIds.indexOf(planetAndParentId(planet.doc)) === -1);
       const allHubs = arrangePlanetsIntoHubs(
         childPlanets.sort(sortPlanet),
         hubs
