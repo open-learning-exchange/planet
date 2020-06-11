@@ -79,7 +79,7 @@
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
               <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button
                 [matMenuTriggerFor]="previewMenu"
-                (click)="menuTriggerButtonClick(step, stepNum)">
+                (click)="previewButtonClick(step, stepNum)">
                 Preview
               </button>
               <mat-menu #previewMenu="matMenu">

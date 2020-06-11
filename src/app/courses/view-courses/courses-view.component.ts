@@ -113,26 +113,17 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  examOrSurveyExists(step: any, courseDetail: 'exam' | 'survey') {
-    return courseDetail === 'exam'
-      ? step && step.exam && step.exam.questions && step.exam.questions.length > 0
-      : step && step.survey && step.survey.questions && step.survey.questions.length > 0;
-  }
-
-  examAndSurveyExist(step: any): boolean {
-    return this.examOrSurveyExists(step, 'survey') && this.examOrSurveyExists(step, 'exam');
-  }
-
-  menuTriggerButtonClick(step: any, stepNum: any): void {
-
-    if (!this.examAndSurveyExist(step)) {
-      if (this.examOrSurveyExists(step, 'exam')) {
-        this.goToExam(step, stepNum, true);
-      }
-      if (this.examOrSurveyExists(step, 'survey')) {
-        this.goToSurvey(stepNum, true);
-      }
-      this.previewButton.closeMenu();
+  previewButtonClick(step: any, stepNum: any): void {
+    const stepType = this.coursesService.stepHasExamSurveyBoth(step);
+    if (stepType === 'both' || stepType === undefined) {
+      return;
+    }
+    this.previewButton.closeMenu();
+    if (stepType === 'exam') {
+      this.goToExam(step, stepNum, true);
+    }
+    if (stepType === 'survey') {
+      this.goToSurvey(stepNum, true);
     }
   }
 
