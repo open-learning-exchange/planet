@@ -58,7 +58,7 @@ export class HealthEventComponent implements OnInit {
       (this.event._id ?
         this.healthService.getHealthData(data.userDetail._id, { docId: this.event._id })
         : of([ this.event ])
-      ).subscribe(([ eventDoc ]) => console.log(eventDoc));
+      ).subscribe(([ eventDoc ]) => this.healthForm.patchValue(eventDoc));
     });
   }
 
@@ -131,7 +131,8 @@ export class HealthEventComponent implements OnInit {
       this.userService.get()._id,
       {
         ...this.healthForm.value,
-        date: Date.now(),
+        date: this.event._id ? this.event.id : Date.now(),
+        updatedDate: this.event._id ? Date.now() : '',
         selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
         createdBy: this.userService.get()._id,
         planetCode: this.stateService.configuration.code,
