@@ -6,7 +6,7 @@ import { of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { StateService } from '../state.service';
 
-const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} };
+const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
 
 @Injectable({
   providedIn: 'root'
@@ -76,7 +76,7 @@ export class RatingService {
         break;
     }
     ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
-    ratingInfo.allRatings = [ ...(ratingInfo.allRatings || []), rating ];
+    ratingInfo.allRatings = [ ...ratingInfo.allRatings, rating ];
     if (ratings.length > index + 1 && ratings[index + 1].item === id) {
       // Ratings are sorted by item id,
       // so this recursion will add all ratings to item
