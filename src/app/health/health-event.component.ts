@@ -8,7 +8,6 @@ import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { of } from 'rxjs';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -19,7 +18,6 @@ export class HealthEventComponent implements OnInit {
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
-  eventDoc: [];
   event: any;
 
   constructor(
@@ -54,12 +52,9 @@ export class HealthEventComponent implements OnInit {
 
   ngOnInit() {
     this.healthService.shareEventDetail.subscribe((data: any) => {
-      this.event = data.events.find(e => e.date.toString() === data.eventDate);
-      (this.event._id ?
-        this.healthService.getHealthData(data.userDetail._id, { docId: this.event._id })
-        : of([ this.event ])
-      ).subscribe(([ eventDoc ]) => this.healthForm.patchValue(eventDoc));
-    });
+      this.healthForm.patchValue(data);
+      this.event = data;
+  });
   }
 
   onSubmit() {
@@ -131,7 +126,7 @@ export class HealthEventComponent implements OnInit {
       this.userService.get()._id,
       {
         ...this.healthForm.value,
-        date: this.event._id ? this.event.id : Date.now(),
+        date: this.event._id ? this.event.date : Date.now(),
         updatedDate: this.event._id ? Date.now() : '',
         selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
         createdBy: this.userService.get()._id,

@@ -44,8 +44,8 @@ export class HealthService {
   }
 
 
-  nextEvent({ events, eventDate, userDetail }) {
-    this.eventDetail.next({ events, eventDate, userDetail });
+  nextEvent( events ) {
+    this.eventDetail.next( events );
   }
 
   createUserKey(userDb) {

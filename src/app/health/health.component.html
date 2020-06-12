@@ -85,12 +85,10 @@
         <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
-              <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="editExam(events, column, userDetail)">
+              <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
                 <div>
                   <div class="header-date">
-                    <mat-icon *ngIf="additionalInfo[column]?.canUpdate===true" class="primary-text-color" i18n-tooltip matTooltip="Click for editing" [inline]="true">edit</mat-icon>
-                    {{ column === 'label' ? '' : (column | date) }}
-                    <mat-icon *ngIf="additionalInfo[column]?.hasInfo===true || additionalInfo[column]?.hasConditions===true" class="primary-text-color" i18n-tooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
+                    {{ column === 'label' ? '' : (column | date) }}<mat-icon *ngIf="additionalInfo[column]?.hasInfo===true || additionalInfo[column]?.hasConditions===true" class="primary-text-color" i18n-tooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
                   </div>
                   <div *ngIf="additionalInfo[column]?.selfExamination===true" class="primary-text-color" i18n>Self Examination</div>
                 </div>

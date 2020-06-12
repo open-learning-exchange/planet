@@ -102,7 +102,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         : of([ event ])
       ).subscribe(([ eventDoc ]) => {
         this.dialog.open(HealthEventDialogComponent, {
-          data: { event: eventDoc },
+          data: { event: eventDoc, user: this.userDetail._id },
           width: '50vw',
           maxHeight: '90vh'
         });
@@ -121,7 +121,6 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       ...additionalInfo,
       [event.date]: {
         selfExamination: event.selfExamination,
-        canUpdate: new Date(Date.now()).getTime() - new Date(event.date).getTime() <= 5 * 6000,
         hasConditions: event.conditions && Object.values(event.conditions).some(value => value === true),
         hasInfo: event.hasInfo === true || Object.entries(event).find(
           ([ key, value ]: [ string, string ]) => (conditionAndTreatmentFields.indexOf(key) > -1) &&

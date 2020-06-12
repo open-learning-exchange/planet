@@ -24,5 +24,6 @@
   <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" color="primary" mat-raised-button mat-dialog-close i18n>OK</button>
+  <button type="button" mat-raised-button mat-dialog-close i18n>Cancel</button>
+  <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" [disabled]="!canUpdate" mat-raised-button i18n>Edit</button>
 </mat-dialog-actions>
