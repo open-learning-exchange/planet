@@ -243,4 +243,11 @@ export class CoursesService {
     })).subscribe((response) => {}, (error) => console.log('Error'));
   }
 
+  stepHasExamSurveyBoth(step): 'exam' | 'survey' | 'both' | undefined {
+    const possibleTypes: ('exam' | 'survey')[] = [ 'exam', 'survey' ];
+    const types: ('exam' | 'survey')[] = possibleTypes
+      .filter((type: 'exam' | 'survey') => step[type] && step[type].questions && step[type].questions.length > 0);
+    return types.length > 1 ? 'both' : types[0];
+  }
+
 }

@@ -10,20 +10,20 @@ export const codeToPlanetName = (code: string, configuration: any, childPlanets:
   return planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : configuration.name;
 };
 
+export const sortPlanet = ((a, b) => {
+  const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
+  return planetName(a).localeCompare(planetName(b));
+});
+
 export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   hubs: hubs.map(hub => ({
     ...hub,
-    children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child),
+    children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child).sort(sortPlanet),
     hubPlanetDoc: (planets.find(planet => planet.doc._id === hub.planetId) || {}).doc
   })),
   sandboxPlanets: planets.filter(
     planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1 || planet.doc._id === hub.planetId) === undefined
   )
-});
-
-export const sortPlanet = ((a, b) => {
-  const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
-  return planetName(a).localeCompare(planetName(b));
 });
 
 export const itemInDateRange = (item, dateField, startDate, endDate) => {
@@ -92,3 +92,7 @@ export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }
   }
   return weeks;
 };
+
+export const scaleLabel = (labelString: string) => ({
+  display: true, labelString, fontSize: 12, fontStyle: 'bold'
+});
