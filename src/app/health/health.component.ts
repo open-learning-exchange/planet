@@ -51,11 +51,6 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  editExam(events, eventDate, userDetail) {
-    this.healthService.nextEvent({ events, eventDate, userDetail });
-    this.router.navigate([ 'event', { id: userDetail._id } ], { relativeTo: this.route });
-  }
-
   ngAfterViewChecked() {
     if (this.initializeEvents === false || this.isWaitingForEvents === true || this.examsTable === undefined) {
       return;
