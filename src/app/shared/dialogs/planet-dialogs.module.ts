@@ -17,6 +17,7 @@ import { SyncDirective } from '../../manager-dashboard/sync.directive';
 import { MeetupsModule } from '../../meetups/meetups.module';
 import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsImagesComponent } from './dialogs-images.component';
+import { DialogsRatingsComponent } from './dialogs-ratings.component';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { DialogsImagesComponent } from './dialogs-images.component';
     DialogsListComponent,
     DialogsLoadingComponent,
     DialogsImagesComponent,
+    DialogsRatingsComponent,
     ChangePasswordDirective,
     SyncDirective
   ],
@@ -47,6 +49,7 @@ import { DialogsImagesComponent } from './dialogs-images.component';
     DialogsListComponent,
     DialogsLoadingComponent,
     DialogsImagesComponent,
+    DialogsRatingsComponent,
     ChangePasswordDirective,
     SyncDirective
   ],
@@ -60,7 +63,8 @@ import { DialogsImagesComponent } from './dialogs-images.component';
     DialogsPromptComponent,
     DialogsListComponent,
     DialogsLoadingComponent,
-    DialogsImagesComponent
+    DialogsImagesComponent,
+    DialogsRatingsComponent
   ]
 })
 export class PlanetDialogsModule {}

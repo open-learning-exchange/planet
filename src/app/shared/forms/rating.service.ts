@@ -76,6 +76,7 @@ export class RatingService {
         break;
     }
     ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;
+    ratingInfo.allRatings = [ ...(ratingInfo.allRatings || []), rating ];
     if (ratings.length > index + 1 && ratings[index + 1].item === id) {
       // Ratings are sorted by item id,
       // so this recursion will add all ratings to item

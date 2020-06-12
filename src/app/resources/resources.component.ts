@@ -25,6 +25,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
+import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
 
 @Component({
   selector: 'planet-resources',
@@ -369,6 +370,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  viewRatings(resource) {
+    this.dialog.open(DialogsRatingsComponent, {
+      data: { ratings: resource.rating.allRatings }
+    });
   }
 
 }

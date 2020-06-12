@@ -1,0 +1,11 @@
+<mat-dialog-content>
+  <mat-card *ngFor="let rating of data.ratings" class="margin-tb">
+    <mat-card-title>
+      <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
+    </mat-card-title>
+    <mat-card-content>{{rating.comment}}</mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" mat-dialog-close i18n>OK</button>
+</mat-dialog-actions>
