@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 
 @Component({
+  selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
   styles: [ `
     .profile-container {
@@ -22,7 +23,6 @@ import { StateService } from '../../shared/state.service';
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
-  userDetail: any = {};
   user: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
@@ -33,6 +33,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   totalLogins = 0;
   lastLogin = 0;
   private onDestroy$ = new Subject<void>();
+  @Input() isDialog: boolean;
+  @Input() userDetail: any = {};
 
   constructor(
     private couchService: CouchService,
