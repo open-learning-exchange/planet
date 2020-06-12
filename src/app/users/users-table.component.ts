@@ -45,6 +45,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   @Input() users: any[];
   @Input() containerClass: string;
   @Input() matSortActive = '';
+  @Input() isDialog = false;
   @Input()
   get search() {
     return this.usersTable.filter;
@@ -72,6 +73,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
     this._tableState = newState;
+  }
+  get tableData() {
+    return this.usersTable;
   }
   @Input() linkPrefix: string;
   @Output() tableStateChange = new EventEmitter<TableState>();
@@ -121,6 +125,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   ngOnChanges() {
     this.usersTable.data = this.users;
+    if (this.isDialog) {
+      this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles' ];
+    }
   }
 
   ngOnDestroy() {
@@ -156,6 +163,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   gotoProfileView(userName: string) {
+    if (this.isDialog) {
+      return;
+    }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
     this.router.navigate([ this.linkPrefix || 'profile', userName, optParams ], { relativeTo: this.route });
   }

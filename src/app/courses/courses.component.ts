@@ -65,6 +65,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
   selectedLocal = 0;
+  get tableData() {
+    return this.courses;
+  }
   courses = new MatTableDataSource();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;

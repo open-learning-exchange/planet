@@ -33,9 +33,10 @@ export class ReportsService {
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
     return array.reduce((group, item) => {
       const currentValue = group.find((groupItem) => fields.every(field => groupItem[field] === item[field]));
+      const sumValue = sumField ? (item[sumField] || 0) : 0;
       if (currentValue) {
         currentValue.count = currentValue.count + 1;
-        currentValue.sum = sumField ? currentValue.sum + item[sumField] : 0;
+        currentValue.sum = currentValue.sum + sumValue;
         currentValue.max = maxField ?
           (currentValue.max[maxField] < item[maxField] ? item : currentValue.max) :
           {};
@@ -46,9 +47,7 @@ export class ReportsService {
           newObj[field] = item[field];
           return newObj;
         }, {});
-        group.push({
-          ...newEntry, count: 1, sum: sumField ? item[sumField] : 0, max: item, unique: [ item[uniqueField] ], docs: [ item ]
-        });
+        group.push({ ...newEntry, count: 1, sum: sumValue, max: item, unique: [ item[uniqueField] ], docs: [ item ] });
       }
       return group;
     }, []);

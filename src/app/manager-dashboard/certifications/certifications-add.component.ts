@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
-import { DialogsAddCoursesComponent } from '../../shared/dialogs/dialogs-add-courses.component';
+import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
 import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
@@ -89,7 +89,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   openCourseDialog() {
     const initialCourseIds = this.courseIds || [];
-    const dialogRef = this.dialog.open(DialogsAddCoursesComponent, {
+    const dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
       data: {
         okClick: (courses: any[]) => {
@@ -97,6 +97,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           dialogRef.close();
         },
         noSpinner: true,
+        mode: 'courses',
         excludeIds: initialCourseIds
       }
     });

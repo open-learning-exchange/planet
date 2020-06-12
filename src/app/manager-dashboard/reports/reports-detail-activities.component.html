@@ -1,4 +1,4 @@
-<mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort>
+<mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
