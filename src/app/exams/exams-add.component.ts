@@ -94,26 +94,7 @@ export class ExamsAddComponent implements OnInit {
   ngOnInit() {
     if (this.route.snapshot.url[0].path === 'update') {
       this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Test updated successfully';
-      if (this.examType === 'survey') {
-        this.submissionsService.getSubmissions(findDocuments({ 'parent._id': this.route.snapshot.paramMap.get('id') }))
-        .subscribe((data) => {
-          if (data.length !== 0) {
-            this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
-            .subscribe((couchData) => {
-              this.pageType = 'Add';
-              this.documentInfo = {};
-              this.examForm.patchValue(couchData);
-              this.initializeQuestions(couchData.questions);
-              this.examForm.value.name += ' - COPY';
-             }, (error) => {
-              console.log(error);
-            });
-          }
-        }, (error) => {
-          console.log(error);
-       });
-      } else {
-        this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
+      this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id'))
         .subscribe((data) => {
           this.pageType = 'Update';
           this.documentInfo = { _rev: data._rev, _id: data._id };
@@ -123,6 +104,17 @@ export class ExamsAddComponent implements OnInit {
         }, (error) => {
           console.log(error);
         });
+      if (this.examType === 'survey') {
+        this.submissionsService.getSubmissions(findDocuments({ 'parent._id': this.route.snapshot.paramMap.get('id') }))
+        .subscribe((data) => {
+          if (data.length !== 0) {
+            this.pageType = 'Add';
+            this.documentInfo = {};
+            this.examForm.value.name += ' - COPY';
+          }
+        }, (error) => {
+          console.log(error);
+       });
       }
     }
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
