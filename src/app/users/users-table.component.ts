@@ -175,13 +175,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   filterPredicate() {
-    return (data, filter) => this.filter['doc.roles'] === 'admin' ?
-      filterAdmin(data, filter) :
-      composeFilterFunctions([
-        filterDropdowns(this.filter),
-        filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-        filterSpecificFieldsByWord([ 'fullName' ])
-      ])(data, filter);
+    return (data, filter) => composeFilterFunctions([
+      filterDropdowns({ ...this.filter, 'doc.roles': this.filter['doc.roles'] === 'admin' ? '' : this.filter['doc.roles'] }),
+      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
+      filterSpecificFieldsByWord([ 'fullName' ]),
+      () => this.filter['doc.roles'] === 'admin' ? filterAdmin(data, filter) : true
+    ])(data, filter);
   }
 
   deleteClick(user, event) {

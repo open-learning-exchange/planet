@@ -79,6 +79,13 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.dialogsLoadingService.stop();
       this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
     });
+    this.searchChange.pipe(debounceTime(500), takeUntil(this.onDestroy$)).subscribe((searchText) => {
+      if (this.isDialog) {
+        this.applyFilter(searchText);
+      } else {
+        this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
+      }
+    });
     this.usersService.requestUserData();
   }
 
@@ -90,11 +97,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   changePlanetFilter(type, child: any = {}) {
     this.filterDisplayColumns(type);
     this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
-    if (!this.isDialog) {
-      this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
-        this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
-      });
-    }
   }
 
   filterDisplayColumns(type: string) {
@@ -110,15 +112,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
-    this.changePlanetFilter(this.tableState.filterType);
+    this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild || {});
   }
 
   searchChanged(searchText: string) {
-    if (this.isDialog) {
-      this.applyFilter(searchText);
-    } else {
-      this.searchChange.next(searchText);
-    }
+    this.searchChange.next(searchText);
   }
 
   idsToUsers(userIds: any[]) {
@@ -158,6 +156,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
-    this.applyFilter('');
+    this.searchChange.next('');
   }
 }
