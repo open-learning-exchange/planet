@@ -194,10 +194,15 @@ export class TeamsService {
   }
 
   getTeamMembers(team, withAllLinks = false) {
-    const typeObj = withAllLinks ? {} : { docType: 'membership' };
+    const selector = {
+      teamId: team._id,
+      teamPlanetCode: team.teamPlanetCode,
+      status: { '$or': [ { '$exists': false }, { '$ne': 'archived' } ] },
+      ...(withAllLinks ? {} : { docType: 'membership' })
+    };
     this.usersService.requestUsers();
     return forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments({ teamId: team._id, teamPlanetCode: team.teamPlanetCode, ...typeObj })),
+      this.couchService.findAll(this.dbName, findDocuments(selector)),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
       this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
