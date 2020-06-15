@@ -18,6 +18,10 @@ import { millisecondsToDay } from '../meetups/constants';
     .narrow-column {
       max-width: 100px;
     }
+    .mat-card {
+      display: flex;
+      align-items: center;
+    }
   ` ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
