@@ -110,7 +110,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
-    this.changePlanetFilter(this.tableState.filterType);
+    this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild || {});
   }
 
   searchChanged(searchText: string) {
