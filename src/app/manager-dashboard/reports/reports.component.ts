@@ -7,7 +7,7 @@ import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil, switchMap, catchError, of } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -61,7 +61,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       switchMap(([ planets, hubs ]) => {
         this.planets = planets;
         this.arrangePlanetData(planets, hubs);
-        return forkJoin(planets.filter(p => p.docType !== 'parentName').map(p =>
+        return forkJoin(planets.filter((p: any) => p.docType !== 'parentName').map((p: any) =>
           this.couchService.getUrl('db', { domain: p.localDomain, protocol: 'http', usePort: true })
           .pipe(catchError(err => of({ [p.code] : false })), switchMap(() => of({ [p.code]: true })))
         ));
