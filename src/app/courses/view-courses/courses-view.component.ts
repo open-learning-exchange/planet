@@ -1,14 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil, switchMap, take } from 'rxjs/operators';
+import { takeUntil, switchMap, take, filter } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { Subject, combineLatest } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { CouchService } from '../../shared/couchdb.service';
 import { MatMenuTrigger } from '@angular/material';
 
 @Component({
@@ -28,7 +25,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  takeTest = true;
   @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
 
   constructor(
@@ -38,8 +34,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private couchService: CouchService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.coursesService.courseUpdated$.pipe(
@@ -74,18 +69,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getStepSubmission(step, stepNum) {
-    const steps = this.courseDetail.steps;
-    if (stepNum > 0) {
-      const priorStep = steps[stepNum - 1];
-      this.submissionsService.getSubmissions(findDocuments({
-        type: 'exam',
-        user: this.userService.get(),
-        parentId: priorStep.exam._id + '@' + this.courseDetail._id
-      })).subscribe((exams) => step.takeTest = exams.length > 0 ? true : false
-        );
-    } else {
-      step.takeTest = this.takeTest;
+  getStepSubmission(step, stepNum, getPrevious = true) {
+    if (stepNum > 0 && getPrevious) {
+      this.getStepSubmission(this.courseDetail.steps[stepNum - 1], stepNum - 1, false);
     }
     if (step.exam && step.submission === undefined) {
       this.submissionsService.openSubmission({
@@ -93,8 +79,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         parent: step.exam,
         user: this.userService.get(),
         type: 'exam' });
-      this.submissionsService.submissionUpdated$.pipe(take(1)).subscribe(({ submission, attempts }) => {
+      this.submissionsService.submissionUpdated$.pipe(
+        filter(({ submission }) => submission.parent._id === step.exam._id),
+        take(1)
+      ).subscribe(({ submission, attempts }) => {
         step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
+        step.attempts = attempts;
         step.submission = submission;
       });
     }
