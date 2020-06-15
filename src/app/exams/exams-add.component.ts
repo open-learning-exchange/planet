@@ -110,10 +110,11 @@ export class ExamsAddComponent implements OnInit {
           if (data.length !== 0) {
             this.pageType = 'Add';
             this.documentInfo = {};
-            this.examForm.value.name += ' - COPY';
+            this.examForm.patchValue({ name: this.examForm.value.name += ' - COPY' });
+            this.examForm.controls.name.setAsyncValidators(this.nameValidator());
           }
         }, (error) => {
-          console.log(error);
+           console.log(error);
        });
       }
     }
