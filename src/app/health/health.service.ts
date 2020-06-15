@@ -43,8 +43,8 @@ export class HealthService {
     );
   }
 
-  nextEvent( events ) {
-    this.eventDetail.next( events );
+  nextEvent(events) {
+    this.eventDetail.next(events);
   }
 
   createUserKey(userDb) {

@@ -54,7 +54,7 @@ export class HealthEventComponent implements OnInit {
     this.healthService.shareEventDetail.subscribe((data: any) => {
       this.healthForm.patchValue(data);
       this.event = data;
-  });
+    });
   }
 
   onSubmit() {

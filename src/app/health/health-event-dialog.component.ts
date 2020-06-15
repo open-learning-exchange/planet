@@ -17,11 +17,10 @@ export class HealthEventDialogComponent {
   canUpdate: any;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
     private healthService: HealthService,
-    ) {
+  ) {
     this.event = this.data.event || {};
     this.canUpdate = new Date(Date.now()).getTime() - new Date(this.event.date).getTime() <= 5 * 6000,
     this.conditions = Object.entries(this.event.conditions || {})
@@ -32,8 +31,8 @@ export class HealthEventDialogComponent {
     this.hasVital = vitals.some(vital => this.event[vital]);
   }
 
-  editExam( event ) {
-    this.healthService.nextEvent( event );
+  editExam(event) {
+    this.healthService.nextEvent(event);
     this.router.navigate([ 'myDashboard/myHealth/event', { id: this.data.user } ]);
   }
 
