@@ -20,7 +20,7 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div class="chart-container">
+  <div *ngIf="showChart" class="chart-container">
     <canvas id="diagnosesTrend" #diagnosesChart></canvas>
   </div>
   <h1 class="mat-title" i18n>Weekly Data</h1>
