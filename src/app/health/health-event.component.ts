@@ -21,7 +21,7 @@ export class HealthEventComponent implements OnInit {
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
-  event: any = {}
+  event: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -59,7 +59,7 @@ export class HealthEventComponent implements OnInit {
       if (!eventId) {
         return of({});
       }
-      return this.healthService.getHealthData(params.get('id'), { docId: eventId })
+      return this.healthService.getHealthData(params.get('id'), { docId: eventId });
     })).subscribe(([ event ]: any[]) => {
       this.healthForm.patchValue(event);
       this.event = event;

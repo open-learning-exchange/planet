@@ -124,7 +124,7 @@ export class HealthService {
       ...newEvent,
       date: oldEvent.date || time,
       updatedDate: time
-    }
+    };
   }
 
   postHealthProfileData(data) {
