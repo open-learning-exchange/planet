@@ -1,7 +1,6 @@
 <mat-card-header>
   <img mat-card-avatar [src]="member?.avatar">
   <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(member)">{{ member?.userDoc?.fullName || member?.userDoc?.firstName  || member?.name }}</a>
-
   <mat-card-subtitle>
     <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
     <span i18n *ngIf="member?.userId === user._id && member?.userPlanetCode === planetCode">(You)</span>{{' '}}
