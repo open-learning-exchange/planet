@@ -12,7 +12,7 @@
   </mat-form-field>
   <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
 </div>
-<div *ngIf = "showBalanceWarning">
+<div *ngIf="showBalanceWarning">
   <mat-icon>warning</mat-icon><span i18n>The current balance is negative!</span><br/>
 </div>
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
