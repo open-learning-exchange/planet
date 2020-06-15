@@ -96,10 +96,10 @@ export class ReportsHealthComponent implements OnChanges {
       this.showChart = false;
       return;
     }
+    this.showChart = true;
     this.weeklyHealthData.sort((a, b) => a.weekOf - b.weekOf);
     const data = this.weeklyHealthData.map(week => week.docs.filter(doc => doc.conditions[diagnosis] === true).length);
     const labels = this.weeklyHealthData.map(week => weekDataLabels(week.weekOf));
-    this.showChart = true;
     this.setChart({
       data: { labels, datasets: [ { label: diagnosis, data, borderColor: styleVariables.primary, lineTension: 0 } ] },
       chartName: 'diagnosesTrend'
