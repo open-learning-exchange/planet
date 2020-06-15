@@ -18,8 +18,7 @@ export class HealthEventDialogComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private router: Router,
-    private healthService: HealthService,
+    private router: Router
   ) {
     this.event = this.data.event || {};
     this.canUpdate = (new Date(Date.now()).getTime() - new Date(this.event.date).getTime()) <= 300000,
@@ -32,8 +31,7 @@ export class HealthEventDialogComponent {
   }
 
   editExam(event) {
-    this.healthService.nextEvent(event);
-    this.router.navigate([ 'event', { id: this.data.user } ], { relativeTo: this.data.route });
+    this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
   }
 
 }
