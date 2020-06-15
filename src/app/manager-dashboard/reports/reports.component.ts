@@ -67,8 +67,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ));
       }),
       switchMap((onlinePlanets) => {
-        this.arrangePlanetData(this.planets.map(planet => ({
-          ...planet, isOnline: this.findByPlanet(onlinePlanets, planet.code)
+        console.log(onlinePlanets);
+        this.arrangePlanetData(this.planets.map((planet: any) => ({
+          ...planet, isOnline: this.findByPlanet({ rows: onlinePlanets }, planet.code)
         })), this.hubs);
         return forkJoin([
           this.activityService.getActivities('resource_activities', 'byPlanet', domain),
