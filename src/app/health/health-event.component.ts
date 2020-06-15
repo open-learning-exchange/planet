@@ -1,23 +1,27 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './health-event.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthEventComponent {
+export class HealthEventComponent implements OnInit {
 
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  event: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -46,6 +50,19 @@ export class HealthEventComponent {
       tests: '',
       referrals: '',
       conditions: {}
+    });
+  }
+
+  ngOnInit() {
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => {
+      const eventId = params.get('eventId');
+      if (!eventId) {
+        return of({});
+      }
+      return this.healthService.getHealthData(params.get('id'), { docId: eventId });
+    })).subscribe(([ event ]: any[]) => {
+      this.healthForm.patchValue(event);
+      this.event = event;
     });
   }
 
@@ -116,9 +133,9 @@ export class HealthEventComponent {
     return this.healthService.addEvent(
       this.route.snapshot.params.id,
       this.userService.get()._id,
+      this.event,
       {
         ...this.healthForm.value,
-        date: Date.now(),
         selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
         createdBy: this.userService.get()._id,
         planetCode: this.stateService.configuration.code,
