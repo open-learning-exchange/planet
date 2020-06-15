@@ -33,7 +33,7 @@ export class HealthEventDialogComponent {
 
   editExam(event) {
     this.healthService.nextEvent(event);
-    this.router.navigate([ 'myDashboard/myHealth/event', { id: this.data.user } ]);
+    this.router.navigate([ 'event', { id: this.data.user } ], { relativeTo: this.data.route });
   }
 
 }
