@@ -26,5 +26,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
-  <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="!canUpdate" mat-raised-button i18n>Edit</button>
+  <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button i18n>Edit</button>
 </mat-dialog-actions>
