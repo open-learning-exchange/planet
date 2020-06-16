@@ -11,6 +11,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -30,7 +31,8 @@ export class HealthEventComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private stateService: StateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private planetMessageService: PlanetMessageService
   ) {
     this.healthForm = this.fb.group({
       temperature: [ '', Validators.min(1) ],
@@ -61,8 +63,14 @@ export class HealthEventComponent implements OnInit {
       }
       return this.healthService.getHealthData(params.get('id'), { docId: eventId });
     })).subscribe(([ event ]: any[]) => {
+      const canUpdate = (new Date(Date.now()).getTime() - new Date(event.updatedDate).getTime()) <= 300000;
+      if (!canUpdate) {
+        this.planetMessageService.showMessage('This examination can no longer be changed.');
+        this.goBack();
+      } else {
       this.healthForm.patchValue(event);
       this.event = event;
+      }
     });
   }
 
