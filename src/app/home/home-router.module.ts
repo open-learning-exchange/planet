@@ -34,7 +34,6 @@ const routes: Routes = [
       { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
       { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
-      { path: 'surveys', loadChildren: () => import('../surveys/surveys.module').then(m => m.SurveysModule) },
       { path: 'logs/myplanet', component: LogsMyPlanetComponent },
       { path: 'health', component: HealthListComponent },
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
