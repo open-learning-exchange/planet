@@ -1,7 +1,7 @@
 <form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
-    <div *ngFor="let field of fields" [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' }">
+    <div *ngFor="let field of fields" [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' || field.type === 'toggle' || field.type === 'markdown' }">
       <mat-checkbox *ngIf="field.type === 'checkbox'" formControlName="{{field.name}}">{{field.placeholder}}</mat-checkbox>
       <!-- input field -->
       <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
@@ -78,8 +78,8 @@
   </mat-dialog-content>
   <mat-dialog-actions *ngIf="title !== 'Rating'">
     <span i18n class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
+    <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
     <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
-    <button color="warn" type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
   </mat-dialog-actions>
 
   <mat-dialog-actions *ngIf="title === 'Rating'">

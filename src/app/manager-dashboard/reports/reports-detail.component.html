@@ -4,21 +4,23 @@
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
-  <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
-    <mat-form-field>
-      <mat-label>Start Date</mat-label>
-      <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
-      <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-      <mat-datepicker #startDate></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>End Date</mat-label>
-      <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
-      <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
-      <mat-datepicker #endDate></mat-datepicker>
-    </mat-form-field>
-  </form>
-  <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime">Show All Time</button>
+  <ng-container *ngIf="minDate">
+    <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
+      <mat-form-field>
+        <mat-label>Start Date</mat-label>
+        <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+        <mat-datepicker #startDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>End Date</mat-label>
+        <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+        <mat-datepicker #endDate></mat-datepicker>
+      </mat-form-field>
+    </form>
+    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime">Show All Time</button>
+  </ng-container>
   <mat-button-toggle-group
     class="font-size-1"
     (change)="onFilterChange($event.value)"
@@ -46,6 +48,7 @@
         <button mat-menu-item *ngIf="loginActivities" (click)="openExportDialog('logins')" i18n>Login Report</button>
         <button mat-menu-item *ngIf="resourceActivities.total" (click)="openExportDialog('resourceViews')" i18n>Resources View Report</button>
         <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
+        <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
     </mat-toolbar-row>
@@ -169,6 +172,9 @@
       </mat-tab>
       <mat-tab i18n-label label="Courses">
         <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" [progress]="progress" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
+      </mat-tab>
+      <mat-tab i18n-label label="Health" *planetBeta #healthTab>
+        <planet-reports-health [planetCode]="planetCode" [dateRange]="dateFilterForm?.value" [isActive]="healthTab.isActive" (changeDateRange)="resetDateFilter($event)"></planet-reports-health>
       </mat-tab>
     </mat-tab-group>
   </div>

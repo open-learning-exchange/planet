@@ -35,7 +35,7 @@
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
-          <mat-expansion-panel hideToggle="true" (opened)="getStepSubmission(step)">
+          <mat-expansion-panel hideToggle="true" (opened)="getStepSubmission(step, stepNum)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
@@ -75,19 +75,19 @@
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</a>
+              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" [disabled]="stepNum > 0 && !courseDetail?.steps[stepNum - 1].attempts" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</a>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
-              <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu">
+              <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button
+                [matMenuTriggerFor]="previewMenu"
+                (click)="previewButtonClick(step, stepNum)">
                 Preview
               </button>
               <mat-menu #previewMenu="matMenu">
                 <a mat-menu-item
-                  *ngIf="step?.exam?.questions.length"
                   (click)="goToExam(step, stepNum, true)">
                   Preview Test
                 </a>
                 <a mat-menu-item
-                  *ngIf="step?.survey?.questions.length"
                   (click)="goToSurvey(stepNum, true)">
                   Preview Survey
                 </a>

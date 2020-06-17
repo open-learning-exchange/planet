@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
+  selector: 'planet-users',
   templateUrl: './users.component.html',
   styles: [ `
     /* Column Widths */
@@ -28,6 +29,9 @@ import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/r
 export class UsersComponent implements OnInit, OnDestroy {
 
   @ViewChild('table', { static: false }) usersTable: UsersTableComponent;
+  @Input() isDialog = false;
+  @Input() hideChildren = false;
+  @Input() excludeIds = [];
   users: any[] = [];
   message = '';
   searchValue = '';
@@ -73,7 +77,14 @@ export class UsersComponent implements OnInit, OnDestroy {
     )).subscribe(childPlanets => this.children = childPlanets.sort(sortPlanet));
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
-      this.users = users;
+      this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
+    });
+    this.searchChange.pipe(debounceTime(500), takeUntil(this.onDestroy$)).subscribe((searchText) => {
+      if (this.isDialog) {
+        this.applyFilter(searchText);
+      } else {
+        this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
+      }
     });
     this.usersService.requestUserData();
   }
@@ -86,9 +97,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   changePlanetFilter(type, child: any = {}) {
     this.filterDisplayColumns(type);
     this.tableState = { ...this.tableState, filterType: type, selectedChild: child };
-    this.searchChange.pipe(debounceTime(500)).subscribe((searchText) => {
-      this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
-    });
   }
 
   filterDisplayColumns(type: string) {
@@ -104,7 +112,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.searchValue = filterValue;
-    this.changePlanetFilter(this.tableState.filterType);
+    this.changePlanetFilter(this.tableState.filterType, this.tableState.selectedChild || {});
   }
 
   searchChanged(searchText: string) {
@@ -148,6 +156,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filteredRole = 'All';
     this.filter = { ...this.filter, 'doc.roles': '' };
-    this.applyFilter('');
+    this.searchChange.next('');
   }
 }

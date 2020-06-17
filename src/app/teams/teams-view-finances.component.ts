@@ -18,6 +18,10 @@ import { millisecondsToDay } from '../meetups/constants';
     .narrow-column {
       max-width: 100px;
     }
+    .mat-card {
+      display: flex;
+      align-items: center;
+    }
   ` ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
@@ -34,6 +38,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   startDate: Date;
   endDate: Date;
   emptyTable = true;
+  showBalanceWarning = false;
 
   constructor(
     private teamsService: TeamsService,
@@ -56,6 +61,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
         transactions[0] = this.setTransactionsTable(transactions)[0];
       }
+      this.showBalanceWarning = this.finances.length === (this.table.filteredData.length - 1) && transactions[0].balance < 0;
     });
   }
 

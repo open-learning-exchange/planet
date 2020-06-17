@@ -61,7 +61,7 @@ export class LogsMyPlanetComponent implements OnInit {
       );
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+    }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
   }
 
 }

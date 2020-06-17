@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, BehaviorSubject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
-import { stringToHex } from '../shared/utils';
+import { UsersService } from '../users/users.service';
+import { stringToHex, ageFromBirthDate } from '../shared/utils';
+import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +13,17 @@ import { stringToHex } from '../shared/utils';
 export class HealthService {
 
   healthData: any = {};
+  readonly encryptedFields = [
+    'events', 'profile', 'lastExamination', 'userKey',
+    'allergies', 'createdBy', 'diagnosis', 'immunizations', 'medications', 'notes', 'referrals', 'tests', 'treatments', 'xrays'
+   ];
+   private eventDetail = new BehaviorSubject({});
+   shareEventDetail = this.eventDetail.asObservable();
 
   constructor(
     private couchService: CouchService,
-    private stateService: StateService
+    private stateService: StateService,
+    private usersService: UsersService
   ) {}
 
   userDatabaseName(userId: string) {
@@ -32,6 +41,10 @@ export class HealthService {
           of({ doc: {} });
       })
     );
+  }
+
+  nextEvent(events) {
+    this.eventDetail.next(events);
   }
 
   createUserKey(userDb) {
@@ -55,9 +68,9 @@ export class HealthService {
     }));
   }
 
-  getHealthData(userId) {
-    return this.getUserKey(this.userDatabaseName(userId)).pipe(
-      switchMap(({ doc }: any) => this.getHealthDoc(userId, doc)),
+  getHealthData(userId, { docId = userId, createKeyIfNone = false } = {}) {
+    return this.getUserKey(this.userDatabaseName(userId), createKeyIfNone).pipe(
+      switchMap(({ doc }: any) => forkJoin([ this.getHealthDoc(docId, doc), of(doc) ]))
     );
   }
 
@@ -67,18 +80,56 @@ export class HealthService {
     );
   }
 
-  addEvent(_id: string, event: any) {
-    return this.postHealthData({ _id, events: [ ...(this.healthData.events || []), event ] });
+  private postHealthDoc(oldDoc, newDoc, keyDoc) {
+    const { encryptData, ...newHealthDoc } = Object.entries({ ...oldDoc, ...newDoc }).reduce((healthObj, [ key, value ]) => {
+      const isEncryptField = this.encryptedFields.indexOf(key) > -1;
+      return {
+        ...healthObj,
+        [isEncryptField ? 'encryptData' : key]: isEncryptField ? { ...healthObj.encryptData, [key]: value } : value
+      };
+    }, { encryptData: {} });
+    return this.couchService.put(
+      'health/_design/health/_update/encrypt',
+      { ...newHealthDoc, encryptData, key: keyDoc.key, iv: keyDoc.iv }
+    );
   }
 
-  postHealthData(data) {
-    const userDb = this.userDatabaseName(data._id);
-    return this.getUserKey(userDb, true).pipe(
-      switchMap(({ doc }: any) => forkJoin([ of(doc), this.getHealthDoc(data._id, doc) ])),
-      switchMap(([ keyDoc, healthDoc ]: any[]) => {
-        const newHealthDoc = { ...healthDoc, ...data, events: [ ...healthDoc.events, ...(data.events || []) ] };
-        return this.couchService.put('health/_design/health/_update/encrypt', { ...newHealthDoc, key: keyDoc.key, iv: keyDoc.iv });
+  addEvent(userId: string, creatorId: string, oldEvent: any, newEvent: any) {
+    this.usersService.requestUsers();
+    return forkJoin([
+      this.getHealthData(userId, { createKeyIfNone: true }),
+      this.getHealthData(creatorId, { createKeyIfNone: true }),
+      this.couchService.get(`_users/${userId}`),
+      this.couchService.currentTime()
+    ]).pipe(
+      switchMap(([ [ healthDoc, keyDoc ], [ creatorHealthDoc, creatorKeyDoc ], user, time ]: [ any, any, any, number ]) => {
+        const userKey = healthDoc.userKey || this.generateKey(32);
+        const creatorKey = newEvent.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
+        const age = ageFromBirthDate(time, user.birthDate);
+        const eventData = this.newEventDoc(oldEvent, newEvent, time);
+        return forkJoin([
+          this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
+          this.postHealthDoc({}, { ...eventData, profileId: userKey, creatorId: creatorKey, gender: user.gender, age }, keyDoc),
+          creatorHealthDoc.userKey || newEvent.selfExamination ?
+            of({}) :
+            this.postHealthDoc(creatorHealthDoc, { userKey: creatorKey }, creatorKeyDoc)
+        ]);
       })
+    );
+  }
+
+  newEventDoc(oldEvent: any, newEvent: any, time: number) {
+    return {
+      ...oldEvent,
+      ...newEvent,
+      date: oldEvent.date || time,
+      updatedDate: time
+    };
+  }
+
+  postHealthProfileData(data) {
+    return this.getHealthData(data._id, { createKeyIfNone: true }).pipe(
+      switchMap(([ healthDoc, keyDoc ]: any[]) => this.postHealthDoc(healthDoc, data, keyDoc))
     );
   }
 
@@ -92,6 +143,10 @@ export class HealthService {
     window.crypto.getRandomValues(keyArray);
 
     return keyArray.reduce((hexString, number) => `${hexString}${hexDigits[Math.floor(number / 16)]}${hexDigits[number % 16]}`, '');
+  }
+
+  getExaminations(planetCode) {
+    return this.couchService.findAll('health', findDocuments({ planetCode }));
   }
 
 }

@@ -12,8 +12,9 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
   @Input() progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
-  @Input() activityType: 'resources' | 'courses' = 'resources';
+  @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
+  matSortActive = '';
   activities = new MatTableDataSource();
   displayedColumns = [
     'title',
@@ -27,11 +28,16 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnInit() {
     this.displayedColumns = [ ...this.displayedColumns, ...(this.activityType === 'courses' ? [ 'enrollments', 'completions' ] : []) ];
-    this.activities.sortingDataAccessor = (item: any, property: string) =>
+    this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?
+      item.unique.length :
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
   ngOnChanges() {
+    this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
+    this.displayedColumns = this.activityType === 'health' ?
+      [ 'weekOf', 'count', 'unique' ] :
+      this.displayedColumns;
     this.activities.data = this.activitiesByDoc.map(activity => ({
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
       enrollments: this.progress.enrollments.filteredData.filter(enrollment => enrollment.courseId === activity.courseId).length,
@@ -50,7 +56,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   rowClick(element) {
-    this.itemClick.emit(element.resourceId || element.courseId);
+    this.itemClick.emit(element.resourceId || element.courseId || element.weekOf);
   }
 
 }

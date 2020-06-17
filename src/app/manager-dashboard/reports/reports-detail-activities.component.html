@@ -1,11 +1,22 @@
-<mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort>
+<mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="weekOf">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Week Starting</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.weekOf | date}}</mat-cell>
+  </ng-container>
   <ng-container matColumnDef="count">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Views</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>
+      <ng-container *ngIf="activityType==='health'; else views" i18n>Examinations</ng-container>
+      <ng-template #views i18n>Views</ng-template>
+    </mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.count}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="unique">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Patients Seen</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.unique?.length}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="averageRating">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Average Rating</mat-header-cell>

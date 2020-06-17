@@ -34,7 +34,7 @@ export class HealthUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.profileForm.patchValue(this.userService.get());
-    this.healthService.getHealthData(this.userService.get()._id).subscribe(data => {
+    this.healthService.getHealthData(this.userService.get()._id).subscribe(([ data ]: any[]) => {
       this.existingData = data;
       this.healthForm.patchValue(data.profile);
     });
@@ -80,7 +80,7 @@ export class HealthUpdateComponent implements OnInit {
     }
     forkJoin([
       this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
-      this.healthService.postHealthData({
+      this.healthService.postHealthProfileData({
         _id: this.existingData._id || this.userService.get()._id,
         _rev: this.existingData._rev,
         profile: this.healthForm.value

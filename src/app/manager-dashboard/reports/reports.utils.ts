@@ -1,3 +1,5 @@
+import { millisecondsToDay } from '../../meetups/constants';
+
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
   return planetDocs.map(doc => ({ doc, nameDoc: names.find((name: any) => name.planetId === doc._id) }));
@@ -8,28 +10,30 @@ export const codeToPlanetName = (code: string, configuration: any, childPlanets:
   return planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : configuration.name;
 };
 
+export const sortPlanet = ((a, b) => {
+  const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
+  return planetName(a).localeCompare(planetName(b));
+});
+
 export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   hubs: hubs.map(hub => ({
     ...hub,
-    children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child)
+    children: hub.spokes.map(code => planets.find(planet => planet.doc.code === code)).filter(child => child).sort(sortPlanet),
+    hubPlanetDoc: (planets.find(planet => planet.doc._id === hub.planetId) || {}).doc
   })),
   sandboxPlanets: planets.filter(
     planet => hubs.find(hub => hub.spokes.indexOf(planet.doc.code) > -1 || planet.doc._id === hub.planetId) === undefined
   )
 });
 
-export const sortPlanet = ((a, b) => {
-  const planetName = doc => doc.nameDoc ? doc.nameDoc.name : doc.doc.name;
-  return planetName(a).localeCompare(planetName(b));
-});
-
 export const itemInDateRange = (item, dateField, startDate, endDate) => {
   return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
 };
 
-export const filterByDate = (array, dateField, { startDate, endDate }) => array.filter(item =>
-  itemInDateRange(item, dateField, startDate, endDate)
-);
+export const filterByDate = (array, dateField, { startDate, endDate, isEndInclusive = true, additionalFilterFunction = (i?) => true }) => {
+  const endTime = isEndInclusive ? new Date(new Date(endDate).setHours(24)) : endDate;
+  return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
+};
 
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
@@ -59,6 +63,8 @@ export const reportsDetailParams = (type) => ({
 
 export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
+export const weekDataLabels = (date) => new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),
   y: unique ? visit.unique.length : visit.count || 0
@@ -75,3 +81,18 @@ export const titleOfChartName = (chartName: string) => {
   };
   return chartNames[chartName];
 };
+
+export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }, startWeekOffset = 1) => {
+  const { startDate, endDate } = { startDate: new Date(dateRange.startDate), endDate: new Date(dateRange.endDate) };
+  let weekStart = startDate.setDate(startDate.getDate() - ((startDate.getDay() + startWeekOffset) % 7));
+  const weeks: number[] = [];
+  while (weekStart < endDate.getTime()) {
+    weeks.push(weekStart);
+    weekStart = weekStart + (millisecondsToDay * 7);
+  }
+  return weeks;
+};
+
+export const scaleLabel = (labelString: string) => ({
+  display: true, labelString, fontSize: 12, fontStyle: 'bold'
+});

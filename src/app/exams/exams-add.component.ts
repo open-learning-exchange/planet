@@ -156,7 +156,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   appendToCourse(info, type: 'exam' | 'survey') {
-    const courseExam = { ...this.documentInfo, ...info, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
+    const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
   }
 
@@ -216,7 +216,7 @@ export class ExamsAddComponent implements OnInit {
       this.showErrorMessage();
       return;
     }
-    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value }, minWidth: '75vw' });
+    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value, examType: this.examType }, minWidth: '75vw' });
   }
 
 }

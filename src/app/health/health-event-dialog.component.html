@@ -1,11 +1,12 @@
 <h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
 <mat-dialog-content>
+  <p *ngIf="!event.selfExamination"><strong class="mat-body-strong" i18n>Performed by: </strong>{{performedBy}}</p>
   <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
-  <p *ngIf="event.temperature"><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}}</p>
-  <p *ngIf="event.pulse"><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}}</p>
+  <p *ngIf="event.temperature"><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}} °C</p>
+  <p *ngIf="event.pulse"><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}} bpm</p>
   <p *ngIf="event.bp"><strong class="mat-body-strong" i18n>Blood Pressure: </strong>{{event.bp}}</p>
-  <p *ngIf="event.height"><strong class="mat-body-strong" i18n>Height: </strong>{{event.height}}</p>
-  <p *ngIf="event.weight"><strong class="mat-body-strong" i18n>Weight: </strong>{{event.weight}}</p>
+  <p *ngIf="event.height"><strong class="mat-body-strong" i18n>Height: </strong>{{event.height}} cm</p>
+  <p *ngIf="event.weight"><strong class="mat-body-strong" i18n>Weight: </strong>{{event.weight}} kg</p>
   <p *ngIf="event.vision"><strong class="mat-body-strong" i18n>Vision: </strong>{{event.vision}}</p>
   <p *ngIf="event.hearing"><strong class="mat-body-strong" i18n>Hearing: </strong>{{event.hearing}}</p>
   <ng-container *ngIf="conditions">
@@ -24,5 +25,6 @@
   <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" color="primary" mat-raised-button mat-dialog-close i18n>OK</button>
+  <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
+  <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button i18n>Edit</button>
 </mat-dialog-actions>

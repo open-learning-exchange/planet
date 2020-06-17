@@ -28,10 +28,13 @@
       }
     }
   </p>
-  <p>{{data.extraMessage}}</p>
+  <p [innerHTML]=data.extraMessage></p>
   <b>{{data.displayName}}</b>
+  <ng-container *ngFor="let label of labels; last as last">
+    <p><b><planet-label [label]="label.field"></planet-label>: {{label.value}}</b></p>
+  </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close *ngIf="cancelable" i18n>Cancel</button>
   <button color="primary" mat-raised-button (click)="ok()" [planetSubmit]="spinnerOn" i18n>OK</button>
-  <button color="warn" mat-raised-button mat-dialog-close *ngIf="cancelable" i18n>Cancel</button>
 </mat-dialog-actions>

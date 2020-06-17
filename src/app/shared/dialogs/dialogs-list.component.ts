@@ -52,8 +52,12 @@ export class DialogsListComponent implements AfterViewInit {
     selectionOptional?: boolean,
     labels?: any
   }) {
+    const hasFullName = this.data.columns.some(column => column === 'Full Name');
+    const tableData = hasFullName ?
+      this.appendFullName(this.data.tableData) :
+      this.data.tableData;
     this.selection = new SelectionModel(this.data.allowMulti || false, this.data.initialSelection || []);
-    this.tableData.data = this.data.tableData;
+    this.tableData.data = tableData;
     this.tableColumns = this.data.columns;
     this.disableRowClick = this.data.disableSelection || false;
     this.emptySubmit = this.data.selectionOptional || false;
@@ -74,6 +78,12 @@ export class DialogsListComponent implements AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.tableData.filter = filterValue || ' ';
+  }
+
+  appendFullName(data: any[]) {
+    return data.map(row => ({
+      ...row, 'Full Name': (row.firstName || '') && `${row.firstName} ${row.middleName || ''} ${row.lastName}`
+    }));
   }
 
   isAllSelected() {
