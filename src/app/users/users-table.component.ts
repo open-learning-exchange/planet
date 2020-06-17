@@ -103,9 +103,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    if (this.isUserAdmin) {
-      this.displayedColumns.unshift('select');
-    }
     this.usersTable.sortingDataAccessor = (item: any, property) => {
       if (item[property]) {
         return sortNumberOrString(item, property);
@@ -139,6 +136,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   ngAfterViewInit() {
+    if (this.isUserAdmin) {
+      this.displayedColumns.unshift('select');
+    }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
   }
