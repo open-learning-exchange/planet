@@ -3,6 +3,12 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 
+const columns = {
+  resources: [ 'title', 'count', 'averageRating' ],
+  courses: [ 'title', 'count', 'averageRating', 'enrollments', 'completions' ],
+  health: [ 'weekOf', 'count', 'unique' ]
+};
+
 @Component({
   selector: 'planet-reports-detail-activities',
   templateUrl: './reports-detail-activities.component.html'
@@ -27,7 +33,6 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   constructor() {}
 
   ngOnInit() {
-    this.displayedColumns = [ ...this.displayedColumns, ...(this.activityType === 'courses' ? [ 'enrollments', 'completions' ] : []) ];
     this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?
       item.unique.length :
       sortNumberOrString(this.sortingObject(item, property), property);
@@ -35,9 +40,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
-    this.displayedColumns = this.activityType === 'health' ?
-      [ 'weekOf', 'count', 'unique' ] :
-      this.displayedColumns;
+    this.displayedColumns = columns[this.activityType];
     this.activities.data = this.activitiesByDoc.map(activity => ({
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
       enrollments: this.progress.enrollments.filteredData.filter(enrollment => enrollment.courseId === activity.courseId).length,
