@@ -5,7 +5,7 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
-import { ManagerDashboardRouterModule } from './manger-dashboard-router.module';
+import { ManagerDashboardRouterModule } from './manager-dashboard-router.module';
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerFetchComponent } from './manager-fetch.component';
