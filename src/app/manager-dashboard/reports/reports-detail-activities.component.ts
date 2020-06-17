@@ -32,14 +32,12 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   ngOnChanges() {
-    this.activities.data = this.activitiesByDoc.map(activity => {
-      return {
-        averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-        enrollments: this.progress.enrollments.filteredData.filter(enrollment => enrollment.courseId === activity.courseId).length,
-        completions: this.progress.completions.filteredData.filter(completion => completion.courseId === activity.courseId).length,
-        ...activity
-      };
-    });
+    this.activities.data = this.activitiesByDoc.map(activity => ({
+      averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
+      enrollments: this.progress.enrollments.filteredData.filter(enrollment => enrollment.courseId === activity.courseId).length,
+      completions: this.progress.completions.filteredData.filter(completion => completion.courseId === activity.courseId).length,
+      ...activity
+    }));
   }
 
   ngAfterViewInit() {
