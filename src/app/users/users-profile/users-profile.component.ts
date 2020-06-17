@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -21,9 +21,10 @@ import { StateService } from '../../shared/state.service';
     }
   ` ]
 })
-export class UsersProfileComponent implements OnInit, OnDestroy {
+export class UsersProfileComponent implements OnInit, OnDestroy, OnChanges {
   private dbName = '_users';
   user: any = {};
+  userDetail: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
@@ -34,7 +35,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   lastLogin = 0;
   private onDestroy$ = new Subject<void>();
   @Input() isDialog: boolean;
-  @Input() userDetail: any = {};
+  @Input() member: any = {};
 
   constructor(
     private couchService: CouchService,
@@ -48,8 +49,10 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user = this.userService.get();
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.urlName = params.get('name');
-      this.planetCode = params.get('planet');
+      if (params.get('name') !== null) {
+        this.urlName = params.get('name');
+        this.planetCode = params.get('planet');
+      }
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
@@ -58,6 +61,10 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
         this.userDetail = user;
       }
     });
+  }
+
+  ngOnChanges() {
+    this.urlName = this.member.name;
   }
 
   ngOnDestroy() {
