@@ -11,13 +11,13 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Average Rating</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.averageRating}}</mat-cell>
   </ng-container>
-  <ng-container matColumnDef="enrolled">
+  <ng-container matColumnDef="enrollments">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Enrolled</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.enrolled}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.enrollments}}</mat-cell>
   </ng-container>
-  <ng-container matColumnDef="passed">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Passed</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.passed}}</mat-cell>
+  <ng-container matColumnDef="completions">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Completed</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.completions}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>

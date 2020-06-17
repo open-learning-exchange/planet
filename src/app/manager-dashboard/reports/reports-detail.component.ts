@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { combineLatest, Subject, of } from 'rxjs';
+import { combineLatest, Subject, of, forkJoin } from 'rxjs';
 import { map, takeUntil, take, switchMap } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
@@ -42,6 +42,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
+  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -140,6 +141,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('resourceActivities');
     this.courseActivities.total.filter(this.filter);
     this.setDocVisits('courseActivities');
+    this.progress.enrollments.filter(this.filter);
+    this.progress.completions.filter(this.filter);
   }
 
   getLoginActivities() {
@@ -184,9 +187,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.getCourseProgress(activityParams(this.planetCode))
-    .subscribe((progress) => {
-      this.reports['progress'] = progress;
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions }) => {
+      this.progress.enrollments.data = enrollments;
+      this.progress.completions.data = completions;
     });
   }
 
