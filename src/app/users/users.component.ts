@@ -74,7 +74,9 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
     this.managerService.getChildPlanets(true).pipe(map(
       (state) => attachNamesToPlanets(state)
-    )).subscribe(childPlanets => this.children = childPlanets.sort(sortPlanet));
+    )).subscribe(childPlanets =>
+      this.children = childPlanets.filter((planet: any) => planet.doc.docType !== 'parentName').sort(sortPlanet)
+    );
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
       this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
