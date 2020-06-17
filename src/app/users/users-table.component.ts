@@ -41,7 +41,7 @@ export class TableState {
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
-  @Input() displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
+  @Input() displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
   @Input() users: any[];
   @Input() containerClass: string;
   @Input() matSortActive = '';
@@ -103,6 +103,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    if (this.isUserAdmin) {
+      this.displayedColumns.unshift('select');
+    }
     this.usersTable.sortingDataAccessor = (item: any, property) => {
       if (item[property]) {
         return sortNumberOrString(item, property);
