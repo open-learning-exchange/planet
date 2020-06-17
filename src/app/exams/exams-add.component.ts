@@ -102,9 +102,7 @@ export class ExamsAddComponent implements OnInit {
       this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
       this.examForm.patchValue(data);
       this.initializeQuestions(data.questions);
-    }, (error) => {
-      console.log(error);
-    });
+    }, error => console.log(error));
     if (this.examType !== 'survey') {
       return;
     }
@@ -115,9 +113,7 @@ export class ExamsAddComponent implements OnInit {
         this.examForm.patchValue({ name: this.examForm.value.name += ' - COPY' });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
-    }, (error) => {
-        console.log(error);
-    });
+    }, error => console.log(error));
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
   }
 
