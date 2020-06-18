@@ -41,10 +41,11 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   ngOnChanges() {
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[this.activityType];
+    const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
     this.activities.data = this.activitiesByDoc.map(activity => ({
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-      enrollments: this.progress.enrollments.filteredData.filter(enrollment => enrollment.courseId === activity.courseId).length,
-      completions: this.progress.completions.filteredData.filter(completion => completion.courseId === activity.courseId).length,
+      enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+      completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
       ...activity
     }));
   }
