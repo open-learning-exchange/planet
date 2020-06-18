@@ -13,7 +13,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { UsersAchievementsModule } from './users-achievements/users-achievements.module';
 import { UsersTableComponent } from './users-table.component';
-import { UserProfileDialogComponent } from './user-profile-dialog.component';
+import { UserProfileDialogComponent } from './users-profile/user-profile-dialog.component';
 
 @NgModule({
   exports: [
