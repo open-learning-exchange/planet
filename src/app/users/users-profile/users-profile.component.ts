@@ -28,12 +28,12 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
-  planetCode: string | null = null;
   editable = false;
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
   private onDestroy$ = new Subject<void>();
+  @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
   @Input() userName: any = {};
 
@@ -50,7 +50,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     this.user = this.userService.get();
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.urlName = this.userName || params.get('name');
-      this.planetCode = params.get('planet');
+      this.planetCode = this.planetCode || params.get('planet');
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
