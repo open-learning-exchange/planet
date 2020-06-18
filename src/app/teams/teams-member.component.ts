@@ -50,10 +50,10 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.actionClick.emit(actionParams);
   }
 
-  openMemberDialog( member ) {
+  openMemberDialog(member) {
     this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      width: '50vw',
+      data: { name: member.userDoc.doc.name },
+      maxWidth: '90vw',
       maxHeight: '90vh'
     });
   }
