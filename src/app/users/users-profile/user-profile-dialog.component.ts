@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
       <planet-users-profile [isDialog]="true" [userName]="name"></planet-users-profile>
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-raised-button mat-dialog-close i18n>Cancel</button>
+      <button mat-raised-button mat-dialog-close i18n>Close</button>
     </mat-dialog-actions>
   `
 })
