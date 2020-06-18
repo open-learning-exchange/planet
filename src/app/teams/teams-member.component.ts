@@ -3,7 +3,7 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { MatDialog } from '@angular/material';
-import { UserProfileDialogComponent } from '../users/user-profile-dialog.component';
+import { UserProfileDialogComponent } from '../users/users-profile/user-profile-dialog.component';
 
 @Component({
   selector: 'planet-teams-member',
