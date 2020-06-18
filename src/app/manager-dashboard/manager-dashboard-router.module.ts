@@ -8,7 +8,7 @@ import { ReportsComponent } from './reports/reports.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
-import { RequestsComponent } from '../manager-dashboard/requests/requests.component';
+import { RequestsComponent } from './requests/requests.component';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
@@ -17,6 +17,7 @@ const routes: Routes = [
   { path: 'fetch', component: ManagerFetchComponent },
   { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule), data: { parent: true } },
   { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { parent: true } },
+  { path: 'surveys', loadChildren: () => import('../surveys/surveys.module').then(m => m.SurveysModule) },
   { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { parent: true } },
   { path: 'configuration', component: ManagerDashboardConfigurationComponent, data: { update: true } },
   { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
