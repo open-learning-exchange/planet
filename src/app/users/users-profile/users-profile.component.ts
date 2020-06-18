@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 
 @Component({
+  selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
   styles: [ `
     .profile-container {
@@ -22,17 +23,19 @@ import { StateService } from '../../shared/state.service';
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
-  userDetail: any = {};
   user: any = {};
+  userDetail: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
-  planetCode: string | null = null;
   editable = false;
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
   private onDestroy$ = new Subject<void>();
+  @Input() planetCode: string | null = null;
+  @Input() isDialog: boolean;
+  @Input() userName: any = {};
 
   constructor(
     private couchService: CouchService,
@@ -46,8 +49,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user = this.userService.get();
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.urlName = params.get('name');
-      this.planetCode = params.get('planet');
+      this.urlName = this.userName || params.get('name');
+      this.planetCode = this.planetCode || params.get('planet');
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
