@@ -44,6 +44,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
+  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -112,6 +113,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
+      this.getCourseProgress();
       this.getPlanetCounts(local);
       this.dialogsLoadingService.stop();
     });
@@ -141,6 +143,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('resourceActivities');
     this.courseActivities.total.filter(this.filter);
     this.setDocVisits('courseActivities');
+    this.progress.enrollments.filter(this.filter);
+    this.progress.completions.filter(this.filter);
   }
 
   getLoginActivities() {
@@ -182,6 +186,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.ratings.courses = averageRatings.filter(item => item.type === 'course');
     this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
     this.reports.courseRatings = this.ratings.courses.slice(0, 5);
+  }
+
+  getCourseProgress() {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions }) => {
+      this.progress.enrollments.data = enrollments;
+      this.progress.completions.data = completions;
+    });
   }
 
   getDocVisits(type) {

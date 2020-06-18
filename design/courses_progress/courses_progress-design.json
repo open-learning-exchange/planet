@@ -1,0 +1,1 @@
+{"views":{"enrollment":{"map":"function (doc) {\n        emit({ userId: doc.userId, courseId: doc.courseId } , doc.createdDate);\n      }","reduce":"_stats"},"completion":{"map":"function (doc) {\n        if (doc.passed) {\n          emit({ userId: doc.userId, courseId: doc.courseId } , doc.updatedDate);\n        }\n      }","reduce":"_stats"}}}

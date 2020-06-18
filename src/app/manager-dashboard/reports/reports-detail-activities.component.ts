@@ -1,6 +1,13 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { sortNumberOrString } from '../../shared/table-helpers';
+import { ReportsDetailData } from './reports-detail-data';
+
+const columns = {
+  resources: [ 'title', 'count', 'averageRating' ],
+  courses: [ 'title', 'count', 'averageRating', 'enrollments', 'completions' ],
+  health: [ 'weekOf', 'count', 'unique' ]
+};
 
 @Component({
   selector: 'planet-reports-detail-activities',
@@ -10,6 +17,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
+  @Input() progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
   @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
   matSortActive = '';
@@ -32,15 +40,14 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
-    this.displayedColumns = this.activityType === 'health' ?
-      [ 'weekOf', 'count', 'unique' ] :
-      [ 'title', 'count', 'averageRating' ];
-    this.activities.data = this.activitiesByDoc.map(
-      activity => ({
-        averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-        ...activity
-      })
-    );
+    this.displayedColumns = columns[this.activityType];
+    const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
+    this.activities.data = this.activitiesByDoc.map(activity => ({
+      averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
+      enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+      completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+      ...activity
+    }));
   }
 
   ngAfterViewInit() {
