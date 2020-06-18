@@ -57,7 +57,7 @@ export class HealthEventComponent implements OnInit {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => {
       const eventId = params.get('eventId');
       if (!eventId) {
-        return of({});
+        return of([ {} ]);
       }
       return this.healthService.getHealthData(params.get('id'), { docId: eventId });
     })).subscribe(([ event ]: any[]) => {
