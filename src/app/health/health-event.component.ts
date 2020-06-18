@@ -10,7 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
@@ -31,6 +31,7 @@ export class HealthEventComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private stateService: StateService,
+    private couchService: CouchService,
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService
   ) {
@@ -61,16 +62,18 @@ export class HealthEventComponent implements OnInit {
       if (!eventId) {
         return of({});
       }
-      return this.healthService.getHealthData(params.get('id'), { docId: eventId });
-    })).subscribe(([ event ]: any[]) => {
-      const canUpdate = (new Date(Date.now()).getTime() - new Date(event.updatedDate).getTime()) <= 300000;
-      if (!canUpdate) {
-        this.planetMessageService.showMessage('This examination can no longer be changed.');
+      return forkJoin([
+        this.healthService.getHealthData(params.get('id'), { docId: eventId }),
+        this.couchService.currentTime()
+      ]);
+    })).subscribe(([ [ event ], time ]: [ any[], number ]) => {
+      if ((time - event.updatedDate) > 300000) {
+        this.planetMessageService.showAlert('This examination can no longer be changed.');
         this.goBack();
-      } else {
+        return;
+      }
       this.healthForm.patchValue(event);
       this.event = event;
-      }
     });
   }
 
