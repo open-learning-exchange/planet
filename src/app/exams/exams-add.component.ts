@@ -39,7 +39,7 @@ export class ExamsAddComponent implements OnInit {
   showFormError = false;
   showPreviewError = false;
   isCourseContent = this.router.url.match(/courses/);
-  returnUrl = (this.examType === 'survey' && !this.isCourseContent) ? '/surveys' : this.coursesService.returnUrl || 'courses';
+  returnUrl = this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
   private _question: FormGroup;
   get question(): FormGroup {
@@ -195,6 +195,10 @@ export class ExamsAddComponent implements OnInit {
   }
 
   goBack() {
+    if (this.examType === 'survey' && !this.isCourseContent) {
+      this.router.navigate([ this.pageType === 'Update' ? '../../' : '../' ], { relativeTo: this.route });
+      return;
+    }
     this.router.navigateByUrl(this.returnUrl);
   }
 
