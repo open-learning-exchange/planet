@@ -7,11 +7,13 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 export class DialogsRatingsComponent {
 
   ratings: any[] = [];
+  title: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.ratings = this.data.ratings;
+    this.title = this.data.title;
   }
 
 }

@@ -374,7 +374,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   viewRatings(resource) {
     this.dialog.open(DialogsRatingsComponent, {
-      data: { ratings: resource.rating.allRatings }
+      data: { title: resource.doc.title, ratings: resource.rating.allRatings },
+      minWidth: '600px'
     });
   }
 
