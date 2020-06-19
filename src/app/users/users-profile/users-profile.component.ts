@@ -35,7 +35,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
-  @Input() userName: any = {};
+  @Input() userName: string;
 
   constructor(
     private couchService: CouchService,
