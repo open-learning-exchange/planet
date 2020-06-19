@@ -23,7 +23,6 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
 
   static nextId = 0;
 
-  @Input() _value = 0;
   @HostBinding() id = `planet-rating-stars-${PlanetRatingStarsComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
 
@@ -42,6 +41,18 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   onContainerClick;
   focused = false;
 
+  @Input()
+  get value() {
+    return this._value;
+  }
+  set value(rating: number) {
+    this._value = rating;
+    this.starActiveWidth = rating * 20 + '%';
+    this.onChange(rating);
+    this.stateChanges.next();
+  }
+  private _value = 0;
+
   onChange(_: any) {}
 
   constructor(@Optional() @Self() public ngControl: NgControl) {
@@ -52,16 +63,6 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
 
   ngOnDestroy() {
     this.stateChanges.complete();
-  }
-
-  get value() {
-    return this._value;
-  }
-  set value(rating: number) {
-    this._value = rating;
-    this.starActiveWidth = rating * 20 + '%';
-    this.onChange(rating);
-    this.stateChanges.next();
   }
 
   setDescribedByIds(ids: string[]) {
