@@ -20,8 +20,8 @@ export class UserProfileDialogComponent {
   planetCode: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    this.name = data.member.userDoc.doc.name;
-    this.planetCode = data.member.userDoc.doc.planetCode;
+    this.name = data.member.name;
+    this.planetCode = data.member.userPlanetCode;
   }
 
 }
