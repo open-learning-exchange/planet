@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Subject, zip, combineLatest, of, throwError } from 'rxjs';
-import { switchMap, map, catchError, auditTime } from 'rxjs/operators';
+import { switchMap, map, catchError, auditTime, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -17,7 +17,9 @@ export class UsersService {
   private adminConfig = '_node/nonode@nohost/_config/admins/';
   usersUpdated = new Subject<any>();
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
-  data: { users: any[], loginActivities: any[], childUsers: any[] } = { users: [], loginActivities: [], childUsers: [] };
+  data: { users: any[], loginActivities: any[], childUsers: any[], parentUsers: any[] } = {
+    users: [], loginActivities: [], childUsers: [], parentUsers: []
+  };
   // List of all possible roles to add to users
   roleList: string[] = [ ...[ 'leader', 'monitor' ], ...[ this.userService.isBetaEnabled ? [ 'health' ] : [] ].flat() ];
   allRolesList: string[] = [ ...this.roleList, 'learner', 'manager', 'admin' ].sort();
@@ -30,20 +32,24 @@ export class UsersService {
   ) {
     const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
     const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
-    this.stateService.couchStateListener('child_users').pipe(
-      switchMap((childUsers) => {
+    combineLatest([
+      this.stateService.couchStateListener('child_users'),
+      this.stateService.couchStateListener('parent_users').pipe(filter((parentUsers) => checkIfLocal(parentUsers)))
+    ]).pipe(
+      switchMap(([ childUsers, parentUsers ]) => {
         const childLocal = checkIfLocal(childUsers);
         return !childLocal ? of([ [], { rows: [] } ]) : forkJoin([
           this.couchService.findAll(this.dbName),
           this.couchService.get(`login_activities/_design/login_activities/_view/byUser?group=true`),
-          of(dataToUse(this.data.childUsers, childUsers, childLocal))
+          of(dataToUse(this.data.childUsers, childUsers, childLocal)),
+          of(parentUsers.newData)
         ]);
       })
-    ).subscribe(([ users, { rows: loginActivities }, childUsers ]: [ any[], { rows: any[] }, any[] ]) => {
+    ).subscribe(([ users, { rows: loginActivities }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
       if (childUsers === undefined) {
         return;
       }
-      this.data = { users, loginActivities, childUsers };
+      this.data = { users, loginActivities, childUsers, parentUsers };
       this.updateUsers();
     });
   }
@@ -69,16 +75,18 @@ export class UsersService {
 
   updateUsers() {
     this.usersUpdated.next(
-      this.data.users.filter((user: any) => {
-        // Removes special satellite user from list.
-        return user.name !== 'satellite';
-      }).concat(this.data.childUsers).map((user: any) => this.fullUserDoc(user))
+      [
+        ...this.data.users.filter((user: any) => user.name !== 'satellite'),
+        ...this.data.childUsers,
+        ...this.data.parentUsers
+      ].map((user: any) => this.fullUserDoc(user))
     );
   }
 
   // Triggers state service for 'child_users' DB.  After that completes fetches '_users' and 'login_activities' data (see constructor).
   requestUserData() {
     this.stateService.requestData('child_users', 'local');
+    this.stateService.requestData('parent_users', 'local');
   }
 
   fullUserDoc(user: any) {
