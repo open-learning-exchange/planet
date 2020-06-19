@@ -65,7 +65,9 @@ export class ReportsHealthComponent implements OnChanges {
   }
 
   setHealthData(weeks: number[]) {
-    const filteredExaminations = filterByDate(this.examinations, 'date', this.dateRange);
+    const filteredExaminations = filterByDate(this.examinations, 'date', this.dateRange).map(examination => ({
+      ...examination, conditions: examination.conditions || {}
+    }));
     this.weeklyHealthData = this.reportsService.groupBy(
       filteredExaminations.map(examination => ({
         ...examination, weekOf: weeks.find(week => week > (examination.date - (millisecondsToDay * 7)))
