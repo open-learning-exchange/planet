@@ -16,6 +16,8 @@ export class HealthEventDialogComponent implements OnInit {
   hasVital = false;
   canUpdate: any;
   performedBy = '';
+  minutes = '5';
+  seconds = '00';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -44,6 +46,12 @@ export class HealthEventDialogComponent implements OnInit {
 
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
+  }
+
+  timer(canStart) {
+    if (canStart) {
+      // timer
+    }
   }
 
 }
