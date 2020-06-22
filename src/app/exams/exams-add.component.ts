@@ -34,7 +34,7 @@ export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
   examForm: FormGroup;
   documentInfo: any = {};
-  pageType = 'Add';
+  pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
   successMessage = this.examType === 'survey' ? 'New survey added' : 'New test added';
@@ -110,7 +110,7 @@ export class ExamsAddComponent implements OnInit {
       this.examForm.patchValue(exam);
       this.initializeQuestions(exam.questions);
       if (submissions.length > 0) {
-        this.pageType = 'Add';
+        this.pageType = 'Copy';
         this.documentInfo = {};
         this.examForm.patchValue({ name: this.examForm.value.name += ' - COPY' });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
@@ -209,7 +209,7 @@ export class ExamsAddComponent implements OnInit {
 
   goBack() {
     if (this.examType === 'survey' && !this.isCourseContent) {
-      this.router.navigate([ this.pageType === 'Update' ? '../../' : '../' ], { relativeTo: this.route });
+      this.router.navigate([ this.pageType === 'Add' ? '../' : '../../' ], { relativeTo: this.route });
       return;
     }
     this.router.navigateByUrl(this.returnUrl);
