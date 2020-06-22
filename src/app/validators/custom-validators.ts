@@ -215,6 +215,13 @@ export class CustomValidators {
     }
   }
 
+  static spaceOnlyValidator(ac: AbstractControl) {
+    if (!ac.value) {
+      return null;
+    }
+    return (!!ac.value.trim().length) ? null : { whitespaceOnly: true };
+  }
+
   static required(ac: AbstractControl) {
     return /\S/.test(ac.value) ? null : { 'required': true };
   }
