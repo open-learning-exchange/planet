@@ -23,7 +23,7 @@ export class HealthEventDialogComponent implements OnInit {
     private usersService: UsersService
   ) {
     this.event = this.data.event || {};
-    this.canUpdate = (new Date(Date.now()).getTime() - new Date(this.event.date).getTime()) <= 300000,
+    this.canUpdate = (new Date(Date.now()).getTime() - new Date(this.event.updatedDate).getTime()) <= 300000,
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
     this.hasConditionAndTreatment = this.event.hasInfo !== undefined ?
