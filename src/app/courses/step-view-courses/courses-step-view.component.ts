@@ -9,6 +9,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -33,6 +34,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
+  noTestPreviewAvaliable = false;
   @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
 
   constructor(

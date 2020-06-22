@@ -17,6 +17,11 @@ import { PlanetMessageService } from '../shared/planet-message.service';
   styleUrls: [ './exams-view.scss' ]
 })
 
+// .mat-card {
+ // display: flex;
+  // align-items: center;
+// }
+
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
   @Input() isDialog = false;
@@ -53,7 +58,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private couchService: CouchService,
-    private planetMessageService : PlanetMessageService
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -63,18 +68,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.previewMode = params.get('preview') === 'true' || this.isDialog;
       this.questionNum = +params.get('questionNum') || this.questionNum;
       if (this.previewMode) {
-
-        if('exam Exist condition'){
-        this.planetMessageService.showAlert('Preview is not available for this test');
-        // goto the route
-        }
-
-        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
+  ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
           this.exam = this.exam || res;
           this.examType = params.get('type') || this.previewExamType;
           this.setExamPreview();
         });
-        return;
+  return;
       }
       this.setExam(params);
     });
