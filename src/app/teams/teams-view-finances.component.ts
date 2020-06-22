@@ -13,16 +13,8 @@ import { millisecondsToDay } from '../meetups/constants';
 
 @Component({
   selector: 'planet-teams-view-finances',
+  styleUrls: [ './teams-view-finances.scss' ],
   templateUrl: './teams-view-finances.component.html',
-  styles: [ `
-    .narrow-column {
-      max-width: 100px;
-    }
-    .mat-card {
-      display: flex;
-      align-items: center;
-    }
-  ` ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 
