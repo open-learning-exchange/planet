@@ -16,8 +16,8 @@ export class HealthEventDialogComponent implements OnInit {
   hasVital = false;
   canUpdate: any;
   performedBy = '';
-  minutes = '5';
-  seconds = '00';
+  minutes: number;
+  seconds: number;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -32,6 +32,10 @@ export class HealthEventDialogComponent implements OnInit {
       this.event.hasInfo === true :
       this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
+
+    // Math.floor this and then use as countdown timer.
+    const time = (300000 - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
+    console.log(time);
   }
 
   ngOnInit() {
@@ -42,6 +46,7 @@ export class HealthEventDialogComponent implements OnInit {
     if (!this.event.selfExamination) {
       this.usersService.requestUsers();
     }
+    this.timer(this.canUpdate);
   }
 
   editExam(event) {
@@ -49,9 +54,7 @@ export class HealthEventDialogComponent implements OnInit {
   }
 
   timer(canStart) {
-    if (canStart) {
-      // timer
-    }
+  // Timer
   }
 
 }
