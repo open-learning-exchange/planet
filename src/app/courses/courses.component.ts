@@ -450,11 +450,4 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.tagInputComponent.addTag(tag);
   }
 
-  viewRatings(course) {
-    this.dialog.open(DialogsRatingsComponent, {
-      data: { title: course.doc.courseTitle, ratings: course.rating.allRatings },
-      minWidth: '600px'
-    });
-  }
-
 }

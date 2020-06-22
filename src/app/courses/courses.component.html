@@ -158,7 +158,7 @@
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
-            <button mat-menu-item (click)="viewRatings(element)">
+            <button mat-menu-item [planetDialogsRatings]="element">
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>

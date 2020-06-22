@@ -372,11 +372,4 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
   }
 
-  viewRatings(resource) {
-    this.dialog.open(DialogsRatingsComponent, {
-      data: { title: resource.doc.title, ratings: resource.rating.allRatings },
-      minWidth: '600px'
-    });
-  }
-
 }

@@ -17,7 +17,7 @@ import { SyncDirective } from '../../manager-dashboard/sync.directive';
 import { MeetupsModule } from '../../meetups/meetups.module';
 import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsImagesComponent } from './dialogs-images.component';
-import { DialogsRatingsComponent } from './dialogs-ratings.component';
+import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
 
 
 @NgModule({
@@ -38,6 +38,7 @@ import { DialogsRatingsComponent } from './dialogs-ratings.component';
     DialogsLoadingComponent,
     DialogsImagesComponent,
     DialogsRatingsComponent,
+    DialogsRatingsDirective,
     ChangePasswordDirective,
     SyncDirective
   ],
@@ -50,6 +51,7 @@ import { DialogsRatingsComponent } from './dialogs-ratings.component';
     DialogsLoadingComponent,
     DialogsImagesComponent,
     DialogsRatingsComponent,
+    DialogsRatingsDirective,
     ChangePasswordDirective,
     SyncDirective
   ],
