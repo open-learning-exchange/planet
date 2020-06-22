@@ -200,7 +200,7 @@ export class TeamsService {
       status: { '$or': [ { '$exists': false }, { '$ne': 'archived' } ] },
       ...(withAllLinks ? {} : { docType: 'membership' })
     };
-    this.usersService.requestUsers();
+    this.usersService.requestUserData();
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments(selector)),
       this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
@@ -209,7 +209,7 @@ export class TeamsService {
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...membershipDocs.map(doc => ({
         ...doc,
-        userDoc: users.find(user => user._id === doc.userId && user.doc.planetCode === doc.userPlanetCode),
+        userDoc: users.find(user => (user.doc.couchId || user._id) === doc.userId && user.doc.planetCode === doc.userPlanetCode),
         attachmentDoc: attachments.find(attachment => attachment._id === `${doc.userId}@${doc.userPlanetCode}`)
       })),
       ...shelves.map((shelf: any) => ({ ...shelf, fromShelf: true, docType: 'membership', userId: shelf._id, teamId: team._id }))
