@@ -85,13 +85,10 @@ export class NewsListComponent implements OnChanges {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          this.postNews({
-            ...news,
-            viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(view => {
-              const { sharedDate, ...viewIn } = view;
-              return viewIn;
-            })
-          }, newNews);
+          this.postNews(
+            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+            newNews
+          );
         }
       },
       autoFocus: true
