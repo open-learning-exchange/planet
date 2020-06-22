@@ -69,7 +69,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
-  excludeIds: any[];
 
   constructor(
     private couchService: CouchService,
@@ -247,19 +246,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendSurveyDialog(survey) {
     this.submissionsService.getSubmissions(
-      findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id }))
-        .subscribe((submissions: any[]) => {
-          this.excludeIds = submissions.map((submission: any) => submission.user._id);
-          this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
-            width: '80vw',
-            data: {
-              okClick: (selection: any[]) => this.sendSurvey(survey, selection.map(item => item.doc)),
-              excludeIds: [ ...this.excludeIds, this.userService.get()._id ],
-              mode: 'users'
-            }
-          });
+      findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
+    ).subscribe((submissions: any[]) => {
+      const excludeIds = submissions.map((submission: any) => submission.user._id);
+      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+        width: '80vw',
+        data: {
+          okClick: (selection: any[]) => this.sendSurvey(survey, selection.map(item => item.doc)),
+          excludeIds: [ ...excludeIds, this.userService.get()._id ],
+          mode: 'users'
         }
-    );
+      });
+    });
   }
 
   sendSurvey(survey: any, users: any[]) {
