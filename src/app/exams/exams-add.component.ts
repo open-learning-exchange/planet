@@ -22,6 +22,7 @@ import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { forkJoin, of } from 'rxjs';
 
 const showdown = require('showdown');
 
@@ -92,29 +93,29 @@ export class ExamsAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
     if (this.route.snapshot.url[0].path !== 'update') {
       return;
     }
     this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Test updated successfully';
-    this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id')).subscribe((data) => {
+    forkJoin([
+      this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id')),
+      this.examType === 'survey' ?
+        this.submissionsService.getSubmissions(findDocuments({ 'parent._id': this.route.snapshot.paramMap.get('id') })) :
+        of([])
+    ]).subscribe(([ exam, submissions ]) => {
       this.pageType = 'Update';
-      this.documentInfo = { _rev: data._rev, _id: data._id };
-      this.examForm.controls.name.setAsyncValidators(this.nameValidator(data.name));
-      this.examForm.patchValue(data);
-      this.initializeQuestions(data.questions);
-    }, error => console.log(error));
-    if (this.examType !== 'survey') {
-      return;
-    }
-    this.submissionsService.getSubmissions(findDocuments({ 'parent._id': this.route.snapshot.paramMap.get('id') })).subscribe((data) => {
-      if (data.length !== 0) {
+      this.documentInfo = { _rev: exam._rev, _id: exam._id };
+      this.examForm.controls.name.setAsyncValidators(this.nameValidator(exam.name));
+      this.examForm.patchValue(exam);
+      this.initializeQuestions(exam.questions);
+      if (submissions.length > 0) {
         this.pageType = 'Add';
         this.documentInfo = {};
         this.examForm.patchValue({ name: this.examForm.value.name += ' - COPY' });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
     }, error => console.log(error));
-    this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
   }
 
   onSubmit(reRoute = false) {
