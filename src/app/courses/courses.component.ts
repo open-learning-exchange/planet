@@ -26,6 +26,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
+import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
 
 @Component({
   selector: 'planet-courses',
@@ -447,6 +448,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   addTag(tag: string) {
     this.tagInputComponent.addTag(tag);
+  }
+
+  viewRatings(course) {
+    this.dialog.open(DialogsRatingsComponent, {
+      data: { title: course.doc.courseTitle, ratings: course.rating.allRatings },
+      minWidth: '600px'
+    });
   }
 
 }
