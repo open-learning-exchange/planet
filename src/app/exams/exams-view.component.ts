@@ -115,6 +115,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
+    const previousStatus = this.submissionsService.submission.status;
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
@@ -123,12 +124,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
-        this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
+        this.routeToNext(nextClicked ? this.questionNum : nextQuestion, previousStatus);
       }
     });
   }
 
-  routeToNext(nextQuestion) {
+  routeToNext(nextQuestion, previousStatus) {
     this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
@@ -140,7 +141,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
     this.examComplete();
     if (this.examType === 'survey' && !this.previewMode) {
-      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
+      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser, previousStatus === 'complete');
     }
   }
 
