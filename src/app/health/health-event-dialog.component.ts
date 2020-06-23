@@ -32,7 +32,7 @@ export class HealthEventDialogComponent implements OnInit {
       this.event.hasInfo === true :
       this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
-    this.timer();
+    this.countdown();
   }
 
   ngOnInit() {
@@ -49,18 +49,21 @@ export class HealthEventDialogComponent implements OnInit {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
   }
 
-  timer() {
+  countdown() {
+    this.timer();
     const intervalId = setInterval(() => {
-      const time = (300000 - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
-      if (time >= 0) {
-        const minutes = Math.floor(time / 60).toString();
-        let seconds = Math.floor(time % 60).toString();
-        seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
-        this.minutes = minutes;
-        this.seconds = seconds;
-      } else {
-        clearInterval(intervalId);
-      }
+      this.timer(intervalId);
     }, 1000);
+  }
+
+  timer(intervalId?) {
+    const time = (10000 - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
+    if (time <= 0) {
+      clearInterval(intervalId);
+      return;
+    }
+    const seconds = Math.floor(time % 60).toString();
+    this.minutes = Math.floor(time / 60).toString();
+    this.seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
   }
 }
