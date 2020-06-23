@@ -12,7 +12,7 @@ import { StateService } from '../../shared/state.service';
 @Component({
   selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
-  styles: [ `
+  styles: [`
     .profile-container {
       max-width: 900px;
       display: grid;
@@ -67,11 +67,11 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   getLoginInfo(name) {
-    this.couchService.findAll('login_activities', findDocuments({ 'user': name }, 0, [ { 'loginTime': 'desc' } ]))
-    .subscribe((logins: any) => {
-      this.totalLogins = logins.length;
-      this.lastLogin = logins.length ? logins[0].loginTime : '';
-    });
+    this.couchService.findAll('login_activities', findDocuments({ 'user': name }, 0, [{ 'loginTime': 'desc' }]))
+      .subscribe((logins: any) => {
+        this.totalLogins = logins.length;
+        this.lastLogin = logins.length ? logins[0].loginTime : '';
+      });
   }
 
   checkHasAchievments() {
@@ -90,7 +90,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     const userId = relationship === 'local' || relationship === 'parent'
       ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
     this.editable = (this.stateService.configuration.adminName !== this.urlName + '@' + this.stateService.configuration.code)
-      && this.userService.doesUserHaveRole([ '_admin' ]) && userId.indexOf('@') === -1 && relationship !== 'parent';
+      && this.userService.doesUserHaveRole(['_admin']) && userId.indexOf('@') === -1 && relationship !== 'parent';
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
@@ -108,14 +108,19 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     return planetCode === this.stateService.configuration.parentCode ?
       'parent' :
       planetCode === null || planetCode === this.stateService.configuration.code ?
-      'local' :
-      'child';
+        'local' :
+        'child';
   }
 
   goBack() {
+    const teamsUrl = this.router.url.split('/');
+    if(teamsUrl[1] === 'teams') {
+      this.router.navigate(['../../'], { relativeTo: this.route });
+      return;
+    }
     const currentUser = this.userService.get();
     if (currentUser.isUserAdmin) {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
+      this.router.navigate(['../../'], { relativeTo: this.route });
     } else {
       this.router.navigate([ '/' ]);
     }
