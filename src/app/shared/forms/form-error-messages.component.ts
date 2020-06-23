@@ -41,7 +41,6 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       dateRequired {This field requires a valid date}
       noUnderscore {Cannot include an underscore}
       whitespace {Cannot include space in password}
-      whitespaceOnly {Cannot contain space only}
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
     }</span>{{number === undefined ? '' : ' ' + number}}

@@ -43,15 +43,15 @@ export class HealthEventComponent implements OnInit {
       weight: [ '', Validators.min(1) ],
       vision: [ '' ],
       hearing: [ '' ],
-      notes: [ '', CustomValidators.spaceOnlyValidator ],
-      diagnosis: [ '', CustomValidators.spaceOnlyValidator ],
-      treatments: [ '', CustomValidators.spaceOnlyValidator ],
-      medications: [ '', CustomValidators.spaceOnlyValidator ],
-      immunizations: [ '', CustomValidators.spaceOnlyValidator ],
-      allergies: [ '', CustomValidators.spaceOnlyValidator ],
-      xrays: [ '', CustomValidators.spaceOnlyValidator ],
-      tests: [ '', CustomValidators.spaceOnlyValidator ],
-      referrals: [ '', CustomValidators.spaceOnlyValidator ],
+      notes: '',
+      diagnosis: '',
+      treatments: '',
+      medications:  '',
+      immunizations: '',
+      allergies: '',
+      xrays: '',
+      tests: '',
+      referrals: '',
       conditions: {}
     });
   }
@@ -93,7 +93,8 @@ export class HealthEventComponent implements OnInit {
 
   isEmptyForm() {
     const isConditionsEmpty = (values) => typeof values === 'object' && Object.values(values).every(value => !value);
-    return Object.values(this.healthForm.controls).every(({ value }) => value === '' || value === null || isConditionsEmpty(value));
+    return Object.values(this.healthForm.controls)
+      .every(({ value }) => value === '' || value === null || /^\s*$/.test(value) || isConditionsEmpty(value));
   }
 
   goBack() {
