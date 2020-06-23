@@ -48,7 +48,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = this.currentUser.isUserAdmin ||
+        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           this.courseDetail.creator !== undefined &&
           (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
         return this.stateService.getCouchState('exams', 'local');
