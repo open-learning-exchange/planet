@@ -16,8 +16,8 @@ export class HealthEventDialogComponent implements OnInit {
   hasVital = false;
   canUpdate: any;
   performedBy = '';
-  minutes: number;
-  seconds: number;
+  minutes: string;
+  seconds: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -32,10 +32,7 @@ export class HealthEventDialogComponent implements OnInit {
       this.event.hasInfo === true :
       this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
-
-    // Math.floor this and then use as countdown timer.
-    const time = (300000 - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
-    console.log(time);
+    this.timer();
   }
 
   ngOnInit() {
@@ -46,15 +43,24 @@ export class HealthEventDialogComponent implements OnInit {
     if (!this.event.selfExamination) {
       this.usersService.requestUsers();
     }
-    this.timer(this.canUpdate);
   }
 
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
   }
 
-  timer(canStart) {
-  // Timer
+  timer() {
+    const intervalId = setInterval(() => {
+      const time = (300000 - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
+      if (time >= 0) {
+        const minutes = Math.floor(time / 60).toString();
+        let seconds = Math.floor(time % 60).toString();
+        seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
+        this.minutes = minutes;
+        this.seconds = seconds;
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 1000);
   }
-
 }
