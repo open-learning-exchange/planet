@@ -228,6 +228,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.openDeleteDialog(this.deleteCourse(course), 'single', course.courseTitle, 1);
   }
 
+  hasNoRating(course: any): boolean {
+    return course.rating.totalRating === 0;
+  }
+
   deleteSelected() {
     const selected = this.selection.selected.map(courseId => findByIdInArray(this.courses.data, courseId).doc);
     let amount = 'many',

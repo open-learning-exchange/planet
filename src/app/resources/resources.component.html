@@ -139,7 +139,7 @@
                 <span i18n>Delete</span>
               </button>
             </ng-container>
-            <button mat-menu-item [planetDialogsRatings]="element">
+            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="hasNoRating(element)">
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>

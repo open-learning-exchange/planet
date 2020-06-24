@@ -202,6 +202,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openDeleteDialog(this.deleteResource(resource), 'single', resource.doc.title, 1);
   }
 
+  hasNoRating(resource: any): boolean {
+    return resource.rating.totalRating === 0;
+  }
+
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
     let amount = 'many',
