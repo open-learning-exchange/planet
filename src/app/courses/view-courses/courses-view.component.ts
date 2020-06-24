@@ -118,40 +118,18 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  goBackToCorseView(stepNum): void {
-
-    this.planetMessageService.showAlert('Preview is not available for this test');
-
-    // this.router.navigate(
-    //   [
-    //     `./step/${stepNum}`,
-    //     { id: this.courseId, stepNum, questionNum, type: 'exam', preview, examId: this.courseDetail.steps[stepIndex].exam._id }
-    //   ],
-    //   { relativeTo: this.route }
-    // );
-
-    this.router.navigate(
-      [
-        '../'
-      ],
-      { relativeTo: this.route }
-    );
-
-  }
-
   previewButtonClick(step: any, stepNum: any): void {
-
     const stepType = this.coursesService.stepHasExamSurveyBoth(step);
     if (stepType === 'both' || stepType === undefined) {
       return;
     }
     this.previewButton.closeMenu();
     if (stepType === 'exam') {
-      const testPreviewAvailable = step.questions.length > 0; // confirm
+      const testPreviewAvailable = step && step.exam && step.exam.questions && step.exam.questions.length > 0;
       if (testPreviewAvailable) {
-        this.goToExam(step, stepNum, true);
+        this.goToExam(step, stepNum, testPreviewAvailable);
       } else {
-        this.goBackToCorseView(stepNum);
+        this.planetMessageService.showAlert('Preview is not available for this test');
       }
     }
     if (stepType === 'survey') {
