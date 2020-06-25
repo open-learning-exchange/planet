@@ -5,7 +5,7 @@ import { ReportsDetailData } from './reports-detail-data';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
-  courses: [ 'title', 'count', 'averageRating', 'enrollments', 'completions' ],
+  courses: [ 'title', 'count', 'averageRating', 'enrollments', 'completions', 'steps', 'exams' ],
   health: [ 'weekOf', 'count', 'unique' ]
 };
 
@@ -17,7 +17,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
-  @Input() progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
+  @Input() progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time'), steps: [] };
   @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
   matSortActive = '';
@@ -44,6 +44,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
     this.activities.data = this.activitiesByDoc.map(activity => ({
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
+      steps: (this.progress.steps.find(filterCourse(activity))  || { steps: 0 }).steps,
+      exams: (this.progress.steps.find(filterCourse(activity))  || { exams: 0 }).exams,
       enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
       completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
       ...activity

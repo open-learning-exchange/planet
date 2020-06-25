@@ -44,7 +44,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
-  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
+  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time'), steps: [] };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -189,9 +189,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions }) => {
+    this.activityService.courseProgressReport().subscribe(({ steps, enrollments, completions }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
+      this.progress.steps = steps;
     });
   }
 

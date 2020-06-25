@@ -30,6 +30,14 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Completed</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.completions}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="steps">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Steps</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.steps}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="exams">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Exams</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.exams}}</mat-cell>
+  </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>
 </mat-table>

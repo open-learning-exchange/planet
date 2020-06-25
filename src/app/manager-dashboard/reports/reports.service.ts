@@ -228,6 +228,11 @@ export class ReportsService {
       this.coursesService.coursesListener$().pipe(take(1))
     ]).pipe(map(([ { rows: enrollments }, { rows: completions }, courses ]) => {
       return {
+        steps: courses.map(course => ({
+          courseId: course.doc._id,
+          steps: course.doc.steps.length,
+          exams: course.doc.steps.filter(step => step.exam).length
+        }) ),
         enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
         completions: completions
           .filter(({ key, value }) => {
