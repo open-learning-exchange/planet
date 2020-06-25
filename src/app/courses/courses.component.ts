@@ -52,9 +52,6 @@ import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.compo
     .column > * {
       line-height: normal;
     }
-    .content {
-      margin-top: 0.5rem;
-    }
     .course-progress {
       margin-top: 0.5rem;
     }
