@@ -16,7 +16,6 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 })
 export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
-  @Input() member;
   @Input() item;
   @Input() replyObject;
   @Input() isMainPostShared = true;
@@ -137,6 +136,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     return this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
+
   openMemberDialog(member) {
     this.dialog.open(UserProfileDialogComponent, {
       data: { member },
