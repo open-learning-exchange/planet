@@ -113,7 +113,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
-      this.getCourseProgress();
       this.getPlanetCounts(local);
       this.dialogsLoadingService.stop();
     });
@@ -189,10 +188,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ steps, enrollments, completions }) => {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, courses }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
-      this.progress.steps = steps;
+      this.courseActivities.byDoc = this.courseActivities.byDoc.map(courseActivity => {
+        const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
+        return { ...course, ...courseActivity };
+      });
     });
   }
 
@@ -217,6 +219,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
     this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
+    if (type === 'courseActivities') {
+      this.getCourseProgress();
+    }
   }
 
   getPlanetCounts(local: boolean) {
