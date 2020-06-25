@@ -60,14 +60,14 @@ export class HealthEventComponent implements OnInit {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => {
       const eventId = params.get('eventId');
       if (!eventId) {
-        return of({});
+        return of([ [ 'new' ], 0 ]);
       }
       return forkJoin([
         this.healthService.getHealthData(params.get('id'), { docId: eventId }),
         this.couchService.currentTime()
       ]);
     })).subscribe(([ [ event ], time ]: [ any[], number ]) => {
-      if ((time - event.updatedDate) > 300000) {
+      if (event !== 'new' && (time - event.updatedDate) > 300000) {
         this.planetMessageService.showAlert('This examination can no longer be changed.');
         this.goBack();
         return;
