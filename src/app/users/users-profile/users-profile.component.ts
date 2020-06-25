@@ -68,10 +68,10 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
 
   getLoginInfo(name) {
     this.couchService.findAll('login_activities', findDocuments({ 'user': name }, 0, [ { 'loginTime': 'desc' } ]))
-      .subscribe((logins: any) => {
-        this.totalLogins = logins.length;
-        this.lastLogin = logins.length ? logins[0].loginTime : '';
-      });
+    .subscribe((logins: any) => {
+      this.totalLogins = logins.length;
+      this.lastLogin = logins.length ? logins[0].loginTime : '';
+    });
   }
 
   checkHasAchievments() {
@@ -108,8 +108,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     return planetCode === this.stateService.configuration.parentCode ?
       'parent' :
       planetCode === null || planetCode === this.stateService.configuration.code ?
-        'local' :
-        'child';
+      'local' :
+      'child';
   }
 
   goBack() {
