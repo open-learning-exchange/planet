@@ -232,7 +232,7 @@ export class ReportsService {
           courseId: course.doc._id,
           steps: course.doc.steps.length,
           exams: course.doc.steps.filter(step => step.exam).length
-        }) ),
+        })),
         enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
         completions: completions
           .filter(({ key, value }) => {
