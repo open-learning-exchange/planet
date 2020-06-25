@@ -72,7 +72,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         }
         this.dialogsLoadingService.stop();
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
-        this.canManage = this.currentUser.isUserAdmin ||
+        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
       });
   }
