@@ -19,6 +19,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
+  @Input() activeMembers: any[] = [];
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
@@ -30,6 +31,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   showExpand = false;
   showLess = true;
   showShare = false;
+  notMember = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
@@ -47,6 +49,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
+    this.notMember = this.shouldShowIndication();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
   }
 
@@ -132,6 +135,11 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   shouldShowShare() {
     return this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
+  }
+
+  shouldShowIndication() {
+    return this.planetCode === this.item.doc.user.planetCode &&
+      !this.activeMembers.find(user => this.item.doc.user._id === user._id && this.item.doc.user.joinDate === user.doc.joinDate);
   }
 
 }
