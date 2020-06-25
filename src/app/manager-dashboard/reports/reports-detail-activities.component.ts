@@ -44,8 +44,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
     this.activities.data = this.activitiesByDoc.map(activity => ({
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-      steps: (this.progress.steps.find(filterCourse(activity))  || { steps: 0 }).steps,
-      exams: (this.progress.steps.find(filterCourse(activity))  || { exams: 0 }).exams,
+      steps: (this.progress.steps.find(filterCourse(activity)) || { steps: 0 }).steps,
+      exams: (this.progress.steps.find(filterCourse(activity)) || { exams: 0 }).exams,
       enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
       completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
       ...activity
