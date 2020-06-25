@@ -5,71 +5,69 @@
 
 <div class="space-container">
   <div class="view-container view-full-height">
-    <div class="form-container">
-      <form class="form-spacing" [formGroup]="healthForm">
-        <h4 class="full-width primary-text-color">Vitals</h4>
-        <mat-form-field>
-          <input matInput i18n-placeholder [planetRound]="1" placeholder="Temperature in °C" formControlName="temperature" type="number" step="any" min="1">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.temperature"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder planetRound placeholder="Pulse in bpm" formControlName="pulse" type="number" step="any" min="1">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.pulse"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Blood Pressure" formControlName="bp">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.bp"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder [planetRound]="1" placeholder="Height in cm" formControlName="height" type="number" step="any" min="1">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.height"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder [planetRound]="1" placeholder="Weight in kg" formControlName="weight" type="number" step="any" min="1">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.weight"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Vision" formControlName="vision">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.vision"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Hearing" formControlName="hearing">
-          <mat-error><planet-form-error-messages [control]="healthForm.controls.hearing"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <h4 class="full-width primary-text-color">Condition and Treatment</h4>
-        <span class="small grey-text-color" i18n>Diagnosis</span>
-        <section class="full-width checkbox-group">
-          <mat-checkbox *ngFor="let condition of conditions" [checked]="healthForm.controls.conditions.value[condition]" (change)="conditionChange(condition)">{{condition}}</mat-checkbox>
-        </section>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Observations & Notes" [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Diagnosis" [formControl]="healthForm.controls.diagnosis"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Treatments" [formControl]="healthForm.controls.treatments"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Medications" [formControl]="healthForm.controls.medications"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Immunization Dates" [formControl]="healthForm.controls.immunizations"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Allergies" [formControl]="healthForm.controls.allergies"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="X-rays" [formControl]="healthForm.controls.xrays"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Lab Tests" [formControl]="healthForm.controls.tests"></planet-markdown-textbox>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Referrals" [formControl]="healthForm.controls.referrals"></planet-markdown-textbox>
-        </mat-form-field>
-      </form>
-    </div>
+    <form [formGroup]="healthForm">
+      <h4 class="full-width primary-text-color">Vitals</h4>
+      <mat-form-field>
+        <input matInput i18n-placeholder [planetRound]="1" placeholder="Temperature in °C" formControlName="temperature" type="number" step="any" min="1">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.temperature"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder planetRound placeholder="Pulse in bpm" formControlName="pulse" type="number" step="any" min="1">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.pulse"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Blood Pressure" formControlName="bp">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.bp"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder [planetRound]="1" placeholder="Height in cm" formControlName="height" type="number" step="any" min="1">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.height"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder [planetRound]="1" placeholder="Weight in kg" formControlName="weight" type="number" step="any" min="1">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.weight"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Vision" formControlName="vision">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.vision"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Hearing" formControlName="hearing">
+        <mat-error><planet-form-error-messages [control]="healthForm.controls.hearing"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <h4 class="full-width primary-text-color">Condition and Treatment</h4>
+      <span class="small grey-text-color" i18n>Diagnosis</span>
+      <section class="full-width checkbox-group">
+        <mat-checkbox *ngFor="let condition of conditions" [checked]="healthForm.controls.conditions.value[condition]" (change)="conditionChange(condition)">{{condition}}</mat-checkbox>
+      </section>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Observations & Notes" [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Diagnosis" [formControl]="healthForm.controls.diagnosis"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Treatments" [formControl]="healthForm.controls.treatments"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Medications" [formControl]="healthForm.controls.medications"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Immunization Dates" [formControl]="healthForm.controls.immunizations"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Allergies" [formControl]="healthForm.controls.allergies"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="X-rays" [formControl]="healthForm.controls.xrays"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Lab Tests" [formControl]="healthForm.controls.tests"></planet-markdown-textbox>
+      </mat-form-field>
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <planet-markdown-textbox i18n-placeholder placeholder="Referrals" [formControl]="healthForm.controls.referrals"></planet-markdown-textbox>
+      </mat-form-field>
+    </form>
     <div class="action-buttons">
       <button mat-raised-button type="button" color="primary" [disabled]="isEmptyForm()" (click)="onSubmit()" i18n>Submit</button>
       <button mat-raised-button type="button" (click)="goBack()" i18n>Cancel</button>
