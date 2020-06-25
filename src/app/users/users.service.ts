@@ -21,7 +21,7 @@ export class UsersService {
     users: [], loginActivities: [], childUsers: [], parentUsers: []
   };
   // List of all possible roles to add to users
-  roleList: string[] = [ ...[ 'leader', 'monitor' ], ...[ this.userService.isBetaEnabled ? [ 'health' ] : [] ].flat() ];
+  roleList: string[] = [ 'leader', 'monitor', 'health' ];
   allRolesList: string[] = [ ...this.roleList, 'learner', 'manager', 'admin' ].sort();
 
   constructor(
