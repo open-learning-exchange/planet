@@ -44,7 +44,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
-  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time'), steps: [] };
+  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
