@@ -46,7 +46,7 @@ export class HealthEventComponent implements OnInit {
       notes: '',
       diagnosis: '',
       treatments: '',
-      medications:  '',
+      medications: '',
       immunizations: '',
       allergies: '',
       xrays: '',
