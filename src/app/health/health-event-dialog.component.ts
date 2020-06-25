@@ -18,6 +18,7 @@ export class HealthEventDialogComponent implements OnInit {
   performedBy = '';
   minutes: string;
   seconds: string;
+  timeLimit = 300000;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -25,7 +26,7 @@ export class HealthEventDialogComponent implements OnInit {
     private usersService: UsersService
   ) {
     this.event = this.data.event || {};
-    this.canUpdate = (new Date(Date.now()).getTime() - new Date(this.event.updatedDate).getTime()) <= 300000,
+    this.canUpdate = (new Date(Date.now()).getTime() - new Date(this.event.updatedDate).getTime()) <= this.timeLimit,
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
     this.hasConditionAndTreatment = this.event.hasInfo !== undefined ?
@@ -57,9 +58,10 @@ export class HealthEventDialogComponent implements OnInit {
   }
 
   timer(intervalId?) {
-    const time = (10000 - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
+    const time = (this.timeLimit - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
     if (time <= 0) {
       clearInterval(intervalId);
+      this.canUpdate = false;
       return;
     }
     const seconds = Math.floor(time % 60).toString();
