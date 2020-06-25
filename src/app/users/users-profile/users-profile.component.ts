@@ -114,12 +114,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
 
   goBack() {
     const teamsUrl = this.router.url.split('/');
-    if (teamsUrl[1] === 'teams') {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
-      return;
-    }
     const currentUser = this.userService.get();
-    if (currentUser.isUserAdmin) {
+    if (currentUser.isUserAdmin || teamsUrl[1] === 'teams') {
       this.router.navigate([ '../../' ], { relativeTo: this.route });
     } else {
       this.router.navigate([ '/' ]);
