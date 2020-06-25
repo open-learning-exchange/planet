@@ -136,7 +136,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   ngAfterViewInit() {
-    if (!this.isUserAdmin && !this.isDialog) {
+    if (!this.isDialog) {
       this.displayedColumns.shift();
     }
     this.usersTable.sort = this.sort;
