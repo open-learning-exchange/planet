@@ -264,18 +264,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.userService.updateUser({ ...councillor.userDoc.doc, leadershipTitle }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
-        let msg ="";
+        let msg = '';
         if (councillor.doc.leadershipTitle) {
           if (leadershipTitle) {
-            (councillor.doc.leadershipTitle !== leadershipTitle) ? msg = "Title updated!":'';
+            msg = (councillor.doc.leadershipTitle !== leadershipTitle) ? 'Title updated!' : '';
           } else {
-            msg = "Title deleted!";
+              msg = 'Title deleted!';
           }
         } else if (leadershipTitle) {
-          msg = "Title Added!";
+            msg = 'Title added!';
         }
         this.dialogsFormService.closeDialogsForm();
-        msg ? this.planetMessageService.showMessage(msg) : '';
+        if (msg) {
+          this.planetMessageService.showMessage(msg);
+        }
         this.usersService.requestUsers();
       });
     };
