@@ -62,7 +62,7 @@ export class UsersUpdateComponent implements OnInit {
   ngOnInit() {
     if (this.route.snapshot.data.submission === true) {
       this.submissionMode = true;
-      this.redirectUrl = '/surveys';
+      this.redirectUrl = '/manager/surveys';
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name');
