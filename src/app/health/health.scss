@@ -51,9 +51,14 @@ mat-table {
 
 }
 
+mat-cell {
+  justify-content: right;
+}
+
 .table-column {
   min-width: $exam-table-col-width;
   &.mat-column-label {
     min-width: 110px;
+    justify-content: left;
   }
 }
