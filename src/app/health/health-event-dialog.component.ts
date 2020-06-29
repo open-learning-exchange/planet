@@ -1,13 +1,16 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
+import { timer, of, combineLatest } from 'rxjs';
+import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
+import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
 })
-export class HealthEventDialogComponent implements OnInit {
+export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
   event: any;
   hasConditionAndTreatment = false;
@@ -19,11 +22,13 @@ export class HealthEventDialogComponent implements OnInit {
   minutes: string;
   seconds: string;
   timeLimit = 300000;
+  isDestroyed = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private couchService: CouchService
   ) {
     this.event = this.data.event || {};
     this.canUpdate = (new Date(Date.now()).getTime() - new Date(this.event.updatedDate).getTime()) <= this.timeLimit,
@@ -46,26 +51,28 @@ export class HealthEventDialogComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.isDestroyed = true;
+  }
+
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
   }
 
   countdown() {
-    this.timer();
-    const intervalId = setInterval(() => {
-      this.timer(intervalId);
-    }, 1000);
+    this.couchService.currentTime().pipe(
+      switchMap((currentTime: number) => combineLatest(of(currentTime), timer(0, 1000))),
+      takeWhile(([ time, seconds ]) => {
+        const millisecondsLeft = this.timeLimit + this.event.date - ((seconds * 1000) + time);
+        this.setTimerValue(millisecondsLeft / 1000);
+        return millisecondsLeft > 0 && !this.isDestroyed;
+      })
+    ).subscribe(() => this.canUpdate = true, () => {}, () => this.canUpdate = false);
   }
 
-  timer(intervalId?) {
-    const time = (this.timeLimit - (new Date(Date.now()).getTime() - new Date(this.event.date).getTime())) / 1000;
-    if (time <= 0) {
-      clearInterval(intervalId);
-      this.canUpdate = false;
-      return;
-    }
-    const seconds = Math.floor(time % 60).toString();
-    this.minutes = Math.floor(time / 60).toString();
+  setTimerValue(secondsLeft) {
+    const seconds = Math.floor(secondsLeft % 60).toString();
+    this.minutes = Math.floor(secondsLeft / 60).toString();
     this.seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
   }
 }
