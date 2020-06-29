@@ -139,7 +139,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   openMemberDialog(member) {
     this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
+      data: { member: { ...member, userPlanetCode: member.planetCode } },
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
