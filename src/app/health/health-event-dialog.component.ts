@@ -38,7 +38,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       this.event.hasInfo === true :
       this.conditionAndTreatmentFields.some(field => this.event[field] !== '');
     this.hasVital = vitals.some(vital => this.event[vital]);
-    this.countdown();
+    this.editButtonCountdown();
   }
 
   ngOnInit() {
@@ -59,7 +59,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
   }
 
-  countdown() {
+  editButtonCountdown() {
     this.couchService.currentTime().pipe(
       switchMap((currentTime: number) => combineLatest(of(currentTime), timer(0, 1000))),
       takeWhile(([ time, seconds ]) => {
