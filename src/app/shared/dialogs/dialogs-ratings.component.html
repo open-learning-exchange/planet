@@ -3,11 +3,9 @@
   <mat-card *ngFor="let rating of data.ratings" class="margin-tb">
     <mat-card-title>
       <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
+      <div class="mat-caption" *ngIf="rating.time">{{rating.time | date:'longDate'}}</div>
     </mat-card-title>
-    <mat-card-content>
-      <p *ngIf="rating.comment">{{rating.comment}}</p>
-      <p *ngIf="rating.time">{{rating.time | date:'longDate'}}</p>
-    </mat-card-content>
+    <mat-card-content *ngIf="rating.comment">{{rating.comment}}</mat-card-content>
   </mat-card>
 </mat-dialog-content>
 <mat-dialog-actions>
