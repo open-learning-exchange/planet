@@ -72,6 +72,9 @@ export class HealthEventComponent implements OnInit {
         this.goBack();
         return;
       }
+      if (event === 'new') {
+        event = {};
+      }
       this.healthForm.patchValue(event);
       this.event = event;
     });
