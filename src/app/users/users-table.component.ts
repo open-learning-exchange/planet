@@ -136,6 +136,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   ngAfterViewInit() {
+    if (!this.isDialog && !this.isUserAdmin) {
+      this.displayedColumns = this.displayedColumns.filter(column => column !== 'select');
+    }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
   }
