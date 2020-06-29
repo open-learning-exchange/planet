@@ -8,7 +8,7 @@
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
     </h3>
     <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
-    <button mat-stroked-button *ngIf="currentUserId === leader" (click)="updateTeam()">
+    <button mat-stroked-button *ngIf="isUserLeader" (click)="updateTeam()">
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
@@ -23,7 +23,7 @@
         <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
           Add Courses
         </button>
-        <ng-container *ngIf="currentUserId !== leader && mode !== 'services'">
+        <ng-container *ngIf="!isUserLeader && mode !== 'services'">
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
         </ng-container>
       </ng-container>
@@ -56,7 +56,7 @@
         </ng-container>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
-          <button mat-raised-button color="accent" *ngIf="currentUserId === leader || mode === 'services'" (click)="updateTeam()" i18n>
+          <button mat-raised-button color="accent" *ngIf="isUserLeader || mode === 'services'" (click)="updateTeam()" i18n>
             { mode, select, team {Add Plan} enterprise {Add Mission & Services} services {Add Services} }
           </button>
         </ng-template>
@@ -75,9 +75,9 @@
                 [member]="member"
                 [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
                 [actionMenu]="[]
-                  .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
-                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || currentUserId === leader ? [ 'title' ] : [])"
+                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
+                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"
