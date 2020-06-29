@@ -7,7 +7,6 @@ import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { MatMenuTrigger } from '@angular/material';
-import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -35,7 +34,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -125,12 +123,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     }
     this.previewButton.closeMenu();
     if (stepType === 'exam') {
-      const testPreviewAvailable = step && step.exam && step.exam.questions && step.exam.questions.length > 0;
-      if (testPreviewAvailable) {
-        this.goToExam(step, stepNum, testPreviewAvailable);
-      } else {
-        this.planetMessageService.showAlert('Preview is not available for this test');
-      }
+      this.goToExam(step, stepNum, true);
     }
     if (stepType === 'survey') {
       this.goToSurvey(stepNum, true);
