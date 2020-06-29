@@ -9,6 +9,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { Exam, ExamQuestion } from './exams.model';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-exams-view',
@@ -51,7 +52,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -61,11 +63,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.previewMode = params.get('preview') === 'true' || this.isDialog;
       this.questionNum = +params.get('questionNum') || this.questionNum;
       if (this.previewMode) {
-        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
-          this.exam = this.exam || res;
-          this.examType = params.get('type') || this.previewExamType;
-          this.setExamPreview();
-        });
+        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe(
+          (res) => {
+            this.exam = this.exam || res;
+            this.examType = params.get('type') || this.previewExamType;
+            this.setExamPreview();
+          },
+          (err) => {
+            this.planetMessageService.showAlert('Preview is not available for this test');
+            this.goBack();
+          }
+        );
         return;
       }
       this.setExam(params);
