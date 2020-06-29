@@ -246,7 +246,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
         width: '80vw',
         data: {
-          okClick: (selection: any[]) => this.sendSurvey(survey, selection.map(item => item.doc)),
+          okClick: (selection: any[]) => this.sendSurvey(survey, selection),
           excludeIds: [ ...excludeIds, this.userService.get()._id ],
           mode: 'users'
         }

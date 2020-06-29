@@ -386,7 +386,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
       data: {
-        okClick: (selected: any[]) => this.addMembers(selected.map(item => item.doc)),
+        okClick: (selected: any[]) => this.addMembers(selected),
         excludeIds: this.members.map(user => user.userId),
         hideChildren: true,
         mode: 'users'
