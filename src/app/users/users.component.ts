@@ -129,8 +129,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   roleSubmit(roles) {
-    const userIds = this.usersTable.selection.selected;
-    this.usersService.setRolesForUsers(this.idsToUsers(userIds), roles).subscribe(
+    this.usersService.setRolesForUsers(this.usersTable.selection.selected, roles).subscribe(
       () => {
         this.usersService.requestUsers(true);
         this.planetMessageService.showMessage('Roles updated');

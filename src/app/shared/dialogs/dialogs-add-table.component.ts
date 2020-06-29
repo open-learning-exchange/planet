@@ -39,14 +39,12 @@ export class DialogsAddTableComponent implements AfterViewInit {
     if (!this.data.noSpinner) {
       this.dialogsLoadingService.start();
     }
-    this.addExistingCourses();
-  }
-
-  addExistingCourses() {
     const tableData = this.component.tableData;
     const selection = this.component.selection.selected;
-    const courses = tableData.data.filter((item: any) => selection.indexOf(item._id) > -1);
-    this.data.okClick(courses);
+    const items = typeof selection[0] === 'string' ?
+      tableData.data.filter((item: any) => selection.indexOf(item._id) > -1) :
+      selection;
+    this.data.okClick(items);
   }
 
 }

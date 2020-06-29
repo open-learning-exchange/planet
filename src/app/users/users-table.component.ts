@@ -147,13 +147,17 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.selection.clear();
   }
 
+  isSelected(user) {
+    return this.selection.selected.find(selected => selected._id === user._id && selected.planetCode === user.planetCode);
+  }
+
   isAllSelected() {
     const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
     return this.selection.selected.length === itemsShown;
   }
 
   onlyManagerSelected() {
-    return this.selection.selected.every((user) => findByIdInArray(this.usersTable.data, user).doc.isUserAdmin === true);
+    return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -162,7 +166,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
+    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc));
   }
 
   gotoProfileView(userName: string) {
@@ -193,7 +197,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
         okClick: {
           request: this.usersService.deleteUser(user),
           onNext: () => {
-            this.selection.deselect(user._id);
+            this.selection.deselect(user);
             this.planetMessageService.showMessage('User deleted: ' + user.name);
             this.deleteDialog.close();
           },

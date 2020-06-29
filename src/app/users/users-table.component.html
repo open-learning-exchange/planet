@@ -8,9 +8,9 @@
       </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="$event ? selection.toggle(row.doc._id) : null"
+        <mat-checkbox (change)="$event ? selection.toggle(row.doc) : null"
           (click)="$event.stopPropagation()"
-          [checked]="selection.isSelected(row.doc._id)">
+          [checked]="isSelected(row.doc)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -128,7 +128,7 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef= "let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:selection.isSelected(row.doc._id)}"></mat-row>
+    <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef= "let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:isSelected(row.doc)}"></mat-row>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="50"
