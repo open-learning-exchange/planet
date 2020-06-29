@@ -93,7 +93,8 @@ export class HealthEventComponent implements OnInit {
 
   isEmptyForm() {
     const isConditionsEmpty = (values) => typeof values === 'object' && Object.values(values).every(value => !value);
-    return Object.values(this.healthForm.controls).every(({ value }) => value === '' || value === null || isConditionsEmpty(value));
+    return Object.values(this.healthForm.controls)
+      .every(({ value }) => value === null || /^\s*$/.test(value) || isConditionsEmpty(value));
   }
 
   goBack() {
