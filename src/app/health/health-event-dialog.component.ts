@@ -75,4 +75,5 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     this.minutes = Math.floor(secondsLeft / 60).toString();
     this.seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
   }
+
 }
