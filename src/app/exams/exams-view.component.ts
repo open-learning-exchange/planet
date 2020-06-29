@@ -71,7 +71,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
           },
           (err) => {
             this.planetMessageService.showAlert('Preview is not available for this test');
-            this.router.navigate([ '../../../' ], { relativeTo: this.route });
+            this.goBack();
           }
         );
         return;
