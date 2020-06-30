@@ -6,9 +6,6 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 })
 export class DialogsRatingsComponent {
 
-  ratings: any[] = [];
-  title: string;
-
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
