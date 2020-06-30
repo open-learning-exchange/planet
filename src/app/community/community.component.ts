@@ -267,7 +267,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const msg = councillor.doc.leadershipTitle === leadershipTitle ? '' : !leadershipTitle ? 'Title deleted!' :
           !councillor.doc.leadershipTitle ? 'Title added!' : 'Title updated!';
         this.dialogsFormService.closeDialogsForm();
-        msg ? this.planetMessageService.showMessage(msg) : '';
+        if (msg) {
+          this.planetMessageService.showMessage(msg);
+        }
         this.usersService.requestUsers();
       });
     };
