@@ -19,6 +19,7 @@ export const conditions = [
   'Pneumonia',
   'Stroke',
   'Tuberculosis',
+  'Trauma',  
 ];
 
 export const conditionAndTreatmentFields = [
