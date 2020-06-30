@@ -11,9 +11,24 @@ export class DialogsRatingsComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {
-    this.ratings = this.data.ratings;
-    this.title = this.data.title;
+  ) {}
+
+  onSortChange(sortValue: string) {
+    const allRatings = this.data.rating.allRatings;
+    switch (sortValue) {
+      case 'Highest':
+        allRatings.sort((a, b) => b.rate - a.rate);
+        break;
+      case 'Lowest':
+        allRatings.sort((a, b) => a.rate - b.rate);
+        break;
+      case 'Recent':
+        allRatings.sort((a, b) => b.time - a.time);
+        break;
+      case 'Oldest':
+        allRatings.sort((a, b) => a.time - b.time);
+        break;
+    }
   }
 
 }
@@ -30,9 +45,8 @@ export class DialogsRatingsDirective {
   ) {}
 
   @HostListener('click') viewRatings() {
-    const { doc, rating } = this.item;
     this.dialog.open(DialogsRatingsComponent, {
-      data: { title: doc.courseTitle || doc.title, ratings: rating.allRatings },
+      data: this.item,
       minWidth: '600px'
     });
   }
