@@ -85,7 +85,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     };
     this.couchService.findAll('teams', findDocuments(selectors, 0))
       .pipe(tap(teams => this.courseTeams = teams))
-      .pipe(map(([team]) => {
+      .pipe(map(([ team ]) => {
         this.teamsService.getTeamMembers(team).subscribe(members => {
           const teamIndex = this.courseTeams.findIndex(courseTeam => team._id === courseTeam._id);
           this.courseTeams[teamIndex] = ({ ...this.courseTeams[teamIndex], members });
