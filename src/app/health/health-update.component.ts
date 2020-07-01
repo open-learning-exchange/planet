@@ -19,6 +19,7 @@ export class HealthUpdateComponent implements OnInit {
   healthForm: FormGroup;
   existingData: any = {};
   languages = languages;
+  minBirthDate: date;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +32,7 @@ export class HealthUpdateComponent implements OnInit {
     this.initProfileForm();
     this.initHealthForm();
     const currentYear = new Date().getFullYear();
-    this.minDate = new Date(currentYear - 120, 0, 1);
+    this.minBirthDate = new Date(currentYear - 120, 0, 1);
   }
 
   ngOnInit() {
