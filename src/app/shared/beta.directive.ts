@@ -1,5 +1,4 @@
 import { Directive, TemplateRef, ViewContainerRef, OnInit, Input } from '@angular/core';
-import { StateService } from './state.service';
 import { UserService } from './user.service';
 
 @Directive({
@@ -7,10 +6,7 @@ import { UserService } from './user.service';
 })
 export class PlanetBetaDirective implements OnInit {
 
-  configuration = this.stateService.configuration;
-
   constructor(
-    private stateService: StateService,
     private userService: UserService,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef
