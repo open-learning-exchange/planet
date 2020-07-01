@@ -168,13 +168,11 @@ export class ConfigurationService {
   }
 
   setCouchPerUser({ doc: configuration }) {
-    return configuration.betaEnabled !== 'off' ?
-      forkJoin([
-        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${stringToHex(configuration.code)}-`),
-        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
-        this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
-      ]) :
-      of({});
+    return forkJoin([
+      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/database_prefix', `userdb-${stringToHex(configuration.code)}-`),
+      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/delete_dbs', 'true'),
+      this.couchService.put('_node/nonode@nohost/_config/couch_peruser/enable', 'true')
+    ]);
   }
 
 }
