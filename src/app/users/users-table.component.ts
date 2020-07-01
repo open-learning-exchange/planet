@@ -121,7 +121,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
-      this.emptyData = !data.length
+      this.emptyData = !data.length;
     });
   }
 
