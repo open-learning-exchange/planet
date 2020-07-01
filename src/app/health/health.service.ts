@@ -98,7 +98,7 @@ export class HealthService {
     this.usersService.requestUsers();
     return forkJoin([
       this.getHealthData(userId, { createKeyIfNone: true }),
-      this.getHealthData(creatorId, { createKeyIfNone: true }),
+      this.getHealthData(creatorId, { createKeyIfNone: userId !== creatorId }),
       this.couchService.get(`_users/${userId}`),
       this.couchService.currentTime()
     ]).pipe(
