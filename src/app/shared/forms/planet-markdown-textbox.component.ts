@@ -129,8 +129,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this.stateChanges.complete();
   }
 
-  writeValue(val: string) {
-    this.value = typeof this._value === 'string' || this.imageGroup === undefined ? val : { ...this._value, text: val };
+  writeValue(val: ValueWithImages | string) {
+    const text = typeof val === 'string' ? val : val.text;
+    this.value = typeof this._value === 'string' || this.imageGroup === undefined ? text : { ...this._value, text };
     this.setErrorState();
   }
 
