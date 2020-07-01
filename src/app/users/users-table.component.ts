@@ -85,6 +85,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;
+  emptyData = false;
   selection = new SelectionModel(true, []);
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
@@ -120,6 +121,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
+      this.emptyData = !data.length
     });
   }
 
