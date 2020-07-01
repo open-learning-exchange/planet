@@ -19,7 +19,7 @@ export class HealthUpdateComponent implements OnInit {
   healthForm: FormGroup;
   existingData: any = {};
   languages = languages;
-  minBirthDate: date;
+  minBirthDate: Date;
 
   constructor(
     private fb: FormBuilder,
