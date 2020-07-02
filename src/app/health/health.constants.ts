@@ -18,7 +18,8 @@ export const conditions = [
   'Neonatal sepsis and infections',
   'Pneumonia',
   'Stroke',
-  'Tuberculosis',
+  'Trauma',
+  'Tuberculosis'
 ];
 
 export const conditionAndTreatmentFields = [
