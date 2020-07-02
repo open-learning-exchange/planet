@@ -60,7 +60,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.calendarTab = window.innerWidth < 800;
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {

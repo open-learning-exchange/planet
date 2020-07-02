@@ -7,21 +7,22 @@
   }
 
   display: grid;
+  grid-template-rows: 64px calc(100% - 64px - 0.5rem);
+  gap: 0.5rem;
+
   @media only screen and (max-width: 800px) {
-    grid-template-rows: 64px calc(100% - 64px - 0.5rem);
     grid-template-areas:
       "links"
       "news";
-    gap: 0.5rem;
   }
+
   @media only screen and (min-width: 801px) {
     grid-template-columns: 4fr 3fr;
-    grid-template-rows: 64px calc(100% - 64px - 0.5rem);
     grid-template-areas:
       "links calendar"
       "news calendar";
-    gap: 0.5rem;
   }
+
 }
 
 .view-container mat-toolbar {
