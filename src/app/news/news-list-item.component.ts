@@ -6,6 +6,8 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { NewsService } from './news.service';
+import { MatDialog } from '@angular/material';
+import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -41,7 +43,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     private newsService: NewsService,
     private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialog: MatDialog
   ) {}
 
   ngOnChanges() {
@@ -134,4 +137,11 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 
+  openMemberDialog(member) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member: { ...member, userPlanetCode: member.planetCode } },
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
+  }
 }

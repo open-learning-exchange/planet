@@ -26,6 +26,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { memberCompare } from './teams.utils';
+import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -532,4 +533,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
+  openMemberDialog(member) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member },
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
+  }
 }
