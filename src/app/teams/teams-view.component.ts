@@ -95,7 +95,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.mode === 'services') {
 
     }
-    setTimeout(() => console.log(this.team), 2000);
   }
 
   ngAfterViewChecked() {
