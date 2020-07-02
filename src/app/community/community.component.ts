@@ -270,10 +270,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         const msg = !leadershipTitle ?
-          'Title deleted!' :
+          'Title deleted' :
           !councillor.doc.leadershipTitle ?
-          'Title added!' :
-          'Title updated!';
+          'Title added' :
+          'Title updated';
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
