@@ -185,7 +185,7 @@
                 </mat-card-header>
                 <mat-card-actions *ngIf="userStatus === 'member'">
                   <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
+                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
                 </mat-card-actions>
               </mat-card>
             </div>
