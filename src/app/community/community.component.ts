@@ -261,11 +261,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   updateTitle(councillor) {
     return ({ leadershipTitle }) => {
+      if (leadershipTitle === councillor.doc.leadershipTitle) {
+        this.dialogsFormService.closeDialogsForm();
+        this.dialogsLoadingService.stop();
+        return;
+      }
       this.userService.updateUser({ ...councillor.userDoc.doc, leadershipTitle }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
+        const msg = !leadershipTitle ?
+          'Title deleted' :
+          !councillor.doc.leadershipTitle ?
+          'Title added' :
+          'Title updated';
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage('Title updated');
+        this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
       });
     };
