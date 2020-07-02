@@ -17,7 +17,7 @@ export class DialogsRatingsComponent {
   }
 
   onSortChange(sortValue: string) {
-    const [ field, direction ] = sortValue.split(',')
+    const [ field, direction ] = sortValue.split(',');
     this.ratings.sort((a, b) => +direction * (b[field] - a[field]));
   }
 
