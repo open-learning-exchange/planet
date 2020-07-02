@@ -6,13 +6,19 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 })
 export class DialogsRatingsComponent {
 
+  ratings: any[] = [];
+  title: string;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {}
+  ) {
+    this.ratings = this.data.ratings;
+    this.title = this.data.title;
+  }
 
   onSortChange(sortValue: string) {
     const [ field, direction ] = sortValue.split(',')
-    this.data.rating.allRatings.sort((a, b) => +direction * (b[field] - a[field]));
+    this.ratings.sort((a, b) => +direction * (b[field] - a[field]));
   }
 
 }
@@ -29,8 +35,9 @@ export class DialogsRatingsDirective {
   ) {}
 
   @HostListener('click') viewRatings() {
+    const { doc, rating } = this.item;
     this.dialog.open(DialogsRatingsComponent, {
-      data: this.item,
+      data: { title: doc.courseTitle || doc.title, ratings: rating.allRatings },
       minWidth: '600px'
     });
   }
