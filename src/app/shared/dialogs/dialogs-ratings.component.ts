@@ -11,21 +11,8 @@ export class DialogsRatingsComponent {
   ) {}
 
   onSortChange(sortValue: string) {
-    const allRatings = this.data.rating.allRatings;
-    switch (sortValue) {
-      case 'Highest':
-        allRatings.sort((a, b) => b.rate - a.rate);
-        break;
-      case 'Lowest':
-        allRatings.sort((a, b) => a.rate - b.rate);
-        break;
-      case 'Recent':
-        allRatings.sort((a, b) => b.time - a.time);
-        break;
-      case 'Oldest':
-        allRatings.sort((a, b) => a.time - b.time);
-        break;
-    }
+    const [ field, direction ] = sortValue.split(',')
+    this.data.rating.allRatings.sort((a, b) => +direction * (b[field] - a[field]));
   }
 
 }
