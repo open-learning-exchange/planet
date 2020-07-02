@@ -16,6 +16,11 @@ export class DialogsRatingsComponent {
     this.title = this.data.title;
   }
 
+  onSortChange(sortValue: string) {
+    const [ field, direction ] = sortValue.split(',');
+    this.ratings.sort((a, b) => +direction * (b[field] - a[field]));
+  }
+
 }
 
 @Directive({
