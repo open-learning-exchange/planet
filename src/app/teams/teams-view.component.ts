@@ -170,7 +170,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   requestTeamNews(teamId) {
-    // Note
     const showAll = this.userStatus === 'member' || this.team.public === true;
     this.newsService.requestNews({
       selectors: {
