@@ -53,7 +53,9 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
         transactions[0] = this.setTransactionsTable(transactions)[0];
       }
-      this.showBalanceWarning = this.finances.length === (this.table.filteredData.length - 1) && transactions[0].balance < 0;
+      if (this.finances) {
+        this.showBalanceWarning = this.finances.length === (this.table.filteredData.length - 1) && transactions[0].balance < 0;
+      }
     });
   }
 
