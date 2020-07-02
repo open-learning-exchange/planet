@@ -6,7 +6,6 @@ import { NotificationsComponent } from '../notifications/notifications.component
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
 import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
-import { NewsComponent } from '../news/news.component';
 import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
@@ -44,7 +43,6 @@ const routes: Routes = [
         path: dashboardPath('mySurveys'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule), data: { mySurveys: true }
       },
-      { path: dashboardPath('news'), component: NewsComponent },
       {
         path: dashboardPath('submissions'),
         loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule)
