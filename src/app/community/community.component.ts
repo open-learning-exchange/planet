@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -43,6 +43,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
+  calendarTab = false;
 
   constructor(
     private dialog: MatDialog,
@@ -59,6 +60,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.calendarTab = window.innerWidth < 800;
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
@@ -75,6 +77,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.calendarTab = window.innerWidth < 800;
   }
 
   ngOnDestroy() {

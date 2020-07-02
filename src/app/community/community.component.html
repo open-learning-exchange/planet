@@ -55,8 +55,11 @@
         <mat-tab i18n-label label="Finances">
           <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="financesChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
+        <mat-tab i18n-label label="Calendar" *ngIf="calendarTab">
+          <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+        </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    <planet-calendar *ngIf="!calendarTab" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>
