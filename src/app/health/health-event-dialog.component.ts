@@ -62,7 +62,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     this.couchService.currentTime().pipe(
       switchMap((currentTime: number) => combineLatest(of(currentTime), timer(0, 1000))),
       takeWhile(([ time, seconds ]) => {
-        const millisecondsLeft = this.timeLimit + this.event.date - ((seconds * 1000) + time);
+        const millisecondsLeft = this.timeLimit + this.event.updatedDate - ((seconds * 1000) + time);
         this.setTimerValue(millisecondsLeft / 1000);
         return millisecondsLeft > 0 && !this.isDestroyed;
       })
