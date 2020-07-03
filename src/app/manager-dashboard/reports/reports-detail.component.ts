@@ -22,6 +22,7 @@ import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
+import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -367,6 +368,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   openResourceView(resourceId) {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
+  }
+
+  openMemberView(member) {
+    this.dialog.open(UserProfileDialogComponent, { data: { member }, autoFocus: false });
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
