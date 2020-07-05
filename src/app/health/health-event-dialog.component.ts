@@ -6,6 +6,7 @@ import { timer, of, combineLatest } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -23,12 +24,14 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
+  isEditButtonEnabled = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
     private usersService: UsersService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private userService: UserService
   ) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
@@ -48,6 +51,8 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     if (!this.event.selfExamination) {
       this.usersService.requestUsers();
     }
+    const logedInUser = this.userService.get();
+    this.isEditButtonEnabled = this.event.createdBy === logedInUser._id;
   }
 
   ngOnDestroy() {
