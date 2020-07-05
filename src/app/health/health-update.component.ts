@@ -31,8 +31,7 @@ export class HealthUpdateComponent implements OnInit {
   ) {
     this.initProfileForm();
     this.initHealthForm();
-    const currentYear = new Date().getFullYear();
-    this.minBirthDate = new Date(currentYear - 120, 0, 1);
+    this.minBirthDate =   new Date(1900, 0, 1);
   }
 
   ngOnInit() {
