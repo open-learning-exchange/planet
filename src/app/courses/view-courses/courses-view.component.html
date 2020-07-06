@@ -34,8 +34,8 @@
         <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
       </div>
       <div class="course-view">
-        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
-          <mat-expansion-panel hideToggle="true" (opened)="getStepSubmission(step, stepNum)">
+        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
+          <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
