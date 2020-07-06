@@ -24,7 +24,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
-  isEditButtonDisabled = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -51,8 +50,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     if (!this.event.selfExamination) {
       this.usersService.requestUsers();
     }
-    const logedInUser = this.userService.get();
-    this.isEditButtonDisabled = this.event.createdBy !== logedInUser._id;
   }
 
   ngOnDestroy() {
@@ -69,7 +66,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       takeWhile(([ time, seconds ]) => {
         const millisecondsLeft = this.timeLimit + this.event.updatedDate - ((seconds * 1000) + time);
         this.setTimerValue(millisecondsLeft / 1000);
-        return millisecondsLeft > 0 && !this.isDestroyed;
+        return millisecondsLeft > 0 && this.event.createdBy === this.userService.get()._id && !this.isDestroyed;
       })
     ).subscribe(() => this.canUpdate = true, () => {}, () => this.canUpdate = false);
   }
