@@ -24,7 +24,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
-  isEditButtonEnabled = false;
+  isEditButtonDisabled = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -52,7 +52,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       this.usersService.requestUsers();
     }
     const logedInUser = this.userService.get();
-    this.isEditButtonEnabled = this.event.createdBy === logedInUser._id;
+    this.isEditButtonDisabled = this.event.createdBy !== logedInUser._id;
   }
 
   ngOnDestroy() {
