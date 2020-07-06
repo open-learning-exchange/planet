@@ -116,7 +116,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
-      this.getTeams()
+      this.getTeams();
       this.dialogsLoadingService.stop();
     });
   }
@@ -242,12 +242,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getTeams() {
     this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any) => {
       this.teams = teams.filter((team: any) => team.teamPlanetCode === this.planetCode);
-    })
+    });
   }
 
   onTeamsFilterChange(filterValue) {
-    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: "membership" }))
-      .subscribe((teams: any) => this.filter.teams = teams)
+    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' }))
+      .subscribe((teams: any) => this.filter.teams = teams);
     }
 
   setGenderDatasets(data, unique = false) {
