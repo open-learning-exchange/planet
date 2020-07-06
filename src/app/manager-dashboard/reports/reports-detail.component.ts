@@ -50,6 +50,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
   disableShowAllTime = true;
+  teams: any;
 
   constructor(
     private activityService: ReportsService,
@@ -114,6 +115,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
+      this.getTeams()
       this.dialogsLoadingService.stop();
     });
   }
@@ -234,6 +236,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.reports.totalCourses = response.totalCourses;
       });
     }
+  }
+
+  getTeams() {
+    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any) => {
+      this.teams = teams.filter((team: any) => team.teamPlanetCode === this.planetCode);
+    })
   }
 
   setGenderDatasets(data, unique = false) {
