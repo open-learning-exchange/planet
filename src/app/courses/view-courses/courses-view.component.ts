@@ -79,9 +79,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
         this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
       });
-    } else {
-      this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
+      return;
     }
+    this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
   }
 
   getStepSubmission(step) {
