@@ -231,7 +231,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   navigateBack() {
-    this.router.navigate([ `../../${this.courseId}` ], { relativeTo: this.route });
+    this.router.navigate([ '../../../' ], { relativeTo: this.route });
   }
 
   removeStep(pos) {
