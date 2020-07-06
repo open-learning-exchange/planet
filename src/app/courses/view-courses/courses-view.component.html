@@ -75,7 +75,7 @@
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</a>
+              <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
               <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button
                 [matMenuTriggerFor]="previewMenu"
