@@ -43,7 +43,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  calendarTab = false;
+  isCalendarInTabs = window.innerWidth < 800;
 
   constructor(
     private dialog: MatDialog,
@@ -79,7 +79,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize') onResize() {
-    this.calendarTab = window.innerWidth < 800;
+    this.isCalendarInTabs = window.innerWidth < 800;
   }
 
   ngOnDestroy() {
