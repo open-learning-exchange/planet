@@ -66,6 +66,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     this.correctCheckboxes[newId] = false;
     this.choices.push(this.examsService.newQuestionChoice(newId));
     this.choiceAdded = true;
+    console.log(this.questionForm);
   }
 
   removeChoice(index: number) {
