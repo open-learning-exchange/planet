@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-header>
-    <img mat-card-avatar [src]="item.avatar">
+    <img mat-card-avatar [src]="item.avatar" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
     <mat-card-title>
       <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
         {{item.doc.user.firstName ?
