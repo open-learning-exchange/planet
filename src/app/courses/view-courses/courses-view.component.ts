@@ -69,9 +69,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getStepSubmission(step, stepNum, getPrevious = true) {
+  getStepSubmission(step, stepNum, stepClickedNum = stepNum, getPrevious = true) {
     if (stepNum > 0 && getPrevious) {
-      this.getStepSubmission(this.courseDetail.steps[stepNum - 1], stepNum - 1, false);
+      const previousStep = this.courseDetail.steps[stepNum - 1];
+      this.getStepSubmission(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
     }
     if (step.exam && step.submission === undefined) {
       this.submissionsService.openSubmission({
@@ -86,8 +87,16 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         step.attempts = attempts;
         step.submission = submission;
+        this.setIsPreviousTestTaken(stepNum, stepClickedNum, attempts);
       });
+    } else {
+      this.setIsPreviousTestTaken(stepNum, stepClickedNum, step.attempts || (stepNum === 0 && step.exam === undefined ? 1 : 0));
     }
+  }
+
+  setIsPreviousTestTaken(stepNum, stepClickedNum, attempts) {
+    const stepClicked = this.courseDetail.steps[stepClickedNum];
+    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && attempts > 0) || stepClicked.isPreviousTestTaken;
   }
 
   viewStep() {
