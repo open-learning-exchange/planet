@@ -1,5 +1,5 @@
 <mat-card-header>
-  <img mat-card-avatar [src]="member?.avatar">
+  <img mat-card-avatar [src]="member?.avatar" class="cursor-pointer" (click)="openMemberDialog(member)">
   <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(member)">{{ member?.userDoc?.fullName || member?.userDoc?.firstName || member?.name }}</a>
   <mat-card-subtitle>
     <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
