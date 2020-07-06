@@ -22,6 +22,7 @@ import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -39,7 +40,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   charts: Chart[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
-  filter: ReportDetailFilter = { app: '', startDate: new Date(0), endDate: new Date() };
+  filter: ReportDetailFilter = { app: '', teams: '', startDate: new Date(0), endDate: new Date() };
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -243,6 +244,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.teams = teams.filter((team: any) => team.teamPlanetCode === this.planetCode);
     })
   }
+
+  onTeamsFilterChange(filterValue) {
+    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: "membership" }))
+      .subscribe((teams: any) => this.filter.teams = teams)
+    }
 
   setGenderDatasets(data, unique = false) {
     const months = setMonths();
