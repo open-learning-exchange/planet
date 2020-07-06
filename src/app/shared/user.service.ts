@@ -44,6 +44,8 @@ export class UserService {
   shelfChange$ = this.shelfChange.asObservable();
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
+  minBirthDate = new Date(1900, 0, 1);
+
 
   constructor(
     private couchService: CouchService,
