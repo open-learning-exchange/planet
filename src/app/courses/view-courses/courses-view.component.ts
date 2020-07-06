@@ -75,12 +75,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
     }
     if (step.exam && step.submission === undefined) {
-      this.getStepSubmission(step).subscribe((res: { examText, submission, attempts }) => {
-        this.courseDetail.steps[stepNum] = { ...step, ...res };
-        this.setIsPreviousTestTaken(stepNum, stepClickedNum, res.attempts);
+      this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
+        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
+        this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
       });
     } else {
-      this.setIsPreviousTestTaken(stepNum, stepClickedNum, step.attempts || (stepNum === 0 && step.exam === undefined ? 1 : 0));
+      this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
     }
   }
 
@@ -100,9 +100,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     })));
   }
 
-  setIsPreviousTestTaken(stepNum, stepClickedNum, attempts) {
+  setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
     const stepClicked = this.courseDetail.steps[stepClickedNum];
-    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && attempts > 0) || stepClicked.isPreviousTestTaken;
+    const isTestTaken = attempts > 0 || (stepNum === 0 && step.exam === undefined);
+    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
   viewStep() {
