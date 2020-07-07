@@ -40,7 +40,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   charts: Chart[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
-  filter: ReportDetailFilter = { app: '', teams: '', startDate: new Date(0), endDate: new Date() };
+  filter: ReportDetailFilter = { app: '', members: '', startDate: new Date(0), endDate: new Date() };
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -247,8 +247,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onTeamsFilterChange(filterValue) {
     this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' }))
-      .subscribe((teams: any) => this.filter.teams = teams);
-    }
+      .subscribe((members: any) => this.filter.members = members);
+    this.filterData();
+  }
 
   setGenderDatasets(data, unique = false) {
     const months = setMonths();

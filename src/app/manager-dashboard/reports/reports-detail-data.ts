@@ -2,7 +2,7 @@ import { filterByDate } from './reports.utils';
 
 export interface ReportDetailFilter {
   app: 'planet' | 'myplanet' | '';
-  teams: any;
+  members: any;
   startDate?: Date;
   endDate?: Date;
 }
@@ -26,10 +26,10 @@ export class ReportsDetailData {
     this.dateField = dateField;
   }
 
-  filter({ app, teams, startDate, endDate }: ReportDetailFilter) {
+  filter({ app, members, startDate, endDate }: ReportDetailFilter) {
     const isCorrectApp = item =>
       app === '' || ((app === 'myplanet') !== (item.androidId === undefined))
-      || teams.forEach(team => team.userId.split(':')[1] === item.user);
+      || members.some(team => team.userId.split(':')[1] === item.user);
     this.filteredData = filterByDate(
       this.data,
       this.dateField,
