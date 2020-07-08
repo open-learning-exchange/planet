@@ -27,12 +27,12 @@ export class ReportsDetailData {
   }
 
   filter({ app, members, startDate, endDate }: ReportDetailFilter) {
-    const isCorrectApp = item => members.some(member => member.userId.split(':')[1] === item.user)
-      && (app === '' || ((app === 'myplanet') !== (item.androidId === undefined)));
+    const isCorrectApp = item => (app === '' || ((app === 'myplanet') !== (item.androidId === undefined)));
+    const isSelectedMember = item => members.length === 0 || members.some(member => member.userId.split(':')[1] === item.user);
     this.filteredData = filterByDate(
       this.data,
       this.dateField,
-      { startDate: startDate || new Date(0), endDate, additionalFilterFunction: (item) => isCorrectApp(item) }
+      { startDate: startDate || new Date(0), endDate, additionalFilterFunction: (item) => isCorrectApp(item) && isSelectedMember(item) }
     );
   }
 
