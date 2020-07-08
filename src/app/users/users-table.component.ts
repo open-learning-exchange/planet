@@ -13,6 +13,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -171,6 +172,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   gotoProfileView(userName: string) {
     if (this.isDialog) {
+      return;
+    }
+    if (this.linkPrefix && this.linkPrefix.length) {
+      const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
+      this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
       return;
     }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
