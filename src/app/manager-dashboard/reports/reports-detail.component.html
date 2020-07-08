@@ -6,7 +6,7 @@
   <span class="toolbar-fill"></span>
   <mat-form-field *ngIf="teams" class="font-size-1 margin-lr-5">
     <mat-select placeholder="Report Of Team:" (selectionChange)="onTeamsFilterChange($event.value)">
-      <mat-option *ngFor="let team of teams" [value]='team'>{{team.name}}</mat-option>
+      <mat-option *ngFor="let team of teams" [value]="team">{{team.name}}</mat-option>
     </mat-select>
   </mat-form-field>
   <ng-container *ngIf="minDate">
