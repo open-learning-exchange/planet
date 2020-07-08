@@ -240,15 +240,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getTeams() {
-    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any) => {
-      this.teams = teams.filter((team: any) => team.teamPlanetCode === this.planetCode);
+    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+      this.teams = teams
+        .filter(team => team.teamPlanetCode === this.planetCode && team.name)
+        .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
+        .reduce((teamObj: any, team) => ({ ...teamObj, [team.type]: [ ...teamObj[team.type], team ] }), { enterprise: [], team: [] });
+      console.log(this.teams);
     });
   }
 
   onTeamsFilterChange(filterValue) {
-    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
+    const filterMembers = (members: any[]) => {
       this.filter.members = members;
       this.filterData();
+    };
+    if (filterValue === 'All') {
+      filterMembers([]);
+      return;
+    }
+    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
+      filterMembers(members);
     });
   }
 
