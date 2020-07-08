@@ -96,8 +96,10 @@
             <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
             <ng-template #newTabLink><a [routerLink]="['/courses/view', element._id]" target="_blank">{{element.doc.courseTitle}}</a></ng-template>
             <ng-container *ngIf="!parent && !isDialog">
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
+              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myCourses" [inline]="true" 
+                        *ngIf="element.admission" (click)="(isDialog || isForm) || courseToggle(element._id, 'resign')">bookmark</mat-icon>
+              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" 
+                        *ngIf="!element.admission && element.doc.steps.length" (click)="(isDialog || isForm) || courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
             </ng-container>
           </h3>
           <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog && !isForm">
