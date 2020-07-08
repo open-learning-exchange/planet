@@ -246,9 +246,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   onTeamsFilterChange(filterValue) {
-    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' }))
-      .subscribe((members: any) => this.filter.members = members);
-    this.filterData();
+    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
+      this.filter.members = members;
+      this.filterData();
+    });
   }
 
   setGenderDatasets(data, unique = false) {
