@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil, switchMap, take, filter } from 'rxjs/operators';
+import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
@@ -69,25 +69,41 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getStepSubmission(step, stepNum, getPrevious = true) {
+  setStepButtonStatus(step, stepNum, stepClickedNum = stepNum, getPrevious = true) {
     if (stepNum > 0 && getPrevious) {
-      this.getStepSubmission(this.courseDetail.steps[stepNum - 1], stepNum - 1, false);
+      const previousStep = this.courseDetail.steps[stepNum - 1];
+      this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
     }
     if (step.exam && step.submission === undefined) {
-      this.submissionsService.openSubmission({
-        parentId: step.exam._id + '@' + this.courseDetail._id,
-        parent: step.exam,
-        user: this.userService.get(),
-        type: 'exam' });
-      this.submissionsService.submissionUpdated$.pipe(
-        filter(({ submission }) => submission.parent._id === step.exam._id),
-        take(1)
-      ).subscribe(({ submission, attempts }) => {
-        step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
-        step.attempts = attempts;
-        step.submission = submission;
+      this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
+        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
+        this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
       });
+      return;
     }
+    this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
+  }
+
+  getStepSubmission(step) {
+    this.submissionsService.openSubmission({
+      parentId: step.exam._id + '@' + this.courseDetail._id,
+      parent: step.exam,
+      user: this.userService.get(),
+      type: 'exam' });
+    return this.submissionsService.submissionUpdated$.pipe(
+      filter(({ submission }) => submission.parent._id === step.exam._id),
+      take(1)
+    ).pipe(map(({ submission, attempts }) => ({
+      examText: submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake',
+      submission,
+      attempts
+    })));
+  }
+
+  setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
+    const stepClicked = this.courseDetail.steps[stepClickedNum];
+    const isTestTaken = attempts > 0 || (stepNum === 0 && step.exam === undefined);
+    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
   viewStep() {
@@ -157,4 +173,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
+
+  trackBySteps(index: number) {
+    return index;
+  }
+
 }
