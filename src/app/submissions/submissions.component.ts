@@ -12,7 +12,7 @@ import { CoursesService } from '../courses/courses.service';
 
 const columnsByFilterAndMode = {
   exam: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ]
+    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
   },
   survey: {
     grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
