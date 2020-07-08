@@ -17,6 +17,7 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { debug } from '../../debug-operator';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { url } from 'inspector';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -231,7 +232,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   navigateBack() {
-    this.router.navigate([ '../../../' ], { relativeTo: this.route });
+    const relativeRoute = (urlArray: string[]) => {
+      const lastIndex = urlArray.length - 1;
+      return '../' + (urlArray[lastIndex] === 'update' ? '' : relativeRoute(urlArray.slice(0, lastIndex)));
+    };
+    this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });
   }
 
   removeStep(pos) {
