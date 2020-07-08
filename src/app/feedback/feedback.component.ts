@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, enableProdMode } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { combineLatest } from 'rxjs';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
@@ -11,7 +11,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';
@@ -23,6 +23,14 @@ import { UsersService } from '../users/users.service';
     .mat-column-type {
       display: flex;
       align-items: center;
+    }
+    mat-chip {
+      pointer-events: none;
+    }
+    mat-chip:after {
+      transition-property: none;
+      transform: none;
+      animation: none;
     }
   ` ]
 })
