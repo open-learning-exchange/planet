@@ -27,9 +27,8 @@ export class ReportsDetailData {
   }
 
   filter({ app, members, startDate, endDate }: ReportDetailFilter) {
-    const isCorrectApp = item =>
-      app === '' || ((app === 'myplanet') !== (item.androidId === undefined))
-      || members.some(team => team.userId.split(':')[1] === item.user);
+    const isCorrectApp = item => members.some(member => member.userId.split(':')[1] === item.user) 
+      && (app === '' || ((app === 'myplanet') !== (item.androidId === undefined)));
     this.filteredData = filterByDate(
       this.data,
       this.dateField,

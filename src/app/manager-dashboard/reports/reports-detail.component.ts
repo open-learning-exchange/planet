@@ -40,7 +40,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   charts: Chart[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
-  filter: ReportDetailFilter = { app: '', members: '', startDate: new Date(0), endDate: new Date() };
+  filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
