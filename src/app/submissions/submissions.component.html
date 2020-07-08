@@ -56,7 +56,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="grade">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Grade</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.status === 'complete'">{{element?.grade }}/{{element.answers.length}}</ng-container>
         </mat-cell>
