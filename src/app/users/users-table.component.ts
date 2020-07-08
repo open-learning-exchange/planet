@@ -2,12 +2,11 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, 
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, of, forkJoin, Observable } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
 } from '../shared/table-helpers';
-import { findByIdInArray } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
