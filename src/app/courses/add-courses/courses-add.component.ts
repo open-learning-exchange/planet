@@ -17,7 +17,6 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { debug } from '../../debug-operator';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
-import { url } from 'inspector';
 
 @Component({
   templateUrl: 'courses-add.component.html',
