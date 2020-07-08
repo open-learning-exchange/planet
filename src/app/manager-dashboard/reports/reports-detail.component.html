@@ -91,7 +91,7 @@
               <ng-container *ngFor="let visit of reports?.visits">
                 <mat-grid-tile class="label">
                   <mat-icon>chevron_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openMemberView(visit.userDoc)">{{visit.userDoc?.fullName || visit.user }}</span>
+                  <span class="cursor-pointer" (click)="openMemberView(visit.userDoc?.doc)">{{visit.userDoc?.fullName || visit.user }}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{visit.count}}</mat-grid-tile>
               </ng-container>
