@@ -18,6 +18,7 @@ import { CustomValidators } from '../validators/custom-validators';
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewChecked {
 
+  @Input() showFormError: boolean;
   @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
@@ -59,6 +60,11 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
       this.choiceAdded = false;
       this.cdRef.detectChanges();
     }
+    this.choices.statusChanges.subscribe((data) => {
+      if (data) {
+        this.choices.valid ? this.showFormError = false : this.showFormError = true;
+      }
+    });
   }
 
   addChoice() {
@@ -66,7 +72,6 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     this.correctCheckboxes[newId] = false;
     this.choices.push(this.examsService.newQuestionChoice(newId));
     this.choiceAdded = true;
-    console.log(this.questionForm);
   }
 
   removeChoice(index: number) {
