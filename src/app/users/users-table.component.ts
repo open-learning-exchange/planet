@@ -173,7 +173,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     if (this.isDialog) {
       return;
     }
-    if (this.linkPrefix && this.linkPrefix.length) {
+    if (this.linkPrefix) {
       const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
       this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
       return;
