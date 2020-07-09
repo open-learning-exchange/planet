@@ -370,8 +370,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
-  openMemberView(member) {
-    this.dialog.open(UserProfileDialogComponent, { data: { member }, autoFocus: false });
+  openMemberView(user) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member: { name: user.name, userPlanetCode: user.planetCode } },
+      autoFocus: false
+    });
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
