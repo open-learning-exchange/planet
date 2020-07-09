@@ -31,7 +31,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   planetCodes: string[] = [];
   selectedPlanetCode: string;
   courseTeams: any[] = [];
-  selectedTeam: string;
+  selectedTeam = { id: '', members: [] };
 
   constructor(
     private router: Router,
@@ -83,14 +83,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       teamPlanetCode: this.selectedPlanetCode,
       courses: { '$elemMatch': { '_id': course._id } }
     };
-    this.couchService.findAll('teams', findDocuments(selectors, 0))
-      .pipe(tap(teams => this.courseTeams = teams))
-      .pipe(map(([ team ]) => {
-        this.teamsService.getTeamMembers(team).subscribe(members => {
-          const teamIndex = this.courseTeams.findIndex(courseTeam => team._id === courseTeam._id);
-          this.courseTeams[teamIndex] = ({ ...this.courseTeams[teamIndex], members });
-        });
-      })).subscribe(() => {});
+    this.couchService.findAll('teams', findDocuments(selectors, 0)).subscribe((teams) => { this.courseTeams = teams; });
   }
 
   onStepChange(value: any) {
@@ -217,16 +210,18 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   onTeamChange(team) {
-    this.selectedTeam = team;
-    this.filterData();
+    this.selectedTeam.id = team;
+    this.teamsService.getTeamMembers(team).subscribe(members => {
+      this.selectedTeam.members = members.reduce((users, user) => {
+        return user.userDoc ? [ ...users, user.userDoc.doc.name ] : users;
+      }, []);
+      this.filterData();
+    });
   }
 
   filterData() {
-    const teamMembers = (this.courseTeams.find(team => this.selectedTeam === team._id) || { members: [] }).members.reduce((users, user) => {
-      return user.userDoc ? [ ...users, user.userDoc.doc.name ] : users;
-    }, []);
     this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode)
-      .filter(data => !this.selectedTeam || teamMembers.indexOf(data.label) > -1);
+      .filter(data => !this.selectedTeam.id || this.selectedTeam.members.indexOf(data.label) > -1);
   }
 
 }

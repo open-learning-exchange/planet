@@ -12,7 +12,7 @@
     <span class="toolbar-fill"></span>
     <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Select Team" [value]="selectedTeam" (selectionChange)="onTeamChange($event.value)">
+      <mat-select i18n-placeholder placeholder="Select Team" [value]="selectedTeam.id" (selectionChange)="onTeamChange($event.value)">
         <mat-option [value]="" i18n>All Learners</mat-option>
         <mat-option *ngFor="let team of courseTeams" [value]="team._id">{{team.name}}</mat-option>
       </mat-select>
