@@ -27,10 +27,8 @@ import { UsersService } from '../users/users.service';
     mat-chip {
       pointer-events: none;
     }
-    mat-chip:after {
-      transition-property: none;
-      transform: none;
-      animation: none;
+    mat-chip:focus::after {
+      opacity: 0;
     }
   ` ]
 })
