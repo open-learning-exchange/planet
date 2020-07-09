@@ -2,17 +2,17 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, 
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, of, forkJoin, Observable } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
 } from '../shared/table-helpers';
-import { findByIdInArray } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -77,7 +77,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   get tableData() {
     return this.usersTable;
   }
-  @Input() linkPrefix: string;
+  @Input() shouldOpenProfileDialog = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -173,8 +173,13 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     if (this.isDialog) {
       return;
     }
+    if (this.shouldOpenProfileDialog) {
+      const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
+      this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
+      return;
+    }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
-    this.router.navigate([ this.linkPrefix || 'profile', userName, optParams ], { relativeTo: this.route });
+    this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
   trackByFn(index, item) {
