@@ -33,6 +33,7 @@ import { Component, Input } from '@angular/core';
       HIV/AIDS {HIV/AIDS}
       Pneumonia {Pneumonia}
       Stroke {Stroke}
+      Trauma {Trauma}
       Tuberculosis {Tuberculosis}
     }</span>
   `
