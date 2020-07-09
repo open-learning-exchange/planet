@@ -179,7 +179,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       return;
     }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
-    this.router.navigate([ this.linkPrefix || 'profile', userName, optParams ], { relativeTo: this.route });
+    this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
   trackByFn(index, item) {
