@@ -165,7 +165,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   updateCourse() {
-    this.router.navigate([ '/courses/update/' + this.courseId ]);
+    this.router.navigate([ 'update' ], { relativeTo: this.route });
   }
   /**
    * Returns routing to previous parent page on Courses
