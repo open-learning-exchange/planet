@@ -77,7 +77,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   get tableData() {
     return this.usersTable;
   }
-  @Input() linkPrefix: string;
+  @Input() shouldOpenProfileDialog = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -173,7 +173,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     if (this.isDialog) {
       return;
     }
-    if (this.linkPrefix) {
+    if (this.shouldOpenProfileDialog) {
       const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
       this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
       return;
