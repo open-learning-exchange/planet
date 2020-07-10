@@ -16,9 +16,6 @@
   <div class="question-choices">
     <div>
       <button type="button" mat-stroked-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')">Add Choice</button>
-      <span i18n class="mat-caption warn-text-color" *ngIf="questionForm.errors?.noChoices && questionForm.touched">
-        You must add a choice
-      </span>
     </div>
     <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
       You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
@@ -35,4 +32,7 @@
       </mat-form-field>
     </div>
   </div>
+  <span i18n class="mat-caption warn-text-color" *ngIf="(questionForm.errors?.noChoices && questionForm.touched) || showFormError">
+    You must add a choice
+  </span>
 </form>
