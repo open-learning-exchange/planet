@@ -1,5 +1,6 @@
 <div class="action-buttons">
   <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()" *ngIf="editable">Add Transaction</button>
+  <button mat-raised-button color="primary" i18n (click)="exportTransactions()" *ngIf="editable" [disabled]="finances.length === 0">Export Transactions</button>
   <mat-form-field>
     <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick Start Date">
     <mat-datepicker-toggle matSuffix [for]="dateFilterStart"></mat-datepicker-toggle>

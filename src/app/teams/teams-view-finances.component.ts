@@ -10,6 +10,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { millisecondsToDay } from '../meetups/constants';
+import { CsvService } from '../shared/csv.service';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -38,6 +39,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
+    private csvService: CsvService,
     private dialog: MatDialog
   ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
@@ -180,6 +182,15 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.endDate = undefined;
     this.table.filter = '';
     this.emptyTable = this.table.data.length <= 1;
+  }
+
+  exportTransactions() {
+    const data = this.setTransactionsTable(this.finances).slice(1);
+    this.csvService.exportCSV({
+      data,
+      title: `${this.team.name} Financial Report`,
+      columns: [ 'date', 'description', 'credit', 'debit', 'balance' ]
+    });
   }
 
 }
