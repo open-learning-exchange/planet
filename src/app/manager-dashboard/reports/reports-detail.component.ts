@@ -244,7 +244,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.teams = teams
         .filter(team => team.teamPlanetCode === this.planetCode && team.name)
         .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
-        .reduce((teamObj: any, team) => ({ ...teamObj, [team.type]: [ ...teamObj[team.type], team ] }), { enterprise: [], team: [] });
+        .reduce((teamObj: any, team) => ({
+          ...teamObj,
+          [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
+        }), { enterprise: [], team: [] });
       console.log(this.teams);
     });
   }
