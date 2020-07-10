@@ -89,7 +89,7 @@ export class TeamsService {
       .pipe(
         switchMap((response: any) => response !== undefined ?
           this.updateTeam(
-            { limit: Infinity, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
+            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
               parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
           ) :
           empty()
