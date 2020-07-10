@@ -233,7 +233,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   navigateBack() {
     const relativeRoute = (urlArray: string[]) => {
       const lastIndex = urlArray.length - 1;
-      return '../' + (urlArray[lastIndex] === 'update' ? '' : relativeRoute(urlArray.slice(0, lastIndex)));
+      const endConditions = [ 'update', 'add' ];
+      return `../${
+        (lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
+      }`;
     };
     this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });
   }
