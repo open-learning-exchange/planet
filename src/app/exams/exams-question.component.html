@@ -32,7 +32,9 @@
       </mat-form-field>
     </div>
   </div>
-  <span i18n class="mat-caption warn-text-color" *ngIf="(questionForm.errors?.noChoices && questionForm.touched) || showFormError">
-    You must add a choice
-  </span>
+  <div *ngIf="questionForm.controls.type.value.includes('select')">
+    <span i18n class="mat-caption warn-text-color" *ngIf="(questionForm.errors?.noChoices && questionForm.touched) || showFormError">
+      You must add a choice
+    </span>
+  </div>
 </form>
