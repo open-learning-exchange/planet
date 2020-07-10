@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class PlanetMarkdownComponent {
 
-  @Input() content: string;
+  @Input() content: string | { text: string };
   couchAddress = `${environment.couchAddress}/`;
 
 }
