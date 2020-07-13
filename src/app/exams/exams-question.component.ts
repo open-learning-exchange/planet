@@ -18,7 +18,7 @@ import { CustomValidators } from '../validators/custom-validators';
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewChecked {
 
-  @Input() showFormError: boolean;
+  @Input() showChoicesError: boolean;
   @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
@@ -61,8 +61,10 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
       this.cdRef.detectChanges();
     }
     this.choices.statusChanges.subscribe((data) => {
-      if (data) {
-        this.choices.valid ? this.showFormError = false : this.showFormError = true;
+      if (data && this.choices.valid) {
+        this.showChoicesError = false;
+      } else {
+        this.showChoicesError = true;
       }
     });
   }

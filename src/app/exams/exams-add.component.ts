@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -30,7 +30,7 @@ const showdown = require('showdown');
   templateUrl: 'exams-add.component.html',
   styleUrls: [ 'exams-add.scss' ]
 })
-export class ExamsAddComponent implements OnInit {
+export class ExamsAddComponent implements OnInit, AfterViewChecked {
   readonly dbName = 'exams'; // make database name a constant
   examForm: FormGroup;
   documentInfo: any = {};
@@ -116,6 +116,16 @@ export class ExamsAddComponent implements OnInit {
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
     }, error => console.log(error));
+  }
+
+  ngAfterViewChecked() {
+    this.examForm.statusChanges.subscribe((data) => {
+      if (data && this.examForm.valid) {
+        this.showFormError = false;
+      } else {
+        this.showFormError = true;
+      }
+    });
   }
 
   onSubmit(reRoute = false) {
