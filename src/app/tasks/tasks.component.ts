@@ -12,6 +12,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
+import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
   selector: 'planet-tasks',
@@ -168,6 +169,11 @@ export class TasksComponent implements OnInit {
         editable: false
       }
     });
+  }
+
+  openMemberDialog(assignee) {
+    this.dialog.open(UserProfileDialogComponent,
+      { data: { member: { name: assignee.name, userPlanetCode: assignee.teamPlanetCode } }, autoFocus: false });
   }
 
 }
