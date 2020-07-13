@@ -118,7 +118,7 @@
             <planet-markdown
               class="img-wrap"
               [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-              '(source: ' + element.doc.sourcePlanet + ') ' + (element.doc.description?.text || element.doc.description) :
+              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
               element.doc.description">
             </planet-markdown>
           </div>
