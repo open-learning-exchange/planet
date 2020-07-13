@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
     <h3 mat-dialog-title i18n class="mat-subheading-2">Review Previous Test Attempts</h3>
     <mat-dialog-content>
       <planet-submissions *ngIf="view==='list'" [isDialog]="true" [parentId]="data.parentId"
-        [displayedColumns]="[ 'lastUpdateTime', 'status' ]" (submissionClick)="showSubmission($event)">
+        [displayedColumns]="[ 'lastUpdateTime', 'gradeTime', 'status' ]" (submissionClick)="showSubmission($event)">
       </planet-submissions>
       <ng-container *ngIf="view==='submission'">
         <planet-exams-view [isDialog]="true" [submission]="submission" [questionNum]="1" mode="view"></planet-exams-view>
