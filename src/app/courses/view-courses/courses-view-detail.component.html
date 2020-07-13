@@ -4,4 +4,4 @@
 <p i18n><b>Language of Instruction:</b> {{courseDetail?.languageOfInstruction || 'N/A'}}</p>
 <p *ngIf="courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet" i18n><b>Source:</b> {{courseDetail?.sourcePlanet}}</p>
 <p><b i18n>Description:</b></p>
-<td-markdown [content]="courseDetail?.description"></td-markdown>
+<planet-markdown [content]="courseDetail?.description" class="img-wrap"></planet-markdown>

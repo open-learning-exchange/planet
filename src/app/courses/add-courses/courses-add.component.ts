@@ -46,6 +46,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
+  images: any[] = [];
 
   mockStep = { stepTitle: 'Add title', description: '!!!' };
 
@@ -73,7 +74,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: [
         '',
         CustomValidators.required,
-        this.courseTitleValidator(this.courseId || this.coursesService.course._id)
+        ac => this.validatorService.isUnique$(
+          this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
+        )
       ],
       description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
@@ -85,10 +88,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       resideOn: configuration.code,
       updatedDate: this.couchService.datePlaceholder
     });
-  }
-
-  courseTitleValidator(id: string = '') {
-    return ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': id } } });
   }
 
   ngOnInit() {
@@ -139,6 +138,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   setFormAndSteps(course: any) {
     this.courseForm.patchValue(course.form);
+    this.images = course.form.images || [];
     this.steps = course.steps || [];
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
   }
@@ -157,9 +157,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       debounce(() => race(interval(2000), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
     ).subscribe(([ value, steps, tags ]) => {
-      this.coursesService.course = { form: value, steps, tags };
+      const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
+      this.coursesService.course = { form: course, steps: course.steps, tags };
       this.pouchService.saveDocEditing(
-        { ...value, steps, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
+        { ...course, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
       );
     });
   }
@@ -168,9 +169,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
+    const newCourse = { ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps), ...this.documentInfo };
     this.couchService.updateDocument(
-      this.dbName,
-      { ...courseInfo, steps: this.steps, updatedDate: this.couchService.datePlaceholder, ...this.documentInfo }
+      this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
     ).pipe(switchMap((res: any) =>
       forkJoin([
         of(res),
@@ -206,7 +207,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (this.isDestroyed) {
       return;
     }
-    this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
     this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
@@ -253,6 +253,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   stepTrackByFn(index, item) {
     return item.id;
+  }
+
+  convertMarkdownImagesText(course, steps) {
+    return { ...this.coursesService.storeMarkdownImages({ ...course, steps }) };
   }
 
 }
