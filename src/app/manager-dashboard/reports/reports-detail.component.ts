@@ -106,8 +106,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.loginActivities.filter(this.filter);
   }
 
-  initializeData(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
+  initializeData(local: boolean, members?) {
+    this.activityService.getTotalUsers(this.planetCode, local, members).pipe(map(({ count, byGender, byMonth }) => {
       this.reports.totalUsers = count;
       this.reports.usersByGender = byGender;
     })).subscribe(() => {
@@ -253,6 +253,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const filterMembers = (members: any[]) => {
       this.filter.members = members;
       this.filterData();
+      this.initializeData(!this.codeParam, members);
     };
     if (filterValue === 'All') {
       filterMembers([]);

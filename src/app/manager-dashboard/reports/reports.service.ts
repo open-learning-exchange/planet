@@ -90,13 +90,15 @@ export class ReportsService {
       undefined;
   }
 
-  getTotalUsers(planetCode: string, local: boolean) {
+  getTotalUsers(planetCode: string, local: boolean, members?) {
     const adminName = this.stateService.configuration.adminName.split('@')[0];
     const obs = local ?
       this.usersService.getAllUsers() :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
     return obs.pipe(map((users: any) => {
-      users = users.filter(user => user.name !== 'satellite' && user.name !== adminName);
+      users = members ? users.filter(user => user.name !== 'satellite'
+          && members.some(member => member.userId.split(':')[1] === user.name) && user.name !== adminName)
+        : users.filter(user => user.name !== 'satellite' && user.name !== adminName);
       this.users = users;
       return ({
         count: users.length,
