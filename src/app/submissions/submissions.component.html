@@ -55,6 +55,12 @@
           <mat-chip-list *ngSwitchDefault><mat-chip selected color="primary" i18n>complete</mat-chip></mat-chip-list>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="grade">
+        <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.status === 'complete'">{{element?.grade}}/{{element.answers.length}}</ng-container>
+        </mat-cell>
+      </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element">
