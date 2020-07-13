@@ -19,6 +19,7 @@ export class HealthUpdateComponent implements OnInit {
   healthForm: FormGroup;
   existingData: any = {};
   languages = languages;
+  minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
     private fb: FormBuilder,

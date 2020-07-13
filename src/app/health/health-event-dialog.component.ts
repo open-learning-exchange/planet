@@ -6,6 +6,7 @@ import { timer, of, combineLatest } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -28,7 +29,8 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
     private usersService: UsersService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private userService: UserService
   ) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
@@ -64,7 +66,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       takeWhile(([ time, seconds ]) => {
         const millisecondsLeft = this.timeLimit + this.event.updatedDate - ((seconds * 1000) + time);
         this.setTimerValue(millisecondsLeft / 1000);
-        return millisecondsLeft > 0 && !this.isDestroyed;
+        return millisecondsLeft > 0 && this.event.createdBy === this.userService.get()._id && !this.isDestroyed;
       })
     ).subscribe(() => this.canUpdate = true, () => {}, () => this.canUpdate = false);
   }

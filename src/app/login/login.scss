@@ -11,6 +11,21 @@
   .login-container {
     padding: 10vh;
     overflow: hidden;
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    .myplanet-link {
+      display: flex;
+      align-items: center;
+
+      a {
+        padding: 0 0.5rem;
+      }
+
+    }
+
   }
 
   .login-left-tile::before {

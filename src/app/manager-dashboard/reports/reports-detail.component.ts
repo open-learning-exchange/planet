@@ -23,6 +23,7 @@ import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -40,7 +41,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   charts: Chart[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
-  filter: ReportDetailFilter = { app: '', startDate: new Date(0), endDate: new Date() };
+  filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -51,6 +52,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
   disableShowAllTime = true;
+  teams: any;
 
   constructor(
     private activityService: ReportsService,
@@ -115,6 +117,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
+      this.getTeams();
       this.dialogsLoadingService.stop();
     });
   }
@@ -235,6 +238,33 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.reports.totalCourses = response.totalCourses;
       });
     }
+  }
+
+  getTeams() {
+    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+      this.teams = teams
+        .filter(team => team.teamPlanetCode === this.planetCode && team.name)
+        .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
+        .reduce((teamObj: any, team) => ({
+          ...teamObj,
+          [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
+        }), { enterprise: [], team: [] });
+      console.log(this.teams);
+    });
+  }
+
+  onTeamsFilterChange(filterValue) {
+    const filterMembers = (members: any[]) => {
+      this.filter.members = members;
+      this.filterData();
+    };
+    if (filterValue === 'All') {
+      filterMembers([]);
+      return;
+    }
+    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
+      filterMembers(members);
+    });
   }
 
   setGenderDatasets(data, unique = false) {

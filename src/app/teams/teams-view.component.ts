@@ -59,7 +59,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
-  finances: any[];
+  finances: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
   initTab;

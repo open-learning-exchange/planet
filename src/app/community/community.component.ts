@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -43,6 +43,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
+  isCalendarInTabs = window.innerWidth < 800;
 
   constructor(
     private dialog: MatDialog,
@@ -75,6 +76,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.isCalendarInTabs = window.innerWidth < 800;
   }
 
   ngOnDestroy() {
