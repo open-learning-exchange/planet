@@ -74,7 +74,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       courseTitle: [
         '',
         CustomValidators.required,
-        this.courseTitleValidator(this.courseId || this.coursesService.course._id)
+        ac => this.validatorService.isUnique$(
+          this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
+        )
       ],
       description: [ '', CustomValidators.required ],
       languageOfInstruction: '',
@@ -86,10 +88,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       resideOn: configuration.code,
       updatedDate: this.couchService.datePlaceholder
     });
-  }
-
-  courseTitleValidator(id: string = '') {
-    return ac => this.validatorService.isUnique$(this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': id } } });
   }
 
   ngOnInit() {
@@ -209,7 +207,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (this.isDestroyed) {
       return;
     }
-    this.courseForm.get('courseTitle').setAsyncValidators(this.courseTitleValidator(response.id));
     this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
