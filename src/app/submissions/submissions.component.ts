@@ -10,6 +10,16 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 
+const columnsByFilterAndMode = {
+  exam: {
+    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ]
+  },
+  survey: {
+    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
+    survey: [ 'name', 'courseTitle', 'stepNum', 'status', 'lastUpdateTime' ]
+  }
+};
+
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
@@ -61,8 +71,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.setMode();
     this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
     if (this.mode === 'survey') {
-      this.filter['type'] = 'survey';
-      this.displayedColumns = this.displayedColumns.filter(col => col !== 'user');
+      this.onFilterChange('survey', 'type');
     } else if (this.mode === 'review') {
       this.filter.status = '';
     }
@@ -152,6 +161,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.submissions.filter = this.submissions.filter || ' ';
     this.emptyData = !this.submissions.filteredData.length;
     this.initTable = !this.emptyData;
+    this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
   }
 
   dropdownsFill() {
