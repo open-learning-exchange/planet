@@ -204,16 +204,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setCouncillors(users) {
+    const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
     this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
-      this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1).map(user => {
-        const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
-        const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
-        const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
-        const avatar = attachmentDoc ?
-          `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
-          (user.imageSrc || 'assets/image.png');
-        return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
-      });
+      this.councillors = users
+        .filter(user => planetCode === user.doc.planetCode && user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
+        .map(user => {
+          const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
+          const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
+          const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
+          const avatar = attachmentDoc ?
+            `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
+            (user.imageSrc || 'assets/image.png');
+          return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
+        });
     });
   }
 
