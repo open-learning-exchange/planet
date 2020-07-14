@@ -254,7 +254,7 @@ export class CoursesService {
   }
 
   storeMarkdownImages(course) {
-    const markdownText = (item: { description: any }) => item.description.text || item.description;
+    const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
     const imagesArray = (item: { description: any }) => this.markdownService.createImagesArray(item, markdownText(item), 'description');
     const images = dedupeObjectArray(
       [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
