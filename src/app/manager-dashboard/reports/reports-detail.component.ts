@@ -146,8 +146,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('resourceActivities');
     this.courseActivities.total.filter(this.filter);
     this.setDocVisits('courseActivities');
-    this.progress.enrollments.filter(this.filter);
-    this.progress.completions.filter(this.filter);
   }
 
   getLoginActivities() {
@@ -199,6 +197,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
         return { ...course, ...courseActivity };
       });
+      this.progress.enrollments.filter(this.filter);
+      this.progress.completions.filter(this.filter);
     });
   }
 
@@ -249,7 +249,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           ...teamObj,
           [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
         }), { enterprise: [], team: [] });
-      console.log(this.teams);
     });
   }
 
