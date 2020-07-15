@@ -88,7 +88,7 @@
         <mat-chip-list>
           <mat-chip class="chip-no-style" *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
           <ng-container *ngFor="let role of element.doc.roles; index as i">
-            <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
+            <mat-chip class="chip-no-style" *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
               <planet-role [role]="role"></planet-role>
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>

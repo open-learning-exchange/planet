@@ -591,6 +591,9 @@ body {
       &:focus::after {
         opacity: 0;
       }
+      &> mat-icon {
+        pointer-events: auto;
+      }
   }
 
 }
