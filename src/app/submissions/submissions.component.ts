@@ -69,14 +69,14 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   ngOnInit() {
     this.setMode();
-    this.filter['type'] = this.route.snapshot.paramMap.get('type') || 'exam';
+    this.filter.type = this.route.snapshot.paramMap.get('type') || 'exam';
     if (this.mode === 'survey') {
       this.onFilterChange('survey', 'type');
     } else if (this.mode === 'review') {
       this.filter.status = '';
     }
-    if (this.filter['type'] === 'survey') {
-      this.filter['status'] = '';
+    if (this.filter.type === 'survey') {
+      this.filter.status = '';
     }
     this.coursesService.requestCourses();
     zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
