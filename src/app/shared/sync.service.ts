@@ -142,7 +142,6 @@ export class SyncService {
 
   createReplicatorsArray(items, type: 'pull' | 'push', allTags: any[] = [], replicators = []) {
     return items.reduce((newReplicators: any[], item: any) => {
-      console.log(item)
       const doc = item.item;
       const syncObjectIndex = newReplicators.findIndex((replicator: any) => replicator.db === item.db);
       if (syncObjectIndex === -1) {
@@ -178,17 +177,15 @@ export class SyncService {
   }
 
   coursesItemsToSync(course, type, replicators, allTags) {
-    console.log(course)
     return this.createReplicatorsArray(
       [].concat.apply([], 
-        course.doc.images.map(image => ({item: image, db: 'attachments'})).concat(
         course.doc.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
-        // .concat(step.resources.map(r => ({ item: r.images.map(mark => mark.markdown), db: 'attachments' })))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
         .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
-        ).concat(course.tags && course.tags.length > 0 ? [ this.tagsSync(course.tags, type) ] : [])
-      )),
+        ).concat(course.tags && course.tags.length > 0 ? [ this.tagsSync(course.tags, type) ] : []
+        ).concat(course.doc.images ? course.doc.images.map(image => ({item: image, db: 'resources'})): [] )
+      ),
       type,
       allTags,
       replicators
