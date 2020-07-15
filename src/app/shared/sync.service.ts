@@ -178,13 +178,12 @@ export class SyncService {
 
   coursesItemsToSync(course, type, replicators, allTags) {
     return this.createReplicatorsArray(
-      [].concat.apply([], 
-        course.doc.steps.map(step =>
+      [].concat.apply([], course.doc.steps.map(step =>
         step.resources.map(r => ({ item: r, db: 'resources' }))
         .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
         .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
         ).concat(course.tags && course.tags.length > 0 ? [ this.tagsSync(course.tags, type) ] : []
-        ).concat(course.doc.images ? course.doc.images.map(image => ({item: image, db: 'resources'})): [] )
+        ).concat(course.doc.images ? course.doc.images.map(image => ({ item: image, db: 'resources' })) : [] )
       ),
       type,
       allTags,
