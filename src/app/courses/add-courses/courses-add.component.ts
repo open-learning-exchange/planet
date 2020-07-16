@@ -98,7 +98,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.stateService.getCouchState('tags', 'local')
     ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
-        this.documentInfo = { _rev: saved._rev, _id: saved._id };
+        this.setDocumentInfo(saved);
         this.pageType = 'Update';
       }
       const doc = draft === undefined ? saved : draft;
@@ -134,6 +134,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         this.submitAddedExam();
       }
     }, 1000);
+  }
+
+  setDocumentInfo(doc) {
+    this.documentInfo = { '_id': doc._id, '_rev': doc._rev };
+    this.courseForm.controls.courseTitle.updateValueAndValidity();
   }
 
   setFormAndSteps(course: any) {
@@ -208,7 +213,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       return;
     }
     this.courseId = response.id;
-    this.documentInfo = { '_id': response.id, '_rev': response.rev };
+    this.setDocumentInfo(response.doc);
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
     if (this.pageType === 'Add new') {
