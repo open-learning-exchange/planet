@@ -90,7 +90,7 @@ export class ReportsService {
       undefined;
   }
 
-  getTotalUsers(planetCode: string, local: boolean, members?) {
+  getTotalUsers(planetCode: string, local: boolean) {
     const adminName = this.stateService.configuration.adminName.split('@')[0];
     const obs = local ?
       this.usersService.getAllUsers() :
