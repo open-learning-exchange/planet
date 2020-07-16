@@ -60,6 +60,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[] = [];
+  reports: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
   initTab;
@@ -207,6 +208,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
+      this.reports = docs.filter(doc => doc.docType === 'report');
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));

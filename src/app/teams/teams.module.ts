@@ -15,6 +15,7 @@ import { TeamsViewFinancesComponent } from './teams-view-finances.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { FormsModule } from '@angular/forms';
 import { TeamsMemberComponent } from './teams-member.component';
+import { PlanetTeamsViewReportsComponent } from './teams-view-reports.component';
 
 @NgModule({
   exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent ],
@@ -36,6 +37,7 @@ import { TeamsMemberComponent } from './teams-member.component';
     TeamsComponent,
     TeamsViewComponent,
     TeamsViewFinancesComponent,
+    PlanetTeamsViewReportsComponent,
     TeamsMemberComponent
   ]
 })
