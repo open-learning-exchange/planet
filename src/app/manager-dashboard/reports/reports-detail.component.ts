@@ -106,11 +106,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.loginActivities.filter(this.filter);
   }
 
-  initializeData(local: boolean, members?) {
-    this.activityService.getTotalUsers(this.planetCode, local, members).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    })).subscribe(() => {
+  initializeData(local: boolean) {
+    this.totalUsersCount(local).subscribe(() => {
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
@@ -119,6 +116,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.dialogsLoadingService.stop();
     });
+  }
+
+  totalUsersCount(local, members?) {
+    return this.activityService.getTotalUsers(this.planetCode, local, members).pipe(map(({ count, byGender, byMonth }) => {
+      this.reports.totalUsers = count;
+      this.reports.usersByGender = byGender;
+    }));
   }
 
   initDateFilterForm() {
@@ -252,11 +256,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onTeamsFilterChange(filterValue) {
     const filterMembers = (members: any[]) => {
       this.filter.members = members;
+      this.totalUsersCount(!this.codeParam, members).subscribe();
       this.filterData();
-      this.initializeData(!this.codeParam, members);
     };
     if (filterValue === 'All') {
       filterMembers([]);
+      this.totalUsersCount(!this.codeParam).subscribe();
       return;
     }
     this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
