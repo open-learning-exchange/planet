@@ -586,4 +586,14 @@ body {
     padding-top: 0.5rem;
   }
 
+  .chip-no-style {
+      pointer-events: none;
+      &:focus::after {
+        opacity: 0;
+      }
+      &> mat-icon {
+        pointer-events: auto;
+      }
+  }
+
 }

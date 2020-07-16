@@ -207,7 +207,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
     this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
       this.councillors = users
-        .filter(user => planetCode === user.doc.planetCode && user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1)
+        .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1)
         .map(user => {
           const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
           const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;

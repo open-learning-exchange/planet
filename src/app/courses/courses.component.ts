@@ -384,6 +384,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
+    if (this.isForm) {
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
