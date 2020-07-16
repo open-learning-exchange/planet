@@ -52,7 +52,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           // here find out all courses in the system. compare all courses ids with this.coursesIds
-          const allCourseIds = []; // find out hhow to get values for this array.
+          const allCourseIds = this.courseTable.dataTable.data;
           this.enableAddCourses = deepEqual(allCourseIds, this.courseIds );
           this.pageType = 'Update';
         });
@@ -70,6 +70,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       this.cdRef.detectChanges();
     }
   }
+
   goBack() {
     const navigation = this.pageType === 'Update' ? '../..' : '..';
     this.router.navigate([ navigation ], { relativeTo: this.route });
