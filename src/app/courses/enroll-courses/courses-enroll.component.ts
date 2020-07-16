@@ -73,7 +73,7 @@ export class CoursesEnrollComponent {
   setMembers([ shelfUsers, progresses, users, childPlanets, courses ]) {
     this.course = this.coursesService.getCourseNameFromId(this.courseId);
     const planets = [ { doc: this.stateService.configuration }, ...attachNamesToPlanets(childPlanets) ];
-    this.members = users.map((user: any) => ({
+    this.members = users.filter(user => planets.some(planet => planet.doc.code === user.doc.planetCode)).map((user: any) => ({
         ...user,
         activityDates: this.userProgress(progresses.filter(
           (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
