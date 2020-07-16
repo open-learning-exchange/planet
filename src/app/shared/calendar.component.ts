@@ -46,7 +46,7 @@ export class PlanetCalendarComponent implements OnInit {
     hour12: false
   };
   dbName = 'meetups';
-  events: any[] = [];
+  events: any[] = [ new Date() ];
   meetups: any[] = [];
   tasks: any[] = [];
 
