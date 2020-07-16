@@ -108,10 +108,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    })).subscribe(() => {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe((userData: { count, byGender, byMonth }) => {
+      this.setUserCounts(userData);
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
@@ -120,6 +118,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.dialogsLoadingService.stop();
     });
+  }
+
+  setUserCounts({ count, byGender }) {
+    this.reports.totalUsers = count;
+    this.reports.usersByGender = byGender;
   }
 
   initDateFilterForm() {
@@ -148,6 +151,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('courseActivities');
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
+    this.setUserCounts(this.activityService.groupUsers(
+      this.users.filter(
+        user => this.filter.members.length === 0 || this.filter.members.some(
+          member => member.userId === user._id && member.userPlanetCode === user.doc.planetCode
+        )
+      )
+    ));
   }
 
   getLoginActivities() {
