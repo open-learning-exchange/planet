@@ -69,7 +69,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   ngOnInit() {
     this.setMode();
-    this.onFilterChange(this.filter.type,'type');
+    this.onFilterChange(this.filter.type, 'type');
     if (this.mode === 'survey') {
       this.onFilterChange('survey', 'type');
     } else if (this.mode === 'review') {
