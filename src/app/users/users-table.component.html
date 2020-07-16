@@ -32,8 +32,8 @@
     <ng-container matColumnDef="planet">
       <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        {{element?.planet?.nameDoc?.name || element?.planet?.doc.name}}
-        <mat-chip class="planet-chip-label margin-lr-5" [disableRipple]="true">{ element?.planet?.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+        {{element.planet.nameDoc?.name || element.planet.doc.name}}
+        <mat-chip class="planet-chip-label margin-lr-5 chip-no-style">{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="visitCount">
@@ -86,14 +86,14 @@
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
-          <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
+          <mat-chip class="chip-no-style" *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
           <ng-container *ngFor="let role of element.doc.roles; index as i">
-            <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
+            <mat-chip class="chip-no-style" *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
               <planet-role [role]="role"></planet-role>
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>
           </ng-container>
-          <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">Admin</mat-chip>
+          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">Admin</mat-chip>
         </mat-chip-list>
         <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
       </mat-cell>
