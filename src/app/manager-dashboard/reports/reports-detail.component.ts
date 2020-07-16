@@ -146,6 +146,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('resourceActivities');
     this.courseActivities.total.filter(this.filter);
     this.setDocVisits('courseActivities');
+    this.progress.enrollments.filter(this.filter);
+    this.progress.completions.filter(this.filter);
   }
 
   getLoginActivities() {
@@ -197,8 +199,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
         return { ...course, ...courseActivity };
       });
-      this.progress.enrollments.filter(this.filter);
-      this.progress.completions.filter(this.filter);
     });
   }
 
@@ -212,18 +212,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
           && !activity.private
       );
-      this.setDocVisits(type);
+      this.setDocVisits(type, true);
     });
   }
 
-  setDocVisits(type) {
+  setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
     const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total.filteredData, type.replace('Activities', 'Id'));
     this[type].byDoc = byDoc;
     this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
     this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-    if (type === 'courseActivities') {
+    if (isInit && type === 'courseActivities') {
       this.getCourseProgress();
     }
   }
