@@ -9,6 +9,7 @@ import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { deepEqual } from '../../shared/utils';
 
 @Component({
   templateUrl: './certifications-add.component.html'
@@ -21,6 +22,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: any[] = [];
   pageType = 'Add';
   disableRemove = true;
+  enableAddCourses = true;
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -49,6 +51,9 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateForm.patchValue(certification);
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
+          // here find out all courses in the system. compare all courses ids with this.coursesIds
+          const allCourseIds = []; // find out hhow to get values for this array.
+          this.enableAddCourses = deepEqual(allCourseIds, this.courseIds );
           this.pageType = 'Update';
         });
       } else {
@@ -65,7 +70,6 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       this.cdRef.detectChanges();
     }
   }
-
   goBack() {
     const navigation = this.pageType === 'Update' ? '../..' : '..';
     this.router.navigate([ navigation ], { relativeTo: this.route });
