@@ -107,7 +107,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
-    this.totalUsersCount(local).subscribe(() => {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe((userData: { count, byGender, byMonth }) => {
+      this.setUserCounts(userData);
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
@@ -118,11 +119,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  totalUsersCount(local, members?) {
-    return this.activityService.getTotalUsers(this.planetCode, local, members).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    }));
+  setUserCounts({ count, byGender }) {
+    this.reports.totalUsers = count;
+    this.reports.usersByGender = byGender;
   }
 
   initDateFilterForm() {
@@ -151,6 +150,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('courseActivities');
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
+    this.setUserCounts(this.activityService.groupUsers(
+      this.users.filter(
+        user => this.filter.members.length === 0 || this.filter.members.some(
+          member => member.userId === user._id && member.userPlanetCode === user.doc.planetCode
+        )
+      )
+    ));
   }
 
   getLoginActivities() {
@@ -256,12 +262,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onTeamsFilterChange(filterValue) {
     const filterMembers = (members: any[]) => {
       this.filter.members = members;
-      this.totalUsersCount(!this.codeParam, members).subscribe();
       this.filterData();
     };
     if (filterValue === 'All') {
       filterMembers([]);
-      this.totalUsersCount(!this.codeParam).subscribe();
       return;
     }
     this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {

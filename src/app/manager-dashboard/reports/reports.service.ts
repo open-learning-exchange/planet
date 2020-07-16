@@ -96,19 +96,21 @@ export class ReportsService {
       this.usersService.getAllUsers() :
       this.couchService.findAll('child_users', this.selector(planetCode, { field: 'planetCode' }));
     return obs.pipe(map((users: any) => {
-      users = members ? users.filter(user => user.name !== 'satellite'
-          && members.some(member => member.userId.split(':')[1] === user.name) && user.name !== adminName)
-        : users.filter(user => user.name !== 'satellite' && user.name !== adminName);
+      users = users.filter(user => user.name !== 'satellite' && user.name !== adminName);
       this.users = users;
-      return ({
-        count: users.length,
-        byGender: users.reduce((usersByGender: any, user: any) => {
-          usersByGender[user.gender || 'didNotSpecify'] += 1;
-          return usersByGender;
-        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
-        byMonth: this.groupByMonth(users, 'joinDate')
-      });
+      return this.groupUsers(users);
     }));
+  }
+
+  groupUsers(users: any[]) {
+    return ({
+      count: users.length,
+      byGender: users.reduce((usersByGender: any, user: any) => {
+        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+        return usersByGender;
+      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+      byMonth: this.groupByMonth(users, 'joinDate')
+    });
   }
 
   getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet', domain?) {
