@@ -1,8 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 
 @Component({
   selector: 'planet-teams-view-reports',
@@ -17,6 +19,7 @@ export class PlanetTeamsViewReportsComponent {
   @Output() reportsChanged = new EventEmitter<void>();
 
   constructor(
+    private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService
@@ -72,6 +75,12 @@ export class PlanetTeamsViewReportsComponent {
       this.reportsChanged.emit();
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
+    });
+  }
+
+  openReportDialog(report) {
+    this.dialog.open(TeamsReportsDialogComponent, {
+      data: { report }
     });
   }
 

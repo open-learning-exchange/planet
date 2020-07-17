@@ -2,7 +2,7 @@
   <button mat-raised-button color="primary" i18n (click)="openAddReportDialog()">Add Report</button>
 </div>
 <mat-grid-list cols="6" rowHeight="16rem">
-  <mat-grid-tile *ngFor="let report of reports">
+  <mat-grid-tile *ngFor="let report of reports" (click)="openReportDialog(report)">
     <mat-card>
       <mat-card-header>
         <mat-card-title>Financial Report</mat-card-title>
