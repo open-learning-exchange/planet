@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
@@ -69,7 +69,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   ngOnInit() {
     this.setMode();
-    this.onFilterChange(this.filter.type, 'type');
+    const filterType = this.route.snapshot.paramMap.get('type') || 'exam';
+    this.onFilterChange(filterType, 'type');
     if (this.mode === 'survey') {
       this.onFilterChange('survey', 'type');
     } else if (this.mode === 'review') {
