@@ -108,7 +108,7 @@
         </mat-tab>
       </ng-container>
       <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
-        <planet-teams-view-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team"></planet-teams-view-reports>
+        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team"></planet-teams-reports>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab label="Resources">

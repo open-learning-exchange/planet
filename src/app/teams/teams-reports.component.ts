@@ -7,11 +7,11 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 
 @Component({
-  selector: 'planet-teams-view-reports',
-  styleUrls: [ './teams-view-reports.scss' ],
-  templateUrl: './teams-view-reports.component.html'
+  selector: 'planet-teams-reports',
+  styleUrls: [ './teams-reports.scss' ],
+  templateUrl: './teams-reports.component.html'
 })
-export class PlanetTeamsViewReportsComponent {
+export class TeamsReportsComponent {
 
   @Input() reports: any[];
   @Input() editable = false;
