@@ -32,6 +32,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   tags = this.fb.control([]);
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
+  private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private _steps = [];
   get steps() {
@@ -157,6 +158,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       debounce(() => race(interval(2000), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
     ).subscribe(([ value, steps, tags ]) => {
+      if (this.isSaved) {
+        return;
+      }
       const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
       this.coursesService.course = { form: course, steps: course.steps, tags };
       this.pouchService.saveDocEditing(
@@ -199,6 +203,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   courseChangeComplete(message, response: any, shouldNavigate) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
+    this.isSaved = true;
     if (shouldNavigate) {
       this.navigateBack();
       return;
@@ -207,6 +212,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (this.isDestroyed) {
       return;
     }
+    this.isSaved = false;
     this.courseId = response.id;
     this.documentInfo = { '_id': response.id, '_rev': response.rev };
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
