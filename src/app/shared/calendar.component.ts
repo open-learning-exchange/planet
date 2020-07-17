@@ -46,7 +46,8 @@ export class PlanetCalendarComponent implements OnInit {
     hour12: false
   };
   dbName = 'meetups';
-  events: any[] = [];
+  // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
+  events: any[] = [ {} ];
   meetups: any[] = [];
   tasks: any[] = [];
 
