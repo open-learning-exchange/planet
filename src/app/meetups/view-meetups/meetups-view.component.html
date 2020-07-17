@@ -29,7 +29,7 @@
   <div class="view-container">
     <div [ngClass]="{'left-tile':!isDialog}">
       <p *ngIf="meetupDetail?.createdBy">
-        <b i18n>Created By:</b><a class="cursor-pointer" (click)="routeToUser(meetupDetail?.createdBy)">{{' ' + meetupDetail?.createdBy}}</a>
+        <b i18n>Created By:</b><a class="cursor-pointer" (click)="routeToUser(meetupDetail)">{{' ' + meetupDetail?.createdBy}}</a>
       </p>
       <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
       <p *ngIf="meetupDetail?.startDate || meetupDetail?.endDate"><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
@@ -39,7 +39,7 @@
       <p *ngIf="meetupDetail?.recurring"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
       <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
-      <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="routeToUser(meetupDetail?.assignee?.name)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+      <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="routeToUser(meetupDetail?.assignee)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
       <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
