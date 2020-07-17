@@ -76,8 +76,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     } else if (this.mode === 'review') {
       this.filter.status = '';
     }
-    if (this.filter['type'] === 'survey') {
-      this.filter['status'] = '';
+    if (this.filter.type === 'survey') {
+      this.filter.status = '';
     }
     this.coursesService.requestCourses();
     zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))

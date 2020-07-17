@@ -98,15 +98,19 @@ export class ReportsService {
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite' && user.name !== adminName);
       this.users = users;
-      return ({
-        count: users.length,
-        byGender: users.reduce((usersByGender: any, user: any) => {
-          usersByGender[user.gender || 'didNotSpecify'] += 1;
-          return usersByGender;
-        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
-        byMonth: this.groupByMonth(users, 'joinDate')
-      });
+      return this.groupUsers(users);
     }));
+  }
+
+  groupUsers(users: any[]) {
+    return ({
+      count: users.length,
+      byGender: users.reduce((usersByGender: any, user: any) => {
+        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+        return usersByGender;
+      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+      byMonth: this.groupByMonth(users, 'joinDate')
+    });
   }
 
   getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet', domain?) {

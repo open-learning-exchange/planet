@@ -108,10 +108,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    })).subscribe(() => {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe((userData: { count, byGender, byMonth }) => {
+      this.setUserCounts(userData);
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
@@ -120,6 +118,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.dialogsLoadingService.stop();
     });
+  }
+
+  setUserCounts({ count, byGender }) {
+    this.reports.totalUsers = count;
+    this.reports.usersByGender = byGender;
   }
 
   initDateFilterForm() {
@@ -148,6 +151,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('courseActivities');
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
+    this.setUserCounts(this.activityService.groupUsers(
+      this.users.filter(
+        user => this.filter.members.length === 0 || this.filter.members.some(
+          member => member.userId === user._id && member.userPlanetCode === user.doc.planetCode
+        )
+      )
+    ));
   }
 
   getLoginActivities() {
@@ -212,18 +222,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
           && !activity.private
       );
-      this.setDocVisits(type);
+      this.setDocVisits(type, true);
     });
   }
 
-  setDocVisits(type) {
+  setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
     const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total.filteredData, type.replace('Activities', 'Id'));
     this[type].byDoc = byDoc;
     this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
     this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-    if (type === 'courseActivities') {
+    if (isInit && type === 'courseActivities') {
       this.getCourseProgress();
     }
   }
@@ -249,7 +259,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           ...teamObj,
           [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
         }), { enterprise: [], team: [] });
-      console.log(this.teams);
     });
   }
 

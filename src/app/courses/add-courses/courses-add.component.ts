@@ -78,7 +78,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
           this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
         )
       ],
-      description: [ '', CustomValidators.required ],
+      description: [ '', CustomValidators.requiredMarkdown ],
       languageOfInstruction: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],

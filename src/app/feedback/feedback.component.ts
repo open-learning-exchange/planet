@@ -24,12 +24,6 @@ import { UsersService } from '../users/users.service';
       display: flex;
       align-items: center;
     }
-    mat-chip {
-      pointer-events: none;
-    }
-    mat-chip:focus::after {
-      opacity: 0;
-    }
   ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {

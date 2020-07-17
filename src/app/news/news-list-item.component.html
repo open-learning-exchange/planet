@@ -14,7 +14,7 @@
       <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
       <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
       <mat-chip-list>
-        <mat-chip color="primary" selected [disableRipple]="true" class="planet-chip-label" *ngFor="let label of item.doc.labels">
+        <mat-chip color="primary" selected class="planet-chip-label chip-no-style" *ngFor="let label of item.doc.labels">
           <planet-label [label]="label"></planet-label>
           <mat-icon *ngIf="item.doc.user.name === currentUser.name && editable" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
         </mat-chip>
