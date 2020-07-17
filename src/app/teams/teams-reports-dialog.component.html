@@ -1,4 +1,7 @@
-<h3 mat-dialog-header>Financial Report</h3>
+<div mat-dialog-header>
+  <h3>{{teamName}} <ng-container i18n>Financial Report</ng-container></h3>
+  <p class="mat-subheading-1">{{ report.startDate | date }} - {{ report.endDate | date }}</p>
+</div>
 <mat-dialog-content>
   <div class="report-grid">
     <b i18n>Beginning Balance</b><b>{{report.beginningBalance | currency:undefined:'symbol':'1.0-2'}}</b>

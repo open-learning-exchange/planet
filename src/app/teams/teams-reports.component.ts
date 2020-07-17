@@ -80,7 +80,7 @@ export class TeamsReportsComponent {
 
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
-      data: { report }
+      data: { report, team: this.team }
     });
   }
 
