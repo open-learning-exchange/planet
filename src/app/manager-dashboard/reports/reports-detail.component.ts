@@ -264,17 +264,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   onTeamsFilterChange(filterValue) {
-    const filterMembers = (members: any[]) => {
-      this.filter.members = members;
-      this.filterData();
-    };
-    if (filterValue === 'All') {
-      filterMembers([]);
-      return;
-    }
-    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
-      filterMembers(members);
-    });
+    this.filterByMember(filterValue);
   }
 
   setGenderDatasets(data, unique = false) {
@@ -330,6 +320,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
+    const teamOptions = [
+      { name: 'All Members', value: 'All' },
+      ...this.teams.team.map(t => ({ name: t.name, value: t })),
+      ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
+    ];
     const fields = [
       {
         'placeholder': 'From',
@@ -340,6 +335,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         'placeholder': 'To',
         'name': 'endDate',
         ...commonProps
+      },
+      {
+        'placeholder': 'Team',
+        'options': teamOptions,
+        'type': 'selectbox'
       }
     ];
     const formGroup = {
@@ -351,11 +351,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }) {
+  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date, team: any }) {
     switch (reportType) {
       case 'logins':
         this.csvService.exportCSV({
-          data: filterByDate(this.loginActivities.data, 'loginTime', dateRange)
+          data: this.filterByMember(dateRange.team, filterByDate(this.loginActivities.data, 'loginTime', dateRange))
             .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
           title: 'Member Visits'
         });
@@ -367,9 +367,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         break;
       case 'summary':
         this.csvService.exportSummaryCSV(
-          filterByDate(this.loginActivities.data, 'loginTime', dateRange),
-          filterByDate(this.resourceActivities.total.data, 'time', dateRange),
-          filterByDate(this.courseActivities.total.data, 'time', dateRange),
+          this.filterByMember(dateRange.team, filterByDate(this.loginActivities.data, 'loginTime', dateRange)),
+          this.filterByMember(dateRange.team, filterByDate(this.resourceActivities.total.data, 'time', dateRange)),
+          this.filterByMember(dateRange.team, filterByDate(this.courseActivities.total.data, 'time', dateRange)),
           this.planetName
         );
         break;
@@ -395,7 +395,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }[reportType];
     const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
     this.csvService.exportCSV({
-      data: filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange)
+      data: this.filterByMember(dateRange.team, filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange))
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title
     });
@@ -420,5 +420,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     this.dateFilterForm.controls.startDate.setValue(startDate || this.minDate);
     this.dateFilterForm.controls.endDate.setValue(endDate || this.today);
+  }
+
+  filterByMember(filterValue, filterData?: []) {
+    let members = [];
+    const isSelectedMember = item => members.length === 0 ||
+      members.some(member => (member.userId === item.userId || member.userId.split(':')[1] === item.user));
+    if (filterValue !== 'All') {
+      this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' }))
+        .subscribe((teamMembers: any) => {
+          members = teamMembers;
+        });
+    }
+    if (filterData) {
+      return filterData.filter(isSelectedMember);
+    }
+    this.filter.members = members;
+    this.filterData();
+    return [];
   }
 }
