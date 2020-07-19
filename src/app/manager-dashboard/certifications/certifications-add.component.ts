@@ -52,8 +52,17 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           // here find out all courses in the system. compare all courses ids with this.coursesIds
-          const allCourseIds = this.courseTable.dataTable.data : any;
-          this.enableAddCourses = deepEqual(allCourseIds, this.courseIds);
+          // if (this.courseTable && this.courseTable.dataTable && this.courseTable.dataTable.data) {
+          let hasAllData: boolean;
+          try {
+            hasAllData = this.courseTable && this.courseTable.courses.data.length > 0;
+          } catch (err) {
+            hasAllData = false;
+          }
+          if (hasAllData) {
+            const allCourseIds = this.courseTable.courses.data.map(v => v.id);
+            this.enableAddCourses = deepEqual(allCourseIds, this.courseIds);
+          }
           this.pageType = 'Update';
         });
       } else {
