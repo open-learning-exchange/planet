@@ -60,7 +60,9 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
             hasAllData = false;
           }
           if (hasAllData) {
-            const allCourseIds = this.courseTable.courses.data.map(v => v.id);
+            const allCourseIds = this.courseTable.courses.data.map((v: any) => {
+              return v.id; }
+            );
             this.enableAddCourses = deepEqual(allCourseIds, this.courseIds);
           }
           this.pageType = 'Update';
