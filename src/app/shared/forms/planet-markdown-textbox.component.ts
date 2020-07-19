@@ -6,6 +6,7 @@ import { MatFormFieldControl, MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
+import { PlanetMessageService } from '../planet-message.service';
 
 interface ImageInfo { resourceId: string; filename: string; markdown: string; }
 interface ValueWithImages { text: string; images: ImageInfo[]; }
@@ -83,6 +84,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
+    private planetMessageService: PlanetMessageService,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
     private dialog: MatDialog
@@ -174,6 +176,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       }
     }).afterClosed().subscribe(image => {
       if (image) {
+        const exists = (<ValueWithImages>this._value).images.filter( img => image.filename === img.filename).length > 0;
+        if (exists) {
+          this.planetMessageService.showAlert(`An image with that  ${image.filename}
+            filename exists. Please rename or select other image.`);
+          return;
+        }
         const markdown = `![](resources/${image._id}/${encodeURI(image.filename)})`;
         this.editor.options.insertTexts.image = [ markdown, '' ];
         this.editor._simpleMDE.drawImage();
