@@ -12,7 +12,6 @@ export class PlanetMarkdownComponent implements OnChanges {
 
   @Input() content: string;
   @Input() imageSource: 'parent' | 'local' = 'local';
-  parentDomain: string;
   couchAddress: string;
 
   constructor(
@@ -20,8 +19,8 @@ export class PlanetMarkdownComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.parentDomain = this.stateService.configuration.parentDomain;
     this.couchAddress = this.imageSource === 'parent' ?
-      `${environment.parentProtocol}://${this.parentDomain}/` : `${environment.couchAddress}/`;
+      `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
+      `${environment.couchAddress}/`;
   }
 }
