@@ -3670,13 +3670,13 @@
         </context-group>
         <target state="needs-translation">Joined Meetup</target>
       </trans-unit>
-      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
+      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>bixi</target>
+        <target state="final"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Bax</target>
       </trans-unit>
       <trans-unit id="c43dc1967a603fefb886149ac35863a06d5b4ce5" datatype="html" approved="yes">
         <source>Information</source>
@@ -5527,13 +5527,13 @@
         </context-group>
         <target state="needs-translation"> By<x id="INTERPOLATION" equiv-text="{{' ' + submittedBy}}"/></target>
       </trans-unit>
-      <trans-unit id="e5d8bb389c702588877f039d72178f219453a72d" datatype="html">
+      <trans-unit id="e5d8bb389c702588877f039d72178f219453a72d" datatype="html" approved="yes">
         <source>Unknown</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Wax la ogeen</target>
+        <target state="final">Lama yaqaan</target>
       </trans-unit>
       <trans-unit id="8c59014d8eea11db1d53f74fab28900072a9b1b2" datatype="html">
         <source> on <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: &apos;short&apos;) || &apos;--&apos;}}"/></source>
