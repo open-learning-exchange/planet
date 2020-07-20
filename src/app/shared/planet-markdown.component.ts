@@ -10,14 +10,14 @@ import { StateService } from './state.service';
 })
 export class PlanetMarkdownComponent implements OnChanges {
 
-  constructor(
-    private stateService: StateService,
-  ) {}
-
   @Input() content: string;
   @Input() imageSource: 'parent' | 'local' = 'local';
   parentDomain: string;
   couchAddress: string;
+
+  constructor(
+    private stateService: StateService,
+  ) {}
 
   ngOnChanges() {
     this.parentDomain = this.stateService.configuration.parentDomain;
