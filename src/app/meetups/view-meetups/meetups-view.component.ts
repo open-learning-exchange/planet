@@ -168,13 +168,19 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
-  routeToUser(memberDetail) {
-    this.dialog.open(UserProfileDialogComponent,
-      { data: { member: { name: memberDetail.name || memberDetail.createdBy,
-        userPlanetCode: memberDetail.teamPlanetCode || memberDetail.sync.planetCode} }, autoFocus: false });
-    if (this.isDialog) {
-      this.dialogRef.close();
-    }
+  openProfile(username, planetCode) {
+    this.dialog.open(
+      UserProfileDialogComponent,
+      {
+        data: {
+          member: {
+            name: username,
+            userPlanetCode: planetCode
+          }
+        },
+        autoFocus: false
+      }
+    );
   }
 
 }
