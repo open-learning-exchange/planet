@@ -117,6 +117,7 @@
           <div class="content">
             <planet-markdown
               class="img-wrap"
+              [imageSource]="parent ? 'parent' : 'local'"
               [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
               '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
               element.doc.description">
