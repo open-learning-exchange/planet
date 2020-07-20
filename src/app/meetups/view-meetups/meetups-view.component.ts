@@ -14,6 +14,7 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
+import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -167,11 +168,19 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
-  routeToUser(username: string) {
-    this.router.navigate([ '/users/profile', username ]);
-    if (this.isDialog) {
-      this.dialogRef.close();
-    }
+  openProfile(username, planetCode) {
+    this.dialog.open(
+      UserProfileDialogComponent,
+      {
+        data: {
+          member: {
+            name: username,
+            userPlanetCode: planetCode
+          }
+        },
+        autoFocus: false
+      }
+    );
   }
 
 }
