@@ -15,12 +15,13 @@ export class PlanetMarkdownComponent implements OnChanges {
   ) {}
 
   @Input() content: string;
-  @Input() imageSource: 'nation' | 'local' = 'local';
-  parentDomain;
-  couchAddress;
+  @Input() imageSource: 'parent' | 'local' = 'local';
+  parentDomain: string;
+  couchAddress: string;
 
   ngOnChanges() {
     this.parentDomain = this.stateService.configuration.parentDomain;
-    this.couchAddress = this.imageSource === 'nation' ? environment.parentProtocol + '//' + this.parentDomain + ':2200' : `${environment.couchAddress}/`;
+    this.couchAddress = this.imageSource === 'parent' ?
+      `${environment.parentProtocol}://${this.parentDomain}/` : `${environment.couchAddress}/`;
   }
 }
