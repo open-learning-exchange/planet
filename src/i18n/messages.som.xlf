@@ -624,13 +624,13 @@
         </context-group>
         <target state="final">Tirtir</target>
       </trans-unit>
-      <trans-unit id="1e1b81bc44eb078f50afc06365f530ca2677d91c" datatype="html">
+      <trans-unit id="1e1b81bc44eb078f50afc06365f530ca2677d91c" datatype="html" approved="yes">
         <source>Upto date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Ilaa taariikhda</target>
+        <target state="final">Ilaa taariikhda</target>
       </trans-unit>
       <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html" approved="yes">
         <source>Newer</source>
@@ -648,13 +648,13 @@
         </context-group>
         <target state="final">Ka weyn</target>
       </trans-unit>
-      <trans-unit id="84bbbe38f927eaeddf081648c8783d06b4348b24" datatype="html">
+      <trans-unit id="84bbbe38f927eaeddf081648c8783d06b4348b24" datatype="html" approved="yes">
         <source>Does not match</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Ma ciyaarin</target>
+        <target state="final">Iskuma eka</target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html" approved="yes">
         <source>Close</source>
@@ -1882,13 +1882,13 @@
         </context-group>
         <target state="needs-translation">Not in myCourses</target>
       </trans-unit>
-      <trans-unit id="e75b2aae16dbd8e5a8bbd1296572d4cbbb1b9260" datatype="html">
+      <trans-unit id="e75b2aae16dbd8e5a8bbd1296572d4cbbb1b9260" datatype="html" approved="yes">
         <source>Your progress:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">104</context>
         </context-group>
-        <target state="translated">Meeshaa mareesid:</target>
+        <target state="final">Horumarkaaga:</target>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html" approved="yes">
         <source>Join</source>
@@ -2283,7 +2283,7 @@
         </context-group>
         <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Source:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{courseDetail?.sourcePlanet}}"/></target>
       </trans-unit>
-      <trans-unit id="4a22c6843133f0b0d7dc0d28f864f2f90c1de7ad" datatype="html">
+      <trans-unit id="4a22c6843133f0b0d7dc0d28f864f2f90c1de7ad" datatype="html" approved="yes">
         <source>Description:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view-detail.component.html</context>
@@ -2297,7 +2297,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Tilmaanta:</target>
+        <target state="final">Sharraxaadda:</target>
       </trans-unit>
       <trans-unit id="e60e85cd5a1397ce30a91312630600d7891ab7dc" datatype="html">
         <source>{VAR_SELECT, select, team {Teams} enterprise {Enterprises} }</source>
@@ -2851,13 +2851,13 @@
         </context-group>
         <target state="needs-translation">There are no transactions</target>
       </trans-unit>
-      <trans-unit id="2a4035c3f7ecaf14491c5e8746da3c3a00095772" datatype="html">
+      <trans-unit id="2a4035c3f7ecaf14491c5e8746da3c3a00095772" datatype="html" approved="yes">
         <source>(You)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">(adiga)</target>
+        <target state="final">(Adiga)</target>
       </trans-unit>
       <trans-unit id="fed5b6747de82e76399fa62f092fa64680e55d6b" datatype="html">
         <source>(Team Leader)</source>
@@ -3155,7 +3155,7 @@
         </context-group>
         <target state="needs-translation">Edit Profile</target>
       </trans-unit>
-      <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
+      <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html" approved="yes">
         <source>Change Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/home/home.component.html</context>
@@ -3165,7 +3165,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated">Badal furaha sirta ah</target>
+        <target state="final">Badal furaha sirta ah</target>
       </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html" approved="yes">
         <source>Logout</source>
@@ -3221,7 +3221,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">Inaad akhrise halkaan ku hubi</target>
+        <target state="translated">Calaamad Aqrin</target>
       </trans-unit>
       <trans-unit id="f147d0f7f965cccee2e77294cba8e1b88021fa08" datatype="html">
         <source>Upgrade</source>
