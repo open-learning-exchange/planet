@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -11,12 +11,14 @@ import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
   styleUrls: [ './teams-reports.scss' ],
   templateUrl: './teams-reports.component.html'
 })
-export class TeamsReportsComponent {
+export class TeamsReportsComponent implements OnChanges {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() team;
+  @Input() containerElement: any;
   @Output() reportsChanged = new EventEmitter<void>();
+  rowHeight = '300px';
 
   constructor(
     private dialog: MatDialog,
@@ -24,6 +26,12 @@ export class TeamsReportsComponent {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService
   ) {}
+
+  ngOnChanges() {
+    if (this.containerElement) {
+      this.rowHeight = `${this.containerElement.offsetHeight - 160}px`;
+    }
+  }
 
   openAddReportDialog() {
     const formControl = (initialValue, endDate = false) => [
@@ -79,6 +87,7 @@ export class TeamsReportsComponent {
   }
 
   openReportDialog(report) {
+    console.log(this.height);
     this.dialog.open(TeamsReportsDialogComponent, {
       data: { report, team: this.team }
     });

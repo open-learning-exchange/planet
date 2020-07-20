@@ -36,7 +36,7 @@
       <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
   </mat-toolbar>
-  <div class="view-container view-full-height">
+  <div class="view-container view-full-height" #viewContainer>
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
@@ -108,7 +108,7 @@
         </mat-tab>
       </ng-container>
       <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
-        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
+        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" [containerElement]="viewContainer" (reportsChanged)="resetData()"></planet-teams-reports>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab label="Resources">
