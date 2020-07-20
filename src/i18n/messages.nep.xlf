@@ -358,7 +358,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Add New Image</target>
+        <target state="translated">नयाँ फोटो थप्नुहोस</target>
       </trans-unit>
       <trans-unit id="8e4e342b8f4170a90c32e4ce5023f8c474025cb7" datatype="html">
         <source>Ratings for</source>
@@ -3081,7 +3081,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">185</context>
         </context-group>
-        <target state="needs-translation">Health</target>
+        <target state="translated">स्वास्थ्य</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html" approved="yes">
         <source>Messages</source>
@@ -6856,7 +6856,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">myHealth</target>
+        <target state="translated">मेरो स्वास्थ्य</target>
       </trans-unit>
       <trans-unit id="83e0458959f65cb1dce0f84d5d276a7bce3b7c3a" datatype="html">
         <source>Update Details</source>
