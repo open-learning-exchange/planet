@@ -6686,7 +6686,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">Temperature: </target>
+        <target state="translated">तापक्रम: </target>
       </trans-unit>
       <trans-unit id="8a3902521a4a7ddd3927f57b2d08468d1afe1579" datatype="html">
         <source>Pulse: </source>
@@ -6694,7 +6694,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Pulse: </target>
+        <target state="translated">पल्स: </target>
       </trans-unit>
       <trans-unit id="a688c208e7fc78c6db76b4968a84d96d843c3e96" datatype="html">
         <source>Blood Pressure: </source>
@@ -6702,7 +6702,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Blood Pressure: </target>
+        <target state="translated">रक्तचाप: </target>
       </trans-unit>
       <trans-unit id="9b868eb282ba919fd6752fefff77a0432b8be77c" datatype="html">
         <source>Height: </source>
@@ -6924,7 +6924,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">Contact</target>
+        <target state="translated">सम्पर्क</target>
       </trans-unit>
       <trans-unit id="e6fc27c5760a1d9a22fc18628a5aa5a5b12cbe31" datatype="html">
         <source>Temperature in °C</source>
@@ -6948,7 +6948,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Blood Pressure</target>
+        <target state="translated">रक्तचाप</target>
       </trans-unit>
       <trans-unit id="194b4329dfe85c1a7e95587b0b688cd58ebba5b3" datatype="html">
         <source>Height in cm</source>
