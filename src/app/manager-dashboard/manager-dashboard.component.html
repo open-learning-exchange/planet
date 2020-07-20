@@ -35,9 +35,8 @@
         <span i18n>{planetType, select,
           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}
           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}
-        } with pending courses and/or resources for download.
-          <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
-        </span>
+        } with pending courses and/or resources for download.</span>
+        <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
       </p>
     </div>
     <div class="view-container" *ngIf="planetType !== 'community'">
