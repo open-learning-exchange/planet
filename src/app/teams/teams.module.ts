@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports.component';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
+import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 
 @NgModule({
   exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent ],
@@ -39,6 +40,7 @@ import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
     TeamsViewComponent,
     TeamsViewFinancesComponent,
     TeamsReportsComponent,
+    TeamsReportsDetailComponent,
     TeamsMemberComponent,
     TeamsReportsDialogComponent
   ],

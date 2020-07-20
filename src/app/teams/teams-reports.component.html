@@ -9,7 +9,7 @@
         <mat-card-subtitle>{{ report.startDate | date }} - {{ report.endDate | date }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <planet-markdown [content]="report.description"></planet-markdown>
+        <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
       </mat-card-content>
     </mat-card>
   </mat-grid-tile>
