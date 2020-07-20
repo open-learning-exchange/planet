@@ -39,7 +39,7 @@
             <span i18n>Editing Question</span>{{ ' ' + (this.activeQuestionIndex + 1) + ' ' }}
             <span i18n>of</span>{{ ' ' + questions?.length }}
           </span>
-          <planet-exam-question [(question)]="question" [(showChoicesError)]="showFormError" [examType]="examType" *ngIf="activeQuestionIndex > -1"></planet-exam-question>
+          <planet-exam-question [(question)]="question" [examType]="examType" *ngIf="activeQuestionIndex > -1"></planet-exam-question>
         </div>
       </planet-step-list>
     </form>

@@ -17,9 +17,6 @@
     <div>
       <button type="button" mat-stroked-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')">Add Choice</button>
     </div>
-    <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
-      You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
-    </div>
     <div *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
       <mat-checkbox
         (change)="setCorrect($event, choice)"
@@ -36,5 +33,8 @@
     <span i18n class="mat-caption warn-text-color" *ngIf="showChoicesError && choices.touched">
       You must add a choice
     </span>
+    <div i18n class="mat-caption warn-text-color" *ngIf="showCorrectChoiceError && choices.touched">
+      You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
+    </div>
   </div>
 </form>
