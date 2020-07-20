@@ -3215,13 +3215,13 @@
         </context-group>
         <target state="needs-translation">Mark all as Read</target>
       </trans-unit>
-      <trans-unit id="fb55bc908a9ef04a80dcf464cd899a559e579d35" datatype="html">
+      <trans-unit id="fb55bc908a9ef04a80dcf464cd899a559e579d35" datatype="html" approved="yes">
         <source>Mark as Read</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/notifications/notifications.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">Calaamad Aqrin</target>
+        <target state="final">Calaamad Aqrin</target>
       </trans-unit>
       <trans-unit id="f147d0f7f965cccee2e77294cba8e1b88021fa08" datatype="html">
         <source>Upgrade</source>
@@ -3602,7 +3602,7 @@
         </context-group>
         <target state="final">Lamaanaha</target>
       </trans-unit>
-      <trans-unit id="097b5dfee5665aa0f7daba8b696acecde6445474" datatype="html">
+      <trans-unit id="097b5dfee5665aa0f7daba8b696acecde6445474" datatype="html" approved="yes">
         <source>Male</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
@@ -3612,9 +3612,9 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="translated">Nin</target>
+        <target state="final">Lab</target>
       </trans-unit>
-      <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html">
+      <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html" approved="yes">
         <source>Female</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
@@ -3624,7 +3624,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">87</context>
         </context-group>
-        <target state="translated">Dumar</target>
+        <target state="final">Dhedig</target>
       </trans-unit>
       <trans-unit id="ae688edf9e80421a513294ce6deda0708d03b310" datatype="html">
         <source>
@@ -4162,7 +4162,7 @@
         </context-group>
         <target state="needs-translation">{VAR_SELECT, select, nation {Manage Communities} center {Manage Nations} }</target>
       </trans-unit>
-      <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html">
+      <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html" approved="yes">
         <source>Reports</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
@@ -4176,7 +4176,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Warbixinta</target>
+        <target state="final">Warbixinno</target>
       </trans-unit>
       <trans-unit id="4956daf7969a99e8dc3393c370d87830631b1a94" datatype="html">
         <source>myPlanet Reports</source>
@@ -4478,13 +4478,13 @@
         </context-group>
         <target state="needs-translation">Your tablet pin number is:</target>
       </trans-unit>
-      <trans-unit id="2dd1a423186deaa4150106c9cc82b1f1fe4599fa" datatype="html">
+      <trans-unit id="2dd1a423186deaa4150106c9cc82b1f1fe4599fa" datatype="html" approved="yes">
         <source>Reset Pin</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="translated">Badal furhaha sirta</target>
+        <target state="final">dib u dhig pin</target>
       </trans-unit>
       <trans-unit id="336ba4aa6090e467b76422f90306cd05eeee8fea" datatype="html">
         <source>Activity on</source>
@@ -4492,7 +4492,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="translated">Isticmaalka</target>
+        <target state="translated">nashaadaadka</target>
       </trans-unit>
       <trans-unit id="4c9a8e4beb4a754639b9e43c2d9906c8f9572412" datatype="html">
         <source>Report Detail</source>
@@ -4526,13 +4526,13 @@
         </context-group>
         <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</target>
       </trans-unit>
-      <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html">
+      <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html" approved="yes">
         <source>Error</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Khalad</target>
+        <target state="final">Qalad</target>
       </trans-unit>
       <trans-unit id="5ab9a3c727788f3597870dd7e3546fc0b0624024" datatype="html">
         <source>In Progress</source>
@@ -4796,13 +4796,13 @@
         </context-group>
         <target state="needs-translation">Member Visits</target>
       </trans-unit>
-      <trans-unit id="4a06e2646228b530b0122c0bde96cc2097395ad2" datatype="html">
+      <trans-unit id="4a06e2646228b530b0122c0bde96cc2097395ad2" datatype="html" approved="yes">
         <source>Last Upgrade</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-table.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Cusbooneeysiinta ugu dambeesay</target>
+        <target state="final">Cusbooneeysiinta ugu dambeesay</target>
       </trans-unit>
       <trans-unit id="f90408d046dcccc26a920dbae72b72bfc1cc6a51" datatype="html">
         <source>Last Sync</source>
@@ -5204,13 +5204,13 @@
         </context-group>
         <target state="needs-translation">Enrolled</target>
       </trans-unit>
-      <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html">
+      <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html" approved="yes">
         <source>Steps</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Tallaabooyinka</target>
+        <target state="final">Tallaabooyinka</target>
       </trans-unit>
       <trans-unit id="be8e1a199c0f65656ec614786777a1552a968979" datatype="html">
         <source>Tests</source>
