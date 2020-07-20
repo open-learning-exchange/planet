@@ -1018,7 +1018,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Birthdate</target>
+        <target state="translated">जन्ममिति</target>
       </trans-unit>
       <trans-unit id="5ef9645b5346af212703215261f80077176f6cd4" datatype="html">
         <source>Birthplace</source>
@@ -1034,7 +1034,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Birthplace</target>
+        <target state="translated">जन्मस्थान</target>
       </trans-unit>
       <trans-unit id="bc3a80edeac0435a8bdf003399bf67e2a00c9cf2" datatype="html">
         <source>My Purpose - What are your educational and professional ambitions?</source>
@@ -4818,7 +4818,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-health.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Total Examinations:</target>
+        <target state="translated">कुल परीक्षण:</target>
       </trans-unit>
       <trans-unit id="f669274b7f3973eb555aff7d6103e4b73b6a454f" datatype="html">
         <source>Patients Seen:</source>
@@ -4826,7 +4826,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-health.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">Patients Seen:</target>
+        <target state="translated">हेरिएका बिरामीहरू:</target>
       </trans-unit>
       <trans-unit id="2a22a0a41e6aacd119ac6a533c8c60c1f7819f51" datatype="html">
         <source>Diagnoses</source>
@@ -4954,7 +4954,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="needs-translation">Health Report</target>
+        <target state="translated">स्वास्थ्य रिपोर्ट</target>
       </trans-unit>
       <trans-unit id="a8233de047500bf0f0d9f9f1712ddb071501a283" datatype="html">
         <source>Summary</source>
