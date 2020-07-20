@@ -166,7 +166,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.activityService.getAllActivities('login_activities', activityParams(this.planetCode))
     ]).pipe(take(1)).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
       this.loginActivities.data = loginActivities;
-      this.users = users;
+      const adminName = this.stateService.configuration.adminName.split('@')[0];
+      this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(this.minDate);
       this.setLoginActivities();
