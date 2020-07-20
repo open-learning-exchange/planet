@@ -2,13 +2,13 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="ne-NP">
     <body>
-      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html">
+      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html" approved="yes">
         <source>Loading</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">लोड हुँदै</target>
+        <target state="final">लोड हुँदै</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
@@ -54,15 +54,15 @@
         </context-group>
         <target state="final">ठीक छ</target>
       </trans-unit>
-      <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
+      <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
     </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-      <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target state="final">
+      <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> सबै
     </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
@@ -290,7 +290,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </target>
+        <target state="translated">नाम: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </target>
       </trans-unit>
       <trans-unit id="57f6d432b2042a0b37f2aec23164d075be873f0d" datatype="html">
         <source>Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></source>
@@ -298,7 +298,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
+        <target state="translated">संस्करण: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
       </trans-unit>
       <trans-unit id="73ac5a30eb2a3c1f47634ef13142493bbc438b92" datatype="html">
         <source>Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></source>
@@ -306,7 +306,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
+        <target state="translated">समय: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
       </trans-unit>
       <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html">
         <source>Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></source>
@@ -314,7 +314,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
+        <target state="translated">त्रुटि: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
       <trans-unit id="da069bcc6623561d4e52ddd8aa7d673bc39f375c" datatype="html">
         <source>
