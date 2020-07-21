@@ -123,7 +123,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
-    const previousStatus = this.submissionsService.submission.status;
+    const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
