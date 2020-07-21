@@ -108,16 +108,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).subscribe((userData: { count, byGender, byMonth }) => {
-      this.setUserCounts(userData);
-      this.getLoginActivities();
-      this.getRatingInfo();
-      this.getDocVisits('resourceActivities');
-      this.getDocVisits('courseActivities');
-      this.getPlanetCounts(local);
-      this.getTeams();
-      this.dialogsLoadingService.stop();
-    });
+    this.getLoginActivities();
+    this.getRatingInfo();
+    this.getDocVisits('resourceActivities');
+    this.getDocVisits('courseActivities');
+    this.getPlanetCounts(local);
+    this.getTeams();
+    this.dialogsLoadingService.stop();
   }
 
   setUserCounts({ count, byGender }) {
