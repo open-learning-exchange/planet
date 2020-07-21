@@ -14,7 +14,6 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
 import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
-import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 
@@ -55,8 +54,7 @@ export class MeetupsAddComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private userService: UserService,
-    private stateService: StateService,
-    private validatorService: ValidatorService
+    private stateService: StateService
   ) {
     this.createForm();
   }
