@@ -8,6 +8,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
+import { languages } from '../../shared/languages';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
@@ -49,6 +50,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   subjectLevels = constants.subjectLevels;
   images: any[] = [];
 
+  // from the languages import
+  languageNames = languages.map(list => this.languageNames = list.name);
+
   mockStep = { stepTitle: 'Add title', description: '!!!' };
 
   constructor(
@@ -80,7 +84,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ],
       description: [ '', CustomValidators.requiredMarkdown ],
-      languageOfInstruction: '',
+      languageOfInstruction: this.languageNames[0],
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: this.couchService.datePlaceholder,
