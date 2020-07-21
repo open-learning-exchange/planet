@@ -48,21 +48,14 @@ export class SubmissionsService {
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
     forkJoin([
       this.getSubmissions(query, opts),
-      this.courseService.findCourses([], opts),
-      this.couchService.findAll('attachments')
-    ]).subscribe(([ submissions, courses, attachments ]: [any, any, any]) => {
+      this.courseService.findCourses([], opts)
+    ]).subscribe(([ submissions, courses ]: [ any, any ]) => {
       this.submissions = (onlyBest ? this.filterBestSubmissions(submissions) : submissions).filter(sub => {
         if (sub.status !== 'pending' || sub.type !== 'exam') {
           return true;
         }
         return courses.find((c: any) => sub.parentId.split('@')[1] === c._id) !== undefined;
-      }).map(sub => ({
-        ...sub,
-        user: {
-          ...sub.user,
-          attachmentDoc: attachments.find(attachment => attachment._id === `${sub.user._id}@${sub.user.planetCode}`)
-        }
-      }));
+      });
       this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }
