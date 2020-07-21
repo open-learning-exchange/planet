@@ -6,6 +6,7 @@
  * ]
  */
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'planet-courses-progress-chart',
@@ -22,6 +23,7 @@ export class CoursesProgressChartComponent implements OnChanges {
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
   @ViewChild('errorsUserTotal', { static: false }) xScrollElement;
   @ViewChild('errorsUser', { static: false }) dataElement;
+  imgUrlPrefix = environment.couchAddress;
   sets = [];
   horizTotals = [];
 

@@ -20,7 +20,7 @@
   .errors {
     display: grid;
     grid-auto-rows: $cell-size;
-    div {
+    div, planet-avatar {
       display: flex;
       justify-content: center;
       align-items: center;

@@ -40,7 +40,7 @@
 <div class="errors-container errors-user-total" #errorsUserTotal>
   <div class="errors" *ngFor="let set of sets">
     <div>{{set.total}}</div>
-    <div><img class="profile-image-large" [src]="set.avatar"></div>
+    <planet-avatar [username]="set.label" [planetCode]="set.planetCode" imgClass="profile-image-large"></planet-avatar>
     <div class="wrap-content" [matTooltip]="set.label?.length > 3 ? set.label : null "><p>{{set.label}}</p></div>
   </div>
 </div>
