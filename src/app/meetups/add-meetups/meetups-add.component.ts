@@ -16,6 +16,7 @@ import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   selector: 'planet-meetups-add',
@@ -54,6 +55,7 @@ export class MeetupsAddComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private userService: UserService,
+    private stateService: StateService,
     private validatorService: ValidatorService
   ) {
     this.createForm();
@@ -95,6 +97,7 @@ export class MeetupsAddComponent implements OnInit {
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
+      sourcePlanet: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
       recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
     }, {
