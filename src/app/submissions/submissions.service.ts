@@ -49,7 +49,7 @@ export class SubmissionsService {
     forkJoin([
       this.getSubmissions(query, opts),
       this.courseService.findCourses([], opts)
-    ]).subscribe(([ submissions, courses ]: [ any, any ]) => {
+    ]).subscribe(([ submissions, courses ]: [any, any]) => {
       this.submissions = (onlyBest ? this.filterBestSubmissions(submissions) : submissions).filter(sub => {
         if (sub.status !== 'pending' || sub.type !== 'exam') {
           return true;
