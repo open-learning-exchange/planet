@@ -167,6 +167,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         return;
       }
       const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
+      this.steps = course.steps;
       this.coursesService.course = { form: course, steps: course.steps, tags };
       this.pouchService.saveDocEditing(
         { ...course, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
