@@ -14,8 +14,8 @@ export class AvatarComponent implements OnInit {
   @Input() imgClass: string;
   imgSrc: string;
   imgSources = [
-    { db: '_attachments', filename: 'img' },
-    { db: '_attachments', filename: 'img_' },
+    { db: 'attachments', filename: 'img' },
+    { db: 'attachments', filename: 'img_' },
     { db: '_users', filename: 'img' },
     { db: '_users', filename: 'img_' }
   ];
@@ -36,7 +36,7 @@ export class AvatarComponent implements OnInit {
   }
 
   setImgSrc({ db, filename }) {
-    const docName = `org.couchdb.user:${this.username}${db === '_attachments' ? '@' + this.planetCode : ''}`;
+    const docName = `org.couchdb.user:${this.username}${db === 'attachments' ? '@' + this.planetCode : ''}`;
     this.imgSrc = `${this.imgUrlPrefix}/${db}/${docName}/${filename}`;
   }
 
