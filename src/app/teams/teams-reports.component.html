@@ -13,8 +13,8 @@
       </mat-card-content>
       <mat-card-footer class="action-buttons margin-lr-10">
         <ng-container *ngIf="editable">
-          <button mat-icon-button i18n (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
-          <button mat-icon-button i18n (click)="$event.stopPropagation(); openAddReportDialog(report)"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(report)"><mat-icon>edit</mat-icon></button>
         </ng-container>
         <button mat-button i18n>View Details</button>
       </mat-card-footer>
