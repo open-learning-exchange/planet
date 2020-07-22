@@ -5,6 +5,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
+import { report } from 'process';
 
 @Component({
   selector: 'planet-teams-reports',

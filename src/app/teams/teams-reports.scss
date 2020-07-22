@@ -3,8 +3,8 @@ mat-card {
   width: 100%;
 
   mat-card-content {
-    max-height: calc(100% - 3.5rem);
-    overflow-y: auto;
+    height: calc(100% - 7rem);
+    overflow-y: hidden;
   }
 
 }
