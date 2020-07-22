@@ -6,6 +6,8 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { report } from 'process';
+import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -53,7 +55,13 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   openDeleteReportDialog(report) {
-
+    const okClick = {
+      request: () => this.updateReport(report),
+      onNext: () => this.dialogsLoadingService.stop()
+    };
+    this.dialog.open(DialogsPromptComponent, {
+      data: { changeType: 'delete', type: 'report', displayDates: report, okClick }
+    });
   }
 
   addFormInitialValues(oldReport) {
