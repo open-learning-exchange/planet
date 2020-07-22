@@ -87,7 +87,6 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   openReportDialog(report) {
-    console.log(this.height);
     this.dialog.open(TeamsReportsDialogComponent, {
       data: { report, team: this.team }
     });
