@@ -5,8 +5,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
-import { report } from 'process';
-import { DialogsViewComponent } from '../shared/dialogs/dialogs-view.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
@@ -75,7 +73,7 @@ export class TeamsReportsComponent implements OnChanges {
       ...oldReport,
       startDate: new Date(oldReport.startDate || Date.now()),
       endDate: new Date(oldReport.endDate || Date.now())
-    }
+    };
     const formControl = (initialValue, endDate = false) => [
       initialValue,
       [ CustomValidators.required, endDate ? CustomValidators.endDateValidator : () => {} ]
