@@ -90,11 +90,12 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
     const userId = relationship === 'local' || relationship === 'parent'
       ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.editable = (this.stateService.configuration.adminName !== this.urlName + '@' + this.stateService.configuration.code)
-      && this.userService.doesUserHaveRole([ '_admin' ]) && userId.indexOf('@') === -1 && relationship !== 'parent';
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
+      this.editable = (this.userDetail.name === this.userService.get().name ||
+      ((this.stateService.configuration.adminName !== this.urlName + '@' + this.stateService.configuration.code)
+      && this.userService.doesUserHaveRole([ '_admin' ]))) && userId.indexOf('@') === -1 && relationship !== 'parent';
       if (response['_attachments']) {
         const filename = Object.keys(response._attachments)[0];
         this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
