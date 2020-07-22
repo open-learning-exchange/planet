@@ -34,11 +34,7 @@ export class TeamsReportsComponent implements OnChanges {
     }
   }
 
-  openAddReportDialog() {
-    const formControl = (initialValue, endDate = false) => [
-      initialValue,
-      [ CustomValidators.required, endDate ? CustomValidators.endDateValidator : () => {} ]
-    ];
+  openAddReportDialog(oldReport = {}) {
     this.dialogsFormService.openDialogsForm(
       'Add Report',
       [
@@ -51,21 +47,37 @@ export class TeamsReportsComponent implements OnChanges {
         { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number' },
         { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number' }
       ],
-      {
-        startDate: formControl(Date.now()),
-        endDate: formControl(Date.now(), true),
-        description: formControl(''),
-        beginningBalance: formControl(0),
-        sales: formControl(0),
-        otherIncome: formControl(0),
-        wages: formControl(0),
-        otherExpenses: formControl(0)
-      },
-      { onSubmit: this.updateReport.bind(this) }
+      this.addFormInitialValues(oldReport),
+      { onSubmit: (newReport) => this.updateReport(oldReport, newReport) }
     );
   }
 
-  updateReport(newReport) {
+  openDeleteReportDialog(report) {
+
+  }
+
+  addFormInitialValues(oldReport) {
+    const initialValues = {
+      description: '',
+      beginningBalance: 0,
+      sales: 0,
+      otherIncome: 0,
+      wages: 0,
+      otherExpenses: 0,
+      ...oldReport,
+      startDate: new Date(oldReport.startDate || Date.now()),
+      endDate: new Date(oldReport.endDate || Date.now())
+    }
+    const formControl = (initialValue, endDate = false) => [
+      initialValue,
+      [ CustomValidators.required, endDate ? CustomValidators.endDateValidator : () => {} ]
+    ];
+    return Object.entries(initialValues).reduce(
+      (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key === 'endDate') }), {}
+    );
+  }
+
+  updateReport(oldReport, newReport: any = {}) {
     const dateFields = [ 'startDate', 'endDate' ];
     const numberFields = [ 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
     const transformFields = (key: string, value: Date | string) => dateFields.indexOf(key) > -1 ?
@@ -73,14 +85,12 @@ export class TeamsReportsComponent implements OnChanges {
       numberFields.indexOf(key) > -1 ?
       +value :
       value;
-    this.teamsService.updateAdditionalDoc(
-      Object.entries(newReport).reduce(
-        (obj, [ key, value ]: [ string, Date | string ]) => ({ ...obj, [key]: transformFields(key, value) }),
-        {}
-      ),
-      this.team,
-      'report'
-    ).subscribe(() => {
+    const { _id, _rev, ...newDoc } = <any>Object.entries(newReport).reduce(
+      (obj, [ key, value ]: [ string, Date | string ]) => ({ ...obj, [key]: transformFields(key, value) }),
+      {}
+    );
+    const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
+    this.teamsService.updateAdditionalDocs(docs, this.team, 'report').subscribe(() => {
       this.reportsChanged.emit();
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
