@@ -263,7 +263,7 @@ export class CoursesService {
     return {
       ...course,
       description: markdownText(course),
-      steps: course.steps.map(step => ({ ...step, description: markdownText(step) })),
+      steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
       images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
     };
   }

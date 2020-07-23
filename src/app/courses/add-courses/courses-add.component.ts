@@ -39,7 +39,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     return this._steps;
   }
   set steps(value: any[]) {
-    this._steps = value;
+    this._steps = value.map(step => ({
+      ...step,
+      description: step.description.text || step.description,
+      images: [ ...(step.description.images || []), ...(step.images || []) ]
+    }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
   }
@@ -167,7 +171,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         return;
       }
       const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
-      this.steps = course.steps;
       this.coursesService.course = { form: course, steps: course.steps, tags };
       this.pouchService.saveDocEditing(
         { ...course, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
@@ -232,7 +235,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.steps.push({
       stepTitle: '',
       description: '',
-      resources: []
+      resources: [],
+      images: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
   }
