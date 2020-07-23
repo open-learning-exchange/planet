@@ -48,7 +48,7 @@ export class DialogsImagesComponent implements OnInit {
 
   uploadImage(event) {
     const file = event.target.files[0];
-    const imageExists = this.images.filter( img => file.name === img.filename).length > 0;
+    const imageExists = this.images.some( img => file.name === img.filename);
     if (imageExists) {
       this.planetMessageService.showAlert('An image with that filename exists. Please rename or select another image.');
       return;
