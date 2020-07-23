@@ -176,8 +176,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
           member: {
             name: username,
             userPlanetCode: planetCode,
-            dialogRef: this.dialogRef
-          }
+          },
+          dialogRef: this.dialogRef
         },
         autoFocus: false
       }
