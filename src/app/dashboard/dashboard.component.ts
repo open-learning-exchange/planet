@@ -24,9 +24,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
-  displayName: string = this.userService.get().firstName !== undefined ?
-    this.userService.get().firstName + ' ' + this.userService.get().middleName + ' ' + this.userService.get().lastName
-    : this.userService.get().name;
+  displayName: string;
   roles: string[];
   planetName: string;
   badgesCourses: { [key: string]: any[] } = {};
@@ -74,7 +72,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    const user = this.userService.get();
+    this.displayName = user.firstName !== undefined ? user.firstName + ' ' + user.middleName + ' ' + user.lastName : user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
