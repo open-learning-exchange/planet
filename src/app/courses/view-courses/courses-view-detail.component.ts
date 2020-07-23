@@ -1,4 +1,4 @@
-import { Component, Input, Inject, OnInit } from '@angular/core';
+import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA } from '@angular/material';
@@ -10,14 +10,20 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
   selector: 'planet-courses-detail',
   templateUrl: './courses-view-detail.component.html'
 })
-export class CoursesViewDetailComponent {
+export class CoursesViewDetailComponent implements OnChanges {
 
   @Input() courseDetail: any = {};
+  @Input() parent = false;
   planetConfiguration = this.stateService.configuration;
+  imageSource: 'parent' | 'local' = 'local';
 
   constructor(
     private stateService: StateService
   ) {}
+
+  ngOnChanges() {
+    this.imageSource = this.parent === true ? 'parent' : 'local';
+  }
 
 }
 
