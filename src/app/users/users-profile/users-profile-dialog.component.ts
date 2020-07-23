@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterContentChecked } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { UsersProfileComponent } from './users-profile.component';
 
@@ -16,7 +16,7 @@ import { UsersProfileComponent } from './users-profile.component';
     </mat-dialog-actions>
   `
 })
-export class UserProfileDialogComponent implements AfterViewInit {
+export class UserProfileDialogComponent implements AfterContentChecked {
 
   @ViewChild(UsersProfileComponent, { static: false }) usersProfileComponent: UsersProfileComponent;
   name: string;
@@ -28,7 +28,7 @@ export class UserProfileDialogComponent implements AfterViewInit {
     this.planetCode = data.member.userPlanetCode;
   }
 
-  ngAfterViewInit() {
+  ngAfterContentChecked() {
     this.editable = this.usersProfileComponent && this.usersProfileComponent.editable;
   }
 

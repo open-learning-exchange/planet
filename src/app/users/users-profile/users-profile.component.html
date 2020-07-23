@@ -12,8 +12,8 @@
     <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
       <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
     </button>
-    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="(user.name === urlName || editable) && !isDialog" [routerLink]="['../../update/', urlName]"><mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span></button>
-    <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="((user.name === urlName && user.planetCode === planetCode) || editable) && !isDialog" i18n [planetChangePassword]="userDetail">Change Password</a>
+    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]"><mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span></button>
+    <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">Change Password</a>
   </mat-toolbar>
   <div class="view-container">
     <div class="profile-container">
