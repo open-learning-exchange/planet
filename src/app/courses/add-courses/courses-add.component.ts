@@ -8,6 +8,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import * as constants from '../constants';
+import { languages } from '../../shared/languages';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
@@ -39,7 +40,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     return this._steps;
   }
   set steps(value: any[]) {
-    this._steps = value;
+    this._steps = value.map(step => ({
+      ...step,
+      description: step.description.text || step.description,
+      images: [ ...(step.description.images || []), ...(step.images || []) ]
+    }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
   }
@@ -48,6 +53,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
   images: any[] = [];
+
+  // from the languages import
+  languageNames = languages.map(list => list.name);
 
   mockStep = { stepTitle: 'Add title', description: '!!!' };
 
@@ -231,7 +239,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.steps.push({
       stepTitle: '',
       description: '',
-      resources: []
+      resources: [],
+      images: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
   }

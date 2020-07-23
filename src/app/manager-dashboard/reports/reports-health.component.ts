@@ -43,7 +43,7 @@ export class ReportsHealthComponent implements OnChanges {
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };
   conditions = conditions;
-  initialSelectedCondition = 'COVID-19';
+  selectedCondition = 'COVID-19';
 
   constructor(
     private reportsService: ReportsService,
@@ -85,7 +85,7 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
-    this.setWeeklyChart('COVID-19');
+    this.setWeeklyChart(this.selectedCondition);
   }
 
   showWeek(weekOf) {
@@ -135,6 +135,7 @@ export class ReportsHealthComponent implements OnChanges {
   }
 
   onSelectedConditionChange(condition) {
+    this.selectedCondition = condition;
     this.setWeeklyChart(condition);
   }
 

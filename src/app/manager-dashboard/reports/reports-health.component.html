@@ -15,7 +15,7 @@
   <div class="trend-filters">
     <span i18n>Select diagnosis to view trend:</span>
     <mat-form-field>
-      <mat-select mat-select [value]="initialSelectedCondition" (selectionChange)="onSelectedConditionChange($event.value)">
+      <mat-select mat-select [value]="selectedCondition" (selectionChange)="onSelectedConditionChange($event.value)">
        <mat-option *ngFor="let condition of conditions" value={{condition}}>{{condition}}</mat-option>
       </mat-select>
     </mat-form-field>
