@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { DatePipe } from '@angular/common';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
@@ -175,7 +174,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         data: {
           member: {
             name: username,
-            userPlanetCode: planetCode,
+            userPlanetCode: planetCode
           },
           dialogRef: this.dialogRef
         },
