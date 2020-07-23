@@ -38,6 +38,7 @@ export class TeamsReportsComponent implements OnChanges {
     this.dialogsFormService.openDialogsForm(
       'Add Report',
       [
+        // question
         { name: 'startDate', placeholder: 'Start Date', type: 'date', required: true },
         { name: 'endDate', placeholder: 'End Date', type: 'date', required: true },
         { name: 'description', placeholder: 'Summary', type: 'markdown', required: true },
