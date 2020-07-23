@@ -25,7 +25,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   displayName: string = this.userService.get().firstName !== undefined ?
-    this.userService.get().firstName + ' ' + this.userService.get().lastName : this.userService.get().name;
+    this.userService.get().firstName + ' ' + this.userService.get().middleName + ' ' + this.userService.get().lastName
+    : this.userService.get().name;
   roles: string[];
   planetName: string;
   badgesCourses: { [key: string]: any[] } = {};
@@ -78,7 +79,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getSurveys();
     this.getExams();
     this.initDashboard();
-
     this.couchService.findAll('login_activities', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
