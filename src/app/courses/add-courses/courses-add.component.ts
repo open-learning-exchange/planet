@@ -51,7 +51,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   images: any[] = [];
 
   // from the languages import
-  languageNames = languages.map(list => this.languageNames = list.name);
+  languageNames = languages.map(list => list.name);
 
   mockStep = { stepTitle: 'Add title', description: '!!!' };
 
@@ -84,7 +84,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ],
       description: [ '', CustomValidators.requiredMarkdown ],
-      languageOfInstruction: this.languageNames[0],
+      languageOfInstruction: '',
       gradeLevel: this.gradeLevels[0],
       subjectLevel: this.subjectLevels[0],
       createdDate: this.couchService.datePlaceholder,
