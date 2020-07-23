@@ -7,6 +7,7 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -54,18 +55,28 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number' }
         ],
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
-        { onSubmit: (newReport) => this.updateReport(oldReport, newReport) }
+        {
+          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
+            this.dialogsFormService.closeDialogsForm();
+          })
+        }
       );
     });
   }
 
   openDeleteReportDialog(report) {
-    const okClick = {
-      request: () => this.updateReport(report),
-      onNext: () => this.dialogsLoadingService.stop()
-    };
-    this.dialog.open(DialogsPromptComponent, {
-      data: { changeType: 'delete', type: 'report', displayDates: report, okClick }
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'delete',
+        type: 'report',
+        displayDates: report,
+        okClick: {
+          request: this.updateReport(report),
+          onNext: () => {
+            deleteDialog.close();
+          }
+        }
+      }
     });
   }
 
@@ -103,11 +114,10 @@ export class TeamsReportsComponent implements OnChanges {
       {}
     );
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).subscribe(() => {
+    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(tap(() => {
       this.reportsChanged.emit();
-      this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
-    });
+    }));
   }
 
   openReportDialog(report) {
