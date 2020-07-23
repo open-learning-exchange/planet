@@ -173,7 +173,7 @@ export class TeamsService {
     );
   }
 
-  updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report') {
+  updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report', opts?: any) {
     const { _id: teamId, teamType, teamPlanetCode } = team;
     const datePlaceholder = this.couchService.datePlaceholder;
     const docs = newDocs.map(newDoc => ({
@@ -185,7 +185,7 @@ export class TeamsService {
       teamPlanetCode,
       docType
     }));
-    return this.couchService.bulkDocs(this.dbName, docs);
+    return this.couchService.bulkDocs(this.dbName, docs, opts);
   }
 
   changeTeamLeadership(oldLeader, newLeader) {
