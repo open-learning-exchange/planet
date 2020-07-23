@@ -35,7 +35,7 @@ export class UserProfileDialogComponent implements AfterViewInit {
   }
 
   closeDialog() {
-    if(this.dialogRef) {
+    if (this.dialogRef) {
       this.dialogRef.close();
     }
   }
