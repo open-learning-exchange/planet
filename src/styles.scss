@@ -424,7 +424,8 @@ body {
     }
   }
 
-  mat-dialog-actions {
+  mat-dialog-actions, mat-card-footer.action-buttons {
+    display: flex;
     justify-content: flex-end;
   }
 

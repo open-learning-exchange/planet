@@ -173,6 +173,21 @@ export class TeamsService {
     );
   }
 
+  updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report') {
+    const { _id: teamId, teamType, teamPlanetCode } = team;
+    const datePlaceholder = this.couchService.datePlaceholder;
+    const docs = newDocs.map(newDoc => ({
+      createdDate: datePlaceholder,
+      ...newDoc,
+      updatedDate: datePlaceholder,
+      teamId,
+      teamType,
+      teamPlanetCode,
+      docType
+    }));
+    return this.couchService.bulkDocs(this.dbName, docs);
+  }
+
   changeTeamLeadership(oldLeader, newLeader) {
     return this.couchService.bulkDocs(this.dbName, [ { ...newLeader, isLeader: true }, { ...oldLeader, isLeader: false } ]);
   }

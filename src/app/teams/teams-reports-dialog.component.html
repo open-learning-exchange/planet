@@ -1,0 +1,10 @@
+<div mat-dialog-header>
+  <h3>{{teamName}} <ng-container i18n>Financial Report</ng-container></h3>
+  <p class="mat-subheading-1">{{ report.startDate | date }} - {{ report.endDate | date }}</p>
+</div>
+<mat-dialog-content>
+  <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" mat-dialog-close i18n>Close</button>
+</mat-dialog-actions>
