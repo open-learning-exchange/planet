@@ -31,7 +31,7 @@
     </div>
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-        <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
+        <planet-courses-detail [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
