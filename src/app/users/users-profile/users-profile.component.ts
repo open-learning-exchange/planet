@@ -95,7 +95,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.userDetail = userDetail;
       this.editable = relationship === 'local' && (
         userDetail.name === this.userService.get().name ||
-        (this.userService.doesUserHaveRole([ '_admin' ]) && userId.indexOf('@') === -1)
+        (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)
       );
       if (response['_attachments']) {
         const filename = Object.keys(response._attachments)[0];
