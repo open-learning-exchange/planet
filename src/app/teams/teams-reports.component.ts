@@ -41,11 +41,11 @@ export class TeamsReportsComponent implements OnChanges {
         { name: 'startDate', placeholder: 'Start Date', type: 'date', required: true },
         { name: 'endDate', placeholder: 'End Date', type: 'date', required: true },
         { name: 'description', placeholder: 'Summary', type: 'markdown', required: true },
-        { name: 'beginningBalance', placeholder: 'Beginning Balance', type: 'textbox', inputType: 'number' },
-        { name: 'sales', placeholder: 'Sales', type: 'textbox', inputType: 'number' },
-        { name: 'otherIncome', placeholder: 'Other Income', type: 'textbox', inputType: 'number' },
-        { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number' },
-        { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number' }
+        { name: 'beginningBalance', placeholder: 'Beginning Balance', type: 'textbox', inputType: 'number', required: true },
+        { name: 'sales', placeholder: 'Sales', type: 'textbox', inputType: 'number', required: true },
+        { name: 'otherIncome', placeholder: 'Other Income', type: 'textbox', inputType: 'number', required: true },
+        { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number', required: true },
+        { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number', required: true }
       ],
       this.addFormInitialValues(oldReport),
       { onSubmit: (newReport) => this.updateReport(oldReport, newReport) }
