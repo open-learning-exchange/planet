@@ -96,7 +96,7 @@ export class TeamsReportsComponent implements OnChanges {
       {}
     );
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    this.teamsService.updateAdditionalDocs(docs, this.team, 'report').subscribe(() => {
+    this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).subscribe(() => {
       this.reportsChanged.emit();
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
