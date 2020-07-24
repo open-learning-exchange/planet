@@ -48,7 +48,10 @@ export class TeamsReportsComponent implements OnChanges {
         { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number' }
       ],
       this.addFormInitialValues(oldReport),
-      { onSubmit: (newReport) => this.updateReport(oldReport, newReport) }
+      {
+        disableIfInvalid: true,
+        onSubmit: (newReport) => this.updateReport(oldReport, newReport)
+      }
     );
   }
 
