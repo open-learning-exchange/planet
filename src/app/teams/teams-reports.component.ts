@@ -56,6 +56,7 @@ export class TeamsReportsComponent implements OnChanges {
         ],
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
+          disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
           })
