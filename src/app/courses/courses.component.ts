@@ -8,7 +8,7 @@ import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, takeUntil, map } from 'rxjs/operators';
+import { switchMap, takeUntil, map, take } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
   dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
@@ -27,6 +27,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
 import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
+import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 
 @Component({
   selector: 'planet-courses',
@@ -443,6 +444,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     ).subscribe(() => {
       this.getCourses();
       this.planetMessageService.showMessage('Collections updated');
+    });
+  }
+
+  openCourseViewDialog(courseId) {
+    this.dialog.open(CoursesViewDetailDialogComponent, {
+      data: { courseId: courseId },
+      minWidth: '600px',
+      maxWidth: '90vw',
+      autoFocus: false
     });
   }
 
