@@ -326,7 +326,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addTag(tag: string) {
-    this.tagInputComponent.addTag(tag);
+    if (tag.trim()) {
+      this.tagInputComponent.writeValue([ tag ]);
+    }
   }
 
   openSendResourceDialog() {
