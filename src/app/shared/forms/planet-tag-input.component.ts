@@ -188,7 +188,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       initTags: this.initTags.bind(this),
       reset: this.resetDialogData.bind(this),
       startingTags,
-      tags: this.addTagCount(this.tags.filter(this.tagsService.filterOutSubTags), this.selectMany),
+      tags: this.addTagCount(this.tags.filter(this.tagsService.filterOutSubTags)),
       mode: this.mode,
       selectMany: this.selectMany,
       db: this.db
@@ -215,14 +215,11 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     }
   }
 
-  addTagCount(tags, selectMany = false) {
+  addTagCount(tags) {
     return this.mode === 'add' ? tags : tags.map((tag) => {
-      return !selectMany ? tag : ({
+      return ({
         ...tag,
-        count: this.filteredData.reduce(
-          (count, item: any) => count + ((item.tags || []).findIndex((itemTag: any) => itemTag._id === tag._id) > -1 ? 1 : 0),
-          0
-        )
+        count: this.filteredData.length
       });
     });
   }
