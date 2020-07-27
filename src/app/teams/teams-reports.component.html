@@ -6,7 +6,7 @@
     <mat-card>
       <mat-card-header>
         <mat-card-title>Financial Report</mat-card-title>
-        <mat-card-subtitle>{{ report.startDate | date }} - {{ report.endDate | date }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
