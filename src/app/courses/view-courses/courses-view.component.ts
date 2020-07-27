@@ -158,6 +158,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
+    // note
   }
 
   toggleFullView() {
