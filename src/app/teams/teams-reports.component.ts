@@ -55,17 +55,7 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number', required: true },
           { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number', required: true }
         ],
-        {
-          description: '',
-          beginningBalance: 0,
-          sales: [ 0, Validators.min(0) ],
-          otherIncome: [ 0, Validators.min(0) ],
-          wages: [ 0, Validators.min(0) ],
-          otherExpenses: [ 0, Validators.min(0) ],
-          ...oldReport,
-          startDate: new Date(oldReport.startDate || lastMonthStart),
-          endDate: new Date(oldReport.endDate || lastMonthEnd)
-        },
+        this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
           disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
@@ -90,6 +80,20 @@ export class TeamsReportsComponent implements OnChanges {
         }
       }
     });
+  }
+
+  addFormInitialValues(oldReport, { startDate, endDate }) {
+    return {
+      description: '',
+      beginningBalance: 0,
+      sales: [ 0, Validators.min(0) ],
+      otherIncome: [ 0, Validators.min(0) ],
+      wages: [ 0, Validators.min(0) ],
+      otherExpenses: [ 0, Validators.min(0) ],
+      ...oldReport,
+      startDate: new Date(oldReport.startDate || startDate),
+      endDate: new Date(oldReport.endDate || endDate)
+    };
   }
 
   updateReport(oldReport, newReport: any = {}) {
