@@ -72,7 +72,7 @@ export class CouchService {
     let docWithDate: any;
     return this.currentTime().pipe(
       switchMap((date) => {
-        docWithDate = this.fillInDateFields(doc, date);
+        docWithDate = this.fillInDateFields(doc, date, opts && opts.utcKeys);
         return this.post(db, docWithDate, opts);
       }),
       map((res: any) => {
@@ -125,8 +125,8 @@ export class CouchService {
     );
   }
 
-  bulkDocs(db: string, docs: any[]) {
-    return this.updateDocument(db + '/_bulk_docs', { docs });
+  bulkDocs(db: string, docs: any[], opts?: any) {
+    return this.updateDocument(db + '/_bulk_docs', { docs }, opts);
   }
 
   stream(method: string, db: string) {
@@ -165,19 +165,19 @@ export class CouchService {
     }));
   }
 
-  fillInDateFields(data, date) {
+  fillInDateFields(data, date, utcKeys: string[] = [], propertyKey = '') {
     switch (data && data.constructor) {
       case DatePlaceholder:
         return date;
       case Array:
-        return data.map((item) => this.fillInDateFields(item, date));
+        return data.map((item) => this.fillInDateFields(item, date, utcKeys, propertyKey));
       case Object:
         return Object.entries(data).reduce((dataWithDate, [ key, value ]) => {
-          dataWithDate[key] = this.fillInDateFields(value, date);
+          dataWithDate[key] = this.fillInDateFields(value, date, utcKeys, key);
           return dataWithDate;
         }, {});
       default:
-        return data;
+        return utcKeys.indexOf(propertyKey) > -1 ? this.dateConversion(data) : data;
     }
   }
 
@@ -186,6 +186,10 @@ export class CouchService {
       catchError((err) => err.error === 'forbidden' ? of(false) : throwError(err)),
       map((res) => res !== false)
     );
+  }
+
+  dateConversion(date: number | Date) {
+    return new Date(date).setUTCHours(0, 0, 0, 0);
   }
 
 }
