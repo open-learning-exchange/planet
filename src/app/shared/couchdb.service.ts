@@ -189,7 +189,8 @@ export class CouchService {
   }
 
   dateConversion(date: number | Date) {
-    return new Date(date).setUTCHours(0, 0, 0, 0);
+    const oldDate = new Date(date);
+    return Date.UTC(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate());
   }
 
 }
