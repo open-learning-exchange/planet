@@ -82,6 +82,10 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   addFormInitialValues(oldReport, { startDate, endDate }) {
+    const convertUtcDate = (date) => {
+      const dateObj = new Date(date);
+      return date ? new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate()) : undefined;
+    };
     const initialValues = {
       description: '',
       beginningBalance: 0,
@@ -90,8 +94,8 @@ export class TeamsReportsComponent implements OnChanges {
       wages: 0,
       otherExpenses: 0,
       ...oldReport,
-      startDate: new Date(oldReport.startDate || startDate),
-      endDate: new Date(oldReport.endDate || endDate)
+      startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
+      endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
     const formControl = (initialValue, isEndDate = false) => [
       initialValue,
