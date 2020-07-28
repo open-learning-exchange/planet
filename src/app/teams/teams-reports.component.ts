@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -38,24 +39,6 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   openAddReportDialog(oldReport = {}) {
-<<<<<<< HEAD
-    this.dialogsFormService.openDialogsForm(
-      'Add Report',
-      [
-        // question
-        { name: 'startDate', placeholder: 'Start Date', type: 'date', required: true },
-        { name: 'endDate', placeholder: 'End Date', type: 'date', required: true },
-        { name: 'description', placeholder: 'Summary', type: 'markdown', required: true },
-        { name: 'beginningBalance', placeholder: 'Beginning Balance', type: 'textbox', inputType: 'number' },
-        { name: 'sales', placeholder: 'Sales', type: 'textbox', inputType: 'number' },
-        { name: 'otherIncome', placeholder: 'Other Income', type: 'textbox', inputType: 'number' },
-        { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number' },
-        { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number' }
-      ],
-      this.addFormInitialValues(oldReport),
-      { onSubmit: (newReport) => this.updateReport(oldReport, newReport) }
-    );
-=======
     this.couchService.currentTime().subscribe((time: number) => {
       const currentDate = new Date(time);
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
@@ -72,7 +55,17 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number', required: true },
           { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number', required: true }
         ],
-        this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
+        {
+          description: '',
+          beginningBalance: 0,
+          sales: [ 0, Validators.min(0) ],
+          otherIncome: [ 0, Validators.min(0) ],
+          wages: [ 0, Validators.min(0) ],
+          otherExpenses: [ 0, Validators.min(0) ],
+          ...oldReport,
+          startDate: new Date(oldReport.startDate || lastMonthStart),
+          endDate: new Date(oldReport.endDate || lastMonthEnd)
+        },
         {
           disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
@@ -81,7 +74,6 @@ export class TeamsReportsComponent implements OnChanges {
         }
       );
     });
->>>>>>> master
   }
 
   openDeleteReportDialog(report) {
@@ -98,27 +90,6 @@ export class TeamsReportsComponent implements OnChanges {
         }
       }
     });
-  }
-
-  addFormInitialValues(oldReport, { startDate, endDate }) {
-    const initialValues = {
-      description: '',
-      beginningBalance: 0,
-      sales: 0,
-      otherIncome: 0,
-      wages: 0,
-      otherExpenses: 0,
-      ...oldReport,
-      startDate: new Date(oldReport.startDate || startDate),
-      endDate: new Date(oldReport.endDate || endDate)
-    };
-    const formControl = (initialValue, isEndDate = false) => [
-      initialValue,
-      [ CustomValidators.required, isEndDate ? CustomValidators.endDateValidator : () => {} ]
-    ];
-    return Object.entries(initialValues).reduce(
-      (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key === 'endDate') }), {}
-    );
   }
 
   updateReport(oldReport, newReport: any = {}) {
