@@ -9,6 +9,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { Exam, ExamQuestion } from './exams.model';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-exams-view',
@@ -51,7 +52,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private planetMessageService: PlanetMessageService
   ) { }
 
   ngOnInit() {
@@ -61,11 +63,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.previewMode = params.get('preview') === 'true' || this.isDialog;
       this.questionNum = +params.get('questionNum') || this.questionNum;
       if (this.previewMode) {
-        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe((res) => {
-          this.exam = this.exam || res;
-          this.examType = params.get('type') || this.previewExamType;
-          this.setExamPreview();
-        });
+        ((this.exam || this.submission) ? of({}) : this.couchService.get(`exams/${params.get('examId')}`)).subscribe(
+          (res) => {
+            this.exam = this.exam || res;
+            this.examType = params.get('type') || this.previewExamType;
+            this.setExamPreview();
+          },
+          (err) => {
+            this.planetMessageService.showAlert('Preview is not available for this test');
+            this.goBack();
+          }
+        );
         return;
       }
       this.setExam(params);
@@ -115,6 +123,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
+    const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
     // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
@@ -123,12 +132,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
-        this.routeToNext(nextClicked ? this.questionNum : nextQuestion);
+        this.routeToNext(nextClicked ? this.questionNum : nextQuestion, previousStatus);
       }
     });
   }
 
-  routeToNext(nextQuestion) {
+  routeToNext(nextQuestion, previousStatus) {
     this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
       this.moveQuestion(nextQuestion - this.questionNum + 1);
@@ -140,7 +149,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
     this.examComplete();
     if (this.examType === 'survey' && !this.previewMode) {
-      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser);
+      this.submissionsService.sendSubmissionNotification(this.route.snapshot.data.newUser, previousStatus === 'complete');
     }
   }
 

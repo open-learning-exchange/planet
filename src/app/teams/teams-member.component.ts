@@ -2,6 +2,8 @@ import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angu
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
+import { MatDialog } from '@angular/material';
+import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
   selector: 'planet-teams-member',
@@ -31,7 +33,8 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   constructor(
     private userService: UserService,
     private stateService: StateService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -45,6 +48,14 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
     this.actionClick.emit(actionParams);
+  }
+
+  openMemberDialog(member) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member },
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
   }
 
   toggleTask({ option }) {

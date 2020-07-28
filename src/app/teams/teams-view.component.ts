@@ -25,6 +25,8 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
+import { memberCompare, memberSort } from './teams.utils';
+import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -42,6 +44,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   disableAddingMembers = false;
   displayedColumns = [ 'name' ];
   userStatus = 'unrelated';
+  isUserLeader = false;
   onDestroy$ = new Subject<void>();
   currentUserId = this.userService.get()._id;
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
@@ -50,13 +53,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   resources: any[] = [];
   isRoot = true;
   visits: any = {};
-  leader: string;
+  leader: any = {};
   planetCode: string;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
-  finances: any[];
+  finances: any[] = [];
+  reports: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
   initTab;
@@ -148,7 +152,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
-      this.setStatus(teamId, this.userService.get());
+      this.setStatus(teamId, this.leader, this.userService.get());
       this.requestTeamNews(teamId);
     });
   }
@@ -161,7 +165,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         return this.getMembers();
       })
     ).subscribe(() => {
-      this.leader = '';
+      this.leader = {};
       this.userStatus = 'member';
     });
   }
@@ -199,13 +203,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         return 'assets/image.png';
       };
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
-      this.leader = (docsWithName.find(mem => mem.isLeader) || {}).userId || this.team.createdBy;
-      this.members = docsWithName.filter(mem => mem.docType === 'membership')
-        .sort((a, b) => a.userId === this.leader ? -1 : 0);
+      this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
+      this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
-      this.setStatus(this.team, this.userService.get());
+      this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (a.startDate - b.startDate) || (a.endDate - b.endDate));
+      this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
@@ -217,7 +221,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
     }));
     if (this.userStatus === 'member') {
-      const tasksForCount = this.leader === this.user._id ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      const tasksForCount = this.isUserLeader ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
@@ -230,13 +234,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isRoot = data._id === 'root';
   }
 
-  setStatus(team, user) {
+  setStatus(team, leader, user) {
     this.userStatus = 'unrelated';
     if (team === undefined) {
       return;
     }
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
+    this.isUserLeader = user._id === leader.userId && user.planetCode === leader.userPlanetCode;
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
@@ -344,7 +349,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   changeMembership(type, memberDoc?) {
     this.dialogsLoadingService.start();
     this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
-      this.setStatus(this.team, this.userService.get());
+      this.setStatus(this.team, this.leader, this.userService.get());
       this.planetMessageService.showMessage(message);
     });
   }
@@ -386,7 +391,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
       data: {
-        okClick: (selected: any[]) => this.addMembers(selected.map(item => item.doc)),
+        okClick: (selected: any[]) => this.addMembers(selected),
         excludeIds: this.members.map(user => user.userId),
         hideChildren: true,
         mode: 'users'
@@ -494,7 +499,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const { tasks, ...currentLeader } = this.members.find(mem => mem.userId === this.leader);
+    const { tasks, ...currentLeader } = this.members.find(mem => memberCompare(mem, this.leader));
     return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 
@@ -529,4 +534,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
+  openMemberDialog(member) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member },
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
+  }
 }

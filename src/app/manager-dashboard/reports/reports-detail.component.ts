@@ -22,6 +22,8 @@ import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
+import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -39,16 +41,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   charts: Chart[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
-  filter: ReportDetailFilter = { app: '', startDate: new Date(0), endDate: new Date() };
+  filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
+  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
   disableShowAllTime = true;
+  teams: any;
 
   constructor(
     private activityService: ReportsService,
@@ -104,17 +108,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
-    this.activityService.getTotalUsers(this.planetCode, local).pipe(map(({ count, byGender, byMonth }) => {
-      this.reports.totalUsers = count;
-      this.reports.usersByGender = byGender;
-    })).subscribe(() => {
+    this.activityService.getTotalUsers(this.planetCode, local).subscribe((userData: { count, byGender, byMonth }) => {
+      this.setUserCounts(userData);
       this.getLoginActivities();
       this.getRatingInfo();
       this.getDocVisits('resourceActivities');
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
+      this.getTeams();
       this.dialogsLoadingService.stop();
     });
+  }
+
+  setUserCounts({ count, byGender }) {
+    this.reports.totalUsers = count;
+    this.reports.usersByGender = byGender;
   }
 
   initDateFilterForm() {
@@ -141,6 +149,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('resourceActivities');
     this.courseActivities.total.filter(this.filter);
     this.setDocVisits('courseActivities');
+    this.progress.enrollments.filter(this.filter);
+    this.progress.completions.filter(this.filter);
+    this.setUserCounts(this.activityService.groupUsers(
+      this.users.filter(
+        user => this.filter.members.length === 0 || this.filter.members.some(
+          member => member.userId === user._id && member.userPlanetCode === user.doc.planetCode
+        )
+      )
+    ));
   }
 
   getLoginActivities() {
@@ -149,7 +166,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.activityService.getAllActivities('login_activities', activityParams(this.planetCode))
     ]).pipe(take(1)).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
       this.loginActivities.data = loginActivities;
-      this.users = users;
+      const adminName = this.stateService.configuration.adminName.split('@')[0];
+      this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(this.minDate);
       this.setLoginActivities();
@@ -184,6 +202,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.reports.courseRatings = this.ratings.courses.slice(0, 5);
   }
 
+  getCourseProgress() {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, courses }) => {
+      this.progress.enrollments.data = enrollments;
+      this.progress.completions.data = completions;
+      this.courseActivities.byDoc = this.courseActivities.byDoc.map(courseActivity => {
+        const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
+        return { ...course, ...courseActivity };
+      });
+    });
+  }
+
   getDocVisits(type) {
     const params = reportsDetailParams(type);
     this.activityService.getAllActivities(params.db, activityParams(this.planetCode))
@@ -194,17 +223,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
           && !activity.private
       );
-      this.setDocVisits(type);
+      this.setDocVisits(type, true);
     });
   }
 
-  setDocVisits(type) {
+  setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
     const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total.filteredData, type.replace('Activities', 'Id'));
     this[type].byDoc = byDoc;
     this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
     this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
+    if (isInit && type === 'courseActivities') {
+      this.getCourseProgress();
+    }
   }
 
   getPlanetCounts(local: boolean) {
@@ -217,6 +249,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.reports.totalCourses = response.totalCourses;
       });
     }
+  }
+
+  getTeams() {
+    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+      this.teams = teams
+        .filter(team => team.teamPlanetCode === this.planetCode && team.name)
+        .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
+        .reduce((teamObj: any, team) => ({
+          ...teamObj,
+          [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
+        }), { enterprise: [], team: [] });
+    });
+  }
+
+  onTeamsFilterChange(filterValue) {
+    const filterMembers = (members: any[]) => {
+      this.filter.members = members;
+      this.filterData();
+    };
+    if (filterValue === 'All') {
+      filterMembers([]);
+      return;
+    }
+    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
+      filterMembers(members);
+    });
   }
 
   setGenderDatasets(data, unique = false) {
@@ -350,6 +408,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   openResourceView(resourceId) {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
+  }
+
+  openMemberView(user) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member: { name: user.name, userPlanetCode: user.planetCode } },
+      autoFocus: false
+    });
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {

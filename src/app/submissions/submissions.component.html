@@ -50,9 +50,15 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
-          <mat-chip-list *ngSwitchCase="'pending'"><mat-chip i18n>pending</mat-chip></mat-chip-list>
-          <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
-          <mat-chip-list *ngSwitchDefault><mat-chip selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="'pending'"><mat-chip  class="chip-no-style" i18n>pending</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip class="chip-no-style" selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchDefault><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="grade">
+        <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.status === 'complete'">{{element?.grade}}/{{element.answers.length}}</ng-container>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
@@ -66,6 +72,12 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Updated On</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <span>{{((isNumber(element.lastUpdateTime) ? element.lastUpdateTime : null) | date: 'medium') || '--'}}</span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="gradeTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Graded On</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{((isNumber(element.gradeTime) ? element.gradeTime : null) | date: 'medium') || '--'}}</span>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>

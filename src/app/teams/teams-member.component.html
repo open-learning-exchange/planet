@@ -1,12 +1,10 @@
 <mat-card-header>
-  <img mat-card-avatar [src]="member?.avatar">
-  <a mat-card-title [routerLink]="['/users/profile', member?.name, planetCode === member?.userPlanetCode ? {} : { planet: member?.userPlanetCode }]">
-    {{ member?.userDoc?.fullName || member?.userDoc?.firstName  || member?.name }}
-  </a>
+  <img mat-card-avatar [src]="member?.avatar" class="cursor-pointer" (click)="openMemberDialog(member)">
+  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(member)">{{ member?.userDoc?.fullName || member?.userDoc?.firstName || member?.name }}</a>
   <mat-card-subtitle>
     <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
     <span i18n *ngIf="member?.userId === user._id && member?.userPlanetCode === planetCode">(You)</span>{{' '}}
-    <span i18n *ngIf="member?.userId === teamLeader">(Team Leader)</span>{{' '}}<span *ngIf="visits">({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+    <span i18n *ngIf="member?.userId === teamLeader?.userId && member?.userPlanetCode === teamLeader?.userPlanetCode">(Team Leader)</span>{{' '}}<span *ngIf="visits">({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
     <p *ngIf="visits && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits?.recentTime | date }}</p>
     <p class="primary-text-color" *ngIf="member?.doc?.leadershipTitle">{{member?.doc?.leadershipTitle}}</p>
     <p class="primary-text-color" *ngIf="member?.role">{{member?.role}}</p>

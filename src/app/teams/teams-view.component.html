@@ -8,7 +8,7 @@
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
     </h3>
     <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
-    <button mat-stroked-button *ngIf="currentUserId === leader" (click)="updateTeam()">
+    <button mat-stroked-button *ngIf="isUserLeader" (click)="updateTeam()">
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
@@ -23,21 +23,21 @@
         <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
           Add Courses
         </button>
-        <ng-container *ngIf="currentUserId !== leader && mode !== 'services'">
+        <ng-container *ngIf="!isUserLeader && mode !== 'services'">
           <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
         </ng-container>
       </ng-container>
       <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
-      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" [disableRipple]="true" selected>Request pending</mat-chip></mat-chip-list>
+      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected>Request pending</mat-chip></mat-chip-list>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
       <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
   </mat-toolbar>
-  <div class="view-container view-full-height">
-    <mat-tab-group [(selectedIndex)]="tabSelectedIndex">
+  <div class="view-container view-full-height" #viewContainer>
+    <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
@@ -56,7 +56,7 @@
         </ng-container>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
-          <button mat-raised-button color="accent" *ngIf="currentUserId === leader || mode === 'services'" (click)="updateTeam()" i18n>
+          <button mat-raised-button color="accent" *ngIf="isUserLeader || mode === 'services'" (click)="updateTeam()" i18n>
             { mode, select, team {Add Plan} enterprise {Add Mission & Services} services {Add Services} }
           </button>
         </ng-template>
@@ -75,9 +75,9 @@
                 [member]="member"
                 [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
                 [actionMenu]="[]
-                  .concat(member.userId !== currentUserId && currentUserId === leader ? [ 'remove' ] : [])
-                  .concat(member.userId !== leader && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || currentUserId === leader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || currentUserId === leader ? [ 'title' ] : [])"
+                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
+                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
                 [visits]="visits[member?.name]"
                 [userStatus]="userStatus"
                 [teamLeader]="leader"
@@ -106,6 +106,11 @@
           </ng-template>
           <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
         </mat-tab>
+      </ng-container>
+      <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
+        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" [containerElement]="viewContainer" (reportsChanged)="resetData()"></planet-teams-reports>
+      </mat-tab>
+      <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab label="Resources">
           <ng-template mat-tab-label>
             <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} services {Documents} }</ng-container> ({{resources?.length || 0}})
@@ -177,15 +182,15 @@
             <div class="card-grid">
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar">
-                  <a mat-card-title [routerLink]="['/users/profile', request.name, planetCode === request.userPlanetCode ? {} : { planet: request.userPlanetCode }]">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name}}</a>
+                  <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
+                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name}}</a>
                   <mat-card-subtitle>
                     <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
                   </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-actions *ngIf="userStatus === 'member'">
                   <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)" [disabled]="disableAddingMembers">Reject</button>
+                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
                 </mat-card-actions>
               </mat-card>
             </div>

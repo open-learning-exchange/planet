@@ -40,6 +40,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   get references(): FormArray {
     return <FormArray>this.editForm.controls.references;
   }
+  minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
     private fb: FormBuilder,

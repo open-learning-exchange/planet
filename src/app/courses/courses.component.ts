@@ -26,6 +26,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
+import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
 
 @Component({
   selector: 'planet-courses',
@@ -50,9 +51,6 @@ import { SearchService } from '../shared/forms/search.service';
     }
     .column > * {
       line-height: normal;
-    }
-    .content {
-      margin-top: 0.5rem;
     }
     .course-progress {
       margin-top: 0.5rem;
@@ -386,6 +384,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
+    if (this.isForm) {
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);

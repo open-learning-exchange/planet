@@ -1,0 +1,12 @@
+.narrow-column {
+  max-width: 100px;
+}
+
+.mat-card {
+  display: flex;
+  align-items: center;
+}
+
+mat-row:first-of-type {
+  font-weight: bold;
+}

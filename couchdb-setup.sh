@@ -38,13 +38,9 @@ set_couch_per_user() {
   CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
   CODE=$(echo $CONFIGURATION | jq -rj '.["rows"][0]["doc"]["code"] // empty')
   HEXCODE=$(echo $CODE | tr -d \\n | hexdump -v -e '/1 "%02x"')
-  BETAMODE=$(echo $CONFIGURATION | jq -r '.["rows"][0]["doc"]["betaEnabled"] // empty')
-  if [ ! -z "$CODE" ] && [ "$BETAMODE" != "off" ];
-  then
-    upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$HEXCODE'-"'
-    upsert_doc _node/nonode@nohost/_config couch_peruser/delete_dbs '"true"'
-    upsert_doc _node/nonode@nohost/_config couch_peruser/enable '"true"'
-  fi
+  upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$HEXCODE'-"'
+  upsert_doc _node/nonode@nohost/_config couch_peruser/delete_dbs '"true"'
+  upsert_doc _node/nonode@nohost/_config couch_peruser/enable '"true"'
 }
 
 # Options are -u for username -w for passWord and -p for port number
@@ -172,6 +168,7 @@ upsert_doc health _design/health @./design/health/health-design.json
 upsert_doc _users _design/_auth @./design/users/_auth.json
 upsert_doc resource_activities _design/resource_activities @./design/activities/activities-design.json
 upsert_doc login_activities _design/login_activities @./design/activities/activities-design.json
+upsert_doc courses_progress _design/courses_progress @./design/courses_progress/courses_progress-design.json
 
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing

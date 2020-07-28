@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce } from '../../shared/utils';
@@ -8,6 +8,7 @@ import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
+import { CoursesService } from '../../courses/courses.service';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -27,7 +28,8 @@ export class ReportsService {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private stateService: StateService
+    private stateService: StateService,
+    private coursesService: CoursesService
   ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
@@ -96,15 +98,19 @@ export class ReportsService {
     return obs.pipe(map((users: any) => {
       users = users.filter(user => user.name !== 'satellite' && user.name !== adminName);
       this.users = users;
-      return ({
-        count: users.length,
-        byGender: users.reduce((usersByGender: any, user: any) => {
-          usersByGender[user.gender || 'didNotSpecify'] += 1;
-          return usersByGender;
-        }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
-        byMonth: this.groupByMonth(users, 'joinDate')
-      });
+      return this.groupUsers(users);
     }));
+  }
+
+  groupUsers(users: any[]) {
+    return ({
+      count: users.length,
+      byGender: users.reduce((usersByGender: any, user: any) => {
+        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+        return usersByGender;
+      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+      byMonth: this.groupByMonth(users, 'joinDate')
+    });
   }
 
   getActivities(db: 'login_activities' | 'resource_activities', view: 'byPlanet' | 'byPlanetRecent' | 'grouped' = 'byPlanet', domain?) {
@@ -216,6 +222,30 @@ export class ReportsService {
         title: `${this.planetTypeText(planet.planetType)} Details`
       }
     });
+  }
+
+  courseProgressReport(parent = false) {
+    this.coursesService.requestCourses(parent);
+    return forkJoin([
+      this.couchService.get('courses_progress/_design/courses_progress/_view/enrollment?group=true'),
+      this.couchService.get('courses_progress/_design/courses_progress/_view/completion?group=true'),
+      this.coursesService.coursesListener$().pipe(take(1))
+    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, courses ]) => {
+      return {
+        courses: courses.map(course => ({
+          steps: course.doc.steps.length,
+          exams: course.doc.steps.filter(step => step.exam).length,
+          _id: course._id
+        })),
+        enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
+        completions: completions
+          .filter(({ key, value }) => {
+            const course = courses.find(c => c._id === key.courseId);
+            return course && value.count === course.doc.steps.length;
+          })
+          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count }))
+      };
+    }));
   }
 
 }

@@ -31,11 +31,11 @@
     </div>
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-        <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
+        <planet-courses-detail [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
       </div>
       <div class="course-view">
-        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index;">
-          <mat-expansion-panel hideToggle="true" (opened)="getStepSubmission(step)">
+        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
+          <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
@@ -48,7 +48,7 @@
               <planet-course-icon *ngIf="step.progress && step.progress.passed" [icon]="'done'"></planet-course-icon>
               <planet-course-icon *ngIf="step.progress && !step.progress.passed" [icon]="'rotate_right'"></planet-course-icon>
             </mat-expansion-panel-header>
-            <td-markdown [content]="step.description"></td-markdown>
+            <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-wrap"></planet-markdown>
             <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0; else contentMessage" i18n>
               There is no content for this step.
             </div>
@@ -75,7 +75,7 @@
             </ng-template>
             <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
               <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</a>
+              <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
               <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button
                 [matMenuTriggerFor]="previewMenu"

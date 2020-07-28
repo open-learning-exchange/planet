@@ -1,23 +1,28 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { switchMap } from 'rxjs/operators';
+import { of, forkJoin } from 'rxjs';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './health-event.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthEventComponent {
+export class HealthEventComponent implements OnInit {
 
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  event: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -26,7 +31,9 @@ export class HealthEventComponent {
     private route: ActivatedRoute,
     private userService: UserService,
     private stateService: StateService,
-    private dialog: MatDialog
+    private couchService: CouchService,
+    private dialog: MatDialog,
+    private planetMessageService: PlanetMessageService
   ) {
     this.healthForm = this.fb.group({
       temperature: [ '', Validators.min(1) ],
@@ -49,6 +56,27 @@ export class HealthEventComponent {
     });
   }
 
+  ngOnInit() {
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => {
+      const eventId = params.get('eventId');
+      if (!eventId) {
+        return of([ [ 'new' ], 0 ]);
+      }
+      return forkJoin([
+        this.healthService.getHealthData(params.get('id'), { docId: eventId }),
+        this.couchService.currentTime()
+      ]);
+    })).subscribe(([ [ event ], time ]: [ any[], number ]) => {
+      if (event !== 'new' && (time - event.updatedDate) > 300000) {
+        this.planetMessageService.showAlert('This examination can no longer be changed.');
+        this.goBack();
+        return;
+      }
+      this.event = event === 'new' ? {} : event;
+      this.healthForm.patchValue(this.event);
+    });
+  }
+
   onSubmit() {
     if (!this.healthForm.valid) {
       return;
@@ -65,7 +93,8 @@ export class HealthEventComponent {
 
   isEmptyForm() {
     const isConditionsEmpty = (values) => typeof values === 'object' && Object.values(values).every(value => !value);
-    return Object.values(this.healthForm.controls).every(({ value }) => value === '' || value === null || isConditionsEmpty(value));
+    return Object.values(this.healthForm.controls)
+      .every(({ value }) => value === null || /^\s*$/.test(value) || isConditionsEmpty(value));
   }
 
   goBack() {
@@ -116,9 +145,9 @@ export class HealthEventComponent {
     return this.healthService.addEvent(
       this.route.snapshot.params.id,
       this.userService.get()._id,
+      this.event,
       {
         ...this.healthForm.value,
-        date: Date.now(),
         selfExamination: this.route.snapshot.params.id === this.userService.get()._id,
         createdBy: this.userService.get()._id,
         planetCode: this.stateService.configuration.code,

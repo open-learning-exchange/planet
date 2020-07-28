@@ -8,6 +8,8 @@ import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
+import { dedupeObjectArray } from '../shared/utils';
+import { MarkdownService } from '../shared/markdown.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
@@ -43,7 +45,8 @@ export class CoursesService {
     private ratingService: RatingService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private markdownService: MarkdownService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
       if (res !== undefined) {
@@ -248,6 +251,21 @@ export class CoursesService {
     const types: ('exam' | 'survey')[] = possibleTypes
       .filter((type: 'exam' | 'survey') => step[type] && step[type].questions && step[type].questions.length > 0);
     return types.length > 1 ? 'both' : types[0];
+  }
+
+  storeMarkdownImages(course) {
+    const markdownText = (item: { description: any }) => item.description.text === undefined ? item.description : item.description.text;
+    const imagesArray = (item: { description: any }) => this.markdownService.createImagesArray(item, markdownText(item), 'description');
+    const images = dedupeObjectArray(
+      [ course.images || [], imagesArray(course), course.steps.map(step => imagesArray(step)) ].flat(2),
+      [ 'resourceId' ]
+    );
+    return {
+      ...course,
+      description: markdownText(course),
+      steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
+      images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
+    };
   }
 
 }

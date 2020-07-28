@@ -46,6 +46,7 @@ export class UsersUpdateComponent implements OnInit {
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
+  minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
     private fb: FormBuilder,
@@ -62,7 +63,7 @@ export class UsersUpdateComponent implements OnInit {
   ngOnInit() {
     if (this.route.snapshot.data.submission === true) {
       this.submissionMode = true;
-      this.redirectUrl = '/surveys';
+      this.redirectUrl = '/manager/surveys';
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name');

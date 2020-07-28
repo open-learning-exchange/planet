@@ -14,11 +14,16 @@
           <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" required="true" placeholder="Description" [formControl]="courseForm.controls.description"></planet-markdown-textbox>
+          <planet-markdown-textbox class="full-width" required="true" placeholder="Description" [formControl]="courseForm.controls.description" imageGroup="community"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction">
+          <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let language of languageNames" [value]="language">
+              {{ language }}
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel">

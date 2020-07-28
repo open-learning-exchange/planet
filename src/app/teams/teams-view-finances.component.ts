@@ -13,12 +13,8 @@ import { millisecondsToDay } from '../meetups/constants';
 
 @Component({
   selector: 'planet-teams-view-finances',
+  styleUrls: [ './teams-view-finances.scss' ],
   templateUrl: './teams-view-finances.component.html',
-  styles: [ `
-    .narrow-column {
-      max-width: 100px;
-    }
-  ` ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 
@@ -34,6 +30,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   startDate: Date;
   endDate: Date;
   emptyTable = true;
+  showBalanceWarning = false;
 
   constructor(
     private teamsService: TeamsService,
@@ -56,6 +53,8 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
         transactions[0] = this.setTransactionsTable(transactions)[0];
       }
+      this.showBalanceWarning = (this.finances && this.finances.length) === (this.table.filteredData.length - 1) &&
+        transactions[0].balance < 0;
     });
   }
 
@@ -121,7 +120,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
           description: [ transaction.description || '', CustomValidators.required ],
-          amount: [ transaction.amount || '', [ CustomValidators.integerValidator, Validators.min(0) ] ],
+          amount: [ transaction.amount || '', [ CustomValidators.integerValidator, CustomValidators.positiveNumberValidator ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {

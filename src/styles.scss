@@ -173,6 +173,7 @@ body {
       text-justify: inter-word;
       max-height: 6rem;
       overflow-y: auto;
+      margin: 0.5rem 0;
     }
 
     .menu {
@@ -423,7 +424,8 @@ body {
     }
   }
 
-  mat-dialog-actions {
+  mat-dialog-actions, mat-card-footer.action-buttons {
+    display: flex;
     justify-content: flex-end;
   }
 
@@ -579,6 +581,20 @@ body {
     grid-column-gap: 0.5rem;
     grid-row-gap: 0.5rem;
     margin: 0.25rem;
+  }
+
+  mat-tab-group.tabs-padding .mat-tab-body {
+    padding-top: 0.5rem;
+  }
+
+  .chip-no-style {
+      pointer-events: none;
+      &:focus::after {
+        opacity: 0;
+      }
+      &> mat-icon {
+        pointer-events: auto;
+      }
   }
 
 }

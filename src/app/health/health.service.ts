@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, BehaviorSubject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -17,6 +17,8 @@ export class HealthService {
     'events', 'profile', 'lastExamination', 'userKey',
     'allergies', 'createdBy', 'diagnosis', 'immunizations', 'medications', 'notes', 'referrals', 'tests', 'treatments', 'xrays'
    ];
+   private eventDetail = new BehaviorSubject({});
+   shareEventDetail = this.eventDetail.asObservable();
 
   constructor(
     private couchService: CouchService,
@@ -39,6 +41,10 @@ export class HealthService {
           of({ doc: {} });
       })
     );
+  }
+
+  nextEvent(events) {
+    this.eventDetail.next(events);
   }
 
   createUserKey(userDb) {
@@ -88,27 +94,37 @@ export class HealthService {
     );
   }
 
-  addEvent(userId: string, creatorId: string, event: any) {
+  addEvent(userId: string, creatorId: string, oldEvent: any, newEvent: any) {
     this.usersService.requestUsers();
     return forkJoin([
       this.getHealthData(userId, { createKeyIfNone: true }),
-      this.getHealthData(creatorId, { createKeyIfNone: true }),
+      this.getHealthData(creatorId, { createKeyIfNone: userId !== creatorId }),
       this.couchService.get(`_users/${userId}`),
       this.couchService.currentTime()
     ]).pipe(
       switchMap(([ [ healthDoc, keyDoc ], [ creatorHealthDoc, creatorKeyDoc ], user, time ]: [ any, any, any, number ]) => {
         const userKey = healthDoc.userKey || this.generateKey(32);
-        const creatorKey = event.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
+        const creatorKey = newEvent.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
         const age = ageFromBirthDate(time, user.birthDate);
+        const eventData = this.newEventDoc(oldEvent, newEvent, time);
         return forkJoin([
           this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
-          this.postHealthDoc({}, { ...event, profileId: userKey, creatorId: creatorKey, gender: user.gender, age }, keyDoc),
-          creatorHealthDoc.userKey || event.selfExamination ?
+          this.postHealthDoc({}, { ...eventData, profileId: userKey, creatorId: creatorKey, gender: user.gender, age }, keyDoc),
+          creatorHealthDoc.userKey || newEvent.selfExamination ?
             of({}) :
             this.postHealthDoc(creatorHealthDoc, { userKey: creatorKey }, creatorKeyDoc)
         ]);
       })
     );
+  }
+
+  newEventDoc(oldEvent: any, newEvent: any, time: number) {
+    return {
+      ...oldEvent,
+      ...newEvent,
+      date: oldEvent.date || time,
+      updatedDate: time
+    };
   }
 
   postHealthProfileData(data) {

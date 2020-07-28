@@ -8,6 +8,7 @@ export const conditions = [
   'Ebola',
   'Epilepsy',
   'FGM',
+  'HIV/AIDS',
   'Influenza',
   'Ischaemic heat disease',
   'Malaria',
@@ -15,10 +16,10 @@ export const conditions = [
   'Measles',
   'Meningitis',
   'Neonatal sepsis and infections',
-  'HIV/AIDS',
   'Pneumonia',
   'Stroke',
-  'Tuberculosis',
+  'Trauma',
+  'Tuberculosis'
 ];
 
 export const conditionAndTreatmentFields = [

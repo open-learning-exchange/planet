@@ -1,5 +1,6 @@
 <h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
 <mat-dialog-content>
+  <p *ngIf="!event.selfExamination"><strong class="mat-body-strong" i18n>Performed by: </strong>{{performedBy}}</p>
   <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
   <p *ngIf="event.temperature"><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}} °C</p>
   <p *ngIf="event.pulse"><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}} bpm</p>
@@ -24,5 +25,8 @@
   <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" color="primary" mat-raised-button mat-dialog-close i18n>OK</button>
+  <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
+  <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button i18n>
+    Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container>
+  </button>
 </mat-dialog-actions>

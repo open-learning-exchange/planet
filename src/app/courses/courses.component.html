@@ -95,10 +95,10 @@
           <h3 class="header">
             <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
             <ng-template #newTabLink><a [routerLink]="['/courses/view', element._id]" target="_blank">{{element.doc.courseTitle}}</a></ng-template>
-            <ng-container *ngIf="!parent && !isDialog">
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
-            </ng-container>
+            <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
+              <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
+              <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
+            </span>
           </h3>
           <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog && !isForm">
             <span i18n>Your progress:</span>
@@ -115,11 +115,13 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <td-markdown
+            <planet-markdown
+              class="img-wrap"
+              [imageSource]="parent ? 'parent' : 'local'"
               [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
               '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
               element.doc.description">
-            </td-markdown>
+            </planet-markdown>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent && !isDialog && !isForm" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
@@ -157,6 +159,10 @@
             <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element.doc)">
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
+            </button>
+            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
+              <mat-icon>star</mat-icon>
+              <span i18n>View Ratings</span>
             </button>
           </mat-menu>
         </mat-cell>

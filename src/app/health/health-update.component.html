@@ -5,7 +5,6 @@
 
 <div class="space-container">
   <div class="view-container view-full-height">
-    <h2 i18n>NOTE: This feature is a work in progress.</h2>
     <div class="form-container">
       <form class="form-spacing" [formGroup]="profileForm">
         <mat-form-field>
@@ -36,7 +35,7 @@
           <mat-error><planet-form-error-messages [control]="profileForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [matDatepicker]="dp" required i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
+          <input matInput [min]="minBirthDate" [matDatepicker]="dp" required i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.birthDate"></planet-form-error-messages></mat-error>

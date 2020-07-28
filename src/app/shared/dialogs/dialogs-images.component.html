@@ -1,3 +1,5 @@
+<h3 *ngIf="images.length !== 0" mat-dialog-title i18n>Select an Image</h3>
+<h3 *ngIf="images.length === 0" mat-dialog-title i18n>No Images to Select</h3>
 <mat-dialog-content>
   <mat-grid-list cols="3" rowHeight="1:1">
     <mat-grid-tile *ngFor="let image of images" (click)="selectImage(image)">

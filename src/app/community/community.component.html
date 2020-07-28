@@ -4,7 +4,7 @@
       <span>{{configuration?.name}}</span>
     </mat-toolbar>
     <div class="community-news">
-      <mat-tab-group>
+      <mat-tab-group class="tabs-padding">
         <mat-tab i18n-label label="News">
           <h3>
             <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
@@ -55,8 +55,11 @@
         <mat-tab i18n-label label="Finances">
           <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="financesChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
+        <mat-tab i18n-label label="Calendar" *ngIf="isCalendarInTabs">
+          <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+        </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    <planet-calendar *ngIf="!isCalendarInTabs" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>

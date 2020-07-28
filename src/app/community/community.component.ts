@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -43,6 +43,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
+  isCalendarInTabs = window.innerWidth < 800;
 
   constructor(
     private dialog: MatDialog,
@@ -75,6 +76,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.isCalendarInTabs = window.innerWidth < 800;
   }
 
   ngOnDestroy() {
@@ -199,16 +204,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setCouncillors(users) {
+    const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
     this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
-      this.councillors = users.filter(user => user.doc.isUserAdmin || user.doc.roles.indexOf('leader') !== -1).map(user => {
-        const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
-        const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
-        const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
-        const avatar = attachmentDoc ?
-          `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
-          (user.imageSrc || 'assets/image.png');
-        return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
-      });
+      this.councillors = users
+        .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1)
+        .map(user => {
+          const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
+          const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
+          const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
+          const avatar = attachmentDoc ?
+            `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
+            (user.imageSrc || 'assets/image.png');
+          return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
+        });
     });
   }
 
@@ -261,11 +269,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   updateTitle(councillor) {
     return ({ leadershipTitle }) => {
+      if (leadershipTitle === councillor.doc.leadershipTitle) {
+        this.dialogsFormService.closeDialogsForm();
+        this.dialogsLoadingService.stop();
+        return;
+      }
       this.userService.updateUser({ ...councillor.userDoc.doc, leadershipTitle }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
+        const msg = !leadershipTitle ?
+          'Title deleted' :
+          !councillor.doc.leadershipTitle ?
+          'Title added' :
+          'Title updated';
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage('Title updated');
+        this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
       });
     };

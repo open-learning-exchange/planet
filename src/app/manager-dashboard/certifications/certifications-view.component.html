@@ -7,7 +7,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 action-buttons">
-    <span>{{certification.name}}</span>
+    <span class="margin-lr-3 ellipsis-title">{{certification.name}}</span>
     <button mat-stroked-button (click)="routeToEdit(certification?._id)">
       <mat-icon>edit</mat-icon>Edit
     </button>
@@ -19,7 +19,7 @@
         <span *ngIf="certification.courseIds.length === 0" i18n>No courses have been added. Click on <b>Edit</b> to add courses.</span>
       </mat-tab>
       <mat-tab i18n-label label="Certified Members">
-        <planet-users-table *ngIf="certifiedMembers.length" [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" linkPrefix="/users/profile" containerClass="view-container view-table"></planet-users-table>
+        <planet-users-table *ngIf="certifiedMembers.length" [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" [shouldOpenProfileDialog]="true" containerClass="view-container view-table"></planet-users-table>
         <span *ngIf="!certifiedMembers.length" i18n>No members have been certified.</span>
       </mat-tab>
     </mat-tab-group>

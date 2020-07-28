@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 
 @Component({
+  selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
   styles: [ `
     .profile-container {
@@ -22,17 +23,19 @@ import { StateService } from '../../shared/state.service';
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
-  userDetail: any = {};
   user: any = {};
+  userDetail: any = {};
   imageSrc = '';
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
-  planetCode: string | null = null;
   editable = false;
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
   private onDestroy$ = new Subject<void>();
+  @Input() planetCode: string | null = null;
+  @Input() isDialog: boolean;
+  @Input() userName: string;
 
   constructor(
     private couchService: CouchService,
@@ -46,8 +49,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user = this.userService.get();
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.urlName = params.get('name');
-      this.planetCode = params.get('planet');
+      this.urlName = this.userName || params.get('name');
+      this.planetCode = this.planetCode || params.get('planet');
       this.profileView();
       this.getLoginInfo(this.urlName);
     });
@@ -64,7 +67,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   getLoginInfo(name) {
-    this.couchService.findAll('login_activities', findDocuments({ 'user': name }, 0, [ { 'loginTime': 'desc' } ]))
+    const createdOn = this.planetCode || this.stateService.configuration.code;
+    this.couchService.findAll('login_activities', findDocuments({ 'user': name, createdOn }, 0, [ { 'loginTime': 'desc' } ]))
     .subscribe((logins: any) => {
       this.totalLogins = logins.length;
       this.lastLogin = logins.length ? logins[0].loginTime : '';
@@ -82,15 +86,17 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   profileView() {
-    const relationship = this.planetCode === this.stateService.configuration.parentCode ? 'parent' : 'child';
-    const dbName = this.planetCode === null ? this.dbName : `${relationship}_users`;
-    const userId = this.planetCode === null || relationship === 'parent'
+    const relationship = this.userRelationship(this.planetCode);
+    const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
+    const userId = relationship === 'local' || relationship === 'parent'
       ? 'org.couchdb.user:' + this.urlName : this.urlName + '@' + this.planetCode;
-    this.editable = (this.stateService.configuration.adminName !== this.urlName + '@' + this.stateService.configuration.code)
-      && this.userService.doesUserHaveRole([ '_admin' ]) && userId.indexOf('@') === -1 && relationship !== 'parent';
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
+      this.editable = relationship === 'local' && (
+        userDetail.name === this.userService.get().name ||
+        (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)
+      );
       if (response['_attachments']) {
         const filename = Object.keys(response._attachments)[0];
         this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
@@ -101,9 +107,18 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  userRelationship(planetCode: string) {
+    return planetCode === this.stateService.configuration.parentCode ?
+      'parent' :
+      planetCode === null || planetCode === this.stateService.configuration.code ?
+      'local' :
+      'child';
+  }
+
   goBack() {
+    const teamsUrl = this.router.url.split('/');
     const currentUser = this.userService.get();
-    if (currentUser.isUserAdmin) {
+    if (currentUser.isUserAdmin || teamsUrl[1] === 'teams') {
       this.router.navigate([ '../../' ], { relativeTo: this.route });
     } else {
       this.router.navigate([ '/' ]);

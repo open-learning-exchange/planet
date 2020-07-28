@@ -4,6 +4,17 @@
   </button>
   <span i18n>Reports</span>
   <span class="toolbar-fill"></span>
+  <mat-form-field *ngIf="teams" class="font-size-1 margin-lr-5">
+    <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" value="All">
+      <mat-option i18n value="All">All Members</mat-option>
+      <mat-optgroup label="Teams" i18n-label>
+        <mat-option *ngFor="let team of teams.team" [value]="team">{{team.name}}</mat-option>
+      </mat-optgroup>
+      <mat-optgroup label="Enterprises" i18n-label>
+        <mat-option *ngFor="let team of teams.enterprise" [value]="team">{{team.name}}</mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
   <ng-container *ngIf="minDate">
     <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
       <mat-form-field>
@@ -91,9 +102,7 @@
               <ng-container *ngFor="let visit of reports?.visits">
                 <mat-grid-tile class="label">
                   <mat-icon>chevron_right</mat-icon>
-                  <a [routerLink]="['/users/profile', visit.user, codeParam === planetCode ? { planet: codeParam } : {}]">
-                    {{visit.userDoc?.fullName || visit.user }}
-                  </a>
+                  <span class="cursor-pointer" (click)="openMemberView(visit.userDoc?.doc)">{{visit.userDoc?.fullName || visit.user }}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{visit.count}}</mat-grid-tile>
               </ng-container>
@@ -171,9 +180,9 @@
         <planet-reports-detail-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="ratings.resources" activityType="resources" (itemClick)="openResourceView($event)"></planet-reports-detail-activities>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
+        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" [progress]="progress" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
       </mat-tab>
-      <mat-tab i18n-label label="Health" *planetBeta #healthTab>
+      <mat-tab i18n-label label="Health" #healthTab>
         <planet-reports-health [planetCode]="planetCode" [dateRange]="dateFilterForm?.value" [isActive]="healthTab.isActive" (changeDateRange)="resetDateFilter($event)"></planet-reports-health>
       </mat-tab>
     </mat-tab-group>

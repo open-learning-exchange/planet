@@ -38,11 +38,12 @@ export class ReportsHealthComponent implements OnChanges {
   @Output() updateHealthData = new EventEmitter<any[]>();
   @ViewChild('diagnosesChart', { static: false }) diagnosesChart;
   charts: any[] = [];
+  showChart: boolean;
   examinations;
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };
   conditions = conditions;
-  initialSelectedCondition = 'COVID-19';
+  selectedCondition = 'COVID-19';
 
   constructor(
     private reportsService: ReportsService,
@@ -64,7 +65,9 @@ export class ReportsHealthComponent implements OnChanges {
   }
 
   setHealthData(weeks: number[]) {
-    const filteredExaminations = filterByDate(this.examinations, 'date', this.dateRange);
+    const filteredExaminations = filterByDate(this.examinations, 'date', this.dateRange).map(examination => ({
+      ...examination, conditions: examination.conditions || {}
+    }));
     this.weeklyHealthData = this.reportsService.groupBy(
       filteredExaminations.map(examination => ({
         ...examination, weekOf: weeks.find(week => week > (examination.date - (millisecondsToDay * 7)))
@@ -82,7 +85,7 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
-    this.setWeeklyChart('COVID-19');
+    this.setWeeklyChart(this.selectedCondition);
   }
 
   showWeek(weekOf) {
@@ -90,10 +93,12 @@ export class ReportsHealthComponent implements OnChanges {
   }
 
   setWeeklyChart(diagnosis: string) {
-    if (this.weeklyHealthData.length === 0) {
+    if (this.weeklyHealthData.length === 0 || this.headlineData.conditions[diagnosis] === 0) {
       this.charts = [];
+      this.showChart = false;
       return;
     }
+    this.showChart = true;
     this.weeklyHealthData.sort((a, b) => a.weekOf - b.weekOf);
     const data = this.weeklyHealthData.map(week => week.docs.filter(doc => doc.conditions[diagnosis] === true).length);
     const labels = this.weeklyHealthData.map(week => weekDataLabels(week.weekOf));
@@ -130,6 +135,7 @@ export class ReportsHealthComponent implements OnChanges {
   }
 
   onSelectedConditionChange(condition) {
+    this.selectedCondition = condition;
     this.setWeeklyChart(condition);
   }
 

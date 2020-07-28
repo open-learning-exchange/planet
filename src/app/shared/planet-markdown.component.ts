@@ -1,5 +1,6 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { StateService } from './state.service';
 
 @Component({
   selector: 'planet-markdown',
@@ -7,9 +8,19 @@ import { environment } from '../../environments/environment';
   styleUrls: [ './planet-markdown.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class PlanetMarkdownComponent {
+export class PlanetMarkdownComponent implements OnChanges {
 
   @Input() content: string;
-  couchAddress = `${environment.couchAddress}/`;
+  @Input() imageSource: 'parent' | 'local' = 'local';
+  couchAddress: string;
 
+  constructor(
+    private stateService: StateService,
+  ) {}
+
+  ngOnChanges() {
+    this.couchAddress = this.imageSource === 'parent' ?
+      `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
+      `${environment.couchAddress}/`;
+  }
 }

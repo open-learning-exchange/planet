@@ -2,14 +2,12 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
-import { forkJoin, Subject, of } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import {
   filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
 } from '../shared/table-helpers';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -19,9 +17,7 @@ import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
-import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { attachNamesToPlanets } from '../manager-dashboard/reports/reports.utils';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 
@@ -72,7 +68,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private couchService: CouchService,
-    private dialogsListService: DialogsListService,
     private submissionsService: SubmissionsService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
@@ -81,7 +76,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private reportsService: ReportsService,
     private dialogsFormService: DialogsFormService
   ) {
     this.dialogsLoadingService.start();
@@ -142,7 +136,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
   routeToEditSurvey(route, id = '') {
@@ -245,13 +239,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendSurveyDialog(survey) {
-    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
-      width: '80vw',
-      data: {
-        okClick: (selection: any[]) => this.sendSurvey(survey, selection.map(item => item.doc)),
-        excludeIds: [ this.userService.get()._id ],
-        mode: 'users'
-      }
+    this.submissionsService.getSubmissions(
+      findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
+    ).subscribe((submissions: any[]) => {
+      const excludeIds = submissions.map((submission: any) => submission.user._id);
+      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+        width: '80vw',
+        data: {
+          okClick: (selection: any[]) => this.sendSurvey(survey, selection),
+          excludeIds: [ ...excludeIds, this.userService.get()._id ],
+          mode: 'users'
+        }
+      });
     });
   }
 

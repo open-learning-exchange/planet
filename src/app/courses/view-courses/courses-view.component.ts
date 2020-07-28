@@ -1,14 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { takeUntil, switchMap, take } from 'rxjs/operators';
+import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { Subject, combineLatest } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
-import { findDocuments } from '../../shared/mangoQueries';
-import { CouchService } from '../../shared/couchdb.service';
 import { MatMenuTrigger } from '@angular/material';
 
 @Component({
@@ -37,8 +34,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private couchService: CouchService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.coursesService.courseUpdated$.pipe(
@@ -52,7 +48,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
-        this.canManage = this.currentUser.isUserAdmin ||
+        this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           this.courseDetail.creator !== undefined &&
           (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
         return this.stateService.getCouchState('exams', 'local');
@@ -73,18 +69,41 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  getStepSubmission(step) {
-    if (step.exam && step.submission === undefined) {
-      this.submissionsService.openSubmission({
-        parentId: step.exam._id + '@' + this.courseDetail._id,
-        parent: step.exam,
-        user: this.userService.get(),
-        type: 'exam' });
-      this.submissionsService.submissionUpdated$.pipe(take(1)).subscribe(({ submission, attempts }) => {
-        step.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
-        step.submission = submission;
-      });
+  setStepButtonStatus(step, stepNum, stepClickedNum = stepNum, getPrevious = true) {
+    if (stepNum > 0 && getPrevious) {
+      const previousStep = this.courseDetail.steps[stepNum - 1];
+      this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
     }
+    if (step.exam && step.submission === undefined) {
+      this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
+        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
+        this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
+      });
+      return;
+    }
+    this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
+  }
+
+  getStepSubmission(step) {
+    this.submissionsService.openSubmission({
+      parentId: step.exam._id + '@' + this.courseDetail._id,
+      parent: step.exam,
+      user: this.userService.get(),
+      type: 'exam' });
+    return this.submissionsService.submissionUpdated$.pipe(
+      filter(({ submission }) => submission.parent._id === step.exam._id),
+      take(1)
+    ).pipe(map(({ submission, attempts }) => ({
+      examText: submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake',
+      submission,
+      attempts
+    })));
+  }
+
+  setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
+    const stepClicked = this.courseDetail.steps[stepClickedNum];
+    const isTestTaken = attempts > 0 || (stepNum === 0 && step.exam === undefined);
+    stepClicked.isPreviousTestTaken = (stepNum !== stepClickedNum && isTestTaken) || stepClicked.isPreviousTestTaken;
   }
 
   viewStep() {
@@ -146,7 +165,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   updateCourse() {
-    this.router.navigate([ '/courses/update/' + this.courseId ]);
+    this.router.navigate([ 'update' ], { relativeTo: this.route });
   }
   /**
    * Returns routing to previous parent page on Courses
@@ -154,4 +173,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goBack() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
+
+  trackBySteps(index: number) {
+    return index;
+  }
+
 }

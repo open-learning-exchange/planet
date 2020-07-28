@@ -2,17 +2,17 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, 
 import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, of, forkJoin, Observable } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
 } from '../shared/table-helpers';
-import { findByIdInArray } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -77,7 +77,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   get tableData() {
     return this.usersTable;
   }
-  @Input() linkPrefix: string;
+  @Input() shouldOpenProfileDialog = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -136,6 +136,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   ngAfterViewInit() {
+    if (!this.isDialog && !this.isUserAdmin) {
+      this.displayedColumns = this.displayedColumns.filter(column => column !== 'select');
+    }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
   }
@@ -144,13 +147,17 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.selection.clear();
   }
 
+  isSelected(user) {
+    return this.selection.selected.find(selected => selected._id === user._id && selected.planetCode === user.planetCode);
+  }
+
   isAllSelected() {
     const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
     return this.selection.selected.length === itemsShown;
   }
 
   onlyManagerSelected() {
-    return this.selection.selected.every((user) => findByIdInArray(this.usersTable.data, user).doc.isUserAdmin === true);
+    return this.selection.selected.every((user) => user.isUserAdmin === true);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
@@ -159,15 +166,20 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
     this.selection.clear() :
-    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc._id));
+    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc));
   }
 
   gotoProfileView(userName: string) {
     if (this.isDialog) {
       return;
     }
+    if (this.shouldOpenProfileDialog) {
+      const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
+      this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
+      return;
+    }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
-    this.router.navigate([ this.linkPrefix || 'profile', userName, optParams ], { relativeTo: this.route });
+    this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
   trackByFn(index, item) {
@@ -175,13 +187,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   filterPredicate() {
-    return (data, filter) => this.filter['doc.roles'] === 'admin' ?
-      filterAdmin(data, filter) :
-      composeFilterFunctions([
-        filterDropdowns(this.filter),
-        filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-        filterSpecificFieldsByWord([ 'fullName' ])
-      ])(data, filter);
+    return (data, filter) => composeFilterFunctions([
+      filterDropdowns({ ...this.filter, 'doc.roles': this.filter['doc.roles'] === 'admin' ? '' : this.filter['doc.roles'] }),
+      filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
+      filterSpecificFieldsByWord([ 'fullName' ]),
+      () => this.filter['doc.roles'] === 'admin' ? filterAdmin(data, filter) : true
+    ])(data, filter);
   }
 
   deleteClick(user, event) {
@@ -191,7 +202,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
         okClick: {
           request: this.usersService.deleteUser(user),
           onNext: () => {
-            this.selection.deselect(user._id);
+            this.selection.deselect(user);
             this.planetMessageService.showMessage('User deleted: ' + user.name);
             this.deleteDialog.close();
           },
