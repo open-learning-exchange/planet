@@ -78,7 +78,8 @@ export class TeamsReportsComponent implements OnChanges {
           onNext: () => {
             deleteDialog.close();
           }
-        }
+        },
+        isDateUtc: true
       }
     });
   }

@@ -25,6 +25,7 @@ export class DialogsPromptComponent {
   cancelable: boolean;
   spinnerOn: boolean;
   labels: string[];
+  isDateUtc = false;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsPromptComponent>,
@@ -37,6 +38,7 @@ export class DialogsPromptComponent {
     this.data.okClick = this.setDefault(this.data.okClick, this.close.bind(this));
     this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
     this.labels = this.data.showLabels;
+    this.isDateUtc = this.data.isDateUtc;
   }
 
   ok() {
