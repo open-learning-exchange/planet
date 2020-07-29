@@ -53,7 +53,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   dateFilterForm: FormGroup;
   disableShowAllTime = true;
   teams: any;
-  showCounts = false;
 
   constructor(
     private activityService: ReportsService,
