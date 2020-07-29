@@ -447,7 +447,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   addTag(tag: string) {
-    this.tagInputComponent.addTag(tag);
+    if (tag.trim()) {
+      this.tagInputComponent.writeValue([ tag ]);
+    }
   }
 
 }
