@@ -106,7 +106,7 @@ export class TeamsReportsComponent implements OnChanges {
 
   addFormValidator(fieldName) {
     return fieldName === 'endDate' ?
-      CustomValidators.endDateValidator :
+      CustomValidators.endDateValidator() :
       [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
       Validators.min(0) :
       () => {};
