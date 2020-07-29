@@ -20,6 +20,7 @@ import { Component, Input, OnChanges } from '@angular/core';
 export class TeamsReportsDetailComponent implements OnChanges {
 
   @Input() report;
+  @Input() showSummary = false;
   expenses: number;
   income: number;
   net: number;

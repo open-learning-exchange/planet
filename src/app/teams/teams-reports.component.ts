@@ -133,7 +133,8 @@ export class TeamsReportsComponent implements OnChanges {
 
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
-      data: { report, team: this.team }
+      data: { report, team: this.team },
+      width: '70ch'
     });
   }
 
