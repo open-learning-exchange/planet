@@ -108,6 +108,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeData(local: boolean) {
+    // getTotalUsers sets users stored in ReportsService which is necessary for some calculations
     this.activityService.getTotalUsers(this.planetCode, local).subscribe(() => {
       this.getLoginActivities();
       this.getRatingInfo();
