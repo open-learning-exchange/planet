@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -50,10 +51,10 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'endDate', placeholder: 'End Date', type: 'date', required: true },
           { name: 'description', placeholder: 'Summary', type: 'markdown', required: true },
           { name: 'beginningBalance', placeholder: 'Beginning Balance', type: 'textbox', inputType: 'number', required: true },
-          { name: 'sales', placeholder: 'Sales', type: 'textbox', inputType: 'number', required: true },
-          { name: 'otherIncome', placeholder: 'Other Income', type: 'textbox', inputType: 'number', required: true },
-          { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number', required: true },
-          { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number', required: true }
+          { name: 'sales', placeholder: 'Sales', type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'otherIncome', placeholder: 'Other Income', type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number', required: true, min: 0 }
         ],
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
@@ -94,13 +95,21 @@ export class TeamsReportsComponent implements OnChanges {
       startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
       endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
-    const formControl = (initialValue, isEndDate = false) => [
+    const formControl = (initialValue, fieldName: string) => [
       initialValue,
-      [ CustomValidators.required, isEndDate ? CustomValidators.endDateValidator : () => {} ]
+      [ CustomValidators.required, this.addFormValidator(fieldName) ]
     ];
     return Object.entries(initialValues).reduce(
-      (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key === 'endDate') }), {}
+      (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key) }), {}
     );
+  }
+
+  addFormValidator(fieldName) {
+    return fieldName === 'endDate' ?
+      CustomValidators.endDateValidator :
+      [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
+      Validators.min(0) :
+      () => {};
   }
 
   updateReport(oldReport, newReport: any = {}) {
