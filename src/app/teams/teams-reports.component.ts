@@ -8,6 +8,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { tap } from 'rxjs/operators';
+import { convertUtcDate } from './teams.utils';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -90,8 +91,8 @@ export class TeamsReportsComponent implements OnChanges {
       wages: 0,
       otherExpenses: 0,
       ...oldReport,
-      startDate: new Date(oldReport.startDate || startDate),
-      endDate: new Date(oldReport.endDate || endDate)
+      startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
+      endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
     const formControl = (initialValue, isEndDate = false) => [
       initialValue,

@@ -10,3 +10,8 @@ export const memberSort = (member1, member2, leader) => memberCompare(member1, l
   memberCompare(member2, leader) ?
   1 :
   memberNameCompare(member1, member2);
+
+export const convertUtcDate = (date) => {
+  const dateObj = new Date(date);
+  return date ? new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate()) : undefined;
+};
