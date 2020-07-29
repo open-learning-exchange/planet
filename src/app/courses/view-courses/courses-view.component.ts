@@ -155,10 +155,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   courseToggle(courseId, type) {
-    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
+    const courseTitle = this.courseDetail.courseTitle;
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
-    // note
   }
 
   toggleFullView() {
