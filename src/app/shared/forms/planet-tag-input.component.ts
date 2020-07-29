@@ -219,7 +219,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     return this.mode === 'add' ? tags : tags.map((tag) => {
       return ({
         ...tag,
-        count: this.filteredData.length
+        count: this.filteredData.map(item => item.tags.filter(subArray => subArray.name === tag.name)).flat().length
       });
     });
   }
