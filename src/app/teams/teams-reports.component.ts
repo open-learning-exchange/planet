@@ -8,6 +8,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { tap } from 'rxjs/operators';
+import { convertUtcDate } from './teams.utils';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -82,10 +83,6 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   addFormInitialValues(oldReport, { startDate, endDate }) {
-    const convertUtcDate = (date) => {
-      const dateObj = new Date(date);
-      return date ? new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate()) : undefined;
-    };
     const initialValues = {
       description: '',
       beginningBalance: 0,
