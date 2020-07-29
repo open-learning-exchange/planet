@@ -94,18 +94,21 @@ export class TeamsReportsComponent implements OnChanges {
       startDate: new Date(oldReport.startDate || startDate),
       endDate: new Date(oldReport.endDate || endDate)
     };
-    const additionalValidator = (fieldName) => fieldName === 'endDate' ?
-      CustomValidators.endDateValidator :
-      [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
-      Validators.min(0) :
-      () => {};
     const formControl = (initialValue, fieldName: string) => [
       initialValue,
-      [ CustomValidators.required, additionalValidator(fieldName) ]
+      [ CustomValidators.required, this.addFormValidator(fieldName) ]
     ];
     return Object.entries(initialValues).reduce(
       (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key) }), {}
     );
+  }
+
+  addFormValidator(fieldName) {
+    return fieldName === 'endDate' ?
+      CustomValidators.endDateValidator :
+      [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
+      Validators.min(0) :
+      () => {};
   }
 
   updateReport(oldReport, newReport: any = {}) {
