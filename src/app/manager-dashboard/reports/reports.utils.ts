@@ -35,6 +35,11 @@ export const filterByDate = (array, dateField, { startDate, endDate, isEndInclus
   return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
 };
 
+export const isSelectedMember = (item, members) => members.length === 0 ||
+  members.some(member => (member.userId === item.userId || member.userId.split(':')[1] === item.user));
+
+export const filterByMember = (array, members = []) => array.filter(item => isSelectedMember(item, members));
+
 export const planetAndParentId = (configuration) => `${configuration.code}@${configuration.parentCode}`;
 
 export const getDomainParams = (configuration, isHub) => isHub ?

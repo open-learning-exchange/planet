@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, Subject, of } from 'rxjs';
 import { map, takeUntil, take } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
@@ -14,7 +14,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels
+  titleOfChartName, monthDataLabels, filterByMember
 } from './reports.utils';
 import { MatDialog } from '@angular/material';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
@@ -53,6 +53,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   dateFilterForm: FormGroup;
   disableShowAllTime = true;
   teams: any;
+  selectedTeam: any = 'All';
 
   constructor(
     private activityService: ReportsService,
@@ -263,16 +264,24 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  getTeamMembers(team: any) {
+    if (team === 'All') {
+      return of([]);
+    }
+    return this.couchService.findAll('teams', findDocuments({ teamId: team._id, docType: 'membership' }));
+  }
+
   onTeamsFilterChange(filterValue) {
     const filterMembers = (members: any[]) => {
       this.filter.members = members;
       this.filterData();
     };
+    this.selectedTeam = filterValue;
     if (filterValue === 'All') {
       filterMembers([]);
       return;
     }
-    this.couchService.findAll('teams', findDocuments({ teamId: filterValue._id, docType: 'membership' })).subscribe((members: any) => {
+    this.getTeamMembers(filterValue).subscribe((members: any) => {
       filterMembers(members);
     });
   }
@@ -327,35 +336,39 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
-    const fields = [
-      {
-        'placeholder': 'From',
-        'name': 'startDate',
-        ...commonProps
-      },
-      {
-        'placeholder': 'To',
-        'name': 'endDate',
-        ...commonProps
-      }
+    const teamOptions = [
+      { name: 'All Members', value: 'All' },
+      ...this.teams.team.map(t => ({ name: t.name, value: t })),
+      ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
+    const commonFields = [
+      { 'placeholder': 'From', 'name': 'startDate', ...commonProps },
+      { 'placeholder': 'To', 'name': 'endDate', ...commonProps }
+    ];
+    const teamField = { 'placeholder': 'Team', 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const fields = [ ...commonFields, ...(reportType === 'health' ? [] : [ teamField ]) ];
     const formGroup = {
       startDate: this.dateFilterForm.controls.startDate.value,
-      endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
+      endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ],
+      team: reportType === 'health' ? 'All' : this.selectedTeam
     };
     this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
-      onSubmit: (dateRange: any) => this.exportCSV(reportType, dateRange)
+      onSubmit: (formValue: any) => {
+        this.getTeamMembers(formValue.team).subscribe(members => {
+          this.exportCSV(reportType, { startDate: formValue.startDate, endDate: formValue.endDate }, members);
+        });
+      }
     });
   }
 
-  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }) {
+  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[]) {
     switch (reportType) {
       case 'logins':
         this.csvService.exportCSV({
-          data: filterByDate(this.loginActivities.data, 'loginTime', dateRange)
+          data: filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
             .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
           title: 'Member Visits'
         });
@@ -363,13 +376,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'resourceViews':
       case 'courseViews':
       case 'health':
-        this.exportDocView(reportType, dateRange);
+        this.exportDocView(reportType, dateRange, members);
         break;
       case 'summary':
         this.csvService.exportSummaryCSV(
-          filterByDate(this.loginActivities.data, 'loginTime', dateRange),
-          filterByDate(this.resourceActivities.total.data, 'time', dateRange),
-          filterByDate(this.courseActivities.total.data, 'time', dateRange),
+          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
+          filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
+          filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
           this.planetName
         );
         break;
@@ -387,7 +400,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportDocView(reportType, dateRange) {
+  exportDocView(reportType, dateRange, members) {
     const data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
@@ -395,7 +408,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }[reportType];
     const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
     this.csvService.exportCSV({
-      data: filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange)
+      data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title
     });
@@ -421,4 +434,5 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dateFilterForm.controls.startDate.setValue(startDate || this.minDate);
     this.dateFilterForm.controls.endDate.setValue(endDate || this.today);
   }
+
 }
