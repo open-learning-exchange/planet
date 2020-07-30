@@ -66,7 +66,6 @@ export class CoursesProgressChartComponent implements OnChanges {
   }
 
   openMemberDialog(member) {
-    console.log(this.sets);
     this.dialog.open(UserProfileDialogComponent, {
       data: { member: { ...member, userPlanetCode: member.planetCode } },
       maxWidth: '90vw',
