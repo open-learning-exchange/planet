@@ -452,6 +452,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       data: { courseId },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }
