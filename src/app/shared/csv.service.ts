@@ -112,7 +112,8 @@ export class CsvService {
   }
 
   isDateKey(key: string) {
-    return key === 'loginTime' || key === 'time' || key === 'Date' || key === 'logoutTime' || key === 'date';
+    const dateKeys = [ 'loginTime', 'time', 'Date', 'logoutTime', 'date', 'Start Date', 'End Date', 'Created Date', 'Updated Date' ];
+    return dateKeys.indexOf(key) > -1;
   }
 
   formatHealthConditions(conditions: any) {
