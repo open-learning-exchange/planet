@@ -27,6 +27,7 @@ export class CoursesProgressChartComponent implements OnChanges {
   @ViewChild('errorsUser', { static: false }) dataElement;
   sets = [];
   horizTotals = [];
+  setTotal: any;
 
   constructor(
     private dialog: MatDialog
@@ -42,6 +43,7 @@ export class CoursesProgressChartComponent implements OnChanges {
     this.horizTotals = this.sets.reduce((totals, set) => {
       return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
     }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
+    this.setTotal = this.sets.map(set => set.total).reduce((sum, currentValue) => sum + currentValue);
   }
 
   dataClick(event, set, index) {
@@ -61,10 +63,6 @@ export class CoursesProgressChartComponent implements OnChanges {
       element.scrollTo(element.scrollLeft - event.movementX, element.scrollTop - event.movementY);
       event.preventDefault();
     }
-  }
-
-  filterUser(set) {
-    return this.users.filter(user => user.name === set.label);
   }
 
   openMemberDialog(member) {
