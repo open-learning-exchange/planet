@@ -32,7 +32,7 @@ import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.co
       max-width: 150px;
     }
     .mat-column-createdDate {
-      max-width: 130px;
+      max-width: 150px;
     }
     .btn:disabled{
       pointer-events: none;

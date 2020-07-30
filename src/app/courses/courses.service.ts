@@ -196,7 +196,8 @@ export class CoursesService {
     }));
   }
 
-  courseResignAdmission(courseId, type) {
+  courseResignAdmission(courseId, type, courseTitle?) {
+    const title = courseTitle ? courseTitle : this.getCourseNameFromId(courseId);
     const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
       const myCourseIndex = courseIds.indexOf(courseId);
@@ -205,8 +206,8 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? this.getCourseNameFromId(courseId) + ' successfully removed from myCourses' :
-        this.getCourseNameFromId(courseId) + ' added to your dashboard';
+      const admissionMessage = type === 'resign' ? title + ' successfully removed from myCourses' :
+        title + ' added to your dashboard';
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));

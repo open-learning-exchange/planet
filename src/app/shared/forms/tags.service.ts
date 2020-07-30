@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
 import { createDeleteArray } from '../table-helpers';
 import { Router, ActivatedRoute, UrlTree, UrlSegmentGroup, UrlSegment, PRIMARY_OUTLET } from '@angular/router';
+import { link } from 'pouchdb-find';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +21,16 @@ export class TagsService {
   ) {}
 
   getTags(db: string, parent: boolean) {
-    return this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }).pipe(
-      map((tags: any[]) => {
-        const tagCounts = tags.reduce(
-          (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
-          {}
-        );
+    return forkJoin([
+      this.stateService.getCouchState('tags', parent ? 'parent' : 'local', { 'name': 'asc' }),
+      this.stateService.getCouchState(db, parent ? 'parent' : 'local')
+    ]).pipe(
+      map(([ tags, linkDocs ]: [ any[], any[] ]) => {
+        const tagCounts = tags.filter(tag => tag.linkId === undefined || linkDocs.some(linkDoc => linkDoc._id === tag.linkId))
+          .reduce(
+            (counts: any, tag: any) => tag.linkId === undefined ? counts : { ...counts, [tag.tagId]: (counts[tag.tagId] || 0) + 1 },
+            {}
+          );
         return tags
           .map((tag: any) => ({ ...tag, count: tagCounts[tag._id] || 0 }))
           .filter((tag: any) => tag.db === db && tag.docType === 'definition')

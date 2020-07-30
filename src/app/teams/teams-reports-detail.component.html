@@ -15,4 +15,5 @@
 <ng-container *ngIf="showSummary">
   <h4 i18n>Report Summary</h4>
   <planet-markdown [content]="report.description"></planet-markdown>
+  <div><ng-container i18n>Report created on:</ng-container> {{report.createdDate | date }}<ng-container *ngIf="report.createdDate !== report.updatedDate"> | <ng-container i18n>Updated on:</ng-container> {{report.updatedDate | date}}</ng-container></div>
 </ng-container>

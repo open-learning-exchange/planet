@@ -70,7 +70,8 @@ export class TeamsReportsComponent {
           onNext: () => {
             deleteDialog.close();
           }
-        }
+        },
+        isDateUtc: true
       }
     });
   }
