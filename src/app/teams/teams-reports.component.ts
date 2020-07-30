@@ -10,6 +10,7 @@ import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { tap } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
+import { CsvService } from '../shared/csv.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -30,7 +31,8 @@ export class TeamsReportsComponent implements OnChanges {
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private csvService: CsvService
   ) {}
 
   ngOnChanges() {
@@ -136,6 +138,23 @@ export class TeamsReportsComponent implements OnChanges {
     this.dialog.open(TeamsReportsDialogComponent, {
       data: { report, team: this.team }
     });
+  }
+
+  exportReports() {
+    const exportData = this.reports.map(report => ({
+      'Start Date': report.startDate,
+      'End Date': report.endDate,
+      'Created Date': report.createdDate,
+      'Updated Date': report.updatedDate,
+      'Beginning Balance': report.beginningBalance,
+      'Sales': report.sales,
+      'Other Income': report.otherIncome,
+      'Wages': report.wages,
+      'Other Expenses': report.otherExpenses,
+      'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
+      'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
+    }));
+    this.csvService.exportCSV({ data: exportData, title: `${this.team.name} Financial Report Summary` });
   }
 
 }
