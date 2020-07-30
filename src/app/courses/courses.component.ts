@@ -27,6 +27,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
 import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
+import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 
 @Component({
   selector: 'planet-courses',
@@ -443,6 +444,16 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     ).subscribe(() => {
       this.getCourses();
       this.planetMessageService.showMessage('Collections updated');
+    });
+  }
+
+  openCourseViewDialog(courseId) {
+    this.dialog.open(CoursesViewDetailDialogComponent, {
+      data: { courseId },
+      minWidth: '600px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      autoFocus: false
     });
   }
 
