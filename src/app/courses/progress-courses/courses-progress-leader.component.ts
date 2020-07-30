@@ -28,6 +28,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   submittedExamSteps: any[] = [];
   planetCodes: string[] = [];
   selectedPlanetCode: string;
+  users: any;
 
   constructor(
     private router: Router,
@@ -196,6 +197,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   filterDataByPlanet() {
     this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode);
+    this.users = this.submissions.map(member => member.user);
   }
 
 }
