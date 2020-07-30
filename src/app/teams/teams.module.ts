@@ -20,7 +20,7 @@ import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent ],
+  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent ],
   imports: [
     TeamsRouterModule,
     CommonModule,

@@ -36,6 +36,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   links: any[] = [];
   finances: any[] = [];
   councillors: any[] = [];
+  reports: any[] = [];
   showNewsButton = true;
   deleteMode = false;
   onDestroy$ = new Subject<void>();
@@ -186,20 +187,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   getLinks(planetCode?) {
     return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
-      const { link: links, transaction: finances } = docs.reduce((docObject, doc) => ({
+      const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => ({
         ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
       }), { link: [], transaction: [] });
-      return { links, finances };
+      return { links, finances, reports };
     }));
   }
 
-  setLinksAndFinances({ links, finances }) {
+  setLinksAndFinances({ links, finances, reports }) {
     this.links = links;
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
+    this.reports = reports;
   }
 
-  financesChanged() {
+  dataChanged() {
     this.getLinks().subscribe(res => this.setLinksAndFinances(res));
   }
 
