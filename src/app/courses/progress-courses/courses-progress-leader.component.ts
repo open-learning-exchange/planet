@@ -1,12 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map, tap } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { CouchService } from '../../shared/couchdb.service';
+import { TeamsService } from '../../teams/teams.service';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -28,13 +30,17 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   submittedExamSteps: any[] = [];
   planetCodes: string[] = [];
   selectedPlanetCode: string;
+  courseTeams: any[] = [];
+  selectedTeam = { id: '', members: [] };
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private couchService: CouchService,
+    private teamsService: TeamsService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -46,6 +52,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ course }) => {
       this.course = course;
       this.setProgress(course);
+      this.getTeams(course);
     });
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
       this.submissions = submissions;
@@ -69,6 +76,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.selectedPlanetCode = this.planetCodes.length === 1 ? this.planetCodes[0] : this.selectedPlanetCode;
       this.setSubmissions();
     });
+  }
+
+  getTeams(course) {
+    const selectors = {
+      teamPlanetCode: this.selectedPlanetCode,
+      courses: { '$elemMatch': { '_id': course._id } }
+    };
+    this.couchService.findAll('teams', findDocuments(selectors, 0)).subscribe((teams) => { this.courseTeams = teams; });
   }
 
   onStepChange(value: any) {
@@ -134,7 +149,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         planetCode: user.planetCode
       });
     });
-    this.filterDataByPlanet();
+    this.filterData();
   }
 
   setSingleStep(submissions: any[]) {
@@ -151,7 +166,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         };
       }
     );
-    this.filterDataByPlanet();
+    this.filterData();
   }
 
   changeData({ index }) {
@@ -191,11 +206,22 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   planetSelectionChange(planet) {
     this.selectedPlanetCode = planet.doc.code;
-    this.filterDataByPlanet();
+    this.filterData();
   }
 
-  filterDataByPlanet() {
-    this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode);
+  onTeamChange(team) {
+    this.selectedTeam.id = team;
+    this.teamsService.getTeamMembers(team).subscribe(members => {
+      this.selectedTeam.members = members.reduce((users, user) => {
+        return user.userDoc ? [ ...users, user.userDoc.doc.name ] : users;
+      }, []);
+      this.filterData();
+    });
+  }
+
+  filterData() {
+    this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode)
+      .filter(data => !this.selectedTeam.id || this.selectedTeam.members.indexOf(data.label) > -1);
   }
 
 }
