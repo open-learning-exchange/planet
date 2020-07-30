@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -16,14 +16,12 @@ import { convertUtcDate } from './teams.utils';
   styleUrls: [ './teams-reports.scss' ],
   templateUrl: './teams-reports.component.html'
 })
-export class TeamsReportsComponent implements OnChanges {
+export class TeamsReportsComponent {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() team;
-  @Input() containerElement: any;
   @Output() reportsChanged = new EventEmitter<void>();
-  rowHeight = '300px';
 
   constructor(
     private couchService: CouchService,
@@ -32,12 +30,6 @@ export class TeamsReportsComponent implements OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService
   ) {}
-
-  ngOnChanges() {
-    if (this.containerElement) {
-      this.rowHeight = `${this.containerElement.offsetHeight - 160}px`;
-    }
-  }
 
   openAddReportDialog(oldReport = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
