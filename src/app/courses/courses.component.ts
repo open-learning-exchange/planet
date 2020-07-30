@@ -8,7 +8,7 @@ import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, takeUntil, map, take } from 'rxjs/operators';
+import { switchMap, takeUntil, map } from 'rxjs/operators';
 import {
   filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
   dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
