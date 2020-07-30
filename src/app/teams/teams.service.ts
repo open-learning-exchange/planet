@@ -272,6 +272,8 @@ export class TeamsService {
         return `You have not been accepted to ${teamMessage}`;
       case 'removed':
         return `You have been removed from ${teamMessage}`;
+      case 'changeTeamName':
+        return `<b>${fullName}</b> changed the name of ${teamMessage}`;
       default:
         return `${newMembersLength} member(s) has been added to ${teamMessage}`;
     }
