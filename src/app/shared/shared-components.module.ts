@@ -18,6 +18,7 @@ import { RouterModule } from '@angular/router';
 import { LabelComponent } from './label.component';
 import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
+import { AvatarComponent } from './avatar.component';
 
 @NgModule({
   imports: [
@@ -39,7 +40,8 @@ import { TimePipe } from '../manager-dashboard/reports/time.pipe';
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
-    MyPlanetTableComponent
+    MyPlanetTableComponent,
+    AvatarComponent
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -58,7 +60,8 @@ import { TimePipe } from '../manager-dashboard/reports/time.pipe';
     CommunityListComponent,
     LabelComponent,
     MyPlanetTableComponent,
-    TimePipe
+    TimePipe,
+    AvatarComponent
   ]
 })
 export class SharedComponentsModule {}
