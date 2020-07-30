@@ -3,7 +3,7 @@
   <p class="mat-subheading-1">{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}</p>
 </div>
 <mat-dialog-content>
-  <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
+  <planet-teams-reports-detail [report]="report" [showSummary]="true"></planet-teams-reports-detail>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button color="primary" mat-dialog-close i18n>Close</button>

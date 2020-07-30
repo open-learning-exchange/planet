@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -17,14 +17,12 @@ import { CsvService } from '../shared/csv.service';
   styleUrls: [ './teams-reports.scss' ],
   templateUrl: './teams-reports.component.html'
 })
-export class TeamsReportsComponent implements OnChanges {
+export class TeamsReportsComponent {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() team;
-  @Input() containerElement: any;
   @Output() reportsChanged = new EventEmitter<void>();
-  rowHeight = '300px';
 
   constructor(
     private couchService: CouchService,
@@ -34,12 +32,6 @@ export class TeamsReportsComponent implements OnChanges {
     private teamsService: TeamsService,
     private csvService: CsvService
   ) {}
-
-  ngOnChanges() {
-    if (this.containerElement) {
-      this.rowHeight = `${this.containerElement.offsetHeight - 160}px`;
-    }
-  }
 
   openAddReportDialog(oldReport = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
@@ -136,7 +128,8 @@ export class TeamsReportsComponent implements OnChanges {
 
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
-      data: { report, team: this.team }
+      data: { report, team: this.team },
+      width: '70ch'
     });
   }
 
