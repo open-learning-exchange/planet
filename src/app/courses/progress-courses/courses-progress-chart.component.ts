@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material';
 /* Structure for inputs = [
  *  {
  *    items: { number, fill? },
@@ -7,7 +6,6 @@ import { MatDialog } from '@angular/material';
  * ]
  */
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild } from '@angular/core';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 
 @Component({
   selector: 'planet-courses-progress-chart',
