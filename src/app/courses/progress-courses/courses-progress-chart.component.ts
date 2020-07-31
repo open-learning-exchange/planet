@@ -19,6 +19,7 @@ export class CoursesProgressChartComponent implements OnChanges {
   @Input() height = 0;
   @Input() showTotals = true;
   @Output() changeData = new EventEmitter<{ set, index }>();
+  @Output() clickAction = new EventEmitter<any>();
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
   @ViewChild('errorsUserTotal', { static: false }) xScrollElement;
   @ViewChild('errorsUser', { static: false }) dataElement;
@@ -54,6 +55,10 @@ export class CoursesProgressChartComponent implements OnChanges {
       element.scrollTo(element.scrollLeft - event.movementX, element.scrollTop - event.movementY);
       event.preventDefault();
     }
+  }
+
+  labelClick(set) {
+    this.clickAction.emit(set);
   }
 
 }

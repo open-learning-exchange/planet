@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
@@ -7,6 +8,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -34,7 +36,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog
   ) {
     this.dialogsLoadingService.start();
   }
@@ -196,6 +199,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   filterDataByPlanet() {
     this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode);
+  }
+
+  memberClick({ label: name, planetCode: userPlanetCode }) {
+    this.dialog.open(UserProfileDialogComponent, {
+      data: { member: { name, userPlanetCode } },
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    });
   }
 
 }
