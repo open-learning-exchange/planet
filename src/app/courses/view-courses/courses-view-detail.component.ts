@@ -42,11 +42,8 @@ export class CoursesViewDetailComponent implements OnChanges {
 export class CoursesViewDetailDialogComponent implements OnInit {
 
   courseDetail;
-  creator = '';
-  userDetail: any = {};
 
   constructor(
-    private stateService: StateService,
     private route: ActivatedRoute,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any,
