@@ -4,7 +4,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { take } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
-import { CouchService } from '../../shared/couchdb.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
@@ -41,13 +40,12 @@ export class CoursesViewDetailComponent implements OnChanges {
   `
 })
 export class CoursesViewDetailDialogComponent implements OnInit {
-  private dbName = '_users';
+
   courseDetail;
   creator = '';
   userDetail: any = {};
 
   constructor(
-    private couchService: CouchService,
     private stateService: StateService,
     private route: ActivatedRoute,
     private router: Router,
@@ -61,34 +59,12 @@ export class CoursesViewDetailDialogComponent implements OnInit {
     this.coursesService.requestCourse({ courseId: this.data.courseId, forceLatest: true });
     this.coursesService.courseUpdated$.pipe(take(1)).subscribe(({ course }) => {
       this.courseDetail = course;
-      this.creator = this.courseDetail.creator.substring(0, this.courseDetail.creator.lastIndexOf("@"));
-      this.creatorDetail();
       this.dialogsLoadingService.stop();
     });
   }
 
   routeToCourses(courseId) {
     this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
-  }
-  
-  
-creatorDetail(){
-    const relationship = this.userRelationship(this.stateService.configuration.parentCode);
-    const dbName = relationship === 'local' ? this.dbName : `${relationship}_users`;
-    const userId = relationship === 'local' || relationship === 'parent'
-      ? 'org.couchdb.user:' + this.creator : this.creator;
-     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
-     this.userDetail =  response;  
-      });
-}
-  
-  
-  userRelationship(planetCode: string) {
-    return planetCode === this.stateService.configuration.parentCode ?
-      'parent' :
-      planetCode === null || planetCode === this.stateService.configuration.code ?
-      'local' :
-      'child';
   }
 
 }
