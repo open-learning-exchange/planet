@@ -38,9 +38,9 @@
   </div>
 </div>
 <div class="errors-container errors-user-total" #errorsUserTotal>
-  <div class="errors" *ngFor="let user of users">
-    <div>{{setTotal}}</div>
-    <planet-avatar class="cursor-pointer" (click)="openMemberDialog(user)" [username]="user.name" [planetCode]="user.planetCode" imgClass="profile-image-large"></planet-avatar>
-    <div class="wrap-content cursor-pointer" (click)="openMemberDialog(user)" [matTooltip]="user.name?.length > 3 ? user.name : null "><p>{{user.name}}</p></div>
+  <div class="errors" *ngFor="let set of sets">
+    <div>{{set.total}}</div>
+    <planet-avatar class="cursor-pointer" (click)="labelClick(set)" [username]="set.label" [planetCode]="set.planetCode" imgClass="profile-image-large"></planet-avatar>
+    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" [matTooltip]="set.label?.length > 3 ? set.label : null "><p>{{set.label}}</p></div>
   </div>
 </div>

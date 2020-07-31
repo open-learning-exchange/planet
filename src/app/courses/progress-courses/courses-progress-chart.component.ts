@@ -20,18 +20,13 @@ export class CoursesProgressChartComponent implements OnChanges {
   @Input() label = '';
   @Input() height = 0;
   @Input() showTotals = true;
-  @Input() users;
   @Output() changeData = new EventEmitter<{ set, index }>();
+  @Output() clickAction = new EventEmitter<any>();
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
   @ViewChild('errorsUserTotal', { static: false }) xScrollElement;
   @ViewChild('errorsUser', { static: false }) dataElement;
   sets = [];
   horizTotals = [];
-  setTotal: any;
-
-  constructor(
-    private dialog: MatDialog
-  ) {}
 
   ngOnChanges() {
     const fillEmptyItems = (items) => [].concat(Array(this.height - items.length).fill(''), items);
@@ -43,7 +38,6 @@ export class CoursesProgressChartComponent implements OnChanges {
     this.horizTotals = this.sets.reduce((totals, set) => {
       return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
     }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
-    this.setTotal = this.sets.map(set => set.total).reduce((sum, currentValue) => sum + currentValue);
   }
 
   dataClick(event, set, index) {
@@ -65,12 +59,8 @@ export class CoursesProgressChartComponent implements OnChanges {
     }
   }
 
-  openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { ...member, userPlanetCode: member.planetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
+  labelClick(set) {
+    this.clickAction.emit(set);
   }
 
 }
