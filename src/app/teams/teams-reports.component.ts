@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -17,12 +17,14 @@ import { CsvService } from '../shared/csv.service';
   styleUrls: [ './teams-reports.scss' ],
   templateUrl: './teams-reports.component.html'
 })
-export class TeamsReportsComponent {
+export class TeamsReportsComponent implements DoCheck {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
+  columns = 4;
+  minColumnWidth = 300;
 
   constructor(
     private couchService: CouchService,
@@ -30,8 +32,20 @@ export class TeamsReportsComponent {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
-    private csvService: CsvService
+    private csvService: CsvService,
+    private elementRef: ElementRef
   ) {}
+
+  ngDoCheck() {
+    const gridElement = this.elementRef.nativeElement.children['report-grid'];
+    if (!gridElement) {
+      return;
+    }
+    const newColumns = Math.floor(gridElement.offsetWidth / this.minColumnWidth);
+    if (this.columns !== newColumns) {
+      this.columns = newColumns;
+    }
+  }
 
   openAddReportDialog(oldReport = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
