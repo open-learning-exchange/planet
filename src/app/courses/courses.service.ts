@@ -3,13 +3,14 @@ import { CouchService } from '../shared/couchdb.service';
 import { Subject, forkJoin, of, combineLatest, zip } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, startWith, skip, debounceTime, filter } from 'rxjs/operators';
+import { switchMap, map, startWith, skip, debounceTime, filter, take } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
+import { UsersService } from '../users/users.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
@@ -46,7 +47,8 @@ export class CoursesService {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
-    private markdownService: MarkdownService
+    private markdownService: MarkdownService,
+    private usersService: UsersService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
       if (res !== undefined) {
@@ -124,10 +126,13 @@ export class CoursesService {
       obs.push(this.couchService.get(this.dbName + '/' + courseId, opts));
     }
     obs.push(this.ratingService.getRatings({ itemIds: [ courseId ], type: 'course' }, opts));
-    forkJoin(obs).subscribe(([ progress, course, ratings ]: [ any[], any, any ]) => {
+    obs.push(this.usersService.usersListener(true).pipe(take(1)));
+    forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
+      course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
       this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
+    this.usersService.requestUserData();
   }
 
   reset() {
