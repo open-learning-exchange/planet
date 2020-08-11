@@ -16,6 +16,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   onDestroy$ = new Subject<void>();
   courseDetail: any = { steps: [] };
+  showNoContentAvaliable: boolean;
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
   progress = [ { stepNum: 1 } ];
@@ -37,6 +38,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.showNoContentAvaliable = false;
     this.coursesService.courseUpdated$.pipe(
       switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
         this.courseDetail = course;
@@ -46,6 +48,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
           resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
           progress: progress.find((p: any) => p.stepNum === (index + 1))
         }));
+        this.showNoContentAvaliable = this.courseDetail.steps.length === 0;
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
