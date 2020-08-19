@@ -26,6 +26,10 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     :host mat-dialog-actions {
       padding: 0;
     }
+    :host #header {
+      display: flex;
+      justify-content: space-between;
+    }
   ` ]
 })
 export class PlanetTagInputDialogComponent {
