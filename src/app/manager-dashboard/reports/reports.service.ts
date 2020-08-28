@@ -229,8 +229,9 @@ export class ReportsService {
     return forkJoin([
       this.couchService.get('courses_progress/_design/courses_progress/_view/enrollment?group=true'),
       this.couchService.get('courses_progress/_design/courses_progress/_view/completion?group=true'),
+      this.couchService.get('courses_progress/_design/courses_progress/_view/steps?group=true'),
       this.coursesService.coursesListener$().pipe(take(1))
-    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, courses ]) => {
+    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, { rows: steps }, courses ]) => {
       return {
         courses: courses.map(course => ({
           steps: course.doc.steps.length,
@@ -243,7 +244,8 @@ export class ReportsService {
             const course = courses.find(c => c._id === key.courseId);
             return course && value.count === course.doc.steps.length;
           })
-          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count }))
+          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
+        steps: steps.map(({ key, value }) => ({ ...key, time: value.max }))
       };
     }));
   }
