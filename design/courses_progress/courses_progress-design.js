@@ -16,7 +16,7 @@ module.exports = {
     },
     "steps": {
       "map": function (doc) {
-        if (doc.passed) {
+        if (doc.passed && doc.stepNum > 0) {
           emit({ userId: doc.userId, courseId: doc.courseId, stepNum: doc.stepNum } , doc.updatedDate);
         }
       },
