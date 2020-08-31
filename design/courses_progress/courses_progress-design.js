@@ -13,6 +13,14 @@ module.exports = {
         }
       },
       "reduce": "_stats"
+    },
+    "steps": {
+      "map": function (doc) {
+        if (doc.passed) {
+          emit({ userId: doc.userId, courseId: doc.courseId, stepNum: doc.stepNum } , doc.updatedDate);
+        }
+      },
+      "reduce": "_stats"
     }
   }
 }
