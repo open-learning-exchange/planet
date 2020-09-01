@@ -32,11 +32,15 @@
   </ng-container>
   <ng-container matColumnDef="steps">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Steps</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.steps}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.max?.steps}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="exams">
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Tests</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.exams}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{element?.max?.exams}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="stepsCompleted">
+    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Steps Completed</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.stepsCompleted}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>

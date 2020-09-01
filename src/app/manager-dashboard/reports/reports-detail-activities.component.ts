@@ -5,7 +5,7 @@ import { ReportsDetailData } from './reports-detail-data';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
-  courses: [ 'title', 'count', 'averageRating', 'steps', 'exams', 'enrollments', 'completions' ],
+  courses: [ 'title', 'count', 'averageRating', 'steps', 'exams', 'enrollments', 'completions', 'stepsCompleted' ],
   health: [ 'weekOf', 'count', 'unique' ]
 };
 
@@ -17,7 +17,11 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
-  @Input() progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
+  @Input() progress = {
+    enrollments: new ReportsDetailData('time'),
+    completions: new ReportsDetailData('time'),
+    steps: new ReportsDetailData('time')
+  };
   @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
   matSortActive = '';
@@ -46,6 +50,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
       enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
       completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+      stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
       ...activity
     }));
   }

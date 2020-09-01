@@ -46,7 +46,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
-  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
+  progress = {
+    enrollments: new ReportsDetailData('time'),
+    completions: new ReportsDetailData('time'),
+    steps: new ReportsDetailData('time')
+  };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -152,6 +156,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('courseActivities');
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
+    this.progress.steps.filter(this.filter);
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -204,10 +209,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, courses }) => {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
-      this.courseActivities.byDoc = this.courseActivities.byDoc.map(courseActivity => {
+      this.progress.steps.data = steps;
+      this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
         return { ...course, ...courseActivity };
       });
