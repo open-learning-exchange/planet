@@ -5,7 +5,7 @@ import { ReportsDetailData } from './reports-detail-data';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
-  courses: [ 'title', 'count', 'averageRating', 'steps', 'exams', 'enrollments', 'completions', 'stepsCompleted' ],
+  courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
   health: [ 'weekOf', 'count', 'unique' ]
 };
 
