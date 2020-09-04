@@ -426,7 +426,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'resourceViews': 'Resource Views',
       'courseViews': 'Course Views',
       'health': 'Community Health',
-      'stepCompletions': 'Course Progress' }[reportType];
+      'stepCompletions': 'Courses Progress' }[reportType];
     this.csvService.exportCSV({
       data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
