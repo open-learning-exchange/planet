@@ -41,7 +41,7 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], planetName: string) {
+  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], planetName: string) {
     const options = {
       title: `Summary report for ${planetName}`,
       filename: `Report of ${planetName} on ${new Date().toDateString()}`,
@@ -52,11 +52,12 @@ export class CsvService {
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
-    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews);
+    const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
+    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions);
     this.generate(formattedData, options);
   }
 
-  summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews) {
+  summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions) {
     const monthLabels = (data, header: boolean) => data.reduce(
       (csvObj, { date }) => {
         const dateLabel = monthDataLabels(date);
@@ -77,7 +78,10 @@ export class CsvService {
       ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
       { label: '', ...blankRow },
       { label: 'Course Views by Month', ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow)
+      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow),
+      { label: '', ...blankRow },
+      { label: 'Steps Completed by Month', ...headerRow },
+      ...this.fillRows(this.summaryDataToTable(groupedStepCompletions), headerRow)
     ];
   }
 

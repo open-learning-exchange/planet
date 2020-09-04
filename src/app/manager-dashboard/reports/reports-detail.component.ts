@@ -157,6 +157,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
+    this.setStepCompletion();
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -179,6 +180,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.setLoginActivities();
     });
     this.usersService.requestUserData();
+  }
+
+  setStepCompletion() {
+    const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData);
+    this.reports.totalStepCompleted = byMonth.reduce((total, doc: any) => total + doc.count, 0);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
 
   setLoginActivities() {
@@ -212,7 +219,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
-      this.progress.steps.data = steps;
+      this.progress.steps.data = steps.map(step => ({ ...step, user: step.userId.replace('org.couchdb.user:', '') }));
       this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
         return { ...course, ...courseActivity };
@@ -389,6 +396,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
           filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
           filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
+          filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
           this.planetName
         );
         break;
