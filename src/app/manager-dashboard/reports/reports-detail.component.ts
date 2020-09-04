@@ -349,7 +349,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const teamOptions = [
@@ -388,6 +388,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         break;
       case 'resourceViews':
       case 'courseViews':
+      case 'stepCompletions':
       case 'health':
         this.exportDocView(reportType, dateRange, members);
         break;
@@ -418,9 +419,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
+      'stepCompletions': this.progress.steps.data,
       'health': this.healthComponent && this.healthComponent.examinations
     }[reportType];
-    const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
+    const title = {
+      'resourceViews': 'Resource Views',
+      'courseViews': 'Course Views',
+      'health': 'Community Health',
+      'stepCompletions': 'Course Progress' }[reportType];
     this.csvService.exportCSV({
       data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
