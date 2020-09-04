@@ -78,7 +78,7 @@ export class CsvService {
       ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
       { label: '', ...blankRow },
       { label: 'Course Views by Month', ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow)
+      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow),
       { label: '', ...blankRow },
       { label: 'Steps Completed by Month', ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedStepCompletions), headerRow)
