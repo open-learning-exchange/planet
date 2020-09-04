@@ -399,6 +399,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
           filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
           filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
+          filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
           this.planetName
         );
         break;
