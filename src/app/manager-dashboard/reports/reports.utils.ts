@@ -82,7 +82,8 @@ export const titleOfChartName = (chartName: string) => {
     resourceViewChart: 'Resource Views by Month',
     courseViewChart: 'Course Views by Month',
     visitChart: 'Total Member Visits by Month',
-    uniqueVisitChart: 'Unique Member Visits by Month'
+    uniqueVisitChart: 'Unique Member Visits by Month',
+    stepCompletedChart: 'Steps Completed by Month'
   };
   return chartNames[chartName];
 };

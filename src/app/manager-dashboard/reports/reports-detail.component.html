@@ -71,6 +71,7 @@
         <canvas id="visitChart"></canvas>
         <canvas id="resourceViewChart"></canvas>
         <canvas id="courseViewChart"></canvas>
+        <canvas id="stepCompletedChart"></canvas>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-title" i18n>Members</h1>
@@ -148,6 +149,8 @@
               <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
               <mat-grid-tile class="label" i18n>Total Views</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalCourseViews}}</mat-grid-tile>
+              <mat-grid-tile class="label" i18n>Steps Completed</mat-grid-tile>
+              <mat-grid-tile>{{reports?.totalStepCompleted}}</mat-grid-tile>
               <mat-grid-tile class="label" i18n>Most Visited</mat-grid-tile>
               <mat-grid-tile i18n>Total Visits by Course</mat-grid-tile>
               <ng-container *ngIf="!reports?.courses || reports?.courses.length === 0">

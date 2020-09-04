@@ -250,4 +250,10 @@ export class ReportsService {
     }));
   }
 
+  groupStepCompletion(steps: any[]) {
+    return ({
+      byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')
+    });
+  }
+
 }

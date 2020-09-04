@@ -157,6 +157,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
+    this.setStepCompletion();
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -179,6 +180,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.setLoginActivities();
     });
     this.usersService.requestUserData();
+  }
+
+  setStepCompletion() {
+    const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData.map(progress => ({
+      ...progress,
+      user: progress.userId.replace('org.couchdb.user:', '')
+    })));
+    this.reports.totalStepCompleted = byMonth.reduce((total, doc: any) => total + doc.count, 0);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
 
   setLoginActivities() {
