@@ -245,7 +245,10 @@ export class ReportsService {
             return course && value.count === course.doc.steps.length;
           })
           .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
-        steps: steps.map(({ key, value }) => ({ ...key, time: value.max }))
+        steps: steps.map(({ key, value }) => {
+          const course = courses.find(c => c._id === key.courseId);
+          return { ...key, time: value.max, title: course ? course.doc.courseTitle : '' };
+        })
       };
     }));
   }
