@@ -393,17 +393,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.exportDocView(reportType, dateRange, members);
         break;
       case 'summary':
-        this.csvService.exportSummaryCSV(
-          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
-          filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
-          filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
-          filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
-          this.planetName
-        );
+        this.exportSummary(dateRange, members);
         break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportSummary(dateRange, members) {
+    this.csvService.exportSummaryCSV(
+      filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
+      filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
+      filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
+      filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
+      this.planetName
+    );
   }
 
   openCourseView(courseId) {
