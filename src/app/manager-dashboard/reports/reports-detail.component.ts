@@ -349,7 +349,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const teamOptions = [
@@ -388,21 +388,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         break;
       case 'resourceViews':
       case 'courseViews':
+      case 'stepCompletions':
       case 'health':
         this.exportDocView(reportType, dateRange, members);
         break;
       case 'summary':
-        this.csvService.exportSummaryCSV(
-          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
-          filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
-          filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
-          filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
-          this.planetName
-        );
+        this.exportSummary(dateRange, members);
         break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportSummary(dateRange, members) {
+    this.csvService.exportSummaryCSV(
+      filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
+      filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
+      filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
+      filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
+      this.planetName
+    );
   }
 
   openCourseView(courseId) {
@@ -418,9 +423,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
+      'stepCompletions': this.progress.steps.data,
       'health': this.healthComponent && this.healthComponent.examinations
     }[reportType];
-    const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
+    const title = {
+      'resourceViews': 'Resource Views',
+      'courseViews': 'Course Views',
+      'health': 'Community Health',
+      'stepCompletions': 'Courses Progress' }[reportType];
     this.csvService.exportCSV({
       data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
