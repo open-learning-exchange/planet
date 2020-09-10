@@ -1,4 +1,5 @@
-FROM node:10.16.0-alpine as builder
+#FROM node:10.16.0-alpine as builder
+FROM treehouses/node as builder
 LABEL maintainer="paul@ole.org"
 
 ARG LANGUAGE=""
@@ -21,6 +22,7 @@ RUN ./compile_planet.sh
 
 ####
 
-FROM node:10.16.0-alpine
+#FROM node:10.16.0-alpine
+FROM treehouses/node
 
 COPY --from=builder /ng-app/dist /ng-app/dist
