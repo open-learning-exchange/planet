@@ -73,6 +73,28 @@ prepare_db_init_rpi(){
   DOCKER_DB_INIT_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init
 }
 
+prepare_planet_arm64(){
+  build_message prepare planet docker...
+  PLANET_ARM64=$DOCKER_ORG/$DOCKER_REPO:arm64-$VERSION-$BRANCH-$COMMIT
+  PLANET_ARM64_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:arm64-$VERSION
+  PLANET_ARM64_LATEST=$DOCKER_ORG/$DOCKER_REPO:arm64-latest
+  docker create --name reuse-artifact $DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
+  mkdir -p ./ng-app/dist
+  docker export reuse-artifact > reuse-artifact.tar
+  # this used to had verbose mode,
+  # which was been removed due to problems when building travis images.
+  # we found the solution here
+  # https://stackoverflow.com/questions/37540792/jenkins-script-tar-write-error
+  tar -xf reuse-artifact.tar -C ./ng-app/dist
+}
+
+prepare_db_init_arm64(){
+  build_message prepare db-init docker...
+  DOCKER_DB_INIT_ARM64=$DOCKER_ORG/$DOCKER_REPO:arm64-db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_ARM64_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:arm64-db-init-$VERSION
+  DOCKER_DB_INIT_ARM64_LATEST=$DOCKER_ORG/$DOCKER_REPO:arm64-db-init
+}
+
 prepare_planet_test(){
   build_message prepare planet test docker...
   PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
