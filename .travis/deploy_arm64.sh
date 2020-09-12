@@ -54,13 +54,13 @@ prepare_ci
 if [[ $image = db-init ]]
   then
   prepare_db_init_arm64
-  deploy_docker './docker/db-init/rpi-Dockerfile' $DOCKER_DB_INIT_ARM64 $DOCKER_DB_INIT_ARM64_LATEST
+  deploy_docker './docker/db-init/arm64-Dockerfile' $DOCKER_DB_INIT_ARM64 $DOCKER_DB_INIT_ARM64_LATEST
   deploy_tag $DOCKER_DB_INIT_ARM64 $DOCKER_DB_INIT_ARM64_VERSIONED
 fi
 
 if [[ $image = planet ]]
   then
   prepare_planet_arm64
-  deploy_docker './docker/planet/rpi-Dockerfile' $PLANET_ARM64 $PLANET_ARM64_LATEST
+  deploy_docker './docker/planet/arm64-Dockerfile' $PLANET_ARM64 $PLANET_ARM64_LATEST
   deploy_tag $PLANET_ARM64 $PLANET_ARM64_VERSIONED
 fi
