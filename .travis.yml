@@ -129,12 +129,12 @@ jobs:
     - stage: docker-release
       script: #arm image building planet
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-        - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
+        - travis_wait 45 bash ./.travis/deploy_arm.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
 
     - stage: docker-release
       script: #arm image building planet
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-        - travis_wait 45 bash ./.travis/deploy_rpi.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
+        - travis_wait 45 bash ./.travis/deploy_arm.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
 
     - stage: multiarch-release
       <<: *_prepare_multiarch
