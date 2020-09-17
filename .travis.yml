@@ -128,12 +128,12 @@ jobs:
         - docker logout
     - stage: docker-release
       script: #arm image building planet
-        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
         - travis_wait 45 bash ./.travis/deploy_arm.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=planet
 
     - stage: docker-release
       script: #arm image building planet
-        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
         - travis_wait 45 bash ./.travis/deploy_arm.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
 
     - stage: docker-release
@@ -144,7 +144,7 @@ jobs:
 
     - stage: docker-release
       script: #arm64 image building planet
-        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker run --rm --privileged multiarch/qemu-user-static: --reset -p yes
         - travis_wait 45 bash ./.travis/deploy_arm64.sh --branch="$TRAVIS_BRANCH" --commit="$TRAVIS_COMMIT" --pull="$TRAVIS_PULL_REQUEST" --duser="$DOCKER_USER" --dpass="$DOCKER_PASS" --gtag="$TRAVIS_TAG" --image=db-init
 
     - stage: multiarch-release
