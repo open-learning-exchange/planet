@@ -1,5 +1,3 @@
-#FROM tobi312/rpi-nginx@sha256:b375cd9a4511f5d7763397c5a4faa1f5c3605507db97075b12582aad2a6871b0
-#FROM treehouses/nginx@sha256:140b543a839e1163fb49ee18259f5ea20453e532596844099a079672ebc8f310
 FROM treehouses/nginx-tags:arm64
 RUN rm -rf /usr/share/nginx/html/*
 RUN apk add --no-cache \

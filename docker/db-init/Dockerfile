@@ -1,4 +1,3 @@
-#FROM node:10.16.0-alpine
 FROM treehouses/node
 
 RUN apk update ;\

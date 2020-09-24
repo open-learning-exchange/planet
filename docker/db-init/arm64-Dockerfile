@@ -6,8 +6,6 @@ RUN bash ./crosscompile_db-init.sh armv8 install
 
 #####
 
-#FROM hypriot/rpi-node:6.10.0-alpine
-#FROM treehouses/node@sha256:81d2ce78d15d92864299c8cc7bdf29b92c16fee793a01345abf8dbed3a8d59a4
 FROM treehouses/node-tags:arm64
 
 RUN apk update ;\
