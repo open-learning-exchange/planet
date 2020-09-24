@@ -1,5 +1,6 @@
 #FROM tobi312/rpi-nginx@sha256:b375cd9a4511f5d7763397c5a4faa1f5c3605507db97075b12582aad2a6871b0
-FROM treehouses/nginx@sha256:2d02350be7f7e0fa1157e44cf4ff7933a5b889e2e0053934490ea9cf1eb4cb6f
+#FROM treehouses/nginx@sha256:2d02350be7f7e0fa1157e44cf4ff7933a5b889e2e0053934490ea9cf1eb4cb6f
+FROM treehouses/nginx-tags:arm
 RUN rm -rf /usr/share/nginx/html/*
 RUN apk add --no-cache \
       fcgi \
