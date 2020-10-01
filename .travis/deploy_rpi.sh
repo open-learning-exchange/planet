@@ -25,11 +25,11 @@ case $i in
         image="${i#*=}"
         ;;
     *)
-    echo "usage: deploy_arm.sh -b=<branch-name>|--branch=<branch-name>"
-    echo "usage: deploy_arm.sh -c=<commit-sha>|--commit=<commit-sha>"
-    echo "usage: deploy_arm.sh -p=<pull-request-number>|--pull=<pull-request-number>"
-    echo "usage: deploy_arm.sh -u=<docker-user-name>|--duser=<docker-user-name>"
-    echo "usage: deploy_arm.sh -k=<docker-password>|--dpass=<docker-password>"
+    echo "usage: deploy_rpi.sh -b=<branch-name>|--branch=<branch-name>"
+    echo "usage: deploy_rpi.sh -c=<commit-sha>|--commit=<commit-sha>"
+    echo "usage: deploy_rpi.sh -p=<pull-request-number>|--pull=<pull-request-number>"
+    echo "usage: deploy_rpi.sh -u=<docker-user-name>|--duser=<docker-user-name>"
+    echo "usage: deploy_rpi.sh -k=<docker-password>|--dpass=<docker-password>"
     exit 1;
     ;;
 esac
