@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Loading</target>
+        <target state="translated">Загрузка</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
         <source>OK</source>
@@ -52,7 +52,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-submissions.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">OK</target>
+        <target state="translated">Ок</target>
       </trans-unit>
       <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -61,8 +61,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-      <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target state="translated">
+      <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> все
     </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
