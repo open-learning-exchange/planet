@@ -84,8 +84,8 @@ jobs:
     name: "Automated Test and Compose Language"
     runs-on: ubuntu-latest
     uses: actions/setup-node@v1
-      with:
-        node-version: "10"
+    with:
+      node-version: "10"
     before_install:
         - source ./.travis/travis_utils.sh
         - prepare_ci
