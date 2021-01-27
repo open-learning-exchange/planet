@@ -9,7 +9,7 @@ RUN apk add --no-cache \
       libssh2=1.8.2-r0 \
       libcurl=7.64.0-r2 \
     curl=7.64.0-r2 \
-      oniguruma=6.9.4-r0 \
+      oniguruma=6.9.4-r1 \
     jq=1.6-r0 \
       openssl=1.1.1g-r0
 
