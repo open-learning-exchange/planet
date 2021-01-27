@@ -27,6 +27,7 @@ dist: xenial
 branches:
   only:
   - master
+  - /^v\d+\.\d+\.\d+$/
 services:
   - docker
 env:
