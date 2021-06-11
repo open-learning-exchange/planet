@@ -156,7 +156,7 @@ jobs:
       script: #Pushing multiarch
         - set -e
         - create_multiarch_manifest_planet $PLANET_LATEST $PLANET_RPI_LATEST $PLANET_ARM64_LATEST $PLANET_VERSIONED $PLANET_RPI_VERSIONED $PLANET_ARM64_VERSIONED
-        - create_multiarch_manifest_dbinit $DB_INIT_LATEST $DB_INIT_RPI_LATEST $DB_INIT_ARM64_LATEST $DB_INIT_VERSIONED $DB_INIT_RPI_VERSIONED $DB_INIT_ARM64_VERSIONED
+        - create_multiarch_manifest_dbinit $DOCKER_DB_INIT_LATEST $DOCKER_DB_INIT_RPI_LATEST $DOCKER_DB_INIT_ARM64_LATEST $DOCKER_DB_INIT_VERSIONED $DOCKER_DB_INIT_RPI_VERSIONED $DOCKER_DB_INIT_ARM64_VERSIONED
         - push_multiarch_manifests
 
 notifications:
