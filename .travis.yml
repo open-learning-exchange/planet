@@ -28,6 +28,7 @@ branches:
   only:
   - master
   - /^v\d+\.\d+\.\d+$/
+  - /^treehouses.*$/
 services:
   - docker
 env:
