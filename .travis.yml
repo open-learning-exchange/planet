@@ -27,8 +27,10 @@ _use_nodejs: &_use_nodejs
 sudo: required
 dist: xenial
 branches:
-  except:
-  - l10n_master
+  only:
+  - master
+  - /^v\d+\.\d+\.\d+$/
+  - /^treehouses.*$/
 services:
   - docker
 env:
