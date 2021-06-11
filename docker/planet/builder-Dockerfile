@@ -1,4 +1,4 @@
-FROM node:10.16.0-alpine as builder
+FROM treehouses/node as builder
 LABEL maintainer="paul@ole.org"
 
 ARG LANGUAGE=""
@@ -13,7 +13,7 @@ COPY docker/planet/scripts/ ./
 COPY . .
 
 RUN apk add --update \
-    python \
+    python3 \
     build-base \
     jq
 RUN npm i --silent
@@ -21,6 +21,6 @@ RUN ./compile_planet.sh
 
 ####
 
-FROM node:10.16.0-alpine
+FROM treehouses/node
 
 COPY --from=builder /ng-app/dist /ng-app/dist

@@ -73,6 +73,28 @@ prepare_db_init_rpi(){
   DOCKER_DB_INIT_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-db-init
 }
 
+prepare_planet_arm64(){
+  build_message prepare planet docker...
+  PLANET_ARM64=$DOCKER_ORG/$DOCKER_REPO:arm64-$VERSION-$BRANCH-$COMMIT
+  PLANET_ARM64_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:arm64-$VERSION
+  PLANET_ARM64_LATEST=$DOCKER_ORG/$DOCKER_REPO:arm64-latest
+  docker create --name reuse-artifact $DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
+  mkdir -p ./ng-app/dist
+  docker export reuse-artifact > reuse-artifact.tar
+  # this used to had verbose mode,
+  # which was been removed due to problems when building travis images.
+  # we found the solution here
+  # https://stackoverflow.com/questions/37540792/jenkins-script-tar-write-error
+  tar -xf reuse-artifact.tar -C ./ng-app/dist
+}
+
+prepare_db_init_arm64(){
+  build_message prepare db-init docker...
+  DOCKER_DB_INIT_ARM64=$DOCKER_ORG/$DOCKER_REPO:arm64-db-init-$VERSION-$BRANCH-$COMMIT
+  DOCKER_DB_INIT_ARM64_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:arm64-db-init-$VERSION
+  DOCKER_DB_INIT_ARM64_LATEST=$DOCKER_ORG/$DOCKER_REPO:arm64-db-init
+}
+
 prepare_planet_test(){
   build_message prepare planet test docker...
   PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
@@ -106,6 +128,8 @@ prepare_everything(){
   prepare_db_init_test
   prepare_planet_rpi
   prepare_db_init_rpi
+  prepare_planet_arm64
+  prepare_db_init_arm64
 }
 
 package_docker(){
@@ -194,15 +218,19 @@ create_multiarch_manifest_planet(){
     if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
         build_message Creating Planet Multiarch Manifest for Latest
-        # $1: latest arm
-        # $2: latest amd64
+        # $1: latest amd64
+        # $2: latest arm
+        # $3: latest arm64
         yq n image treehouses/planet:latest | \
         yq w - manifests[0].image $1 | \
-        yq w - manifests[0].platform.architecture arm | \
+        yq w - manifests[0].platform.architecture amd64 | \
         yq w - manifests[0].platform.os linux | \
         yq w - manifests[1].image $2 | \
-        yq w - manifests[1].platform.architecture amd64 | \
+        yq w - manifests[1].platform.architecture arm | \
         yq w - manifests[1].platform.os linux | \
+        yq w - manifests[2].image $3 | \
+        yq w - manifests[2].platform.architecture arm64 | \
+        yq w - manifests[2].platform.os linux | \
         tee /tmp/MA_manifests/MA_planet_latest.yaml
     else
         build_message Branch is Not master so no need to create Multiarch manifests for planet.
@@ -214,15 +242,19 @@ create_multiarch_manifest_planet(){
         if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
         then
             build_message Creating Planet Multiarch Manifest for Versioned.
-            # $3: versioned arm
             # $4: versioned amd64
+            # $5: versioned arm
+            # $6: versioned arm64
             yq n image treehouses/planet:$VERSION | \
-            yq w - manifests[0].image $3 | \
-            yq w - manifests[0].platform.architecture arm | \
+            yq w - manifests[0].image $4 | \
+            yq w - manifests[0].platform.architecture amd64 | \
             yq w - manifests[0].platform.os linux | \
-            yq w - manifests[1].image $4 | \
-            yq w - manifests[1].platform.architecture amd64 | \
+            yq w - manifests[1].image $5 | \
+            yq w - manifests[1].platform.architecture arm | \
             yq w - manifests[1].platform.os linux | \
+            yq w - manifests[2].image $6 | \
+            yq w - manifests[2].platform.architecture arm64 | \
+            yq w - manifests[2].platform.os linux | \
             tee /tmp/MA_manifests/MA_planet_versioned.yaml
         else
             build_message Local Commit is not latest. Hence Not creating Versioned Multiarch manifests for planet.
@@ -237,15 +269,19 @@ create_multiarch_manifest_dbinit(){
     if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
     then
         build_message Creating Multiarch Manifest for db-init
-        # $1: db-init arm
-        # $2: db-init amd64
+        # $1: db-init amd64
+        # $2: db-init arm
+        # $3: db-init arm64
         yq n image treehouses/planet:db-init | \
         yq w - manifests[0].image $1 | \
-        yq w - manifests[0].platform.architecture arm | \
+        yq w - manifests[0].platform.architecture amd64 | \
         yq w - manifests[0].platform.os linux | \
         yq w - manifests[1].image $2 | \
-        yq w - manifests[1].platform.architecture amd64 | \
+        yq w - manifests[1].platform.architecture arm | \
         yq w - manifests[1].platform.os linux | \
+        yq w - manifests[2].image $3 | \
+        yq w - manifests[2].platform.architecture arm64 | \
+        yq w - manifests[2].platform.os linux | \
         tee /tmp/MA_manifests/MA_db_init.yaml
      else
         build_message Branch is Not master so no need to create Multiarch manifests for db-init.
@@ -257,15 +293,19 @@ create_multiarch_manifest_dbinit(){
         if [ "$REMOTE_MASTER_HASH" = "$LOCAL_HASH" ]
         then
             build_message Creating Multiarch Manifest for db-init Versioned
-            # $3: db-init versioned arm
             # $4: db-init versioned amd64
+            # $5: db-init versioned arm
+            # $6: db-init versioned arm64
             yq n image treehouses/planet:db-init-$VERSION | \
-            yq w - manifests[0].image $3 | \
-            yq w - manifests[0].platform.architecture arm | \
+            yq w - manifests[0].image $4 | \
+            yq w - manifests[0].platform.architecture amd64 | \
             yq w - manifests[0].platform.os linux | \
-            yq w - manifests[1].image $4 | \
-            yq w - manifests[1].platform.architecture amd64 | \
+            yq w - manifests[1].image $5 | \
+            yq w - manifests[1].platform.architecture arm | \
             yq w - manifests[1].platform.os linux | \
+            yq w - manifests[2].image $6 | \
+            yq w - manifests[2].platform.architecture arm64 | \
+            yq w - manifests[2].platform.os linux | \
             tee /tmp/MA_manifests/MA_db_init_versioned.yaml
         else
             build_message Local Commit is not latest. Hence Not creating Versioned Multiarch manifests for db-init.

@@ -2,11 +2,11 @@ FROM ubuntu:xenial as builder
 LABEL maintainer="sahil@ole.org,mappuji@ole.org"
 
 COPY docker/db-init/crosscompile_db-init.sh .
-RUN bash ./crosscompile_db-init.sh armv7 install
+RUN bash ./crosscompile_db-init.sh armv8 install
 
 #####
 
-FROM treehouses/node-tags:arm
+FROM treehouses/node-tags:arm64
 
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates;\
