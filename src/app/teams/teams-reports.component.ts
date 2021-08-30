@@ -140,6 +140,31 @@ export class TeamsReportsComponent implements DoCheck {
     }));
   }
 
+  addComment(report) {
+    const initialValue = ''
+    const title = 'Add comment'
+    const fields = [ {
+      'type': 'markdown',
+      'name': 'message',
+      // placeholder,
+      'required': true,
+      // imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
+    } ];
+    const formGroup = { message: [ initialValue, CustomValidators.required ] };
+    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
+      onSubmit: (newComments: any) => {
+      //   if (newNews) {
+      //     this.postNews(
+      //       { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+      //       newNews
+      //     );
+      //   }
+      // },
+      // autoFocus: true
+      console.log('newComments', newComments)
+    }});
+  }
+
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
       data: { report, team: this.team },
