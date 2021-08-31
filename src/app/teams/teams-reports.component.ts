@@ -141,6 +141,7 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   addComment(report) {
+    console.log("report", report);
     const initialValue = ''
     const title = 'Add comment'
     const fields = [ {
@@ -153,16 +154,16 @@ export class TeamsReportsComponent implements DoCheck {
     const formGroup = { message: [ initialValue, CustomValidators.required ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newComments: any) => {
-      //   if (newNews) {
-      //     this.postNews(
-      //       { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-      //       newNews
-      //     );
-      //   }
-      // },
-      // autoFocus: true
-      console.log('newComments', newComments)
-    }});
+        // if (newNews) {
+        //   this.postNews(
+        //     { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+        //     newNews
+        //   );
+        // }
+      },
+      autoFocus: true
+      // console.log('newComments', newComments)
+    });
   }
 
   openReportDialog(report) {

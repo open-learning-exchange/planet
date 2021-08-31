@@ -67,6 +67,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   }
 
   addReply(news) {
+    console.log('news added:', news);
     const label = this.formLabel(news);
     this.updateNews.emit({
       title: `Reply to ${label}`,

@@ -120,6 +120,7 @@ export class TeamsService {
   }
 
   updateTeam(team: any) {
+    console.log('update team')
     return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
       return of({ ...team, _rev: res.rev, _id: res.id });
     }));
@@ -174,6 +175,7 @@ export class TeamsService {
   }
 
   updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report', opts?: any) {
+    console.log('update docs')
     const { _id: teamId, teamType, teamPlanetCode } = team;
     const datePlaceholder = this.couchService.datePlaceholder;
     const docs = newDocs.map(newDoc => ({
