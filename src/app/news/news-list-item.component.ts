@@ -80,6 +80,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   addReply(news) {
+    console.log('news added:', news);
     const label = this.formLabel(news);
     const newNews = {
         replyTo: news._id,
