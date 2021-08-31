@@ -22,6 +22,7 @@ export class TeamsReportsComponent implements DoCheck {
   @Input() reports: any[];
   @Input() editable = false;
   @Input() team;
+  @Input() viewableId: string;
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;
   minColumnWidth = 300;
@@ -154,15 +155,14 @@ export class TeamsReportsComponent implements DoCheck {
     const formGroup = { message: [ initialValue, CustomValidators.required ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newComments: any) => {
-        // if (newNews) {
-        //   this.postNews(
-        //     { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-        //     newNews
-        //   );
-        // }
+        if (newComments) {
+          this.updateReport(
+            { ...report, viewIn: report.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+            newComments
+          );
+        }
       },
       autoFocus: true
-      // console.log('newComments', newComments)
     });
   }
 
