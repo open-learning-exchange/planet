@@ -8,9 +8,10 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap, finalize } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
+import { NewsService } from '../news/news.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -26,6 +27,7 @@ export class TeamsReportsComponent implements DoCheck {
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;
   minColumnWidth = 300;
+  report: any;
 
   constructor(
     private couchService: CouchService,
@@ -33,6 +35,7 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
+    private newsService: NewsService,
     private csvService: CsvService,
     private elementRef: ElementRef
   ) {}
@@ -142,29 +145,35 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   addComment(report) {
-    console.log("report", report);
-    const initialValue = ''
-    const title = 'Add comment'
-    const fields = [ {
-      'type': 'markdown',
-      'name': 'message',
-      // placeholder,
-      'required': true,
-      // imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
-    } ];
-    const formGroup = { message: [ initialValue, CustomValidators.required ] };
-    this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
-      onSubmit: (newComments: any) => {
-        if (newComments) {
-          this.updateReport(
-            { ...report, viewIn: report.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-            newComments
-          );
-        }
-      },
-      autoFocus: true
-    });
+    let message = '';
+    this.report = report;
+    this.dialogsFormService.openDialogsForm(
+      'Add Comment',
+      [ { name: 'message', placeholder: 'Comment', type: 'markdown', required: true, imageGroup: { teams: this.report.teamId} } ],
+      { message: [ message, CustomValidators.requiredMarkdown ] },
+      { autoFocus: true, onSubmit: this.postMessage.bind(this) }
+    );
   }
+
+  postMessage(message) {
+    this.newsService.postNews({
+      viewIn: [ { '_id': this.team._id, section: 'teams', public: this.team.userStatus !== 'member' } ],
+      reportId: this.report._id,
+      teamId: this.team._id,
+      messageType: this.team.teamType,
+      messagePlanetCode: this.team.teamPlanetCode,
+      ...message
+    }, 'Comment has been posted successfully').pipe(
+      // switchMap(() => this.sendNotifications('message')),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+  }
+
+  // sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
+  //   return this.teamsService.sendNotifications(type, members || this.members, {
+  //     newMembersLength, url: this.router.url, team: { ...this.team }
+  //   });
+
 
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
