@@ -217,6 +217,26 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     return this.news.filter(item => item.doc.reportId === report._id);
   }
 
+  postMessage(message) {
+    this.newsService.postNews({
+      viewIn: [ { '_id': this.team._id, section: 'teams', public: this.team.userStatus !== 'member' } ],
+      reportId: this.report._id,
+      teamId: this.team._id,
+      messageType: this.team.teamType,
+      messagePlanetCode: this.team.teamPlanetCode,
+      ...message
+    }, 'Comment has been posted successfully').pipe(
+      // switchMap(() => this.sendNotifications('message')),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+  }
+
+  // sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
+  //   return this.teamsService.sendNotifications(type, members || this.members, {
+  //     newMembersLength, url: this.router.url, team: { ...this.team }
+  //   });
+
+
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
       data: { report, team: this.team },
