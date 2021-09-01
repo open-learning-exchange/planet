@@ -217,6 +217,10 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     return this.news.filter(item => item.doc.reportId === report._id);
   }
 
+  filterCommentsFromNews () {
+    return this.news.filter(item => item.doc.reportId === this.report._id)
+  }
+
   postMessage(message) {
     this.newsService.postNews({
       viewIn: [ { '_id': this.team._id, section: 'teams', public: this.team.userStatus !== 'member' } ],

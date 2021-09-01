@@ -61,6 +61,8 @@ export class DialogsFormComponent {
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
       this.fields = this.data.fields;
+      console.log(this.data.comments);
+      this.comments = this.data.comments || [];
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
