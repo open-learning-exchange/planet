@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -8,17 +8,21 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { tap, switchMap, finalize } from 'rxjs/operators';
+import { takeUntil, tap, switchMap, finalize, catchError } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { NewsService } from '../news/news.service';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { StateService } from '../shared/state.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'planet-teams-reports',
   styleUrls: [ './teams-reports.scss' ],
   templateUrl: './teams-reports.component.html'
 })
-export class TeamsReportsComponent implements DoCheck {
+export class TeamsReportsComponent implements DoCheck, OnInit {
 
   @Input() reports: any[];
   @Input() editable = false;
@@ -28,6 +32,10 @@ export class TeamsReportsComponent implements DoCheck {
   columns = 4;
   minColumnWidth = 300;
   report: any;
+  teamId: string;
+  news: any[] = [];
+  mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
+  onDestroy$ = new Subject<void>();
 
   constructor(
     private couchService: CouchService,
@@ -37,7 +45,9 @@ export class TeamsReportsComponent implements DoCheck {
     private teamsService: TeamsService,
     private newsService: NewsService,
     private csvService: CsvService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private route: ActivatedRoute,
+    private stateService: StateService,
   ) {}
 
   ngDoCheck() {
@@ -50,6 +60,22 @@ export class TeamsReportsComponent implements DoCheck {
       this.columns = newColumns;
     }
   }
+
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
+      this.initTeam(this.teamId);
+    });
+
+  }
+
+  initTeam(teamId: string) {
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(news => this.news = news.map(post => ({
+        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+      })));
+  }
+
 
   openAddReportDialog(oldReport = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
@@ -147,12 +173,19 @@ export class TeamsReportsComponent implements DoCheck {
   addComment(report) {
     let message = '';
     this.report = report;
+    const comments = this.filterCommentsFromNews();
+
     this.dialogsFormService.openDialogsForm(
       'Add Comment',
       [ { name: 'message', placeholder: 'Comment', type: 'markdown', required: true, imageGroup: { teams: this.report.teamId} } ],
       { message: [ message, CustomValidators.requiredMarkdown ] },
-      { autoFocus: true, onSubmit: this.postMessage.bind(this) }
+      { autoFocus: true, onSubmit: this.postMessage.bind(this) },
+      comments
     );
+  }
+
+  filterCommentsFromNews () {
+    return this.news.filter(item => item.doc.reportId === this.report._id)
   }
 
   postMessage(message) {

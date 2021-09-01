@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
+import { StateService } from '../state.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -17,12 +18,14 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: any;
+  public comments: any;
   public modalForm: FormGroup;
   passwordVisibility = new Map();
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  configuration = this.stateService.configuration;
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -39,7 +42,8 @@ export class DialogsFormComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private stateService: StateService,
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
@@ -47,6 +51,8 @@ export class DialogsFormComponent {
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
       this.fields = this.data.fields;
+      console.log(this.data.comments);
+      this.comments = this.data.comments || [];
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
