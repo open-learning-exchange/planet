@@ -1,0 +1,16 @@
+name: Planet Builder
+
+on: [push]
+
+jobs:
+  build:
+    name: Planet build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
