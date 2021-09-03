@@ -57,6 +57,13 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     private stateService: StateService,
     private userService: UserService,
   ) {}
+  
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
+      this.initTeam(this.teamId);
+    });
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
@@ -217,8 +224,8 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     return this.news.filter(item => item.doc.reportId === report._id);
   }
 
-  filterCommentsFromNews () {
-    return this.news.filter(item => item.doc.reportId === this.report._id)
+  filterCommentsFromNews (report) {
+    return this.news.filter(item => item.doc.reportId === report._id)
   }
 
   postMessage(message) {
@@ -227,6 +234,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       reportId: this.report._id,
       teamId: this.team._id,
       messageType: this.team.teamType,
+      viewedBy: [this.currentUser._id],
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
     }, 'Comment has been posted successfully').pipe(

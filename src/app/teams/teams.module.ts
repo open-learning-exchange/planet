@@ -21,6 +21,7 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 import { TeamsCommentsComponent } from './teams-comments.component';
 
 
+
 @NgModule({
   exports: [
     TeamsViewComponent,
