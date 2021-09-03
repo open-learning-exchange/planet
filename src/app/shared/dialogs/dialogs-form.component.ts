@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnChanges } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -26,6 +26,8 @@ export class DialogsFormComponent {
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
   configuration = this.stateService.configuration;
+  isRoot = true;
+  userStatus = 'member';
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -72,6 +74,11 @@ export class DialogsFormComponent {
       dialog.close(mForm.value);
     }
   }
+
+  toggleAdd(data) {
+    this.isRoot = data._id === 'root';
+  }
+
 
   togglePasswordVisibility(fieldName) {
     const visibility = this.passwordVisibility.get(fieldName) || false;

@@ -67,7 +67,6 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   }
 
   addReply(news) {
-    console.log('news added:', news);
     const label = this.formLabel(news);
     this.updateNews.emit({
       title: `Reply to ${label}`,
@@ -77,7 +76,9 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
         replyTo: news._id,
         messagePlanetCode: news.messagePlanetCode,
         messageType: news.messageType,
-        viewIn: news.viewIn
+        viewIn: news.viewIn,
+        teamId: news.teamId,
+        reportId: news.reportId
       }
     });
     this.sendNewsNotifications(news);

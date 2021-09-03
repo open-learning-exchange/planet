@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -16,6 +16,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -35,7 +36,10 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   teamId: string;
   news: any[] = [];
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
+  commentCount: number;
   onDestroy$ = new Subject<void>();
+  comments = 8;
+  currentUser = this.userService.get();
 
   constructor(
     private couchService: CouchService,
@@ -48,7 +52,15 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     private elementRef: ElementRef,
     private route: ActivatedRoute,
     private stateService: StateService,
+    private userService: UserService,
   ) {}
+  
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
+      this.initTeam(this.teamId);
+    });
+  }
 
   ngDoCheck() {
     const gridElement = this.elementRef.nativeElement.children['report-grid'];
@@ -61,14 +73,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     }
   }
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
-      this.initTeam(this.teamId);
-    });
-
-  }
-
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => this.news = news.map(post => ({
@@ -76,6 +80,20 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       })));
   }
 
+  // ngAfterViewChecked() {
+  //   this.checkNewComments()
+  // }
+
+  // checkNewComments() {
+  //   console.log(this.currentUser._id)
+  //   console.log('this is new comments', this.news)
+  //   this.comments = this.news.filter(item => item.doc.viewableId.includes(this.currentUser._id)).length; 
+  // }
+
+  showCommentsCount(report) {
+    this.commentCount = this.filterCommentsFromNews(report).length;
+    return this.commentCount
+  }
 
   openAddReportDialog(oldReport = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
@@ -173,7 +191,9 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   addComment(report) {
     let message = '';
     this.report = report;
-    const comments = this.filterCommentsFromNews();
+    const comments = this.filterCommentsFromNews(report);
+    console.log(comments)
+    console.log(report);
 
     this.dialogsFormService.openDialogsForm(
       'Add Comment',
@@ -184,8 +204,8 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     );
   }
 
-  filterCommentsFromNews () {
-    return this.news.filter(item => item.doc.reportId === this.report._id)
+  filterCommentsFromNews (report) {
+    return this.news.filter(item => item.doc.reportId === report._id)
   }
 
   postMessage(message) {
@@ -194,6 +214,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       reportId: this.report._id,
       teamId: this.team._id,
       messageType: this.team.teamType,
+      viewedBy: [this.currentUser._id],
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
     }, 'Comment has been posted successfully').pipe(
