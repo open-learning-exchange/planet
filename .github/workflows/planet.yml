@@ -17,13 +17,13 @@ jobs:
       - name: Prepare CI
         run: |
           echo "DOCKER_ORG=rjpadilla" >> "$GITHUB_ENV"
-          "DOCKER_REPO=planet-tags >> "$GITHUB_ENV"
-          "DOCKER_REPO_TEST=planet-test >> "$GITHUB_ENV"
-          "VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//') >> "$GITHUB_ENV"
-          "BRANCH=${GITHUB_REF#refs/heads/}" >> "$GITHUB_ENV"
-          "COMMIT=${GITHUB_SHA::8}" >> "$GITHUB_ENV"
-          "REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)" >> "$GITHUB_ENV"
-          "LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")" >> "$GITHUB_ENV"
+          echo "DOCKER_REPO=planet-tags >> "$GITHUB_ENV"
+          echo "DOCKER_REPO_TEST=planet-test >> "$GITHUB_ENV"
+          echo "VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//') >> "$GITHUB_ENV"
+          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> "$GITHUB_ENV"
+          echo "COMMIT=${GITHUB_SHA::8}" >> "$GITHUB_ENV"
+          echo "REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)" >> "$GITHUB_ENV"
+          echo "LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")" >> "$GITHUB_ENV"
 
       - name: Prepare Planet
         run: |
