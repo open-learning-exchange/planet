@@ -24,5 +24,4 @@ jobs:
           COMMIT="${GITHUB_SHA::8}"
           REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)
           LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")
-          env | sort
-
+          echo "$VERSION $BRANCH $COMMIT $REMOTE_MASTER_HASH $LOCAL_HASH"
