@@ -39,4 +39,9 @@ jobs:
 
       - name: prepare planet test docker...
         run: |
-          env
+          echo "PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
+          echo "PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest" >> "$GITHUB_ENV"
+
+      - name: prepare db-init test docker...
+        run: |
+          echo
