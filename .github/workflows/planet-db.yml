@@ -1,4 +1,4 @@
-name: Planet Builder
+name: Planet DB-Init Builder
 
 on: [push]
 
@@ -16,8 +16,8 @@ jobs:
 
       - name: Build image
         run: |
-          repo="rjpadilla/planet:latest"
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo .
+          repo="rjpadilla/planet:db-init"
+          docker build -f './docker/db-init/Dockerfile' -t $repo .
           docker images
           docker push $repo
 
