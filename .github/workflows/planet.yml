@@ -25,12 +25,18 @@ jobs:
           echo "REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)" >> "$GITHUB_ENV"
           echo "LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")" >> "$GITHUB_ENV"
 
-      - name: Prepare Planet
+      - name: prepare planet docker...
         run: |
           echo "PLANET=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
           echo "PLANET_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:$VERSION" >> "$GITHUB_ENV"
           echo "PLANET_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest" >> "$GITHUB_ENV"
 
-      - name: Prepare DB Init
+      - name: prepare db-init docker...
+        run: |
+          echo "DOCKER_DB_INIT=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
+          echo "DOCKER_DB_INIT_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION" >> "$GITHUB_ENV"
+          echo "DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init" >> "$GITHUB_ENV"
+
+      - name: prepare planet test docker...
         run: |
           env
