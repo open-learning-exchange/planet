@@ -27,5 +27,10 @@ jobs:
 
       - name: Prepare Planet
         run: |
+          echo "PLANET=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
+          echo "PLANET_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:$VERSION" >> "$GITHUB_ENV"
+          echo "PLANET_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest" >> "$GITHUB_ENV"
+
+      - name: Prepare DB Init
+        run: |
           env
-      
