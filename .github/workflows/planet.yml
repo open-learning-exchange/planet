@@ -17,12 +17,8 @@ jobs:
       - name: Build image
         run: |
           repo="rjpadilla/planet:latest"
-          mkdir -p ./ng-app/dist
-          mkdir -p ./ng-app/dist/eng
-          docker create --name eng treehouses/planet-test:0.13.0-v0.13.0-d3f8084d
-          docker export eng > eng.tar
-          tar -xf eng.tar -C ./ng-app/eng
-          cp -ar ./ng-app/eng/ng-app/dist/eng/ ./ng-app/dist/
+          npm install
+          npm run build
           docker build -f './docker/planet/Dockerfile' -t $repo .
           docker images
           docker push $repo
