@@ -14,57 +14,19 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
-      - name: Prepare CI
+      - name: Build image
         run: |
-          echo "DOCKER_ORG=rjpadilla" >> "$GITHUB_ENV"
-          echo "DOCKER_REPO=planet-tags" >> "$GITHUB_ENV"
-          echo "DOCKER_REPO_TEST=planet-test" >> "$GITHUB_ENV"
-          echo "VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')" >> "$GITHUB_ENV"
-          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> "$GITHUB_ENV"
-          echo "COMMIT=${GITHUB_SHA::8}" >> "$GITHUB_ENV"
-          echo "REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)" >> "$GITHUB_ENV"
-          echo "LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")" >> "$GITHUB_ENV"
+          DOCKER_ORG=rjpadilla
+          DOCKER_REPO=planet-tags
+          DOCKER_REPO_TEST=planet-test
+          VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          BRANCH=${GITHUB_REF#refs/heads/}
+          COMMIT=${GITHUB_SHA::8}
+          REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)
+          LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")
+          PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
+          PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest
+          docker build './docker/planet/builder-Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST "eng" "en"
+          docker images
 
-      - name: prepare planet docker...
-        run: |
-          echo "PLANET=$DOCKER_ORG/$DOCKER_REPO:$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
-          echo "PLANET_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:$VERSION" >> "$GITHUB_ENV"
-          echo "PLANET_LATEST=$DOCKER_ORG/$DOCKER_REPO:latest" >> "$GITHUB_ENV"
-
-      - name: prepare db-init docker...
-        run: |
-          echo "DOCKER_DB_INIT=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
-          echo "DOCKER_DB_INIT_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:db-init-$VERSION" >> "$GITHUB_ENV"
-          echo "DOCKER_DB_INIT_LATEST=$DOCKER_ORG/$DOCKER_REPO:db-init" >> "$GITHUB_ENV"
-
-      - name: prepare planet test docker...
-        run: |
-          echo "PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
-          echo "PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest" >> "$GITHUB_ENV"
-
-      - name: prepare db-init test docker...
-        run: |
-          echo "DOCKER_DB_INIT_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init-$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
-          echo "DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init" >> "$GITHUB_ENV"
-
-      - name: prepare planet rpi docker...
-        run: |
-          echo "PLANET_RPI=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
-          echo "PLANET_RPI_VERSIONED=$DOCKER_ORG/$DOCKER_REPO:rpi-$VERSION" >> "$GITHUB_ENV"
-          echo "PLANET_RPI_LATEST=$DOCKER_ORG/$DOCKER_REPO:rpi-latest" >> "$GITHUB_ENV"
-          docker create --name reuse-artifact $DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
-          mkdir -p ./ng-app/dist
-          docker export reuse-artifact > reuse-artifact.tar
-          tar -xf reuse-artifact.tar -C ./ng-app/dist
-
-      - name: prepare db-init rpi docker...
-        run: |
-          ls
-
-      - name: prepare planet arm64 docker...
-        run: |
-          echo
-
-      - name: prepare db-init arm64 docker...
-        run: |
-          echo
+      
