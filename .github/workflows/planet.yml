@@ -19,7 +19,7 @@ jobs:
           repo="rjpadilla/planet:latest"
           mkdir -p ./ng-app/dist
           mkdir -p ./ng-app/dist/eng
-          docker create --name eng planet_test
+          docker create --name eng treehouses/planet
           docker export eng > eng.tar
           tar -xf eng.tar -C ./ng-app/eng
           cp -ar ./ng-app/eng/ng-app/dist/eng/ ./ng-app/dist/
