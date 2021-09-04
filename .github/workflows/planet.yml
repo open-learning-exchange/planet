@@ -6,8 +6,6 @@ jobs:
   build:
     name: Planet build
     runs-on: ubuntu-latest
-    env:
-
 
     steps:
       - name: Checkout Code
