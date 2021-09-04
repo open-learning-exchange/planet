@@ -26,7 +26,7 @@ jobs:
           LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")
           PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT
           PLANET_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:latest
-          docker build './docker/planet/builder-Dockerfile' $PLANET_TEST $PLANET_TEST_LATEST "eng" "en"
+          docker build -f './docker/planet/builder-Dockerfile' -t $PLANET_TEST .
           docker images
 
       
