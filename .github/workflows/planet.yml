@@ -44,4 +44,9 @@ jobs:
 
       - name: prepare db-init test docker...
         run: |
+          echo "DOCKER_DB_INIT_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init-$VERSION-$BRANCH-$COMMIT" >> "$GITHUB_ENV"
+          echo "DOCKER_DB_INIT_TEST_LATEST=$DOCKER_ORG/$DOCKER_REPO_TEST:db-init" >> "$GITHUB_ENV"
+
+      - name: prepare planet rpi docker...
+        run: |
           echo
