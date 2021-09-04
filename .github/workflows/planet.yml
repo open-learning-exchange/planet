@@ -17,7 +17,7 @@ jobs:
       - name: Build image
         run: |
           repo="rjpadilla/planet:latest"
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo .
+          docker build -f './docker/planet/Dockerfile' -t $repo .
           docker images
           docker push $repo
 
