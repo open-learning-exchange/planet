@@ -7,14 +7,14 @@ jobs:
     name: Planet build
     runs-on: ubuntu-latest
     env:
-       DOCKER_ORG=rjpadilla
-       DOCKER_REPO=planet-tags
-       DOCKER_REPO_TEST=planet-test
-       VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-       BRANCH="${GITHUB_REF#refs/heads/}"
-       COMMIT="${GITHUB_SHA::8}"
-       REMOTE_MASTER_HASH=$(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)
-       LOCAL_HASH=$(git log -n 1 --pretty=format:"%H")
+       DOCKER_ORG: rjpadilla
+       DOCKER_REPO: planet-tags
+       DOCKER_REPO_TEST: planet-test
+       VERSION: $(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+       BRANCH: "${GITHUB_REF#refs/heads/}"
+       COMMIT: "${GITHUB_SHA::8}"
+       REMOTE_MASTER_HASH: $(git ls-remote https://github.com/rjpadilla/planet.git | grep refs/heads/master | cut -f 1)
+       LOCAL_HASH: $(git log -n 1 --pretty=format:"%H")
 
     steps:
       - name: Checkout Code
