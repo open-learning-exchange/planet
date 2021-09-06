@@ -598,3 +598,10 @@ body {
   }
 
 }
+
+.comment-popup.mat-snack-bar-container {
+  background: $planet-green;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
