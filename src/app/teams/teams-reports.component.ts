@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar} from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,6 +17,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../shared/user.service';
+import { TeamsCommentsComponent } from './teams-comments.component';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -38,12 +39,13 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   commentCount: number;
   onDestroy$ = new Subject<void>();
-  comments = 8;
+  comments = 0;
   currentUser = this.userService.get();
 
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
+    private snackbar: MatSnackBar,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
@@ -75,21 +77,30 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
 
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => this.news = news.map(post => ({
+      .subscribe(news => {
+        this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      })));
+      }))
+      this.checkNewComments(this.news)
+    });
   }
 
-  // ngAfterViewChecked() {
-  //   this.checkNewComments()
-  // }
+  // for comment notification
+  checkNewComments(news) {
+    this.comments = news.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
+    if(this.comments > 0) this.snackbar.openFromComponent(TeamsCommentsComponent, {
+      data: {
+        message: `You have ${this.comments} comments.`,
+        buttonText: 'Close'
+      },
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: 'comment-popup'
+    });
+  }
 
-  // checkNewComments() {
-  //   console.log(this.currentUser._id)
-  //   console.log('this is new comments', this.news)
-  //   this.comments = this.news.filter(item => item.doc.viewableId.includes(this.currentUser._id)).length; 
-  // }
-
+  // for individual comments count of the report
   showCommentsCount(report) {
     this.commentCount = this.filterCommentsFromNews(report).length;
     return this.commentCount
@@ -192,8 +203,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     let message = '';
     this.report = report;
     const comments = this.filterCommentsFromNews(report);
-    console.log(comments)
-    console.log(report);
 
     this.dialogsFormService.openDialogsForm(
       'Add Comment',

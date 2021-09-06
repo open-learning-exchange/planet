@@ -18,10 +18,11 @@ import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports.component';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { TeamsCommentsComponent } from './teams-comments.component';
 
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent ],
+  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent, TeamsCommentsComponent ],
   imports: [
     TeamsRouterModule,
     CommonModule,
@@ -44,7 +45,8 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
     TeamsReportsDetailComponent,
     TeamsMemberComponent,
     TeamsReportsDialogComponent,
+    TeamsCommentsComponent
   ],
-  entryComponents: [ TeamsReportsDialogComponent ]
+  entryComponents: [ TeamsReportsDialogComponent, TeamsCommentsComponent ]
 })
 export class TeamsModule {}
