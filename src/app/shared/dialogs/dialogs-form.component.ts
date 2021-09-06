@@ -18,7 +18,7 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: any;
-  public comments: any;
+  public comments = [];
   public modalForm: FormGroup;
   passwordVisibility = new Map();
   isSpinnerOk = true;
@@ -54,7 +54,7 @@ export class DialogsFormComponent {
       this.title = this.data.title;
       this.fields = this.data.fields;
       console.log(this.data.comments);
-      this.comments = this.data.comments || [];
+      this.comments = this.data.comments !== undefined ? this.data.comments : [];
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
