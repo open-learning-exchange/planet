@@ -62,6 +62,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   finances: any[] = [];
   reports: any[] = [];
   tasks: any[];
+  messages: any[];
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
@@ -128,9 +129,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => this.news = news.map(post => ({
+      .subscribe(news => {
+      this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      })));
+      }))
+      this.filterMessages(this.news);
+    });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
@@ -155,6 +159,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setStatus(teamId, this.leader, this.userService.get());
       this.requestTeamNews(teamId);
     });
+  }
+
+  filterMessages(news) {
+    this.messages = news.filter(item => item.doc.docType == 'message');
   }
 
   initServices(teamId) {
@@ -466,7 +474,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
-    }, 'Message has been posted successfully').pipe(
+    }, 'Message has been posted successfully', 'message').pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });

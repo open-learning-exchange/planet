@@ -36,11 +36,11 @@
       <button mat-icon-button type="button" (click)="editNews(item.doc)" i18n><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)" i18n><mat-icon>delete</mat-icon></button>
     </ng-container>
-    <button mat-button i18n *ngIf="item.doc.user.name === currentUser.name && editable" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
+    <button mat-button i18n *ngIf="item.doc.user.name === currentUser.name && editable && !comments" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
     <mat-menu #labelMenu="matMenu">
       <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
     </mat-menu>
-    <button mat-button i18n *ngIf="showShare" (click)="shareStory(item.doc)">Share with {
+    <button mat-button i18n *ngIf="showShare && !comments" (click)="shareStory(item.doc)">Share with {
       shareTarget, select, community {Community} nation {Nation} center {Earth}
     }</button>
   </mat-card-actions>

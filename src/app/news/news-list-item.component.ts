@@ -17,6 +17,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   @Input() item;
+  @Input() comments;
   @Input() replyObject;
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
@@ -68,18 +69,22 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   addReply(news) {
     const label = this.formLabel(news);
-    this.updateNews.emit({
-      title: `Reply to ${label}`,
-      placeholder: `Your ${label}`,
-      initialValue: '',
-      news: {
+    let newNews = {
         replyTo: news._id,
         messagePlanetCode: news.messagePlanetCode,
         messageType: news.messageType,
         viewIn: news.viewIn,
         teamId: news.teamId,
-        reportId: news.reportId
+        reportId: news.reportId,
       }
+
+    if(this.comments) newNews['viewedBy'] = [this.currentUser._id];
+
+    this.updateNews.emit({
+      title: `Reply to ${label}`,
+      placeholder: `Your ${label}`,
+      initialValue: '',
+      news: newNews
     });
     this.sendNewsNotifications(news);
   }

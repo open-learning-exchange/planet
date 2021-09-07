@@ -87,10 +87,11 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
 
   // for comment notification
   checkNewComments(news) {
-    this.comments = news.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
+    const newComments = news.filter(item => item.doc.viewedBy !== undefined);
+    if(newComments.length > 0) this.comments = newComments.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
     if(this.comments > 0) this.snackbar.openFromComponent(TeamsCommentsComponent, {
       data: {
-        message: `You have ${this.comments} comments.`,
+        message: this.comments,
         buttonText: 'Close'
       },
       duration: 5000,
@@ -211,6 +212,15 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       { autoFocus: true, onSubmit: this.postMessage.bind(this) },
       comments
     );
+
+    // viewing comments
+    this.viewComments(comments)
+  }
+
+  viewComments(comments) {
+    console.log(comments);
+    // separating the comments from replies
+    console.log(comments.filter(comment => comment.doc.replyTo == undefined))
   }
 
   filterCommentsFromNews (report) {
@@ -226,7 +236,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       viewedBy: [this.currentUser._id],
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
-    }, 'Comment has been posted successfully').pipe(
+    }, 'Comment has been posted successfully', 'report-notes').pipe(
       // switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });

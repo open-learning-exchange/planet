@@ -28,6 +28,7 @@ export class NewsListComponent implements OnChanges {
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() closeCommentDialog: any;
+  @Input() comments: boolean = false;
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
@@ -99,7 +100,8 @@ export class NewsListComponent implements OnChanges {
   postNews(oldNews, newNews) {
     this.newsService.postNews(
       { ...oldNews, ...newNews },
-      oldNews._id ? this.editSuccessMessage : 'Reply has been posted successfully.'
+      oldNews._id ? this.editSuccessMessage : 'Reply has been posted successfully.',
+      this.comments ? 'report-notes' : 'message'
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();

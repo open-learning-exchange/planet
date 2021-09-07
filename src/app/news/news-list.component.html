@@ -6,6 +6,7 @@
   <p i18n>Viewing replies for:</p>
   <planet-news-list-item class="main-message"
     [item]="replyViewing"
+    [comments]="comments"
     [replyObject]="replyObject"
     [showRepliesButton]="false"
     [editable]="editable"
@@ -21,6 +22,7 @@
 </ng-container>
 <planet-news-list-item *ngFor="let item of displayedItems; trackBy: trackById"
   [item]="item"
+  [comments]="comments"
   [isMainPostShared]="isMainPostShared"
   [replyObject]="replyObject"
   [editable]="editable"
