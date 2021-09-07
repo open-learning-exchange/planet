@@ -238,7 +238,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       viewedBy: [this.currentUser._id],
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
-    }, 'Comment has been posted successfully').pipe(
+    }, 'Comment has been posted successfully', 'report-notes').pipe(
       // switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
