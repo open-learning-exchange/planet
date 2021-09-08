@@ -67,6 +67,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   initTab;
   taskCount = 0;
   configuration = this.stateService.configuration;
+  comments = 0 ;
+  currentUser = this.userService.get();
+  isNewComment = false;
 
   constructor(
     private couchService: CouchService,
@@ -118,6 +121,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return activeTabs[initTab];
   }
 
+  goToReports() {
+    this.tabSelectedIndex = 6;
+    this.isNewComment = false;
+  }
+
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -134,6 +142,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
       }))
       this.filterMessages(this.news);
+      this.checkNewComments(this.news);
     });
     if (this.mode === 'services') {
       this.initServices(teamId);
@@ -163,6 +172,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   filterMessages(news) {
     this.messages = news.filter(item => item.doc.docType == 'message');
+  }
+
+  
+  // for comment notification
+  checkNewComments(news) {
+    const newComments = news.filter(item => item.doc.viewedBy !== undefined);
+    if(newComments.length > 0) {
+      this.comments = newComments.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
+      if(this.comments > 0) this.isNewComment = true;
+    }
   }
 
   initServices(teamId) {

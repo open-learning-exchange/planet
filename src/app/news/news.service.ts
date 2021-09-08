@@ -74,9 +74,8 @@ export class NewsService {
     }));
   }
 
-  updateNews(post, successMessage='You have viewed the comments.') {
+  updateNews(post) {
     return this.couchService.updateDocument(this.dbName, post).pipe(map(() => {
-      this.planetMessageService.showMessage(successMessage);
       this.requestNews();
     }));
   }

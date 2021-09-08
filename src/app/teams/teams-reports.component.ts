@@ -38,8 +38,9 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   news: any[] = [];
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   commentCount: number;
+  newCommentCount: number;
   onDestroy$ = new Subject<void>();
-  comments = 0;
+  comments : number;
   currentUser = this.userService.get();
 
   constructor(
@@ -81,30 +82,23 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
         this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
       }))
-      this.checkNewComments(this.news)
+      this.checkNewComments(this.news);
     });
   }
 
   // for comment notification
   checkNewComments(news) {
-    const newComments = news.filter(item => item.doc.viewedBy !== undefined);
-    if(newComments.length > 0) this.comments = newComments.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
-    if(this.comments > 0) this.snackbar.openFromComponent(TeamsCommentsComponent, {
-      data: {
-        message: this.comments,
-        buttonText: 'Close'
-      },
-      duration: 5000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: 'comment-popup'
-    });
+    this.comments = news.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
   }
 
   // for individual comments count of the report
   showCommentsCount(report) {
+    // const oldCommentsId = this.filterCommentsFromNews(report).map(item => item.doc._id).length;
+    // console.log('newComments', this.comments.map(item => item._id))
+    // console.log('old comments', oldCommentsId)
     this.commentCount = this.filterCommentsFromNews(report).length;
-    return this.commentCount
+    this.newCommentCount = this.comments - this.commentCount
+    return this.commentCount;
   }
 
   openAddReportDialog(oldReport = {}) {
@@ -218,9 +212,14 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   }
 
   viewComments(comments) {
-    console.log(comments);
     // separating the comments from replies
-    console.log(comments.filter(comment => comment.doc.replyTo == undefined))
+    const commentsOnly = comments.filter(comment => comment.doc.replyTo == undefined)
+    commentsOnly.map(item => {
+      if(!item.doc.viewedBy.includes(this.currentUser._id)) {
+        item.doc.viewedBy.push(this.currentUser._id)
+        return this.newsService.updateNews(item.doc).subscribe(() => {});
+      }
+    })
   }
 
   filterCommentsFromNews (report) {
