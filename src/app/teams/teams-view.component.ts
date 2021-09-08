@@ -182,6 +182,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
+  
+  // for comment notification
+  checkNewComments(news) {
+    const newComments = news.filter(item => item.doc.viewedBy !== undefined);
+    if(newComments.length > 0) {
+      this.comments = newComments.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
+      if(this.comments > 0) this.isNewComment = true;
+    }
+  }
+
   initServices(teamId) {
     this.getTeam(teamId).pipe(
       catchError(() => this.teamsService.createServicesDoc()),

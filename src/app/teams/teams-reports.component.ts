@@ -93,6 +93,9 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
 
   // for individual comments count of the report
   showCommentsCount(report) {
+    // const oldCommentsId = this.filterCommentsFromNews(report).map(item => item.doc._id).length;
+    // console.log('newComments', this.comments.map(item => item._id))
+    // console.log('old comments', oldCommentsId)
     this.commentCount = this.filterCommentsFromNews(report).length;
     return this.commentCount;
   }

@@ -55,6 +55,6 @@ import { TeamsCommentsComponent } from './teams-comments.component';
     TeamsReportsDialogComponent,
     TeamsCommentsComponent
   ],
-  entryComponents: [ TeamsReportsDialogComponent, TeamsCommentsComponent ]
+  entryComponents: [ TeamsReportsDialogComponent ]
 })
 export class TeamsModule {}
