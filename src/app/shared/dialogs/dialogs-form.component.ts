@@ -5,6 +5,11 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { StateService } from '../state.service';
+import { NewsService } from '../../news/news.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -28,6 +33,10 @@ export class DialogsFormComponent {
   configuration = this.stateService.configuration;
   isRoot = true;
   userStatus = 'member';
+  report: any;
+  news: any;
+  teamId: string;
+  onDestroy$ = new Subject<void>();
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -46,6 +55,8 @@ export class DialogsFormComponent {
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService,
     private stateService: StateService,
+    private newsService: NewsService,
+    private route: ActivatedRoute,
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
@@ -53,11 +64,44 @@ export class DialogsFormComponent {
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
       this.fields = this.data.fields;
-      console.log(this.data.comments);
-      this.comments = this.data.comments !== undefined ? this.data.comments : [];
       this.isSpinnerOk = false;
+      this.report = this.data.report;
+      this.teamId = this.data.teamId;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
+  }
+
+  ngOnInit() {
+    // this.route.paramMap.subscribe((params: ParamMap) => {
+    //   this.initTeam(this.teamId);
+    //   console.log(this.news);
+    //   this.comments = this.filterCommentsFromNews(this.report, this.news);
+    // });
+    // this.newsService.getNews().subscribe(news:any => this.news = news.docs);
+    // this.initTeam(this.teamId);
+    console.log('team id', this.teamId)
+    console.log('report', this.report)
+    console.log('news', this.news)
+    console.log('comments', this.comments )
+  }
+  
+  ngOnChanges() {
+    // this.initTeam(this.teamId)
+  }
+  
+    initTeam(teamId: string) {
+      this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+        .subscribe(news => {
+          this.news = news.map(post => ({
+          ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+        }))
+        // this.news = news;
+        this.comments = this.filterCommentsFromNews(this.report, this.news);
+      });
+    }
+
+  filterCommentsFromNews (report, news) {
+    return news.filter(item => item.doc.reportId === report._id)
   }
 
   onSubmit(mForm, dialog) {

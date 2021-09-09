@@ -86,7 +86,7 @@
   </mat-dialog-actions>
   <div style="margin-top: 14px" *ngIf="comments.length > 0">
     <mat-dialog-content>
-      <planet-news-list [items]="comments" [comments]="true" viewableBy="teams" [viewableId]="comments[0].doc.teamId" [shareTarget]="configuration?.planetType" editSuccessMessage="Message has been updated successfully" (viewChange)="toggleAdd($event)" [editable]="userStatus === 'member'" ></planet-news-list>
+      <planet-news-list [items]="comments" [comments]="true" viewableBy="teams" [viewableId]="comments[0].doc.teamId" [shareTarget]="configuration?.planetType" editSuccessMessage="Message has been updated successfully" (viewChange)="toggleAdd($event)" [editable]="userStatus === 'member'"></planet-news-list>
     </mat-dialog-content>
   </div>
 </form>

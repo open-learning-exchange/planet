@@ -17,7 +17,6 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../shared/user.service';
-import { TeamsCommentsComponent } from './teams-comments.component';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -38,10 +37,11 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   news: any[] = [];
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   commentCount: number;
-  newCommentCount: number;
+  newCommentCount : number;
   onDestroy$ = new Subject<void>();
-  comments : number;
+  comments : any[];
   currentUser = this.userService.get();
+  commentDialog: any;
 
   constructor(
     private couchService: CouchService,
@@ -82,23 +82,18 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
         this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
       }))
-      this.checkNewComments(this.news);
     });
-  }
-
-  // for comment notification
-  checkNewComments(news) {
-    this.comments = news.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
   }
 
   // for individual comments count of the report
   showCommentsCount(report) {
-    // const oldCommentsId = this.filterCommentsFromNews(report).map(item => item.doc._id).length;
-    // console.log('newComments', this.comments.map(item => item._id))
-    // console.log('old comments', oldCommentsId)
     this.commentCount = this.filterCommentsFromNews(report).length;
-    this.newCommentCount = this.comments - this.commentCount
-    return this.commentCount;
+    return this.commentCount
+  }
+
+  showNewComment(report) {
+    this.newCommentCount = this.filterCommentsFromNews(report).filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
+    return this.newCommentCount
   }
 
   openAddReportDialog(oldReport = {}) {
@@ -199,14 +194,15 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     this.report = report;
     const comments = this.filterCommentsFromNews(report);
 
-    this.dialogsFormService.openDialogsForm(
+  this.dialogsFormService.openDialogsForm(
       'Add Comment',
       [ { name: 'message', placeholder: 'Comment', type: 'markdown', required: true, imageGroup: { teams: this.report.teamId} } ],
       { message: [ message, CustomValidators.requiredMarkdown ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) },
-      comments
+      report,
+      this.teamId
     );
-
+    
     // viewing comments
     this.viewComments(comments)
   }
