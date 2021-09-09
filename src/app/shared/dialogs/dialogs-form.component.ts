@@ -61,11 +61,44 @@ export class DialogsFormComponent {
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
       this.fields = this.data.fields;
-      console.log(this.data.comments);
-      this.comments = this.data.comments !== undefined ? this.data.comments : [];
       this.isSpinnerOk = false;
+      this.report = this.data.report;
+      this.teamId = this.data.teamId;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
+  }
+
+  ngOnInit() {
+    // this.route.paramMap.subscribe((params: ParamMap) => {
+    //   this.initTeam(this.teamId);
+    //   console.log(this.news);
+    //   this.comments = this.filterCommentsFromNews(this.report, this.news);
+    // });
+    // this.newsService.getNews().subscribe(news:any => this.news = news.docs);
+    // this.initTeam(this.teamId);
+    console.log('team id', this.teamId)
+    console.log('report', this.report)
+    console.log('news', this.news)
+    console.log('comments', this.comments )
+  }
+  
+  ngOnChanges() {
+    // this.initTeam(this.teamId)
+  }
+  
+    initTeam(teamId: string) {
+      this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+        .subscribe(news => {
+          this.news = news.map(post => ({
+          ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+        }))
+        // this.news = news;
+        this.comments = this.filterCommentsFromNews(this.report, this.news);
+      });
+    }
+
+  filterCommentsFromNews (report, news) {
+    return news.filter(item => item.doc.reportId === report._id)
   }
 
   onSubmit(mForm, dialog) {
