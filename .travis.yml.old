@@ -31,7 +31,6 @@ branches:
   - master
   - /^v\d+\.\d+\.\d+$/
   - /^treehouses.*$/
-  - comment-system-enterprise
 services:
   - docker
 env:
