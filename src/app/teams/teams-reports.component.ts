@@ -17,6 +17,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { StateService } from '../shared/state.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../shared/user.service';
+import { DialogsCommentComponent } from '../shared/dialogs/dialogs-comment.component';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -37,7 +38,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   news: any[] = [];
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   commentCount: number;
-  newCommentCount : number;
+  newComments : any[] = [];
   onDestroy$ = new Subject<void>();
   comments : any[];
   currentUser = this.userService.get();
@@ -91,9 +92,9 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     return this.commentCount
   }
 
-  showNewComment(report) {
-    this.newCommentCount = this.filterCommentsFromNews(report).filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
-    return this.newCommentCount
+  // to show new comments related to the report
+  showNewComment(report) {    
+    return this.filterCommentsFromNews(report).filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
   }
 
   openAddReportDialog(oldReport = {}) {
@@ -190,18 +191,12 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   }
 
   addComment(report) {
-    let message = '';
     this.report = report;
     const comments = this.filterCommentsFromNews(report);
-
-  this.dialogsFormService.openDialogsForm(
-      'Add Comment',
-      [ { name: 'message', placeholder: 'Comment', type: 'markdown', required: true, imageGroup: { teams: this.report.teamId} } ],
-      { message: [ message, CustomValidators.requiredMarkdown ] },
-      { autoFocus: true, onSubmit: this.postMessage.bind(this) },
-      report,
-      this.teamId
-    );
+    this.dialog.open(DialogsCommentComponent, {
+      data: { comments, report: this.report, team: this.team, newComments: this.newComments },
+      width: '70ch'
+    });
     
     // viewing comments
     this.viewComments(comments)
@@ -213,7 +208,10 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     commentsOnly.map(item => {
       if(!item.doc.viewedBy.includes(this.currentUser._id)) {
         item.doc.viewedBy.push(this.currentUser._id)
-        return this.newsService.updateNews(item.doc).subscribe(() => {});
+        return this.newsService.updateNews(item.doc).pipe(
+      // switchMap(() => this.sendNotifications('message')),
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(() => {});
       }
     })
   }
@@ -221,27 +219,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   filterCommentsFromNews (report) {
     return this.news.filter(item => item.doc.reportId === report._id)
   }
-
-  postMessage(message) {
-    this.newsService.postNews({
-      viewIn: [ { '_id': this.team._id, section: 'teams', public: this.team.userStatus !== 'member' } ],
-      reportId: this.report._id,
-      teamId: this.team._id,
-      messageType: this.team.teamType,
-      viewedBy: [this.currentUser._id],
-      messagePlanetCode: this.team.teamPlanetCode,
-      ...message
-    }, 'Comment has been posted successfully', 'report-notes').pipe(
-      // switchMap(() => this.sendNotifications('message')),
-      finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
-  }
-
-  // sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
-  //   return this.teamsService.sendNotifications(type, members || this.members, {
-  //     newMembersLength, url: this.router.url, team: { ...this.team }
-  //   });
-
 
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {

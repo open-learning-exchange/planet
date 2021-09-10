@@ -3,28 +3,23 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
 @Component({
   selector: 'planet-teams-comments',
   template: `<div class="comment-container">
-                  <span>You have <b style="font-size: 22px; font-weight: bolder;">{{comments}}</b> <em (click)="readComments()">unread</em> comments.</span>
+                  <span>You have <b style="font-size: 22px; font-weight: bolder;">{{comments}}</b> unread comments.</span>
+                  <button mat-raised-button color="primary" (click)="readComments()">Read comments</button>
                 </div>`,
   styles: [`
   .comment-container {
-    width: 60%;
-    margin: 8px auto;
-    border-radius: 4px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #fff;
-    height: 60px;
+    height: 80px;
     font-size: 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   }
 
-  em {
-    cursor: pointer;
-    color: blue;
-  }
-
-  em:hover {
-    color: black;
+  .comment-container button {
+    margin-left: 30px;
   }
   `]
 })

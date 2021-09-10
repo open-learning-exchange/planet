@@ -19,6 +19,7 @@ import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsImagesComponent } from './dialogs-images.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
 import { NewsModule } from '../../news/news.module';
+import { DialogsCommentComponent } from './dialogs-comment.component';
 
 
 @NgModule({
@@ -34,6 +35,7 @@ import { NewsModule } from '../../news/news.module';
   exports: [
     DialogsFormComponent,
     DialogsViewComponent,
+    DialogsCommentComponent,
     DialogsPromptComponent,
     FeedbackDirective,
     DialogsListComponent,
@@ -47,6 +49,7 @@ import { NewsModule } from '../../news/news.module';
   declarations: [
     DialogsFormComponent,
     DialogsViewComponent,
+    DialogsCommentComponent,
     DialogsPromptComponent,
     FeedbackDirective,
     DialogsListComponent,
@@ -64,6 +67,7 @@ import { NewsModule } from '../../news/news.module';
   entryComponents: [
     DialogsFormComponent,
     DialogsViewComponent,
+    DialogsCommentComponent,
     DialogsPromptComponent,
     DialogsListComponent,
     DialogsLoadingComponent,

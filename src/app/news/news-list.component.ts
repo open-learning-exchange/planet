@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -19,7 +19,7 @@ import { dedupeShelfReduce } from '../shared/utils';
     }
   ` ]
 })
-export class NewsListComponent implements OnChanges {
+export class NewsListComponent implements  OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = 'News has been updated successfully.';
@@ -28,6 +28,8 @@ export class NewsListComponent implements OnChanges {
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() comments: boolean = false;
+  @Input() closeComment?:any;
+
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
@@ -44,7 +46,7 @@ export class NewsListComponent implements OnChanges {
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService
   ) {}
-
+  
   ngOnChanges() {
     this.replyObject = {};
     this.items.forEach(item => {
@@ -104,6 +106,7 @@ export class NewsListComponent implements OnChanges {
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
+      this.closeComment.close();
     });
   }
 
@@ -129,6 +132,7 @@ export class NewsListComponent implements OnChanges {
           this.showReplies({ _id: parentId });
         }
         this.deleteDialog.close();
+        this.closeComment.close();
       },
       onError: (error) => {
         this.planetMessageService.showAlert('There was a problem deleting this news.');

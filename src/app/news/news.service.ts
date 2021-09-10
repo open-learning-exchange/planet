@@ -18,6 +18,7 @@ export class NewsService {
   dbName = 'news';
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
+  newsCollection$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
 
   constructor(
@@ -72,10 +73,6 @@ export class NewsService {
       this.planetMessageService.showMessage(successMessage);
       this.requestNews();
     }));
-  }
-
-  getNews() {
-    return this.couchService.findAll(this.dbName);
   }
 
   updateNews(post) {
