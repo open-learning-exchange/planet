@@ -16,6 +16,7 @@ jobs:
 
       - name: Build image
         run: |
+          export NODE_OPTIONS=--max_old_space_size=4096
           repo="rjpadilla/planet:latest"
           npm install
           npm run build
