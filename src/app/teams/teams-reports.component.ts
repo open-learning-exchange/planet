@@ -202,7 +202,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       data: { comments, report: this.report, team: this.team, newComments: this.newComments },
       width: '70ch'
     });
-
     // viewing comments
     this.viewComments(comments);
   }
@@ -228,27 +227,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   filterCommentsFromNews (report) {
     return this.news.filter(item => item.doc.reportId === report._id)
   }
-
-  postMessage(message) {
-    this.newsService.postNews({
-      viewIn: [ { '_id': this.team._id, section: 'teams', public: this.team.userStatus !== 'member' } ],
-      reportId: this.report._id,
-      teamId: this.team._id,
-      messageType: this.team.teamType,
-      viewedBy: [this.currentUser._id],
-      messagePlanetCode: this.team.teamPlanetCode,
-      ...message
-    }, 'Comment has been posted successfully', 'report-notes').pipe(
-      // switchMap(() => this.sendNotifications('message')),
-      finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
-  }
-
-  // sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
-  //   return this.teamsService.sendNotifications(type, members || this.members, {
-  //     newMembersLength, url: this.router.url, team: { ...this.team }
-  //   });
-
 
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {

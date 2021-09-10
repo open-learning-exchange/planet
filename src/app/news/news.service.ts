@@ -81,10 +81,6 @@ export class NewsService {
     }));
   }
 
-  getNews() {
-    return this.couchService.findAll(this.dbName);
-  }
-
   updateNews(post) {
     return this.couchService.updateDocument(this.dbName, post).pipe(map(() => {
       this.requestNews();
