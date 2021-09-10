@@ -19,7 +19,7 @@ jobs:
           export NODE_OPTIONS=--max_old_space_size=4096
           repo="rjpadilla/planet:latest"
           npm install
-          npm run build
+          npm run ng-high-memory -- build --prod --base-href /eng/ --output-path=dist/eng
           docker build -f './docker/planet/Dockerfile' -t $repo .
           docker images
           docker push $repo
