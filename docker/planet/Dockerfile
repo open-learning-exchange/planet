@@ -19,7 +19,7 @@ COPY package.json ./
 COPY docker/planet/scripts/ ./
 RUN mkdir -p /usr/share/nginx/html \
     && cat package.json | jq -r .version > /usr/share/nginx/html/version
-COPY ./dist/eng /usr/share/nginx/html
+COPY ./dist /usr/share/nginx/html
 COPY docker/planet/nginx/ /usr/share/nginx/html
 
 RUN ./create_version_json.sh
