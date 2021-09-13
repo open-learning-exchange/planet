@@ -18,6 +18,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() comments;
+  @Input() newReplies: any[];
   @Input() replyObject;
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
@@ -35,6 +36,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
+  replyExist:boolean = false;
+  unreadReplies : any[] = [];
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
 
   constructor(
@@ -47,6 +50,15 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     private stateService: StateService,
     private dialog: MatDialog
   ) {}
+
+  ngOnInit() {
+    if(this.comments && this.newReplies.length > 0) {
+      this.unreadReplies = this.newReplies.filter(reply => reply.doc.replyTo === this.item.doc._id);
+        if(this.unreadReplies.length > 0) {
+          this.replyExist = true;
+        }
+    }
+  }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
@@ -123,8 +135,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     return news.viewableBy === 'teams' ? 'Message' : 'Story';
   }
 
-  showReplies(news) {
-    this.changeReplyViewing.emit(news);
+  showReplies(news, replies) {
+    this.changeReplyViewing.emit({news, replies});
   }
 
   openDeleteDialog(news) {

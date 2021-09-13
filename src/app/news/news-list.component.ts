@@ -9,6 +9,8 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { forkJoin } from 'rxjs';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
+import { UserService } from '../shared/user.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-news-list',
@@ -37,6 +39,8 @@ export class NewsListComponent implements  OnChanges {
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
+  currentUser = this.userService.get();
+  newReplies : any[] = [];
   @Output() viewChange = new EventEmitter<any>();
 
   constructor(
@@ -44,9 +48,16 @@ export class NewsListComponent implements  OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService,
   ) {}
   
+  ngOnInit() {
+    if(this.comments) {
+      this.newReplies = this.items.filter(item => item.doc.replyTo !== undefined && !item.doc.viewedBy.includes(this.currentUser._id));
+    }
+  }
+
   ngOnChanges() {
     this.replyObject = {};
     this.items.forEach(item => {
@@ -58,7 +69,18 @@ export class NewsListComponent implements  OnChanges {
     }
   }
 
-  showReplies(news) {
+  showReplies(data:any) {
+    console.log('this is show replies:', data.news);
+    console.log(data);
+    let news;
+    let replies;
+    if(data.news !== undefined) {
+      news = data.news;
+      replies = data.replies;
+    } else {
+      news = data;
+    }
+
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
@@ -68,6 +90,18 @@ export class NewsListComponent implements  OnChanges {
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
+
+        // reading replies
+    if(replies.length > 0) {
+      replies.map(item => {
+        if(!item.doc.viewedBy.includes(this.currentUser._id)) {
+          item.doc.viewedBy.push(this.currentUser._id)
+          return this.newsService.updateNews(item.doc).pipe(
+            finalize(() => this.dialogsLoadingService.stop())
+          ).subscribe(() => {});
+        }
+      })
+    }
   }
 
   showPreviousReplies() {

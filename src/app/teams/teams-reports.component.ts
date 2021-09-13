@@ -47,7 +47,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private snackbar: MatSnackBar,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,

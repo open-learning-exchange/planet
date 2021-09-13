@@ -29,8 +29,10 @@
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
-    <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
-      <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
+    <button mat-button class="report-comment-btn" type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item, unreadReplies)">
+      <ng-container i18n>Show Replies</ng-container>
+      ({{replyObject[item.doc._id]?.length}})
+      <span [ngClass]="{'circle': replyExist}"></span>
     </button>
     <ng-container *ngIf="item.doc.user.name === currentUser.name">
       <button mat-icon-button type="button" (click)="editNews(item.doc)" i18n><mat-icon>edit</mat-icon></button>
