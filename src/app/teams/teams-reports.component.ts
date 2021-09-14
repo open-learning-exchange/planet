@@ -61,7 +61,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
-      this.initTeam(this.teamId);
+      this.getNews(this.teamId);
     });
   }
 
@@ -88,7 +88,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       .subscribe(news => {
         this.news = mapNews(news, teamId);
     });
-  };
+  }
 
   // for individual comments count of the report
   showCommentsCount(report) {
@@ -201,27 +201,16 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       data: { comments, report: this.report, team: this.team, newComments: this.newComments },
       width: '70ch'
     });
-<<<<<<< HEAD
-=======
-  
->>>>>>> b1b56107 (code climate fix)
     // viewing comments
     this.viewComments(comments);
   }
 
   viewComments(comments) {
     // separating the comments from replies
-<<<<<<< HEAD
     const commentsOnly = comments.filter(comment => comment.doc.replyTo === undefined);
     commentsOnly.map(item => {
       if (!item.doc.viewedBy.includes(this.currentUser._id)) {
         item.doc.viewedBy.push(this.currentUser._id);
-=======
-    const commentsOnly = comments.filter(comment => comment.doc.replyTo == undefined);
-    commentsOnly.map(item => {
-      if (!item.doc.viewedBy.includes(this.currentUser._id)) {
-        item.doc.viewedBy.push(this.currentUser._id)
->>>>>>> b1b56107 (code climate fix)
         return this.newsService.updateNews(item.doc).pipe(
       // switchMap(() => this.sendNotifications('message')),
           finalize(() => this.dialogsLoadingService.stop())
@@ -232,10 +221,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
 
   filterCommentsFromNews (report) {
     return this.news.filter(item => item.doc.reportId === report._id);
-  }
-
-  filterCommentsFromNews (report) {
-    return this.news.filter(item => item.doc.reportId === report._id)
   }
 
   openReportDialog(report) {

@@ -54,7 +54,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   ngOnInit() {
     if (this.comments && this.newReplies.length > 0) {
       this.unreadReplies = this.newReplies.filter(reply => reply.doc.replyTo === this.item.doc._id);
+<<<<<<< HEAD
       if (this.unreadReplies.length > 0) {
+=======
+        if (this.unreadReplies.length > 0) {
+>>>>>>> 3bd68072 (code climate fix colons and spaces)
           this.replyExist = true;
         }
     }
