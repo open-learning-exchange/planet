@@ -137,14 +137,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
+<<<<<<< HEAD
       this.news = mapNews(news, teamId);
+=======
+      this.news = mapNews(news, teamId)
+>>>>>>> b1b56107 (code climate fix)
       this.filterMessages(this.news);
       this.checkNewComments(this.news);
     });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
-    }
+    };
     this.getTeam(teamId).pipe(
       catchError(err => {
         this.goBack(true);
@@ -168,6 +172,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   filterMessages(news) {
+<<<<<<< HEAD
     this.messages = news.filter(item => item.doc.docType === 'message');
   }
 
@@ -180,15 +185,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.isNewComment = true;
       }
     }
+=======
+    this.messages = news.filter(item => item.doc.docType ==='message');
+>>>>>>> b1b56107 (code climate fix)
   }
 
-  
   // for comment notification
   checkNewComments(news) {
     const newComments = news.filter(item => item.doc.viewedBy !== undefined);
-    if(newComments.length > 0) {
+    if (newComments.length > 0) {
       this.comments = newComments.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
-      if(this.comments > 0) this.isNewComment = true;
+      if (this.comments > 0) this.isNewComment = true;
     }
   }
 

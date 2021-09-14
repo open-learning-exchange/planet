@@ -24,11 +24,19 @@ import { TeamsCommentsComponent } from './teams-comments.component';
 
 @NgModule({
   exports: [
+<<<<<<< HEAD
     TeamsViewComponent,
     TeamsComponent,
     TeamsViewFinancesComponent,
     TeamsMemberComponent,
     TeamsReportsComponent,
+=======
+    TeamsViewComponent, 
+    TeamsComponent, 
+    TeamsViewFinancesComponent, 
+    TeamsMemberComponent, 
+    TeamsReportsComponent, 
+>>>>>>> b1b56107 (code climate fix)
     TeamsCommentsComponent
   ],
   imports: [

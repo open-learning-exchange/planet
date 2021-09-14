@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog, MatSnackBar} from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CouchService } from '../shared/couchdb.service';
@@ -57,7 +57,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     private stateService: StateService,
     private userService: UserService,
   ) {}
-  
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
@@ -88,7 +88,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       .subscribe(news => {
         this.news = mapNews(news, teamId);
     });
-  }
+  };
 
   // for individual comments count of the report
   showCommentsCount(report) {
@@ -201,16 +201,27 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       data: { comments, report: this.report, team: this.team, newComments: this.newComments },
       width: '70ch'
     });
+<<<<<<< HEAD
+=======
+  
+>>>>>>> b1b56107 (code climate fix)
     // viewing comments
     this.viewComments(comments);
   }
 
   viewComments(comments) {
     // separating the comments from replies
+<<<<<<< HEAD
     const commentsOnly = comments.filter(comment => comment.doc.replyTo === undefined);
     commentsOnly.map(item => {
       if (!item.doc.viewedBy.includes(this.currentUser._id)) {
         item.doc.viewedBy.push(this.currentUser._id);
+=======
+    const commentsOnly = comments.filter(comment => comment.doc.replyTo == undefined);
+    commentsOnly.map(item => {
+      if (!item.doc.viewedBy.includes(this.currentUser._id)) {
+        item.doc.viewedBy.push(this.currentUser._id)
+>>>>>>> b1b56107 (code climate fix)
         return this.newsService.updateNews(item.doc).pipe(
       // switchMap(() => this.sendNotifications('message')),
           finalize(() => this.dialogsLoadingService.stop())
