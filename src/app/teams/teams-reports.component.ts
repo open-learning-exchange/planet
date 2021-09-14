@@ -40,7 +40,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   commentCount: number;
   newComments: any[] = [];
   onDestroy$ = new Subject<void>();
-  comments : any[];
+  comments: any[];
   currentUser = this.userService.get();
   commentDialog: any;
 
@@ -61,7 +61,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
-      this.initTeam(this.teamId);
+      this.getNews(this.teamId);
     });
   }
 
@@ -76,12 +76,12 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     }
   }
 
-  initTeam(teamId: string) {
+  getNews(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
         this.news = mapNews(news, teamId);
     });
-  };
+  }
 
   // for individual comments count of the report
   showCommentsCount(report) {
@@ -90,7 +90,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   }
 
   // to show new comments related to the report
-  showNewComment(report) {    
+  showNewComment(report) {
     return this.filterCommentsFromNews(report).filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
   }
 
@@ -194,27 +194,27 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       data: { comments, report: this.report, team: this.team, newComments: this.newComments },
       width: '70ch'
     });
-  
+
     // viewing comments
     this.viewComments(comments);
   }
 
   viewComments(comments) {
     // separating the comments from replies
-    const commentsOnly = comments.filter(comment => comment.doc.replyTo == undefined);
+    const commentsOnly = comments.filter(comment => comment.doc.replyTo === undefined);
     commentsOnly.map(item => {
       if (!item.doc.viewedBy.includes(this.currentUser._id)) {
-        item.doc.viewedBy.push(this.currentUser._id)
+        item.doc.viewedBy.push(this.currentUser._id);
         return this.newsService.updateNews(item.doc).pipe(
       // switchMap(() => this.sendNotifications('message')),
           finalize(() => this.dialogsLoadingService.stop())
         ).subscribe(() => {});
       }
-    })
+    });
   }
 
   filterCommentsFromNews (report) {
-    return this.news.filter(item => item.doc.reportId === report._id)
+    return this.news.filter(item => item.doc.reportId === report._id);
   }
 
   openReportDialog(report) {

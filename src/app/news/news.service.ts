@@ -35,7 +35,12 @@ export class NewsService {
       this.couchService.findAll('attachments')
     ]).subscribe(([ newsItems, avatars ]) => {
       this.newsUpdated$.next(
-        newsItems.map((item: any) => ({ doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatars), _id: item._id })
+        newsItems.map((item: any) => ({
+          doc: item, 
+          sharedDate: this.findShareDate(item, viewId), 
+          avatar: this.findAvatar(item.user, avatars), 
+          _id: item._id 
+        })
       ));
     });
   }

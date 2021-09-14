@@ -19,5 +19,5 @@ export const convertUtcDate = (date) => {
 export const mapNews = (news, teamId) => {
   return news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      }))
+      }));
 };

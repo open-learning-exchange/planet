@@ -52,9 +52,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   ) {}
 
   ngOnInit() {
-    if(this.comments && this.newReplies.length > 0) {
+    if (this.comments && this.newReplies.length > 0) {
       this.unreadReplies = this.newReplies.filter(reply => reply.doc.replyTo === this.item.doc._id);
-        if(this.unreadReplies.length > 0) {
+        if (this.unreadReplies.length > 0) {
           this.replyExist = true;
         }
     }
@@ -90,9 +90,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
         reportId: news.reportId,
       };
 
-    if(this.comments) {
+    if (this.comments) {
       newNews[ 'viewedBy' ] = [ this.currentUser._id ];
-    };
+    }
 
     this.updateNews.emit({
       title: `Reply to ${label}`,

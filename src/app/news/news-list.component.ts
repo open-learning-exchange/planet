@@ -29,7 +29,7 @@ export class NewsListComponent implements OnInit, OnChanges {
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
-  @Input() comments: boolean = false;
+  @Input() comments = false;
   @Input() closeComment?: any;
 
   displayedItems: any[] = [];
@@ -51,7 +51,7 @@ export class NewsListComponent implements OnInit, OnChanges {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
   ) {}
-  
+
   ngOnInit() {
     if (this.comments) {
       this.newReplies = this.items.filter(item => item.doc.replyTo !== undefined && !item.doc.viewedBy.includes(this.currentUser._id));
@@ -91,15 +91,19 @@ export class NewsListComponent implements OnInit, OnChanges {
 
         // reading replies
     if (replies.length > 0) {
-      replies.map(item => {
-        if (!item.doc.viewedBy.includes(this.currentUser._id)) {
-          item.doc.viewedBy.push(this.currentUser._id);
-          return this.newsService.updateNews(item.doc).pipe(
-            finalize(() => this.dialogsLoadingService.stop())
-          ).subscribe(() => {});
-        }
-      })
+      this.viewReplies(replies);
     }
+  }
+
+  viewReplies(replies) {
+    replies.map(item => {
+      if (!item.doc.viewedBy.includes(this.currentUser._id)) {
+        item.doc.viewedBy.push(this.currentUser._id);
+        return this.newsService.updateNews(item.doc).pipe(
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(() => {});
+      }
+    })
   }
 
   showPreviousReplies() {
