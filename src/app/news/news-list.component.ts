@@ -21,7 +21,7 @@ import { finalize } from 'rxjs/operators';
     }
   ` ]
 })
-export class NewsListComponent implements  OnChanges {
+export class NewsListComponent implements OnInit, OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = 'News has been updated successfully.';
@@ -30,7 +30,7 @@ export class NewsListComponent implements  OnChanges {
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() comments: boolean = false;
-  @Input() closeComment?:any;
+  @Input() closeComment?: any;
 
   displayedItems: any[] = [];
   replyObject: any = {};
@@ -40,7 +40,7 @@ export class NewsListComponent implements  OnChanges {
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   currentUser = this.userService.get();
-  newReplies : any[] = [];
+  newReplies: any[] = [];
   @Output() viewChange = new EventEmitter<any>();
 
   constructor(
@@ -53,7 +53,7 @@ export class NewsListComponent implements  OnChanges {
   ) {}
   
   ngOnInit() {
-    if(this.comments) {
+    if (this.comments) {
       this.newReplies = this.items.filter(item => item.doc.replyTo !== undefined && !item.doc.viewedBy.includes(this.currentUser._id));
     }
   }
@@ -69,12 +69,10 @@ export class NewsListComponent implements  OnChanges {
     }
   }
 
-  showReplies(data:any) {
-    console.log('this is show replies:', data.news);
-    console.log(data);
+  showReplies(data: any) {
     let news;
     let replies;
-    if(data.news !== undefined) {
+    if (data.news !== undefined) {
       news = data.news;
       replies = data.replies;
     } else {
@@ -92,10 +90,10 @@ export class NewsListComponent implements  OnChanges {
     this.viewChange.emit(this.replyViewing);
 
         // reading replies
-    if(replies.length > 0) {
+    if (replies.length > 0) {
       replies.map(item => {
-        if(!item.doc.viewedBy.includes(this.currentUser._id)) {
-          item.doc.viewedBy.push(this.currentUser._id)
+        if (!item.doc.viewedBy.includes(this.currentUser._id)) {
+          item.doc.viewedBy.push(this.currentUser._id);
           return this.newsService.updateNews(item.doc).pipe(
             finalize(() => this.dialogsLoadingService.stop())
           ).subscribe(() => {});

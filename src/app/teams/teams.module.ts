@@ -22,7 +22,14 @@ import { TeamsCommentsComponent } from './teams-comments.component';
 
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent, TeamsCommentsComponent ],
+  exports: [
+    TeamsViewComponent, 
+    TeamsComponent, 
+    TeamsViewFinancesComponent, 
+    TeamsMemberComponent, 
+    TeamsReportsComponent, 
+    TeamsCommentsComponent
+  ],
   imports: [
     TeamsRouterModule,
     CommonModule,

@@ -15,3 +15,9 @@ export const convertUtcDate = (date) => {
   const dateObj = new Date(date);
   return date ? new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate()) : undefined;
 };
+
+export const mapNews = (news, teamId) => {
+  return news.map(post => ({
+        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+      }))
+};

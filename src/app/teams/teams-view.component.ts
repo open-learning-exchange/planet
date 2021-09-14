@@ -25,7 +25,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { memberCompare, memberSort } from './teams.utils';
+import { mapNews, memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
@@ -79,7 +79,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private dialogsListService: DialogsListService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
@@ -138,16 +137,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
-      this.news = news.map(post => ({
-        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      }))
+      this.news = mapNews(news, teamId)
       this.filterMessages(this.news);
       this.checkNewComments(this.news);
     });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
-    }
+    };
     this.getTeam(teamId).pipe(
       catchError(err => {
         this.goBack(true);
@@ -171,16 +168,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   filterMessages(news) {
-    this.messages = news.filter(item => item.doc.docType == 'message');
+    this.messages = news.filter(item => item.doc.docType ==='message');
   }
 
-  
   // for comment notification
   checkNewComments(news) {
     const newComments = news.filter(item => item.doc.viewedBy !== undefined);
-    if(newComments.length > 0) {
+    if (newComments.length > 0) {
       this.comments = newComments.filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
-      if(this.comments > 0) this.isNewComment = true;
+      if (this.comments > 0) this.isNewComment = true;
     }
   }
 

@@ -37,15 +37,15 @@ export class DialogsCommentComponent {
     this.report = this.data.report;
   }
 
-  closeDialog():void {
-    this.dialogRef.close()
+  closeDialog(): void {
+    this.dialogRef.close();
   }
 
   addComment() {
-    const message = ""
+    const message = '';
     this.dialogsFormService.openDialogsForm(
         'Add Comment',
-        [ { name: 'message', placeholder: 'Comment', type: 'markdown', required: true, imageGroup: { teams: this.report.teamId} } ],
+        [ { name: 'message', placeholder: 'Comment', type: 'markdown', required: true, imageGroup: { teams: this.report.teamId } } ],
         { message: [ message, CustomValidators.requiredMarkdown ] },
         { autoFocus: true, onSubmit: this.postMessage.bind(this) },
       );
@@ -57,14 +57,14 @@ export class DialogsCommentComponent {
       reportId: this.report._id,
       teamId: this.team._id,
       messageType: this.team.teamType,
-      viewedBy: [this.currentUser._id],
+      viewedBy: [ this.currentUser._id ],
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
     }, 'Comment has been posted successfully', 'report-notes').pipe(
       // switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => { 
-      this.dialogsFormService.closeDialogsForm(); 
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm();
       this.dialogRef.close();
     });
   }

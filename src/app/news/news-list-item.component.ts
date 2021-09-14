@@ -14,7 +14,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() comments;
@@ -36,8 +36,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
-  replyExist:boolean = false;
-  unreadReplies : any[] = [];
+  replyExist = false;
+  unreadReplies: any[] = [];
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
 
   constructor(
@@ -81,16 +81,18 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   addReply(news) {
     const label = this.formLabel(news);
-    let newNews = {
+    const newNews = {
         replyTo: news._id,
         messagePlanetCode: news.messagePlanetCode,
         messageType: news.messageType,
         viewIn: news.viewIn,
         teamId: news.teamId,
         reportId: news.reportId,
-      }
+      };
 
-    if(this.comments) newNews['viewedBy'] = [this.currentUser._id];
+    if(this.comments) {
+      newNews[ 'viewedBy' ] = [ this.currentUser._id ];
+    };
 
     this.updateNews.emit({
       title: `Reply to ${label}`,
@@ -136,7 +138,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   }
 
   showReplies(news, replies) {
-    this.changeReplyViewing.emit({news, replies});
+    this.changeReplyViewing.emit({ news, replies });
   }
 
   openDeleteDialog(news) {

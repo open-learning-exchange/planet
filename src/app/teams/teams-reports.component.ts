@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog, MatSnackBar} from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CouchService } from '../shared/couchdb.service';
@@ -9,7 +9,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { takeUntil, tap, switchMap, finalize, catchError } from 'rxjs/operators';
-import { convertUtcDate } from './teams.utils';
+import { convertUtcDate, mapNews } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { NewsService } from '../news/news.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -38,7 +38,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   news: any[] = [];
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   commentCount: number;
-  newComments : any[] = [];
+  newComments: any[] = [];
   onDestroy$ = new Subject<void>();
   comments : any[];
   currentUser = this.userService.get();
@@ -57,7 +57,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     private stateService: StateService,
     private userService: UserService,
   ) {}
-  
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
@@ -79,16 +79,14 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
-        this.news = news.map(post => ({
-        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      }))
+        this.news = mapNews(news, teamId);
     });
-  }
+  };
 
   // for individual comments count of the report
   showCommentsCount(report) {
     this.commentCount = this.filterCommentsFromNews(report).length;
-    return this.commentCount
+    return this.commentCount;
   }
 
   // to show new comments related to the report
@@ -196,16 +194,16 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
       data: { comments, report: this.report, team: this.team, newComments: this.newComments },
       width: '70ch'
     });
-    
+  
     // viewing comments
-    this.viewComments(comments)
+    this.viewComments(comments);
   }
 
   viewComments(comments) {
     // separating the comments from replies
-    const commentsOnly = comments.filter(comment => comment.doc.replyTo == undefined)
+    const commentsOnly = comments.filter(comment => comment.doc.replyTo == undefined);
     commentsOnly.map(item => {
-      if(!item.doc.viewedBy.includes(this.currentUser._id)) {
+      if (!item.doc.viewedBy.includes(this.currentUser._id)) {
         item.doc.viewedBy.push(this.currentUser._id)
         return this.newsService.updateNews(item.doc).pipe(
       // switchMap(() => this.sendNotifications('message')),

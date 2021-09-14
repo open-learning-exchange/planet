@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'planet-teams-comments',
@@ -6,7 +6,7 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
                   <span>You have <b style="font-size: 22px; font-weight: bolder;">{{comments}}</b> unread comments.</span>
                   <button mat-raised-button color="primary" (click)="readComments()">Read comments</button>
                 </div>`,
-  styles: [`
+  styles: [ `
   .comment-container {
     width: 100%;
     display: flex;
@@ -21,7 +21,7 @@ import { Component, Input, Output, EventEmitter } from "@angular/core";
   .comment-container button {
     margin-left: 30px;
   }
-  `]
+  ` ]
 })
 
 export class TeamsCommentsComponent {
