@@ -36,10 +36,10 @@ export class NewsService {
     ]).subscribe(([ newsItems, avatars ]) => {
       this.newsUpdated$.next(
         newsItems.map((item: any) => ({
-          doc: item, 
-          sharedDate: this.findShareDate(item, viewId), 
-          avatar: this.findAvatar(item.user, avatars), 
-          _id: item._id 
+          doc: item,
+          sharedDate: this.findShareDate(item, viewId),
+          avatar: this.findAvatar(item.user, avatars),
+          _id: item._id
         })
       ));
     });

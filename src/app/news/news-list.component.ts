@@ -103,7 +103,7 @@ export class NewsListComponent implements OnInit, OnChanges {
           finalize(() => this.dialogsLoadingService.stop())
         ).subscribe(() => {});
       }
-    })
+    });
   }
 
   showPreviousReplies() {
