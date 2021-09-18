@@ -32,7 +32,7 @@ jobs:
           done
           npm install
           npm run ng-high-memory -- build --prod --base-href /eng/ --output-path=dist/eng
-          docker build -f './docker/planet/Dockerfile' -t $repo .
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo --build-arg LANGUAGE=eng --build-arg LANGUAGE2=en . 
           docker images
           docker push $repo
 
