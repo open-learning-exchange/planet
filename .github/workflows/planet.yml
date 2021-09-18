@@ -18,6 +18,18 @@ jobs:
         run: |
           export NODE_OPTIONS=--max_old_space_size=4096
           repo="rjpadilla/planet:latest"
+          LANGUAGES=('eng' 'ara' 'spa' 'fra' 'nep' 'som')
+          pull_language() {
+            docker create --name $1 $repo-$1
+            docker export $1 > $1.tar
+            tar -xf $1.tar -C ./ng-app/$1
+            cp -ar ./ng-app/$1/ng-app/dist/$1/ ./ng-app/dist/
+          }
+          mkdir -p ./ng-app/dist
+          for LANGUAGE in "${LANGUAGES[@]}"; do
+            mkdir -p ./ng-app/$LANGUAGE
+            pull_language $LANGUAGE
+          done
           npm install
           npm run ng-high-memory -- build --prod --base-href /eng/ --output-path=dist/eng
           docker build -f './docker/planet/Dockerfile' -t $repo .
