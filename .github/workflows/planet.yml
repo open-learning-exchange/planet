@@ -6,6 +6,10 @@ jobs:
   build:
     name: Planet build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lang: [ eng, ara, fra, spa, nep, som]
+      
 
     steps:
       - name: Checkout Code
@@ -16,12 +20,21 @@ jobs:
 
       - name: Build image
         run: |
+          case ${{ matrix.lang }} in
+            eng) : "en" ;;
+            ara) : "ar" ;;
+            fra) : "fr" ;;
+            spa) : "es" ;;
+            nep) : "ne" ;;
+            som) : "so" ;;
+          esac
+          lang2="$_"
           export NODE_OPTIONS=--max_old_space_size=4096
           repo="rjpadilla/planet:latest"
           mkdir -p ./ng-app/dist
           # npm install
           # npm run ng-high-memory -- build --prod --base-href /eng/ --output-path=dist/eng
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo --build-arg LANGUAGE=eng --build-arg LANGUAGE2=en . 
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo-${{ matrix.lang }} --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
           docker images
           docker push $repo
 
