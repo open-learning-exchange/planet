@@ -20,6 +20,12 @@ jobs:
 
       - name: Build image
         run: |
+          DOCKER_ORG=rjpadilla
+          DOCKER_REPO_TEST=planet-test
+          VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          BRANCH=${GITHUB_REF#refs/heads/}
+          COMMIT=${GITHUB_SHA::8}
+          PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT-${{ matrix.lang }}
           case ${{ matrix.lang }} in
             eng) : "en" ;;
             ara) : "ar" ;;
@@ -30,12 +36,10 @@ jobs:
           esac
           lang2="$_"
           export NODE_OPTIONS=--max_old_space_size=4096
-          repo="rjpadilla/planet:latest"
+          repo="rjpadilla/planet-test"
           mkdir -p ./ng-app/dist
-          # npm install
-          # npm run ng-high-memory -- build --prod --base-href /eng/ --output-path=dist/eng
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo-${{ matrix.lang }} --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
+          docker build -f './docker/planet/builder-Dockerfile' -t $PLANET_TEST --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
           docker images
-          docker push $repo
+          docker push $PLANET_TEST
 
       
