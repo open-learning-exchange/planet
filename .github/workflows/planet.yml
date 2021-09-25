@@ -1,8 +1,77 @@
 name: Planet Builder
 
-on: [push]
+on: 
+  push:
+  workflow_dispatch:
+    inputs:
+      buildtype:
+        description: 'Build by "prebuild", "single-language", or "planet"'
+        required: true
+        default: 'planet'
+
+env:
+  DOCKER_ORG: rjpadilla
+  DOCKER_REPO: planet
+  DOCKER_REPO_PRE: preplanet
+  DOCKER_REPO_TEST: planet-test
+
 
 jobs:
+
+  pre-build:
+    name: Pre-Planet build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Pre-Build Planet
+        if: ${{ github.event.inputs.buildtype == 'prebuild' }}
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          mkdir -p ./ng-app/dist
+          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
+          docker images
+          docker push $repo
+
+  deploy-single-language:
+    name: Deploy single language build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        lang: [ eng, ara, fra, spa, nep, som]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Build single language build
+        if: ${{ github.event.inputs.buildtype == 'single-language' }}
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_TEST:${{ matrix.lang }}"
+          case ${{ matrix.lang }} in
+            eng) : "en" ;;
+            ara) : "ar" ;;
+            fra) : "fr" ;;
+            spa) : "es" ;;
+            nep) : "ne" ;;
+            som) : "so" ;;
+          esac
+          lang2="$_"
+          export NODE_OPTIONS=--max_old_space_size=4096
+          mkdir -p ./ng-app/dist
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
+          docker images
+          docker push $repo
+
   build:
     name: Planet build
     runs-on: ubuntu-latest
@@ -15,8 +84,9 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Build image
+        if: ${{ github.event.inputs.buildtype == 'planet' }}
         run: |
-          repo="rjpadilla/planet:latest"
+          repo="$DOCKER_ORG/$DOCKER_REPO:latest"
           LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
           mkdir -p ./ng-app/dist
           for LANGUAGE in "${LANGUAGES[@]}"; do
