@@ -6,10 +6,6 @@ jobs:
   build:
     name: Planet build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        lang: [ eng, ara, fra, spa, nep, som]
-      
 
     steps:
       - name: Checkout Code
@@ -20,25 +16,17 @@ jobs:
 
       - name: Build image
         run: |
-          DOCKER_ORG=rjpadilla
-          DOCKER_REPO_TEST=planet-test
-          VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          BRANCH=${GITHUB_REF#refs/heads/}
-          COMMIT=${GITHUB_SHA::8}
-          # PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT-${{ matrix.lang }}
-          PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:${{ matrix.lang }}
-          case ${{ matrix.lang }} in
-            eng) : "en" ;;
-            ara) : "ar" ;;
-            fra) : "fr" ;;
-            spa) : "es" ;;
-            nep) : "ne" ;;
-            som) : "so" ;;
-          esac
-          lang2="$_"
-          export NODE_OPTIONS=--max_old_space_size=4096
+          repo="rjpadilla/planet:latest"
+          LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
           mkdir -p ./ng-app/dist
-          docker build -f './docker/planet/builder-Dockerfile' -t $PLANET_TEST --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
+          for LANGUAGE in "${LANGUAGES[@]}"; do
+            mkdir -p ./ng-app/$LANGUAGE
+            docker create --name $LANGUAGE rjpadilla/planet-test:$LANGUAGE
+            docker export $LANGUAGE > $LANGUAGE.tar
+            tar -xf $LANGUAGE.tar -C ./ng-app/$LANGUAGE
+            cp -ar ./ng-app/$LANGUAGE/ng-app/dist/$LANGUAGE/ ./ng-app/dist/
+          done
+          docker build -f './docker/planet/Dockerfile' -t $repo .
           docker images
           docker push $PLANET_TEST
 
