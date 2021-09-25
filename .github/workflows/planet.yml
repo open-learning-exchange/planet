@@ -25,7 +25,8 @@ jobs:
           VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
           BRANCH=${GITHUB_REF#refs/heads/}
           COMMIT=${GITHUB_SHA::8}
-          PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT-${{ matrix.lang }}
+          # PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:$VERSION-$BRANCH-$COMMIT-${{ matrix.lang }}
+          PLANET_TEST=$DOCKER_ORG/$DOCKER_REPO_TEST:${{ matrix.lang }}
           case ${{ matrix.lang }} in
             eng) : "en" ;;
             ara) : "ar" ;;
