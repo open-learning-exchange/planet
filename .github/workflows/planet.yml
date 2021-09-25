@@ -28,6 +28,6 @@ jobs:
           done
           docker build -f './docker/planet/Dockerfile' -t $repo .
           docker images
-          docker push $PLANET_TEST
+          docker push $repo
 
       
