@@ -36,7 +36,6 @@ jobs:
           esac
           lang2="$_"
           export NODE_OPTIONS=--max_old_space_size=4096
-          repo="rjpadilla/planet-test"
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/builder-Dockerfile' -t $PLANET_TEST --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
           docker images
