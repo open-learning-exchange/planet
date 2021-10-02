@@ -2,11 +2,11 @@ name: Planet Builder
 
 on: 
   workflow_dispatch:
-    inputs:
-      buildtype:
-        description: 'Build by "prebuild", "single-language", or "planet"'
-        required: true
-        default: 'planet'
+    # inputs:
+    #   buildtype:
+    #     description: 'Build by "prebuild", "single-language", or "planet"'
+    #     required: true
+    #     default: 'planet'
 
 env:
   DOCKER_ORG: rjpadilla
