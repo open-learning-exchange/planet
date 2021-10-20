@@ -100,7 +100,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> selected
+        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> seleccionado
       </target>
       </trans-unit>
       <trans-unit id="9c7e2ec4e504d0f26f4c6c5dc299b4f9ea1c58d9" datatype="html">
