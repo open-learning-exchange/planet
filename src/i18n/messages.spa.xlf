@@ -8,7 +8,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Loading</target>
+        <target state="translated">Cargando</target>
       </trans-unit>
       <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
         <source>OK</source>
