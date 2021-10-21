@@ -358,7 +358,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Add New Image</target>
+        <target state="translated">Añadir nueva imagen</target>
       </trans-unit>
       <trans-unit id="8e4e342b8f4170a90c32e4ce5023f8c474025cb7" datatype="html">
         <source>Ratings for</source>
