@@ -414,7 +414,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Sorry, page not found</target>
+        <target state="translated">Lo sentimos, página no encontrada</target>
       </trans-unit>
       <trans-unit id="8c000e81f174c6e177323227a376cd91bdc1772d" datatype="html">
         <source>Back to Planet Learning</source>
@@ -450,7 +450,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Collections</target>
+        <target state="translated">Colecciones</target>
       </trans-unit>
       <trans-unit id="cde3bee9c9751a6125943387703f6a7bd5e3aa23" datatype="html">
         <source>Change Collections</source>
@@ -462,7 +462,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Change Collections</target>
+        <target state="translated">Cambiar colecciones</target>
       </trans-unit>
       <trans-unit id="0539092f5642901cc44e32b1a841270c2448aa40" datatype="html">
         <source>Filter by Collection Name</source>
@@ -478,7 +478,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Create New Collection</target>
+        <target state="translated">Crear nueva colección</target>
       </trans-unit>
       <trans-unit id="40cf215f61708390d3aba0212e49596e0d3d981c" datatype="html">
         <source>Collection</source>
