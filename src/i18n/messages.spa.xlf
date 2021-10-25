@@ -5460,7 +5460,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {...} survey {...}}"/></target>
+        <target state="translated">Debes añadir una pregunta para previsualizar la <x id="ICU" equiv-text="{examType, select, exam {...} survey {...}}"/></target>
       </trans-unit>
       <trans-unit id="4ca2c72bf5ff5edc48765326ef5d845125048f89" datatype="html">
         <source>{VAR_SELECT, select, exam {test} survey {survey} }</source>
@@ -5476,7 +5476,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">There are missing fields on this question</target>
+        <target state="translated">Faltan campos en esta pregunta</target>
       </trans-unit>
       <trans-unit id="0b21c81ca8bb91c383248584c87c1a135039ae70" datatype="html">
         <source>Editing Question</source>
@@ -5484,7 +5484,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">Editing Question</target>
+        <target state="translated">Editando Pregunta</target>
       </trans-unit>
       <trans-unit id="169eed2bc3e08e1bea977bcc5d799379f6b8a758" datatype="html">
         <source>of</source>
@@ -5500,7 +5500,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-step.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">of</target>
+        <target state="translated">de</target>
       </trans-unit>
       <trans-unit id="355dc55ec716a8a749b232dd07ad485191b3dfa8" datatype="html">
         <source>{VAR_SELECT, select, survey {Survey} exam {Test} }</source>
@@ -5516,7 +5516,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Question</target>
+        <target state="translated">Pregunta</target>
       </trans-unit>
       <trans-unit id="aeb4cd97caded9fb9b622d9468f269d55740237b" datatype="html">
         <source> By<x id="INTERPOLATION" equiv-text="{{&apos; &apos; + submittedBy}}"/></source>
@@ -5524,7 +5524,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation"> By<x id="INTERPOLATION" equiv-text="{{' ' + submittedBy}}"/></target>
+        <target state="translated"> Por<x id="INTERPOLATION" equiv-text="{{' ' + submittedBy}}"/></target>
       </trans-unit>
       <trans-unit id="e5d8bb389c702588877f039d72178f219453a72d" datatype="html">
         <source>Unknown</source>
@@ -5532,7 +5532,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Unknown</target>
+        <target state="translated">Desconocido</target>
       </trans-unit>
       <trans-unit id="8c59014d8eea11db1d53f74fab28900072a9b1b2" datatype="html">
         <source> on <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: &apos;short&apos;) || &apos;--&apos;}}"/></source>
@@ -5540,7 +5540,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation"> on <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: 'short') || '--'}}"/></target>
+        <target state="translated"> en <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: 'short') || '--'}}"/></target>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html">
         <source>Enter answer here</source>
@@ -6220,7 +6220,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="needs-translation">Subject/s:</target>
+        <target state="translated">Tema/s:</target>
       </trans-unit>
       <trans-unit id="04dfb5c4bdc25eb61e388b7e4ec140afa6bb21df" datatype="html">
         <source>to License:</source>
@@ -6228,7 +6228,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">to License:</target>
+        <target state="translated">a la Licencia:</target>
       </trans-unit>
       <trans-unit id="c5a14e38bd853bedce32ff85fc01bac11299b95b" datatype="html">
         <source>Resource:</source>
@@ -6236,7 +6236,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">Resource:</target>
+        <target state="translated">Recurso:</target>
       </trans-unit>
       <trans-unit id="2f2d3537be5ad6783862d60ec1e4b6a034714783" datatype="html">
         <source>Source:</source>
@@ -6244,7 +6244,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="needs-translation">Source:</target>
+        <target state="translated">Fuente:</target>
       </trans-unit>
       <trans-unit id="13920b97c3b7d68064cd7fed213fec17f08662a0" datatype="html">
         <source>
@@ -6254,8 +6254,8 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">
-        You must add a choice
+        <target state="translated">
+        Debes añadir una opción
       </target>
       </trans-unit>
       <trans-unit id="e1a01919bf52f60c91ef62c2108ff568b9b9c323" datatype="html">
@@ -6266,8 +6266,8 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">
-      You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {...} selectMultiple {...}}"/>
+        <target state="translated">
+      Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {...} selectMultiple {...}}"/>
     </target>
       </trans-unit>
       <trans-unit id="155cfac8bb9b398e2b32a5a78736b54efc317214" datatype="html">
@@ -6284,7 +6284,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Add Choice</target>
+        <target state="translated">Añadir opción</target>
       </trans-unit>
       <trans-unit id="a20b186b1ac42c389d1a03a313fa5806f3e142f5" datatype="html">
         <source>{VAR_SELECT, select, survey {mySurveys} grade {Submissions} }</source>
@@ -6308,7 +6308,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="needs-translation">Status</target>
+        <target state="translated">Estado</target>
       </trans-unit>
       <trans-unit id="77f2c458f0c59985dd060235d000150dbe263d18" datatype="html">
         <source>
@@ -6318,8 +6318,8 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">
-        Tests
+        <target state="translated">
+        Pruebas
       </target>
       </trans-unit>
       <trans-unit id="b02967be2c7428bf5545e2e2f702eec070760271" datatype="html">
@@ -6330,8 +6330,8 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">
-        Surveys
+        <target state="translated">
+        Encuestas
       </target>
       </trans-unit>
       <trans-unit id="0c2d0e97890355f5113f8101d505cf8374a577ad" datatype="html">
@@ -6340,7 +6340,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Course Name</target>
+        <target state="translated">Nombre del Curso</target>
       </trans-unit>
       <trans-unit id="00252e2519a555f1e5d1f7e374be67f09ac861bd" datatype="html">
         <source>Course Step</source>
@@ -6348,7 +6348,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">Course Step</target>
+        <target state="translated">Paso del curso</target>
       </trans-unit>
       <trans-unit id="3590f5c3ef2810f637316edb8aaa86b8e907f152" datatype="html">
         <source>pending</source>
@@ -6356,7 +6356,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="needs-translation">pending</target>
+        <target state="translated">pendiente</target>
       </trans-unit>
       <trans-unit id="eadc271ee3b59521dac74702dbed7d2a335d36c0" datatype="html">
         <source>requires grading</source>
@@ -6364,7 +6364,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">requires grading</target>
+        <target state="translated">requiere calificación</target>
       </trans-unit>
       <trans-unit id="ff60971d770b92ddda39fc9b747a95ab05188cee" datatype="html">
         <source>complete</source>
@@ -6372,7 +6372,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="needs-translation">complete</target>
+        <target state="translated">completo</target>
       </trans-unit>
       <trans-unit id="bdcb1032f75d1947b65ab44ff55a216c45236bdd" datatype="html">
         <source>Grade</source>
@@ -6380,7 +6380,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">Grade</target>
+        <target state="translated">Nota</target>
       </trans-unit>
       <trans-unit id="fb07200670483962cc3047c20793ea3a7cc570e9" datatype="html">
         <source>Submitted by</source>
@@ -6388,7 +6388,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="needs-translation">Submitted by</target>
+        <target state="translated">Entregado por</target>
       </trans-unit>
       <trans-unit id="a83968982bc8e45a676fa22b116b066c9a82ae73" datatype="html">
         <source>
@@ -6405,7 +6405,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="needs-translation">Updated On</target>
+        <target state="translated">Actualizado el</target>
       </trans-unit>
       <trans-unit id="03d5be56a7492a2dc241f6def42cd6c14a5e58e2" datatype="html">
         <source>Graded On</source>
@@ -6413,7 +6413,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="needs-translation">Graded On</target>
+        <target state="translated">Calificado en</target>
       </trans-unit>
       <trans-unit id="69dd23678914843813f724f369cc5257f3bf508f" datatype="html">
         <source>Number of Times Taken</source>
@@ -6421,7 +6421,7 @@
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">Number of Times Taken</target>
+        <target state="translated">Número de veces que se toma</target>
       </trans-unit>
       <trans-unit id="70f265c6440a3472359497ebf933c9313eb53165" datatype="html">
         <source>Course Linked</source>
@@ -6429,7 +6429,7 @@
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="needs-translation">Course Linked</target>
+        <target state="translated">Curso vinculado</target>
       </trans-unit>
       <trans-unit id="51fd3207f18af7d6ed95489eb16762ce05a6c99b" datatype="html">
         <source>Created/Updated on</source>
@@ -6437,7 +6437,7 @@
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="needs-translation">Created/Updated on</target>
+        <target state="translated">Creado/Actualizado el</target>
       </trans-unit>
       <trans-unit id="65224f6352181d4d586fe864794553e995a01f40" datatype="html">
         <source>Excel (CSV)</source>
@@ -6453,7 +6453,7 @@
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="needs-translation">Print (PDF)</target>
+        <target state="translated">Imprimir (PDF)</target>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html">
         <source>Feedback List</source>
