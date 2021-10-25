@@ -3660,7 +3660,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Type title to search...</target>
+        <target state="translated">Escriba el título para buscar...</target>
       </trans-unit>
       <trans-unit id="c437431221e028a87d7e8cf1aa624801792b0ac4" datatype="html">
         <source>Joined Meetup</source>
@@ -3820,7 +3820,7 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">Number of Recurrences</target>
+        <target state="translated">Número de recurrencias</target>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
@@ -3860,7 +3860,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">Created By:</target>
+        <target state="translated">Creado por:</target>
       </trans-unit>
       <trans-unit id="0cc1dec590ecd74bef71a865fb364779bc42a749" datatype="html">
         <source>Category:</source>
@@ -3868,7 +3868,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">Category:</target>
+        <target state="translated">Categoría:</target>
       </trans-unit>
       <trans-unit id="2036db6533aeb865026fc2202344ca3da93e60ac" datatype="html">
         <source>Completed On:</source>
@@ -3876,7 +3876,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="needs-translation">Completed On:</target>
+        <target state="translated">Completado en:</target>
       </trans-unit>
       <trans-unit id="1b1427ee02e04fbde6fc23655dfda44a83bc7a33" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail?.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail?.endTime ? &apos;-&apos; : &apos;&apos; }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail?.endTime}}"/></source>
@@ -3884,7 +3884,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail?.startTime}}"/> <x id="INTERPOLATION_1" equiv-text="{{ meetupDetail?.endTime ? '-' : '' }}"/> <x id="INTERPOLATION_2" equiv-text="{{meetupDetail?.endTime}}"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Hora:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail?.startTime}}"/> <x id="INTERPOLATION_1" equiv-text="{{ meetupDetail?.endTime ? '-' : '' }}"/> <x id="INTERPOLATION_2" equiv-text="{{meetupDetail?.endTime}}"/></target>
       </trans-unit>
       <trans-unit id="0e7b201d158c10d177f853cd90e839214b267546" datatype="html">
         <source>Assigned to:</source>
@@ -3892,7 +3892,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">Assigned to:</target>
+        <target state="translated">Asignado a:</target>
       </trans-unit>
       <trans-unit id="44bf4fce64f69f0d8a1d0b6443a16d504cdc6598" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
