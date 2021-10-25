@@ -2736,7 +2736,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Joined Team</target>
+        <target state="translated">Se unió al equipo</target>
       </trans-unit>
       <trans-unit id="4ea0e590d72ebac13cbc7f154b2aefd2b1052d70" datatype="html">
         <source>Most recent visit</source>
@@ -2744,7 +2744,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Most recent visit</target>
+        <target state="translated">Visita más reciente</target>
       </trans-unit>
       <trans-unit id="a8936425e36b9fa3716c945011a4b83110676cd7" datatype="html">
         <source>Total visits from last 30 days</source>
@@ -2752,7 +2752,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Total visits from last 30 days</target>
+        <target state="translated">Total de visitas de los últimos 30 días</target>
       </trans-unit>
       <trans-unit id="eadc17c3df80143992e2d9028dead3199ae6d79d" datatype="html">
         <source>Local</source>
@@ -2760,7 +2760,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="needs-translation">Local</target>
+        <target state="translated">Local</target>
       </trans-unit>
       <trans-unit id="515ff315db5d049de822a007fcc689bcf7b2e2ed" datatype="html">
         <source>
@@ -2785,7 +2785,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">Connected with</target>
+        <target state="translated">Conectado con</target>
       </trans-unit>
       <trans-unit id="358adf9ddba77d90f32fdd4e727f3d5e7c631fd0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/> Edit</source>
@@ -2809,7 +2809,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Add Transaction</target>
+        <target state="translated">Añadir Transacción</target>
       </trans-unit>
       <trans-unit id="988e00889d6842e693dca0215e19008b7944e58e" datatype="html">
         <source>Pick Start Date</source>
@@ -2817,7 +2817,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Pick Start Date</target>
+        <target state="translated">Seleccionar fecha de inicio</target>
       </trans-unit>
       <trans-unit id="0a18a2a7693bc2cb473ce1fdfafe70ae50073f12" datatype="html">
         <source>Pick End Date</source>
@@ -2825,7 +2825,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Pick End Date</target>
+        <target state="translated">Seleccionar fecha de finalización</target>
       </trans-unit>
       <trans-unit id="9130b18aefe71381dd93d67d4963a3df6aea1924" datatype="html">
         <source>View All Transactions</source>
@@ -2833,7 +2833,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">View All Transactions</target>
+        <target state="translated">Ver todas las transacciones</target>
       </trans-unit>
       <trans-unit id="d2663f1567b2dd10bbaf9876d4c8d3a715f7e2df" datatype="html">
         <source>The current balance is negative!</source>
@@ -2841,7 +2841,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation">The current balance is negative!</target>
+        <target state="translated">¡El saldo actual es negativo!</target>
       </trans-unit>
       <trans-unit id="b5917c9b7750d9d798ed14018dc288af7bb2851d" datatype="html">
         <source>There are no transactions</source>
@@ -2849,7 +2849,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">There are no transactions</target>
+        <target state="translated">No hay transacciones</target>
       </trans-unit>
       <trans-unit id="2a4035c3f7ecaf14491c5e8746da3c3a00095772" datatype="html">
         <source>(You)</source>
@@ -2857,7 +2857,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">(You)</target>
+        <target state="translated">(Usted)</target>
       </trans-unit>
       <trans-unit id="fed5b6747de82e76399fa62f092fa64680e55d6b" datatype="html">
         <source>(Team Leader)</source>
@@ -2865,7 +2865,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">(Team Leader)</target>
+        <target state="translated">(Líder de equipo)</target>
       </trans-unit>
       <trans-unit id="b16b60725de9091b9103eb25631bf11e407b68a1" datatype="html">
         <source>visits</source>
@@ -2873,7 +2873,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">visits</target>
+        <target state="translated">visitas</target>
       </trans-unit>
       <trans-unit id="514e977154cfeaeb3658ec834fa71048b5dcdc7f" datatype="html">
         <source>Last visit:</source>
@@ -2881,7 +2881,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Last visit:</target>
+        <target state="translated">Última visita:</target>
       </trans-unit>
       <trans-unit id="e31225b5b97e30d9049bdb06cd7755de9d86da66" datatype="html">
         <source>Make Leader</source>
@@ -2889,7 +2889,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Make Leader</target>
+        <target state="translated">Hacer líder</target>
       </trans-unit>
       <trans-unit id="6f410fff3ed0bf0bfd16e8d2651d944a65cf3308" datatype="html">
         <source>{VAR_SELECT, select, Add {Add Title} Change {Change Title} }</source>
@@ -2913,7 +2913,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Menu</target>
+        <target state="translated">Menú</target>
       </trans-unit>
       <trans-unit id="ec2d3a89b366d1ca80be056e9e71f0165ae75c7b" datatype="html">
         <source>Community</source>
@@ -2977,7 +2977,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">120</context>
         </context-group>
-        <target state="needs-translation">myDashboard</target>
+        <target state="translated">miDashboard</target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html">
         <source>Library</source>
@@ -3025,7 +3025,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Teams</target>
+        <target state="translated">Equipos</target>
       </trans-unit>
       <trans-unit id="492df58020c537134736feb258590340db0d1b11" datatype="html">
         <source>Enterprises</source>
@@ -3049,7 +3049,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Enterprises</target>
+        <target state="translated">Empresas</target>
       </trans-unit>
       <trans-unit id="25299a278bea66449842e0dccfa161b178b780b7" datatype="html">
         <source>Earth</source>
@@ -3349,7 +3349,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">News</target>
+        <target state="translated">Noticias</target>
       </trans-unit>
       <trans-unit id="cd7656fe48014ee16c6ea30692bda6fbf8ad344a" datatype="html">
         <source>New Story</source>
