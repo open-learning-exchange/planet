@@ -3357,7 +3357,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">New Story</target>
+        <target state="translated">Nueva historia</target>
       </trans-unit>
       <trans-unit id="4e4d16b4259fded9bd56f912a7a11f0e2002aa22" datatype="html">
         <source>Community Leaders</source>
@@ -3365,7 +3365,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Community Leaders</target>
+        <target state="translated">Líder de la comunidad</target>
       </trans-unit>
       <trans-unit id="647da294f8330bf8f435abff9a895e872e6eae79" datatype="html">
         <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {...} Add {...}}"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {...} nation {...} center {...}}"/> Description
@@ -3374,8 +3374,8 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">
-              <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {...} Add {...}}"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {...} nation {...} center {...}}"/> Description
+        <target state="translated">
+              <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {...} Add {...}}"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {...} nation {...} center {...}}"/> Descripción
             </target>
       </trans-unit>
       <trans-unit id="185db144040cb5b95b3b3bad6bf4fb4387351e57" datatype="html">
@@ -3400,7 +3400,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Add Link</target>
+        <target state="translated">Añadir enlace</target>
       </trans-unit>
       <trans-unit id="f5952c35586047a991bb204e509e710918e2160d" datatype="html">
         <source>Remove Links</source>
@@ -3408,7 +3408,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="needs-translation">Remove Links</target>
+        <target state="translated">Eliminar enlaces</target>
       </trans-unit>
       <trans-unit id="8be41741b06bf3ee6cb732add78e375d5d6af5d4" datatype="html">
         <source>Done Removing Links</source>
@@ -3416,7 +3416,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">Done Removing Links</target>
+        <target state="translated">Eliminar enlaces completada</target>
       </trans-unit>
       <trans-unit id="419d940613972cc3fae9c8ea0a4306dbf80616e5" datatype="html">
         <source>Services</source>
@@ -3424,7 +3424,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">Services</target>
+        <target state="translated">Servicios</target>
       </trans-unit>
       <trans-unit id="6642147ee5ae8acb8b128faedfc7985d39637911" datatype="html">
         <source>Communities</source>
@@ -3432,7 +3432,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">Communities</target>
+        <target state="translated">Comunidades</target>
       </trans-unit>
       <trans-unit id="d946dc6859dddb1dd1aee7ddadab233128787317" datatype="html">
         <source>Health Care</source>
@@ -3444,7 +3444,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Health Care</target>
+        <target state="translated">Salud</target>
       </trans-unit>
       <trans-unit id="4bcba4864c0ade18ad95f58b67643b5de4f4efb7" datatype="html">
         <source>My Course Progress</source>
@@ -3452,7 +3452,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-learner.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">My Course Progress</target>
+        <target state="translated">Progreso del curso</target>
       </trans-unit>
       <trans-unit id="812234027d039ff707dd67391f893846b8c2bfde" datatype="html">
         <source>No Progress record available</source>
@@ -3464,7 +3464,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="needs-translation">No Progress record available</target>
+        <target state="translated">No hay registros de progreso disponibles</target>
       </trans-unit>
       <trans-unit id="60d301d4b9b3cf3eb97f2adde5eca44c79d55686" datatype="html">
         <source>View Achievements</source>
@@ -3472,7 +3472,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">View Achievements</target>
+        <target state="translated">Ver logros</target>
       </trans-unit>
       <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html">
         <source>Full Name</source>
@@ -3484,7 +3484,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="needs-translation">Full Name</target>
+        <target state="translated">Nombre completo</target>
       </trans-unit>
       <trans-unit id="244aae9346da82b0922506c2d2581373a15641cc" datatype="html">
         <source>Email</source>
@@ -3520,7 +3520,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="needs-translation">Number of Visits</target>
+        <target state="translated">Número de visitas</target>
       </trans-unit>
       <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html">
         <source>DOB</source>
@@ -3532,7 +3532,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">DOB</target>
+        <target state="translated">Fecha de nacimiento</target>
       </trans-unit>
       <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html">
         <source>Phone</source>
@@ -3544,7 +3544,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Phone</target>
+        <target state="translated">Teléfono</target>
       </trans-unit>
       <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html">
         <source>Level</source>
@@ -3552,7 +3552,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="needs-translation">Level</target>
+        <target state="translated">Nivel</target>
       </trans-unit>
       <trans-unit id="a9aa4a447e7a64b1744ee9ec9581cdf5ba73501c" datatype="html">
         <source>Survey Profile</source>
@@ -3592,7 +3592,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="needs-translation">level</target>
+        <target state="translated">nivel</target>
       </trans-unit>
       <trans-unit id="003d4f5e4909ccf01b6a204c688fd6dab15c20bd" datatype="html">
         <source>Gender</source>
@@ -3600,7 +3600,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="needs-translation">Gender</target>
+        <target state="translated">Género</target>
       </trans-unit>
       <trans-unit id="097b5dfee5665aa0f7daba8b696acecde6445474" datatype="html">
         <source>Male</source>
@@ -3612,7 +3612,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="needs-translation">Male</target>
+        <target state="translated">Masculino</target>
       </trans-unit>
       <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html">
         <source>Female</source>
@@ -3624,7 +3624,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">87</context>
         </context-group>
-        <target state="needs-translation">Female</target>
+        <target state="translated">Femenino</target>
       </trans-unit>
       <trans-unit id="ae688edf9e80421a513294ce6deda0708d03b310" datatype="html">
         <source>
@@ -3644,7 +3644,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Meetups</target>
+        <target state="translated">Reuniones</target>
       </trans-unit>
       <trans-unit id="97e6c8bf46828b2beb9fda740e6dca54bdef172e" datatype="html">
         <source>Type title to search...</source>
@@ -3668,7 +3668,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Joined Meetup</target>
+        <target state="translated">Se unió a reunión</target>
       </trans-unit>
       <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>clear<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Leave</source>
