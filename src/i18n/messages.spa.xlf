@@ -374,7 +374,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Most Recent</target>
+        <target state="translated">Más reciente</target>
       </trans-unit>
       <trans-unit id="726c63f6217ab0d9f67dc9f3eafbcb3df159a0e9" datatype="html">
         <source>Oldest</source>
@@ -382,7 +382,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Oldest</target>
+        <target state="translated">Más antiguo</target>
       </trans-unit>
       <trans-unit id="f1c3d90b66e7121d8843511573944a791f324c91" datatype="html">
         <source>Best Rating</source>
@@ -390,7 +390,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Best Rating</target>
+        <target state="translated">Mejor valoración</target>
       </trans-unit>
       <trans-unit id="8ab4f31599a0e38a844e4b1a712ab62b6790657f" datatype="html">
         <source>Worst Rating</source>
@@ -398,7 +398,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Worst Rating</target>
+        <target state="translated">Peor valoración</target>
       </trans-unit>
       <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
         <source>ltr</source>
@@ -422,7 +422,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Back to Planet Learning</target>
+        <target state="translated">Volver a Planet Learning</target>
       </trans-unit>
       <trans-unit id="ab3d26166235cd0712cbf521c86feb139ab01877" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list} }</source>
@@ -470,7 +470,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Filter by Collection Name</target>
+        <target state="translated">Filtrar por nombre de colección</target>
       </trans-unit>
       <trans-unit id="52ba668e67efcdd7de6110b1e2b3cd9b53337bb3" datatype="html">
         <source>Create New Collection</source>
@@ -486,7 +486,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">Collection</target>
+        <target state="translated">Colección</target>
       </trans-unit>
       <trans-unit id="7e2845f1f9090146de98255260992d96189dd5e6" datatype="html">
         <source>Subcollection of...</source>
@@ -494,7 +494,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">Subcollection of...</target>
+        <target state="translated">Subcolección de...</target>
       </trans-unit>
       <trans-unit id="9bdfd86a36ad720590d491d3ccc9a815d9381493" datatype="html">
         <source>Add Collection</source>
@@ -502,7 +502,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Add Collection</target>
+        <target state="translated">Añadir colección</target>
       </trans-unit>
       <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html">
         <source>Reset</source>
@@ -510,7 +510,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="needs-translation">Reset</target>
+        <target state="translated">Reiniciar</target>
       </trans-unit>
       <trans-unit id="79de54bc65f84280345d21f5d246b53b57bcc306" datatype="html">
         <source>Add Collections</source>
@@ -518,7 +518,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Add Collections</target>
+        <target state="translated">Añadir colección</target>
       </trans-unit>
       <trans-unit id="c0813691471cc540f1a5d60389442705f8ecf5ae" datatype="html">
         <source>No collections selected</source>
@@ -526,7 +526,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-selected-input.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">No collections selected</target>
+        <target state="translated">No se seleccionaron colecciones</target>
       </trans-unit>
       <trans-unit id="3c22a53faef3b3e3674be4b8c02f0137cfc19cc5" datatype="html">
         <source>Selected:</source>
@@ -534,7 +534,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-selected-input.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Selected:</target>
+        <target state="translated">Seleccionado:</target>
       </trans-unit>
       <trans-unit id="3a3668364fd42fca62ce7a31e88e9de577b8b266" datatype="html">
         <source>Select Planet</source>
@@ -542,7 +542,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-selector.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Select Planet</target>
+        <target state="translated">Seleccionar planeta</target>
       </trans-unit>
       <trans-unit id="680d5c75b7fd8d37961083608b9fcdc4167b4c43" datatype="html">
         <source>Previous</source>
@@ -550,7 +550,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-step-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Previous</target>
+        <target state="translated">Anterior</target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html">
         <source>Next</source>
@@ -622,7 +622,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="needs-translation">Delete</target>
+        <target state="translated">Eliminar</target>
       </trans-unit>
       <trans-unit id="1e1b81bc44eb078f50afc06365f530ca2677d91c" datatype="html">
         <source>Upto date</source>
@@ -682,7 +682,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">Close</target>
+        <target state="translated">Cerrar</target>
       </trans-unit>
       <trans-unit id="344f589e3d011f328342c72a85d7ccef574a8f87" datatype="html">
         <source>{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_1, plural, =0 {courses} =1 {course} other {courses} }} }</source>
@@ -710,7 +710,7 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Add a task</target>
+        <target state="translated">Añadir una tarea</target>
       </trans-unit>
       <trans-unit id="2b6b20ad71426cea34a1821a95b321370e3d8e2c" datatype="html">
         <source>
@@ -720,8 +720,8 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">
-    myTasks
+        <target state="translated">
+    Mis tareas
   </target>
       </trans-unit>
       <trans-unit id="98c204852bf501b6fc0016709f9f33b1f71aa1a1" datatype="html">
@@ -732,8 +732,8 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">
-    All Tasks
+        <target state="translated">
+    Todas las tareas
   </target>
       </trans-unit>
       <trans-unit id="287628a9d3c31a07593caf82ddd3986582074273" datatype="html">
@@ -878,7 +878,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">Time</target>
+        <target state="translated">Tiempo</target>
       </trans-unit>
       <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html">
         <source>Type</source>
@@ -898,7 +898,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="needs-translation">Type</target>
+        <target state="translated">Tipo</target>
       </trans-unit>
       <trans-unit id="8fe73a4787b8068b2ba61f54ab7e0f9af2ea1fc9" datatype="html">
         <source>Version</source>
@@ -906,7 +906,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Version</target>
+        <target state="translated">Versión</target>
       </trans-unit>
       <trans-unit id="7ae7814bc0d4339fb5ff68a37494b48dac6dacc1" datatype="html">
         <source>No of Visits</source>
@@ -914,7 +914,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">No of Visits</target>
+        <target state="translated">Número de visitas</target>
       </trans-unit>
       <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html">
         <source>Details</source>
@@ -922,7 +922,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="needs-translation">Details</target>
+        <target state="translated">Ver más detalles</target>
       </trans-unit>
       <trans-unit id="6623257de867bbe8003919a76d9e5daaec6c3023" datatype="html">
         <source>Used Time</source>
@@ -930,7 +930,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="needs-translation">Used Time</target>
+        <target state="translated">Tiempo de uso</target>
       </trans-unit>
       <trans-unit id="65fd3bdd144e77ecbc47b1d41c52471ee65bf53f" datatype="html">
         <source>Edit Achievements</source>
@@ -1263,7 +1263,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Search by:</target>
+        <target state="translated">Buscar por:</target>
       </trans-unit>
       <trans-unit id="5ca707824ab93066c7d9b44e1b8bf216725c2c22" datatype="html">
         <source>Filter</source>
@@ -1271,7 +1271,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Filter</target>
+        <target state="translated">Filtro</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
@@ -1323,7 +1323,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">Title</target>
+        <target state="translated">Título</target>
       </trans-unit>
       <trans-unit id="4e088dfa3f8d51ecae688d9e7818e37a5a3a7bb3" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -1343,7 +1343,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Borrar<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="b6846f2dab8383c531b4a703a7712ce6d02eddef" datatype="html">
         <source>Get resource</source>
@@ -1351,7 +1351,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Get resource</target>
+        <target state="translated">Obtener recurso</target>
       </trans-unit>
       <trans-unit id="8292faed3a05482dd8f2a9368bbe5bfcbe9a9a50" datatype="html">
         <source>Add to myLibrary</source>
@@ -1383,7 +1383,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Send Resources</target>
+        <target state="translated">Enviar recursos</target>
       </trans-unit>
       <trans-unit id="0b9c06a21269f0947cf4d61652ab975e3d6b57e9" datatype="html">
         <source>Push To <x id="ICU" equiv-text="{planetType, select, center {...} other {...}}"/></source>
@@ -1395,7 +1395,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target state="needs-translation">Push To <x id="ICU" equiv-text="{planetType, select, center {...} other {...}}"/></target>
+        <target state="translated">Pulsar para <x id="ICU" equiv-text="{planetType, select, center {...} other {...}}"/></target>
       </trans-unit>
       <trans-unit id="83b15e53b01c3852b5b9de21f680aea85afe9302" datatype="html">
         <source>{VAR_SELECT, select, center {Nation} other {Community} }</source>
@@ -1415,7 +1415,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target state="needs-translation">In myLibrary</target>
+        <target state="translated">En mi biblioteca</target>
       </trans-unit>
       <trans-unit id="869271d6ca873bdaff8a370007e343a37c064b4a" datatype="html">
         <source>Not in myLibrary</source>
@@ -1423,7 +1423,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation">Not in myLibrary</target>
+        <target state="translated">No están en mi biblioteca</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html">
         <source>Feedback</source>
@@ -1487,7 +1487,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="needs-translation">Manage</target>
+        <target state="translated">Gestionar</target>
       </trans-unit>
       <trans-unit id="8f20ac8857e97b28cef31916b010b88c648ad035" datatype="html">
         <source>View Ratings</source>
@@ -1499,7 +1499,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">164</context>
         </context-group>
-        <target state="needs-translation">View Ratings</target>
+        <target state="translated">Ver valoraciones</target>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html">
         <source>Download file</source>
@@ -1519,7 +1519,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">179</context>
         </context-group>
-        <target state="needs-translation">Created On</target>
+        <target state="translated">Creado en</target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html">
         <source>Rating</source>
@@ -1539,7 +1539,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Resource</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Recurso</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html">
         <source>Author</source>
@@ -1567,7 +1567,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">Labels</target>
+        <target state="translated">Etiquetas</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html">
         <source>Language</source>
@@ -1663,7 +1663,7 @@
           <context context-type="sourcefile">app/users/users-table.component.html</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="needs-translation">Learner</target>
+        <target state="translated">Aprender</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
