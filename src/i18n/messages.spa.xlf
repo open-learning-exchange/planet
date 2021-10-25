@@ -5995,8 +5995,8 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="needs-translation">
-        View Resource Details
+        <target state="translated">
+        Ver detalles del recurso
       </target>
       </trans-unit>
       <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html">
@@ -6021,7 +6021,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="needs-translation">No description provided.</target>
+        <target state="translated">No hay descripción.</target>
       </trans-unit>
       <trans-unit id="4992e9ce2d5b9d465e27dc7e8a77019311e6c32d" datatype="html">
         <source>Course Progress</source>
@@ -6029,7 +6029,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Course Progress</target>
+        <target state="translated">Progreso del curso</target>
       </trans-unit>
       <trans-unit id="6b8393e758b95fcb4a11bcfffab7f8e9a5d93509" datatype="html">
         <source>Test Progress</source>
@@ -6037,7 +6037,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Test Progress</target>
+        <target state="translated">Progreso de prueba</target>
       </trans-unit>
       <trans-unit id="0a996d7eeaf48b7ca0256a78e437b24018fc52f5" datatype="html">
         <source>Show full course</source>
@@ -6045,7 +6045,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">Show full course</target>
+        <target state="translated">Mostrar curso completo</target>
       </trans-unit>
       <trans-unit id="8cc2524b37acccedf6556a4de6ff0fad152884f6" datatype="html">
         <source>View Test Progress</source>
@@ -6053,7 +6053,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation">View Test Progress</target>
+        <target state="translated">Ver progreso de prueba</target>
       </trans-unit>
       <trans-unit id="86115ad60b7ce4af831b92927f338007ce7dd2f5" datatype="html">
         <source>Total Errors</source>
@@ -6061,7 +6061,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-chart.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Total Errors</target>
+        <target state="translated">Total de errores</target>
       </trans-unit>
       <trans-unit id="43dc9450a5fcbd86537abcc4eae1f51d48fa3399" datatype="html">
         <source>{VAR_SELECT, select, Steps {Steps} Quest. {Quest.} other {Steps} }</source>
@@ -6077,7 +6077,7 @@
           <context context-type="sourcefile">app/courses/courses-icon.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Test</target>
+        <target state="translated">Prueba</target>
       </trans-unit>
       <trans-unit id="4e3c4504f1ba9f2f12f92e434f3505922d7913a1" datatype="html">
         <source>Resource(s)</source>
@@ -6085,7 +6085,7 @@
           <context context-type="sourcefile">app/courses/courses-icon.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Resource(s)</target>
+        <target state="translated">Recurso(s)</target>
       </trans-unit>
       <trans-unit id="8398f0f83ca04e0abf4b2ec1f5e1341073fbe250" datatype="html">
         <source>Survey</source>
@@ -6097,7 +6097,7 @@
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Survey</target>
+        <target state="translated">Encuesta</target>
       </trans-unit>
       <trans-unit id="db731a2d5ce8ff775ce9615745482eb214c28efc" datatype="html">
         <source>This step has been completed.</source>
@@ -6105,7 +6105,7 @@
           <context context-type="sourcefile">app/courses/courses-icon.component.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">This step has been completed.</target>
+        <target state="translated">Este paso ha sido completado.</target>
       </trans-unit>
       <trans-unit id="9b4d0d223996e1def34b5371aa396eb120aa0db0" datatype="html">
         <source>This step is in progress.</source>
@@ -6113,7 +6113,7 @@
           <context context-type="sourcefile">app/courses/courses-icon.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">This step is in progress.</target>
+        <target state="translated">Este paso está en curso.</target>
       </trans-unit>
       <trans-unit id="5657d2448668ae93d4cbc7ff554a07a5a3b2fd74" datatype="html">
         <source><x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
@@ -6122,8 +6122,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-        <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> details
+        <target state="translated">
+        <x id="ICU" equiv-text="{fullView, select, on {...} off {...}}"/> detalles
     </target>
       </trans-unit>
       <trans-unit id="6c128d5827c8e8e663840f7decc9d6dd18132e27" datatype="html">
@@ -6132,7 +6132,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Open in new tab</target>
+        <target state="translated">Abrir en nueva pestaña</target>
       </trans-unit>
       <trans-unit id="7932626e74124ebf9e044b04917b7bc6db68b479" datatype="html">
         <source>
@@ -6142,8 +6142,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">
-          Add to myLibrary
+        <target state="translated">
+          Añadir a myLibrary
         </target>
       </trans-unit>
       <trans-unit id="c17e26c0124993e34bd62a6fe1ac07b2f14e0518" datatype="html">
@@ -6154,8 +6154,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">
-          Remove from myLibrary
+        <target state="translated">
+          Eliminar de myLibrary
         </target>
       </trans-unit>
       <trans-unit id="61c58c7f484580d386b86c6099edc1d79986a745" datatype="html">
@@ -6164,7 +6164,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">Author:</target>
+        <target state="translated">Autor:</target>
       </trans-unit>
       <trans-unit id="4cd14966d4be6a82382699ddc71dded656f5030e" datatype="html">
         <source>Published by:</source>
@@ -6172,7 +6172,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Published by:</target>
+        <target state="translated">Publicado por:</target>
       </trans-unit>
       <trans-unit id="48b29674ac5968ecb463d16ae19b5cfb034df50f" datatype="html">
         <source>on</source>
@@ -6180,7 +6180,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="needs-translation">on</target>
+        <target state="translated">en</target>
       </trans-unit>
       <trans-unit id="bee2bbe4209e29f8b3666967fd70015e460cbeb3" datatype="html">
         <source>Collections:</source>
@@ -6188,7 +6188,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="needs-translation">Collections:</target>
+        <target state="translated">Colecciones:</target>
       </trans-unit>
       <trans-unit id="7097a7e261682ecdfdf828f549d2fd084bd6a822" datatype="html">
         <source>Level:</source>
@@ -6196,7 +6196,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Level:</target>
+        <target state="translated">Nivel:</target>
       </trans-unit>
       <trans-unit id="c5f6267f7afb58d1ffcf2645bf1ab2fc5ff75517" datatype="html">
         <source>Media:</source>
@@ -6204,7 +6204,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Media:</target>
+        <target state="translated">Medio:</target>
       </trans-unit>
       <trans-unit id="3bb351ea6c98d11eb111708c2d620a3e79029ee6" datatype="html">
         <source>Language:</source>
@@ -6212,7 +6212,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="needs-translation">Language:</target>
+        <target state="translated">Idioma:</target>
       </trans-unit>
       <trans-unit id="651cd7b29aae7bb7583cb9e8d9b8885773ebafb5" datatype="html">
         <source>Subject/s:</source>
@@ -6461,7 +6461,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Feedback List</target>
+        <target state="translated">Lista de comentarios</target>
       </trans-unit>
       <trans-unit id="5aacbee9239d7422e3c92fd18293df496818c4b6" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Reset<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -6469,7 +6469,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Reset<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Restablecer<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html">
         <source>Your Current Lists of Feedback</source>
@@ -6477,7 +6477,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">Your Current Lists of Feedback</target>
+        <target state="translated">Tus listas actuales de comentarios</target>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html">
         <source>Priority</source>
@@ -6485,7 +6485,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">Priority</target>
+        <target state="translated">Prioridad</target>
       </trans-unit>
       <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html">
         <source>Yes</source>
@@ -6493,7 +6493,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Yes</target>
+        <target state="translated">Sí</target>
       </trans-unit>
       <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html">
         <source>No</source>
@@ -6501,7 +6501,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="needs-translation">No</target>
+        <target state="translated">No</target>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html">
         <source>Owner</source>
@@ -6509,7 +6509,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="needs-translation">Owner</target>
+        <target state="translated">Propietario</target>
       </trans-unit>
       <trans-unit id="73c8ea027d594b211a22ad250947eb93b9ab235f" datatype="html">
         <source>Open Date</source>
@@ -6517,7 +6517,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="needs-translation">Open Date</target>
+        <target state="translated">Fecha de apertura</target>
       </trans-unit>
       <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html">
         <source>Close Date</source>
@@ -6525,7 +6525,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="needs-translation">Close Date</target>
+        <target state="translated">Fecha de cierre</target>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html">
         <source>Source</source>
@@ -6533,7 +6533,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">85</context>
         </context-group>
-        <target state="needs-translation">Source</target>
+        <target state="translated">Fuente</target>
       </trans-unit>
       <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
         <source> Action </source>
@@ -6541,7 +6541,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target state="needs-translation"> Action </target>
+        <target state="translated"> Acción </target>
       </trans-unit>
       <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
         <source>Re-open</source>
@@ -6549,7 +6549,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="needs-translation">Re-open</target>
+        <target state="translated">Reabrir</target>
       </trans-unit>
       <trans-unit id="cd42facac1d103107bab3d9deae24d03c2d4777f" datatype="html">
         <source>
@@ -6566,7 +6566,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">Feedback title</target>
+        <target state="translated">Lista de comentarios</target>
       </trans-unit>
       <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html">
         <source>Type your reply here</source>
@@ -6574,7 +6574,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">Type your reply here</target>
+        <target state="translated">Escribe aquí tu respuesta</target>
       </trans-unit>
       <trans-unit id="356f0217cb37692ec174a85359aaf9c03df4c459" datatype="html">
         <source>wrote on</source>
@@ -6582,7 +6582,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">wrote on</target>
+        <target state="translated">escribió en</target>
       </trans-unit>
       <trans-unit id="c76b19614e2f4ff6c5b5e33d01e550b0397794a8" datatype="html">
         <source>edited on</source>
@@ -6590,7 +6590,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">edited on</target>
+        <target state="translated">editado en</target>
       </trans-unit>
       <trans-unit id="203293aa5b579334f045d712e4c94cb067efc74c" datatype="html">
         <source>shared on</source>
@@ -6598,7 +6598,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">shared on</target>
+        <target state="translated">compartido en</target>
       </trans-unit>
       <trans-unit id="6cf9006ec076125ca182af753ecc14cfb27306e7" datatype="html">
         <source>
@@ -6615,7 +6615,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="needs-translation">Reply</target>
+        <target state="translated">Responder</target>
       </trans-unit>
       <trans-unit id="0fa58356ab9372df8f0fa73e7f8c0b6dfbd15ea0" datatype="html">
         <source>Show Replies</source>
@@ -6623,7 +6623,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Show Replies</target>
+        <target state="translated">Mostrar respuestas</target>
       </trans-unit>
       <trans-unit id="662e2616ca10447672a0215381c9e5d6bd221cf4" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></source>
@@ -6631,7 +6631,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>editar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="68b6beb852a4703c4a717b29dead06a00401589c" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></source>
@@ -6639,7 +6639,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>eliminar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="c869aaeff1aa55366e15e597dd81a37ebdbf14e2" datatype="html">
         <source>Add Label</source>
@@ -6647,7 +6647,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">Add Label</target>
+        <target state="translated">Añadir etiqueta</target>
       </trans-unit>
       <trans-unit id="fed05eb45fc6be6e1aa9414763f35cb21a81724b" datatype="html">
         <source>Share with <x id="ICU" equiv-text="{       shareTarget, select, community {...} nation {...} center {...}}"/></source>
@@ -6655,7 +6655,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Share with <x id="ICU" equiv-text="{       shareTarget, select, community {...} nation {...} center {...}}"/></target>
+        <target state="translated">Compartir con <x id="ICU" equiv-text="{       shareTarget, select, community {...} nation {...} center {...}}"/></target>
       </trans-unit>
       <trans-unit id="93c0dca37d7fc72cb10618954e323303169b2e77" datatype="html">
         <source>{VAR_SELECT, select, community {Community} nation {Nation} center {Earth} }</source>
@@ -6671,7 +6671,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Performed by: </target>
+        <target state="translated">Realizado por: </target>
       </trans-unit>
       <trans-unit id="62bc0ad597ef8f7b5602a36c625624cc2f8a6ef7" datatype="html">
         <source>Vitals</source>
@@ -6679,7 +6679,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Vitals</target>
+        <target state="translated">Vitales</target>
       </trans-unit>
       <trans-unit id="80a277f23baf5597a59796b6934b654df82d10eb" datatype="html">
         <source>Temperature: </source>
@@ -6687,7 +6687,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">Temperature: </target>
+        <target state="translated">Temperatura: </target>
       </trans-unit>
       <trans-unit id="8a3902521a4a7ddd3927f57b2d08468d1afe1579" datatype="html">
         <source>Pulse: </source>
@@ -6695,7 +6695,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Pulse: </target>
+        <target state="translated">Pulso: </target>
       </trans-unit>
       <trans-unit id="a688c208e7fc78c6db76b4968a84d96d843c3e96" datatype="html">
         <source>Blood Pressure: </source>
@@ -6703,7 +6703,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Blood Pressure: </target>
+        <target state="translated">Presión arterial: </target>
       </trans-unit>
       <trans-unit id="9b868eb282ba919fd6752fefff77a0432b8be77c" datatype="html">
         <source>Height: </source>
@@ -6711,7 +6711,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Height: </target>
+        <target state="translated">Altura: </target>
       </trans-unit>
       <trans-unit id="e6873b924d5dd4406b271612892fe6fb49ca1086" datatype="html">
         <source>Weight: </source>
@@ -6719,7 +6719,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Weight: </target>
+        <target state="translated">Peso: </target>
       </trans-unit>
       <trans-unit id="479c429b9474619e3da2270b6c9dd0d3a29031e9" datatype="html">
         <source>Vision: </source>
@@ -6727,7 +6727,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Vision: </target>
+        <target state="translated">Visión: </target>
       </trans-unit>
       <trans-unit id="3fb8de89594f93436b91c082c63691cea3d6e17c" datatype="html">
         <source>Hearing: </source>
@@ -6735,7 +6735,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Hearing: </target>
+        <target state="translated">Audiencia: </target>
       </trans-unit>
       <trans-unit id="986668e81481d0fd0934b4ef56b4236ccb298712" datatype="html">
         <source>Conditions</source>
@@ -6743,7 +6743,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Conditions</target>
+        <target state="translated">Condiciones</target>
       </trans-unit>
       <trans-unit id="8c145c0568d0e5b46a510cacccab5b7affc44396" datatype="html">
         <source>Other Notes</source>
@@ -6755,7 +6755,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target state="needs-translation">Other Notes</target>
+        <target state="translated">Otras notas</target>
       </trans-unit>
       <trans-unit id="b020047c2738ffce598158c35e3a76b828ff4f0e" datatype="html">
         <source>Observations &amp; Notes: </source>
@@ -6771,7 +6771,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Diagnosis: </target>
+        <target state="translated">Diagnóstico: </target>
       </trans-unit>
       <trans-unit id="3824e0ab31d52f857de205ed69ff57788c782563" datatype="html">
         <source>Treatments: </source>
@@ -6779,7 +6779,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">Treatments: </target>
+        <target state="translated">Tratamientos: </target>
       </trans-unit>
       <trans-unit id="151dac6999f6870ca8b6bea0c97a9334d18f537a" datatype="html">
         <source>Medications: </source>
@@ -6787,7 +6787,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Medications: </target>
+        <target state="translated">Medicamentos: </target>
       </trans-unit>
       <trans-unit id="ebba88b0b0ae070dfce35cb480c02ea0b5bd9fbf" datatype="html">
         <source>Immunizations: </source>
@@ -6795,7 +6795,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Immunizations: </target>
+        <target state="translated">Inmunizaciones: </target>
       </trans-unit>
       <trans-unit id="d6c08d5c7f495bd8e273fd544e7186877e211c64" datatype="html">
         <source>Allergies: </source>
@@ -6803,7 +6803,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Allergies: </target>
+        <target state="translated">Alergias: </target>
       </trans-unit>
       <trans-unit id="815d26f9f50d45d8f114946d1119064e73f8cb59" datatype="html">
         <source>X-rays: </source>
@@ -6811,7 +6811,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">X-rays: </target>
+        <target state="translated">Rayos X: </target>
       </trans-unit>
       <trans-unit id="ea8f9558f047af0da57c3130dab660418d04b689" datatype="html">
         <source>Lab Tests: </source>
@@ -6819,7 +6819,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Lab Tests: </target>
+        <target state="translated">Pruebas de laboratorio: </target>
       </trans-unit>
       <trans-unit id="aef6294ff327c381357b310dc0bad464c866427c" datatype="html">
         <source>Referrals: </source>
@@ -6827,7 +6827,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">Referrals: </target>
+        <target state="translated">Referencias: </target>
       </trans-unit>
       <trans-unit id="8a0db24e7e3ed40395f039792c8bd90a33be14f7" datatype="html">
         <source>
@@ -6857,7 +6857,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">myHealth</target>
+        <target state="translated">miSalud</target>
       </trans-unit>
       <trans-unit id="83e0458959f65cb1dce0f84d5d276a7bce3b7c3a" datatype="html">
         <source>Update Details</source>
@@ -6865,7 +6865,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Update Details</target>
+        <target state="translated">Actualizar detalles</target>
       </trans-unit>
       <trans-unit id="0180ec3230bdfd5215eb38dbed6758f3a149ea00" datatype="html">
         <source>Add Examination</source>
@@ -6873,7 +6873,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Add Examination</target>
+        <target state="translated">Añadir examen</target>
       </trans-unit>
       <trans-unit id="732247f68f0d66d132bef0585a275387e2cfccd2" datatype="html">
         <source>Member login:</source>
@@ -6881,7 +6881,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Member login:</target>
+        <target state="translated">Inicio de sesión para miembros:</target>
       </trans-unit>
       <trans-unit id="f1f52619c9666ae58a6672dc1721d4ec6ad26757" datatype="html">
         <source>Special Needs</source>
@@ -6893,7 +6893,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="needs-translation">Special Needs</target>
+        <target state="translated">Necesidades especiales</target>
       </trans-unit>
       <trans-unit id="fcde58253a4cfd52c228eebdae74e1be7a1ab714" datatype="html">
         <source>Notes</source>
@@ -7065,7 +7065,7 @@
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Planet Learning</target>
+        <target state="translated">Planet Learning</target>
       </trans-unit>
       <trans-unit id="6d45d72c013249b5894106b967827ea873fd1d01" datatype="html">
         <source>On Android?</source>
@@ -7073,7 +7073,7 @@
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">On Android?</target>
+        <target state="translated">¿En Android?</target>
       </trans-unit>
       <trans-unit id="92d1cadd80f703e669f220ad5ec0fc973df8fe44" datatype="html">
         <source>Try myPlanet</source>
@@ -7081,7 +7081,7 @@
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Try myPlanet</target>
+        <target state="translated">Prueba myPlanet</target>
       </trans-unit>
       <trans-unit id="7b39459e4e45c1e91ee4354a50e47c62da35ed3c" datatype="html">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ planetVersion }}"/></source>
@@ -7105,7 +7105,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard-notifications-dialog.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">You have</target>
+        <target state="translated">Tú tienes</target>
       </trans-unit>
       <trans-unit id="897ef1bdc3affbd32c022e5685a741e109e0ed04" datatype="html">
         <source><x id="ICU" equiv-text="{ surveysCount, plural, =1 {...} other {...}}"/> to complete</source>
