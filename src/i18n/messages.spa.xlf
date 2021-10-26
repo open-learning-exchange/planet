@@ -5468,7 +5468,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, exam {test} survey {survey} }</target>
+        <target state="translated">{VAR_SELECT, select, exam {Prueba} survey {encuesta} }</target>
       </trans-unit>
       <trans-unit id="a40ff9fd87d3c03893f09210e921b9984ddeef81" datatype="html">
         <source>There are missing fields on this question</source>
