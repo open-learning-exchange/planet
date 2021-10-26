@@ -654,7 +654,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Does not match</target>
+        <target state="translated">No coincide</target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -702,7 +702,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Member Profile</target>
+        <target state="translated">Perfil de miembro</target>
       </trans-unit>
       <trans-unit id="f1fb641f599b5ff4f33419ca08dcb02c00822ea5" datatype="html">
         <source>Add a task</source>
@@ -746,7 +746,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Deadline:</target>
+        <target state="translated">Fecha límite:</target>
       </trans-unit>
       <trans-unit id="502e1c27d4e9533cdf8e42c1a4f8f2735e4c3fb2" datatype="html">
         <source>Completed:</source>
@@ -754,7 +754,7 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">Completed:</target>
+        <target state="translated">Completado:</target>
       </trans-unit>
       <trans-unit id="019d4bd6a5690f0cfa0ecf346a4e6bf7f0d8debb" datatype="html">
         <source>Remove</source>
@@ -774,7 +774,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Remove</target>
+        <target state="translated">Eliminar</target>
       </trans-unit>
       <trans-unit id="f5e42d395dc5053923334a858982ae5467009853" datatype="html">
         <source>{VAR_SELECT, select, leader {Leader} monitor {Monitor} health {Health Provider} learner {Learner} manager {Manager} admin {Admin} }</source>
@@ -794,7 +794,7 @@
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">View Exchange</target>
+        <target state="translated">Ver intercambio</target>
       </trans-unit>
       <trans-unit id="968e0a59387a849f7d6a11a84735edf18e6c4577" datatype="html">
         <source>
@@ -808,8 +808,8 @@
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">
-            View Report
+        <target state="translated">
+            Ver Reporte
           </target>
       </trans-unit>
       <trans-unit id="11eb38ace36c45d1a3d10bb8d177b8fe51c553a4" datatype="html">
@@ -834,7 +834,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">ID</target>
+        <target state="translated">ID</target>
       </trans-unit>
       <trans-unit id="cff1428d10d59d14e45edec3c735a27b5482db59" datatype="html">
         <source>Name</source>
@@ -870,7 +870,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Last Synced</target>
+        <target state="translated">Última sincronización</target>
       </trans-unit>
       <trans-unit id="b24f1cd32cbc1ec9537af28c4fe1b8204097714b" datatype="html">
         <source>Time</source>
@@ -938,7 +938,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Edit Achievements</target>
+        <target state="translated">Editar Logros</target>
       </trans-unit>
       <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
         <source>First Name</source>
@@ -1018,7 +1018,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Birthdate</target>
+        <target state="translated">Fecha de nacimiento</target>
       </trans-unit>
       <trans-unit id="5ef9645b5346af212703215261f80077176f6cd4" datatype="html">
         <source>Birthplace</source>
@@ -1034,7 +1034,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Birthplace</target>
+        <target state="translated">Lugar de Nacimiento</target>
       </trans-unit>
       <trans-unit id="bc3a80edeac0435a8bdf003399bf67e2a00c9cf2" datatype="html">
         <source>My Purpose - What are your educational and professional ambitions?</source>
@@ -1066,7 +1066,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Sort by Date</target>
+        <target state="translated">Ordenar por fecha</target>
       </trans-unit>
       <trans-unit id="28f86ffd419b869711aa13f5e5ff54be6d70731c" datatype="html">
         <source>Edit</source>
@@ -1082,7 +1082,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">139</context>
         </context-group>
-        <target state="needs-translation">Edit</target>
+        <target state="translated">Editar</target>
       </trans-unit>
       <trans-unit id="de8a134c4145571acdde1b49cdafb4c391fe9a5e" datatype="html">
         <source>
@@ -1092,8 +1092,8 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">88</context>
         </context-group>
-        <target state="needs-translation">
-          Allow your achievements to be shared with the nation
+        <target state="translated">
+          Permite que tus logros sean compartidos con la nación
         </target>
       </trans-unit>
       <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html">
@@ -1106,7 +1106,7 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="needs-translation">Update</target>
+        <target state="translated">Actualizar</target>
       </trans-unit>
       <trans-unit id="0c2d2ffa150f07cde368ab144c7918e0d4e16421" datatype="html">
         <source>Achievements</source>
@@ -1114,7 +1114,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Achievements</target>
+        <target state="translated">Logros</target>
       </trans-unit>
       <trans-unit id="55526a857846276da256675ffe7f92a11a6e61b4" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>mode_edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Add Achievements<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="START_TAG_SPAN_1" ctype="x-span" equiv-text="&lt;span&gt;"/>Edit Achievements<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
@@ -1134,7 +1134,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Birthdate:</target>
+        <target state="translated">Fecha de nacimiento:</target>
       </trans-unit>
       <trans-unit id="1ea01f1312ec96e35ed4df7eba08c282f758606a" datatype="html">
         <source>Birthplace:</source>
@@ -1142,7 +1142,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Birthplace:</target>
+        <target state="translated">Lugar de Nacimiento:</target>
       </trans-unit>
       <trans-unit id="4b742571bac7b98d558eac2094d312b91dc0c2da" datatype="html">
         <source>My Purpose</source>
@@ -1150,7 +1150,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">My Purpose</target>
+        <target state="translated">Mi propósito</target>
       </trans-unit>
       <trans-unit id="f3c44d6f868ee126543619e45aff1bbc581acf53" datatype="html">
         <source>My Goals</source>
@@ -1158,7 +1158,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">My Goals</target>
+        <target state="translated">Mis Objetivos</target>
       </trans-unit>
       <trans-unit id="1315abdc097e8999155f390ac764102aea8eba0f" datatype="html">
         <source>My Certifications</source>
@@ -1166,7 +1166,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">My Certifications</target>
+        <target state="translated">Mis certificaciones</target>
       </trans-unit>
       <trans-unit id="0740c7ebd1d546cd0db754b888bef11236307bfc" datatype="html">
         <source>My Achievements</source>
@@ -1174,7 +1174,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">My Achievements</target>
+        <target state="translated">Mis logros</target>
       </trans-unit>
       <trans-unit id="691d693b7c2f53307b5d454c26986f49151603bb" datatype="html">
         <source>My References</source>
@@ -1182,7 +1182,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target state="needs-translation">My References</target>
+        <target state="translated">Mis referencias</target>
       </trans-unit>
       <trans-unit id="bb1e9db59df966035ab536088c52b72a3a41ccd7" datatype="html">
         <source>Relationship:</source>
@@ -1190,7 +1190,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="needs-translation">Relationship:</target>
+        <target state="translated">Relación:</target>
       </trans-unit>
       <trans-unit id="9988ada51fbf826595b77a8de10fdcea198b4e82" datatype="html">
         <source>Phone Number:</source>
@@ -1198,7 +1198,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="needs-translation">Phone Number:</target>
+        <target state="translated">Número de teléfono:</target>
       </trans-unit>
       <trans-unit id="91b96d7228b6e05c238fa4e39abfc17ad51a6eef" datatype="html">
         <source>Email:</source>
@@ -1206,7 +1206,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements.component.html</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="needs-translation">Email:</target>
+        <target state="translated">Correo electrónico:</target>
       </trans-unit>
       <trans-unit id="8daf628abf250bd4338c8103d74ea77638694062" datatype="html">
         <source>Show main conversation</source>
@@ -1214,7 +1214,7 @@
           <context context-type="sourcefile">app/news/news-list.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Show main conversation</target>
+        <target state="translated">Mostrar conversación principal</target>
       </trans-unit>
       <trans-unit id="30e850b858676433f80f0c08b606f675f611b6ee" datatype="html">
         <source>Show previous replies</source>
@@ -1222,7 +1222,7 @@
           <context context-type="sourcefile">app/news/news-list.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Show previous replies</target>
+        <target state="translated">Mostrar respuestas anteriores</target>
       </trans-unit>
       <trans-unit id="d146d8488d2257c1f6befafaa47a91432c47a5dd" datatype="html">
         <source>Viewing replies for:</source>
@@ -1230,7 +1230,7 @@
           <context context-type="sourcefile">app/news/news-list.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Viewing replies for:</target>
+        <target state="translated">Viendo respuestas para:</target>
       </trans-unit>
       <trans-unit id="bb712e2f5c73eb903eb96978eb270199359bef9e" datatype="html">
         <source>
