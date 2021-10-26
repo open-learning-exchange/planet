@@ -71,7 +71,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
+        <target state="translated">{VAR_SELECT, select, yes {Deselecciona} no {Selecciona} }</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
@@ -325,7 +325,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
     
     Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...} leave {...} remove {...} leader {...}}"/>
       the <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
@@ -338,7 +338,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} }</target>
+        <target state="translated">{VAR_SELECT, select, accept {acepta} reject {rechaza} delete {elimina} leave {déjal} remove {Elimina} leader {Dale liderazgo a} }</target>
       </trans-unit>
       <trans-unit id="175dc758594d037e52c00283498e5cee10d338ef" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {member} change {change} team {team} task {task} certification {certification} event {event} transaction {transaction} link {link} }?
@@ -690,7 +690,7 @@
           <context context-type="sourcefile">app/shared/planet-filtered-amount.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_1, plural, =0 {courses} =1 {course} other {courses} }} }</target>
+        <target state="translated">{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {recursos} =1 {recurso} other {recursos} }} courses {{VAR_PLURAL_1, plural, =0 {cursos} =1 {curso} other {cursos} }} }</target>
       </trans-unit>
       <trans-unit id="972da96eb0540d81c26deac1e6cc2f7504ca50c2" datatype="html">
         <source>Member Profile</source>
@@ -1042,7 +1042,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">My Purpose - What are your educational and professional ambitions?</target>
+        <target state="translated">Mi propósito - ¿Cuáles son sus ambiciones educativas y profesionales?</target>
       </trans-unit>
       <trans-unit id="cd248660f6861d19ed98421a2f897c0d1124ccf5" datatype="html">
         <source>My Goals - What are your goals for the next 10 years?</source>
@@ -1050,7 +1050,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">My Goals - What are your goals for the next 10 years?</target>
+        <target state="translated">Mis Metas - ¿Cuáles son sus metas para los próximos 10 años?</target>
       </trans-unit>
       <trans-unit id="847158640dd80bbb7c32c61c8fb82ce365189f63" datatype="html">
         <source>Summary of Achievements - Briefly summarize your achievements and add related materials below</source>
@@ -2504,7 +2504,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="needs-translation">No member has joined this <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...}}"/>.</target>
+        <target state="translated">Ningún miembro se ha unido a este <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...}}"/>.</target>
       </trans-unit>
       <trans-unit id="75b7b37def2bce5206a97f69d0814e3f9bf66b0a" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise} }</source>
@@ -2584,7 +2584,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">122</context>
         </context-group>
-        <target state="needs-translation">Resource unavailable. Contact your administrator to add resource to this Planet.</target>
+        <target state="translated">Recursos no disponibles. Póngase en contacto con su administrador para agregar recursos a este planeta.</target>
       </trans-unit>
       <trans-unit id="ba567a133d29c0f86135f4604f2f0676939caf97" datatype="html">
         <source>There is no content for this resource</source>
@@ -2596,7 +2596,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="needs-translation">There is no content for this resource</target>
+        <target state="translated">No hay contenido para este recurso</target>
       </trans-unit>
       <trans-unit id="7eec194fdb5177fb2a2b67ddfd1a5c71a943eb9d" datatype="html">
         <source>Courses</source>
@@ -2640,7 +2640,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">150</context>
         </context-group>
-        <target state="needs-translation">There are no courses associated with this team.</target>
+        <target state="translated">No hay cursos asociados con este equipo.</target>
       </trans-unit>
       <trans-unit id="694b96f3f5a1769e984959aebdac59456b86fff1" datatype="html">
         <source>{VAR_SELECT, select, team {Join Requests} enterprise {Applicants} }</source>
@@ -3392,7 +3392,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, community {Community} nation {Nation} center {Earth} }</target>
+        <target state="translated">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra} }</target>
       </trans-unit>
       <trans-unit id="72ea393a8941d9c78b055e5c4597a7f760b713a7" datatype="html">
         <source>Add Link</source>
@@ -4296,7 +4296,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {communities} =1 {community} other {communities} }} center {{VAR_PLURAL_1, plural, =0 {nations} =1 {nation} other {nations} }} }</target>
+        <target state="translated">{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {comunidades} =1 {comunidad} other {comunidades} }} center {{VAR_PLURAL_1, plural, =0 {naciones} =1 {nacion} other {naciones} }} }</target>
       </trans-unit>
       <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html">
         <source>View</source>
@@ -5646,7 +5646,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, survey {Finish Survey} exam {Finish Test} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {Finish Survey} exam {Finish Test} }</target>
       </trans-unit>
       <trans-unit id="e3b437177444483ae45895ed7db8dca06a1d7568" datatype="html">
         <source>Incorrect answer, please try again</source>
@@ -5662,7 +5662,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, survey {Survey is complete.} exam {Test is complete.} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {Encuesta completada.} exam {Prueba completada.} }</target>
       </trans-unit>
       <trans-unit id="e3b42c766c994f673b65f6117b40abb77e3123f8" datatype="html">
         <source>You can close the preview.</source>
@@ -5678,7 +5678,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {Haga clic en Finalizar Encuesta para enviar para revisión.} exam {Haga clic en Finalizar Prueba para enviar para revisar.} }</target>
       </trans-unit>
       <trans-unit id="71650180e3ae0e3ff56d90a6f15abd5c3ed4c7db" datatype="html">
         <source>Review Previous Test Attempts</source>
@@ -5781,7 +5781,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, on {Show} off {Hide} }</target>
+        <target state="translated">{VAR_SELECT, select, on {Mostrar} off {Ocultar} }</target>
       </trans-unit>
       <trans-unit id="1360aa52f3faeed54a94917fb1c0d68d655eab2d" datatype="html">
         <source>
@@ -5865,7 +5865,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =1 {resource} other {resources} }</target>
+        <target state="translated">{VAR_PLURAL, plural, one {} =1 {recurso} other {recursos} }</target>
       </trans-unit>
       <trans-unit id="6263ac43a8b2a7b2f82af6a6d375e37879d491b1" datatype="html">
         <source>The test has</source>
@@ -5889,7 +5889,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =1 {question} other {questions} }</target>
+        <target state="translated">{VAR_PLURAL, plural, one {} =1 {pregunta} other {preguntas} }</target>
       </trans-unit>
       <trans-unit id="5960890e18274117b9c21b07bde7b6326df91c07" datatype="html">
         <source>The survey has</source>
@@ -5913,7 +5913,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">73</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =1 {question} other {questions} }</target>
+        <target state="translated">{VAR_PLURAL, plural, one {} =1 {pregunta} other {preguntas} }</target>
       </trans-unit>
       <trans-unit id="5339e40170ef503b40f6dbd63d2ba88bcdbd95b8" datatype="html">
         <source>View Resource</source>
@@ -6445,7 +6445,7 @@
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="needs-translation">Excel (CSV)</target>
+        <target state="translated">CSV de Excel</target>
       </trans-unit>
       <trans-unit id="88fe2daea9a5df89dc3a9fa375dbc8540ce05c8e" datatype="html">
         <source>Print (PDF)</source>
@@ -7097,7 +7097,7 @@
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, on {Connected} off {Offline} }</target>
+        <target state="translated">{VAR_SELECT, select, on {Conectado} off {¡Desconectado} }</target>
       </trans-unit>
       <trans-unit id="0a2ef3b6084dc7f2445949adc05c0da5574e0df4" datatype="html">
         <source>You have</source>
@@ -7121,7 +7121,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard-notifications-dialog.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =1 {survey} other {surveys} }</target>
+        <target state="translated">{VAR_PLURAL, plural, one {} =1 {recurso} other {recursos} }</target>
       </trans-unit>
       <trans-unit id="bf612b44e3ba6c05c219aceac6a6ed6c37df1dc4" datatype="html">
         <source>Complete</source>
