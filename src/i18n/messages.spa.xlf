@@ -818,7 +818,7 @@
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Sandbox Planets</target>
+        <target state="translated">Planetas de Sandbox</target>
       </trans-unit>
       <trans-unit id="17cf5d913d353cb420e6d46357bd7aabcb0e91af" datatype="html">
         <source>{VAR_SELECT, select, temperature {Temperature (°C)} pulse {Pulse (bpm)} bp {Blood Pressure} height {Height (cm)} weight {Weight (kg)} vision {Vision} hearing {Hearing} help {Help Wanted} offer {Offer} advice {Request for Advice} Cancer {Cancer} Cardiovascular disorders {Cardiovascular disorders} Cirrhosis of the liver {Cirrhosis of the liver} COVID-19 {COVID-19} Diabetes {Diabetes} Diarrhoea diseases {Diarrhoea diseases} Ebola {Ebola} Epilepsy {Epilepsy} FGM {FGM} Influenza {Influenza} Ischaemic heat disease {Ischaemic heat disease} Malaria {Malaria} Malnutrition {Malnutrition} Measles {Measles} Meningitis {Meningitis} Neonatal sepsis and infections {Neonatal sepsis and infections} HIV/AIDS {HIV/AIDS} Pneumonia {Pneumonia} Stroke {Stroke} Trauma {Trauma} Tuberculosis {Tuberculosis} }</source>
@@ -1058,7 +1058,7 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">Summary of Achievements - Briefly summarize your achievements and add related materials below</target>
+        <target state="translated">Resumen de Logros - Resume brevemente tus logros y agrega materiales relacionados a continuación</target>
       </trans-unit>
       <trans-unit id="21dc4e7557f22576bea26af2b023d2e44476f41b" datatype="html">
         <source>Sort by Date</source>
@@ -1727,7 +1727,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation">Existing Resource/file:</target>
+        <target state="translated">Recurso/archivo existente:</target>
       </trans-unit>
       <trans-unit id="9ce1a0f44239a960521f629e8894684e429950c8" datatype="html">
         <source>Delete File</source>
@@ -1776,7 +1776,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">OR</target>
+        <target state="translated">O</target>
       </trans-unit>
       <trans-unit id="b17d3a917ff1e6f08f278a4eb356b76e57f65669" datatype="html">
         <source>{VAR_SELECT, select, on {myCourses} off {Courses} }</source>
@@ -4770,7 +4770,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Summary of Connected Planets</target>
+        <target state="translated">Resumen de los planetas conectados</target>
       </trans-unit>
       <trans-unit id="f72992030f134408b675152c397f9d0ec00f3b2a" datatype="html">
         <source>Report</source>
@@ -5296,7 +5296,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">Save &amp; Return</target>
+        <target state="translated">Guardar &amp; Devolución</target>
       </trans-unit>
       <trans-unit id="cc3f46865e8205bc59118fcba179c9a5b26f2044" datatype="html">
         <source>Add Courses</source>
@@ -6663,7 +6663,7 @@
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, community {Community} nation {Nation} center {Earth} }</target>
+        <target state="translated">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra} }</target>
       </trans-unit>
       <trans-unit id="318774a5708c08349195b145ecf4420982fa5e40" datatype="html">
         <source>Performed by: </source>
@@ -6763,7 +6763,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Observations &amp; Notes: </target>
+        <target state="translated">Observaciones &amp; Notas: </target>
       </trans-unit>
       <trans-unit id="035a100fc60478ce38d9b8f0ad4f9414b746a3a0" datatype="html">
         <source>Diagnosis: </source>
@@ -7001,7 +7001,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="needs-translation">Observations &amp; Notes</target>
+        <target state="translated">Observaciones &amp; Notas</target>
       </trans-unit>
       <trans-unit id="fc5f0f619c3b02dc1f12fb270081bf393bb70588" datatype="html">
         <source>Treatments</source>
