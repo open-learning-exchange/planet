@@ -226,7 +226,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -234,7 +234,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, community {Nation} nation {Center} }</target>
+        <target state="translated">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -366,7 +366,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Ratings for</target>
+        <target state="translated">Calificaciones para</target>
       </trans-unit>
       <trans-unit id="e0666c1be03bca95833a011f9bb8436e5b07a09d" datatype="html">
         <source>Most Recent</source>
@@ -406,7 +406,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">ltr</target>
+        <target state="translated">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
@@ -630,7 +630,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Upto date</target>
+        <target state="translated">Hasta la fecha</target>
       </trans-unit>
       <trans-unit id="c9585eeca463713dadbe3845f2d9e39de24c66fc" datatype="html">
         <source>Newer</source>
@@ -1247,7 +1247,7 @@
           <context context-type="sourcefile">app/resources/search-resources/resources-search.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, subject {Subject} language {Language} mediaType {Medium} level {Level} }</target>
+        <target state="translated">{VAR_SELECT, select, subject {Asunto} language {Idioma} mediaType {Medios} level {Nivel} }</target>
       </trans-unit>
       <trans-unit id="21dc9c93f4fbc0b38a4951888293b445c9161654" datatype="html">
         <source>{VAR_SELECT, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library} }</source>
@@ -3964,7 +3964,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, new {Set Up Configuration} update {Update Configuration} }</target>
+        <target state="translated">{VAR_SELECT, select, new {Set Up Configuration} update {Update Configuration} }</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html">
         <source>Select Nation/Community</source>
@@ -4104,7 +4104,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">96</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, new {Contact Details} update {Update Contact Details} }</target>
+        <target state="translated">{VAR_SELECT, select, new {Contact Details} update {Update Contact Details} }</target>
       </trans-unit>
       <trans-unit id="08067508bd53595fbcb97312a72e198986bda165" datatype="html">
         <source>{VAR_SELECT, select, new {Submit} update {Update} }</source>
@@ -4112,7 +4112,7 @@
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">118</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, new {Submit} update {Update} }</target>
+        <target state="translated">{VAR_SELECT, select, new {Envía} update {Actualiza} }</target>
       </trans-unit>
       <trans-unit id="087f9725733cb62e03f552649db8db0b589ffcb0" datatype="html">
         <source>Planet Details</source>
