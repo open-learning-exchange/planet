@@ -5849,7 +5849,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =1 {There is} other {There are} }</target>
+        <target state="translated">{VAR_PLURAL, plural, one {} =1 {¡Hay} other {¡Hay} }</target>
       </trans-unit>
       <trans-unit id="1ce49a6cd99c266e83fa0a909bf25e9c4ca75a44" datatype="html">
         <source><x id="ICU" equiv-text="{step.resources.length, plural, =1 {...} other {...}}"/>.</source>
@@ -5857,7 +5857,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {...} other {...}}"/>.</target>
+        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {...} other {...}}"/>.</target>
       </trans-unit>
       <trans-unit id="81603f902fa514ddff8034bb556891db9a7dea24" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {resource} other {resources} }</source>
@@ -5929,7 +5929,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, continue {Continue Test} retake {Retake Test} other {Take Test} }</target>
+        <target state="translated">{VAR_SELECT, select, continue {Continuar Prueba} retake {Retomar Prueba} other {Toma la Prueba} }</target>
       </trans-unit>
       <trans-unit id="7a78da589abfa0fe1ca9f1c3da2ad6371ef1e8cd" datatype="html">
         <source>Take Survey</source>
@@ -6069,7 +6069,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-chart.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, Steps {Steps} Quest. {Quest.} other {Steps} }</target>
+        <target state="translated">{VAR_SELECT, select, Steps {Paso} Quest. {Misión.} other {Pasos} }</target>
       </trans-unit>
       <trans-unit id="a79d938b5ed20249b4ab6bef86c12633d2f346a0" datatype="html">
         <source>Test</source>
@@ -6276,7 +6276,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, select {choice} selectMultiple {choices} }</target>
+        <target state="translated">{VAR_SELECT, select, select {elección} selectMultiple {elecciones} }</target>
       </trans-unit>
       <trans-unit id="1fc2618c7ca4b3722929d8739dbf6d9ab4f7dacf" datatype="html">
         <source>Add Choice</source>
@@ -6292,7 +6292,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, survey {mySurveys} grade {Submissions} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {mySurveys} grade {¡Envíos} }</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
         <source>Status</source>
@@ -6837,9 +6837,9 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
     
-    Edit <x id="START_TAG_NG-CONTAINER" ctype="x-ng-container" equiv-text="&lt;ng-container&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG-CONTAINER" ctype="x-ng-container" equiv-text="&lt;/ng-container&gt;"/>
+    Editar <x id="START_TAG_NG-CONTAINER" ctype="x-ng-container" equiv-text="&lt;ng-container&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutos}}"/>:<x id="INTERPOLATION_1" equiv-text="{{ segundos }}"/>)<x id="CLOSE_TAG_NG-CONTAINER" ctype="x-ng-container" equiv-text="&lt;/ng-container&gt;"/>
   
   </target>
       </trans-unit>
