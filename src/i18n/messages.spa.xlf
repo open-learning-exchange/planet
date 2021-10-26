@@ -4492,7 +4492,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="needs-translation">Activity on</target>
+        <target state="translated">Actividad en</target>
       </trans-unit>
       <trans-unit id="4c9a8e4beb4a754639b9e43c2d9906c8f9572412" datatype="html">
         <source>Report Detail</source>
@@ -5006,7 +5006,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">100</context>
         </context-group>
-        <target state="needs-translation">There are no visits</target>
+        <target state="translated">No hay visitas</target>
       </trans-unit>
       <trans-unit id="3b3a5c83076883c4ae8b2562480451b9acfa5642" datatype="html">
         <source>Total Resources</source>
@@ -5014,7 +5014,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">114</context>
         </context-group>
-        <target state="needs-translation">Total Resources</target>
+        <target state="translated">Recursos totales</target>
       </trans-unit>
       <trans-unit id="85cb8235aea7eaa66bda9796aa525fef04aee3b6" datatype="html">
         <source>Total Views</source>
@@ -5026,7 +5026,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">149</context>
         </context-group>
-        <target state="needs-translation">Total Views</target>
+        <target state="translated">Vistas totales</target>
       </trans-unit>
       <trans-unit id="34cac61cc9b9f55c05b120fa5aa7cfb8aca87c34" datatype="html">
         <source>Most Visited</source>
@@ -5038,7 +5038,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">151</context>
         </context-group>
-        <target state="needs-translation">Most Visited</target>
+        <target state="translated">Más visitado</target>
       </trans-unit>
       <trans-unit id="9773cc25bceb6a472ad2779b283ecb322f3affb6" datatype="html">
         <source>Total Visits by Resource</source>
@@ -5046,7 +5046,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">119</context>
         </context-group>
-        <target state="needs-translation">Total Visits by Resource</target>
+        <target state="translated">Visitas totales por Recurso</target>
       </trans-unit>
       <trans-unit id="0829d4c90397079a9f31de44ff4055ef2a467e09" datatype="html">
         <source>No resources have been visited</source>
@@ -5054,7 +5054,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">121</context>
         </context-group>
-        <target state="needs-translation">No resources have been visited</target>
+        <target state="translated">Ningún recurso ha sido visitado</target>
       </trans-unit>
       <trans-unit id="acb4356df9d3fd956469d9f9cc00923c36bb5960" datatype="html">
         <source>Highest Rated</source>
@@ -5066,7 +5066,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">163</context>
         </context-group>
-        <target state="needs-translation">Highest Rated</target>
+        <target state="translated">Calificación más alta</target>
       </trans-unit>
       <trans-unit id="bfd0b38247f6c4c5c80afe653b923e048882bae2" datatype="html">
         <source>Average Rating</source>
@@ -5082,7 +5082,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Average Rating</target>
+        <target state="translated">Calificación promedio</target>
       </trans-unit>
       <trans-unit id="c00a21a7252b7ee051cc2e43edf8916e96e37080" datatype="html">
         <source>There are no resource ratings</source>
@@ -5090,7 +5090,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">133</context>
         </context-group>
-        <target state="needs-translation">There are no resource ratings</target>
+        <target state="translated">No hay calificaciones de recursos</target>
       </trans-unit>
       <trans-unit id="fdd60f9b4f5184188fc280602ec21a56d2bb5f51" datatype="html">
         <source>Total Courses</source>
@@ -5098,7 +5098,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">147</context>
         </context-group>
-        <target state="needs-translation">Total Courses</target>
+        <target state="translated">Total de cursos</target>
       </trans-unit>
       <trans-unit id="c018f56794850abdb05f2a46b323b9d751b359ea" datatype="html">
         <source>Total Visits by Course</source>
@@ -5106,7 +5106,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">152</context>
         </context-group>
-        <target state="needs-translation">Total Visits by Course</target>
+        <target state="translated">Total de visitas por curso</target>
       </trans-unit>
       <trans-unit id="a540b4f749d22b085b40cc575f6bab16396599c2" datatype="html">
         <source>No courses have been visited</source>
@@ -5114,7 +5114,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">154</context>
         </context-group>
-        <target state="needs-translation">No courses have been visited</target>
+        <target state="translated">Ningún curso ha sido visitado</target>
       </trans-unit>
       <trans-unit id="dfeb320d0b2aa69fe99158ddf68d1b07853de21f" datatype="html">
         <source>There are no course ratings</source>
@@ -5122,7 +5122,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">166</context>
         </context-group>
-        <target state="needs-translation">There are no course ratings</target>
+        <target state="translated">No hay calificaciones de curso</target>
       </trans-unit>
       <trans-unit id="5ca560193c762090e39d5d677cf3c79173673ef5" datatype="html">
         <source>Pending Report</source>
@@ -5130,7 +5130,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-pending.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Pending Report</target>
+        <target state="translated">Reporte pendiente</target>
       </trans-unit>
       <trans-unit id="56b1baecac043b12fd134a53c9f0fcd549fcde02" datatype="html">
         <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {...} center {...}}"/></source>
@@ -5138,7 +5138,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-pending.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {...} center {...}}"/></target>
+        <target state="translated">Recursos pendientes/cursos en <x id="ICU" equiv-text="{ planetType, select, nation {...} center {...}}"/></target>
       </trans-unit>
       <trans-unit id="9a1128da70d2bd440f3633c3fce70b54289665e5" datatype="html">
         <source>myPlanet Report</source>
@@ -5146,7 +5146,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">myPlanet Report</target>
+        <target state="translated">reporte de myPlanet</target>
       </trans-unit>
       <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html">
         <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {...} other {...}}"/></source>
@@ -5154,7 +5154,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {...} other {...}}"/></target>
+        <target state="translated">myPlanet activado <x id="ICU" equiv-text="{ planetType, select, center {...} other {...}}"/></target>
       </trans-unit>
       <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html">
         <source>{VAR_SELECT, select, center {Nations} other {Communities} }</source>
@@ -5162,7 +5162,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, center {Nations} other {Communities} }</target>
+        <target state="translated">{VAR_SELECT, select, center {Naciones} other {Comunidades} }</target>
       </trans-unit>
       <trans-unit id="061dde2212f990858543682a4660f3df65c58f11" datatype="html">
         <source>Week Starting</source>
@@ -5170,7 +5170,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Week Starting</target>
+        <target state="translated">Comienzo de la semana</target>
       </trans-unit>
       <trans-unit id="dc9c320e0f608c980d86b92777ac55cdbc9d5825" datatype="html">
         <source>Examinations</source>
@@ -5178,7 +5178,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Examinations</target>
+        <target state="translated">Exámenes</target>
       </trans-unit>
       <trans-unit id="b7641aed03492978b4ec6843b1e53f30464294d9" datatype="html">
         <source>Views</source>
@@ -5186,7 +5186,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Views</target>
+        <target state="translated">Vistas</target>
       </trans-unit>
       <trans-unit id="27522fe80e008cfe4909c923da2a42e532758754" datatype="html">
         <source>Patients Seen</source>
@@ -5194,7 +5194,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Patients Seen</target>
+        <target state="translated">Pacientes vistos</target>
       </trans-unit>
       <trans-unit id="943777234ea0f773a8bd30f32f4db1bca680df38" datatype="html">
         <source>Enrolled</source>
@@ -5202,7 +5202,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="needs-translation">Enrolled</target>
+        <target state="translated">Inscritos</target>
       </trans-unit>
       <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html">
         <source>Steps</source>
@@ -5210,7 +5210,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">Steps</target>
+        <target state="translated">Pasos</target>
       </trans-unit>
       <trans-unit id="be8e1a199c0f65656ec614786777a1552a968979" datatype="html">
         <source>Tests</source>
@@ -5218,7 +5218,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-translation">Tests</target>
+        <target state="translated">Exámenes</target>
       </trans-unit>
       <trans-unit id="c63bfc746ef14608d74bc14ad6c272eddd0a49bf" datatype="html">
         <source>Type certification name to search</source>
@@ -5226,7 +5226,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Type certification name to search</target>
+        <target state="translated">Escriba el nombre de la certificación a buscar</target>
       </trans-unit>
       <trans-unit id="fdb49ad5f69a1206c2d9acdca4afaf2cb93279ed" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></source>
@@ -5234,7 +5234,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>añadir<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="1567cf7bdefe1d40e39cdaf3505317ddb1d0f2fa" datatype="html">
         <source>Certification Name</source>
@@ -5242,7 +5242,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Certification Name</target>
+        <target state="translated">Nombre del certificado</target>
       </trans-unit>
       <trans-unit id="3c05c3a780c4558a662e672a89bdeb44fb2e08b4" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Edit
@@ -5276,7 +5276,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">No Certifications Found</target>
+        <target state="translated">No se encontraron certificaciones</target>
       </trans-unit>
       <trans-unit id="f1997284f17b3f356e41cf815ebfc328a74123fc" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Certification</source>
@@ -5284,7 +5284,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Certification</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Certificado</target>
       </trans-unit>
       <trans-unit id="98ca9e77e76f3b2a10b1c6acbc922c3ba16464ad" datatype="html">
         <source>Save &amp; Return</source>
@@ -5304,7 +5304,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation">Add Courses</target>
+        <target state="translated">Añadir cursos</target>
       </trans-unit>
       <trans-unit id="01bc74b2c1e376dafe813af9f8df24ccceb6f395" datatype="html">
         <source>Remove Courses</source>
@@ -5312,7 +5312,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Remove Courses</target>
+        <target state="translated">Eliminar cursos</target>
       </trans-unit>
       <trans-unit id="abddfb9533b710fef66654067e295699067a78b1" datatype="html">
         <source>Certificate Name</source>
@@ -5320,7 +5320,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Certificate Name</target>
+        <target state="translated">Nombre del certificado</target>
       </trans-unit>
       <trans-unit id="754f497944b7d20333ce7230eba1aba5c967524e" datatype="html">
         <source>No courses have been added. Click on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> to add courses.</source>
@@ -5328,7 +5328,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">No courses have been added. Click on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> to add courses.</target>
+        <target state="translated">No se han añadido cursos. Haga clic en <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Editar<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> para añadir cursos.</target>
       </trans-unit>
       <trans-unit id="582ac511469c38ec9277e09dd243246ada6ec3fd" datatype="html">
         <source>Course Requirements</source>
@@ -5336,7 +5336,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Course Requirements</target>
+        <target state="translated">Requisitos del curso</target>
       </trans-unit>
       <trans-unit id="5bd25f9e824f25316a62df8c981ee28fe94472c6" datatype="html">
         <source>No members have been certified.</source>
@@ -5344,7 +5344,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">No members have been certified.</target>
+        <target state="translated">Ningún miembro ha sido certificado.</target>
       </trans-unit>
       <trans-unit id="60ca1e335fa98d19eee273ecf353debaf1537a5d" datatype="html">
         <source>Certified Members</source>
@@ -5352,7 +5352,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Certified Members</target>
+        <target state="translated">Miembros Certificados</target>
       </trans-unit>
       <trans-unit id="10602729fb815f82ee9e85b0dc0a2baccb568afc" datatype="html">
         <source>Download/Open</source>
@@ -5360,7 +5360,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-viewer.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Download/Open</target>
+        <target state="translated">Descargar/Abrir</target>
       </trans-unit>
       <trans-unit id="7caa77b9307c9832b37ecdbbda1ade7cf7e6c3d3" datatype="html">
         <source>Close Preview</source>
@@ -5368,7 +5368,7 @@
           <context context-type="sourcefile">app/exams/exams-preview.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Close Preview</target>
+        <target state="translated">Cerrar vista previa</target>
       </trans-unit>
       <trans-unit id="eabbe399bdf428d10ac22766a9cb96652c87290b" datatype="html">
         <source>{VAR_SELECT, select, exam {Test} survey {Survey} }</source>
@@ -5380,7 +5380,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, exam {Test} survey {Survey} }</target>
+        <target state="translated">{VAR_SELECT, select, exam {Prueba} survey {Encuesta} }</target>
       </trans-unit>
       <trans-unit id="4188ef67a196ca21d68f20405b99fb6b2f6476c7" datatype="html">
         <source>Add Question</source>
@@ -5388,7 +5388,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">Add Question</target>
+        <target state="translated">Añadir pregunta</target>
       </trans-unit>
       <trans-unit id="342d3c62ddaed90f50256b66c29d01c29c0843f2" datatype="html">
         <source>Text - Short answer</source>
@@ -5400,7 +5400,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">Text - Short answer</target>
+        <target state="translated">Texto - Respuesta corta</target>
       </trans-unit>
       <trans-unit id="72543743756e482a9c759891976f318c10beb626" datatype="html">
         <source>Text - Long answer</source>
@@ -5412,7 +5412,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Text - Long answer</target>
+        <target state="translated">Texto - respuesta larga</target>
       </trans-unit>
       <trans-unit id="d0d0ffb152f14b8794dd6c8dda40edba72ca7193" datatype="html">
         <source>Multiple Choice - single answer</source>
@@ -5424,7 +5424,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Multiple Choice - single answer</target>
+        <target state="translated">Opción Múltiple - respuesta única</target>
       </trans-unit>
       <trans-unit id="275e7c74485f60718dcd182d1516ce8ea40d3c86" datatype="html">
         <source>Multiple Choice - multiple answer</source>
@@ -5436,7 +5436,7 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Multiple Choice - multiple answer</target>
+        <target state="translated">Opción Múltiple - respuesta múltiple</target>
       </trans-unit>
       <trans-unit id="237aee1ad5348e348010215bd2a7775e413d0f43" datatype="html">
         <source>Preview <x id="ICU" equiv-text="{examType, select, exam {...} survey {...}}"/></source>
@@ -5444,7 +5444,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Preview <x id="ICU" equiv-text="{examType, select, exam {...} survey {...}}"/></target>
+        <target state="translated">Vista previa <x id="ICU" equiv-text="{examType, select, exam {...} survey {...}}"/></target>
       </trans-unit>
       <trans-unit id="99f6c1311cd7455ed5e830fefe582e2f8e413790" datatype="html">
         <source>Some required fields are missing.</source>
@@ -5452,7 +5452,7 @@
           <context context-type="sourcefile">app/exams/exams-add.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Some required fields are missing.</target>
+        <target state="translated">Faltan algunos campos obligatorios.</target>
       </trans-unit>
       <trans-unit id="ae439bfbc5bf21c474056c6a99d51d9cbedad4e2" datatype="html">
         <source>You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {...} survey {...}}"/></source>
