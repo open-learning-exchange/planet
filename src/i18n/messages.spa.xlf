@@ -1872,7 +1872,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">En mis MisCursos</target>
+        <target state="translated">En mis MyCourses</target>
       </trans-unit>
       <trans-unit id="c4afb357b68ffb75fbab07292a8db9da862b404f" datatype="html">
         <source>Not in myCourses</source>
