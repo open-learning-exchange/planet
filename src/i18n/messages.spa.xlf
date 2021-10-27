@@ -4106,13 +4106,13 @@
         </context-group>
         <target state="translated">{VAR_SELECT, select, new {Contact Details} update {Update Contact Details} }</target>
       </trans-unit>
-      <trans-unit id="08067508bd53595fbcb97312a72e198986bda165" datatype="html">
+      <trans-unit id="08067508bd53595fbcb97312a72e198986bda165" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, new {Submit} update {Update} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">118</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, new {Envía} update {Actualiza} }</target>
+        <target state="final">{VAR_SELECT, select, new {Envía} update {Actualiza} }</target>
       </trans-unit>
       <trans-unit id="087f9725733cb62e03f552649db8db0b589ffcb0" datatype="html">
         <source>Planet Details</source>
@@ -4154,13 +4154,13 @@
         </context-group>
         <target state="translated">La configuración es válida. Haga clic en "Siguiente" para clonar el Planet.</target>
       </trans-unit>
-      <trans-unit id="89f887ef0474f04731481617438b8cb27bdd1e43" datatype="html">
+      <trans-unit id="89f887ef0474f04731481617438b8cb27bdd1e43" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, nation {Manage Communities} center {Manage Nations} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, nation {Administra Comunidades} center {Administra Naciones} }</target>
+        <target state="final">{VAR_SELECT, select, nation {Administra Comunidades} center {Administra Naciones} }</target>
       </trans-unit>
       <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html">
         <source>Reports</source>
@@ -4290,13 +4290,13 @@
         </context-group>
         <target state="translated"><x id="ICU" equiv-text="{planetType, select, nation {...} center {...}}"/> con cursos y/o recursos pendientes para descargar.</target>
       </trans-unit>
-      <trans-unit id="c2dfcaa6427fea5b3701edb7422b3b943d88ecc5" datatype="html">
+      <trans-unit id="c2dfcaa6427fea5b3701edb7422b3b943d88ecc5" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {communities} =1 {community} other {communities} }} center {{VAR_PLURAL_1, plural, =0 {nations} =1 {nation} other {nations} }} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {comunidades} =1 {comunidad} other {comunidades} }} center {{VAR_PLURAL_1, plural, =0 {naciones} =1 {nacion} other {naciones} }} }</target>
+        <target state="final">{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {comunidades} =1 {comunidad} other {comunidades} }} center {{VAR_PLURAL_1, plural, =0 {naciones} =1 {nacion} other {naciones} }} }</target>
       </trans-unit>
       <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html">
         <source>View</source>
@@ -4358,15 +4358,15 @@
         </context-group>
         <target state="translated">Versión del Planet</target>
       </trans-unit>
-      <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html">
+      <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</target>
+        <target state="final"><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</target>
       </trans-unit>
-      <trans-unit id="381b5c52485ebfd2c52aa62129911d02a8962d75" datatype="html">
+      <trans-unit id="381b5c52485ebfd2c52aa62129911d02a8962d75" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
@@ -4376,7 +4376,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
+        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
       </trans-unit>
       <trans-unit id="8b18f57830b5c4c4954b7a8e3097b2aafa01d75d" datatype="html">
         <source>Local:</source>
@@ -4446,7 +4446,7 @@
         </context-group>
         <target state="translated">Su solicitud ha sido rechazada por <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/>. Puede volver a intentarlo o ponerse en contacto con <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/> planeta.</target>
       </trans-unit>
-      <trans-unit id="4ef4955380453184df847c308888e43f5bc3a07d" datatype="html">
+      <trans-unit id="4ef4955380453184df847c308888e43f5bc3a07d" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {nation} nation {center} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
@@ -4460,7 +4460,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
+        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
       </trans-unit>
       <trans-unit id="b756b811312062e2a2880792474b22515f7e161a" datatype="html">
         <source>Your request has not been accepted by <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/></source>
@@ -5156,13 +5156,13 @@
         </context-group>
         <target state="translated">myPlanet activado <x id="ICU" equiv-text="{ planetType, select, center {...} other {...}}"/></target>
       </trans-unit>
-      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html">
+      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, center {Nations} other {Communities} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, center {Naciones} other {Comunidades} }</target>
+        <target state="final">{VAR_SELECT, select, center {Naciones} other {Comunidades} }</target>
       </trans-unit>
       <trans-unit id="061dde2212f990858543682a4660f3df65c58f11" datatype="html">
         <source>Week Starting</source>
@@ -5656,13 +5656,13 @@
         </context-group>
         <target state="translated">Contraseña incorrecta, vuelve a intentarlo</target>
       </trans-unit>
-      <trans-unit id="2e387d7da8f0af49c148be54826069b2d68f0d59" datatype="html">
+      <trans-unit id="2e387d7da8f0af49c148be54826069b2d68f0d59" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {Survey is complete.} exam {Test is complete.} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {Encuesta completada.} exam {Prueba completada.} }</target>
+        <target state="final">{VAR_SELECT, select, survey {Encuesta completada.} exam {Prueba completada.} }</target>
       </trans-unit>
       <trans-unit id="e3b42c766c994f673b65f6117b40abb77e3123f8" datatype="html">
         <source>You can close the preview.</source>
