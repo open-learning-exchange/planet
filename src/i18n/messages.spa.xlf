@@ -65,13 +65,13 @@
       <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> todo
     </target>
       </trans-unit>
-      <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
+      <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, yes {Deselect} no {Select} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, yes {Deselecciona} no {Selecciona} }</target>
+        <target state="final">{VAR_SELECT, select, yes {Deselecciona} no {Selecciona} }</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
@@ -228,13 +228,13 @@
         </context-group>
         <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
-      <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html">
+      <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
+        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -332,13 +332,13 @@
   
   </target>
       </trans-unit>
-      <trans-unit id="57a96f2f57ae4aef2b72af04782702e1d8a53fa7" datatype="html">
+      <trans-unit id="57a96f2f57ae4aef2b72af04782702e1d8a53fa7" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, accept {acepta} reject {rechaza} delete {elimina} leave {déjal} remove {Elimina} leader {Dale liderazgo a} }</target>
+        <target state="final">{VAR_SELECT, select, accept {acepta} reject {rechaza} delete {elimina} leave {déjal} remove {Elimina} leader {Dale liderazgo a} }</target>
       </trans-unit>
       <trans-unit id="175dc758594d037e52c00283498e5cee10d338ef" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {member} change {change} team {team} task {task} certification {certification} event {event} transaction {transaction} link {link} }?
