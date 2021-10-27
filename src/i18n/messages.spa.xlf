@@ -684,13 +684,13 @@
         </context-group>
         <target state="translated">Cerrar</target>
       </trans-unit>
-      <trans-unit id="344f589e3d011f328342c72a85d7ccef574a8f87" datatype="html">
+      <trans-unit id="344f589e3d011f328342c72a85d7ccef574a8f87" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_1, plural, =0 {courses} =1 {course} other {courses} }} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/planet-filtered-amount.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {recursos} =1 {recurso} other {recursos} }} courses {{VAR_PLURAL_1, plural, =0 {cursos} =1 {curso} other {cursos} }} }</target>
+        <target state="final">{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {recursos} =1 {recurso} other {recursos} }} courses {{VAR_PLURAL_1, plural, =0 {cursos} =1 {curso} other {cursos} }} }</target>
       </trans-unit>
       <trans-unit id="972da96eb0540d81c26deac1e6cc2f7504ca50c2" datatype="html">
         <source>Member Profile</source>
@@ -1241,13 +1241,13 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="51f10472200945b4eb823d6a9eef3f210c870167" datatype="html">
+      <trans-unit id="51f10472200945b4eb823d6a9eef3f210c870167" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, subject {Subject} language {Language} mediaType {Medium} level {Level} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/search-resources/resources-search.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, subject {Asunto} language {Idioma} mediaType {Medios} level {Nivel} }</target>
+        <target state="final">{VAR_SELECT, select, subject {Asunto} language {Idioma} mediaType {Medios} level {Nivel} }</target>
       </trans-unit>
       <trans-unit id="21dc9c93f4fbc0b38a4951888293b445c9161654" datatype="html">
         <source>{VAR_SELECT, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library} }</source>
@@ -3386,13 +3386,13 @@
         </context-group>
         <target state="needs-translation">{VAR_SELECT, select, Edit {Edit} Add {Add} }</target>
       </trans-unit>
-      <trans-unit id="54fd639c1b9cbb129dfc92849c0201e3a0597f68" datatype="html">
+      <trans-unit id="54fd639c1b9cbb129dfc92849c0201e3a0597f68" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Community} nation {Nation} center {Earth} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra} }</target>
+        <target state="final">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra} }</target>
       </trans-unit>
       <trans-unit id="72ea393a8941d9c78b055e5c4597a7f760b713a7" datatype="html">
         <source>Add Link</source>
@@ -7091,13 +7091,13 @@
         </context-group>
         <target state="translated">Versión <x id="INTERPOLATION" equiv-text="{{ planetVersion }}"/></target>
       </trans-unit>
-      <trans-unit id="9db95d10dedf6f319ffec17a38e50157b7e336bb" datatype="html">
+      <trans-unit id="9db95d10dedf6f319ffec17a38e50157b7e336bb" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, on {Connected} off {Offline} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, on {Conectado} off {¡Desconectado} }</target>
+        <target state="final">{VAR_SELECT, select, on {Conectado} off {¡Desconectado} }</target>
       </trans-unit>
       <trans-unit id="0a2ef3b6084dc7f2445949adc05c0da5574e0df4" datatype="html">
         <source>You have</source>
@@ -7115,13 +7115,13 @@
         </context-group>
         <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {...} other {...}}"/> para completar</target>
       </trans-unit>
-      <trans-unit id="614a23af3206d2bd46bb14ed070bd61fe532ea16" datatype="html">
+      <trans-unit id="614a23af3206d2bd46bb14ed070bd61fe532ea16" datatype="html" approved="yes">
         <source>{VAR_PLURAL, plural, =1 {survey} other {surveys} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/dashboard/dashboard-notifications-dialog.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">{VAR_PLURAL, plural, one {} =1 {recurso} other {recursos} }</target>
+        <target state="final">{VAR_PLURAL, plural, =1 {recurso} other {recursos} }</target>
       </trans-unit>
       <trans-unit id="bf612b44e3ba6c05c219aceac6a6ed6c37df1dc4" datatype="html">
         <source>Complete</source>
