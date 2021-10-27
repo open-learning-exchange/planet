@@ -4637,7 +4637,7 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT_1, select, pending {Your Current List of Requests} accepted {{VAR_SELECT, select, nation {Connected Community Networks} center {Connected Regions} }} }</target>
+        <target state="translated">{VAR_SELECT_1, select, pending {¡Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {¡Redes de comunidad conectadas} center {¡Regiones conectadas} }} }</target>
       </trans-unit>
       <trans-unit id="d20ffd3c02b2da8a11d59baedec3970e756ec612" datatype="html">
         <source>
@@ -4654,7 +4654,7 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, nation {Add Network} center {Add Region} }</target>
+        <target state="translated">{VAR_SELECT, select, nation {¡Añade la red} center {¡Añade la región} }</target>
       </trans-unit>
       <trans-unit id="1cfd9fe8004228440a1a5f18d8525c2d8873b749" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network
@@ -4724,7 +4724,7 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region} }} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions} }} }</target>
+        <target state="translated">{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region} }} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions} }} }</target>
       </trans-unit>
       <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html">
         <source>
@@ -4745,9 +4745,9 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
           
-          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Accept
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Aceptar
         
         </target>
       </trans-unit>
@@ -4758,9 +4758,9 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
         
-        <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
+          <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Eliminar
       
       </target>
       </trans-unit>
