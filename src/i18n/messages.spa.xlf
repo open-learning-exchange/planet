@@ -4279,7 +4279,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =0 {are} =1 {is} other {are} }</target>
+        <target state="translated">{VAR_PLURAL, plural, one {} =0 {son} =1 {es} other {son} }</target>
       </trans-unit>
       <trans-unit id="a457b8eb8a24e2313a7209891f25708b8d37d81a" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select, nation {...} center {...}}"/> with pending courses and/or resources for download.</source>
@@ -4515,7 +4515,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>sync<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Run Sync</target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>sincronizar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Ejecutar Sincronización</target>
       </trans-unit>
       <trans-unit id="fb5c601c7ffb4477287a72fea486562a2fb7fab0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
@@ -4523,7 +4523,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</target>
+        <target state="translated"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>actualizar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
       </trans-unit>
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html">
         <source>Error</source>
@@ -4619,7 +4619,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-pending.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, nation {Communities} center {Nations} }</target>
+        <target state="translated">{VAR_SELECT, select, nation {Comunidades} center {Naciones} }</target>
       </trans-unit>
       <trans-unit id="fda55fcfda6ee9032f2f9025444a847fefa294b8" datatype="html">
         <source>
@@ -4662,9 +4662,9 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
             
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>borrar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Eliminar red
           
           </target>
       </trans-unit>
@@ -5250,9 +5250,9 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
               
-              <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Edit
+              <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>editar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Editar
             
             </target>
       </trans-unit>
@@ -5263,9 +5263,9 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
             
-            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Delete
+            <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>borrar<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Eliminar
           
           </target>
       </trans-unit>
@@ -5507,7 +5507,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, survey {Survey} exam {Test} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {Encuesta} exam {Prueba} }</target>
       </trans-unit>
       <trans-unit id="2fa3b16b569acf67b1d1a29e8083acc8d07b0595" datatype="html">
         <source>Question</source>
@@ -5564,7 +5564,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {Puedes elegir una o más respuestas.} exam {Hay una o más respuestas correctas. ¡Elige todas las respuestas correctas!} }</target>
       </trans-unit>
       <trans-unit id="73c34be23712a3b6418c7fa78133edcc6243aaf1" datatype="html">
         <source>Submitted answer:</source>
