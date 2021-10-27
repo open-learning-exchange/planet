@@ -6270,13 +6270,13 @@
       Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {...} selectMultiple {...}}"/>
     </target>
       </trans-unit>
-      <trans-unit id="155cfac8bb9b398e2b32a5a78736b54efc317214" datatype="html">
+      <trans-unit id="155cfac8bb9b398e2b32a5a78736b54efc317214" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, select {choice} selectMultiple {choices} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, select {elección} selectMultiple {elecciones} }</target>
+        <target state="final">{VAR_SELECT, select, select {elección} selectMultiple {elecciones} }</target>
       </trans-unit>
       <trans-unit id="1fc2618c7ca4b3722929d8739dbf6d9ab4f7dacf" datatype="html">
         <source>Add Choice</source>
@@ -6657,13 +6657,13 @@
         </context-group>
         <target state="translated">Compartir con <x id="ICU" equiv-text="{       shareTarget, select, community {...} nation {...} center {...}}"/></target>
       </trans-unit>
-      <trans-unit id="93c0dca37d7fc72cb10618954e323303169b2e77" datatype="html">
+      <trans-unit id="93c0dca37d7fc72cb10618954e323303169b2e77" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Community} nation {Nation} center {Earth} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra} }</target>
+        <target state="final">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra} }</target>
       </trans-unit>
       <trans-unit id="318774a5708c08349195b145ecf4420982fa5e40" datatype="html">
         <source>Performed by: </source>
