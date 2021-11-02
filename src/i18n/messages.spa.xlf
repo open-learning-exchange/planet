@@ -2,15 +2,15 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
     <body>
-      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html">
+      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html" approved="yes">
         <source>Loading</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">Cargando</target>
+        <target state="final">Cargando</target>
       </trans-unit>
-      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
+      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -52,16 +52,16 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-submissions.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Aceptar</target>
+        <target state="final">Aceptar</target>
       </trans-unit>
-      <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
+      <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
     </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">
+        <target state="final">
       <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> todo
     </target>
       </trans-unit>
@@ -73,7 +73,7 @@
         </context-group>
         <target state="final">{VAR_SELECT, select, yes {Deselecciona} no {Selecciona} }</target>
       </trans-unit>
-      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html" approved="yes">
         <source>Search</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -91,16 +91,16 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Buscar</target>
+        <target state="final">Buscar</target>
       </trans-unit>
-      <trans-unit id="9e90121dcc9d53ed86f36f40fae54c5968662dcf" datatype="html">
+      <trans-unit id="9e90121dcc9d53ed86f36f40fae54c5968662dcf" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> selected
       </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> seleccionado
+        <target state="final"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> seleccionado
       </target>
       </trans-unit>
       <trans-unit id="9c7e2ec4e504d0f26f4c6c5dc299b4f9ea1c58d9" datatype="html">
@@ -111,7 +111,7 @@
         </context-group>
         <target state="translated">{VAR_SELECT, select, members {{VAR_PLURAL, plural, one {} =0 {members} =1 {member} other {members} }} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses} }} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups} }} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items} }} }</target>
       </trans-unit>
-      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -161,7 +161,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="translated">Cancelar</target>
+        <target state="final">Cancelar</target>
       </trans-unit>
       <trans-unit id="64f6114e14bee0f91b462f203bd6001e06d297b5" datatype="html">
         <source>
@@ -172,7 +172,7 @@
           <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
+      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
@@ -194,39 +194,39 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="translated">Enviar</target>
+        <target state="final">Enviar</target>
       </trans-unit>
-      <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
+      <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Nombre: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target state="final">Nombre: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
-      <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
+      <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html" approved="yes">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Código: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target state="final">Código: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
-      <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
+      <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html" approved="yes">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">URL local: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target state="final">URL local: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
-      <trans-unit id="4a6770b15dac93402d82185064355eb78d53d233" datatype="html">
+      <trans-unit id="4a6770b15dac93402d82185064355eb78d53d233" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="final"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -236,85 +236,85 @@
         </context-group>
         <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
       </trans-unit>
-      <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
+      <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html" approved="yes">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Tipo de planet: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target state="final">Tipo de planet: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
-      <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
+      <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html" approved="yes">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: &apos;fullDate&apos;}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Fecha de creación: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target state="final">Fecha de creación: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
-      <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html">
+      <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html" approved="yes">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Idioma: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target state="final">Idioma: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
-      <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
+      <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html" approved="yes">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Estado: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target state="final">Estado: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
-      <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html">
+      <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html" approved="yes">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Correo electrónico: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target state="final">Correo electrónico: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
-      <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
+      <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html" approved="yes">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Número de teléfono: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target state="final">Número de teléfono: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
-      <trans-unit id="86725057828a4156eafa87a09cf87c9d7c91a78e" datatype="html">
+      <trans-unit id="86725057828a4156eafa87a09cf87c9d7c91a78e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">Nombre: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </target>
+        <target state="final">Nombre: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </target>
       </trans-unit>
-      <trans-unit id="57f6d432b2042a0b37f2aec23164d075be873f0d" datatype="html">
+      <trans-unit id="57f6d432b2042a0b37f2aec23164d075be873f0d" datatype="html" approved="yes">
         <source>Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">Versión: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
+        <target state="final">Versión: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
       </trans-unit>
-      <trans-unit id="73ac5a30eb2a3c1f47634ef13142493bbc438b92" datatype="html">
+      <trans-unit id="73ac5a30eb2a3c1f47634ef13142493bbc438b92" datatype="html" approved="yes">
         <source>Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">Hora: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
+        <target state="final">Hora: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
       </trans-unit>
-      <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html">
+      <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html" approved="yes">
         <source>Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
+        <target state="final">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
       <trans-unit id="da069bcc6623561d4e52ddd8aa7d673bc39f375c" datatype="html">
         <source>
@@ -352,77 +352,77 @@
       } many {selected <x id="INTERPOLATION" equiv-text="{{data.count}}"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} }?
       } }</target>
       </trans-unit>
-      <trans-unit id="b779ee8bf5347b4f13b4cfd754c865adac65c7ec" datatype="html">
+      <trans-unit id="b779ee8bf5347b4f13b4cfd754c865adac65c7ec" datatype="html" approved="yes">
         <source>Add New Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Añadir nueva imagen</target>
+        <target state="final">Añadir nueva imagen</target>
       </trans-unit>
-      <trans-unit id="8e4e342b8f4170a90c32e4ce5023f8c474025cb7" datatype="html">
+      <trans-unit id="8e4e342b8f4170a90c32e4ce5023f8c474025cb7" datatype="html" approved="yes">
         <source>Ratings for</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">Calificaciones para</target>
+        <target state="final">Calificaciones para</target>
       </trans-unit>
-      <trans-unit id="e0666c1be03bca95833a011f9bb8436e5b07a09d" datatype="html">
+      <trans-unit id="e0666c1be03bca95833a011f9bb8436e5b07a09d" datatype="html" approved="yes">
         <source>Most Recent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Más reciente</target>
+        <target state="final">Más reciente</target>
       </trans-unit>
-      <trans-unit id="726c63f6217ab0d9f67dc9f3eafbcb3df159a0e9" datatype="html">
+      <trans-unit id="726c63f6217ab0d9f67dc9f3eafbcb3df159a0e9" datatype="html" approved="yes">
         <source>Oldest</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Más antiguo</target>
+        <target state="final">Más antiguo</target>
       </trans-unit>
-      <trans-unit id="f1c3d90b66e7121d8843511573944a791f324c91" datatype="html">
+      <trans-unit id="f1c3d90b66e7121d8843511573944a791f324c91" datatype="html" approved="yes">
         <source>Best Rating</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Mejor valoración</target>
+        <target state="final">Mejor valoración</target>
       </trans-unit>
-      <trans-unit id="8ab4f31599a0e38a844e4b1a712ab62b6790657f" datatype="html">
+      <trans-unit id="8ab4f31599a0e38a844e4b1a712ab62b6790657f" datatype="html" approved="yes">
         <source>Worst Rating</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Peor valoración</target>
+        <target state="final">Peor valoración</target>
       </trans-unit>
-      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
+      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
         <source>ltr</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
-      <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
+      <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html" approved="yes">
         <source>Sorry, page not found</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">Lo sentimos, página no encontrada</target>
+        <target state="final">Lo sentimos, página no encontrada</target>
       </trans-unit>
-      <trans-unit id="8c000e81f174c6e177323227a376cd91bdc1772d" datatype="html">
+      <trans-unit id="8c000e81f174c6e177323227a376cd91bdc1772d" datatype="html" approved="yes">
         <source>Back to Planet Learning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">Volver a Planet Learning</target>
+        <target state="final">Volver a Planet Learning</target>
       </trans-unit>
       <trans-unit id="ab3d26166235cd0712cbf521c86feb139ab01877" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list} }</source>
@@ -432,15 +432,15 @@
         </context-group>
         <target state="translated">{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list} }</target>
       </trans-unit>
-      <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html">
+      <trans-unit id="578f3696ab5ffb8fc85da042cb38d898c9ca894b" datatype="html" approved="yes">
         <source>Average</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-rating.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Promedio</target>
+        <target state="final">Promedio</target>
       </trans-unit>
-      <trans-unit id="d14d93e7ed17daa7a6b4238a3413056df11e1acb" datatype="html">
+      <trans-unit id="d14d93e7ed17daa7a6b4238a3413056df11e1acb" datatype="html" approved="yes">
         <source>Collections</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
@@ -450,9 +450,9 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Colecciones</target>
+        <target state="final">Colecciones</target>
       </trans-unit>
-      <trans-unit id="cde3bee9c9751a6125943387703f6a7bd5e3aa23" datatype="html">
+      <trans-unit id="cde3bee9c9751a6125943387703f6a7bd5e3aa23" datatype="html" approved="yes">
         <source>Change Collections</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
@@ -462,39 +462,39 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Cambiar colecciones</target>
+        <target state="final">Cambiar colecciones</target>
       </trans-unit>
-      <trans-unit id="0539092f5642901cc44e32b1a841270c2448aa40" datatype="html">
+      <trans-unit id="0539092f5642901cc44e32b1a841270c2448aa40" datatype="html" approved="yes">
         <source>Filter by Collection Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Filtrar por nombre de colección</target>
+        <target state="final">Filtrar por nombre de colección</target>
       </trans-unit>
-      <trans-unit id="52ba668e67efcdd7de6110b1e2b3cd9b53337bb3" datatype="html">
+      <trans-unit id="52ba668e67efcdd7de6110b1e2b3cd9b53337bb3" datatype="html" approved="yes">
         <source>Create New Collection</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Crear nueva colección</target>
+        <target state="final">Crear nueva colección</target>
       </trans-unit>
-      <trans-unit id="40cf215f61708390d3aba0212e49596e0d3d981c" datatype="html">
+      <trans-unit id="40cf215f61708390d3aba0212e49596e0d3d981c" datatype="html" approved="yes">
         <source>Collection</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Colección</target>
+        <target state="final">Colección</target>
       </trans-unit>
-      <trans-unit id="7e2845f1f9090146de98255260992d96189dd5e6" datatype="html">
+      <trans-unit id="7e2845f1f9090146de98255260992d96189dd5e6" datatype="html" approved="yes">
         <source>Subcollection of...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">Subcolección de...</target>
+        <target state="final">Subcolección de...</target>
       </trans-unit>
       <trans-unit id="9bdfd86a36ad720590d491d3ccc9a815d9381493" datatype="html">
         <source>Add Collection</source>
