@@ -6486,69 +6486,69 @@
         </context-group>
         <target state="final">Prioridad</target>
       </trans-unit>
-      <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html">
+      <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html" approved="yes">
         <source>Yes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">Sí</target>
+        <target state="final">Sí</target>
       </trans-unit>
-      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html">
+      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html" approved="yes">
         <source>No</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">No</target>
+        <target state="final">No</target>
       </trans-unit>
-      <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html">
+      <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html" approved="yes">
         <source>Owner</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="translated">Propietario</target>
+        <target state="final">Propietario</target>
       </trans-unit>
-      <trans-unit id="73c8ea027d594b211a22ad250947eb93b9ab235f" datatype="html">
+      <trans-unit id="73c8ea027d594b211a22ad250947eb93b9ab235f" datatype="html" approved="yes">
         <source>Open Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="translated">Fecha de apertura</target>
+        <target state="final">Fecha de apertura</target>
       </trans-unit>
-      <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html">
+      <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html" approved="yes">
         <source>Close Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="translated">Fecha de cierre</target>
+        <target state="final">Fecha de cierre</target>
       </trans-unit>
-      <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html">
+      <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html" approved="yes">
         <source>Source</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">85</context>
         </context-group>
-        <target state="translated">Fuente</target>
+        <target state="final">Fuente</target>
       </trans-unit>
-      <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
+      <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html" approved="yes">
         <source> Action </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target state="translated"> Acción </target>
+        <target state="final"> Acción </target>
       </trans-unit>
-      <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html">
+      <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html" approved="yes">
         <source>Re-open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="translated">Reabrir</target>
+        <target state="final">Reabrir</target>
       </trans-unit>
       <trans-unit id="cd42facac1d103107bab3d9deae24d03c2d4777f" datatype="html">
         <source>
@@ -6559,45 +6559,45 @@
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html">
+      <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html" approved="yes">
         <source>Feedback title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback-view.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="translated">Lista de comentarios</target>
+        <target state="final">Lista de comentarios</target>
       </trans-unit>
-      <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html">
+      <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html" approved="yes">
         <source>Type your reply here</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback-view.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="translated">Escribe aquí tu respuesta</target>
+        <target state="final">Escribe aquí tu respuesta</target>
       </trans-unit>
-      <trans-unit id="356f0217cb37692ec174a85359aaf9c03df4c459" datatype="html">
+      <trans-unit id="356f0217cb37692ec174a85359aaf9c03df4c459" datatype="html" approved="yes">
         <source>wrote on</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">escribió en</target>
+        <target state="final">escribió en</target>
       </trans-unit>
-      <trans-unit id="c76b19614e2f4ff6c5b5e33d01e550b0397794a8" datatype="html">
+      <trans-unit id="c76b19614e2f4ff6c5b5e33d01e550b0397794a8" datatype="html" approved="yes">
         <source>edited on</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">editado en</target>
+        <target state="final">editado en</target>
       </trans-unit>
-      <trans-unit id="203293aa5b579334f045d712e4c94cb067efc74c" datatype="html">
+      <trans-unit id="203293aa5b579334f045d712e4c94cb067efc74c" datatype="html" approved="yes">
         <source>shared on</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">compartido en</target>
+        <target state="final">compartido en</target>
       </trans-unit>
       <trans-unit id="6cf9006ec076125ca182af753ecc14cfb27306e7" datatype="html">
         <source>
@@ -6608,21 +6608,21 @@
           <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="cb23d4d98007aa4d7123837f4c17a671848377d6" datatype="html">
+      <trans-unit id="cb23d4d98007aa4d7123837f4c17a671848377d6" datatype="html" approved="yes">
         <source>Reply</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="translated">Responder</target>
+        <target state="final">Responder</target>
       </trans-unit>
-      <trans-unit id="0fa58356ab9372df8f0fa73e7f8c0b6dfbd15ea0" datatype="html">
+      <trans-unit id="0fa58356ab9372df8f0fa73e7f8c0b6dfbd15ea0" datatype="html" approved="yes">
         <source>Show Replies</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/news/news-list-item.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">Mostrar respuestas</target>
+        <target state="final">Mostrar respuestas</target>
       </trans-unit>
       <trans-unit id="662e2616ca10447672a0215381c9e5d6bd221cf4" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></source>
