@@ -218,7 +218,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="final">URL local: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target state="final">URL Local: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4a6770b15dac93402d82185064355eb78d53d233" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -242,7 +242,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="final">Tipo de planet: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target state="final">Tipo de Planet: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html" approved="yes">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: &apos;fullDate&apos;}}"/></source>
@@ -250,7 +250,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="final">Fecha de creación: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target state="final">Fecha de Creación: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html" approved="yes">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -282,7 +282,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="final">Número de teléfono: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target state="final">Número de Teléfono: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="86725057828a4156eafa87a09cf87c9d7c91a78e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </source>
