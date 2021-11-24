@@ -258,7 +258,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">भाषा : <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target state="translated">भाषा : <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -1595,7 +1595,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated">भाषा </target>
+        <target state="translated">भाषा </target>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html">
         <source>Publisher/Attribution</source>
@@ -3948,7 +3948,7 @@
           <context context-type="sourcefile">app/login/login-form.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">पासवर्ड </target>
+        <target state="translated">पासवर्ड </target>
       </trans-unit>
       <trans-unit id="c1b7e6d75ff4285c7636c67e5ef259629b81725b" datatype="html">
         <source>Confirm Password</source>
