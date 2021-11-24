@@ -1,22 +1,13 @@
-FROM treehouses/node as builder
-LABEL maintainer="paul@ole.org"
+FROM treehouses/planet-base as builder
 
 ARG LANGUAGE=""
 ENV LANG ${LANGUAGE}
 ARG LANGUAGE2=""
 ENV LANG2 ${LANGUAGE2}
 
-WORKDIR /ng-app
-
-COPY package.json ./
 COPY docker/planet/scripts/ ./
 COPY . .
 
-RUN apk add --update \
-    python3 \
-    build-base \
-    jq
-RUN npm i --silent
 RUN ./compile_planet.sh
 
 ####

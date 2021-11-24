@@ -1,0 +1,95 @@
+name: Planet DB-Init Builder
+
+on: 
+  create:
+  workflow_dispatch:
+
+env:
+  DOCKER_ORG: treehouses
+  DOCKER_REPO: db-init
+
+jobs:
+
+  build-prepare:
+    name: Preparing
+    runs-on: ubuntu-latest
+    outputs:
+      master_hash: ${{ steps.step1.outputs.hash }}
+    steps:
+      - name: Setting Env
+        id: step1
+        run: |
+          echo "::set-output name=hash::$(git ls-remote https://github.com/$GITHUB_REPOSITORY.git | grep refs/heads/master | cut -f 1)"
+          
+  build:
+    name: DB Init build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        arch: [ amd64, arm, arm64 ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Build image
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO:${{ matrix.arch }}"
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker build -f './docker/db-init/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker images
+          docker push $repo
+
+  multiarch:
+    name: Manifest build
+    needs: [ build-prepare, build ]
+    env:
+      REMOTE_MASTER_HASH: ${{ needs.build-prepare.outputs.master_hash }}
+    if: ${{ needs.build-prepare.outputs.master_hash == github.sha }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Multiarch Deploy
+        run: |
+          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+          sudo chmod +x /usr/local/bin/manifest_tool
+          mkdir -p /tmp/MA_manifests
+          latesttag="$DOCKER_ORG/$DOCKER_REPO:latest" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO:amd64" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          yq e '.manifests[0].platform.architecture = "amd64"' - | \
+          yq e '.manifests[0].platform.os = "linux"' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO:arm" yq e '.manifests[1].image = strenv(armtag)' - | \
+          yq e '.manifests[1].platform.architecture = "arm"' - | \
+          yq e '.manifests[1].platform.os = "linux"' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO:arm64" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          yq e '.manifests[2].platform.architecture = "arm64"' - | \
+          yq e '.manifests[2].platform.os = "linux"' - | \
+          tee /tmp/MA_manifests/MA_db-init_latest.yaml
+          manifest_tool push from-spec /tmp/MA_manifests/MA_db-init_latest.yaml
+          
+      - name: Multiarch Deploy Versioned
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+          VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+          sudo chmod +x /usr/local/bin/manifest_tool
+          mkdir -p /tmp/MA_manifests
+          latesttag="$DOCKER_ORG/$DOCKER_REPO:$VERSION" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO:amd64-$VERSION" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          yq e '.manifests[0].platform.architecture = "amd64"' - | \
+          yq e '.manifests[0].platform.os = "linux"' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO:arm-$VERSION" yq e '.manifests[1].image = strenv(armtag)' - | \
+          yq e '.manifests[1].platform.architecture = "arm"' - | \
+          yq e '.manifests[1].platform.os = "linux"' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO:arm64-$VERSION" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          yq e '.manifests[2].platform.architecture = "arm64"' - | \
+          yq e '.manifests[2].platform.os = "linux"' - | \
+          tee /tmp/MA_manifests/MA_db-init_versioned.yaml
+          manifest_tool push from-spec /tmp/MA_manifests/MA_db-init_versioned.yaml
