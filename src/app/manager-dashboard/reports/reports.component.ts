@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, Subject, of } from 'rxjs';
 import { CouchService } from '../../shared/couchdb.service';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -7,7 +7,7 @@ import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -61,12 +61,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
       switchMap(([ planets, hubs ]) => {
         this.planets = planets;
         this.arrangePlanetData(planets, hubs);
-        return forkJoin([
-          this.activityService.getActivities('resource_activities', 'byPlanet', domain),
-          this.activityService.getActivities('login_activities', 'byPlanet', domain),
-          this.activityService.getAdminActivities({ domain })
-        ]);
-      })
+        return forkJoin(planets.filter((p: any) => p.docType !== 'parentName').map((p: any) =>
+          this.couchService.getUrl('db', { domain: p.localDomain, protocol: 'http', usePort: true })
+          .pipe(catchError(err => of({ [p.code] : false })), switchMap(() => of({ [p.code]: true })))
+        ));
+      } ),
+      switchMap((onlinePlanets) => this.getActivityLog(onlinePlanets, domain) )
     ).subscribe(([ resourceVisits, loginActivities, adminActivities ]) => {
       this.arrangePlanetData(this.planets.map((planet: any) => planet.docType === 'parentName' ? planet : ({
         ...planet,
@@ -75,6 +75,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ...this.activityService.mostRecentAdminActivities(planet, [], adminActivities)
       })), this.hubs);
     }, (error) => this.planetMessageService.showAlert('There was a problem getting Activity Logs'));
+  }
+
+  getActivityLog(onlinePlanets, domain) {
+    this.arrangePlanetData(this.planets.map((planet: any) => ({
+      ...planet, isOnline: this.findByPlanet({ rows: onlinePlanets }, planet.code)
+    })), this.hubs);
+    return forkJoin([
+      this.activityService.getActivities('resource_activities', 'byPlanet', domain),
+      this.activityService.getActivities('login_activities', 'byPlanet', domain),
+      this.activityService.getAdminActivities({ domain })
+    ]);
   }
 
   arrangePlanetData(planetDocs, hubData) {

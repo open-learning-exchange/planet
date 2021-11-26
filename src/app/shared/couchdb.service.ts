@@ -145,7 +145,7 @@ export class CouchService {
 
   getUrl(url: string, reqOpts?: any) {
     const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
-    const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
+    const domain = domainWithPort ? (opts.usePort ? domainWithPort : domainWithPort.split(':')[0]).split('/db')[0] : '';
     const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
     return this.http.get(urlPrefix + '/' + url, opts);
   }
