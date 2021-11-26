@@ -26,11 +26,11 @@ export class CsvService {
     }
   }
 
-  exportCSV({ data, title }: { data: any[], title: string }) {
+  exportCSV({ data, title, columns }: { data: any[], title: string, columns?: string[] }) {
     const options = { title, filename: `Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
-      return Object.entries(dataToDisplay).reduce(
-        (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
+      return (columns || Object.keys(dataToDisplay)).reduce(
+        (object, column) => ({ ...object, [markdownToPlainText(column)]: this.formatValue(column, dataToDisplay[column]) }),
         {}
       );
     });
