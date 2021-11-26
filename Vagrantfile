@@ -37,7 +37,7 @@ Vagrant.configure(2) do |config|
     prod.vm.network "forwarded_port", guest: 2200, host: 5984, auto_correct: true
     prod.vm.network "forwarded_port", guest: 2400, host: 2400, auto_correct: true
     prod.vm.network "forwarded_port", guest: 3200, host: 3200, auto_correct: true
-    prod.vm.network "forwarded_port", guest: 22, host: 2223, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
+    prod.vm.network "forwarded_port", guest: 22, host: 2223, host_ip: "127.0.0.1", id: "ssh", auto_correct: true
 
     # Prevent TTY Errors (copied from laravel/homestead: "homestead.rb" file)... By default this is "bash -l".
     prod.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
@@ -79,7 +79,7 @@ Vagrant.configure(2) do |config|
     dev.vm.network "forwarded_port", guest: 3000, host: 3000, auto_correct: true
     # Port expose for unit tests (Karma)
     dev.vm.network "forwarded_port", guest: 9876, host: 9876, auto_correct: true
-    dev.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
+    dev.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "127.0.0.1", id: "ssh", auto_correct: true
 
     # Prevent TTY Errors (copied from laravel/homestead: "homestead.rb" file)... By default this is "bash -l".
     dev.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
