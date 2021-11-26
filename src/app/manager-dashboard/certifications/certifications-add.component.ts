@@ -9,6 +9,7 @@ import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { deepEqual } from '../../shared/utils';
 
 @Component({
   templateUrl: './certifications-add.component.html'
@@ -21,6 +22,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: any[] = [];
   pageType = 'Add';
   disableRemove = true;
+  enableAddCourses = true;
   @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
 
   constructor(
@@ -49,6 +51,20 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateForm.patchValue(certification);
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
+          // here find out all courses in the system. compare all courses ids with this.coursesIds
+          // if (this.courseTable && this.courseTable.dataTable && this.courseTable.dataTable.data) {
+          let hasAllData: boolean;
+          try {
+            hasAllData = this.courseTable && this.courseTable.courses.data.length > 0;
+          } catch (err) {
+            hasAllData = false;
+          }
+          if (hasAllData) {
+            const allCourseIds = this.courseTable.courses.data.map((v: any) => {
+              return v.id; }
+            );
+            this.enableAddCourses = deepEqual(allCourseIds, this.courseIds);
+          }
           this.pageType = 'Update';
         });
       } else {

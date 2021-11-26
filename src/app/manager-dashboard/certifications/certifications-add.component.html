@@ -13,7 +13,7 @@
     <div class="action-buttons">
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(false)" i18n>Save</button>
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(true)" i18n class="margin-lr-5">Save & Return</button>
-      <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" i18n>Add Courses</button>
+      <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" [disabled]="!enableAddCourses" i18n>Add Courses</button>
       <button mat-raised-button color="accent" type="button" [disabled]="disableRemove" (click)="removeCourses()" i18n>Remove Courses</button>
     </div>
     <form [formGroup]="certificateForm" novalidate>
