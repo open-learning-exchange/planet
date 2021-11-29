@@ -4265,10 +4265,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, nation {Manage Communities} center {Manage Nations} }</target>
-      </trans-unit>
-      <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html">
-        <source>Reports</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">5</context>
@@ -4389,10 +4385,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {communities} =1 {community} other {communities} }} center {{VAR_PLURAL_1, plural, =0 {nations} =1 {nation} other {nations} }} }</target>
-      </trans-unit>
-      <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html">
-        <source>View</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">65</context>
@@ -4477,10 +4469,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, community {Nation} nation {Center} }</target>
-      </trans-unit>
-      <trans-unit id="8b18f57830b5c4c4954b7a8e3097b2aafa01d75d" datatype="html">
-        <source>Local:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">71</context>
@@ -4565,10 +4553,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, community {nation} nation {center} }</target>
-      </trans-unit>
-      <trans-unit id="b756b811312062e2a2880792474b22515f7e161a" datatype="html">
-        <source>Your request has not been accepted by <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">26</context>
@@ -4589,10 +4573,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">Reset Pin</target>
-      </trans-unit>
-      <trans-unit id="336ba4aa6090e467b76422f90306cd05eeee8fea" datatype="html">
-        <source>Activity on</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">30</context>
@@ -4727,10 +4707,6 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>arrow_back<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
-      </trans-unit>
-      <trans-unit id="6ff28b6a959968cba78bea08bbcd23daacd0f46c" datatype="html">
-        <source>Planet Configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">25</context>
@@ -5631,10 +5607,6 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="needs-translation"> By<x id="INTERPOLATION" equiv-text="{{' ' + submittedBy}}"/></target>
-      </trans-unit>
-      <trans-unit id="e5d8bb389c702588877f039d72178f219453a72d" datatype="html">
-        <source>Unknown</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">61</context>
@@ -6138,10 +6110,6 @@
           <context context-type="sourcefile">app/courses/courses-icon.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">No description provided.</target>
-      </trans-unit>
-      <trans-unit id="4992e9ce2d5b9d465e27dc7e8a77019311e6c32d" datatype="html">
-        <source>Course Progress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">43</context>
