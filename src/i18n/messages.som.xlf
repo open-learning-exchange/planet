@@ -4265,10 +4265,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, nation {Manage Communities} center {Manage Nations} }</target>
-      </trans-unit>
-      <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html" approved="yes">
-        <source>Reports</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">5</context>
@@ -4401,10 +4397,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="needs-translation">There <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {...} =1 {...} other {...}}"/></target>
-      </trans-unit>
-      <trans-unit id="123ff7cab6a66b53a4e1280088dea7de116ca7b9" datatype="html">
-        <source>{VAR_PLURAL, plural, =0 {are} =1 {is} other {are} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">60</context>
@@ -4561,10 +4553,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation"> List all from the <x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/></target>
-      </trans-unit>
-      <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html" approved="yes">
-        <source>List Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">26</context>
@@ -4585,10 +4573,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="final">Hubinta xaaladda codsiga ...</target>
-      </trans-unit>
-      <trans-unit id="480b5cfc2b0b7c8763316616d652ead0ced37277" datatype="html">
-        <source>Your request has been rejected by <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/>. You can retry or contact <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/> planet.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">30</context>
@@ -4645,10 +4629,6 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Your tablet pin number is:</target>
-      </trans-unit>
-      <trans-unit id="2dd1a423186deaa4150106c9cc82b1f1fe4599fa" datatype="html" approved="yes">
-        <source>Reset Pin</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-pending.component.html</context>
           <context context-type="linenumber">13</context>
@@ -4727,10 +4707,6 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">In Progress</target>
-      </trans-unit>
-      <trans-unit id="07db550ae114d9faad3a0cbb68bcc16ab6cd31fc" datatype="html">
-        <source>Paused</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">25</context>
@@ -5622,10 +5598,6 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">Editing Question</target>
-      </trans-unit>
-      <trans-unit id="169eed2bc3e08e1bea977bcc5d799379f6b8a758" datatype="html">
-        <source>of</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">60</context>
@@ -5825,10 +5797,6 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="final">Magaca Koorsada</target>
-      </trans-unit>
-      <trans-unit id="162a0cdc541668672140bc2905c4ecd1e51f4019" datatype="html" approved="yes">
-        <source>Language of Instruction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">10</context>
