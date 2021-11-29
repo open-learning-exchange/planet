@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="zh-CN">
     <body>
       <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html">
@@ -16,9 +16,6 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-      <target state="translated">加载</target></trans-unit>
-      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
-        <source>OK</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">52</context>
@@ -200,29 +197,6 @@
         </context-group>
         <target state="needs-translation">Submit</target>
       </trans-unit>
-      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
-        <source>Submit</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
-          <context context-type="linenumber">82</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">106</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/health/health-update.component.html</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/health/health-event.component.html</context>
-          <context context-type="linenumber">74</context>
-        </context-group>
-      <target state="translated">提交</target></trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
         <context-group purpose="location">
@@ -687,9 +661,6 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-resources-viewer.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-      <target state="translated">较新的</target></trans-unit>
-      <trans-unit id="a5eb07587a845a6e31ac6faee94ba465ed733e06" datatype="html">
-        <source>Older</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-profile/users-profile-dialog.component.ts</context>
           <context context-type="linenumber">9</context>
@@ -698,9 +669,6 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view-detail.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-      <target state="translated">不匹配</target></trans-unit>
-      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
-        <source>Close</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">62</context>
@@ -773,9 +741,6 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-      <target state="needs-translation">Member Profile</target></trans-unit>
-      <trans-unit id="f1fb641f599b5ff4f33419ca08dcb02c00822ea5" datatype="html">
-        <source>Add a task</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">36</context>
@@ -796,11 +761,6 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-      <target state="needs-translation">
-    All Tasks
-  </target></trans-unit>
-      <trans-unit id="287628a9d3c31a07593caf82ddd3986582074273" datatype="html">
-        <source>Deadline:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">135</context>
@@ -809,9 +769,6 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">164</context>
         </context-group>
-      <target state="needs-translation">Deadline:</target></trans-unit>
-      <trans-unit id="502e1c27d4e9533cdf8e42c1a4f8f2735e4c3fb2" datatype="html">
-        <source>Completed:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">18</context>
@@ -888,11 +845,6 @@
           <context context-type="sourcefile">app/users/users-table.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-      <target state="needs-translation">
-            View Report
-          </target></trans-unit>
-      <trans-unit id="11eb38ace36c45d1a3d10bb8d177b8fe51c553a4" datatype="html">
-        <source>Sandbox Planets</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">29</context>
@@ -941,9 +893,6 @@
           <context context-type="sourcefile">app/exams/exams-question.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-      <target state="translated">名字</target></trans-unit>
-      <trans-unit id="dbf317c1cf220ebe88387d1debd5fa1e36f8bc44" datatype="html">
-        <source>Last Synced</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">40</context>
@@ -1000,16 +949,10 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-      <target state="needs-translation">No of Visits</target></trans-unit>
-      <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html">
-        <source>Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">98</context>
         </context-group>
-      <target state="needs-translation">Details</target></trans-unit>
-      <trans-unit id="6623257de867bbe8003919a76d9e5daaec6c3023" datatype="html">
-        <source>Used Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">11</context>
@@ -1022,9 +965,6 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-      <target state="needs-translation">Edit Achievements</target></trans-unit>
-      <trans-unit id="c83b838d845690bcb897f775f53b5316535306dc" datatype="html">
-        <source>First Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">21</context>
@@ -1045,9 +985,6 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-      <target state="translated">名</target></trans-unit>
-      <trans-unit id="e82f6e4c34cdbb18b0d9a753ebcfe8b3e9f43e4c" datatype="html">
-        <source>Middle Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">24</context>
@@ -1164,9 +1101,6 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">94</context>
         </context-group>
-      <target state="needs-translation">Birthdate</target></trans-unit>
-      <trans-unit id="5ef9645b5346af212703215261f80077176f6cd4" datatype="html">
-        <source>Birthplace</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">79</context>
@@ -1345,16 +1279,10 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-      <target state="needs-translation">My References</target></trans-unit>
-      <trans-unit id="bb1e9db59df966035ab536088c52b72a3a41ccd7" datatype="html">
-        <source>Relationship:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">88</context>
         </context-group>
-      <target state="needs-translation">Relationship:</target></trans-unit>
-      <trans-unit id="9988ada51fbf826595b77a8de10fdcea198b4e82" datatype="html">
-        <source>Phone Number:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">11</context>
@@ -1375,10 +1303,6 @@
           <context context-type="sourcefile">app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-      <target state="needs-translation">Viewing replies for:</target></trans-unit>
-      <trans-unit id="bb712e2f5c73eb903eb96978eb270199359bef9e" datatype="html">
-        <source><x id="ICU" equiv-text="{category, select, subject {...} language {...} mediaType {...} level {...}}"/>
-    </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-fetch.component.html</context>
           <context context-type="linenumber">32</context>
@@ -1387,9 +1311,6 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/pending-table.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-      <target state="needs-translation">{VAR_SELECT, select, subject {Subject} language {Language} mediaType {Medium} level {Level} }</target></trans-unit>
-      <trans-unit id="21dc9c93f4fbc0b38a4951888293b445c9161654" datatype="html">
-        <source>{VAR_SELECT, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">3</context>
@@ -1470,9 +1391,6 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-      <target state="translated">标题</target></trans-unit>
-      <trans-unit id="4e088dfa3f8d51ecae688d9e7818e37a5a3a7bb3" datatype="html">
-        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">64</context>
@@ -1629,14 +1547,16 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-      <target state="needs-translation">Author</target></trans-unit>
+        <target state="needs-translation">Author</target>
+      </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html">
         <source>Year</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-      <target state="needs-translation">Year</target></trans-unit>
+        <target state="needs-translation">Year</target>
+      </trans-unit>
       <trans-unit id="2af7efecfae8d7fed3b07f718a623eca1ad8163f" datatype="html">
         <source>Labels</source>
         <context-group purpose="location">
@@ -1683,42 +1603,48 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-      <target state="needs-translation">Publisher/Attribution</target></trans-unit>
+        <target state="needs-translation">Publisher/Attribution</target>
+      </trans-unit>
       <trans-unit id="d891222d75499aa82e5f979ffb001e642384d175" datatype="html">
         <source>Link to License</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-      <target state="translated">许可协议的链接</target></trans-unit>
+        <target state="needs-translation">Link to License</target>
+      </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html">
         <source>Subject(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-      <target state="translated">主题</target></trans-unit>
+        <target state="needs-translation">Subject(s)</target>
+      </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html">
         <source>Level(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-      <target state="translated">等级</target></trans-unit>
+        <target state="needs-translation">Level(s)</target>
+      </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
-      <target state="translated">打开</target></trans-unit>
+        <target state="needs-translation">Open</target>
+      </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html">
         <source>Default</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-      <target state="translated">默认</target></trans-unit>
+        <target state="needs-translation">Default</target>
+      </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html">
         <source>Leader</source>
         <context-group purpose="location">
@@ -1745,7 +1671,8 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
-      <target state="translated">资源</target></trans-unit>
+        <target state="needs-translation">Resource For</target>
+      </trans-unit>
       <trans-unit id="8a27a855a00b08d2ca981207638ea9097032412b" datatype="html">
         <source>Media</source>
         <context-group purpose="location">
@@ -1760,7 +1687,8 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">72</context>
         </context-group>
-      <target state="translated">资源类型</target></trans-unit>
+        <target state="needs-translation">Resource Type</target>
+      </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
         <context-group purpose="location">
@@ -1775,28 +1703,32 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">82</context>
         </context-group>
-      <target state="translated">请指定打开文件</target></trans-unit>
+        <target state="needs-translation">Open Which File</target>
+      </trans-unit>
       <trans-unit id="ab2d402efd915ef9b8988853c468d37fec83a57d" datatype="html">
         <source>File Upload:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">91</context>
         </context-group>
-      <target state="translated">文件上传</target></trans-unit>
+        <target state="needs-translation">File Upload:</target>
+      </trans-unit>
       <trans-unit id="2295cec19ae4dc9478249809afc1902d3b940d46" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">93</context>
         </context-group>
-      <target state="translated">文件大小不得超过512MB</target></trans-unit>
+        <target state="needs-translation">File size cannot exceed more than 512 MB</target>
+      </trans-unit>
       <trans-unit id="264153a66e508d3e1eb2d4df32e01531e5151575" datatype="html">
         <source>Existing Resource/file:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-      <target state="translated">现有资源/文件</target></trans-unit>
+        <target state="needs-translation">Existing Resource/file:</target>
+      </trans-unit>
       <trans-unit id="9ce1a0f44239a960521f629e8894684e429950c8" datatype="html">
         <source>Delete File</source>
         <context-group purpose="location">
@@ -1875,16 +1807,10 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-      <target state="translated">全部</target></trans-unit>
-      <trans-unit id="1907c8d64231feef5a240e23eb61d723b9a428cf" datatype="html">
-        <source>Get Course</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-      <target state="needs-translation">Get Course</target></trans-unit>
-      <trans-unit id="ab0226f9e7f956b0cb48bc1dd2e3610bdfa4c5b0" datatype="html">
-        <source>Join Selected</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">14</context>
@@ -1917,9 +1843,6 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-      <target state="needs-translation">Leave Selected</target></trans-unit>
-      <trans-unit id="9883cb29ace06daf7eff455945ea6685cfbe1f23" datatype="html">
-        <source>Send Courses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">26</context>
@@ -2196,9 +2119,6 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/pending-table.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-      <target state="translated">操作</target></trans-unit>
-      <trans-unit id="a8f5a3b30397a5dc1051a9c90c1cfa22537d7c4d" datatype="html">
-        <source>Activate</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/surveys/surveys.component.html</context>
           <context context-type="linenumber">61</context>
@@ -2454,9 +2374,6 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-      <target state="needs-translation">New message</target></trans-unit>
-      <trans-unit id="5adf337be1ad12c915ae18012f1bfa1f2ca4628b" datatype="html">
-        <source>Chat</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">77</context>
