@@ -117,10 +117,6 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="final">Número de visitas</target>
-      </trans-unit>
-      <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html" approved="yes">
-        <source>DOB</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
           <context context-type="linenumber">81</context>
@@ -129,10 +125,6 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="final">Fecha de nacimiento</target>
-      </trans-unit>
-      <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html" approved="yes">
-        <source>Phone</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">95</context>
@@ -141,10 +133,6 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">107</context>
         </context-group>
-        <target state="final">Teléfono</target>
-      </trans-unit>
-      <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html" approved="yes">
-        <source>Level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">12</context>
@@ -571,18 +559,10 @@
           <context context-type="sourcefile">app/shared/forms/planet-step-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="final">Categoría:</target>
-      </trans-unit>
-      <trans-unit id="2036db6533aeb865026fc2202344ca3da93e60ac" datatype="html" approved="yes">
-        <source>Completed On:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="final">Completado en:</target>
-      </trans-unit>
-      <trans-unit id="1b1427ee02e04fbde6fc23655dfda44a83bc7a33" datatype="html" approved="yes">
-        <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{meetupDetail?.startTime}}"/><x id="INTERPOLATION_1" equiv-text="{{ meetupDetail?.endTime ? &apos;-&apos; : &apos;&apos; }}"/><x id="INTERPOLATION_2" equiv-text="{{meetupDetail?.endTime}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">90</context>
@@ -687,10 +667,6 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile-dialog.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="final">Código</target>
-      </trans-unit>
-      <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html" approved="yes">
-        <source>Local URL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/view-courses/courses-view-detail.component.ts</context>
           <context context-type="linenumber">6</context>
@@ -699,18 +675,10 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="final">Auto aceptar miembros</target>
-      </trans-unit>
-      <trans-unit id="960739f0a09bd1f827ec918dd12641423e848c07" datatype="html" approved="yes">
-        <source>Always off</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">106</context>
         </context-group>
-        <target state="final">Siempre apagado</target>
-      </trans-unit>
-      <trans-unit id="c1e1118519a4f142313444ed2bdb82170013e250" datatype="html" approved="yes">
-        <source>Always on</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">28</context>
@@ -795,10 +763,6 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, new {Contact Details} update {Update Contact Details} }</target>
-      </trans-unit>
-      <trans-unit id="08067508bd53595fbcb97312a72e198986bda165" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, new {Submit} update {Update} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">135</context>
@@ -807,10 +771,6 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">164</context>
         </context-group>
-        <target state="final">Detalles del Planet</target>
-      </trans-unit>
-      <trans-unit id="c84249d3e7430526f195a0070f50d50337a34240" datatype="html" approved="yes">
-        <source>Please provide PLANET details to clone from</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">18</context>
@@ -831,10 +791,6 @@
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="final">URL del servidor</target>
-      </trans-unit>
-      <trans-unit id="4d360f145003ec4d1082afd2be7be3366368c4e3" datatype="html" approved="yes">
-        <source>Planet Cloning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">24</context>
@@ -849,10 +805,6 @@
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="final">La configuración es válida. Haga clic en "Siguiente" para clonar el Planet.</target>
-      </trans-unit>
-      <trans-unit id="89f887ef0474f04731481617438b8cb27bdd1e43" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, nation {Manage Communities} center {Manage Nations} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">25</context>
@@ -1003,10 +955,6 @@
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="final">Certificaciones</target>
-      </trans-unit>
-      <trans-unit id="164df14330dda13a0e97e610d177bf4f19555b07" datatype="html" approved="yes">
-        <source>There <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {...} =1 {...} other {...}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">11</context>
@@ -1023,10 +971,6 @@
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {comunidades} =1 {comunidad} other {comunidades} }} center {{VAR_PLURAL_1, plural, =0 {naciones} =1 {nacion} other {naciones} }} }</target>
-      </trans-unit>
-      <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html" approved="yes">
-        <source>View</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/configuration/configuration.component.html</context>
           <context context-type="linenumber">102</context>
@@ -1043,10 +987,6 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="final">Enviar al aceptar</target>
-      </trans-unit>
-      <trans-unit id="452ef1b96854fe05618303ee601f8fed3b866c9f" datatype="html" approved="yes">
-        <source>Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">24</context>
@@ -1067,18 +1007,10 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> Lista</target>
-      </trans-unit>
-      <trans-unit id="2a21b10525fa33ffc442266171deb9dce322350b" datatype="html" approved="yes">
-        <source>Planet Version</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-table.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="final">Versión del Planet</target>
-      </trans-unit>
-      <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html" approved="yes">
-        <source><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">44</context>
@@ -1143,18 +1075,10 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">73</context>
         </context-group>
-        <target state="final">Comprobando el estado de las peticiones...</target>
-      </trans-unit>
-      <trans-unit id="480b5cfc2b0b7c8763316616d652ead0ced37277" datatype="html">
-        <source>Your request has been rejected by <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/>. You can retry or contact <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/> planet.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target state="translated">Su solicitud ha sido rechazada por <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/>. Puede volver a intentarlo o ponerse en contacto con <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/> planeta.</target>
-      </trans-unit>
-      <trans-unit id="4ef4955380453184df847c308888e43f5bc3a07d" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, community {nation} nation {center} }</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">139</context>
@@ -1179,10 +1103,6 @@
           <context context-type="sourcefile">app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro} }</target>
-      </trans-unit>
-      <trans-unit id="b756b811312062e2a2880792474b22515f7e161a" datatype="html" approved="yes">
-        <source>Your request has not been accepted by <x id="ICU" equiv-text="{ planetType, select, community {...} nation {...}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">79</context>
@@ -1370,10 +1290,6 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="final">Detalles del informe</target>
-      </trans-unit>
-      <trans-unit id="2977df466130f5d5fb305ba013651a291130f215" datatype="html" approved="yes">
-        <source>Synchronization Task</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">21</context>
@@ -1522,10 +1438,6 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">127</context>
         </context-group>
-        <target state="final">En Progreso</target>
-      </trans-unit>
-      <trans-unit id="07db550ae114d9faad3a0cbb68bcc16ab6cd31fc" datatype="html" approved="yes">
-        <source>Paused</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">140</context>
@@ -1558,10 +1470,6 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="final">Pausado</target>
-      </trans-unit>
-      <trans-unit id="a7c328c4773db932ff14a1954e15e43dca58e7b7" datatype="html" approved="yes">
-        <source>Completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback-view.component.html</context>
           <context context-type="linenumber">4</context>
@@ -1574,18 +1482,10 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">135</context>
         </context-group>
-        <target state="final">Completado</target>
-      </trans-unit>
-      <trans-unit id="8c37f5f40f77902065caeb7ae44f60003b4675db" datatype="html" approved="yes">
-        <source>Courses/Resources Sent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">144</context>
         </context-group>
-        <target state="final">Cursos/Recursos Enviados</target>
-      </trans-unit>
-      <trans-unit id="e9d24a36b00caebe1c3f45b981e4ae51d723ea82" datatype="html" approved="yes">
-        <source>Get Courses/Resources</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">74</context>
@@ -4813,10 +4713,6 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="final"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>flecha_atrás<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></target>
-      </trans-unit>
-      <trans-unit id="6ff28b6a959968cba78bea08bbcd23daacd0f46c" datatype="html" approved="yes">
-        <source>Planet Configuration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">25</context>
@@ -5713,10 +5609,6 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="final"> Por<x id="INTERPOLATION" equiv-text="{{' ' + submittedBy}}"/></target>
-      </trans-unit>
-      <trans-unit id="e5d8bb389c702588877f039d72178f219453a72d" datatype="html" approved="yes">
-        <source>Unknown</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">60</context>
@@ -5729,10 +5621,6 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="final"> en <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: 'short') || '--'}}"/></target>
-      </trans-unit>
-      <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html" approved="yes">
-        <source>Enter answer here</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">61</context>
