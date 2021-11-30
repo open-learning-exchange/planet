@@ -88,7 +88,7 @@ jobs:
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_db-init_latest.yaml
           manifest_tool push from-spec /tmp/MA_manifests/MA_db-init_latest.yaml
-          
+
       - name: Multiarch Deploy Versioned
         if: ${{ github.ref_type == 'tag' }}
         run: |
