@@ -32,6 +32,7 @@ jobs:
 
   build:
     name: DB Init build
+    needs: [ build-prepare ]
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
