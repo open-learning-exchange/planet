@@ -96,7 +96,7 @@ jobs:
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
           versiontag="$DOCKER_ORG/$DOCKER_REPO:db-init-$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
-          yq e '.tags |= . + ["latest"] ' - | \
+          yq e '.tags |= . + ["db-init"] ' - | \
           amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
