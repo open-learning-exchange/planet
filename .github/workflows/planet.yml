@@ -193,5 +193,3 @@ jobs:
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_planet_versioned.yaml
           manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
-
-      
