@@ -9,7 +9,7 @@ on:
 
 env:
   DOCKER_ORG: treehouses
-  DOCKER_REPO: db-init
+  DOCKER_REPO: test-db-init
 
 jobs:
 
