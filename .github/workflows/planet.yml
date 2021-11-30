@@ -14,10 +14,10 @@ on:
 
 env:
   DOCKER_ORG: treehouses
-  DOCKER_REPO_PRE: planet-base
-  DOCKER_REPO_LANG: planet-lang
-  DOCKER_REPO_TAG: planet-tags
-  DOCKER_REPO: planet
+  DOCKER_REPO_PRE: test-planet-base
+  DOCKER_REPO_LANG: test-planet-lang
+  DOCKER_REPO_TAG: test-planet-tags
+  DOCKER_REPO: test-planet
 
 jobs:
 
