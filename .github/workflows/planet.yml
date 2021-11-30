@@ -1,6 +1,6 @@
 name: Planet Builder
 
-on: 
+on:
   create:
   push:
     branches:
