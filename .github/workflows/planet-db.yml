@@ -29,7 +29,7 @@ jobs:
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
           echo "::set-output name=hash::$(git ls-remote https://github.com/$GITHUB_REPOSITORY.git | grep refs/heads/master | cut -f 1)"
           echo "::set-output name=version::$version"
-          
+  
   build:
     name: DB Init build
     runs-on: ubuntu-latest
