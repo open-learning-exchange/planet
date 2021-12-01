@@ -65,7 +65,7 @@ jobs:
   deploy-single-language:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
-    if: ${{ github.event_name != 'release' && (github.event.inputs.buildtype == 'prebuild' || (github.event.inputs.buildtype == 'single-language' && always())) }}
+    if: ${{ github.event_name != 'release' && (github.event.inputs.buildtype == 'prebuild' || ((github.event.inputs.buildtype == 'single-language' || github.event_name != 'workflow_dispatch') && always())) }}
     runs-on: ubuntu-latest 
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
