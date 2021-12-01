@@ -2,18 +2,16 @@ name: Planet Builder
 
 on:
   create:
+  push:
   release:
     types:
       - created
-  push:
-    branches:
-      - master
   workflow_dispatch:
     inputs:
       buildtype:
         description: 'Build by "prebuild", "single-language", "planet", or "deploy"'
         required: true
-        default: 'planet'
+        default: 'single-language'
 
 env:
   DOCKER_ORG: treehouses
@@ -67,7 +65,7 @@ jobs:
   deploy-single-language:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' || (github.ref_type == 'tag' || github.ref_name == 'master' || github.event.inputs.buildtype == 'single-language' && always()) }}
+    if: ${{ github.event_name != 'release' && (github.event.inputs.buildtype == 'prebuild' || (github.event.inputs.buildtype == 'single-language' && always())) }}
     runs-on: ubuntu-latest 
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
