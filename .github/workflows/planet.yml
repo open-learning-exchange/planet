@@ -28,7 +28,6 @@ jobs:
     name: Preparing
     runs-on: ubuntu-latest
     outputs:
-      master_hash: ${{ steps.step1.outputs.hash }}
       planet_version: ${{ steps.step1.outputs.version }}
     steps:
       - name: Checkout Code
@@ -37,7 +36,6 @@ jobs:
         id: step1
         run: |
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          echo "::set-output name=hash::$(git ls-remote https://github.com/$GITHUB_REPOSITORY.git | grep refs/heads/master | cut -f 1)"
           echo "::set-output name=version::$version"
 
   pre-build:
@@ -150,7 +148,8 @@ jobs:
     needs: [ build-prepare, build ]
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
+    if: ${{ always() }}
+    #if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
     runs-on: ubuntu-latest
 
     steps:
@@ -158,6 +157,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Multiarch Deploy
+        if: ${{ github.event_name != 'release' }}
         run: |
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
