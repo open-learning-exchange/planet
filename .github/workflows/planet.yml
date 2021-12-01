@@ -69,7 +69,7 @@ jobs:
   deploy-single-language:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' || (github.ref_type == 'tag' || github.ref_name == 'master' || github.event_name == 'release' || github.event.inputs.buildtype == 'single-language' && always()) }}
+    if: ${{ github.event.inputs.buildtype == 'prebuild' || (github.ref_type == 'tag' || github.ref_name == 'master' || github.event.inputs.buildtype == 'single-language' && always()) }}
     runs-on: ubuntu-latest 
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -109,7 +109,7 @@ jobs:
   build:
     name: Planet build
     needs: [build-prepare, deploy-single-language]
-    if: ${{ github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always()) }}
+    if: ${{ github.event_name != 'release' && (github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always())) }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -149,9 +149,8 @@ jobs:
     name: Manifest build
     needs: [ build-prepare, build ]
     env:
-      REMOTE_MASTER_HASH: ${{ needs.build-prepare.outputs.master_hash }}
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    if: ${{ (github.event.inputs.buildtype == 'deploy' || needs.build-prepare.outputs.master_hash == github.sha) && always() }}
+    if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
     runs-on: ubuntu-latest
 
     steps:
@@ -177,8 +176,7 @@ jobs:
           manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
 
       - name: Multiarch Deploy Versioned
-        if: ${{ github.ref_type == 'tag' }}
-        #if: ${{ (github.event.inputs.buildtype == 'deploy' || needs.build-prepare.outputs.master_hash == github.sha) && always() }}
+        if: ${{ github.event_name == 'release' }}
         run: |
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
