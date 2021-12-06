@@ -1,10 +1,10 @@
 name: Planet DB-Init Builder
 
 on: 
-  create:
   push:
-    branches:
-      - master
+  release:
+    types:
+      - created
   workflow_dispatch:
 
 env:
@@ -18,7 +18,6 @@ jobs:
     name: Preparing
     runs-on: ubuntu-latest
     outputs:
-      master_hash: ${{ steps.step1.outputs.hash }}
       planet_version: ${{ steps.step1.outputs.version }}
     steps:
       - name: Checkout Code
@@ -27,7 +26,6 @@ jobs:
         id: step1
         run: |
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          echo "::set-output name=hash::$(git ls-remote https://github.com/$GITHUB_REPOSITORY.git | grep refs/heads/master | cut -f 1)"
           echo "::set-output name=version::$version"
 
   build:
@@ -63,9 +61,7 @@ jobs:
     name: Manifest build
     needs: [ build-prepare, build ]
     env:
-      REMOTE_MASTER_HASH: ${{ needs.build-prepare.outputs.master_hash }}
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    if: ${{ needs.build-prepare.outputs.master_hash == github.sha }}
     runs-on: ubuntu-latest
 
     steps:
@@ -73,6 +69,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Multiarch Deploy
+        if: ${{ github.event_name != 'release' }}
         run: |
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
@@ -91,7 +88,7 @@ jobs:
           manifest_tool push from-spec /tmp/MA_manifests/MA_db-init_latest.yaml
 
       - name: Multiarch Deploy Versioned
-        if: ${{ github.ref_type == 'tag' }}
+        if: ${{ github.event_name == 'release' }}
         run: |
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool

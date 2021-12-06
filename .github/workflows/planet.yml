@@ -1,16 +1,16 @@
 name: Planet Builder
 
 on:
-  create:
   push:
-    branches:
-      - master
+  release:
+    types:
+      - created
   workflow_dispatch:
     inputs:
       buildtype:
         description: 'Build by "prebuild", "single-language", "planet", or "deploy"'
         required: true
-        default: 'planet'
+        default: 'single-language'
 
 env:
   DOCKER_ORG: treehouses
@@ -25,7 +25,6 @@ jobs:
     name: Preparing
     runs-on: ubuntu-latest
     outputs:
-      master_hash: ${{ steps.step1.outputs.hash }}
       planet_version: ${{ steps.step1.outputs.version }}
     steps:
       - name: Checkout Code
@@ -34,7 +33,6 @@ jobs:
         id: step1
         run: |
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          echo "::set-output name=hash::$(git ls-remote https://github.com/$GITHUB_REPOSITORY.git | grep refs/heads/master | cut -f 1)"
           echo "::set-output name=version::$version"
 
   pre-build:
@@ -66,7 +64,7 @@ jobs:
   deploy-single-language:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' || (github.event.inputs.buildtype == 'single-language' && always()) }}
+    if: ${{ github.event_name != 'release' && (github.event.inputs.buildtype == 'prebuild' || ((github.event.inputs.buildtype == 'single-language' || github.event_name != 'workflow_dispatch') && always())) }}
     runs-on: ubuntu-latest 
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -83,6 +81,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Build single language build
+        if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_LANG:${{ matrix.lang }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:${{ matrix.lang }}-$PLANET_VERSION-$GITHUB_REF_NAME"
@@ -106,7 +105,7 @@ jobs:
   build:
     name: Planet build
     needs: [build-prepare, deploy-single-language]
-    if: ${{ github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always()) }}
+    if: ${{ github.event_name != 'release' && (github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always())) }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -126,7 +125,10 @@ jobs:
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME"
-          LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
+          if [[ "$GITHUB_REF_TYPE" == 'tag' ]]
+          then LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
+          else LANGUAGES=( 'eng' )
+          fi
           mkdir -p ./ng-app/dist
           for LANGUAGE in "${LANGUAGES[@]}"; do
             mkdir -p ./ng-app/$LANGUAGE
@@ -146,9 +148,9 @@ jobs:
     name: Manifest build
     needs: [ build-prepare, build ]
     env:
-      REMOTE_MASTER_HASH: ${{ needs.build-prepare.outputs.master_hash }}
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    if: ${{ (github.event.inputs.buildtype == 'deploy' || needs.build-prepare.outputs.master_hash == github.sha) && always() }}
+    if: ${{ always() }}
+    #if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
     runs-on: ubuntu-latest
 
     steps:
@@ -156,6 +158,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Multiarch Deploy
+        if: ${{ github.event_name != 'release' }}
         run: |
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
@@ -174,8 +177,7 @@ jobs:
           manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
 
       - name: Multiarch Deploy Versioned
-        if: ${{ github.ref_type == 'tag' }}
-        #if: ${{ (github.event.inputs.buildtype == 'deploy' || needs.build-prepare.outputs.master_hash == github.sha) && always() }}
+        if: ${{ github.event_name == 'release' }}
         run: |
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
