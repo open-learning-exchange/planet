@@ -1,13 +1,10 @@
 name: Planet DB-Init Builder
 
 on: 
-  create:
+  push:
   release:
     types:
       - created
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 env:
