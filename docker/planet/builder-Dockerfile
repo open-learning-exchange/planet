@@ -1,4 +1,4 @@
-FROM treehouses/test-planet-base as builder
+FROM treehouses/planet-base as builder
 
 ARG LANGUAGE=""
 ENV LANG ${LANGUAGE}
