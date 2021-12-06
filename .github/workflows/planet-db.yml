@@ -9,8 +9,8 @@ on:
 
 env:
   DOCKER_ORG: treehouses
-  DOCKER_REPO_TAG: test-planet-tags
-  DOCKER_REPO: test-planet
+  DOCKER_REPO_TAG: planet-tags
+  DOCKER_REPO: planet
 
 jobs:
 
