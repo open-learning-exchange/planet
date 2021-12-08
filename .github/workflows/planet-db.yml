@@ -5,8 +5,7 @@ on:
     tags-ignore:
       - v*
   release:
-    types:
-      - [published]
+    types: [published]
   workflow_dispatch:
 
 env:
