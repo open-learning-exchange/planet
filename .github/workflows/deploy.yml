@@ -47,7 +47,7 @@ jobs:
           PLANET_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$BUILD"
           DBINIT_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$BUILD"
           #branch="${GITHUB_REF#refs/heads/}"
-          echo "The branched that was pushed is $branch"
+          #echo "The branched that was pushed is $branch"
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           echo "$SERVER_HOST ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
