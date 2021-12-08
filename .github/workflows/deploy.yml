@@ -32,14 +32,15 @@ jobs:
 
       - name: deploy
         run: |
-          SERVER_HOST="${{ github.event.inputs.buildtype }}"
+          SERVER_HOST="${{ github.event.inputs.buildtype:-planet.dev.ole.org }}"
+          echo "$SERVER_HOST"
           PLANET_VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          planetrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          dbinitrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          docker pull planetrepo
-          docker pull dbinitrepo
-          docker tag planetrepo "$DOCKER_ORG/$DOCKER_REPO:local1"
-          docker tag dbinitrepo "$DOCKER_ORG/$DOCKER_REPO:db-init-local1"
+          PLANET_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          DBINIT_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          docker pull $PLANET_REPO
+          docker pull $DBINIT_REPO
+          docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local1"
+          docker tag $DBINIT_REPO "$DOCKER_ORG/$DOCKER_REPO:db-init-local1"
           #branch="${GITHUB_REF#refs/heads/}"
           echo "The branched that was pushed is $branch"
           mkdir -p ~/.ssh
