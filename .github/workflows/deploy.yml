@@ -48,8 +48,8 @@ jobs:
           DBINIT_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$BUILD"
           docker pull $PLANET_REPO
           docker pull $DBINIT_REPO
-          docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local1"
-          docker tag $DBINIT_REPO "$DOCKER_ORG/$DOCKER_REPO:db-init-local1"
+          docker tag $DOCKER_REPO_TAG:$BUILD "$DOCKER_ORG/$DOCKER_REPO:local1"
+          docker tag $DOCKER_REPO_TAG:db-init-$BUILD "$DOCKER_ORG/$DOCKER_REPO:db-init-local1"
           #branch="${GITHUB_REF#refs/heads/}"
           echo "The branched that was pushed is $branch"
           mkdir -p ~/.ssh
