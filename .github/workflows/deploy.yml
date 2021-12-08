@@ -10,6 +10,9 @@ on:
         description: 'Server hostname Eg. "planet.dev.ole.org"'
         required: true
         default: 'planet.dev.ole.org'
+      buildname:
+        description: 'Planet Image name Eg. "0.13.4-deploy-d6b59441"'
+        required: false
 
 env:
   DOCKER_ORG: treehouses
@@ -37,10 +40,12 @@ jobs:
           else
             SERVER_HOST="${{ github.event.inputs.hostname }}"
           fi
-          echo "$SERVER_HOST"
           PLANET_VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          PLANET_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          DBINIT_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          BUILD="$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          echo "$BUILD"
+          BUILD="0.13.4-deploy-d6b59441"
+          PLANET_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$BUILD"
+          DBINIT_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$BUILD"
           docker pull $PLANET_REPO
           docker pull $DBINIT_REPO
           docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local1"
