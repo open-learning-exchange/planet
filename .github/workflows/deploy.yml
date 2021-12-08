@@ -1,0 +1,35 @@
+name: Manual Deploy
+
+on:
+  push:
+    branches:
+      - deploy
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: sshagent
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.SSHKEY }}
+
+      - name: deploy
+        run: |
+          branch="${GITHUB_REF#refs/heads/}"
+          echo "The branched that was pushed is $branch"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "planet.dev.ole.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
+          ssh root@planet.dev.ole.org <<EOF
+          cd /srv/planet/
+          hostname
+          pwd
+          ls -la
+          EOF
