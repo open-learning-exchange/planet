@@ -2,9 +2,11 @@ name: Planet DB-Init Builder
 
 on: 
   push:
+    tags-ignore:
+      - v*
   release:
     types:
-      - created
+      - [published]
   workflow_dispatch:
 
 env:
