@@ -52,13 +52,10 @@ jobs:
           chmod 700 ~/.ssh
           echo "$SERVER_HOST ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
           ssh root@$SERVER_HOST <<EOF
-          cd /srv/planet/
-          hostname
-          pwd
-          ls -la
           docker pull $PLANET_REPO
           docker pull $DBINIT_REPO
-          docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local1"
-          docker tag $DBINIT_REPO "$DOCKER_ORG/$DOCKER_REPO:db-init-local1"
+          #docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local"
+          #docker tag $DBINIT_REPO "$DOCKER_ORG/$DOCKER_REPO:db-init-local"
           docker images
+          # treehouses service planet restart
           EOF
