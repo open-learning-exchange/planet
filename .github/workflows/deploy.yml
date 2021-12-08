@@ -5,7 +5,17 @@ on:
     branches:
       - deploy
   workflow_dispatch:
+    inputs:
+      buildtype:
+        description: 'Server hostname Eg. "planet.dev.ole.org"'
+        required: true
+        default: 'planet.dev.ole.org'
 
+env:
+  DOCKER_ORG: treehouses
+  DOCKER_REPO_TAG: planet-tags
+  DOCKER_REPO: planet
+  
 jobs:
   deploy:
     name: Deploy
@@ -22,15 +32,23 @@ jobs:
 
       - name: deploy
         run: |
-          branch="${GITHUB_REF#refs/heads/}"
+          SERVER_HOST="${{ github.event.inputs.buildtype }}"
+          PLANET_VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          planetrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          dbinitrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          docker pull planetrepo
+          docker pull dbinitrepo
+          docker tag planetrepo "$DOCKER_ORG/$DOCKER_REPO:local1"
+          docker tag dbinitrepo "$DOCKER_ORG/$DOCKER_REPO:db-init-local1"
+          #branch="${GITHUB_REF#refs/heads/}"
           echo "The branched that was pushed is $branch"
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "planet.dev.ole.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
-          ssh root@planet.dev.ole.org <<EOF
+          echo "$SERVER_HOST ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
+          ssh root@$SERVER_HOST <<EOF
           cd /srv/planet/
           hostname
           pwd
           ls -la
-          docker ps -a
+          docker images
           EOF
