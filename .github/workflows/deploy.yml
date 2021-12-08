@@ -32,4 +32,5 @@ jobs:
           hostname
           pwd
           ls -la
+          docker ps -a
           EOF
