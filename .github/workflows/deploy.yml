@@ -6,7 +6,7 @@ on:
       - deploy
   workflow_dispatch:
     inputs:
-      buildtype:
+      hostname:
         description: 'Server hostname Eg. "planet.dev.ole.org"'
         required: true
         default: 'planet.dev.ole.org'
@@ -32,7 +32,11 @@ jobs:
 
       - name: deploy
         run: |
-          SERVER_HOST="${{ github.event.inputs.buildtype }:-planet.dev.ole.org}"
+          if [[ "${{ github.event.inputs.hostname }}" == "" ]]; then
+            SERVER_HOST="planet.dev.ole.org"  
+          else
+            SERVER_HOST="${{ github.event.inputs.hostname }}"
+          fi
           echo "$SERVER_HOST"
           PLANET_VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
           PLANET_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
