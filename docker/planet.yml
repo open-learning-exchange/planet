@@ -6,13 +6,13 @@ services:
     ports:
       - "2200:5984"
   db-init:
-    image: treehouses/planet-tags:db-init-0.13.4-comment-system-enterprise-1ded4203
+    image: treehouses/planet-tags:db-init-0.13.4-comment-system-enterprise-20452cc7
     depends_on:
       - couchdb
     environment:
       - COUCHDB_HOST=http://couchdb:5984
   planet:
-    image: treehouses/planet-tags:0.13.4-comment-system-enterprise-f480f4a1
+    image: treehouses/planet-tags:0.13.4-comment-system-enterprise-20452cc7
     ports:
       - "80:80"
     volumes:
