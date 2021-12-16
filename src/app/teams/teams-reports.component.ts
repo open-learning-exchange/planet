@@ -66,14 +66,6 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
       this.getNews(this.teamId);
-      this.initTeam(this.teamId);
-    });
-  }
-
-  ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
-      this.getNews(this.teamId);
     });
   }
 
