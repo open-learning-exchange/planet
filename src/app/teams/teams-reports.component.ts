@@ -43,6 +43,10 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
   comments: any[];
   currentUser = this.userService.get();
   commentDialog: any;
+  userStatus = 'unrelated';
+  readonly dbName = 'teams';
+  requests = [];
+  members = [];
 
   constructor(
     private couchService: CouchService,
@@ -62,6 +66,7 @@ export class TeamsReportsComponent implements DoCheck, OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
       this.getNews(this.teamId);
+      this.initTeam(this.teamId);
     });
   }
 

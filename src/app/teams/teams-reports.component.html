@@ -13,7 +13,7 @@
         <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
       </mat-card-content>
       <mat-card-footer class="action-buttons margin-lr-10">
-        <button class="report-comment-btn" mat-button type="button" (click)="$event.stopPropagation(); addComment(report)" i18n>
+        <button *ngIf="userStatus === member" class="report-comment-btn" mat-button type="button" (click)="$event.stopPropagation(); addComment(report)" i18n>
           Comment 
           <span *ngIf="showCommentsCount(report) !== 0">({{commentCount}})</span>
           <span [ngClass]="{'circle': showNewComment(report) > 0}">{{}}</span>

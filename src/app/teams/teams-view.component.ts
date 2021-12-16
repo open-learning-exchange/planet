@@ -98,7 +98,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setTasks(tasks);
     });
     if (this.mode === 'services') {
-
     }
   }
 
