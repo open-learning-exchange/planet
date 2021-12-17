@@ -12,7 +12,7 @@ services:
     environment:
       - COUCHDB_HOST=http://couchdb:5984
   planet:
-    image: treehouses/planet-tags:0.13.4-comment-system-enterprise-20452cc7
+    image: treehouses/planet-tags:0.13.4-comment-system-enterprise-b8f3facd
     ports:
       - "80:80"
     volumes:
