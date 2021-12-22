@@ -73,13 +73,21 @@ export class ConfigurationService {
       continuous: true,
       type: 'internal'
     };
+    const meetupReplicator = {
+      dbSource: 'meetups',
+      db: 'community_meetups',
+      selector: { 'link': {'teams': { '$eq': `${configuration.code}@${configuration.parentCode}` } } },
+      continuous: true,
+      type: 'internal'
+    };
     return forkJoin([
       // create replicator for pulling from parent at first as we do not have session
       this.syncService.sync({ ...replicatorObj, db: 'courses' }, credentials),
       this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
       this.syncService.sync({ ...replicatorObj, db: 'exams' }, credentials),
       this.syncService.sync({ ...replicatorObj, db: 'tags' }, credentials),
-      this.syncService.sync(userReplicator, credentials)
+      this.syncService.sync(userReplicator, credentials),
+      this.syncService.sync(meetupReplicator, credentials)
     ]);
   }
 
