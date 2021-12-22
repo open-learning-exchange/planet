@@ -67,18 +67,14 @@ export class ConfigurationService {
       selector: { 'sendOnAccept': true }
     };
     const userReplicator = {
-      dbSource: '_users',
-      db: 'tablet_users',
+      dbSource: '_users', db: 'tablet_users',
       selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } },
-      continuous: true,
-      type: 'internal'
+      continuous: true, type: 'internal'
     };
     const meetupReplicator = {
-      dbSource: 'meetups',
-      db: 'community_meetups',
-      selector: { 'link': {'teams': { '$eq': `${configuration.code}@${configuration.parentCode}` } } },
-      continuous: true,
-      type: 'internal'
+      dbSource: 'meetups', db: 'community_meetups',
+      selector: { 'link': { 'teams': { '$eq': `${configuration.code}@${configuration.parentCode}` } } },
+      continuous: true, type: 'internal'
     };
     return forkJoin([
       // create replicator for pulling from parent at first as we do not have session
