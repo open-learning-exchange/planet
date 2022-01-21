@@ -14,6 +14,7 @@ RUN apk add --no-cache \
       openssl
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
+RUN touch /etc/nginx/conf.d/auth.txt
 COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY ./ng-app/dist /usr/share/nginx/html
 COPY docker/planet/nginx/ /usr/share/nginx/html
