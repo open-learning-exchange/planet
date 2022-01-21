@@ -15,6 +15,7 @@ RUN apk add --no-cache \
       openssl
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
+RUN touch /etc/nginx/conf.d/auth.txt
 COPY package.json ./
 COPY docker/planet/scripts/ ./
 RUN mkdir -p /usr/share/nginx/html \
