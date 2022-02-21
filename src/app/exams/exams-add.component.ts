@@ -90,6 +90,11 @@ export class ExamsAddComponent implements OnInit {
       questions: this.fb.array([]),
       type: { exam: 'courses', survey: 'surveys' }[this.examType]
     });
+    this.examForm.statusChanges.subscribe((data) => {
+      if (data && this.examForm.valid) {
+        this.showFormError = false;
+      }
+    });
   }
 
   ngOnInit() {

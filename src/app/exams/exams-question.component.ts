@@ -23,6 +23,8 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
+  showChoicesError: boolean;
+  showCorrectChoiceError: boolean;
   correctCheckboxes: any = {};
   questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
@@ -51,6 +53,12 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
   ngOnChanges() {
     this.initializing = true;
     this.updateQuestion(this.question);
+    if (this.question.value.choices.length === 0) {
+      this.showChoicesError = true;
+    }
+    if (this.question.value.correctChoice.length === 0) {
+      this.showCorrectChoiceError = true;
+    }
   }
 
   ngAfterViewChecked() {
@@ -59,6 +67,18 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
       this.choiceAdded = false;
       this.cdRef.detectChanges();
     }
+    this.choices.statusChanges.subscribe((data) => {
+      if (data && this.choices.valid) {
+        this.showChoicesError = false;
+      } else {
+        this.showChoicesError = true;
+      }
+      if (data && this.question.controls.correctChoice.valid) {
+        this.showCorrectChoiceError = false;
+      } else {
+        this.showCorrectChoiceError = true;
+      }
+    });
   }
 
   addChoice() {
