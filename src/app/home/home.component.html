@@ -68,7 +68,7 @@
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
-        <a mat-menu-item (click)="readAllNotification()">Mark all as Read</a>
+        <a mat-menu-item (click)="readAllNotification()" i18n>Mark all as Read</a>
         <a [routerLink]="!notification.link ? '/notifications' : notification.link !== '/' ? [ notification.link, notification.linkParams || {} ] : '/'"
           class="menu-item-notification"
           [ngClass]="{'primary-text-color':notification.status==='unread'}"
@@ -80,7 +80,7 @@
           <mat-divider></mat-divider>
         </a>
       </div>
-      <a routerLink="/notifications" mat-menu-item>See All</a>
+      <a routerLink="/notifications" mat-menu-item i18n>See All</a>
     </mat-menu>
   </span>
 </mat-toolbar>

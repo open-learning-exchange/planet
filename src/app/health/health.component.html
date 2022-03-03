@@ -59,9 +59,9 @@
         <div>
           <div>
             <h4 class="primary-text-color" i18n>Emergency Contact</h4>
-            <p><b>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
-            <p><b>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
-            <p><b>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+            <p><b i18n>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
+            <p><b i18n>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
+            <p><b i18n>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
           </div>
           <mat-divider></mat-divider>
         </div>
@@ -81,7 +81,7 @@
         </div>
       </div>
       <ng-container *ngIf="events.length > 0">
-        <h4 class="full-width">Examinations</h4>
+        <h4 class="full-width" i18n>Examinations</h4>
         <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">

@@ -8,7 +8,7 @@
     <div class="form-container">
       <form class="form-spacing" [formGroup]="resourceForm" novalidate>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Title"  formControlName="title" required>
+          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
@@ -18,7 +18,7 @@
           <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" required="true" placeholder="Description" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
+          <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
@@ -30,10 +30,10 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
+          <input matInput i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
         </mat-form-field>
         <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
+          <input matInput i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple required>
@@ -94,7 +94,7 @@
         </div>
         <p *ngIf="existingResource.doc?._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
         <div class="inner-gaps full-width">
-          <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable">File downloadable</mat-checkbox>
+          <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
           <ng-container *ngIf="existingResource.doc?._attachments">
             <mat-checkbox [disabled]="disableDelete || this.file" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
           </ng-container>

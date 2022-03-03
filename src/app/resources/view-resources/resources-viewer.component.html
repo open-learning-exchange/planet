@@ -1,9 +1,9 @@
 <div [ngClass]="{'dialog-view':isDialog}" [ngSwitch]="mediaType">
   <img [src]="resourceSrc" class="image-fit" *ngSwitchCase="'image'">
-  <video controls *ngSwitchCase="'video'" [src]="resourceSrc">
+  <video controls *ngSwitchCase="'video'" [src]="resourceSrc" i18n>
     Browser not supported
   </video>
-  <audio controls [src]="resourceSrc" *ngSwitchCase="'audio'">
+  <audio controls [src]="resourceSrc" *ngSwitchCase="'audio'" i18n>
     Browser not supported
   </audio>
   <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen

@@ -9,10 +9,10 @@
     class="margin-lr-5 font-size-1"
     (change)="shownStatusChange($event.value)"
     #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'">
+    <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'" i18n>
       Pending
     </mat-button-toggle>
-    <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'">
+    <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'" i18n>
       Connected
     </mat-button-toggle>
   </mat-button-toggle-group>
@@ -50,7 +50,7 @@
       </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title>Sandbox</mat-panel-title>
+          <mat-panel-title i18n>Sandbox</mat-panel-title>
         </mat-expansion-panel-header>
         <planet-requests-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-requests-table>
       </mat-expansion-panel>

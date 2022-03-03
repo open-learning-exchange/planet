@@ -18,13 +18,13 @@
   <ng-container *ngIf="minDate">
     <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
       <mat-form-field>
-        <mat-label>Start Date</mat-label>
+        <mat-label i18n>Start Date</mat-label>
         <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
         <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
         <mat-datepicker #startDate></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
-        <mat-label>End Date</mat-label>
+        <mat-label i18n>End Date</mat-label>
         <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
         <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
         <mat-datepicker #endDate></mat-datepicker>
@@ -77,7 +77,7 @@
           <div>
             <h1 class="mat-title" i18n>Members</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="label">Total Members</mat-grid-tile>
+              <mat-grid-tile class="label" i18n>Total Members</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
               <mat-grid-tile class="label">
                 <mat-icon>chevron_right</mat-icon>

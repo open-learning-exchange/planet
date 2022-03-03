@@ -3,7 +3,7 @@
     <div class="anchor-label" i18n>Total Errors</div>
     <div
       class="accent-color border-bottom"
-      matTooltip="Click to see test detail"
+      i18n-matTooltip matTooltip="Click to see test detail"
       [matTooltipDisabled]="!total.clickable"
       *ngFor="let total of horizTotals; index as i"
       [ngClass]="{'cursor-pointer':total.clickable}"
@@ -16,7 +16,7 @@
   <div class="anchor-label" i18n>{label, select, Steps {Steps} Quest. {Quest.} other {Steps}}</div>
   <div
     class="border-bottom"
-    matTooltip="Click to see test detail"
+    i18n-matTooltip matTooltip="Click to see test detail"
     [matTooltipDisabled]="!total.clickable"
     *ngFor="let total of horizTotals; index as i"
     [ngClass]="{'cursor-pointer':total.clickable}"
@@ -28,7 +28,7 @@
   <div class="errors" *ngFor="let set of sets">
     <div
       class="border-bottom"
-      matTooltip="Click to see test detail"
+      i18n-matTooltip matTooltip="Click to see test detail"
       [matTooltipDisabled]="!item.clickable"
       [ngClass]="{'primary-color':item.fill,'cursor-pointer':item.clickable}"
       *ngFor="let item of set?.items; index as i"
@@ -41,6 +41,6 @@
   <div class="errors" *ngFor="let set of sets">
     <div>{{set.total}}</div>
     <planet-avatar *ngIf="showAvatar" class="cursor-pointer" (click)="labelClick(set)" [username]="set.label" [planetCode]="set.planetCode" imgClass="profile-image-large"></planet-avatar>
-    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" [matTooltip]="set.label?.length > 3 ? set.label : null "><p>{{set.label}}</p></div>
+    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label?.length > 3 ? set.label : null "><p>{{set.label}}</p></div>
   </div>
 </div>
