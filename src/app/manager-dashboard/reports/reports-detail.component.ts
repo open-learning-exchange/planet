@@ -33,7 +33,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') readonly hostClass = 'manager-reports-detail';
-  @ViewChild(ReportsHealthComponent, { static: false }) healthComponent: ReportsHealthComponent;
+  @ViewChild(ReportsHealthComponent) healthComponent: ReportsHealthComponent;
   parentCode = '';
   planetCode = '';
   planetName = '';

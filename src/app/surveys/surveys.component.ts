@@ -51,8 +51,8 @@ import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.co
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   surveys = new MatTableDataSource<any>();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
     [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
   );

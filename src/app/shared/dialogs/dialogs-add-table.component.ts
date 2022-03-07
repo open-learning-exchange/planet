@@ -9,8 +9,8 @@ import { UsersComponent } from '../../users/users.component';
 })
 export class DialogsAddTableComponent implements AfterViewInit {
 
-  @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
-  @ViewChild(UsersComponent, { static: false }) usersComponent: UsersComponent;
+  @ViewChild(CoursesComponent) coursesComponent: CoursesComponent;
+  @ViewChild(UsersComponent) usersComponent: UsersComponent;
   mode: 'courses' | 'users' = 'courses';
   okDisabled = true;
   get component() {

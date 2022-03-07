@@ -18,7 +18,7 @@ import { UsersProfileComponent } from './users-profile.component';
 })
 export class UserProfileDialogComponent implements AfterContentChecked {
 
-  @ViewChild(UsersProfileComponent, { static: false }) usersProfileComponent: UsersProfileComponent;
+  @ViewChild(UsersProfileComponent) usersProfileComponent: UsersProfileComponent;
   name: string;
   planetCode: string;
   editable = false;

@@ -4,6 +4,26 @@
   "newProjectRoot": "projects",
   "projects": {
     "planet-app": {
+      "i18n": {
+        "locales": {
+          "so": {
+            "translation": "src/i18n/messages.som.xlf",
+            "baseHref": ""
+          },
+          "fr": {
+            "translation": "src/i18n/messages.fra.xlf",
+            "baseHref": ""
+          },
+          "ne": {
+            "translation": "src/i18n/messages.nep.xlf",
+            "baseHref": ""
+          },
+          "ar": {
+            "translation": "src/i18n/messages.ara.xlf",
+            "baseHref": ""
+          }
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -11,6 +31,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -34,6 +55,12 @@
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -53,6 +80,12 @@
               ]
             },
             "test": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -62,28 +95,36 @@
             },
             "somali": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.som.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "so"
-            },
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
             "french": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.fra.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "fr"
-            },
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
             "nepali": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.nep.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "ne"
-            },
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
             "arabic": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.ara.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "ar"
-            }
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]}
           }
         },
         "serve": {
@@ -177,14 +218,14 @@
   "defaultProject": "planet-app",
   "schematics": {
     "@schematics/angular:class": {
-      "spec": false
+      "skipTests": true
     },
     "@schematics/angular:component": {
-      "spec": true,
+      "skipTests": false,
       "inlineStyle": false,
       "inlineTemplate": false,
       "prefix": "app",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

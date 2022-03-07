@@ -22,7 +22,7 @@ export class PendingTableComponent implements OnChanges, AfterViewInit {
   items = new MatTableDataSource();
   displayedColumns = [ 'item', 'date', 'actions' ];
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private couchService: CouchService,

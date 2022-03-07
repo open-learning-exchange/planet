@@ -28,7 +28,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParams = 'off';
   showParamsButton = false;
   users = {};
-  @ViewChild('chatList', { static: false }) chatListElement: ElementRef;
+  @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
     private couchService: CouchService,

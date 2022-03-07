@@ -25,7 +25,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,

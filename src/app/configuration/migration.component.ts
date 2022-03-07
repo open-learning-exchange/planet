@@ -37,7 +37,7 @@ const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 })
 export class MigrationComponent implements OnInit {
 
-  @ViewChild('stepper', { static: false }) stepper: MatStepper;
+  @ViewChild('stepper') stepper: MatStepper;
   cloneForm: FormGroup;
   cloneDomain = '';
   cloneProtocol = '';

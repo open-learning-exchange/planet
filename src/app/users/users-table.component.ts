@@ -80,8 +80,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   @Input() shouldOpenProfileDialog = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;

@@ -36,9 +36,9 @@ import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.compo
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(ResourcesSearchComponent, { static: false }) searchComponent: ResourcesSearchComponent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
@@ -86,7 +86,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   trackById = trackById;
   initialSort = '';
 
-  @ViewChild(PlanetTagInputComponent, { static: false })
+  @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(

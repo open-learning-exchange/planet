@@ -33,7 +33,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
-  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,

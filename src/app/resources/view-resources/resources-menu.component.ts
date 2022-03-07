@@ -24,7 +24,7 @@ export class ResourcesMenuComponent {
 
   @Input() resources: any[] = [];
   @Input() color = 'accent';
-  @ViewChild(MatMenuTrigger, { static: false }) resourceButton: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger) resourceButton: MatMenuTrigger;
 
   constructor(
     private dialog: MatDialog,

@@ -36,8 +36,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
   getOpts = this.parent ? { domain: this.stateService.configuration.parentDomain } : {};

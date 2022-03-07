@@ -17,7 +17,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
-  @ViewChild('examsTable', { static: false }) examsTable: ElementRef;
+  @ViewChild('examsTable') examsTable: ElementRef;
   userDetail = this.userService.get();
   healthDetail: any = {};
   events: any[] = [];
