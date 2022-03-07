@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';

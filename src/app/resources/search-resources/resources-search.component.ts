@@ -11,7 +11,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { dedupeShelfReduce } from '../../shared/utils';
-import { MatSelectionList } from '@angular/material';
+import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   template: `

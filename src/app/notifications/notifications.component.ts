@@ -6,7 +6,8 @@ import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { NotificationsService } from './notifications.service';
 

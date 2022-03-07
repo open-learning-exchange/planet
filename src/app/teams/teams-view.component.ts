@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTab } from '@angular/material/tabs';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';

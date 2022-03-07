@@ -1,7 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';

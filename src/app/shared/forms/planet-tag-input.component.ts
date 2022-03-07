@@ -3,7 +3,8 @@ import {
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
-import { MatFormFieldControl, MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';

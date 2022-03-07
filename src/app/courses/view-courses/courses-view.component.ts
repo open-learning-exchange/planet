@@ -6,7 +6,7 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   templateUrl: './courses-view.component.html',

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { forkJoin, interval } from 'rxjs';
 import { switchMap, takeWhile, map } from 'rxjs/operators';
 import { SyncService } from '../shared/sync.service';
