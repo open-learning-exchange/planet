@@ -103,6 +103,7 @@ jobs:
           docker push $branchrepo
 
       - name: Upload artifact
+        if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: my-artifactmy-artifact ${{ matrix.lang }}
