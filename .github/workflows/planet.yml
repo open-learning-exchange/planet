@@ -107,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: my-artifactmy-artifact ${{ matrix.lang }}
-          path: /tmp
+          path: /tmp/*/*.log
 
   build:
     name: Planet build
