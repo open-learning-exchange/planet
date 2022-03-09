@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { OptionsInput } from '@fullcalendar/core';
+import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
@@ -11,17 +11,7 @@ import { addDateAndTime, styleVariables } from './utils';
 @Component({
   selector: 'planet-calendar',
   template: `
-    <full-calendar
-      defaultView="dayGridMonth"
-      [events]="events"
-      [eventTimeFormat]="eventTimeFormat"
-      [plugins]="calendarPlugins"
-      [firstDay]="6"
-      [header]="header"
-      [buttonText]="buttonText"
-      [customButtons]="buttons"
-      (eventClick)="eventClick($event)">
-    </full-calendar>
+    <full-calendar [options]="calendarOptions"></full-calendar>
   `
 })
 export class PlanetCalendarComponent implements OnInit {
@@ -29,7 +19,7 @@ export class PlanetCalendarComponent implements OnInit {
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  options: OptionsInput;
+
   calendarPlugins = [ dayGridPlugin ];
   header = {
     left: 'title',
@@ -51,6 +41,16 @@ export class PlanetCalendarComponent implements OnInit {
   meetups: any[] = [];
   tasks: any[] = [];
 
+  calendarOptions: CalendarOptions = {
+    initialView: 'dayGridMonth',
+    events: this.events,
+    headerToolbar: this.header,
+    customButtons: this.buttons,
+    buttonText: this.buttonText,
+    firstDay: 6,
+    eventClick: this.eventClick.bind(this)
+  };
+
   constructor(
     private dialog: MatDialog,
     private couchService: CouchService
@@ -67,6 +67,7 @@ export class PlanetCalendarComponent implements OnInit {
         }
       } :
       {};
+    this.calendarOptions.customButtons = this.buttons
   }
 
   getMeetups() {
@@ -83,6 +84,7 @@ export class PlanetCalendarComponent implements OnInit {
         }
       }).flat();
       this.events = [ ...this.meetups, ...this.tasks ];
+      this.calendarOptions.events = this.events;
     });
   }
 
@@ -97,6 +99,7 @@ export class PlanetCalendarComponent implements OnInit {
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
       this.events = [ ...this.meetups, ...this.tasks ];
+      this.calendarOptions.events = this.events;
     });
   }
 

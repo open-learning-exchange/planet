@@ -205,8 +205,8 @@ export class ReportsService {
     return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
   }
 
-  minTime(activities, timeField) {
-    return activities.reduce((minTime, { [timeField]: time }) => minTime && minTime < time ? minTime : time, undefined);
+  minTime(activities, timeField: string) {
+    return activities.reduce((minTime, { [timeField as keyof Object]: time }) => minTime && minTime < time ? minTime : time, undefined);
   }
 
   planetTypeText(planetType) {
