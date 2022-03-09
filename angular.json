@@ -5,6 +5,7 @@
   "projects": {
     "planet-app": {
       "i18n": {
+        "sourceLocale": "eng",
         "locales": {
           "en": {
             "translation": "src/i18n/messages.eng.xlf",
@@ -14,15 +15,15 @@
             "translation": "src/i18n/messages.som.xlf",
             "baseHref": "/som/"
           },
-          "fr": {
+          "fra": {
             "translation": "src/i18n/messages.fra.xlf",
             "baseHref": "/fra/"
           },
-          "ne": {
+          "nep": {
             "translation": "src/i18n/messages.nep.xlf",
             "baseHref": "/nep/"
           },
-          "ar": {
+          "ara": {
             "translation": "src/i18n/messages.ara.xlf",
             "baseHref": "/ara/"
           },
