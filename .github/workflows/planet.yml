@@ -81,7 +81,7 @@ jobs:
 
       - name: Build single language build
         if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
-        run: |
+        - run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_LANG:${{ matrix.lang }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:${{ matrix.lang }}-$PLANET_VERSION-$GITHUB_REF_NAME"
           case ${{ matrix.lang }} in
@@ -101,7 +101,10 @@ jobs:
           docker tag $repo $branchrepo
           docker push $repo
           docker push $branchrepo
-
+        - uses: actions/upload-artifact@v3
+              with:
+                name: ${{ env.name }}-name
+                path: ${{ github.workspace }}/artifact/**/*
   build:
     name: Planet build
     needs: [build-prepare, deploy-single-language]
@@ -144,13 +147,6 @@ jobs:
           docker tag $repo $branchrepo
           docker push $repo
           docker push $branchrepo
-
-      - name: Archive production artifacts
-              uses: actions/upload-artifact@v3
-              with:
-                name: tmp-folder
-                path: |
-                  tmp
 
   multiarch:
     name: Manifest build
