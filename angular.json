@@ -5,22 +5,23 @@
   "projects": {
     "planet-app": {
       "i18n": {
+        "sourceLocale": "eng",
         "locales": {
-          "so": {
+          "som": {
             "translation": "src/i18n/messages.som.xlf",
-            "baseHref": ""
+            "baseHref": "/som"
           },
-          "fr": {
+          "fra": {
             "translation": "src/i18n/messages.fra.xlf",
-            "baseHref": ""
+            "baseHref": "/fra"
           },
-          "ne": {
+          "nep": {
             "translation": "src/i18n/messages.nep.xlf",
-            "baseHref": ""
+            "baseHref": "/nep"
           },
-          "ar": {
+          "ara": {
             "translation": "src/i18n/messages.ara.xlf",
-            "baseHref": ""
+            "baseHref": "/ara"
           }
         }
       },
@@ -95,6 +96,7 @@
             },
             "somali": {
               "aot": true,
+              "localize": ["so"],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -103,6 +105,7 @@
               ]},
             "french": {
               "aot": true,
+              "localize": ["fr"],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -111,6 +114,7 @@
               ]},
             "nepali": {
               "aot": true,
+              "localize": ["np"],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -119,6 +123,7 @@
               ]},
             "arabic": {
               "aot": true,
+              "localize": ["ar"],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
