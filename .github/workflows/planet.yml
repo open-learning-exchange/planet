@@ -101,11 +101,13 @@ jobs:
           docker tag $repo $branchrepo
           docker push $repo
           docker push $branchrepo
+
       - name: Upload artifact
-          uses: actions/upload-artifact@v3
-          with:
-              name: my-artifactmy-artifact ${{ matrix.lang }}
-              path: ${{ github.workspace }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifactmy-artifact ${{ matrix.lang }}
+          path: ${{ github.workspace }}
+
   build:
     name: Planet build
     needs: [build-prepare, deploy-single-language]
