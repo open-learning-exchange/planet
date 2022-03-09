@@ -141,6 +141,13 @@ jobs:
           docker push $repo
           docker push $branchrepo
 
+      - name: Archive production artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: tmp-folder
+                path: |
+                  tmp
+
   multiarch:
     name: Manifest build
     needs: [ build-prepare, build ]
