@@ -7,10 +7,20 @@ YML_PATH=credentials/credentials.yml
 PLANET_USER=${PLANET_CREDENTIALS%%,*}
 PLANET_PASS=${PLANET_CREDENTIALS##*,}
 PLANET_PASS=$(echo $PLANET_PASS | sed -e 's/\$/\$\$/g')
+
 BASE_PASS = $(echo -n $PLANET_USER:$PLANET_PASS | base64)
 if [ -f "$YML_PATH" ]; then
   OLD_USER=$(grep COUCHDB_USER $YML_PATH | sed -e 's/.*=//')
+  OLD_PASS=$(grep COUCHDB_PASS $YML_PATH | sed -e 's/.*=//')
 fi
+
+function gen_nginx_conf {
+  BASE_PASS=$(echo -n $1:$2 | base64)
+  {
+      echo "proxy_set_header Authorization \"Basic $BASE_PASS\";"
+  } > /etc/nginx/conf.d/auth.txt
+}
+
 
 if [ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_USER" ]; then
   rm credentials/credentials.yml
@@ -22,9 +32,8 @@ if [ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_USER" ]; then
     echo "      - COUCHDB_PASS=$PLANET_PASS"
     echo "version: \"2\""
   } >> $YML_PATH
-
-  {
-    echo "proxy_set_header Authorization \"Basic $BASE_PASS\";"
-  } > /etc/nginx/conf.d/auth.txt
-
+  
+  gen_nginx_conf $PLANET_USER $PLANET_PASS
+else
+  gen_nginx_conf $OLD_USER $OLD_PASS
 fi
