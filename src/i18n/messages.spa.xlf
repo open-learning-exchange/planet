@@ -1986,7 +1986,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-table.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Planet</target>
+        <target state="translated">Planet</target>
       </trans-unit>
       <trans-unit id="7b79ab95f86e6b433a2b457d6297ebf537002048" datatype="html" approved="yes">
         <source>No. of Visits</source>
@@ -3346,7 +3346,7 @@
           <context context-type="sourcefile">app/logs-myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">myPlanet</target>
+        <target state="translated">myPlanet</target>
       </trans-unit>
       <trans-unit id="9ca82952a6bc860b5391d5975322d8af8ceddfa4" datatype="html" approved="yes">
         <source>Select</source>
@@ -4909,7 +4909,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
       Planet
     </target>
       </trans-unit>
@@ -4921,7 +4921,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
       myPlanet
     </target>
       </trans-unit>
@@ -7099,7 +7099,7 @@
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Planet Learning</target>
+        <target state="translated">Planet Learning</target>
       </trans-unit>
       <trans-unit id="6d45d72c013249b5894106b967827ea873fd1d01" datatype="html" approved="yes">
         <source>On Android?</source>
