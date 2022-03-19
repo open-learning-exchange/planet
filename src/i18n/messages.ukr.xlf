@@ -2,15 +2,15 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="uk">
     <body>
-      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html">
+      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html" approved="yes">
         <source>Loading</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Loading</target>
+        <target state="final">Завантаження</target>
       </trans-unit>
-      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
+      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -52,7 +52,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-submissions.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">OK</target>
+        <target state="final">Гаразд</target>
       </trans-unit>
       <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -61,8 +61,8 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">
-      <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
+        <target state="translated">
+      <x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> все
     </target>
       </trans-unit>
       <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
@@ -71,9 +71,9 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select} }</target>
+        <target state="translated">{VAR_SELECT, select, yes {Зняти вибір з} no {Оберіть} }</target>
       </trans-unit>
-      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html" approved="yes">
         <source>Search</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -91,7 +91,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Search</target>
+        <target state="final">Пошук</target>
       </trans-unit>
       <trans-unit id="9e90121dcc9d53ed86f36f40fae54c5968662dcf" datatype="html">
         <source><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> selected
@@ -100,7 +100,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> selected
+        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> вибрано
       </target>
       </trans-unit>
       <trans-unit id="9c7e2ec4e504d0f26f4c6c5dc299b4f9ea1c58d9" datatype="html">
@@ -109,9 +109,9 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, members {{VAR_PLURAL, plural, =0 {members} =1 {member} other {members} }} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses} }} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups} }} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items} }} }</target>
+        <target state="translated">{VAR_SELECT, select, members {{VAR_PLURAL, plural, one {} few {members} many {members} =0 {members} =1 {member} other {members} }} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses} }} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups} }} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items} }} }</target>
       </trans-unit>
-      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -161,7 +161,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="needs-translation">Cancel</target>
+        <target state="final">Скасувати</target>
       </trans-unit>
       <trans-unit id="64f6114e14bee0f91b462f203bd6001e06d297b5" datatype="html">
         <source>
@@ -171,9 +171,9 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
       </trans-unit>
-      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
+      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
@@ -195,7 +195,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="needs-translation">Submit</target>
+        <target state="final">Подати</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -203,7 +203,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target state="translated">Ім'я: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -389,7 +389,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Best Rating</target>
+        <target state="translated">Найкращий рейтинг</target>
       </trans-unit>
       <trans-unit id="8ab4f31599a0e38a844e4b1a712ab62b6790657f" datatype="html">
         <source>Worst Rating</source>
@@ -397,7 +397,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Worst Rating</target>
+        <target state="translated">Найгірша оцінка</target>
       </trans-unit>
       <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
         <source>ltr</source>
@@ -405,7 +405,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">ltr</target>
+        <target state="translated">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
@@ -413,7 +413,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Sorry, page not found</target>
+        <target state="translated">Вибачте, сторінку не знайдено</target>
       </trans-unit>
       <trans-unit id="8c000e81f174c6e177323227a376cd91bdc1772d" datatype="html">
         <source>Back to Planet Learning</source>
