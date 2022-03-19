@@ -109,7 +109,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, members {{VAR_PLURAL, plural, one {} =0 {members} =1 {member} other {members} }} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses} }} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups} }} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items} }} }</target>
+        <target state="translated">{VAR_SELECT, select, members {{VAR_PLURAL, plural, one {} =0 {miembros} =1 {miembro} other {miembros} }} resources {{VAR_PLURAL_1, plural, =0 {recursos} =1 {recurso} other {recursos} }} courses {{VAR_PLURAL_2, plural, =0 {cursos} =1 {curso} other {cursos} }} meetups {{VAR_PLURAL_3, plural, =0 {reuniones} =1 {reunirse} other {reuniones} }} other {{VAR_PLURAL_4, plural, =0 {elementos} =1 {elemento} other {elementos} }} }</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
@@ -163,7 +163,7 @@
         </context-group>
         <target state="final">Cancelar</target>
       </trans-unit>
-      <trans-unit id="64f6114e14bee0f91b462f203bd6001e06d297b5" datatype="html">
+      <trans-unit id="64f6114e14bee0f91b462f203bd6001e06d297b5" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{errorMessage}}"/>
         </source>
@@ -171,7 +171,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
       </trans-unit>
       <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
@@ -309,13 +309,13 @@
         </context-group>
         <target state="final">Hora: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
       </trans-unit>
-      <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html">
+      <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html" approved="yes">
         <source>Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
+        <target state="final">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
       <trans-unit id="da069bcc6623561d4e52ddd8aa7d673bc39f375c" datatype="html">
         <source>
@@ -328,7 +328,7 @@
         </context-group>
         <target state="translated">
     
-    Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...} leave {...} remove {...} leader {...}}"/>
+Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, accept {...} reject {...} delete {...} leave {...} remove {...} leader {...}}"/>
       the <x id="ICU_1" equiv-text="{data.amount, select, single {...} many {...}}"/>
   
   </target>
