@@ -85,3 +85,11 @@
   }
 
 }
+@media screen and (max-width: 375px){
+  .login-container{
+    padding: 0 !important;
+  }
+  .login-card{
+    height: 100vh !important;
+  }
+}
