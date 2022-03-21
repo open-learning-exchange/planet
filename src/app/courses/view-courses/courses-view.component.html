@@ -37,7 +37,7 @@
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
-              <mat-panel-title>
+              <mat-panel-title i18n>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
@@ -79,16 +79,16 @@
               <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
               <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button
                 [matMenuTriggerFor]="previewMenu"
-                (click)="previewButtonClick(step, stepNum)">
+                (click)="previewButtonClick(step, stepNum)" i18n>
                 Preview
               </button>
               <mat-menu #previewMenu="matMenu">
                 <a mat-menu-item
-                  (click)="goToExam(step, stepNum, true)">
+                  (click)="goToExam(step, stepNum, true)" i18n>
                   Preview Test
                 </a>
                 <a mat-menu-item
-                  (click)="goToSurvey(stepNum, true)">
+                  (click)="goToSurvey(stepNum, true)" i18n>
                   Preview Survey
                 </a>
               </mat-menu>

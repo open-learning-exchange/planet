@@ -15,7 +15,7 @@
       <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
       <mat-chip-list>
         <mat-chip color="primary" selected class="planet-chip-label chip-no-style" *ngFor="let label of item.doc.labels">
-          <planet-label [label]="label"></planet-label>
+          <planet-label i18n-label [label]="label"></planet-label>
           <mat-icon *ngIf="item.doc.user.name === currentUser.name && editable" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
         </mat-chip>
       </mat-chip-list>
@@ -38,7 +38,7 @@
     </ng-container>
     <button mat-button i18n *ngIf="item.doc.user.name === currentUser.name && editable" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
     <mat-menu #labelMenu="matMenu">
-      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
+      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label i18n-label [label]="label"></planet-label></button>
     </mat-menu>
     <button mat-button i18n *ngIf="showShare" (click)="shareStory(item.doc)">Share with {
       shareTarget, select, community {Community} nation {Nation} center {Earth}
