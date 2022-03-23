@@ -5,21 +5,24 @@
   "projects": {
     "planet-app": {
       "i18n": {
-        "sourceLocale": "eng",
         "locales": {
-          "som": {
+          "en": {
+            "translation": "src/i18n/messages.eng.xlf",
+            "baseHref": "/eng"
+          },
+          "so": {
             "translation": "src/i18n/messages.som.xlf",
             "baseHref": "/som"
           },
-          "fra": {
+          "fr": {
             "translation": "src/i18n/messages.fra.xlf",
             "baseHref": "/fra"
           },
-          "nep": {
+          "ne": {
             "translation": "src/i18n/messages.nep.xlf",
             "baseHref": "/nep"
           },
-          "ara": {
+          "ar": {
             "translation": "src/i18n/messages.ara.xlf",
             "baseHref": "/ara"
           }
@@ -94,8 +97,19 @@
                 }
               ]
             },
-            "somali": {
+            "eng": {
               "aot": true,
+              "outputPath": "dist/eng",
+              "localize": ["en"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
+            "som": {
+              "aot": true,
+              "outputPath": "dist/som",
               "localize": ["so"],
               "budgets": [
                 {
@@ -103,8 +117,9 @@
                   "maximumWarning": "6kb"
                 }
               ]},
-            "french": {
+            "fra": {
               "aot": true,
+              "outputPath": "dist/fra",
               "localize": ["fr"],
               "budgets": [
                 {
@@ -112,17 +127,19 @@
                   "maximumWarning": "6kb"
                 }
               ]},
-            "nepali": {
+            "nep": {
               "aot": true,
-              "localize": ["np"],
+              "outputPath": "dist/nep",
+              "localize": ["ne"],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
               ]},
-            "arabic": {
+            "ara": {
               "aot": true,
+              "outputPath": "dist/ara",
               "localize": ["ar"],
               "budgets": [
                 {

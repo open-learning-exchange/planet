@@ -68,9 +68,9 @@ jobs:
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
 
-    strategy:
-      matrix:
-        lang: [ eng, ara, fra, spa, nep, som, ukr ]
+    #strategy:
+    #  matrix:
+    #    lang: [ eng, ara, fra, spa, nep, som ]
 
     steps:
       - name: Checkout Code
@@ -80,23 +80,14 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Build single language build
-        if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
+        # if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
+        if: ${{ github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
         run: |
-          repo="$DOCKER_ORG/$DOCKER_REPO_LANG:${{ matrix.lang }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:${{ matrix.lang }}-$PLANET_VERSION-$GITHUB_REF_NAME"
-          case ${{ matrix.lang }} in
-            eng) : "en" ;;
-            ara) : "ar" ;;
-            fra) : "fr" ;;
-            spa) : "es" ;;
-            nep) : "ne" ;;
-            som) : "so" ;;
-            ukr) : "uk" ;;
-          esac
-          lang2="$_"
+          repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
           export NODE_OPTIONS=--max_old_space_size=4096
           mkdir -p ./ng-app/dist
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo --build-arg LANGUAGE=${{ matrix.lang }} --build-arg LANGUAGE2=$lang2 . 
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo . 
           docker images
           docker tag $repo $branchrepo
           docker push $repo
@@ -125,18 +116,24 @@ jobs:
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME"
-          if [[ "$GITHUB_REF_TYPE" == 'tag' ]]
-          then LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
-          # else LANGUAGES=( 'eng')
-          else LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som' 'ukr')
-          fi
+          LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
           mkdir -p ./ng-app/dist
+          mkdir -p ./ng-app/langbuild
+          docker create --name langbuild "$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
+          docker export langbuild > langbuild.tar
+          tar -xf langbuild.tar -C ./ng-app/langbuild
           for LANGUAGE in "${LANGUAGES[@]}"; do
-            mkdir -p ./ng-app/$LANGUAGE
-            docker create --name $LANGUAGE "$DOCKER_ORG/$DOCKER_REPO_LANG:$LANGUAGE-$PLANET_VERSION-$GITHUB_REF_NAME"
-            docker export $LANGUAGE > $LANGUAGE.tar
-            tar -xf $LANGUAGE.tar -C ./ng-app/$LANGUAGE
-            cp -ar ./ng-app/$LANGUAGE/ng-app/dist/$LANGUAGE/ ./ng-app/dist/
+            case $LANGUAGE in
+              eng) : "en" ;;
+              ara) : "ar" ;;
+              fra) : "fr" ;;
+              spa) : "es" ;;
+              nep) : "ne" ;;
+              som) : "so" ;;
+            esac
+            lang2="$_"
+            mkdir -p ./ng-app/dist/$LANGUAGE
+            cp -ar ./ng-app/langbuild/ng-app/dist/$lang2/ ./ng-app/dist/$LANGUAGE
           done
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker build -f './docker/planet/${{ matrix.arch }}-Dockerfile' -t $repo .
