@@ -25,6 +25,10 @@
           "ar": {
             "translation": "src/i18n/messages.ara.xlf",
             "baseHref": "/ara"
+          },
+          "es": {
+            "translation": "src/i18n/messages.spa.xlf",
+            "baseHref": "/spa"
           }
         }
       },
@@ -146,6 +150,16 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
+              ]},
+            "spa": {
+              "aot": true,
+              "outputPath": "dist/spa",
+              "localize": ["es"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
               ]}
           }
         },
@@ -163,17 +177,20 @@
             "test": {
               "browserTarget": "planet-app:build:test"
             },
-            "somali": {
-              "browserTarget": "planet-app:build:somali"
+            "som": {
+              "browserTarget": "planet-app:build:som"
             },
-            "french": {
-              "browserTarget": "planet-app:build:french"
+            "fra": {
+              "browserTarget": "planet-app:build:fra"
             },
-            "nepali": {
-              "browserTarget": "planet-app:build:nepali"
+            "nep": {
+              "browserTarget": "planet-app:build:nep"
             },
-            "arabic": {
-              "browserTarget": "planet-app:build:arabic"
+            "ara": {
+              "browserTarget": "planet-app:build:ara"
+            },
+            "spa": {
+              "browserTarget": "planet-app:build:spa"
             }
           }
         },

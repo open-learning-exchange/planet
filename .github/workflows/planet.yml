@@ -89,8 +89,8 @@ jobs:
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/builder-Dockerfile' -t $repo . 
           docker images
-          docker tag $repo $branchrepo
           docker push $repo
+          docker tag $repo $branchrepo
           docker push $branchrepo
 
   build:
