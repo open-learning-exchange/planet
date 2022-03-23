@@ -122,12 +122,17 @@ jobs:
           docker export langbuild > langbuild.tar
           tar -xf langbuild.tar -C ./ng-app/langbuild
           for LANGUAGE in "${LANGUAGES[@]}"; do
-            mkdir -p ./ng-app/$LANGUAGE
-            mkdir -p ./ng-app/dist/$LANGUAGE
-            docker create --name $LANGUAGE "$DOCKER_ORG/$DOCKER_REPO_LANG:$LANGUAGE-$PLANET_VERSION-$GITHUB_REF_NAME"
-            docker export $LANGUAGE > $LANGUAGE.tar
-            tar -xf $LANGUAGE.tar -C ./ng-app/$LANGUAGE
-            cp -ar ./ng-app/$LANGUAGE/ng-app/dist/ ./ng-app/dist/$LANGUAGE
+            case $LANGUAGE in
+              eng) : "en" ;;
+              ara) : "ar" ;;
+              fra) : "fr" ;;
+              spa) : "es" ;;
+              nep) : "ne" ;;
+              som) : "so" ;;
+            esac
+            lang2="$_"
+            cp -ar ./ng-app/langbuild/ng-app/dist/$lang2 ./ng-app/dist/
+            mv ./ng-app/dist/$lang2 ./ng-app/dist/$LANGUAGE
           done
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker build -f './docker/planet/${{ matrix.arch }}-Dockerfile' -t $repo .
