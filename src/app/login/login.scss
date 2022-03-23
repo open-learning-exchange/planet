@@ -79,7 +79,7 @@
   @media (max-width: 400px), screen and (orientation: portrait){
     .login-card{
       grid-template-columns: 1fr !important;
-      grid-auto-rows: 1fr !important;
+      grid-auto-rows: 1fr 2fr !important;
     }
     .left-tile{
       grid-area: lt;
@@ -94,6 +94,23 @@
       grid-row-end: rt-end;
       grid-column-start: lt-start;
       grid-column-end: lt-end;
+    }
+     .login-left-tile-container{
+      display: inline !important;
+     }
+    .ole-logo{
+       display: inline !important;
+       width: 5rem;
+    }
+    h1 {
+      display: inline;
+      margin-left: 10px;
+    }
+    .myplanet-link {
+      justify-content: center;
+    }
+    h3 {
+      margin: 0;
     }
   }
 
