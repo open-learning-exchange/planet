@@ -90,7 +90,7 @@
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab #taskTab>
           <ng-template mat-tab-label>
-            <ng-container i18n><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
+            <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
           </ng-template>
           <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members" [editable]="userStatus === 'member'"></planet-tasks>
         </mat-tab>
