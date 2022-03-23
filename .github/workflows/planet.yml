@@ -102,13 +102,6 @@ jobs:
           docker push $repo
           docker push $branchrepo
 
-      - name: Upload artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-artifactmy-artifact ${{ matrix.lang }}
-          path: /tmp/*/*.log
-
   build:
     name: Planet build
     needs: [build-prepare, deploy-single-language]
