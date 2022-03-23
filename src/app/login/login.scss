@@ -76,13 +76,25 @@
     display: block;
   }
 
-  @media screen and (max-width: 375px){
+  @media screen and (max-width: 400px){
     .login-card{
-      display: flex;
-      flex-direction: column;
-      
+      grid-template-columns: 1fr !important;
+      grid-auto-rows: 1fr !important;
     }
-  
+    .left-tile{
+      grid-area: lt;
+      grid-row-start: lt;
+      grid-row-end: lt;
+      grid-column-start: lt-start;
+      grid-column-end: lt-end;
+    }
+    .right-tile {
+      grid-area: rt;
+      grid-row-start: lt-end;
+      grid-row-end: rt-end;
+      grid-column-start: lt-start;
+      grid-column-end: lt-end;
+    }
   }
 
 }
