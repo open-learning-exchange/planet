@@ -5,30 +5,31 @@
   "projects": {
     "planet-app": {
       "i18n": {
+        "sourceLocale": "en",
         "locales": {
           "en": {
             "translation": "src/i18n/messages.eng.xlf",
-            "baseHref": "/eng"
+            "baseHref": "/eng/"
           },
           "so": {
             "translation": "src/i18n/messages.som.xlf",
-            "baseHref": "/som"
+            "baseHref": "/som/"
           },
           "fr": {
             "translation": "src/i18n/messages.fra.xlf",
-            "baseHref": "/fra"
+            "baseHref": "/fra/"
           },
           "ne": {
             "translation": "src/i18n/messages.nep.xlf",
-            "baseHref": "/nep"
+            "baseHref": "/nep/"
           },
           "ar": {
             "translation": "src/i18n/messages.ara.xlf",
-            "baseHref": "/ara"
+            "baseHref": "/ara/"
           },
           "es": {
             "translation": "src/i18n/messages.spa.xlf",
-            "baseHref": "/spa"
+            "baseHref": "/spa/"
           }
         }
       },
