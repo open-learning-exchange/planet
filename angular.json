@@ -5,7 +5,6 @@
   "projects": {
     "planet-app": {
       "i18n": {
-        "sourceLocale": "en",
         "locales": {
           "en": {
             "translation": "src/i18n/messages.eng.xlf",
