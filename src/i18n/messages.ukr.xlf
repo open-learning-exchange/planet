@@ -171,7 +171,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
+        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
       </trans-unit>
       <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
@@ -405,7 +405,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">ltr</target>
+        <target state="needs-translation">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
