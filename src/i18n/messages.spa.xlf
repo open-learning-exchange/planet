@@ -163,7 +163,7 @@
         </context-group>
         <target state="final">Cancelar</target>
       </trans-unit>
-      <trans-unit id="64f6114e14bee0f91b462f203bd6001e06d297b5" datatype="html" approved="yes">
+      <trans-unit id="64f6114e14bee0f91b462f203bd6001e06d297b5" datatype="html">
         <source>
           <x id="INTERPOLATION" equiv-text="{{errorMessage}}"/>
         </source>
@@ -171,7 +171,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
+        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
       </trans-unit>
       <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
@@ -227,7 +227,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="needs-translation"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -309,13 +309,13 @@
         </context-group>
         <target state="final">Hora: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
       </trans-unit>
-      <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html" approved="yes">
+      <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html">
         <source>Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="final">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
+        <target state="needs-translation">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
       <trans-unit id="da069bcc6623561d4e52ddd8aa7d673bc39f375c" datatype="html">
         <source>
@@ -401,13 +401,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Peor valoración</target>
       </trans-unit>
-      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
+      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
         <source>ltr</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="final">ltr</target>
+        <target state="needs-translation">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html" approved="yes">
         <source>Sorry, page not found</source>
@@ -1241,7 +1241,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/resources/search-resources/resources-search.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{category, select, subject {...} language {...} mediaType {...} level {...}}"/>
+        <target state="needs-translation"><x id="ICU" equiv-text="{category, select, subject {...} language {...} mediaType {...} level {...}}"/>
     </target>
       </trans-unit>
       <trans-unit id="51f10472200945b4eb823d6a9eef3f210c870167" datatype="html" approved="yes">
@@ -1764,7 +1764,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
       <x id="ICU" equiv-text="{view, select, resources {...} resourcesAdd {...}}"/>
     </target>
       </trans-unit>
@@ -1972,7 +1972,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Foto de perfil</target>
       </trans-unit>
-      <trans-unit id="486df5f83817d9a5645aa24e36d066ec341656a5" datatype="html" approved="yes">
+      <trans-unit id="486df5f83817d9a5645aa24e36d066ec341656a5" datatype="html">
         <source>Planet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-table.component.html</context>
@@ -1986,7 +1986,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-table.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="final">Planet</target>
+        <target state="needs-translation">Planet</target>
       </trans-unit>
       <trans-unit id="7b79ab95f86e6b433a2b457d6297ebf537002048" datatype="html" approved="yes">
         <source>No. of Visits</source>
@@ -2347,7 +2347,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
           <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...} services {...}}"/>
         </target>
       </trans-unit>
@@ -2407,7 +2407,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
           <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...} services {...}}"/>
         </target>
       </trans-unit>
@@ -2475,7 +2475,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
             <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...} services {...}}"/>
           </target>
       </trans-unit>
@@ -2783,7 +2783,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
                 <x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>
               </target>
       </trans-unit>
@@ -3295,13 +3295,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Verificar</target>
       </trans-unit>
-      <trans-unit id="4cbd98a0063e75a63b8977954b06e338ad3f4ea7" datatype="html" approved="yes">
+      <trans-unit id="4cbd98a0063e75a63b8977954b06e338ad3f4ea7" datatype="html">
         <source>Error :(</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="final">Error :(</target>
+        <target state="needs-translation">Error :(</target>
       </trans-unit>
       <trans-unit id="b6d36f80e564bf800a998cee94569cadcfb5b4ce" datatype="html" approved="yes">
         <source>Please let us know</source>
@@ -3339,13 +3339,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Registros</target>
       </trans-unit>
-      <trans-unit id="d410b5622382d4ff02dace3b5b92005fdbff528f" datatype="html" approved="yes">
+      <trans-unit id="d410b5622382d4ff02dace3b5b92005fdbff528f" datatype="html">
         <source>myPlanet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/logs-myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="final">myPlanet</target>
+        <target state="needs-translation">myPlanet</target>
       </trans-unit>
       <trans-unit id="9ca82952a6bc860b5391d5975322d8af8ceddfa4" datatype="html" approved="yes">
         <source>Select</source>
@@ -4380,7 +4380,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</target>
+        <target state="needs-translation"><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</target>
       </trans-unit>
       <trans-unit id="381b5c52485ebfd2c52aa62129911d02a8962d75" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -4542,13 +4542,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final"><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
       </trans-unit>
-      <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html" approved="yes">
+      <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html">
         <source>Error</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="final">Error</target>
+        <target state="needs-translation">Error</target>
       </trans-unit>
       <trans-unit id="5ab9a3c727788f3597870dd7e3546fc0b0624024" datatype="html" approved="yes">
         <source>In Progress</source>
@@ -4646,7 +4646,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{ shownStatus, select, pending {...} accepted {...}}"/>
+        <target state="needs-translation"><x id="ICU" equiv-text="{ shownStatus, select, pending {...} accepted {...}}"/>
       </target>
       </trans-unit>
       <trans-unit id="b2101f568fc522bc8de1ff1397815c2f6b48b565" datatype="html" approved="yes">
@@ -4665,7 +4665,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
         <x id="ICU" equiv-text="{ planetType, select, nation {...} center {...}}"/>
       </target>
       </trans-unit>
@@ -4690,13 +4690,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           
           </target>
       </trans-unit>
-      <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html" approved="yes">
+      <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
         <source>URL</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="final">URL</target>
+        <target state="needs-translation">URL</target>
       </trans-unit>
       <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html" approved="yes">
         <source>Created Date</source>
@@ -4738,7 +4738,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
           <x id="ICU" equiv-text="{ hub, select, sandbox {...} other {...}}"/>
         </target>
       </trans-unit>
@@ -4900,7 +4900,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Mostrar todo el tiempo</target>
       </trans-unit>
-      <trans-unit id="ac2243738f5b368bf3ab2e6d7fd97cdaaf75985b" datatype="html" approved="yes">
+      <trans-unit id="ac2243738f5b368bf3ab2e6d7fd97cdaaf75985b" datatype="html">
         <source>
       Planet
     </source>
@@ -4908,11 +4908,11 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="final">
+        <target state="needs-translation">
       Planet
     </target>
       </trans-unit>
-      <trans-unit id="a7126e141b9b37015cff76a8af4001906ab74fdb" datatype="html" approved="yes">
+      <trans-unit id="a7126e141b9b37015cff76a8af4001906ab74fdb" datatype="html">
         <source>
       myPlanet
     </source>
@@ -4920,7 +4920,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="final">
+        <target state="needs-translation">
       myPlanet
     </target>
       </trans-unit>
@@ -5578,7 +5578,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
               <x id="ICU" equiv-text="{examType, select, survey {...} exam {...}}"/>
             </target>
       </trans-unit>
@@ -5662,7 +5662,7 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">85</context>
         </context-group>
-        <target state="translated">
+        <target state="needs-translation">
         <x id="ICU" equiv-text="{examType, select, survey {...} exam {...}}"/>
       </target>
       </trans-unit>
@@ -6033,13 +6033,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Lista de recursos</target>
       </trans-unit>
-      <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html" approved="yes">
+      <trans-unit id="bb56b817ae1c5fbe2b34a7e74031be3b4dc8de3a" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
+        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{stepNum}}"/>/<x id="INTERPOLATION_1" equiv-text="{{maxStep}}"/></target>
       </trans-unit>
       <trans-unit id="7244b411f047aa7cc7a4018d1452a45b460ff0e4" datatype="html" approved="yes">
         <source>No description provided.</source>
@@ -6522,13 +6522,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Sí</target>
       </trans-unit>
-      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html" approved="yes">
+      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html">
         <source>No</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="final">No</target>
+        <target state="needs-translation">No</target>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html" approved="yes">
         <source>Owner</source>
@@ -7088,13 +7088,13 @@ Estás seguro que quieres <x id="ICU" equiv-text="{data.changeType, select, acce
         </context-group>
         <target state="final">Referencias</target>
       </trans-unit>
-      <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html" approved="yes">
+      <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html">
         <source>Planet Learning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/login/login.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="final">Planet Learning</target>
+        <target state="needs-translation">Planet Learning</target>
       </trans-unit>
       <trans-unit id="6d45d72c013249b5894106b967827ea873fd1d01" datatype="html" approved="yes">
         <source>On Android?</source>
