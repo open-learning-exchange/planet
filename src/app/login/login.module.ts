@@ -25,9 +25,6 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
   declarations: [
     LoginComponent, LoginFormComponent, DashboardNotificationsDialogComponent
   ],
-  entryComponents: [
-    DashboardNotificationsDialogComponent
-  ],
   providers: [ ConfigurationGuard ]
 })
 export class LoginModule { }

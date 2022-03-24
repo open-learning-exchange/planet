@@ -58,15 +58,6 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
   providers: [
     DialogsFormService,
     DialogsListService
-  ],
-  entryComponents: [
-    DialogsFormComponent,
-    DialogsViewComponent,
-    DialogsPromptComponent,
-    DialogsListComponent,
-    DialogsLoadingComponent,
-    DialogsImagesComponent,
-    DialogsRatingsComponent
   ]
 })
 export class PlanetDialogsModule {}
