@@ -1,9 +1,8 @@
-@import '../variables.scss';
-@import '../../planet-mat-theme.scss';
-@import '../mixins.scss';
+@import "../variables.scss";
+@import "../../planet-mat-theme.scss";
+@import "../mixins.scss";
 
 :host {
-
   @include left-right-grid-areas;
 
   text-align: center;
@@ -23,15 +22,13 @@
       a {
         padding: 0 0.5rem;
       }
-
     }
-
   }
 
   .login-left-tile::before {
     content: "";
     height: 80vh;
-    background: linear-gradient(to right, $grey, #FFFFFF);
+    background: linear-gradient(to right, $grey, #ffffff);
     width: 30px;
     position: absolute;
     left: 100%;
@@ -47,14 +44,15 @@
 
   .login-card {
     padding: 0;
-    height:80vh;
+    height: 80vh;
     display: grid;
     grid-template-areas: "lt rt";
     grid-template-columns: 1fr 2fr;
     grid-auto-rows: 1fr;
   }
 
-  .login-form, .login-left-tile-container {
+  .login-form,
+  .login-left-tile-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -62,7 +60,8 @@
   }
 
   .login-form {
-    a, button[mat-raised-button] {
+    a,
+    button[mat-raised-button] {
       margin-bottom: 1rem;
     }
 
@@ -76,16 +75,16 @@
     display: block;
   }
 
-  @media (max-width: 400px), screen and (orientation: portrait){
+  @media screen, (max-width: 400px) and (orientation: portrait) {
     .login-container {
-      padding: 0 !important;
+      padding: 0 ;
       overflow: auto;
     }
-    .login-card{
-      grid-template-columns: 1fr !important;
-      grid-auto-rows: 1fr 2fr !important;
+    .login-card {
+      grid-template-columns: 1fr ;
+      grid-template-rows: 1fr 2fr ;
     }
-    .left-tile{
+    .left-tile {
       grid-area: lt;
       grid-row-start: lt;
       grid-row-end: lt;
@@ -99,12 +98,12 @@
       grid-column-start: lt-start;
       grid-column-end: lt-end;
     }
-     .login-left-tile-container{
-      display: inline !important;
-     }
-    .ole-logo{
-       display: inline !important;
-       width: 5rem;
+    .login-left-tile-container {
+      display: inline ;
+    }
+    .ole-logo {
+      display: inline ;
+      width: 5rem;
     }
     h1 {
       display: inline;
@@ -117,5 +116,33 @@
       margin: 0;
     }
   }
+}
+@media screen, (max-height: 375px) and (orientation: "landscape") {
+  .login-container {
+    overflow: auto ;
+    padding: 0 ;
+  }
+  .login-card {
+    height: 100vh;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+  .login-left-tile-container {
+    display: inline ;
+  }
+  .right-tile {
+    grid-area: rt;
+    grid-row-start: rt-start;
+    grid-row-end: rt-end;
+    grid-column-start: rt-end;
+    grid-column-end: rt-start;
+  }
+  .ole-logo {
+    display: inline ;
+    width: 5rem ;
+  }
 
+  .myplanet-link {
+    display: inline ;
+  }
 }
