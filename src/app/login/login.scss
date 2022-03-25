@@ -81,35 +81,36 @@
       margin-top: 15px;
     }
   }
-}
-@media only screen and (max-device-width: 375px) and (orientation: 'portrait'){
-  .login-container {
-    padding: 0vh;
+  @media only screen and (max-device-width: 375px) and (orientation: 'portrait'){
+    .login-container {
+      padding: 0vh;
+    }
+    .login-card {
+      height: 100vh;
+    }
   }
-  .login-card {
-    height: 100vh;
+  
+  @media only screen and (device-height: 375px) and (orientation: 'landscape'){
+    .login-container{
+      overflow: auto ;
+      padding: 0 ;
+    }
+    .login-card {
+      height: 100vh ;
+      grid-template-columns: 1fr 1fr ;
+      grid-template-rows: 1fr ;
+    }
+    .login-left-tile-container {
+      display: inline ;
+    }
+    .ole-logo {
+      display: inline ;
+      width: 5rem ;
+    }
+  
+    .myplanet-link{
+      display: inline ;
+    }
   }
 }
 
-@media only screen and (device-height: 375px) and (orientation: 'landscape'){
-  .login-container{
-    overflow: auto ;
-    padding: 0 ;
-  }
-  .login-card {
-    height: 100vh ;
-    grid-template-columns: 1fr 1fr ;
-    grid-template-rows: 1fr ;
-  }
-  .login-left-tile-container {
-    display: inline ;
-  }
-  .ole-logo {
-    display: inline ;
-    width: 5rem ;
-  }
-
-  .myplanet-link{
-    display: inline ;
-  }
-}
