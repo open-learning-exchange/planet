@@ -41,7 +41,7 @@
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3" *ngIf="tableState.filterType==='local'">
-      <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ng-form" class="toolbar-form" *ngIf="isUserAdmin">
+      <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
         <mat-form-field>
           <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Set roles of selected">
             <mat-option disabled="disabled" class="hide-checkbox">
