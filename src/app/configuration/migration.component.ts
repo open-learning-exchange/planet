@@ -76,7 +76,7 @@ export class MigrationComponent implements OnInit {
     .subscribe(() => {
       this.stepper.selected.completed = true;
       this.stepper.next();
-    }, error => this.planetMessageService.showMessage('Configuration is not valid. Please check again.'));
+    }, error => this.planetMessageService.showMessage($localize`Configuration is not valid. Please check again.`));
   }
 
   clonePlanet() {
@@ -94,7 +94,7 @@ export class MigrationComponent implements OnInit {
       switchMap(() => this.getDatabaseNames()),
       switchMap((syncDatabases: string[]) => forkJoin(syncDatabases.map(db => this.syncService.sync(this.syncDoc(db), this.credential))))
     ).subscribe(() => {
-      this.planetMessageService.showMessage(`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
+      this.planetMessageService.showMessage($localize`Planet is being synced with domain "${this.cloneDomain}". Please hold on.`);
       this.dialogsLoadingService.start();
       this.replicationCompletionCheck(() => this.cloneUserDbs());
     });
@@ -124,7 +124,7 @@ export class MigrationComponent implements OnInit {
   completeMigration() {
     this.router.navigate([ '/' ]);
     this.dialogsLoadingService.stop();
-    this.planetMessageService.showMessage(`Cloning "${this.cloneDomain}" complete.`);
+    this.planetMessageService.showMessage($localize`Cloning "${this.cloneDomain}" complete.`);
   }
 
   syncDoc(db: string) {

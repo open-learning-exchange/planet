@@ -68,7 +68,7 @@ export class DashboardTileComponent implements AfterViewChecked {
             this.dialogPrompt.close();
             this.removeMessage(item);
           },
-          onError: () => this.planetMessageService.showMessage('There was an error removing ' + item.title)
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
         },
         changeType: 'leave',
         type: 'team',
@@ -78,7 +78,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   removeMessage(item) {
-    this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+    this.planetMessageService.showMessage($localize`${item.title} removed from ${this.cardTitle}`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -88,7 +88,7 @@ export class DashboardTileComponent implements AfterViewChecked {
     this.userService.updateShelf(ids, this.shelfName).subscribe(
       () => {},
       () => {
-        this.planetMessageService.showAlert('There was an error reordering ' + this.cardTitle);
+        this.planetMessageService.showAlert($localize`There was an error reordering ${this.cardTitle}`);
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );

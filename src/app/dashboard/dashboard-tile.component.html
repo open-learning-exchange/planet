@@ -18,7 +18,7 @@
             class="dashboard-item"
             [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link}"
             [routerLink]="item.link"
-            i18n-matTooltip [matTooltip]="item.tooltip"
+            [matTooltip]="item.tooltip"
             cdkDrag
             [cdkDragDisabled]="cardTitle==='myLife'"
             #dashboardTile

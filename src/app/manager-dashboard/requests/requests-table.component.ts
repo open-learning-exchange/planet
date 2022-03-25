@@ -108,7 +108,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
             this.requestUpdate.emit();
             this.editDialog.close();
           },
-          onError: (error) => this.planetMessageService.showAlert('Planet was not accepted')
+          onError: (error) => this.planetMessageService.showAlert($localize`Planet was not accepted`)
         };
     }
   }
@@ -131,7 +131,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         this.requestUpdate.emit();
         this.editDialog.close();
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this community')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this community`)
     };
   }
 
@@ -208,8 +208,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   openEditChildNameDialog(planet) {
     const exceptions = [ planet.nameDoc ? planet.nameDoc.name : planet.doc.name ];
     this.dialogsFormService.openDialogsForm(
-      `Edit ${this.reportsService.planetTypeText(planet.doc.planetType)} Name`,
-      [ { 'label': 'Name', 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', 'required': true } ],
+      $localize`Edit ${this.reportsService.planetTypeText(planet.doc.planetType)} Name`,
+      [ { 'label': $localize`Name`, 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, 'required': true } ],
       this.fb.group({ name: [
         planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
         CustomValidators.required,
@@ -229,10 +229,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage(`${this.reportsService.planetTypeText(doc.planetType)} name updated.`);
+        this.planetMessageService.showMessage($localize`${this.reportsService.planetTypeText(doc.planetType)} name updated.`);
         this.requestUpdate.emit();
       },
-      () => this.planetMessageService.showAlert(`There was an error updating ${this.reportsService.planetTypeText(doc.planetType)} name`));
+      () => this.planetMessageService.showAlert($localize`There was an error updating ${this.reportsService.planetTypeText(doc.planetType)} name`));
     };
   }
 

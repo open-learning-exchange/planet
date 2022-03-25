@@ -62,7 +62,7 @@ export class PlanetCalendarComponent implements OnInit {
     this.buttons = this.editable ?
       {
         addEventButton: {
-          text: 'Add Event',
+          text: $localize`Add Event`,
           click: this.openAddEventDialog.bind(this)
         }
       } :

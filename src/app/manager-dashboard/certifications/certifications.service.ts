@@ -45,9 +45,9 @@ export class CertificationsService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage(`You have deleted the ${displayName} certification`);
+        this.planetMessageService.showMessage($localize`You have deleted the ${displayName} certification`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this certification')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this certification`)
     };
   }
 
