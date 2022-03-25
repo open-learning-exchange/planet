@@ -244,9 +244,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted resource: ' + resource.doc.title);
+        this.planetMessageService.showMessage($localize`You have deleted resource: ${resource.doc.title}`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };
   }
 
@@ -258,9 +258,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
+        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} resources`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };
   }
 
@@ -280,13 +280,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
     .subscribe((response: any) => {
-      this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
+      this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
   addTagsToSelected({ selected, indeterminate }) {
     this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
-      this.planetMessageService.showMessage('Collections updated');
+      this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
 
@@ -356,9 +356,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',
           nation: selectedPlanets.length > 1 ? 'communities' : 'community'
         }[this.planetType];
-        this.planetMessageService.showMessage(`Resources queued to push to ${childType}.`);
+        this.planetMessageService.showMessage($localize`Resources queued to push to ${childType}.`);
         this.dialogRef.close();
-      }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
+      }, () => this.planetMessageService.showAlert($localize`There was an error sending these resources`));
     };
   }
 

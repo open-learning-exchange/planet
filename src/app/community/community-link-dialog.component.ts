@@ -15,8 +15,8 @@ export class CommunityLinkDialogComponent {
   @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink: { db, title, selector? };
   links: { db, title, selector? }[] = [
-    { db: 'teams', title: 'Teams', selector: { type: 'team' } },
-    { db: 'teams', title: 'Enterprises', selector: { type: 'enterprise' } }
+    { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
+    { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } }
   ];
   linkForm: FormGroup;
 

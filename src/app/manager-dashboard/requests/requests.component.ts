@@ -32,7 +32,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
   get childType() {
-    return this.planetType === 'nation' ? 'Network' : 'Region';
+    return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
   }
 
   constructor(
@@ -90,18 +90,18 @@ export class RequestsComponent implements OnInit, OnDestroy {
       this.hubs = hubs;
       this.data = attachNamesToPlanets(data);
       this.filterData(search);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting ${this.childType}`));
   }
 
   addHubClick() {
     const type = this.childType;
     this.dialogsFormService.confirm(
-      'Add ' + type,
+      $localize`Add ${type}`,
       [
-        { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
-        { type: 'selectbox', name: 'planetId', placeholder: 'Planet', required: false,
+        { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
+        { type: 'selectbox', name: 'planetId', placeholder: $localize`Planet`, required: false,
           'options': [
-            { name: 'Select Planet', value: '' },
+            { name: $localize`Select Planet`, value: '' },
             ...this.sandboxPlanets.map(p => ({ name: p.nameDoc ? p.nameDoc.name : p.doc.name, value: p.doc._id }))
           ]
         }
@@ -113,10 +113,10 @@ export class RequestsComponent implements OnInit, OnDestroy {
     ).pipe(switchMap((response: any) => response !== undefined ? this.couchService.post('hubs', { ...response, spokes: [] }) : of())
     ).subscribe(
       () => {
-        this.planetMessageService.showMessage(type + ' Added');
+        this.planetMessageService.showMessage($localize`${type} Added`);
         this.getCommunityList();
       },
-      () => this.planetMessageService.showAlert('There was an error adding ' + type)
+      () => this.planetMessageService.showAlert($localize`There was an error adding ${type}`)
     );
   }
 

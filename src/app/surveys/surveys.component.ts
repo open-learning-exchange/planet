@@ -190,9 +190,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = this.surveys.data.filter((survey: any) => findByIdInArray(deleteArray, survey._id) === undefined);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' surveys');
+        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} surveys`);
       },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting survey.')
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting survey.`)
     };
   }
 
@@ -207,9 +207,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.deselect(survey._id);
         this.surveys.data = filterById(this.surveys.data, survey._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('Survey deleted: ' + survey.name);
+        this.planetMessageService.showMessage($localize`Survey deleted: ${survey.name}`);
       },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this survey.')
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this survey.`)
     };
   }
 
@@ -261,7 +261,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissionsService.sendSubmissionRequests(users, {
       'parentId': survey._id, 'parent': survey }
     ).subscribe(() => {
-      this.planetMessageService.showMessage('Survey requests sent');
+      this.planetMessageService.showMessage($localize`Survey requests sent`);
       this.dialogsLoadingService.stop();
       this.dialogRef.close();
     });
@@ -279,7 +279,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   exportCSV(survey) {
     this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe(res => {
       if (!res.length) {
-        this.planetMessageService.showMessage('There is no survey response');
+        this.planetMessageService.showMessage($localize`There is no survey response`);
       }
     });
   }
@@ -288,8 +288,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       'Records to Export',
       [
-        { name: 'includeQuestions', placeholder: 'Include Questions', type: 'checkbox' },
-        { name: 'includeAnswers', placeholder: 'Include Answers', type: 'checkbox' }
+        { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
+        { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' }
       ],
       { includeQuestions: true, includeAnswers: true },
       {

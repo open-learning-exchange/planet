@@ -1,23 +1,23 @@
 export const categories = [
-  'ICT',
-  'First Time',
-  'Mothers',
-  'General',
-  'E Learning',
-  'Farming',
-  'Academic Discussion',
-  'Academic Help',
-  'Awareness'
+  $localize`ICT`,
+  $localize`First Time`,
+  $localize`Mothers`,
+  $localize`General`,
+  $localize`E Learning`,
+  $localize`Farming`,
+  $localize`Academic Discussion`,
+  $localize`Academic Help`,
+  $localize`Awareness`
 ];
 
 export const days = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday'
+  $localize`Sunday`,
+  $localize`Monday`,
+  $localize`Tuesday`,
+  $localize`Wednesday`,
+  $localize`Thursday`,
+  $localize`Friday`,
+  $localize`Saturday`
 ];
 
 export const millisecondsToDay = 86400000;

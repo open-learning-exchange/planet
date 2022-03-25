@@ -145,9 +145,9 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.meetupService.updateMeetups();
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted selected meetups');
+        this.planetMessageService.showMessage($localize`You have deleted selected meetups`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting these meetups.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting these meetups.`)
     };
   }
 
@@ -180,13 +180,13 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const meetupDate = (meetup.endDate || meetup.startDate);
     if ((meetupDate < this.dateNow && meetup.participate) || (meetupDate > this.dateNow)) {
       this.meetupService.attendMeetup(meetup._id, meetup.participate).subscribe((res) => {
-        const msg = res.participate ? 'left' : 'joined';
+        const msg = res.participate ? $localize`left` : $localize`joined`;
         meetup.participate = !res.participate;
         this.countSelectedShelf(this.selection.selected);
-        this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+        this.planetMessageService.showMessage($localize`You have ${msg} meetup.`);
       });
     } else {
-      this.planetMessageService.showMessage('You cannot join an old meetup.');
+      this.planetMessageService.showMessage($localize`You cannot join an old meetup.`);
     }
   }
 

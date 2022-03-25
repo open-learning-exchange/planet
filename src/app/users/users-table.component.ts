@@ -206,23 +206,23 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
           request: this.usersService.deleteUser(user),
           onNext: () => {
             this.selection.deselect(user);
-            this.planetMessageService.showMessage('User deleted: ' + user.name);
+            this.planetMessageService.showMessage($localize`User deleted: ${user.name}`);
             this.deleteDialog.close();
           },
-          onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.')
+          onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this user.`)
         },
         amount: 'single',
         changeType: 'delete',
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
+        extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : ''
       }
     });
   }
 
   removeRole(user: any, roleIndex: number) {
     this.usersService.setRolesForUsers([ user ], [ ...user.roles.slice(0, roleIndex), ...user.roles.slice(roleIndex + 1) ])
-      .subscribe(() => {}, () => this.planetMessageService.showAlert('There was an error removing the member\'s role'));
+      .subscribe(() => {}, () => this.planetMessageService.showAlert($localize`There was an error removing the member\'s role`));
   }
 
   toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
@@ -233,9 +233,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     request.subscribe(
       () => {
         this.usersService.requestUsers(true);
-        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+        this.planetMessageService.showMessage($localize`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
       },
-      () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
+      () => this.planetMessageService.showAlert($localize`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
   }
 
@@ -243,7 +243,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     event.stopPropagation();
     this.usersService.setRoles(user, roles).subscribe(() => {
       this.usersService.requestUsers(true);
-      this.planetMessageService.showMessage(`${user.name} roles modified`);
+      this.planetMessageService.showMessage($localize`${user.name} roles modified`);
     });
   }
 
