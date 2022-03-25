@@ -77,6 +77,10 @@
   }
 
   @media (max-width: 400px), screen and (orientation: portrait){
+    .login-container {
+      padding: 0 !important;
+      overflow: auto;
+    }
     .login-card{
       grid-template-columns: 1fr !important;
       grid-auto-rows: 1fr 2fr !important;
