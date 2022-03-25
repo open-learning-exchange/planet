@@ -11,17 +11,17 @@ import { StateService } from '../state.service';
 
 const popupFormFields = [
   {
-    'label': 'Rate',
+    'label': $localize`Rate`,
     'type': 'rating',
     'name': 'rate',
-    'placeholder': 'Your Rating',
+    'placeholder': $localize`Your Rating`,
     'required': false
   },
   {
-    'label': 'Comment',
+    'label': $localize`Comment`,
     'type': 'textarea',
     'name': 'comment',
-    'placeholder': 'Would you like to leave a comment?',
+    'placeholder': $localize`Would you like to leave a comment?`,
     'required': false
   }
 ];
@@ -90,12 +90,12 @@ export class PlanetRatingComponent implements OnChanges {
     this.updateRating(form).subscribe(res => {
       if (!this.isPopupOpen) {
         this.openDialog();
-        this.planetMessage.showMessage('Thank you, your rating is submitted!');
+        this.planetMessage.showMessage($localize`Thank you, your rating is submitted!`);
       } else {
         this.rateForm.setValue({ rate: this.popupForm.controls.rate.value });
         this.isPopupOpen = false;
         if (this.popupForm.controls.comment.dirty && this.popupForm.controls.comment.value !== '') {
-          this.planetMessage.showMessage('Thank you for your additional comments');
+          this.planetMessage.showMessage($localize`Thank you for your additional comments`);
         }
       }
     }, (err) => {
@@ -132,7 +132,7 @@ export class PlanetRatingComponent implements OnChanges {
     this.popupForm.patchValue(this.rateForm.value);
     this.isPopupOpen = true;
     this.dialogsForm
-      .confirm('Rating', popupFormFields, this.popupForm)
+      .confirm($localize`Rating`, popupFormFields, this.popupForm)
       .pipe(debug('Dialog confirm'))
       .subscribe((res) => {
         if (res) {
@@ -142,7 +142,7 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   ratingError() {
-    this.planetMessage.showAlert('There was an issue updating your rating');
+    this.planetMessage.showAlert($localize`There was an issue updating your rating`);
     this.rateForm.patchValue({ rate: this.rating.userRating.rate || 0 });
     // If the dialog is open, then there will also be a comment control to reset
     if (this.rateForm.controls.comment) {

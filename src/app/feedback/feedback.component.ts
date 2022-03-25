@@ -106,7 +106,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.feedback.data = feedbackData.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
       this.emptyData = !this.feedback.data.length;
       this.dialogsLoadingService.stop();
-    }, (error) => this.message = 'There is a problem of getting data.');
+    }, (error) => this.message = $localize`There is a problem of getting data.`);
   }
 
   deleteClick(feedback) {
@@ -132,9 +132,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted feedback.');
+        this.planetMessageService.showMessage($localize`You have deleted feedback.`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There is a problem deleting this feedback.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There is a problem deleting this feedback.`)
     };
   }
 

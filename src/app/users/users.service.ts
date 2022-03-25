@@ -220,7 +220,7 @@ export class UsersService {
   sendNotifications(user) {
     const notificationDoc = {
       user: user._id,
-      'message': 'You were assigned a new role',
+      'message': $localize`You were assigned a new role`,
       link: '/myDashboard',
       'type': 'newRole',
       'priority': 1,

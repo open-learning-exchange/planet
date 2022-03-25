@@ -42,7 +42,7 @@ export class PendingTableComponent implements OnChanges, AfterViewInit {
     const { _id: id, _rev: rev } = item;
     this.couchService.delete(`send_items/${id}?rev=${rev}`).subscribe(
       () => this.requestUpdate.emit(),
-      () => this.planetMessageService.showAlert('There was a problem deleting item')
+      () => this.planetMessageService.showAlert($localize`There was a problem deleting item`)
     );
   }
 }

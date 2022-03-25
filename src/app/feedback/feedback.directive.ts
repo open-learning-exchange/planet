@@ -30,7 +30,7 @@ export class Feedback {
 
 const dialogFieldOptions = [
   {
-    'label': 'Is your feedback Urgent?',
+    'label': $localize`Is your feedback Urgent?`,
     'type': 'radio',
     'name': 'priority',
     'options': [
@@ -40,7 +40,7 @@ const dialogFieldOptions = [
     'required': true
   },
   {
-    'label': 'Feedback Type:',
+    'label': $localize`Feedback Type:`,
     'type': 'radio',
     'name': 'type',
     'options': [
@@ -53,7 +53,7 @@ const dialogFieldOptions = [
   {
     'type': 'textarea',
     'name': 'message',
-    'placeholder': 'Your Feedback',
+    'placeholder': $localize`Your Feedback`,
     'required': true
   }
 ];
@@ -95,19 +95,19 @@ export class FeedbackDirective {
       };
     const feedbackUrl = newFeedback.url.substring(0, newFeedback.url.indexOf(';')) || newFeedback.url;
     this.couchService.updateDocument('feedback', {
-      ...newFeedback, title: newFeedback.type + ' regarding ' + feedbackUrl })
+      ...newFeedback, title: $localize`${newFeedback.type} regarding ${feedbackUrl}` })
     .subscribe((data) => {
       this.feedbackService.setFeedback();
-      this.planetMessageService.showMessage('Thank you, your feedback is submitted!');
+      this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
     },
     (error) => {
-      this.planetMessageService.showAlert('Error, your feedback cannot be submitted');
+      this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
     });
   }
 
   @HostListener('click')
   openFeedback() {
-    const title = 'Feedback';
+    const title = $localize`Feedback`;
     const type = 'feedback';
     const fields = dialogFieldOptions;
     const formGroup = {

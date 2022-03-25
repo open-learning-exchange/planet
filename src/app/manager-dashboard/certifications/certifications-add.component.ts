@@ -80,7 +80,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
-      this.planetMessageService.showMessage(this.pageType === 'Add' ? 'New certification added' : 'Certification updated');
+      this.planetMessageService.showMessage(this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`);
       if (reroute) {
         this.goBack();
       }

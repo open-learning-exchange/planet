@@ -47,9 +47,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatSort) sort: MatSort;
   initTable = true;
   statusOptions: any = [
-    { text: 'Pending', value: 'pending' },
-    { text: 'Not Graded', value: 'requires grading' },
-    { text: 'Completed', value: 'complete' }
+    { text: $localize`Pending`, value: 'pending' },
+    { text: $localize`Not Graded`, value: 'requires grading' },
+    { text: $localize`Completed`, value: 'complete' }
   ];
   mode = 'grade';
   emptyData = false;

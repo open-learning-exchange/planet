@@ -189,7 +189,7 @@ export class ConfigurationComponent implements OnInit {
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;
-      }, (error) => this.planetMessageService.showAlert('There is a problem getting the list of nations'));
+      }, (error) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`));
   }
 
   onChange(selectedValue: string) {
@@ -251,18 +251,18 @@ export class ConfigurationComponent implements OnInit {
       this.configurationService.updateConfiguration(configuration).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
         err => {
-          this.planetMessageService.showAlert('There was an error updating the configuration');
+          this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
         }, () => {
           this.router.navigate([ '/manager' ]);
-          this.planetMessageService.showMessage('Configuration Updated Successfully');
+          this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
         }
       );
     } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
       this.configurationService.createPlanet(admin, configuration, credentials).pipe(finalize(spinnerOff)).subscribe((data) => {
-        this.planetMessageService.showMessage('Admin created: ' + credentials.name);
+        this.planetMessageService.showMessage($localize`Admin created: ${credentials.name}`);
         this.router.navigate([ '/login' ]);
-      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+      }, (error) => this.planetMessageService.showAlert($localize`There was an error creating planet`));
     }
   }
 

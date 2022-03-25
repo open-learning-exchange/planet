@@ -240,7 +240,7 @@ export class SubmissionsService {
 
   sendSubmissionNotification(isRecorded: boolean, isUpdated: boolean = false) {
     const data = {
-      'message': `<b>${this.userService.get().name}</b> has
+      'message': $localize`<b>${this.userService.get().name}</b> has
         ${isUpdated ? 'updated' : isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
       'link': '/myDashboard/submissions/exam',
       'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
@@ -307,7 +307,7 @@ export class SubmissionsService {
     ]).subscribe(([ [ submissions, time, questionTexts ], planets ]: [ [ any[], number, string[] ], any[] ]) => {
       if (!submissions.length) {
         this.dialogsLoadingService.stop();
-        this.planetMessageService.showMessage('There is no survey response');
+        this.planetMessageService.showMessage($localize`There is no survey response`);
         return;
       }
       const planetsWithName = attachNamesToPlanets(planets);

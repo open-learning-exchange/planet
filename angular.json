@@ -198,7 +198,8 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "planet-app:build"
-          }
+          },
+          "ivy":true
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",

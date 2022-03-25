@@ -69,8 +69,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   addReply(news) {
     const label = this.formLabel(news);
     this.updateNews.emit({
-      title: `Reply to ${label}`,
-      placeholder: `Your ${label}`,
+      title: $localize`Reply to ${label}`,
+      placeholder:  $localize`Your ${label}`,
       initialValue: '',
       news: {
         replyTo: news._id,
@@ -91,7 +91,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     const link = this.router.url;
     const notification = {
       user: userId,
-      'message': `<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
       'priority': 1,
       'type': 'replyMessage',
@@ -105,15 +105,15 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   editNews(news) {
     const label = this.formLabel(news);
     this.updateNews.emit({
-      title: `Edit ${label}`,
-      placeholder: `Your ${label}`,
+      title:  $localize`Edit ${label}`,
+      placeholder:  $localize`Your ${label}`,
       initialValue: news.message,
       news
     });
   }
 
   formLabel(news) {
-    return news.viewableBy === 'teams' ? 'Message' : 'Story';
+    return news.viewableBy === 'teams' ?  $localize`Message` :  $localize`Story`;
   }
 
   showReplies(news) {

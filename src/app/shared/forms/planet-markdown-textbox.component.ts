@@ -106,7 +106,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       name: 'custom',
       action: this.addImage.bind(this),
       className: 'fa fa-picture-o',
-      title: 'Add Image'
+      title: $localize`Add Image`
     };
     this.options = {
       ...this.options,

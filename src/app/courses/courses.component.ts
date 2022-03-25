@@ -269,9 +269,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
+        this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this course.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this course.`)
     };
   }
 
@@ -283,9 +283,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.getCourses();
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
+        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} courses`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting courses.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting courses.`)
     };
   }
 
@@ -374,7 +374,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
       this.setupList(this.courses.data, this.userShelf.courseIds);
-      this.planetMessageService.showMessage(message + ' myCourses');
+      this.planetMessageService.showMessage($localize`${message} myCourses`);
     }, (error) => (error));
   }
 
@@ -383,7 +383,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const courseIds = courses.map((data) => {
       return data._id;
     }).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
-    const message = courses.length === 1 ? courses[0].courseTitle + ' have been added to' : courses.length + ' courses have been added to';
+    const message = courses.length === 1 ? $localize`${courses[0].courseTitle} have been added to` : $localize`${courses.length} courses have been added to`;
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
@@ -409,7 +409,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(switchMap(replicators =>
       this.syncService.confirmPasswordAndRunReplicators(replicators)
     )).subscribe(() => {
-      this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
+      this.planetMessageService.showMessage($localize`${courses.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
@@ -435,9 +435,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
           center: selected.length > 1 ? 'nations' : 'nation',
           nation: selected.length > 1 ? 'communities' : 'community'
         }[this.planetType];
-        this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
+        this.planetMessageService.showMessage($localize`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
-      }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
+      }, () => this.planetMessageService.showAlert($localize`There was an error sending these courses`));
     };
   }
 
@@ -446,7 +446,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.courses.data, this.dbName, { selectedIds: this.selection.selected, tagIds: selected, indeterminateIds: indeterminate }
     ).subscribe(() => {
       this.getCourses();
-      this.planetMessageService.showMessage('Collections updated');
+      this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
 
