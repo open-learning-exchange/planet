@@ -90,3 +90,26 @@
     height: 100vh !important;
   }
 }
+
+@media screen, (max-height: 375px) and (orientation: 'landscape'){
+  .login-container{
+    overflow: auto !important;
+    padding: 0 !important;
+  }
+  .login-card {
+    height: 100vh !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr !important;
+  }
+  .login-left-tile-container {
+    display: inline !important;
+  }
+  .ole-logo {
+    display: inline !important;
+    width: 5rem !important;
+  }
+
+  .myplanet-link{
+    display: inline !important;
+  }
+}
