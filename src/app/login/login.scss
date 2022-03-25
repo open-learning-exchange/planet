@@ -75,7 +75,7 @@
     display: block;
   }
 
-  @media screen, (max-width: 400px) and (orientation: portrait) {
+  @media only screen and (max-width: 400px) and (orientation: portrait) {
     .login-container {
       padding: 0 ;
       overflow: auto;
@@ -116,33 +116,34 @@
       margin: 0;
     }
   }
+  @media only screen and (max-height: 375px) and (orientation: "landscape") {
+    .login-container {
+      overflow: auto ;
+      padding: 0 ;
+    }
+    .login-card {
+      height: 100vh;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+    }
+    .login-left-tile-container {
+      display: inline ;
+    }
+    .right-tile {
+      grid-area: rt;
+      grid-row-start: rt-start;
+      grid-row-end: rt-end;
+      grid-column-start: rt-end;
+      grid-column-end: rt-start;
+    }
+    .ole-logo {
+      display: inline ;
+      width: 5rem ;
+    }
+  
+    .myplanet-link {
+      display: inline ;
+    }
+  }
 }
-@media screen, (max-height: 375px) and (orientation: "landscape") {
-  .login-container {
-    overflow: auto ;
-    padding: 0 ;
-  }
-  .login-card {
-    height: 100vh;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-  }
-  .login-left-tile-container {
-    display: inline ;
-  }
-  .right-tile {
-    grid-area: rt;
-    grid-row-start: rt-start;
-    grid-row-end: rt-end;
-    grid-column-start: rt-end;
-    grid-column-end: rt-start;
-  }
-  .ole-logo {
-    display: inline ;
-    width: 5rem ;
-  }
 
-  .myplanet-link {
-    display: inline ;
-  }
-}
