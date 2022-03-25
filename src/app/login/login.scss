@@ -75,41 +75,41 @@
     display: block;
   }
 
-  @media screen and (max-width: 810px) {
+@media only screen and (max-device-width: 810px) {
     .myplanet-link {
       flex-direction: column;
       margin-top: 15px;
     }
   }
 }
-@media screen and (max-width: 375px) {
+@media only screen and (max-device-width: 375px) and (orientation: 'portrait'){
   .login-container {
-    padding: 0 !important;
+    padding: 0vh;
   }
   .login-card {
-    height: 100vh !important;
+    height: 100vh;
   }
 }
 
-@media screen, (max-height: 375px) and (orientation: 'landscape'){
+@media only screen and (device-height: 375px) and (orientation: 'landscape'){
   .login-container{
-    overflow: auto !important;
-    padding: 0 !important;
+    overflow: auto ;
+    padding: 0 ;
   }
   .login-card {
-    height: 100vh !important;
-    grid-template-columns: 1fr 1fr !important;
-    grid-template-rows: 1fr !important;
+    height: 100vh ;
+    grid-template-columns: 1fr 1fr ;
+    grid-template-rows: 1fr ;
   }
   .login-left-tile-container {
-    display: inline !important;
+    display: inline ;
   }
   .ole-logo {
-    display: inline !important;
-    width: 5rem !important;
+    display: inline ;
+    width: 5rem ;
   }
 
   .myplanet-link{
-    display: inline !important;
+    display: inline ;
   }
 }
