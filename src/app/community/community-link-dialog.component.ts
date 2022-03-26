@@ -1,6 +1,7 @@
 import { Component, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatStepper, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
@@ -11,7 +12,7 @@ import { ValidatorService } from '../validators/validator.service';
 })
 export class CommunityLinkDialogComponent {
 
-  @ViewChild('linkStepper', { static: false }) linkStepper: MatStepper;
+  @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink: { db, title, selector? };
   links: { db, title, selector? }[] = [
     { db: 'teams', title: 'Teams', selector: { type: 'team' } },

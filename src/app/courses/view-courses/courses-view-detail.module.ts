@@ -19,9 +19,6 @@ import { CoursesViewDetailComponent, CoursesViewDetailDialogComponent } from './
   declarations: [
     CoursesViewDetailComponent,
     CoursesViewDetailDialogComponent
-  ],
-  entryComponents: [
-    CoursesViewDetailDialogComponent
   ]
 })
 export class CoursesViewDetailModule {}

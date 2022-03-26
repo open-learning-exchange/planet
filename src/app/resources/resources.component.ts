@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
@@ -36,9 +39,9 @@ import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.compo
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(ResourcesSearchComponent, { static: false }) searchComponent: ResourcesSearchComponent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
@@ -86,7 +89,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   trackById = trackById;
   initialSort = '';
 
-  @ViewChild(PlanetTagInputComponent, { static: false })
+  @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
@@ -135,7 +138,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
-    this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
+    this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }

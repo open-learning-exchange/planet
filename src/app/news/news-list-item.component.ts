@@ -6,7 +6,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { NewsService } from './news.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
@@ -27,7 +27,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
-  @ViewChild('content', { static: false }) content;
+  @ViewChild('content') content;
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;

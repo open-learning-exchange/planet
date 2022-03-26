@@ -6,7 +6,9 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { findByIdInArray } from '../shared/utils';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -25,8 +27,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel(true, []);
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   planetConfiguration = this.stateService.configuration;
   displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();

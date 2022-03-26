@@ -43,7 +43,7 @@
       <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
-      <span i18n><b i18n>Joined Members: ({{members.length}})</b></span>
+      <span><b i18n>Joined Members: ({{members.length}})</b></span>
       <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
       <ng-template #memberList>
         <ul>

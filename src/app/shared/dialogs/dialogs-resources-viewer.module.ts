@@ -16,9 +16,6 @@ import { DialogsResourcesViewerComponent } from './dialogs-resources-viewer.comp
   ],
   declarations: [
     DialogsResourcesViewerComponent
-  ],
-  entryComponents: [
-    DialogsResourcesViewerComponent
   ]
 })
 export class DialogsResourcesViewerModule {}

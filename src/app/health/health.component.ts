@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { MatTableDataSource, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
@@ -17,7 +18,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
-  @ViewChild('examsTable', { static: false }) examsTable: ElementRef;
+  @ViewChild('examsTable') examsTable: ElementRef;
   userDetail = this.userService.get();
   healthDetail: any = {};
   events: any[] = [];

@@ -45,11 +45,11 @@ export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
 
 export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
   const iterable = map.entries();
-  const keyToArray = ({ value, done }, array: string[]) => {
-    if (done) {
+  const keyToArray = (item, array: string[]) => {
+    if (item.done) {
       return array;
     }
-    const [ key, val ] = value;
+    const [ key, val ] = item.value;
     return keyToArray(iterable.next(), !equalValue || val === equalValue ? [ ...array, key ] : array);
   };
   return keyToArray(iterable.next(), []);

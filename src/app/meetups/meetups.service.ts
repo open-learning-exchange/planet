@@ -7,7 +7,7 @@ import { Subject, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { dedupeShelfReduce } from '../shared/utils';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Injectable()

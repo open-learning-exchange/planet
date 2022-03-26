@@ -11,7 +11,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { dedupeShelfReduce } from '../../shared/utils';
-import { MatSelectionList } from '@angular/material';
+import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   template: `
@@ -38,7 +38,7 @@ export class ResourcesSearchListComponent {
   @Input() items;
   @Input() selected: string[] = [];
   @Output() selectChange = new EventEmitter<any>();
-  @ViewChild(MatSelectionList, { static: false }) selectionList: MatSelectionList;
+  @ViewChild(MatSelectionList) selectionList: MatSelectionList;
 
   selectionChange(event) {
     this.emitChange(event.source.selectedOptions.selected.map(option => option.value));

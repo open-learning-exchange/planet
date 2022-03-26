@@ -5,7 +5,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -37,7 +37,7 @@ const removeProtocol = (str: string) => {
   ` ]
 })
 export class ConfigurationComponent implements OnInit {
-  @ViewChild('stepper', { static: false }) stepper: MatStepper;
+  @ViewChild('stepper') stepper: MatStepper;
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';

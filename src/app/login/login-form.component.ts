@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { from, forkJoin, of, throwError } from 'rxjs';

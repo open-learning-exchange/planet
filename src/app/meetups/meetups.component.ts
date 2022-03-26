@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatPaginator, MatTableDataSource, MatSort, MatDialog, PageEvent } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
@@ -36,8 +39,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   parent = this.route.snapshot.data.parent;
   displayedColumns = this.parent ? [ 'title' ] : [ 'select', 'title', 'info' ];
   getOpts = this.parent ? { domain: this.stateService.configuration.parentDomain } : {};
@@ -79,7 +82,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       filterSpecificFields([ 'description' ])
     ]);
     this.meetups.sortingDataAccessor = (item, property) => item[property].toLowerCase();
-    this.selection.onChange.subscribe(({ source }) => {
+    this.selection.changed.subscribe(({ source }) => {
       this.countSelectedShelf(source.selected);
     });
     this.couchService.checkAuthorization('meetups').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);

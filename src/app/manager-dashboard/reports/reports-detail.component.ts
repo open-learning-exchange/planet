@@ -16,7 +16,7 @@ import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
   titleOfChartName, monthDataLabels, filterByMember
 } from './reports.utils';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
@@ -33,7 +33,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') readonly hostClass = 'manager-reports-detail';
-  @ViewChild(ReportsHealthComponent, { static: false }) healthComponent: ReportsHealthComponent;
+  @ViewChild(ReportsHealthComponent) healthComponent: ReportsHealthComponent;
   parentCode = '';
   planetCode = '';
   planetName = '';
