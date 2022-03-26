@@ -2,8 +2,8 @@ name: Planet DB-Init Builder
 
 on: 
   push:
-    branches:
-      - '!l10n_i18n'
+    branches-ignore:
+      - l10n_i18n
   release:
     types:
       - created
