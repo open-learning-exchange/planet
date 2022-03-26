@@ -3496,7 +3496,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Date</target>
+        <target state="translated">Fecha</target>
       </trans-unit>
       <trans-unit id="5c54befce78d70e20c215f10a00e617245f53bc9" datatype="html">
         <source>Note</source>
@@ -3504,7 +3504,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Note</target>
+        <target state="translated">Nota</target>
       </trans-unit>
       <trans-unit id="2d24d1eb8d295534d8669dbeaf56201c141285af" datatype="html">
         <source>Credits</source>
@@ -3512,7 +3512,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">Credits</target>
+        <target state="translated">Créditos</target>
       </trans-unit>
       <trans-unit id="f49bf8f7810f562e5a86b89c7b18dd7f1e248eef" datatype="html">
         <source>Debits</source>
@@ -3520,7 +3520,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">Debits</target>
+        <target state="translated">Débitos</target>
       </trans-unit>
       <trans-unit id="7e69426bd97a606d8ae6026762858e6e7c86a1fd" datatype="html">
         <source>Balance</source>
@@ -3528,7 +3528,7 @@
           <context context-type="sourcefile">app/teams/teams-view-finances.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Balance</target>
+        <target state="translated">Equilibrio</target>
       </trans-unit>
       <trans-unit id="030b4423b92167200e39519599f9b863b4f7c62c" datatype="html" approved="yes">
         <source>Actions</source>
@@ -3620,7 +3620,7 @@
           <context context-type="sourcefile">app/teams/teams-reports.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Financial Report</target>
+        <target state="translated">Informe Financiero</target>
       </trans-unit>
       <trans-unit id="afd9db4fa8c9c2d369c8d4ebf6008031d04d3727" datatype="html">
         <source>Add Report</source>
@@ -3628,7 +3628,7 @@
           <context context-type="sourcefile">app/teams/teams-reports.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Add Report</target>
+        <target state="translated">Agregar informe</target>
       </trans-unit>
       <trans-unit id="9e86c6ccb38ce274852aeb8d8d07d6892e738069" datatype="html">
         <source>Export as CSV</source>
@@ -3636,7 +3636,7 @@
           <context context-type="sourcefile">app/teams/teams-reports.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">Export as CSV</target>
+        <target state="translated">Exportar como CSV</target>
       </trans-unit>
       <trans-unit id="3f4b5cd8e1b5b509ec31747810b63bb68d658a9b" datatype="html">
         <source>View Report</source>
@@ -3644,7 +3644,7 @@
           <context context-type="sourcefile">app/teams/teams-reports.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">View Report</target>
+        <target state="translated">Ver Reporte</target>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html" approved="yes">
         <source>Menu</source>
@@ -3916,7 +3916,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target state="needs-translation">See All</target>
+        <target state="translated">Ver todo</target>
       </trans-unit>
       <trans-unit id="f65253954b66e929a8b4d5ecaf61f9129f8cec64" datatype="html" approved="yes">
         <source>Dashboard</source>
@@ -3940,7 +3940,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">My Progress</target>
+        <target state="translated">Mi progreso</target>
       </trans-unit>
       <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html">
         <source>
@@ -4068,7 +4068,7 @@
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">Send feedback</target>
+        <target state="translated">Enviar opinión</target>
       </trans-unit>
       <trans-unit id="eb3d5aefff38a814b76da74371cbf02c0789a1ef" datatype="html" approved="yes">
         <source>Logs</source>
@@ -5663,7 +5663,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
       Planet
     </target>
       </trans-unit>
@@ -5675,7 +5675,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="translated">
       myPlanet
     </target>
       </trans-unit>
@@ -5733,7 +5733,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="needs-translation">Course Progress Report</target>
+        <target state="translated">Informe de progreso del curso</target>
       </trans-unit>
       <trans-unit id="e5146d25810fd7e2853a30412580f078f3e0e84c" datatype="html" approved="yes">
         <source>Health Report</source>
@@ -5761,7 +5761,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="needs-translation">Total Members</target>
+        <target state="translated">Número total de miembros</target>
       </trans-unit>
       <trans-unit id="1b722ca79075384d2484b8647738457b72ef73f7" datatype="html" approved="yes">
         <source>Did not specify</source>
@@ -5905,7 +5905,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">Steps Completed</target>
+        <target state="translated">Pasos completados</target>
       </trans-unit>
       <trans-unit id="c018f56794850abdb05f2a46b323b9d751b359ea" datatype="html" approved="yes">
         <source>Total Visits by Course</source>
@@ -6021,7 +6021,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="needs-translation">Courses Completed</target>
+        <target state="translated">Cursos Completados</target>
       </trans-unit>
       <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html" approved="yes">
         <source>Steps</source>
@@ -6189,9 +6189,8 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-viewer.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">
-    Browser not supported
-  </target>
+        <target state="translated">
+Navegador no compatible  </target>
       </trans-unit>
       <trans-unit id="10602729fb815f82ee9e85b0dc0a2baccb568afc" datatype="html" approved="yes">
         <source>Download/Open</source>
@@ -6457,7 +6456,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">Comment</target>
+        <target state="translated">Comentario</target>
       </trans-unit>
       <trans-unit id="20fa923f713d65971258a4e3e2d361810d70851d" datatype="html" approved="yes">
         <source>Response:</source>
