@@ -99,7 +99,8 @@
       grid-column-end: lt-end;
     }
     .login-left-tile-container {
-      display: inline ;
+      display: flex;
+      flex-direction: row;
     }
     .ole-logo {
       display: inline ;
@@ -127,7 +128,7 @@
       grid-template-rows: 1fr;
     }
     .login-left-tile-container {
-      display: inline ;
+      display: inline;
     }
     .right-tile {
       grid-area: rt;
