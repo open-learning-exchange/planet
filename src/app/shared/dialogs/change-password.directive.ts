@@ -108,7 +108,7 @@ export class ChangePasswordDirective implements OnChanges {
     const formFields = this.isLoggedInUser ? [ ...changePasswordFields, ...resetPasswordFields ] : resetPasswordFields;
     const formGroups = this.isLoggedInUser ? this.changePasswordFormGroup : this.resetPasswordFormGroup;
     this.dialogsFormService.openDialogsForm(
-      'Change Password',
+      $localize `Change Password`,
       formFields,
       formGroups,
       { onSubmit: this.onPasswordSubmit.bind(this) }

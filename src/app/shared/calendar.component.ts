@@ -27,7 +27,7 @@ export class PlanetCalendarComponent implements OnInit {
     right: 'addEventButton today prev,next'
   };
   buttonText = {
-    today: 'Today'
+    today: $localize`Today`
   };
   buttons = {};
   eventTimeFormat = {
