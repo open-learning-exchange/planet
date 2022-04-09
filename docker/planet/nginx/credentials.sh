@@ -22,7 +22,7 @@ function gen_nginx_conf {
   } > /etc/nginx/conf.d/auth.txt
 }
 
-if [ ! -z "$PLANET_USER" ] && [ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_USER" ]; then
+if [ ! -z "$PLANET_USER" ] && ([ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_USER" ]); then
   rm -f credentials/credentials.yml
   {
     echo "services:"
