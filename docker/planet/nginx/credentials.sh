@@ -8,6 +8,8 @@ PLANET_USER=${PLANET_CREDENTIALS%%,*}
 PLANET_PASS=${PLANET_CREDENTIALS##*,}
 PLANET_PASS=$(echo $PLANET_PASS | sed -e 's/\$/\$\$/g')
 
+mkdir -p credentials
+
 if [ -f "$YML_PATH" ]; then
   OLD_USER=$(grep COUCHDB_USER $YML_PATH | sed -e 's/.*=//')
   OLD_PASS=$(grep COUCHDB_PASS $YML_PATH | sed -e 's/.*=//')
