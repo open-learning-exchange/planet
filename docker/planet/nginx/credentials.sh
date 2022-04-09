@@ -34,6 +34,6 @@ if [ ! -z "$PLANET_USER" ] && [ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_US
   } >> $YML_PATH
 
   gen_nginx_conf $PLANET_USER $PLANET_PASS
-elif [ ! -z "$OLD_USER" ]; then
+else
   gen_nginx_conf $OLD_USER $OLD_PASS
 fi
