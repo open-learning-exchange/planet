@@ -14,26 +14,26 @@ import { ManagerService } from '../../manager-dashboard/manager.service';
 
 const changePasswordFields = [
   {
-    'label': 'Old Password',
+    'label': $localize`Old Password`,
     'type': 'password',
     'name': 'oldPassword',
-    'placeholder': 'Old Password',
+    'placeholder': $localize`Old Password`,
     'required': true
   }
 ];
 const resetPasswordFields = [
   {
-    'label': 'Password',
+    'label': $localize`Password`,
     'type': 'password',
     'name': 'password',
-    'placeholder': 'Password',
+    'placeholder': $localize`Password`,
     'required': true
   },
   {
-    'label': 'Confirm Password',
+    'label': $localize`Confirm Password`,
     'type': 'password',
     'name': 'confirmPassword',
-    'placeholder': 'Confirm Password',
+    'placeholder': $localize`Confirm Password`,
     'required': true
   }
 ];
@@ -108,7 +108,7 @@ export class ChangePasswordDirective implements OnChanges {
     const formFields = this.isLoggedInUser ? [ ...changePasswordFields, ...resetPasswordFields ] : resetPasswordFields;
     const formGroups = this.isLoggedInUser ? this.changePasswordFormGroup : this.resetPasswordFormGroup;
     this.dialogsFormService.openDialogsForm(
-      'Change Password',
+      $localize`Change Password`,
       formFields,
       formGroups,
       { onSubmit: this.onPasswordSubmit.bind(this) }
