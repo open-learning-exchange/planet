@@ -34,7 +34,7 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
     padding: 0.5rem;
     margin: 0 2px;
     // @media (max-width: $screen-md) and (min-width: 648) {
-    //   grid-template-rows: [row2-start] 1.5rem
+    //   grid-template-rows: [row2-start] 1.5rem;
     // }
     img {
       grid-area: img;
