@@ -1,6 +1,6 @@
 export const gradeLevels = [
-  $localize`Pre-Kindergarten`,
-  $localize`Kindergarten`,
+  'Pre-Kindergarten',
+  'Kindergarten',
   '1',
   '2',
   '3',
@@ -13,11 +13,11 @@ export const gradeLevels = [
   '10',
   '11',
   '12',
-  $localize`College`,
-  $localize`Post-Graduate`
+  'College',
+  'Post-Graduate'
 ];
 
-export const subjectLevels = [ $localize`Beginner`, $localize`Intermediate`, $localize`Advanced`, $localize`Expert` ];
+export const subjectLevels = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
 
 export const foundations = [
   'literacy',
