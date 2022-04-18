@@ -59,7 +59,7 @@
 
       <!-- Date Select -->
       <mat-form-field *ngIf="field.type === 'date'" class="full-width">
-        <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
+        <input matInput [matDatepicker]="dp" placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
         <mat-datepicker #dp></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
@@ -77,7 +77,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions *ngIf="title !== 'Rating'">
-    <span i18n class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
+    <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
     <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
     <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
   </mat-dialog-actions>

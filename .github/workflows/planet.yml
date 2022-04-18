@@ -2,6 +2,8 @@ name: Planet Builder
 
 on:
   push:
+    branches-ignore:
+      - l10n_i18n
   release:
     types: [published]
   workflow_dispatch:

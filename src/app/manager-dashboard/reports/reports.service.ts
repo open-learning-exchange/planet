@@ -210,7 +210,7 @@ export class ReportsService {
   }
 
   planetTypeText(planetType) {
-    return planetType === 'nation' ? 'Nation' : 'Community';
+    return planetType === 'nation' ? $localize`Nation` : $localize`Community`;
   }
 
   viewPlanetDetails(planet) {
@@ -219,7 +219,7 @@ export class ReportsService {
       autoFocus: false,
       data: {
         allData: planet,
-        title: `${this.planetTypeText(planet.planetType)} Details`
+        title: $localize`${this.planetTypeText(planet.planetType)} Details`
       }
     });
   }

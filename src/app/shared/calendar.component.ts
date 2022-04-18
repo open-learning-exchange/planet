@@ -27,7 +27,7 @@ export class PlanetCalendarComponent implements OnInit {
     right: 'addEventButton today prev,next'
   };
   buttonText = {
-    today: 'Today'
+    today: $localize`Today`
   };
   buttons = {};
   eventTimeFormat = {
@@ -62,7 +62,7 @@ export class PlanetCalendarComponent implements OnInit {
     this.buttons = this.editable ?
       {
         addEventButton: {
-          text: 'Add Event',
+          text: $localize`Add Event`,
           click: this.openAddEventDialog.bind(this)
         }
       } :

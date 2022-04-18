@@ -64,7 +64,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <span i18n>{{stepNum}}/{{maxStep}}</span>
+      <span>{{stepNum}}/{{maxStep}}</span>
       <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
       <button mat-icon-button [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length > 0 && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
     </div>

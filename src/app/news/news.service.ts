@@ -54,7 +54,7 @@ export class NewsService {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
   }
 
-  postNews(post, successMessage = 'Thank you for submitting your news', isMessageEdit = true) {
+  postNews(post, successMessage = $localize`Thank you for submitting your news`, isMessageEdit = true) {
     const configuration = this.stateService.configuration;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
     const images = this.createImagesArray(post, message);
@@ -76,7 +76,7 @@ export class NewsService {
   }
 
   deleteNews(post) {
-    return this.postNews({ ...post, _deleted: true }, 'Post deleted');
+    return this.postNews({ ...post, _deleted: true }, $localize`Post deleted`);
   }
 
   createImagesArray(post, message) {
@@ -108,7 +108,7 @@ export class NewsService {
           ...newPlanets
         ]
       },
-      'News has been successfully shared',
+      $localize`News has been successfully shared`,
       false
     );
   }

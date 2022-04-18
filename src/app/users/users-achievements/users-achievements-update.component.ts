@@ -118,12 +118,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       achievement = { title: '', description: achievement, resources: [], date: '' };
     }
     this.dialogsFormService.openDialogsForm(
-      achievement.title !== '' ? 'Edit Achievement' : 'Add Achievement',
+      achievement.title !== '' ? $localize`Edit Achievement` : $localize`Add Achievement`,
       [
-        { 'type': 'textbox', 'name': 'title', 'placeholder': 'Title', required: true },
-        { 'type': 'date', 'name': 'date', 'placeholder': 'Date', 'required': false },
-        { 'type': 'textarea', 'name': 'description', 'placeholder': 'Description', 'required': false },
-        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': 'Add Resources' }
+        { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Title`, required: true },
+        { 'type': 'date', 'name': 'date', 'placeholder': $localize`Date`, 'required': false },
+        { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
+        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': $localize`Add Resources` }
       ],
       this.fb.group({
         ...achievement,
@@ -143,12 +143,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   addReference(index = -1, reference: any = { name: '' }) {
     this.dialogsFormService.openDialogsForm(
-      reference.name !== '' ? 'Edit Reference' : 'Add Reference',
+      reference.name !== '' ? $localize`Edit Reference` : $localize`Add Reference`,
       [
-        { 'type': 'textbox', 'name': 'name', 'placeholder': 'Name', required: true },
-        { 'type': 'textbox', 'name': 'relationship', 'placeholder': 'Relationship', 'required': false },
-        { 'type': 'textbox', 'name': 'phone', 'placeholder': 'Phone Number', 'required': false },
-        { 'type': 'textbox', 'name': 'email', 'placeholder': 'Email', 'required': false }
+        { 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, required: true },
+        { 'type': 'textbox', 'name': 'relationship', 'placeholder': $localize`Relationship`, 'required': false },
+        { 'type': 'textbox', 'name': 'phone', 'placeholder': $localize`Phone Number`, 'required': false },
+        { 'type': 'textbox', 'name': 'email', 'placeholder': $localize`Email`, 'required': false }
       ],
       this.fb.group({
         relationship: '',
@@ -228,10 +228,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
       this.userService.updateUser(userInfo)
     ]).subscribe(() => {
-      this.planetMessageService.showMessage('Achievements successfully updated');
+      this.planetMessageService.showMessage($localize`Achievements successfully updated`);
       this.goBack();
     }, (err) => {
-      this.planetMessageService.showAlert('There was an error updating your achievements');
+      this.planetMessageService.showAlert($localize`There was an error updating your achievements`);
     });
   }
 

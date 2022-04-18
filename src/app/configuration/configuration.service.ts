@@ -27,7 +27,7 @@ export class ConfigurationService {
     return mergeMap(data => {
       const requestNotification = {
         'user': 'SYSTEM',
-        'message': `New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
+        'message': $localize`New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
         'link': '/manager/requests/',
         'linkParams': { 'search': configuration.code },
         'type': 'request',

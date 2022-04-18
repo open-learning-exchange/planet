@@ -67,7 +67,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           if (this.resourcesService.isActiveResourceFetch) {
             return;
           }
-          this.planetMessageService.showAlert('Resource does not exist in Library');
+          this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
         }
         this.dialogsLoadingService.stop();
