@@ -37,7 +37,7 @@ export class CouchService {
       .pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'))
       .pipe(catchError(err => {
         if (err.status === 403) {
-          this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
+          this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
         }
         return throwError(err);
       }));
