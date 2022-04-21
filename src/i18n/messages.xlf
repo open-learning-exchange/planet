@@ -196,35 +196,35 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2fd60ce3dceb8501216bd735ed4eacd2cfbd0f07" datatype="html">
-        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}"/> the 
-        <x id="ICU_1" equiv-text="{data.amount, select, single
-          {following {data.type, select,
-            community {community}
-            nation {nation}
-            course {course}
-            resource {resource}
-            meetup {meetup}
-            user {member}
-            change {change}
-            team {team}
-            task {task}
-            certification {certification}
-            event {event}
-            transaction {transaction}
-            link {link}
-            report {report}}?
-          }
-          many
-          {selected {{data.count}} {data.type, select,
-            community {communities}
-            nation {nations}
-            course {courses}
-            resource {resources}
-            meetup {meetups}
-            event {events}}?
-          }
-        }
-        "/> </source>
+        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}
+      "/> the <x id="ICU_1" equiv-text="{data.amount, select, single
+      {following {data.type, select,
+        community {community}
+        nation {nation}
+        course {course}
+        resource {resource}
+        meetup {meetup}
+        user {member}
+        change {change}
+        team {team}
+        task {task}
+        certification {certification}
+        event {event}
+        transaction {transaction}
+        link {link}
+        report {report}}?
+      }
+      many
+      {selected {{data.count}} {data.type, select,
+        community {communities}
+        nation {nations}
+        course {courses}
+        resource {resources}
+        meetup {meetups}
+        event {events}}?
+      }
+    }
+  "/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">3,31</context>
@@ -1253,6 +1253,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">83</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html">
@@ -4654,6 +4658,10 @@
           <context context-type="linenumber">23</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
           <context context-type="linenumber">137</context>
         </context-group>
@@ -5550,24 +5558,6 @@
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7aec8d8442bc0e061396131f1a2648aa6047ac0d" datatype="html">
-        <source> Browser not supported </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/resources/view-resources/resources-viewer.component.html</context>
-          <context context-type="linenumber">4,5</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/resources/view-resources/resources-viewer.component.html</context>
-          <context context-type="linenumber">7,8</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="10602729fb815f82ee9e85b0dc0a2baccb568afc" datatype="html">
-        <source>Download/Open</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/resources/view-resources/resources-viewer.component.html</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7233626879883312022" datatype="html">
         <source>joined</source>
         <context-group purpose="location">
@@ -5732,6 +5722,24 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7aec8d8442bc0e061396131f1a2648aa6047ac0d" datatype="html">
+        <source> Browser not supported </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/resources/view-resources/resources-viewer.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/resources/view-resources/resources-viewer.component.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="10602729fb815f82ee9e85b0dc0a2baccb568afc" datatype="html">
+        <source>Download/Open</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/resources/view-resources/resources-viewer.component.html</context>
+          <context context-type="linenumber">11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1159671860655828397" datatype="html">
@@ -6471,13 +6479,6 @@
           <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8a0db24e7e3ed40395f039792c8bd90a33be14f7" datatype="html">
-        <source> Edit <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;minutes&quot;&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4342510535269152024" datatype="html">
         <source>You have deleted selected meetups</source>
         <context-group purpose="location">
@@ -6559,13 +6560,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
           <context context-type="linenumber">54</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="        &lt;s"/>clear<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="ngIf=&quot;eleme"/>Leave</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
-          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html">
@@ -10176,7 +10170,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="e1a01919bf52f60c91ef62c2108ff568b9b9c323" datatype="html">
-        <source> You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}"/> </source>
+        <source> You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
+    "/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-question.component.html</context>
           <context context-type="linenumber">24,25</context>
@@ -10421,7 +10416,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="0fed89be7ab1e5a75f0962a5f54604f16a659ac6" datatype="html">
-        <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="{{configuration.name}}"/></source>
+        <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="{{configuration}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">67</context>
