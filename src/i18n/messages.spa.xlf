@@ -6984,13 +6984,13 @@
         </context-group>
         <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro}}</target>
       </trans-unit>
-      <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html">
+      <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}"/>:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/>:</target>
+        <target state="final"><x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/>:</target>
       </trans-unit>
       <trans-unit id="8b18f57830b5c4c4954b7a8e3097b2aafa01d75d" datatype="html" approved="yes">
         <source>Local:</source>
@@ -7028,13 +7028,13 @@
         </context-group>
         <target state="final"><x id="INTERPOLATION" equiv-text="{{ planetType === 'community' ? 'Nation' : 'Center' }}"/> Lista</target>
       </trans-unit>
-      <trans-unit id="467815b97659da013aa21415fd277d05827de177" datatype="html">
+      <trans-unit id="467815b97659da013aa21415fd277d05827de177" datatype="html" approved="yes">
         <source> List all from the <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated"> Listar todo desde el <x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/></target>
+        <target state="final"> Listar todo desde el <x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/></target>
       </trans-unit>
       <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html" approved="yes">
         <source>List Resources</source>
@@ -7060,7 +7060,7 @@
         </context-group>
         <target state="final">Comprobando el estado de las peticiones...</target>
       </trans-unit>
-      <trans-unit id="4ef4955380453184df847c308888e43f5bc3a07d" datatype="html">
+      <trans-unit id="4ef4955380453184df847c308888e43f5bc3a07d" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {nation} nation {center}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
@@ -7074,23 +7074,23 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, community {nación} nation {centro}}</target>
+        <target state="final">{VAR_SELECT, select, community {nación} nation {centro}}</target>
       </trans-unit>
-      <trans-unit id="480b5cfc2b0b7c8763316616d652ead0ced37277" datatype="html">
+      <trans-unit id="480b5cfc2b0b7c8763316616d652ead0ced37277" datatype="html" approved="yes">
         <source>Your request has been rejected by <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}} "/>. You can retry or contact <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}} "/> planet.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="translated">Su solicitud ha sido rechazada por <x id="ICU" equiv-text="{ planetType, select, community {nación} nation {centro}} "/>. Puede volver a intentarlo o ponerse en contacto con <x id="ICU" equiv-text="{ planetType, select, community {nación} nation {centro}} "/> planeta.</target>
+        <target state="final">Su solicitud ha sido rechazada por <x id="ICU" equiv-text="{ planetType, select, community {nación} nation {centro}} "/>. Puede volver a intentarlo o ponerse en contacto con <x id="ICU" equiv-text="{ planetType, select, community {nación} nation {centro}} "/> planeta.</target>
       </trans-unit>
-      <trans-unit id="b756b811312062e2a2880792474b22515f7e161a" datatype="html">
+      <trans-unit id="b756b811312062e2a2880792474b22515f7e161a" datatype="html" approved="yes">
         <source>Your request has not been accepted by <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="translated">Tu solicitud no ha sido aceptada por <x id="ICU" equiv-text="{ planetType, select, community {nación} nation {centro}}"/></target>
+        <target state="final">Tu solicitud no ha sido aceptada por <x id="ICU" equiv-text="{ planetType, select, community {nación} nation {centro}}"/></target>
       </trans-unit>
       <trans-unit id="4473b88150ab069fea4b91b497042373f7d32b55" datatype="html" approved="yes">
         <source>Your tablet pin number is:</source>
@@ -7116,21 +7116,21 @@
         </context-group>
         <target state="final">Tarea de sincronización</target>
       </trans-unit>
-      <trans-unit id="a02cec97c84b05f450a7a65583400d48907b5819" datatype="html">
+      <trans-unit id="a02cec97c84b05f450a7a65583400d48907b5819" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>sync<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Run Sync</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>sync<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Enviar encuesta</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>sync<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Enviar encuesta</target>
       </trans-unit>
-      <trans-unit id="fb5c601c7ffb4477287a72fea486562a2fb7fab0" datatype="html">
+      <trans-unit id="fb5c601c7ffb4477287a72fea486562a2fb7fab0" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
       </trans-unit>
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html" approved="yes">
         <source>Error</source>
@@ -7168,13 +7168,13 @@
         </context-group>
         <target state="final">Completado</target>
       </trans-unit>
-      <trans-unit id="781518682677021817" datatype="html">
+      <trans-unit id="781518682677021817" datatype="html" approved="yes">
         <source>Resources/Courses are being fetched</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-fetch.component.ts</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target state="translated">Recuperación de recursos/cursos</target>
+        <target state="final">Recuperación de recursos/cursos</target>
       </trans-unit>
       <trans-unit id="8c37f5f40f77902065caeb7ae44f60003b4675db" datatype="html" approved="yes">
         <source>Courses/Resources Sent</source>
@@ -7216,7 +7216,7 @@
         </context-group>
         <target state="final">No se ha encontrado ningún registro</target>
       </trans-unit>
-      <trans-unit id="9721777848454fa0a358e6ea8360cd311ebbfe50" datatype="html">
+      <trans-unit id="9721777848454fa0a358e6ea8360cd311ebbfe50" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>arrow_back<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard-configuration.component.ts</context>
@@ -7226,7 +7226,7 @@
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>arrow_back<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>arrow_back<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="6ff28b6a959968cba78bea08bbcd23daacd0f46c" datatype="html" approved="yes">
         <source>Planet Configuration</source>
@@ -7236,13 +7236,13 @@
         </context-group>
         <target state="final">Configuración del planeta</target>
       </trans-unit>
-      <trans-unit id="8197090923939965653" datatype="html">
+      <trans-unit id="8197090923939965653" datatype="html" approved="yes">
         <source>There was a problem getting Activity Logs</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="translated">Hubo un problema al obtener los registros de actividad</target>
+        <target state="final">Hubo un problema al obtener los registros de actividad</target>
       </trans-unit>
       <trans-unit id="bbb5c789c5d51c611c658d4ba0ff71e03be92642" datatype="html" approved="yes">
         <source>Summary of Connected Planets</source>
@@ -7292,117 +7292,117 @@
         </context-group>
         <target state="final">Visitas de miembros</target>
       </trans-unit>
-      <trans-unit id="6783237823517394918" datatype="html">
+      <trans-unit id="6783237823517394918" datatype="html" approved="yes">
         <source>All Members</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">356</context>
         </context-group>
-        <target state="translated">Todos los miembros</target>
+        <target state="final">Todos los miembros</target>
       </trans-unit>
-      <trans-unit id="5203279511751768967" datatype="html">
+      <trans-unit id="5203279511751768967" datatype="html" approved="yes">
         <source>From</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">361</context>
         </context-group>
-        <target state="translated">De</target>
+        <target state="final">De</target>
       </trans-unit>
-      <trans-unit id="1640609344969975994" datatype="html">
+      <trans-unit id="1640609344969975994" datatype="html" approved="yes">
         <source>To</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">362</context>
         </context-group>
-        <target state="translated">A</target>
+        <target state="final">A</target>
       </trans-unit>
-      <trans-unit id="3724068243287682962" datatype="html">
+      <trans-unit id="3724068243287682962" datatype="html" approved="yes">
         <source>Team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">364</context>
         </context-group>
-        <target state="translated">Equipo</target>
+        <target state="final">Equipo</target>
       </trans-unit>
-      <trans-unit id="7573351880512456623" datatype="html">
+      <trans-unit id="7573351880512456623" datatype="html" approved="yes">
         <source>Select Date Range for Data Export</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">371</context>
         </context-group>
-        <target state="translated">Seleccionar rango de fecha para exportar datos</target>
+        <target state="final">Seleccionar rango de fecha para exportar datos</target>
       </trans-unit>
-      <trans-unit id="6618436654643584870" datatype="html">
+      <trans-unit id="6618436654643584870" datatype="html" approved="yes">
         <source>Member Visits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">386</context>
         </context-group>
-        <target state="translated">Visitas de miembros</target>
+        <target state="final">Visitas de miembros</target>
       </trans-unit>
-      <trans-unit id="1263316497945956063" datatype="html">
+      <trans-unit id="1263316497945956063" datatype="html" approved="yes">
         <source>Resource Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">430</context>
         </context-group>
-        <target state="translated">Vistas de recursos</target>
+        <target state="final">Vistas de recursos</target>
       </trans-unit>
-      <trans-unit id="2102187567920963737" datatype="html">
+      <trans-unit id="2102187567920963737" datatype="html" approved="yes">
         <source>Course Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">431</context>
         </context-group>
-        <target state="translated">Vistas del curso</target>
+        <target state="final">Vistas del curso</target>
       </trans-unit>
-      <trans-unit id="7636767686765305289" datatype="html">
+      <trans-unit id="7636767686765305289" datatype="html" approved="yes">
         <source>Community Health</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">432</context>
         </context-group>
-        <target state="translated">Salud de la Comunidad</target>
+        <target state="final">Salud de la Comunidad</target>
       </trans-unit>
-      <trans-unit id="5092703122145292158" datatype="html">
+      <trans-unit id="5092703122145292158" datatype="html" approved="yes">
         <source>Courses Progress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">433</context>
         </context-group>
-        <target state="translated">Progreso de cursos</target>
+        <target state="final">Progreso de cursos</target>
       </trans-unit>
-      <trans-unit id="ac2243738f5b368bf3ab2e6d7fd97cdaaf75985b" datatype="html">
+      <trans-unit id="ac2243738f5b368bf3ab2e6d7fd97cdaaf75985b" datatype="html" approved="yes">
         <source> Planet </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">40,41</context>
         </context-group>
-        <target state="translated"> Planet </target>
+        <target state="final"> Planet </target>
       </trans-unit>
-      <trans-unit id="a7126e141b9b37015cff76a8af4001906ab74fdb" datatype="html">
+      <trans-unit id="a7126e141b9b37015cff76a8af4001906ab74fdb" datatype="html" approved="yes">
         <source> myPlanet </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">43,44</context>
         </context-group>
-        <target state="translated"> myPlanet </target>
+        <target state="final"> myPlanet </target>
       </trans-unit>
-      <trans-unit id="1e157c0afb49506da4107e68d49dcc673b312391" datatype="html">
+      <trans-unit id="1e157c0afb49506da4107e68d49dcc673b312391" datatype="html" approved="yes">
         <source> Both </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">46,47</context>
         </context-group>
-        <target state="translated"> Ambos </target>
+        <target state="final"> Ambos </target>
       </trans-unit>
-      <trans-unit id="365dfe7b910f29c8cdd418ab2a19153b531aa7f9" datatype="html">
+      <trans-unit id="365dfe7b910f29c8cdd418ab2a19153b531aa7f9" datatype="html" approved="yes">
         <source> Export </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">56,57</context>
         </context-group>
-        <target state="translated"> Exportar </target>
+        <target state="final"> Exportar </target>
       </trans-unit>
       <trans-unit id="a8233de047500bf0f0d9f9f1712ddb071501a283" datatype="html" approved="yes">
         <source>Summary</source>
@@ -7648,7 +7648,7 @@
         </context-group>
         <target state="final">No hay calificaciones de curso</target>
       </trans-unit>
-      <trans-unit id="5712931470313882827" datatype="html">
+      <trans-unit id="5712931470313882827" datatype="html" approved="yes">
         <source>There was a problem getting <x id="PH" equiv-text="this.childType"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.ts</context>
@@ -7658,7 +7658,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target state="translated">Hubo un problema al obtener <x id="PH" equiv-text="this.childType"/></target>
+        <target state="final">Hubo un problema al obtener <x id="PH" equiv-text="this.childType"/></target>
       </trans-unit>
       <trans-unit id="5ca560193c762090e39d5d677cf3c79173673ef5" datatype="html" approved="yes">
         <source>Pending Report</source>
@@ -7668,7 +7668,7 @@
         </context-group>
         <target state="final">Reporte pendiente</target>
       </trans-unit>
-      <trans-unit id="78f05c4f33f1fafaeb5c1ba610979dfceaad12db" datatype="html">
+      <trans-unit id="78f05c4f33f1fafaeb5c1ba610979dfceaad12db" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, nation {Communities} center {Nations}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
@@ -7678,23 +7678,23 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, nation {Comunidades} center {Naciones}}</target>
+        <target state="final">{VAR_SELECT, select, nation {Comunidades} center {Naciones}}</target>
       </trans-unit>
-      <trans-unit id="56b1baecac043b12fd134a53c9f0fcd549fcde02" datatype="html">
+      <trans-unit id="56b1baecac043b12fd134a53c9f0fcd549fcde02" datatype="html" approved="yes">
         <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Recursos pendientes/cursos en <x id="ICU" equiv-text="{ planetType, select, nation {Comunidades} center {Naciones} }"/></target>
+        <target state="final">Recursos pendientes/cursos en <x id="ICU" equiv-text="{ planetType, select, nation {Comunidades} center {Naciones} }"/></target>
       </trans-unit>
-      <trans-unit id="2467446332932372407" datatype="html">
+      <trans-unit id="2467446332932372407" datatype="html" approved="yes">
         <source>There was a problem deleting item</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/pending-table.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="translated">Hubo un problema al eliminar el elemento</target>
+        <target state="final">Hubo un problema al eliminar el elemento</target>
       </trans-unit>
       <trans-unit id="9a1128da70d2bd440f3633c3fce70b54289665e5" datatype="html" approved="yes">
         <source>myPlanet Report</source>
@@ -7704,21 +7704,21 @@
         </context-group>
         <target state="final">reporte de myPlanet</target>
       </trans-unit>
-      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html">
+      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, center {Naciones} other {Comunidades}}</target>
+        <target state="final">{VAR_SELECT, select, center {Naciones} other {Comunidades}}</target>
       </trans-unit>
-      <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html">
+      <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html" approved="yes">
         <source>myPlanet on <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Nations} other"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">myPlanet en <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Naciones} other"/></target>
+        <target state="final">myPlanet en <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Naciones} other"/></target>
       </trans-unit>
       <trans-unit id="061dde2212f990858543682a4660f3df65c58f11" datatype="html" approved="yes">
         <source>Week Starting</source>
@@ -7836,13 +7836,13 @@
         </context-group>
         <target state="final">Datos semanales</target>
       </trans-unit>
-      <trans-unit id="43dc9450a5fcbd86537abcc4eae1f51d48fa3399" datatype="html">
+      <trans-unit id="43dc9450a5fcbd86537abcc4eae1f51d48fa3399" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, Steps {Steps} Quest. {Quest.} other {Steps}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-chart.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, Steps {Paso} Quest. {Misión.} other {Pasos}}</target>
+        <target state="final">{VAR_SELECT, select, Steps {Paso} Quest. {Misión.} other {Pasos}}</target>
       </trans-unit>
       <trans-unit id="86115ad60b7ce4af831b92927f338007ce7dd2f5" datatype="html" approved="yes">
         <source>Total Errors</source>
@@ -7988,21 +7988,21 @@
         </context-group>
         <target state="final">Otras notas</target>
       </trans-unit>
-      <trans-unit id="1552831590018565676" datatype="html">
+      <trans-unit id="1552831590018565676" datatype="html" approved="yes">
         <source>This examination can no longer be changed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event.component.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="translated">Este examen ya no puede ser modificado.</target>
+        <target state="final">Este examen ya no puede ser modificado.</target>
       </trans-unit>
-      <trans-unit id="3476599354203204124" datatype="html">
+      <trans-unit id="3476599354203204124" datatype="html" approved="yes">
         <source>The following measurement(s) may be incorrect. Click &lt;b&gt;Cancel&lt;/b&gt; to fix or click &lt;b&gt;OK&lt;/b&gt; to submit.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event.component.ts</context>
           <context context-type="linenumber">120</context>
         </context-group>
-        <target state="translated">Las siguientes mediciones pueden ser incorrectas. Haga clic en &lt;b&gt;Cancelar&lt;/b&gt; para arreglar o haga clic en &lt;b&gt;Aceptar&lt;/b&gt; para enviar.</target>
+        <target state="final">Las siguientes mediciones pueden ser incorrectas. Haga clic en &lt;b&gt;Cancelar&lt;/b&gt; para arreglar o haga clic en &lt;b&gt;Aceptar&lt;/b&gt; para enviar.</target>
       </trans-unit>
       <trans-unit id="62bc0ad597ef8f7b5602a36c625624cc2f8a6ef7" datatype="html" approved="yes">
         <source>Vitals</source>
@@ -8300,39 +8300,39 @@
         </context-group>
         <target state="final">Referencias: </target>
       </trans-unit>
-      <trans-unit id="8a0db24e7e3ed40395f039792c8bd90a33be14f7" datatype="html">
+      <trans-unit id="8a0db24e7e3ed40395f039792c8bd90a33be14f7" datatype="html" approved="yes">
         <source> Edit <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;minutes&quot;&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated"> Editar <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;minutes&quot;&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/>
+        <target state="final"> Editar <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;minutes&quot;&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/>
   
 </target>
       </trans-unit>
-      <trans-unit id="4342510535269152024" datatype="html">
+      <trans-unit id="4342510535269152024" datatype="html" approved="yes">
         <source>You have deleted selected meetups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">148</context>
         </context-group>
-        <target state="translated">Ha eliminado las reuniones seleccionadas</target>
+        <target state="final">Ha eliminado las reuniones seleccionadas</target>
       </trans-unit>
-      <trans-unit id="3633779853516712282" datatype="html">
+      <trans-unit id="3633779853516712282" datatype="html" approved="yes">
         <source>There was a problem deleting these meetups.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">150</context>
         </context-group>
-        <target state="translated">Hubo un problema al eliminar estas reuniones.</target>
+        <target state="final">Hubo un problema al eliminar estas reuniones.</target>
       </trans-unit>
-      <trans-unit id="3919928928256100890" datatype="html">
+      <trans-unit id="3919928928256100890" datatype="html" approved="yes">
         <source>You cannot join an old meetup.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.ts</context>
           <context context-type="linenumber">189</context>
         </context-group>
-        <target state="translated">No puedes unirte a una vieja reunión.</target>
+        <target state="final">No puedes unirte a una vieja reunión.</target>
       </trans-unit>
       <trans-unit id="ff21f3e794267d03bd93abc2581290aecca12935" datatype="html" approved="yes">
         <source>Meetups</source>
@@ -8402,13 +8402,13 @@
         </context-group>
         <target state="final">Se unió a reunión</target>
       </trans-unit>
-      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
+      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="        &lt;s"/>clear<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="ngIf=&quot;eleme"/>Leave</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="        &lt;s"/>clear<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="ngIf=&quot;eleme"/>Salir</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="        &lt;s"/>clear<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="ngIf=&quot;eleme"/>Salir</target>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html" approved="yes">
         <source>Manage</source>
@@ -8450,13 +8450,13 @@
         </context-group>
         <target state="final">No se encontraron reuniones</target>
       </trans-unit>
-      <trans-unit id="4491293533591377812" datatype="html">
+      <trans-unit id="4491293533591377812" datatype="html" approved="yes">
         <source>You have left <x id="PH" equiv-text="countChanged"/> meetups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.service.ts</context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <target state="translated">Has dejado <x id="PH" equiv-text="countChanged"/> reuniones</target>
+        <target state="final">Has dejado <x id="PH" equiv-text="countChanged"/> reuniones</target>
       </trans-unit>
       <trans-unit id="1110805787603506098" datatype="html" approved="yes">
         <source>You have joined <x id="PH" equiv-text="countChanged"/> meetups</source>
@@ -9886,23 +9886,23 @@
         </context-group>
         <target state="final">Previos intentos: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
-      <trans-unit id="9766af821d2a20e35add69544ab589e1d34372fe" datatype="html">
+      <trans-unit id="9766af821d2a20e35add69544ab589e1d34372fe" datatype="html" approved="yes">
         <source> Review Attempts </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">17,18</context>
         </context-group>
-        <target state="translated"> Intentos de revisión </target>
+        <target state="final"> Intentos de revisión </target>
       </trans-unit>
-      <trans-unit id="0c9caaeca90c67df8181d0d3782320041ed244eb" datatype="html">
+      <trans-unit id="0c9caaeca90c67df8181d0d3782320041ed244eb" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, take {Take Test} continue {Continue Test} retake {Retake Test}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, take {Toma la prueba} continue {¡Continúa la prueba} retake {¡Reinicia la prueba}}</target>
+        <target state="final">{VAR_SELECT, select, take {Toma la prueba} continue {¡Continúa la prueba} retake {¡Reinicia la prueba}}</target>
       </trans-unit>
-      <trans-unit id="05a6c5225741ad711eae3e129330d6b0c49e09e7" datatype="html">
+      <trans-unit id="05a6c5225741ad711eae3e129330d6b0c49e09e7" datatype="html" approved="yes">
         <source>
           <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}       "/>
         </source>
@@ -9910,47 +9910,47 @@
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">25,26</context>
         </context-group>
-        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Realizar prueba} continue {Continuar prueba} retake {Volver a tomar la prueba}}       "/> </target>
+        <target state="final"> <x id="ICU" equiv-text="{examText, select, take {Realizar prueba} continue {Continuar prueba} retake {Volver a tomar la prueba}}       "/> </target>
       </trans-unit>
-      <trans-unit id="fb90c4904a8b04c19372034c2e4a58634ce65e21" datatype="html">
+      <trans-unit id="fb90c4904a8b04c19372034c2e4a58634ce65e21" datatype="html" approved="yes">
         <source> Take Survey </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">33,34</context>
         </context-group>
-        <target state="translated"> Tomar Encuesta </target>
+        <target state="final"> Tomar Encuesta </target>
       </trans-unit>
-      <trans-unit id="0210c438bacd6f4eb23961f1eb778cf263fdc7f5" datatype="html">
+      <trans-unit id="0210c438bacd6f4eb23961f1eb778cf263fdc7f5" datatype="html" approved="yes">
         <source> Preview </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">36,37</context>
         </context-group>
-        <target state="translated"> Vista previa </target>
+        <target state="final"> Vista previa </target>
       </trans-unit>
-      <trans-unit id="8b14f49a6303a8098139910a127e4c530d3a0d49" datatype="html">
+      <trans-unit id="8b14f49a6303a8098139910a127e4c530d3a0d49" datatype="html" approved="yes">
         <source> Preview Test </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">42,43</context>
         </context-group>
-        <target state="translated"> Previsualizar prueba </target>
+        <target state="final"> Previsualizar prueba </target>
       </trans-unit>
-      <trans-unit id="545d512bd30a8f75998d61a36a9d6fa8ff18baee" datatype="html">
+      <trans-unit id="545d512bd30a8f75998d61a36a9d6fa8ff18baee" datatype="html" approved="yes">
         <source> Preview Survey </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">47,48</context>
         </context-group>
-        <target state="translated"> Vista previa de encuesta </target>
+        <target state="final"> Vista previa de encuesta </target>
       </trans-unit>
-      <trans-unit id="78c5e6e08f1a99f1279e47c3e7ed2c0b78f42acb" datatype="html">
+      <trans-unit id="78c5e6e08f1a99f1279e47c3e7ed2c0b78f42acb" datatype="html" approved="yes">
         <source> View Resource Details </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">58,59</context>
         </context-group>
-        <target state="translated"> Ver detalles del recurso </target>
+        <target state="final"> Ver detalles del recurso </target>
       </trans-unit>
       <trans-unit id="b46c766f5745fbe4d967d14eaf20391606a0c28d" datatype="html" approved="yes">
         <source>List of Resources</source>
@@ -9968,7 +9968,7 @@
         </context-group>
         <target state="final">No hay descripción.</target>
       </trans-unit>
-      <trans-unit id="1534367694207535197" datatype="html">
+      <trans-unit id="1534367694207535197" datatype="html" approved="yes">
         <source>Steps</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.ts</context>
@@ -9978,9 +9978,9 @@
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.ts</context>
           <context context-type="linenumber">171</context>
         </context-group>
-        <target state="translated">Pasos</target>
+        <target state="final">Pasos</target>
       </trans-unit>
-      <trans-unit id="7020324760657049446" datatype="html">
+      <trans-unit id="7020324760657049446" datatype="html" approved="yes">
         <source>Quest.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.ts</context>
@@ -9990,7 +9990,7 @@
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.ts</context>
           <context context-type="linenumber">166</context>
         </context-group>
-        <target state="translated">Misión.</target>
+        <target state="final">Misión.</target>
       </trans-unit>
       <trans-unit id="4992e9ce2d5b9d465e27dc7e8a77019311e6c32d" datatype="html" approved="yes">
         <source>Course Progress</source>
@@ -10024,7 +10024,7 @@
         </context-group>
         <target state="final">Ver progreso de prueba</target>
       </trans-unit>
-      <trans-unit id="7f7633a79c20dbf87ac0cbb83ef96c48e56afa7d" datatype="html">
+      <trans-unit id="7f7633a79c20dbf87ac0cbb83ef96c48e56afa7d" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || &apos;Step &apos; + (step.ind"/>
         </source>
@@ -10032,7 +10032,7 @@
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || 'Paso ' + (step.ind"/> </target>
+        <target state="final"> <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || 'Paso ' + (step.ind"/> </target>
       </trans-unit>
       <trans-unit id="a79d938b5ed20249b4ab6bef86c12633d2f346a0" datatype="html" approved="yes">
         <source>Test</source>
@@ -10078,53 +10078,53 @@
         </context-group>
         <target state="final">Este paso está en curso.</target>
       </trans-unit>
-      <trans-unit id="4416413576346763682" datatype="html">
+      <trans-unit id="4416413576346763682" datatype="html" approved="yes">
         <source>Pending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated">Pendiente</target>
+        <target state="final">Pendiente</target>
       </trans-unit>
-      <trans-unit id="7051326948537819824" datatype="html">
+      <trans-unit id="7051326948537819824" datatype="html" approved="yes">
         <source>Not Graded</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="translated">Sin calificar</target>
+        <target state="final">Sin calificar</target>
       </trans-unit>
-      <trans-unit id="1161299114153631702" datatype="html">
+      <trans-unit id="1161299114153631702" datatype="html" approved="yes">
         <source>Completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated">Completado</target>
+        <target state="final">Completado</target>
       </trans-unit>
-      <trans-unit id="a20b186b1ac42c389d1a03a313fa5806f3e142f5" datatype="html">
+      <trans-unit id="a20b186b1ac42c389d1a03a313fa5806f3e142f5" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {mySurveys} grade {Submissions}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {misEncuestas} grade {¡Envíos}}</target>
+        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {¡Envíos}}</target>
       </trans-unit>
-      <trans-unit id="77f2c458f0c59985dd060235d000150dbe263d18" datatype="html">
+      <trans-unit id="77f2c458f0c59985dd060235d000150dbe263d18" datatype="html" approved="yes">
         <source> Tests </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">22,23</context>
         </context-group>
-        <target state="translated"> Tests </target>
+        <target state="final"> Tests </target>
       </trans-unit>
-      <trans-unit id="b02967be2c7428bf5545e2e2f702eec070760271" datatype="html">
+      <trans-unit id="b02967be2c7428bf5545e2e2f702eec070760271" datatype="html" approved="yes">
         <source> Surveys </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">25,26</context>
         </context-group>
-        <target state="translated"> Encuestas </target>
+        <target state="final"> Encuestas </target>
       </trans-unit>
       <trans-unit id="0c2d0e97890355f5113f8101d505cf8374a577ad" datatype="html" approved="yes">
         <source>Course Name</source>
@@ -10208,13 +10208,13 @@
         </context-group>
         <target state="final">Calificado en</target>
       </trans-unit>
-      <trans-unit id="3456814180102116536" datatype="html">
+      <trans-unit id="3456814180102116536" datatype="html" approved="yes">
         <source>Preview is not available for this test</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.ts</context>
           <context context-type="linenumber">73</context>
         </context-group>
-        <target state="translated">La vista previa no está disponible para esta prueba</target>
+        <target state="final">La vista previa no está disponible para esta prueba</target>
       </trans-unit>
       <trans-unit id="2fa3b16b569acf67b1d1a29e8083acc8d07b0595" datatype="html" approved="yes">
         <source>Question</source>
@@ -10232,13 +10232,13 @@
         </context-group>
         <target state="final"> en <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: 'short') || '--'}}"/></target>
       </trans-unit>
-      <trans-unit id="355dc55ec716a8a749b232dd07ad485191b3dfa8" datatype="html">
+      <trans-unit id="355dc55ec716a8a749b232dd07ad485191b3dfa8" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {Survey} exam {Test}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {Encuesta} exam {Prueba}}</target>
+        <target state="final">{VAR_SELECT, select, survey {Encuesta} exam {Prueba}}</target>
       </trans-unit>
       <trans-unit id="aeb4cd97caded9fb9b622d9468f269d55740237b" datatype="html" approved="yes">
         <source> By<x id="INTERPOLATION" equiv-text="{{&apos; &apos; + submittedBy}}"/></source>
@@ -10264,15 +10264,15 @@
         </context-group>
         <target state="final">Ingresa tu respuesta aquí</target>
       </trans-unit>
-      <trans-unit id="da5335cbd9d3f9bac761139454df5b79c4547718" datatype="html">
+      <trans-unit id="da5335cbd9d3f9bac761139454df5b79c4547718" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {Puedes elegir una o más respuestas.} exam {Hay una o más respuestas correctas. ¡Elige todas las respuestas correctas!}}</target>
+        <target state="final">{VAR_SELECT, select, survey {Puedes elegir una o más respuestas.} exam {Hay una o más respuestas correctas. ¡Elige todas las respuestas correctas!}}</target>
       </trans-unit>
-      <trans-unit id="7ea1535474a8d8d112d78780ae29df7ea54ebe62" datatype="html">
+      <trans-unit id="7ea1535474a8d8d112d78780ae29df7ea54ebe62" datatype="html" approved="yes">
         <source>
           <x id="ICU" equiv-text="{examType, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}             "/>
         </source>
@@ -10280,7 +10280,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">36,37</context>
         </context-group>
-        <target state="translated"> <x id="ICU" equiv-text="{examType, select, survey {Puede elegir una o más respuestas.} exam {Hay una o más respuestas correctas. Por favor, elija todas las respuestas correctas.}}             "/> </target>
+        <target state="final"> <x id="ICU" equiv-text="{examType, select, survey {Puede elegir una o más respuestas.} exam {Hay una o más respuestas correctas. Por favor, elija todas las respuestas correctas.}}             "/> </target>
       </trans-unit>
       <trans-unit id="73c34be23712a3b6418c7fa78133edcc6243aaf1" datatype="html" approved="yes">
         <source>Submitted answer:</source>
@@ -10354,15 +10354,15 @@
         </context-group>
         <target state="final">Enviar respuesta</target>
       </trans-unit>
-      <trans-unit id="220fe7824eecfc317b8a4bf2a4684dde57be5f5b" datatype="html">
+      <trans-unit id="220fe7824eecfc317b8a4bf2a4684dde57be5f5b" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {Finish Survey} exam {Finish Test}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {¡Finaliza la encuesta} exam {¡Finaliza la prueba}}</target>
+        <target state="final">{VAR_SELECT, select, survey {¡Finaliza la encuesta} exam {¡Finaliza la prueba}}</target>
       </trans-unit>
-      <trans-unit id="32ac591a2c27504838d629c5e35afec2c97788ed" datatype="html">
+      <trans-unit id="32ac591a2c27504838d629c5e35afec2c97788ed" datatype="html" approved="yes">
         <source>
           <x id="ICU" equiv-text="{examType, select, survey {Finish Survey} exam {Finish Test}}       "/>
         </source>
@@ -10370,7 +10370,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">86,87</context>
         </context-group>
-        <target state="translated"> <x id="ICU" equiv-text="{examType, select, survey {Terminar encuesta} exam {Finalizar prueba}}       "/> </target>
+        <target state="final"> <x id="ICU" equiv-text="{examType, select, survey {Terminar encuesta} exam {Finalizar prueba}}       "/> </target>
       </trans-unit>
       <trans-unit id="e3b437177444483ae45895ed7db8dca06a1d7568" datatype="html" approved="yes">
         <source>Incorrect answer, please try again</source>
@@ -10380,13 +10380,13 @@
         </context-group>
         <target state="final">Contraseña incorrecta, vuelve a intentarlo</target>
       </trans-unit>
-      <trans-unit id="2e387d7da8f0af49c148be54826069b2d68f0d59" datatype="html">
+      <trans-unit id="2e387d7da8f0af49c148be54826069b2d68f0d59" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {Survey is complete.} exam {Test is complete.}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {Encuesta completada.} exam {Prueba completada.}}</target>
+        <target state="final">{VAR_SELECT, select, survey {Encuesta completada.} exam {Prueba completada.}}</target>
       </trans-unit>
       <trans-unit id="e3b42c766c994f673b65f6117b40abb77e3123f8" datatype="html" approved="yes">
         <source>You can close the preview.</source>
@@ -10396,53 +10396,53 @@
         </context-group>
         <target state="final">Puede cerrar la vista previa.</target>
       </trans-unit>
-      <trans-unit id="35f905ee76c0bebaa7eb87c1e1a743f5255a4191" datatype="html">
+      <trans-unit id="35f905ee76c0bebaa7eb87c1e1a743f5255a4191" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, survey {Haga clic en Finalizar Encuesta para enviar para revisión.} exam {Haga clic en Finalizar Prueba para enviar para revisar.}}</target>
+        <target state="final">{VAR_SELECT, select, survey {Haga clic en Finalizar Encuesta para enviar para revisión.} exam {Haga clic en Finalizar Prueba para enviar para revisar.}}</target>
       </trans-unit>
-      <trans-unit id="6095875067730636945" datatype="html">
+      <trans-unit id="6095875067730636945" datatype="html" approved="yes">
         <source>Planet was not accepted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
           <context context-type="linenumber">111</context>
         </context-group>
-        <target state="translated">El plan no fue aceptado</target>
+        <target state="final">El plan no fue aceptado</target>
       </trans-unit>
-      <trans-unit id="2972014593505653665" datatype="html">
+      <trans-unit id="2972014593505653665" datatype="html" approved="yes">
         <source>There was a problem deleting this community</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
           <context context-type="linenumber">134</context>
         </context-group>
-        <target state="translated">Hubo un problema al eliminar esta comunidad</target>
+        <target state="final">Hubo un problema al eliminar esta comunidad</target>
       </trans-unit>
-      <trans-unit id="3096098546617387266" datatype="html">
+      <trans-unit id="3096098546617387266" datatype="html" approved="yes">
         <source>Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
           <context context-type="linenumber">211</context>
         </context-group>
-        <target state="translated">Editar nombre <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/></target>
+        <target state="final">Editar nombre <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/></target>
       </trans-unit>
-      <trans-unit id="2012917231300508078" datatype="html">
+      <trans-unit id="2012917231300508078" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
           <context context-type="linenumber">232</context>
         </context-group>
-        <target state="translated"><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> nombre actualizado.</target>
+        <target state="final"><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> nombre actualizado.</target>
       </trans-unit>
-      <trans-unit id="4685838598500716603" datatype="html">
+      <trans-unit id="4685838598500716603" datatype="html" approved="yes">
         <source>There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
           <context context-type="linenumber">235</context>
         </context-group>
-        <target state="translated">Hubo un error al actualizar el nombre <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/></target>
+        <target state="final">Hubo un error al actualizar el nombre <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/></target>
       </trans-unit>
       <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html" approved="yes">
         <source>URL</source>
@@ -10460,39 +10460,39 @@
         </context-group>
         <target state="final">Fecha de creación</target>
       </trans-unit>
-      <trans-unit id="03a50faaf426ee668aecb37f5b0aa8ae6d78baac" datatype="html">
+      <trans-unit id="03a50faaf426ee668aecb37f5b0aa8ae6d78baac" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">48,49</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Eliminar </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Eliminar </target>
       </trans-unit>
-      <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html">
+      <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html" approved="yes">
         <source> Edit Name </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">39,40</context>
         </context-group>
-        <target state="translated"> Editar nombre </target>
+        <target state="final"> Editar nombre </target>
       </trans-unit>
-      <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html">
+      <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html" approved="yes">
         <source> Communities </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">24,25</context>
         </context-group>
-        <target state="translated"> Comunidades </target>
+        <target state="final"> Comunidades </target>
       </trans-unit>
-      <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html">
+      <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html" approved="yes">
         <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">27,30</context>
         </context-group>
-        <target state="translated">{VAR_SELECT_2, select, sandbox {Añade a {VAR_SELECT, select, nation {Red} center {¡Región}}} other {¡Mover {VAR_SELECT_1, select, nation {Redes} center {¡Regiones}}}}</target>
+        <target state="final">{VAR_SELECT_2, select, sandbox {Añade a {VAR_SELECT, select, nation {Red} center {¡Región}}} other {¡Mover {VAR_SELECT_1, select, nation {Redes} center {¡Regiones}}}}</target>
       </trans-unit>
-      <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html">
+      <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html" approved="yes">
         <source>
           <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/>
         </source>
@@ -10500,89 +10500,89 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">27,31</context>
         </context-group>
-        <target state="translated"> <x id="ICU" equiv-text="{ hub, select,             sandbox {Añadir { planetType, select, nation {Red} center {Región} }}             other {Moverse { planetType, select, nation {Redes} center {Regiones} }}           }         "/> </target>
+        <target state="final"> <x id="ICU" equiv-text="{ hub, select,             sandbox {Añadir { planetType, select, nation {Red} center {Región} }}             other {Moverse { planetType, select, nation {Redes} center {Regiones} }}           }         "/> </target>
       </trans-unit>
-      <trans-unit id="b784ca273d1611e93718c5ba67ec552f383d0e1d" datatype="html">
+      <trans-unit id="b784ca273d1611e93718c5ba67ec552f383d0e1d" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">44,45</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Aceptar </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Aceptar </target>
       </trans-unit>
-      <trans-unit id="1415060111017347427" datatype="html">
+      <trans-unit id="1415060111017347427" datatype="html" approved="yes">
         <source>Network</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Red</target>
+        <target state="final">Red</target>
       </trans-unit>
-      <trans-unit id="2702200797962830082" datatype="html">
+      <trans-unit id="2702200797962830082" datatype="html" approved="yes">
         <source>Region</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Región</target>
+        <target state="final">Región</target>
       </trans-unit>
-      <trans-unit id="5258595085525200029" datatype="html">
+      <trans-unit id="5258595085525200029" datatype="html" approved="yes">
         <source>Add <x id="PH" equiv-text="type"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">Añadir <x id="PH" equiv-text="type"/></target>
+        <target state="final">Añadir <x id="PH" equiv-text="type"/></target>
       </trans-unit>
-      <trans-unit id="6895106535826141456" datatype="html">
+      <trans-unit id="6895106535826141456" datatype="html" approved="yes">
         <source>Planet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="translated">Planet</target>
+        <target state="final">Planet</target>
       </trans-unit>
-      <trans-unit id="3047897875233101157" datatype="html">
+      <trans-unit id="3047897875233101157" datatype="html" approved="yes">
         <source>Select Planet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">104</context>
         </context-group>
-        <target state="translated">Seleccionar Planet</target>
+        <target state="final">Seleccionar Planet</target>
       </trans-unit>
-      <trans-unit id="935680876697928477" datatype="html">
+      <trans-unit id="935680876697928477" datatype="html" approved="yes">
         <source>There was an error adding <x id="PH" equiv-text="type"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">119</context>
         </context-group>
-        <target state="translated">Hubo un error al añadir <x id="PH" equiv-text="type"/></target>
+        <target state="final">Hubo un error al añadir <x id="PH" equiv-text="type"/></target>
       </trans-unit>
-      <trans-unit id="32abe7aeeedc8d3354255dfbb999a6b330683700" datatype="html">
+      <trans-unit id="32abe7aeeedc8d3354255dfbb999a6b330683700" datatype="html" approved="yes">
         <source> Pending </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">13,14</context>
         </context-group>
-        <target state="translated"> Pendiente </target>
+        <target state="final"> Pendiente </target>
       </trans-unit>
-      <trans-unit id="dd49f43647494e25d7034033322935d22a5bd683" datatype="html">
+      <trans-unit id="dd49f43647494e25d7034033322935d22a5bd683" datatype="html" approved="yes">
         <source> Connected </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">16,17</context>
         </context-group>
-        <target state="translated"> Conectado </target>
+        <target state="final"> Conectado </target>
       </trans-unit>
-      <trans-unit id="b2101f568fc522bc8de1ff1397815c2f6b48b565" datatype="html">
+      <trans-unit id="b2101f568fc522bc8de1ff1397815c2f6b48b565" datatype="html" approved="yes">
         <source>{VAR_SELECT_1, select, pending {Your Current List of Requests} accepted {{VAR_SELECT, select, nation {Connected Community Networks} center {Connected Regions}}}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">28,30</context>
         </context-group>
-        <target state="translated">{VAR_SELECT_1, select, pending {¡Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {¡Redes de comunidad conectadas} center {¡Regiones conectadas}}}}</target>
+        <target state="final">{VAR_SELECT_1, select, pending {¡Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {¡Redes de comunidad conectadas} center {¡Regiones conectadas}}}}</target>
       </trans-unit>
-      <trans-unit id="fda55fcfda6ee9032f2f9025444a847fefa294b8" datatype="html">
+      <trans-unit id="fda55fcfda6ee9032f2f9025444a847fefa294b8" datatype="html" approved="yes">
         <source>
           <x id="ICU" equiv-text="{ shownStatus, select,         pending {Your Current List of Requests}         accepted {{ planetType, select, nation {Connected Community Networks} center {Connected Regions} }} }       "/>
         </source>
@@ -10590,17 +10590,17 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">28,31</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{ shownStatus, select,         pending {Su lista actual de solicitudes}         accepted {{ planetType, select, nation {Redes comunitarias conectadas} center {Regiones conectadas} }} }       "/> </target>
+        <target state="final"><x id="ICU" equiv-text="{ shownStatus, select,         pending {Su lista actual de solicitudes}         accepted {{ planetType, select, nation {Redes comunitarias conectadas} center {Regiones conectadas} }} }       "/> </target>
       </trans-unit>
-      <trans-unit id="06e541e2085ae21ee51fd2f55cc079845f0ca69e" datatype="html">
+      <trans-unit id="06e541e2085ae21ee51fd2f55cc079845f0ca69e" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, nation {Add Network} center {Add Region}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, nation {¡Añade la red} center {¡Añade la región}}</target>
+        <target state="final">{VAR_SELECT, select, nation {¡Añade la red} center {¡Añade la región}}</target>
       </trans-unit>
-      <trans-unit id="d20ffd3c02b2da8a11d59baedec3970e756ec612" datatype="html">
+      <trans-unit id="d20ffd3c02b2da8a11d59baedec3970e756ec612" datatype="html" approved="yes">
         <source>
           <x id="ICU" equiv-text="{ planetType, select, nation {Add Network} center {Add Region} }       "/>
         </source>
@@ -10608,23 +10608,23 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">34,35</context>
         </context-group>
-        <target state="translated"> <x id="ICU" equiv-text="{ planetType, select, nation {Agregar red} center {Añadir región} }       "/> </target>
+        <target state="final"> <x id="ICU" equiv-text="{ planetType, select, nation {Agregar red} center {Añadir región} }       "/> </target>
       </trans-unit>
-      <trans-unit id="1cfd9fe8004228440a1a5f18d8525c2d8873b749" datatype="html">
+      <trans-unit id="1cfd9fe8004228440a1a5f18d8525c2d8873b749" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">46,47</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Borrar red </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Borrar red </target>
       </trans-unit>
-      <trans-unit id="8605994873123160708" datatype="html">
+      <trans-unit id="8605994873123160708" datatype="html" approved="yes">
         <source>Cancer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health.constants.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">Cancer</target>
+        <target state="final">Cancer</target>
       </trans-unit>
       <trans-unit id="6983399986398818397" datatype="html" approved="yes">
         <source>Cardiovascular disorders</source>
@@ -10874,327 +10874,327 @@
         </context-group>
         <target state="final">Ley</target>
       </trans-unit>
-      <trans-unit id="8832343684695963710" datatype="html">
+      <trans-unit id="8832343684695963710" datatype="html" approved="yes">
         <source>Learning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Aprender</target>
+        <target state="final">Aprender</target>
       </trans-unit>
-      <trans-unit id="6845524575989109311" datatype="html">
+      <trans-unit id="6845524575989109311" datatype="html" approved="yes">
         <source>Literature</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Literatura</target>
+        <target state="final">Literatura</target>
       </trans-unit>
-      <trans-unit id="3080099711511142058" datatype="html">
+      <trans-unit id="3080099711511142058" datatype="html" approved="yes">
         <source>Math</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated">Matemáticas</target>
+        <target state="final">Matemáticas</target>
       </trans-unit>
-      <trans-unit id="855872803871324523" datatype="html">
+      <trans-unit id="855872803871324523" datatype="html" approved="yes">
         <source>Music</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">Música</target>
+        <target state="final">Música</target>
       </trans-unit>
-      <trans-unit id="7436221208101133694" datatype="html">
+      <trans-unit id="7436221208101133694" datatype="html" approved="yes">
         <source>Politics and Government</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">Política y gobierno</target>
+        <target state="final">Política y gobierno</target>
       </trans-unit>
-      <trans-unit id="3147371091697922238" datatype="html">
+      <trans-unit id="3147371091697922238" datatype="html" approved="yes">
         <source>Reference</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">Referencia</target>
+        <target state="final">Referencia</target>
       </trans-unit>
-      <trans-unit id="744862547206313189" datatype="html">
+      <trans-unit id="744862547206313189" datatype="html" approved="yes">
         <source>Religion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">Religión</target>
+        <target state="final">Religión</target>
       </trans-unit>
-      <trans-unit id="8597364861447301684" datatype="html">
+      <trans-unit id="8597364861447301684" datatype="html" approved="yes">
         <source>Science</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Ciencia</target>
+        <target state="final">Ciencia</target>
       </trans-unit>
-      <trans-unit id="2421530779333047465" datatype="html">
+      <trans-unit id="2421530779333047465" datatype="html" approved="yes">
         <source>Social Sciences</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Ciencias Sociales</target>
+        <target state="final">Ciencias Sociales</target>
       </trans-unit>
-      <trans-unit id="513843037780139436" datatype="html">
+      <trans-unit id="513843037780139436" datatype="html" approved="yes">
         <source>Sports</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="translated">Deportes</target>
+        <target state="final">Deportes</target>
       </trans-unit>
-      <trans-unit id="5765523585863707029" datatype="html">
+      <trans-unit id="5765523585863707029" datatype="html" approved="yes">
         <source>Technology</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">Tecnología</target>
+        <target state="final">Tecnología</target>
       </trans-unit>
-      <trans-unit id="4910083311358584278" datatype="html">
+      <trans-unit id="4910083311358584278" datatype="html" approved="yes">
         <source>Early Education</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated">Educación temprana</target>
+        <target state="final">Educación temprana</target>
       </trans-unit>
-      <trans-unit id="18057945953021900" datatype="html">
+      <trans-unit id="18057945953021900" datatype="html" approved="yes">
         <source>Lower Primary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated">Menor primario</target>
+        <target state="final">Menor primario</target>
       </trans-unit>
-      <trans-unit id="8759628242708447609" datatype="html">
+      <trans-unit id="8759628242708447609" datatype="html" approved="yes">
         <source>Upper Primary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated">Principal superior</target>
+        <target state="final">Principal superior</target>
       </trans-unit>
-      <trans-unit id="7375716016988559491" datatype="html">
+      <trans-unit id="7375716016988559491" datatype="html" approved="yes">
         <source>Lower Secondary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="translated">Bajo secundario</target>
+        <target state="final">Bajo secundario</target>
       </trans-unit>
-      <trans-unit id="2146568470813983071" datatype="html">
+      <trans-unit id="2146568470813983071" datatype="html" approved="yes">
         <source>Upper Secondary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">Secundario superior</target>
+        <target state="final">Secundario superior</target>
       </trans-unit>
-      <trans-unit id="4331721931629393735" datatype="html">
+      <trans-unit id="4331721931629393735" datatype="html" approved="yes">
         <source>Undergraduate</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">Graduado</target>
+        <target state="final">Graduado</target>
       </trans-unit>
-      <trans-unit id="2797701537329503049" datatype="html">
+      <trans-unit id="2797701537329503049" datatype="html" approved="yes">
         <source>Graduate</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Graduado</target>
+        <target state="final">Graduado</target>
       </trans-unit>
-      <trans-unit id="7722828221329169436" datatype="html">
+      <trans-unit id="7722828221329169436" datatype="html" approved="yes">
         <source>Professional</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Profesional</target>
+        <target state="final">Profesional</target>
       </trans-unit>
-      <trans-unit id="6162693758764653365" datatype="html">
+      <trans-unit id="6162693758764653365" datatype="html" approved="yes">
         <source>Text</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">Texto</target>
+        <target state="final">Texto</target>
       </trans-unit>
-      <trans-unit id="3005583847063955885" datatype="html">
+      <trans-unit id="3005583847063955885" datatype="html" approved="yes">
         <source>Graphic/Pictures</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="translated">Gráfico/Fotos</target>
+        <target state="final">Gráfico/Fotos</target>
       </trans-unit>
-      <trans-unit id="5960547050292900847" datatype="html">
+      <trans-unit id="5960547050292900847" datatype="html" approved="yes">
         <source>Audio/Music/Book</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="translated">Audio/Música/Libro</target>
+        <target state="final">Audio/Música/Libro</target>
       </trans-unit>
-      <trans-unit id="6549265851868599441" datatype="html">
+      <trans-unit id="6549265851868599441" datatype="html" approved="yes">
         <source>Video</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated">Vídeo</target>
+        <target state="final">Vídeo</target>
       </trans-unit>
-      <trans-unit id="1592662511626645756" datatype="html">
+      <trans-unit id="1592662511626645756" datatype="html" approved="yes">
         <source>Just download</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated">Sólo descargar</target>
+        <target state="final">Sólo descargar</target>
       </trans-unit>
-      <trans-unit id="7913678223536081420" datatype="html">
+      <trans-unit id="7913678223536081420" datatype="html" approved="yes">
         <source>HTML</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="translated">HTML</target>
+        <target state="final">HTML</target>
       </trans-unit>
-      <trans-unit id="5794539423374616988" datatype="html">
+      <trans-unit id="5794539423374616988" datatype="html" approved="yes">
         <source>PDF.js</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="translated">PDF.js</target>
+        <target state="final">PDF.js</target>
       </trans-unit>
-      <trans-unit id="117089467365527130" datatype="html">
+      <trans-unit id="117089467365527130" datatype="html" approved="yes">
         <source>Bell-Reader</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="translated">BeLL-Reader</target>
+        <target state="final">BeLL-Reader</target>
       </trans-unit>
-      <trans-unit id="8791433357397328424" datatype="html">
+      <trans-unit id="8791433357397328424" datatype="html" approved="yes">
         <source>MP3</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated">MP3</target>
+        <target state="final">MP3</target>
       </trans-unit>
-      <trans-unit id="3067037062048660869" datatype="html">
+      <trans-unit id="3067037062048660869" datatype="html" approved="yes">
         <source>Flow Video Player</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="translated">Reproductor de vídeo de Flow</target>
+        <target state="final">Reproductor de vídeo de Flow</target>
       </trans-unit>
-      <trans-unit id="1439779788882494982" datatype="html">
+      <trans-unit id="1439779788882494982" datatype="html" approved="yes">
         <source>BeLL Video Book Player</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated">Reproductor de vídeo BeLL</target>
+        <target state="final">Reproductor de vídeo BeLL</target>
       </trans-unit>
-      <trans-unit id="5417597592174252978" datatype="html">
+      <trans-unit id="5417597592174252978" datatype="html" approved="yes">
         <source>Native Video</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="translated">Vídeo nativo</target>
+        <target state="final">Vídeo nativo</target>
       </trans-unit>
-      <trans-unit id="4147800774525158765" datatype="html">
+      <trans-unit id="4147800774525158765" datatype="html" approved="yes">
         <source>Textbook</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="translated">Textobook</target>
+        <target state="final">Textobook</target>
       </trans-unit>
-      <trans-unit id="7789101779167400829" datatype="html">
+      <trans-unit id="7789101779167400829" datatype="html" approved="yes">
         <source>Lesson Plan</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="translated">Plan de Lección</target>
+        <target state="final">Plan de Lección</target>
       </trans-unit>
-      <trans-unit id="2309808536212982229" datatype="html">
+      <trans-unit id="2309808536212982229" datatype="html" approved="yes">
         <source>Activities</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">Actividades</target>
+        <target state="final">Actividades</target>
       </trans-unit>
-      <trans-unit id="5815398842801469550" datatype="html">
+      <trans-unit id="5815398842801469550" datatype="html" approved="yes">
         <source>Exercises</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="translated">Ejercicios</target>
+        <target state="final">Ejercicios</target>
       </trans-unit>
-      <trans-unit id="8368569603919141747" datatype="html">
+      <trans-unit id="8368569603919141747" datatype="html" approved="yes">
         <source>Discussion Questions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="translated">Preguntas de debate</target>
+        <target state="final">Preguntas de debate</target>
       </trans-unit>
-      <trans-unit id="6317134853623145512" datatype="html">
+      <trans-unit id="6317134853623145512" datatype="html" approved="yes">
         <source>New survey added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="translated">Nueva encuesta añadida</target>
+        <target state="final">Nueva encuesta añadida</target>
       </trans-unit>
-      <trans-unit id="941114206781763713" datatype="html">
+      <trans-unit id="941114206781763713" datatype="html" approved="yes">
         <source>New test added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="translated">Nueva prueba añadida</target>
+        <target state="final">Nueva prueba añadida</target>
       </trans-unit>
-      <trans-unit id="174388127472361159" datatype="html">
+      <trans-unit id="174388127472361159" datatype="html" approved="yes">
         <source>Survey updated successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">100</context>
         </context-group>
-        <target state="translated">Encuesta actualizada correctamente</target>
+        <target state="final">Encuesta actualizada correctamente</target>
       </trans-unit>
-      <trans-unit id="3696810352584726915" datatype="html">
+      <trans-unit id="3696810352584726915" datatype="html" approved="yes">
         <source>Test updated successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.ts</context>
           <context context-type="linenumber">100</context>
         </context-group>
-        <target state="translated">Prueba actualizada correctamente</target>
+        <target state="final">Prueba actualizada correctamente</target>
       </trans-unit>
-      <trans-unit id="eabbe399bdf428d10ac22766a9cb96652c87290b" datatype="html">
+      <trans-unit id="eabbe399bdf428d10ac22766a9cb96652c87290b" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, exam {Test} survey {Survey}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
@@ -11204,7 +11204,7 @@
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, exam {Prueba} survey {Encuesta}}</target>
+        <target state="final">{VAR_SELECT, select, exam {Prueba} survey {Encuesta}}</target>
       </trans-unit>
       <trans-unit id="98ca9e77e76f3b2a10b1c6acbc922c3ba16464ad" datatype="html" approved="yes">
         <source>Save &amp; Return</source>
@@ -11274,13 +11274,13 @@
         </context-group>
         <target state="final">Opción Múltiple - respuesta múltiple</target>
       </trans-unit>
-      <trans-unit id="237aee1ad5348e348010215bd2a7775e413d0f43" datatype="html">
+      <trans-unit id="237aee1ad5348e348010215bd2a7775e413d0f43" datatype="html" approved="yes">
         <source>Preview <x id="ICU" equiv-text="{examType, select, exam {Test} survey {Survey}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Vista previa <x id="ICU" equiv-text="{examType, select, exam {Prueba} survey {Encuesta}}"/></target>
+        <target state="final">Vista previa <x id="ICU" equiv-text="{examType, select, exam {Prueba} survey {Encuesta}}"/></target>
       </trans-unit>
       <trans-unit id="0b21c81ca8bb91c383248584c87c1a135039ae70" datatype="html" approved="yes">
         <source>Editing Question</source>
@@ -11298,21 +11298,21 @@
         </context-group>
         <target state="final">Faltan algunos campos obligatorios.</target>
       </trans-unit>
-      <trans-unit id="4ca2c72bf5ff5edc48765326ef5d845125048f89" datatype="html">
+      <trans-unit id="4ca2c72bf5ff5edc48765326ef5d845125048f89" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, exam {test} survey {survey}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, exam {Prueba} survey {encuesta}}</target>
+        <target state="final">{VAR_SELECT, select, exam {Prueba} survey {encuesta}}</target>
       </trans-unit>
-      <trans-unit id="ae439bfbc5bf21c474056c6a99d51d9cbedad4e2" datatype="html">
+      <trans-unit id="ae439bfbc5bf21c474056c6a99d51d9cbedad4e2" datatype="html" approved="yes">
         <source>You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">Debes añadir una pregunta para previsualizar el <x id="ICU" equiv-text="{examType, select, exam {prueba} survey {encuesta}}"/></target>
+        <target state="final">Debes añadir una pregunta para previsualizar el <x id="ICU" equiv-text="{examType, select, exam {prueba} survey {encuesta}}"/></target>
       </trans-unit>
       <trans-unit id="9e60ae27adff66fbb52d5f7d98fc1ef1f3750bed" datatype="html" approved="yes">
         <source>
@@ -11368,29 +11368,29 @@
         </context-group>
         <target state="final">Añadir opción</target>
       </trans-unit>
-      <trans-unit id="13920b97c3b7d68064cd7fed213fec17f08662a0" datatype="html">
+      <trans-unit id="13920b97c3b7d68064cd7fed213fec17f08662a0" datatype="html" approved="yes">
         <source> You must add a choice </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-question.component.html</context>
           <context context-type="linenumber">20,21</context>
         </context-group>
-        <target state="translated"> Debes añadir una opción </target>
+        <target state="final"> Debes añadir una opción </target>
       </trans-unit>
-      <trans-unit id="155cfac8bb9b398e2b32a5a78736b54efc317214" datatype="html">
+      <trans-unit id="155cfac8bb9b398e2b32a5a78736b54efc317214" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, select {choice} selectMultiple {choices}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-question.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, select {elección} selectMultiple {elecciones}}</target>
+        <target state="final">{VAR_SELECT, select, select {elección} selectMultiple {elecciones}}</target>
       </trans-unit>
-      <trans-unit id="e1a01919bf52f60c91ef62c2108ff568b9b9c323" datatype="html">
+      <trans-unit id="e1a01919bf52f60c91ef62c2108ff568b9b9c323" datatype="html" approved="yes">
         <source> You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}     "/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-question.component.html</context>
           <context context-type="linenumber">24,25</context>
         </context-group>
-        <target state="translated"> Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {elección} selectMultiple {opciones}}     "/> </target>
+        <target state="final"> Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {elección} selectMultiple {opciones}}     "/> </target>
       </trans-unit>
       <trans-unit id="7caa77b9307c9832b37ecdbbda1ade7cf7e6c3d3" datatype="html" approved="yes">
         <source>Close Preview</source>
@@ -11416,13 +11416,13 @@
         </context-group>
         <target state="final"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Borrar<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
-      <trans-unit id="fdb49ad5f69a1206c2d9acdca4afaf2cb93279ed" datatype="html">
+      <trans-unit id="fdb49ad5f69a1206c2d9acdca4afaf2cb93279ed" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="1567cf7bdefe1d40e39cdaf3505317ddb1d0f2fa" datatype="html" approved="yes">
         <source>Certification Name</source>
@@ -11432,13 +11432,13 @@
         </context-group>
         <target state="final">Nombre del certificado</target>
       </trans-unit>
-      <trans-unit id="3c05c3a780c4558a662e672a89bdeb44fb2e08b4" datatype="html">
+      <trans-unit id="3c05c3a780c4558a662e672a89bdeb44fb2e08b4" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">28,29</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Editar </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Editar </target>
       </trans-unit>
       <trans-unit id="8c1279ab98bba8b884f744cccdedf4431f48d103" datatype="html" approved="yes">
         <source>No Certifications Found</source>
@@ -11448,21 +11448,21 @@
         </context-group>
         <target state="final">No se encontraron certificaciones</target>
       </trans-unit>
-      <trans-unit id="1211727562750778121" datatype="html">
+      <trans-unit id="1211727562750778121" datatype="html" approved="yes">
         <source>New certification added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target state="translated">Nueva certificación añadida</target>
+        <target state="final">Nueva certificación añadida</target>
       </trans-unit>
-      <trans-unit id="4307981078573107930" datatype="html">
+      <trans-unit id="4307981078573107930" datatype="html" approved="yes">
         <source>Certification updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target state="translated">Certificación actualizada</target>
+        <target state="final">Certificación actualizada</target>
       </trans-unit>
       <trans-unit id="f1997284f17b3f356e41cf815ebfc328a74123fc" datatype="html" approved="yes">
         <source><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Certification</source>
@@ -11496,13 +11496,13 @@
         </context-group>
         <target state="final">Nombre del certificado</target>
       </trans-unit>
-      <trans-unit id="d39b907e97fabd4ea7747d59630d332690bdbf1c" datatype="html">
+      <trans-unit id="d39b907e97fabd4ea7747d59630d332690bdbf1c" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">12,13</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Editar </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Editar </target>
       </trans-unit>
       <trans-unit id="582ac511469c38ec9277e09dd243246ada6ec3fd" datatype="html" approved="yes">
         <source>Course Requirements</source>
@@ -11520,13 +11520,13 @@
         </context-group>
         <target state="final">Miembros Certificados</target>
       </trans-unit>
-      <trans-unit id="754f497944b7d20333ce7230eba1aba5c967524e" datatype="html">
+      <trans-unit id="754f497944b7d20333ce7230eba1aba5c967524e" datatype="html" approved="yes">
         <source>No courses have been added. Click on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt; "/> to add courses.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">No se han añadido cursos. Haga clic en <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Editar<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt; "/> para añadir cursos.</target>
+        <target state="final">No se han añadido cursos. Haga clic en <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Editar<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt; "/> para añadir cursos.</target>
       </trans-unit>
       <trans-unit id="5bd25f9e824f25316a62df8c981ee28fe94472c6" datatype="html" approved="yes">
         <source>No members have been certified.</source>
@@ -11536,61 +11536,61 @@
         </context-group>
         <target state="final">Ningún miembro ha sido certificado.</target>
       </trans-unit>
-      <trans-unit id="4059126126596316619" datatype="html">
+      <trans-unit id="4059126126596316619" datatype="html" approved="yes">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">193</context>
         </context-group>
-        <target state="translated">Ha eliminado <x id="PH" equiv-text="deleteArray.length"/> encuestas</target>
+        <target state="final">Ha eliminado <x id="PH" equiv-text="deleteArray.length"/> encuestas</target>
       </trans-unit>
-      <trans-unit id="302849038487684889" datatype="html">
+      <trans-unit id="302849038487684889" datatype="html" approved="yes">
         <source>There was a problem deleting survey.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">195</context>
         </context-group>
-        <target state="translated">Hubo un problema al eliminar la encuesta.</target>
+        <target state="final">Hubo un problema al eliminar la encuesta.</target>
       </trans-unit>
-      <trans-unit id="6391136956444171776" datatype="html">
+      <trans-unit id="6391136956444171776" datatype="html" approved="yes">
         <source>Survey deleted: <x id="PH" equiv-text="survey.name"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">210</context>
         </context-group>
-        <target state="translated">Encuesta eliminada: <x id="PH" equiv-text="survey.name"/></target>
+        <target state="final">Encuesta eliminada: <x id="PH" equiv-text="survey.name"/></target>
       </trans-unit>
-      <trans-unit id="4314140811591483032" datatype="html">
+      <trans-unit id="4314140811591483032" datatype="html" approved="yes">
         <source>There was a problem deleting this survey.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">212</context>
         </context-group>
-        <target state="translated">Hubo un problema al eliminar esta encuesta.</target>
+        <target state="final">Hubo un problema al eliminar esta encuesta.</target>
       </trans-unit>
-      <trans-unit id="717884325364222210" datatype="html">
+      <trans-unit id="717884325364222210" datatype="html" approved="yes">
         <source>Survey requests sent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">264</context>
         </context-group>
-        <target state="translated">Solicitudes de encuesta enviadas</target>
+        <target state="final">Solicitudes de encuesta enviadas</target>
       </trans-unit>
-      <trans-unit id="272476219454502710" datatype="html">
+      <trans-unit id="272476219454502710" datatype="html" approved="yes">
         <source>Include Questions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">291</context>
         </context-group>
-        <target state="translated">Incluye preguntas</target>
+        <target state="final">Incluye preguntas</target>
       </trans-unit>
-      <trans-unit id="6000603289798163651" datatype="html">
+      <trans-unit id="6000603289798163651" datatype="html" approved="yes">
         <source>Include Answers</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">292</context>
         </context-group>
-        <target state="translated">Incluye respuestas</target>
+        <target state="final">Incluye respuestas</target>
       </trans-unit>
       <trans-unit id="69dd23678914843813f724f369cc5257f3bf508f" datatype="html" approved="yes">
         <source>Number of Times Taken</source>
@@ -11624,13 +11624,13 @@
         </context-group>
         <target state="final">No hay datos para exportar</target>
       </trans-unit>
-      <trans-unit id="89473e033576628fe0e65f151038fc69d9570f32" datatype="html">
+      <trans-unit id="89473e033576628fe0e65f151038fc69d9570f32" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>move_to_inbox<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Export Survey</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>move_to_inbox<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Exportar encuesta</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>move_to_inbox<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Exportar encuesta</target>
       </trans-unit>
       <trans-unit id="65224f6352181d4d586fe864794553e995a01f40" datatype="html" approved="yes">
         <source>Excel (CSV)</source>
@@ -11648,37 +11648,37 @@
         </context-group>
         <target state="final">Imprimir (PDF)</target>
       </trans-unit>
-      <trans-unit id="d3fed9aa04558c7c5cce6fe5beece448649ff01b" datatype="html">
+      <trans-unit id="d3fed9aa04558c7c5cce6fe5beece448649ff01b" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Edit Survey</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Editar encuesta</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Editar encuesta</target>
       </trans-unit>
-      <trans-unit id="9a1af8bb99afa0b17ab5c404adfec9e609960b80" datatype="html">
+      <trans-unit id="9a1af8bb99afa0b17ab5c404adfec9e609960b80" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Send Survey</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Enviar encuesta</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Enviar encuesta</target>
       </trans-unit>
-      <trans-unit id="0fed89be7ab1e5a75f0962a5f54604f16a659ac6" datatype="html">
+      <trans-unit id="0fed89be7ab1e5a75f0962a5f54604f16a659ac6" datatype="html" approved="yes">
         <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="a member of {{configur"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="translated">Registrar información de la encuesta de una persona que no es miembro de <x id="INTERPOLATION" equiv-text="a member of {{configur"/></target>
+        <target state="final">Registrar información de la encuesta de una persona que no es miembro de <x id="INTERPOLATION" equiv-text="a member of {{configur"/></target>
       </trans-unit>
-      <trans-unit id="253c896e12c0990afe6a7733ba8971bc8bf5c849" datatype="html">
+      <trans-unit id="253c896e12c0990afe6a7733ba8971bc8bf5c849" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>fiber_manual_record<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Record Survey </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">68,69</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>fiber_manual_record<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Grabar Encuesta </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>fiber_manual_record<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Grabar Encuesta </target>
       </trans-unit>
       <trans-unit id="ad5486d60f4da9175b5ffaea9b68d58bf31f54bb" datatype="html" approved="yes">
         <source>No Survey Found</source>
