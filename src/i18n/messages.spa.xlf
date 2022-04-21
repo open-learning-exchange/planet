@@ -9690,7 +9690,7 @@
           <context context-type="sourcefile">src/app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="final"><x id="ICU" equiv-text="{step.resources.length, plural, one {} =1 {recurso} other {recursos}}"/>.</target>
+        <target state="final"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {recurso} other {recursos}}"/>.</target>
       </trans-unit>
       <trans-unit id="6263ac43a8b2a7b2f82af6a6d375e37879d491b1" datatype="html" approved="yes">
         <source>The test has</source>
@@ -9714,7 +9714,7 @@
           <context context-type="sourcefile">src/app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="final"><x id="ICU" equiv-text="{step.exam.questions.length, plural, one {} =1 {pregunta} other {preguntas}}"/>.</target>
+        <target state="final"><x id="ICU" equiv-text="{step.exam.questions.length, plural, =1 {pregunta} other {preguntas}}"/>.</target>
       </trans-unit>
       <trans-unit id="5960890e18274117b9c21b07bde7b6326df91c07" datatype="html" approved="yes">
         <source>The survey has</source>
@@ -9738,7 +9738,7 @@
           <context context-type="sourcefile">src/app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">73</context>
         </context-group>
-        <target state="final"><x id="ICU" equiv-text="{step.survey.questions.length, plural, one {} =1 {pregunta} other {preguntas}}"/>.</target>
+        <target state="final"><x id="ICU" equiv-text="{step.survey.questions.length, plural, =1 {pregunta} other {preguntas}}"/>.</target>
       </trans-unit>
       <trans-unit id="0e66347135743a3ebddc8ce32228fb30b490d367" datatype="html" approved="yes">
         <source> Preview Test </source>
