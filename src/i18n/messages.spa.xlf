@@ -6918,7 +6918,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="final">Allí <x id="ICU" equiv-text="{pendingPushCount, plural, one {} =0 {son} =1 {es} other {son}}"/></target>
+        <target state="final">Allí <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {son} =1 {es} other {son}}"/></target>
       </trans-unit>
       <trans-unit id="c2dfcaa6427fea5b3701edb7422b3b943d88ecc5" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, nation {{VAR_PLURAL, plural, =0 {communities} =1 {community} other {communities}}} center {{VAR_PLURAL_1, plural, =0 {nations} =1 {nation} other {nations}}}}</source>
