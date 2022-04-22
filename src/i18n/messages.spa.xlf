@@ -192,7 +192,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}</target>
+        <target state="translated">{VAR_SELECT, select, accept {acepta} reject {rechaza} delete {elimina} leave {déjal} remove {Elimina} leader {Dale liderazgo a}}</target>
       </trans-unit>
       <trans-unit id="f6791629b2f59f7c3619150ff20496d074dcb409" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {member} change {change} team {team} task {task} certification {certification} event {event} transaction {transaction} link {link} report {report}}?
@@ -340,7 +340,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Is your feedback Urgent?</target>
+        <target state="translated">¿Es urgente tu comentario?</target>
       </trans-unit>
       <trans-unit id="8445874055593271783" datatype="html">
         <source>Feedback Type:</source>
@@ -348,7 +348,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Feedback Type:</target>
+        <target state="translated">Tipo de comentario:</target>
       </trans-unit>
       <trans-unit id="2990758986298089631" datatype="html">
         <source>Your Feedback</source>
@@ -356,7 +356,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target state="needs-translation">Your Feedback</target>
+        <target state="translated">Tus comentarios</target>
       </trans-unit>
       <trans-unit id="1913882854081114283" datatype="html">
         <source><x id="PH" equiv-text="newFeedback.type"/> regarding <x id="PH_1" equiv-text="feedbackUrl"/></source>
@@ -364,7 +364,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="newFeedback.type"/> regarding <x id="PH_1" equiv-text="feedbackUrl"/></target>
+        <target state="translated"><x id="PH" equiv-text="newFeedback.type"/> con respecto a <x id="PH_1" equiv-text="feedbackUrl"/></target>
       </trans-unit>
       <trans-unit id="5797017555211455118" datatype="html">
         <source>Thank you, your feedback is submitted!</source>
@@ -372,7 +372,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="needs-translation">Thank you, your feedback is submitted!</target>
+        <target state="translated">¡Gracias, su opinión ha sido enviada!</target>
       </trans-unit>
       <trans-unit id="5883618387676553175" datatype="html">
         <source>Error, your feedback cannot be submitted</source>
@@ -380,7 +380,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">104</context>
         </context-group>
-        <target state="needs-translation">Error, your feedback cannot be submitted</target>
+        <target state="translated">Error, no se puede enviar tu opinión</target>
       </trans-unit>
       <trans-unit id="8429316238784832901" datatype="html">
         <source>Feedback</source>
@@ -388,7 +388,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="needs-translation">Feedback</target>
+        <target state="translated">Comentarios</target>
       </trans-unit>
       <trans-unit id="fb30a6dd16b2455ffcaf94d40b840980f8f9dfed" datatype="html" approved="yes">
         <source>There are no items to select</source>
@@ -424,7 +424,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select}}</target>
+        <target state="translated">{VAR_SELECT, select, yes {Deselecciona} no {Selecciona}}</target>
       </trans-unit>
       <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}} "/> all </source>
@@ -468,7 +468,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Old Password</target>
+        <target state="translated">Contraseña antigua</target>
       </trans-unit>
       <trans-unit id="1431416938026210429" datatype="html">
         <source>Password</source>
@@ -488,7 +488,7 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Password</target>
+        <target state="translated">Contraseña</target>
       </trans-unit>
       <trans-unit id="3241357959735682038" datatype="html">
         <source>Confirm Password</source>
@@ -500,7 +500,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Confirm Password</target>
+        <target state="translated">Confirmar contraseña</target>
       </trans-unit>
       <trans-unit id="6582573664846559511" datatype="html">
         <source>Change Password</source>
@@ -508,7 +508,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">111</context>
         </context-group>
-        <target state="needs-translation">Change Password</target>
+        <target state="translated">Cambiar contraseña</target>
       </trans-unit>
       <trans-unit id="8348734508103087089" datatype="html">
         <source>Syncing started</source>
@@ -516,7 +516,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/sync.directive.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="needs-translation">Syncing started</target>
+        <target state="translated">Sincronización iniciada</target>
       </trans-unit>
       <trans-unit id="b779ee8bf5347b4f13b4cfd754c865adac65c7ec" datatype="html" approved="yes">
         <source>Add New Image</source>
@@ -588,7 +588,7 @@
           <context context-type="sourcefile">src/app/resources/resources.service.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation"> Resources successfully removed from myLibrary</target>
+        <target state="translated"> Recursos eliminados con éxito de myLibrary</target>
       </trans-unit>
       <trans-unit id="4703909854007878985" datatype="html">
         <source> Resources added to your dashboard</source>
@@ -596,7 +596,7 @@
           <context context-type="sourcefile">src/app/resources/resources.service.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation"> Resources added to your dashboard</target>
+        <target state="translated"> Recursos añadidos a tu panel de control</target>
       </trans-unit>
       <trans-unit id="3470732430391263457" datatype="html">
         <source>There are new resources in the Library. Click to see them!</source>
@@ -604,7 +604,7 @@
           <context context-type="sourcefile">src/app/resources/resources.service.ts</context>
           <context context-type="linenumber">152</context>
         </context-group>
-        <target state="needs-translation">There are new resources in the Library. Click to see them!</target>
+        <target state="translated">Hay nuevos recursos en la Biblioteca. ¡Haz clic para verlos!</target>
       </trans-unit>
       <trans-unit id="8186245387967147088" datatype="html">
         <source>Nation</source>
@@ -616,7 +616,7 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Nation</target>
+        <target state="translated">Nación</target>
       </trans-unit>
       <trans-unit id="1274247756500564795" datatype="html">
         <source>Community</source>
@@ -628,7 +628,7 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Community</target>
+        <target state="translated">Comunidad</target>
       </trans-unit>
       <trans-unit id="3041841225755615388" datatype="html">
         <source><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Details</source>
@@ -636,7 +636,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.service.ts</context>
           <context context-type="linenumber">222</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Details</target>
+        <target state="translated"><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Detalles</target>
       </trans-unit>
       <trans-unit id="4014896326011468687" datatype="html">
         <source>Admin Confirmation</source>
@@ -644,7 +644,7 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="needs-translation">Admin Confirmation</target>
+        <target state="translated">Confirmación de Admin</target>
       </trans-unit>
       <trans-unit id="1922027233506151042" datatype="html">
         <source>Password is incorrect.</source>
@@ -652,7 +652,7 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="needs-translation">Password is incorrect.</target>
+        <target state="translated">La contraseña es incorrecta.</target>
       </trans-unit>
       <trans-unit id="8288238877926002807" datatype="html">
         <source>Invalid password</source>
@@ -660,7 +660,7 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="needs-translation">Invalid password</target>
+        <target state="translated">Contraseña no válida</target>
       </trans-unit>
       <trans-unit id="7725072328684268739" datatype="html">
         <source><x id="PH" equiv-text="title"/> successfully removed from myCourses</source>
@@ -672,7 +672,7 @@
           <context context-type="sourcefile">src/app/courses/courses.service.ts</context>
           <context context-type="linenumber">228</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="title"/> successfully removed from myCourses</target>
+        <target state="translated"><x id="PH" equiv-text="title"/> eliminado correctamente de micursos</target>
       </trans-unit>
       <trans-unit id="1528824276704609490" datatype="html">
         <source><x id="PH" equiv-text="title"/> added to your dashboard</source>
@@ -684,7 +684,7 @@
           <context context-type="sourcefile">src/app/courses/courses.service.ts</context>
           <context context-type="linenumber">228</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="title"/> added to your dashboard</target>
+        <target state="translated"><x id="PH" equiv-text="title"/> añadido a tu panel de control</target>
       </trans-unit>
       <trans-unit id="4478983912693286511" datatype="html">
         <source><x id="PH" equiv-text="countChanged"/> courses</source>
@@ -692,7 +692,7 @@
           <context context-type="sourcefile">src/app/courses/courses.service.ts</context>
           <context context-type="linenumber">227</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="countChanged"/> courses</target>
+        <target state="translated"><x id="PH" equiv-text="countChanged"/> cursos</target>
       </trans-unit>
       <trans-unit id="8967779035598464251" datatype="html">
         <source>You are not authorized. Please contact administrator.</source>
@@ -700,7 +700,7 @@
           <context context-type="sourcefile">src/app/shared/couchdb.service.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="needs-translation">You are not authorized. Please contact administrator.</target>
+        <target state="translated">No está autorizado. Póngase en contacto con el administrador.</target>
       </trans-unit>
       <trans-unit id="8579890230783442432" datatype="html">
         <source>You were assigned a new role</source>
@@ -708,7 +708,7 @@
           <context context-type="sourcefile">src/app/users/users.service.ts</context>
           <context context-type="linenumber">223</context>
         </context-group>
-        <target state="needs-translation">You were assigned a new role</target>
+        <target state="translated">Se le asignó un nuevo rol</target>
       </trans-unit>
       <trans-unit id="4578192247039196794" datatype="html">
         <source>Task</source>
@@ -716,7 +716,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.service.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target state="needs-translation">Task</target>
+        <target state="translated">Tarea</target>
       </trans-unit>
       <trans-unit id="3108168000666137165" datatype="html">
         <source>Deadline</source>
@@ -724,7 +724,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.service.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="needs-translation">Deadline</target>
+        <target state="translated">Fecha límite</target>
       </trans-unit>
       <trans-unit id="6393659300045087883" datatype="html">
         <source>Deadline Time</source>
@@ -732,7 +732,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.service.ts</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="needs-translation">Deadline Time</target>
+        <target state="translated">Fecha límite</target>
       </trans-unit>
       <trans-unit id="4902817035128594900" datatype="html">
         <source>Description</source>
@@ -748,7 +748,7 @@
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements-update.component.ts</context>
           <context context-type="linenumber">125</context>
         </context-group>
-        <target state="needs-translation">Description</target>
+        <target state="translated">Descripción</target>
       </trans-unit>
       <trans-unit id="6597680371820382343" datatype="html">
         <source>validateDates(): startDate control is not found in parent group</source>
@@ -756,7 +756,7 @@
           <context context-type="sourcefile">src/app/validators/custom-validators.ts</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="needs-translation">validateDates(): startDate control is not found in parent group</target>
+        <target state="translated">validateDates(): el control de la fecha de inicio no se encuentra en el grupo padre</target>
       </trans-unit>
       <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html" approved="yes">
         <source>ID</source>
@@ -900,7 +900,7 @@
           <context context-type="sourcefile">src/app/community/community-list.component.html</context>
           <context context-type="linenumber">26,27</context>
         </context-group>
-        <target state="needs-translation"> View Report </target>
+        <target state="translated"> Ver informe </target>
       </trans-unit>
       <trans-unit id="11eb38ace36c45d1a3d10bb8d177b8fe51c553a4" datatype="html" approved="yes">
         <source>Sandbox Planets</source>
@@ -924,7 +924,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="needs-translation">Task updated successfully</target>
+        <target state="translated">Tarea actualizada correctamente</target>
       </trans-unit>
       <trans-unit id="632836510174522566" datatype="html">
         <source>Task created successfully</source>
@@ -932,7 +932,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="needs-translation">Task created successfully</target>
+        <target state="translated">Tarea creada con éxito</target>
       </trans-unit>
       <trans-unit id="922482600342048186" datatype="html">
         <source>Edit Task</source>
@@ -940,7 +940,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="needs-translation">Edit Task</target>
+        <target state="translated">Editar tarea</target>
       </trans-unit>
       <trans-unit id="1106209590160342889" datatype="html">
         <source>Add Task</source>
@@ -948,7 +948,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="needs-translation">Add Task</target>
+        <target state="translated">Añadir tarea</target>
       </trans-unit>
       <trans-unit id="1594753606848576570" datatype="html">
         <source>You have deleted a task.</source>
@@ -956,7 +956,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">103</context>
         </context-group>
-        <target state="needs-translation">You have deleted a task.</target>
+        <target state="translated">Has eliminado una tarea.</target>
       </trans-unit>
       <trans-unit id="6883985625707132284" datatype="html">
         <source>There was a problem deleting this team.</source>
@@ -968,7 +968,7 @@
           <context context-type="sourcefile">src/app/teams/teams.component.ts</context>
           <context context-type="linenumber">229</context>
         </context-group>
-        <target state="needs-translation">There was a problem deleting this team.</target>
+        <target state="translated">Hubo un problema al eliminar este equipo.</target>
       </trans-unit>
       <trans-unit id="8927336123907203447" datatype="html">
         <source>You were assigned a new task</source>
@@ -976,7 +976,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">150</context>
         </context-group>
-        <target state="needs-translation">You were assigned a new task</target>
+        <target state="translated">Se te ha asignado una nueva tarea</target>
       </trans-unit>
       <trans-unit id="f1fb641f599b5ff4f33419ca08dcb02c00822ea5" datatype="html" approved="yes">
         <source>Add a task</source>
@@ -992,7 +992,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.html</context>
           <context context-type="linenumber">8,9</context>
         </context-group>
-        <target state="needs-translation"> myTasks </target>
+        <target state="translated"> miTareas </target>
       </trans-unit>
       <trans-unit id="98c204852bf501b6fc0016709f9f33b1f71aa1a1" datatype="html">
         <source> All Tasks </source>
@@ -1000,7 +1000,7 @@
           <context context-type="sourcefile">src/app/tasks/tasks.component.html</context>
           <context context-type="linenumber">11,12</context>
         </context-group>
-        <target state="needs-translation"> All Tasks </target>
+        <target state="translated"> Todas las tareas </target>
       </trans-unit>
       <trans-unit id="287628a9d3c31a07593caf82ddd3986582074273" datatype="html" approved="yes">
         <source>Deadline:</source>
@@ -1100,7 +1100,7 @@
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="needs-translation">Resource Views by Month</target>
+        <target state="translated">Vistas de recursos por mes</target>
       </trans-unit>
       <trans-unit id="8274964871742592467" datatype="html">
         <source>Course Views by Month</source>
@@ -1112,7 +1112,7 @@
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="needs-translation">Course Views by Month</target>
+        <target state="translated">Vistas del curso por mes</target>
       </trans-unit>
       <trans-unit id="5754271872143949281" datatype="html">
         <source>Total Member Visits by Month</source>
@@ -1124,7 +1124,7 @@
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="needs-translation">Total Member Visits by Month</target>
+        <target state="translated">Visitas totales de miembros por mes</target>
       </trans-unit>
       <trans-unit id="1122687023031648394" datatype="html">
         <source>Unique Member Visits by Month</source>
@@ -1136,7 +1136,7 @@
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="needs-translation">Unique Member Visits by Month</target>
+        <target state="translated">Visitas únicas de socios por mes</target>
       </trans-unit>
       <trans-unit id="2502500993744072451" datatype="html">
         <source>Steps Completed by Month</source>
@@ -1148,7 +1148,7 @@
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target state="needs-translation">Steps Completed by Month</target>
+        <target state="translated">Pasos completados por el mes</target>
       </trans-unit>
       <trans-unit id="4270578970484850798" datatype="html">
         <source>You re-opened this feedback.</source>
@@ -1156,7 +1156,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.service.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">You re-opened this feedback.</target>
+        <target state="translated">Has vuelto a abrir este comentario.</target>
       </trans-unit>
       <trans-unit id="2403361110765782799" datatype="html">
         <source>You closed this feedback.</source>
@@ -1164,7 +1164,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.service.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">You closed this feedback.</target>
+        <target state="translated">Has cerrado este comentario.</target>
       </trans-unit>
       <trans-unit id="3a3668364fd42fca62ce7a31e88e9de577b8b266" datatype="html" approved="yes">
         <source>Select Planet</source>
@@ -1180,7 +1180,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
           <context context-type="linenumber">142</context>
         </context-group>
-        <target state="needs-translation">New collection added</target>
+        <target state="translated">Nueva colección añadida</target>
       </trans-unit>
       <trans-unit id="4910426482289634030" datatype="html">
         <source>Collection updated</source>
@@ -1188,7 +1188,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
           <context context-type="linenumber">157</context>
         </context-group>
-        <target state="needs-translation">Collection updated</target>
+        <target state="translated">Colección actualizada</target>
       </trans-unit>
       <trans-unit id="6479431726273099172" datatype="html">
         <source>Subcollection of...</source>
@@ -1196,7 +1196,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
           <context context-type="linenumber">168</context>
         </context-group>
-        <target state="needs-translation">Subcollection of...</target>
+        <target state="translated">Subcolección de...</target>
       </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
         <source>Name</source>
@@ -1224,7 +1224,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
           <context context-type="linenumber">212</context>
         </context-group>
-        <target state="needs-translation">Name</target>
+        <target state="translated">Nombre</target>
       </trans-unit>
       <trans-unit id="6829390231101249587" datatype="html">
         <source>Tag deleted: <x id="PH" equiv-text="tag.name"/></source>
@@ -1232,7 +1232,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
           <context context-type="linenumber">205</context>
         </context-group>
-        <target state="needs-translation">Tag deleted: <x id="PH" equiv-text="tag.name"/></target>
+        <target state="translated">Etiqueta eliminada: <x id="PH" equiv-text="tag.name"/></target>
       </trans-unit>
       <trans-unit id="3314808714627824584" datatype="html">
         <source>There was a problem deleting this tag.</source>
@@ -1240,7 +1240,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
           <context context-type="linenumber">207</context>
         </context-group>
-        <target state="needs-translation">There was a problem deleting this tag.</target>
+        <target state="translated">Hubo un problema al eliminar esta etiqueta.</target>
       </trans-unit>
       <trans-unit id="0539092f5642901cc44e32b1a841270c2448aa40" datatype="html" approved="yes">
         <source>Filter by Collection Name</source>
@@ -1468,7 +1468,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target state="needs-translation">Add Image</target>
+        <target state="translated">Añadir imagen</target>
       </trans-unit>
       <trans-unit id="e3eabe4bc26223eb279394f47a58891af68b61c0" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</source>
@@ -1548,7 +1548,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">Rate</target>
+        <target state="translated">Tasa</target>
       </trans-unit>
       <trans-unit id="1463626174028575334" datatype="html">
         <source>Your Rating</source>
@@ -1556,7 +1556,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Your Rating</target>
+        <target state="translated">Tu puntuación</target>
       </trans-unit>
       <trans-unit id="2662644497259948010" datatype="html">
         <source>Comment</source>
@@ -1564,7 +1564,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Comment</target>
+        <target state="translated">Comentario</target>
       </trans-unit>
       <trans-unit id="1114700465921225367" datatype="html">
         <source>Would you like to leave a comment?</source>
@@ -1572,7 +1572,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Would you like to leave a comment?</target>
+        <target state="translated">¿Quieres dejar un comentario?</target>
       </trans-unit>
       <trans-unit id="8817338979353272763" datatype="html">
         <source>Thank you, your rating is submitted!</source>
@@ -1580,7 +1580,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target state="needs-translation">Thank you, your rating is submitted!</target>
+        <target state="translated">¡Gracias, tu calificación ha sido enviada!</target>
       </trans-unit>
       <trans-unit id="7917163392288701953" datatype="html">
         <source>Thank you for your additional comments</source>
@@ -1588,7 +1588,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="needs-translation">Thank you for your additional comments</target>
+        <target state="translated">Gracias por sus comentarios adicionales</target>
       </trans-unit>
       <trans-unit id="3706222784708785028" datatype="html">
         <source>Rating</source>
@@ -1596,7 +1596,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">135</context>
         </context-group>
-        <target state="needs-translation">Rating</target>
+        <target state="translated">Valoración</target>
       </trans-unit>
       <trans-unit id="1028171187763989633" datatype="html">
         <source>There was an issue updating your rating</source>
@@ -1604,7 +1604,7 @@
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">145</context>
         </context-group>
-        <target state="needs-translation">There was an issue updating your rating</target>
+        <target state="translated">Hubo un problema al actualizar tu calificación</target>
       </trans-unit>
       <trans-unit id="00d5eb6141a80092d2258e8ebc59531fff788b57" datatype="html" approved="yes">
         <source>
@@ -1638,7 +1638,7 @@
           <context context-type="sourcefile">src/app/shared/forms/form-error-messages.component.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation">Letters, numbers and _ . - allowed.</target>
+        <target state="translated">Letras, números y _ . - permitido.</target>
       </trans-unit>
       <trans-unit id="ab3d26166235cd0712cbf521c86feb139ab01877" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list}}</source>
@@ -1922,7 +1922,7 @@
           <context context-type="sourcefile">src/app/community/community-link-dialog.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Teams</target>
+        <target state="translated">Equipos</target>
       </trans-unit>
       <trans-unit id="2691415103769178647" datatype="html">
         <source>Enterprises</source>
@@ -1930,7 +1930,7 @@
           <context context-type="sourcefile">src/app/community/community-link-dialog.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">Enterprises</target>
+        <target state="translated">Empresas</target>
       </trans-unit>
       <trans-unit id="db2a4e38c960e7964dd30d1e13ec3da681945e14" datatype="html" approved="yes">
         <source>Type of Link</source>
@@ -2006,7 +2006,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">138</context>
         </context-group>
-        <target state="needs-translation">Add Story</target>
+        <target state="translated">Añadir historia</target>
       </trans-unit>
       <trans-unit id="6682795553360127522" datatype="html">
         <source>Your Story</source>
@@ -2014,7 +2014,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">139</context>
         </context-group>
-        <target state="needs-translation">Your Story</target>
+        <target state="translated">Tu historia</target>
       </trans-unit>
       <trans-unit id="7799915732089058334" datatype="html">
         <source>Message has been posted successfully</source>
@@ -2026,7 +2026,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">470</context>
         </context-group>
-        <target state="needs-translation">Message has been posted successfully</target>
+        <target state="translated">El mensaje se ha publicado correctamente</target>
       </trans-unit>
       <trans-unit id="1023644693014791390" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="currentUser.split(&apos;:&apos;)[1]"/>&lt;/b&gt; posted a &lt;b&gt;new story&lt;/b&gt;.</source>
@@ -2058,7 +2058,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">265</context>
         </context-group>
-        <target state="needs-translation">Change Leader Title</target>
+        <target state="translated">Cambiar título del líder</target>
       </trans-unit>
       <trans-unit id="1510170719772431801" datatype="html">
         <source>Add Leader Title</source>
@@ -2066,7 +2066,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">265</context>
         </context-group>
-        <target state="needs-translation">Add Leader Title</target>
+        <target state="translated">Añadir título de líder</target>
       </trans-unit>
       <trans-unit id="6237124452520563797" datatype="html">
         <source>Title deleted</source>
@@ -2074,7 +2074,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">283</context>
         </context-group>
-        <target state="needs-translation">Title deleted</target>
+        <target state="translated">Título eliminado</target>
       </trans-unit>
       <trans-unit id="5747793227686644489" datatype="html">
         <source>Title added</source>
@@ -2082,7 +2082,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">285</context>
         </context-group>
-        <target state="needs-translation">Title added</target>
+        <target state="translated">Título añadido</target>
       </trans-unit>
       <trans-unit id="7732999803360464192" datatype="html">
         <source>Title updated</source>
@@ -2090,7 +2090,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">286</context>
         </context-group>
-        <target state="needs-translation">Title updated</target>
+        <target state="translated">Título actualizado</target>
       </trans-unit>
       <trans-unit id="6910161258777059985" datatype="html">
         <source>Edit Description</source>
@@ -2098,7 +2098,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">305</context>
         </context-group>
-        <target state="needs-translation">Edit Description</target>
+        <target state="translated">Editar descripción</target>
       </trans-unit>
       <trans-unit id="5501786654960299265" datatype="html">
         <source>Add Description</source>
@@ -2106,7 +2106,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">305</context>
         </context-group>
-        <target state="needs-translation">Add Description</target>
+        <target state="translated">Añadir descripción</target>
       </trans-unit>
       <trans-unit id="1d0974afae70914072a4fbf19e53328e517bae73" datatype="html" approved="yes">
         <source>News</source>
@@ -2186,7 +2186,7 @@
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, Edit {Edit} Add {Add}}</target>
+        <target state="translated">{VAR_SELECT, select, Edit {Editar} Add {Añade}}</target>
       </trans-unit>
       <trans-unit id="54fd639c1b9cbb129dfc92849c0201e3a0597f68" datatype="html">
         <source>{VAR_SELECT, select, community {Community} nation {Nation} center {Earth}}</source>
@@ -2261,7 +2261,7 @@
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">144</context>
         </context-group>
-        <target state="needs-translation">Start upgrade</target>
+        <target state="translated">Iniciar actualización</target>
       </trans-unit>
       <trans-unit id="2827276519893025325" datatype="html">
         <source>Not started</source>
@@ -2269,7 +2269,7 @@
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="needs-translation">Not started</target>
+        <target state="translated">No iniciado</target>
       </trans-unit>
       <trans-unit id="8112791383751618441" datatype="html">
         <source>Upgrading</source>
@@ -2277,7 +2277,7 @@
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">Upgrading</target>
+        <target state="translated">Actualizando</target>
       </trans-unit>
       <trans-unit id="5401225784803031512" datatype="html">
         <source>Server request started</source>
@@ -2285,7 +2285,7 @@
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Server request started</target>
+        <target state="translated">Solicitud de servidor iniciada</target>
       </trans-unit>
       <trans-unit id="4648900870671159218" datatype="html">
         <source>Success</source>
@@ -3557,7 +3557,7 @@
           <context context-type="sourcefile">src/app/users/users.component.ts</context>
           <context context-type="linenumber">135</context>
         </context-group>
-        <target state="needs-translation">Roles updated</target>
+        <target state="translated">Rol actualizado</target>
       </trans-unit>
       <trans-unit id="3883608342071663260" datatype="html">
         <source>There was an error adding role(s) to member(s)</source>
