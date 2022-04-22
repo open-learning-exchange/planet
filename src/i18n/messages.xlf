@@ -6849,7 +6849,7 @@
       </trans-unit>
       <trans-unit id="5657d2448668ae93d4cbc7ff554a07a5a3b2fd74" datatype="html">
         <source> <x id="ICU" equiv-text="
-        {fullView, select, on {Show} off"/> details </source>
+        {fullView, select, on {Show} off {Hide}}"/> details </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">10,11</context>
