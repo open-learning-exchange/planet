@@ -2208,7 +2208,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5516871186038324585" datatype="html">
-        <source>There was an error removing <x id="PH" equiv-text="netMessage"/></source>
+        <source>There was an error removing <x id="PH" equiv-text="item.title"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.ts</context>
           <context context-type="linenumber">71</context>
@@ -2236,7 +2236,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html">
-        <source> Add item to <x id="INTERPOLATION" equiv-text="]=&quot;[emptyLink"/> </source>
+        <source> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">34,36</context>
