@@ -1677,20 +1677,20 @@
         <target state="final">Completo</target>
       </trans-unit>
       <trans-unit id="8517892359070439603" datatype="html">
-        <source>Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace('org.couchdb.user:', '')"/>&lt;/b&gt; to the Planet Learning</source>
+        <source>Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; to the Planet Learning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="needs-translation">Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace('org.couchdb.user:', '')"/>&lt;/b&gt; to the Planet Learning</target>
+        <target state="needs-translation">Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; to the Planet Learning</target>
       </trans-unit>
       <trans-unit id="1260359891793768927" datatype="html">
-        <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace('org.couchdb.user:', '')"/>!</source>
+        <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
           <context context-type="linenumber">130</context>
         </context-group>
-        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace('org.couchdb.user:', '')"/>!</target>
+        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</target>
       </trans-unit>
       <trans-unit id="1496185008827271823" datatype="html">
         <source>An error occurred please try again</source>
@@ -2440,12 +2440,12 @@
         <target state="final">Mi progreso</target>
       </trans-unit>
       <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html">
-        <source> Add item to <x id="INTERPOLATION" equiv-text="]=&quot;[emptyLink"/> </source>
+        <source> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">34,36</context>
         </context-group>
-        <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="]=&quot;[emptyLink"/> </target>
+        <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </target>
       </trans-unit>
       <trans-unit id="7623976547869428392" datatype="html">
         <source>my</source>
@@ -7621,12 +7621,12 @@
         <target state="needs-translation">{VAR_SELECT, select, on {Show} off {Hide}}</target>
       </trans-unit>
       <trans-unit id="5657d2448668ae93d4cbc7ff554a07a5a3b2fd74" datatype="html">
-        <source><x id="ICU" equiv-text="         {fullView, select, on {Show} off"/> details </source>
+        <source><x id="ICU" equiv-text="         {fullView, select, on {Show} off {Hide}}"/> details </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">10,11</context>
         </context-group>
-        <target state="needs-translation"> <x id="ICU" equiv-text="         {fullView, select, on {Show} off"/> details </target>
+        <target state="needs-translation"> <x id="ICU" equiv-text="         {fullView, select, on {Show} off {Hide}}"/> details </target>
       </trans-unit>
       <trans-unit id="7097a7e261682ecdfdf828f549d2fd084bd6a822" datatype="html" approved="yes">
         <source>Level:</source>
@@ -10021,12 +10021,12 @@
         <target state="needs-translation">{VAR_SELECT, select, center {Nations} other {Communities}}</target>
       </trans-unit>
       <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html">
-        <source>myPlanet on <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Nations} other"/></source>
+        <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">myPlanet on <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Nations} other"/></target>
+        <target state="needs-translation">myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></target>
       </trans-unit>
       <trans-unit id="2467446332932372407" datatype="html">
         <source>There was a problem deleting item</source>
