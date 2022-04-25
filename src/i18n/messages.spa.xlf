@@ -7349,12 +7349,12 @@
         <target state="translated">Te has unido a <x id="PH" equiv-text="countChanged"/> reuniones</target>
       </trans-unit>
       <trans-unit id="3583016375550160777" datatype="html">
-        <source>You have deleted the <x id="PH" equiv-text="displayName ? `${displayName} event` : &apos;selected events&apos;"/></source>
+        <source>You have deleted the <x id="PH" equiv-text="displayName ? &#96;&#36;&#123;displayName&#125; event&#96; : &apos;selected events&apos;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.service.ts</context>
           <context context-type="linenumber">118</context>
         </context-group>
-        <target state="needs-translation">You have deleted the <x id="PH" equiv-text="displayName ? `${displayName} event` : 'selected events'"/></target>
+        <target state="needs-translation">You have deleted the <x id="PH" equiv-text="displayName ? &#96;&#36;&#123;displayName&#125; event&#96; : 'selected events'"/></target>
       </trans-unit>
       <trans-unit id="8842484659556861897" datatype="html">
         <source>There was a problem deleting this meetup</source>
