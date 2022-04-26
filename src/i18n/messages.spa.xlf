@@ -10942,7 +10942,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Social Sciences</target>
+        <target state="translated">Ciencias Sociales</target>
       </trans-unit>
       <trans-unit id="513843037780139436" datatype="html">
         <source>Sports</source>
@@ -10950,7 +10950,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Sports</target>
+        <target state="translated">Deportes</target>
       </trans-unit>
       <trans-unit id="5765523585863707029" datatype="html">
         <source>Technology</source>
@@ -10958,7 +10958,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Technology</target>
+        <target state="translated">Tecnología</target>
       </trans-unit>
       <trans-unit id="4910083311358584278" datatype="html">
         <source>Early Education</source>
@@ -10966,7 +10966,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">Early Education</target>
+        <target state="translated">Educación temprana</target>
       </trans-unit>
       <trans-unit id="18057945953021900" datatype="html">
         <source>Lower Primary</source>
@@ -10974,7 +10974,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">Lower Primary</target>
+        <target state="translated">Menor primario</target>
       </trans-unit>
       <trans-unit id="8759628242708447609" datatype="html">
         <source>Upper Primary</source>
@@ -10982,7 +10982,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="needs-translation">Upper Primary</target>
+        <target state="translated">Principal superior</target>
       </trans-unit>
       <trans-unit id="7375716016988559491" datatype="html">
         <source>Lower Secondary</source>
@@ -10990,7 +10990,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="needs-translation">Lower Secondary</target>
+        <target state="translated">Bajo secundario</target>
       </trans-unit>
       <trans-unit id="2146568470813983071" datatype="html">
         <source>Upper Secondary</source>
@@ -10998,7 +10998,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">Upper Secondary</target>
+        <target state="translated">Secundario superior</target>
       </trans-unit>
       <trans-unit id="4331721931629393735" datatype="html">
         <source>Undergraduate</source>
@@ -11006,7 +11006,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Undergraduate</target>
+        <target state="translated">Graduado</target>
       </trans-unit>
       <trans-unit id="2797701537329503049" datatype="html">
         <source>Graduate</source>
@@ -11014,7 +11014,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="needs-translation">Graduate</target>
+        <target state="translated">Graduado</target>
       </trans-unit>
       <trans-unit id="7722828221329169436" datatype="html">
         <source>Professional</source>
@@ -11022,7 +11022,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">Professional</target>
+        <target state="translated">Profesional</target>
       </trans-unit>
       <trans-unit id="6162693758764653365" datatype="html">
         <source>Text</source>
@@ -11030,7 +11030,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">Text</target>
+        <target state="translated">Texto</target>
       </trans-unit>
       <trans-unit id="3005583847063955885" datatype="html">
         <source>Graphic/Pictures</source>
@@ -11038,7 +11038,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="needs-translation">Graphic/Pictures</target>
+        <target state="translated">Gráfico/Fotos</target>
       </trans-unit>
       <trans-unit id="5960547050292900847" datatype="html">
         <source>Audio/Music/Book</source>
@@ -11046,7 +11046,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="needs-translation">Audio/Music/Book</target>
+        <target state="translated">Audio/Música/Libro</target>
       </trans-unit>
       <trans-unit id="6549265851868599441" datatype="html">
         <source>Video</source>
@@ -11054,7 +11054,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">Video</target>
+        <target state="translated">Vídeo</target>
       </trans-unit>
       <trans-unit id="1592662511626645756" datatype="html">
         <source>Just download</source>
@@ -11062,7 +11062,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="needs-translation">Just download</target>
+        <target state="translated">Sólo descargar</target>
       </trans-unit>
       <trans-unit id="7913678223536081420" datatype="html">
         <source>HTML</source>
@@ -11070,7 +11070,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">HTML</target>
+        <target state="translated">HTML</target>
       </trans-unit>
       <trans-unit id="5794539423374616988" datatype="html">
         <source>PDF.js</source>
@@ -11078,7 +11078,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">PDF.js</target>
+        <target state="translated">PDF.js</target>
       </trans-unit>
       <trans-unit id="117089467365527130" datatype="html">
         <source>Bell-Reader</source>
@@ -11086,7 +11086,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="needs-translation">Bell-Reader</target>
+        <target state="translated">BeLL-Reader</target>
       </trans-unit>
       <trans-unit id="8791433357397328424" datatype="html">
         <source>MP3</source>
@@ -11094,7 +11094,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="needs-translation">MP3</target>
+        <target state="translated">MP3</target>
       </trans-unit>
       <trans-unit id="3067037062048660869" datatype="html">
         <source>Flow Video Player</source>
@@ -11102,7 +11102,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="needs-translation">Flow Video Player</target>
+        <target state="translated">Reproductor de vídeo de Flow</target>
       </trans-unit>
       <trans-unit id="1439779788882494982" datatype="html">
         <source>BeLL Video Book Player</source>
@@ -11110,7 +11110,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">BeLL Video Book Player</target>
+        <target state="translated">Reproductor de vídeo BeLL</target>
       </trans-unit>
       <trans-unit id="5417597592174252978" datatype="html" approved="yes">
         <source>Native Video</source>
@@ -11302,7 +11302,7 @@
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, exam {test} survey {survey}}</target>
+        <target state="translated">{VAR_SELECT, select, exam {Prueba} survey {encuesta}}</target>
       </trans-unit>
       <trans-unit id="ae439bfbc5bf21c474056c6a99d51d9cbedad4e2" datatype="html">
         <source>You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}"/></source>
@@ -11420,7 +11420,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="1567cf7bdefe1d40e39cdaf3505317ddb1d0f2fa" datatype="html" approved="yes">
         <source>Certification Name</source>
@@ -11436,7 +11436,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">28,29</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Editar </target>
       </trans-unit>
       <trans-unit id="8c1279ab98bba8b884f744cccdedf4431f48d103" datatype="html" approved="yes">
         <source>No Certifications Found</source>
@@ -11500,7 +11500,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">12,13</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Editar </target>
       </trans-unit>
       <trans-unit id="582ac511469c38ec9277e09dd243246ada6ec3fd" datatype="html" approved="yes">
         <source>Course Requirements</source>
@@ -11524,7 +11524,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="needs-translation">No courses have been added. Click on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt; "/> to add courses.</target>
+        <target state="translated">No se han añadido cursos. Haga clic en <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt; "/> para añadir cursos.</target>
       </trans-unit>
       <trans-unit id="5bd25f9e824f25316a62df8c981ee28fe94472c6" datatype="html" approved="yes">
         <source>No members have been certified.</source>
@@ -11540,7 +11540,7 @@
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">193</context>
         </context-group>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</target>
+        <target state="translated">Ha eliminado <x id="PH" equiv-text="deleteArray.length"/> encuestas</target>
       </trans-unit>
       <trans-unit id="302849038487684889" datatype="html" approved="yes">
         <source>There was a problem deleting survey.</source>
