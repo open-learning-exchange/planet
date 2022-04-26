@@ -1780,7 +1780,7 @@
         </context-group>
         <target state="final">Contraseña</target>
       </trans-unit>
-      <trans-unit id="5b22ff15f832d415a19f50e6322b17c1fc87e7df" datatype="html">
+      <trans-unit id="5b22ff15f832d415a19f50e6322b17c1fc87e7df" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{ createMode ? &apos;Become a member&apos; : &apos;SIGN-IN&apos; }}"/>
         </source>
@@ -1788,9 +1788,9 @@
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ createMode ? &apos;Become a member&apos; : &apos;SIGN-IN&apos; }}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Hazte miembro' : 'REGISTRARSE' }}"/></target>
       </trans-unit>
-      <trans-unit id="7369a7af265c375ffa335a804f9600bcf2564e2b" datatype="html">
+      <trans-unit id="7369a7af265c375ffa335a804f9600bcf2564e2b" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{ createMode ? 'Already have an account?&apos; : &apos;Become a member&apos; }}"/>
         </source>
@@ -1798,7 +1798,7 @@
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
           <context context-type="linenumber">27,29</context>
         </context-group>
-        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{ createMode ? 'Already have an account?&apos; : &apos;Become a member&apos; }}"/> </target>
+        <target state="final"> <x id="INTERPOLATION" equiv-text="{{ createMode ? '¿Ya tienes una cuenta?' : 'Hazte miembro' }}"/> </target>
       </trans-unit>
       <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html" approved="yes">
         <source>Repeat Password</source>
@@ -1832,13 +1832,13 @@
         </context-group>
         <target state="final">Prueba myPlanet</target>
       </trans-unit>
-      <trans-unit id="7b39459e4e45c1e91ee4354a50e47c62da35ed3c" datatype="html">
+      <trans-unit id="7b39459e4e45c1e91ee4354a50e47c62da35ed3c" datatype="html" approved="yes">
         <source>Version <x id="INTERPOLATION" equiv-text="{{ planetVersion }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">Version <x id="INTERPOLATION" equiv-text="{{ planetVersion }}"/></target>
+        <target state="final">Versión <x id="INTERPOLATION" equiv-text="{{ planetVersion }}"/></target>
       </trans-unit>
       <trans-unit id="9db95d10dedf6f319ffec17a38e50157b7e336bb" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, on {Connected} off {Offline}}</source>
@@ -7626,7 +7626,7 @@
           <context context-type="sourcefile">src/app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">10,11</context>
         </context-group>
-        <target state="final"> <x id="ICU" equiv-text="{fullView, select, on {Show} off {Esconder}} "/> detalles </target>
+        <target state="final"> <x id="ICU" equiv-text="{fullView, select, on {Show} off {Hide}}"/> detalles </target>
       </trans-unit>
       <trans-unit id="7097a7e261682ecdfdf828f549d2fd084bd6a822" datatype="html" approved="yes">
         <source>Level:</source>
@@ -8544,7 +8544,7 @@
         </context-group>
         <target state="final">Mi progreso:</target>
       </trans-unit>
-      <trans-unit id="fe4170a202e943619028c72dd9fe38225d2db591" datatype="html">
+      <trans-unit id="fe4170a202e943619028c72dd9fe38225d2db591" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{step.stepTitle || &apos;Step &apos; + (stepNum + 1)}}"/>
         </source>
@@ -8552,7 +8552,7 @@
           <context context-type="sourcefile">src/app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">40,42</context>
         </context-group>
-        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{step.stepTitle || &apos;Step &apos; + (stepNum + 1)}}"/> </target>
+        <target state="final"> <x id="INTERPOLATION" equiv-text="{{step.stepTitle || 'Paso ' + (stepNum + 1)}}"/> </target>
       </trans-unit>
       <trans-unit id="3e507ff9c5c2d995d6591d2028ba1e210413b8b9" datatype="html" approved="yes">
         <source> There is no content for this step. </source>
