@@ -11663,12 +11663,12 @@
         <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Enviar encuesta</target>
       </trans-unit>
       <trans-unit id="0fed89be7ab1e5a75f0962a5f54604f16a659ac6" datatype="html">
-        <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="a member of {{configur"/></source>
+        <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="configuration.name"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="needs-translation">Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="a member of {{configur"/></target>
+        <target state="needs-translation">Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="configuration.name"/></target>
       </trans-unit>
       <trans-unit id="253c896e12c0990afe6a7733ba8971bc8bf5c849" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>fiber_manual_record<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Record Survey </source>
