@@ -8,7 +8,7 @@
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">ltr</target>
+        <target state="translated">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
@@ -16,7 +16,7 @@
           <context context-type="sourcefile">src/app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Sorry, page not found</target>
+        <target state="translated">Désolé, page introuvable</target>
       </trans-unit>
       <trans-unit id="8c000e81f174c6e177323227a376cd91bdc1772d" datatype="html">
         <source>Back to Planet Learning</source>
@@ -24,7 +24,7 @@
           <context context-type="sourcefile">src/app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Back to Planet Learning</target>
+        <target state="translated">Retour à l'apprentissage de la planète</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
         <source>None</source>
@@ -44,7 +44,7 @@
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">None</target>
+        <target state="translated">Aucun</target>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
@@ -184,7 +184,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-submissions.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">OK</target>
+        <target state="translated">Ok</target>
       </trans-unit>
       <trans-unit id="57a96f2f57ae4aef2b72af04782702e1d8a53fa7" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}</source>
@@ -340,7 +340,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Is your feedback Urgent?</target>
+        <target state="translated">Vos commentaires sont-ils urgents ?</target>
       </trans-unit>
       <trans-unit id="8445874055593271783" datatype="html">
         <source>Feedback Type:</source>
@@ -348,7 +348,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Feedback Type:</target>
+        <target state="translated">Type de commentaire :</target>
       </trans-unit>
       <trans-unit id="2990758986298089631" datatype="html">
         <source>Your Feedback</source>
@@ -356,7 +356,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target state="needs-translation">Your Feedback</target>
+        <target state="translated">Vos commentaires</target>
       </trans-unit>
       <trans-unit id="1913882854081114283" datatype="html">
         <source><x id="PH" equiv-text="newFeedback.type"/> regarding <x id="PH_1" equiv-text="feedbackUrl"/></source>
@@ -364,7 +364,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="newFeedback.type"/> regarding <x id="PH_1" equiv-text="feedbackUrl"/></target>
+        <target state="translated"><x id="PH" equiv-text="newFeedback.type"/> concernant <x id="PH_1" equiv-text="feedbackUrl"/></target>
       </trans-unit>
       <trans-unit id="5797017555211455118" datatype="html">
         <source>Thank you, your feedback is submitted!</source>
@@ -372,7 +372,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="needs-translation">Thank you, your feedback is submitted!</target>
+        <target state="translated">Merci, vos commentaires ont été envoyés!</target>
       </trans-unit>
       <trans-unit id="5883618387676553175" datatype="html">
         <source>Error, your feedback cannot be submitted</source>
@@ -380,7 +380,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">104</context>
         </context-group>
-        <target state="needs-translation">Error, your feedback cannot be submitted</target>
+        <target state="translated">Erreur, votre commentaire ne peut pas être soumis</target>
       </trans-unit>
       <trans-unit id="8429316238784832901" datatype="html">
         <source>Feedback</source>
@@ -388,7 +388,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="needs-translation">Feedback</target>
+        <target state="translated">Vos commentaires</target>
       </trans-unit>
       <trans-unit id="fb30a6dd16b2455ffcaf94d40b840980f8f9dfed" datatype="html">
         <source>There are no items to select</source>
@@ -396,7 +396,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">There are no items to select</target>
+        <target state="translated">Il n'y a aucun élément à sélectionner</target>
       </trans-unit>
       <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
         <source>Search</source>
@@ -424,7 +424,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select}}</target>
+        <target state="translated">{VAR_SELECT, select, yes {Déselectionnez} no {Sélectionnez-vous}}</target>
       </trans-unit>
       <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}} "/> all </source>
@@ -468,7 +468,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Old Password</target>
+        <target state="translated">Ancien mot de passe</target>
       </trans-unit>
       <trans-unit id="1431416938026210429" datatype="html">
         <source>Password</source>
@@ -488,7 +488,7 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Password</target>
+        <target state="translated">Mot de passe</target>
       </trans-unit>
       <trans-unit id="3241357959735682038" datatype="html">
         <source>Confirm Password</source>
@@ -500,7 +500,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Confirm Password</target>
+        <target state="translated">Confirmer le mot de passe</target>
       </trans-unit>
       <trans-unit id="6582573664846559511" datatype="html">
         <source>Change Password</source>
@@ -508,7 +508,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">111</context>
         </context-group>
-        <target state="needs-translation">Change Password</target>
+        <target state="translated">Changer le mot de passe</target>
       </trans-unit>
       <trans-unit id="8348734508103087089" datatype="html">
         <source>Syncing started</source>
@@ -516,7 +516,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/sync.directive.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="needs-translation">Syncing started</target>
+        <target state="translated">Synchronisation démarrée</target>
       </trans-unit>
       <trans-unit id="b779ee8bf5347b4f13b4cfd754c865adac65c7ec" datatype="html">
         <source>Add New Image</source>
@@ -524,7 +524,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Add New Image</target>
+        <target state="translated">Ajouter une nouvelle image</target>
       </trans-unit>
       <trans-unit id="fe505ea3b54659d0e509dd7f91bca35f0493a0f4" datatype="html">
         <source>Select an Image</source>
@@ -532,7 +532,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-translation">Select an Image</target>
+        <target state="translated">Sélectionner une image</target>
       </trans-unit>
       <trans-unit id="aec6ea29fe24d067d3ae0bb9eb8dbdd6dd9f53e7" datatype="html">
         <source>No Images to Select</source>
@@ -540,7 +540,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">No Images to Select</target>
+        <target state="translated">Aucune image à sélectionner</target>
       </trans-unit>
       <trans-unit id="8e4e342b8f4170a90c32e4ce5023f8c474025cb7" datatype="html">
         <source>Ratings for</source>
@@ -548,7 +548,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Ratings for</target>
+        <target state="translated">Évaluations pour</target>
       </trans-unit>
       <trans-unit id="e0666c1be03bca95833a011f9bb8436e5b07a09d" datatype="html">
         <source>Most Recent</source>
@@ -556,7 +556,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Most Recent</target>
+        <target state="translated">Les plus récents</target>
       </trans-unit>
       <trans-unit id="726c63f6217ab0d9f67dc9f3eafbcb3df159a0e9" datatype="html">
         <source>Oldest</source>
@@ -564,7 +564,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Oldest</target>
+        <target state="translated">Plus ancien</target>
       </trans-unit>
       <trans-unit id="f1c3d90b66e7121d8843511573944a791f324c91" datatype="html">
         <source>Best Rating</source>
@@ -572,7 +572,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Best Rating</target>
+        <target state="translated">Meilleure note</target>
       </trans-unit>
       <trans-unit id="8ab4f31599a0e38a844e4b1a712ab62b6790657f" datatype="html">
         <source>Worst Rating</source>
@@ -580,7 +580,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Worst Rating</target>
+        <target state="translated">La pire note</target>
       </trans-unit>
       <trans-unit id="6690213511225137015" datatype="html">
         <source> Resources successfully removed from myLibrary</source>
@@ -588,7 +588,7 @@
           <context context-type="sourcefile">src/app/resources/resources.service.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation"> Resources successfully removed from myLibrary</target>
+        <target state="translated"> Ressources retirées de ma bibliothèque avec succès</target>
       </trans-unit>
       <trans-unit id="4703909854007878985" datatype="html">
         <source> Resources added to your dashboard</source>
@@ -596,7 +596,7 @@
           <context context-type="sourcefile">src/app/resources/resources.service.ts</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation"> Resources added to your dashboard</target>
+        <target state="translated"> Ressources ajoutées à votre tableau de bord</target>
       </trans-unit>
       <trans-unit id="3470732430391263457" datatype="html">
         <source>There are new resources in the Library. Click to see them!</source>
@@ -604,7 +604,7 @@
           <context context-type="sourcefile">src/app/resources/resources.service.ts</context>
           <context context-type="linenumber">152</context>
         </context-group>
-        <target state="needs-translation">There are new resources in the Library. Click to see them!</target>
+        <target state="translated">Il y a de nouvelles ressources dans la bibliothèque. Cliquez pour les voir!</target>
       </trans-unit>
       <trans-unit id="8186245387967147088" datatype="html">
         <source>Nation</source>
@@ -616,7 +616,7 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Nation</target>
+        <target state="translated">Nation</target>
       </trans-unit>
       <trans-unit id="1274247756500564795" datatype="html">
         <source>Community</source>
