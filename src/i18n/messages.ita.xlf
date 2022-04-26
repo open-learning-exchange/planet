@@ -8928,13 +8928,13 @@
       </trans-unit>
       <trans-unit id="7f7633a79c20dbf87ac0cbb83ef96c48e56afa7d" datatype="html">
         <source>
-          <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || &apos;Step &apos; + (step.ind"/>
+          <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || &apos;Step &apos; + (step.index + 1) }}"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
-        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || 'Step ' + (step.ind"/> </target>
+        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || 'Step ' + (step.index + 1) }}"/> </target>
       </trans-unit>
       <trans-unit id="a79d938b5ed20249b4ab6bef86c12633d2f346a0" datatype="html">
         <source>Test</source>
@@ -11663,12 +11663,12 @@
         <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Send Survey</target>
       </trans-unit>
       <trans-unit id="0fed89be7ab1e5a75f0962a5f54604f16a659ac6" datatype="html">
-        <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="a member of {{configur"/></source>
+        <source>Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="configuration.name"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="needs-translation">Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="a member of {{configur"/></target>
+        <target state="needs-translation">Record survey information from a person who is not a member of <x id="INTERPOLATION" equiv-text="configuration.name"/></target>
       </trans-unit>
       <trans-unit id="253c896e12c0990afe6a7733ba8971bc8bf5c849" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>fiber_manual_record<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Record Survey </source>
