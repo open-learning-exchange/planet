@@ -340,7 +340,8 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">Is your feedback Urgent?</target>
+        <target state="translated">के तपाईंको प्रतिक्रिया जरुरी छ?
+</target>
       </trans-unit>
       <trans-unit id="8445874055593271783" datatype="html">
         <source>Feedback Type:</source>
@@ -348,7 +349,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="needs-translation">Feedback Type:</target>
+        <target state="translated">प्रतिक्रियाका प्रकार:</target>
       </trans-unit>
       <trans-unit id="2990758986298089631" datatype="html">
         <source>Your Feedback</source>
@@ -388,7 +389,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="needs-translation">Feedback</target>
+        <target state="translated">प्रतिकृया</target>
       </trans-unit>
       <trans-unit id="fb30a6dd16b2455ffcaf94d40b840980f8f9dfed" datatype="html">
         <source>There are no items to select</source>
@@ -424,7 +425,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, yes {Deselect} no {Select}}</target>
+        <target state="translated">{VAR_SELECT, select, yes {नछान्नु} no {छान्नु} }</target>
       </trans-unit>
       <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}} "/> all </source>
@@ -432,7 +433,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10,11</context>
         </context-group>
-        <target state="needs-translation"> <x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}} "/> all </target>
+        <target state="translated">     सबै <x id="ICU" equiv-text="{isAllSelected(), select, yes {छान्नु} no {नछान्नु}}"/>    </target>
       </trans-unit>
       <trans-unit id="9c7e2ec4e504d0f26f4c6c5dc299b4f9ea1c58d9" datatype="html">
         <source>{VAR_SELECT, select, members {{VAR_PLURAL, plural, =0 {members} =1 {member} other {members}}} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses}}} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups}}} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items}}}}</source>
@@ -468,7 +469,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Old Password</target>
+        <target state="translated">पुरानो पासवर्ड</target>
       </trans-unit>
       <trans-unit id="1431416938026210429" datatype="html">
         <source>Password</source>
@@ -488,7 +489,7 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Password</target>
+        <target state="translated">पासवर्ड</target>
       </trans-unit>
       <trans-unit id="3241357959735682038" datatype="html">
         <source>Confirm Password</source>
@@ -500,7 +501,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="needs-translation">Confirm Password</target>
+        <target state="translated">पासवर्ड सुनिश्चित गर्नुहोस</target>
       </trans-unit>
       <trans-unit id="6582573664846559511" datatype="html">
         <source>Change Password</source>
@@ -508,7 +509,7 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">111</context>
         </context-group>
-        <target state="needs-translation">Change Password</target>
+        <target state="translated">पासवर्ड बदल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="8348734508103087089" datatype="html">
         <source>Syncing started</source>
@@ -616,7 +617,7 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Nation</target>
+        <target state="translated">राष्ट्र</target>
       </trans-unit>
       <trans-unit id="1274247756500564795" datatype="html">
         <source>Community</source>
@@ -628,7 +629,7 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Community</target>
+        <target state="translated">समुदाय</target>
       </trans-unit>
       <trans-unit id="3041841225755615388" datatype="html">
         <source><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Details</source>
@@ -636,7 +637,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.service.ts</context>
           <context context-type="linenumber">222</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Details</target>
+        <target state="translated"><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> विवरण</target>
       </trans-unit>
       <trans-unit id="4014896326011468687" datatype="html">
         <source>Admin Confirmation</source>
