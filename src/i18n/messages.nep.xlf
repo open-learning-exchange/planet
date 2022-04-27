@@ -2,13 +2,13 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="ne-NP">
     <body>
-      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
+      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
         <source>ltr</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
@@ -334,22 +334,22 @@
         </context-group>
         <target state="final">त्रुटि: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
-      <trans-unit id="6441458224198272423" datatype="html">
+      <trans-unit id="6441458224198272423" datatype="html" approved="yes">
         <source>Is your feedback Urgent?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">के तपाईंको प्रतिक्रिया जरुरी छ?
+        <target state="final">के तपाईंको प्रतिक्रिया जरुरी छ?
 </target>
       </trans-unit>
-      <trans-unit id="8445874055593271783" datatype="html">
+      <trans-unit id="8445874055593271783" datatype="html" approved="yes">
         <source>Feedback Type:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">43</context>
         </context-group>
-        <target state="translated">प्रतिक्रियाका प्रकार:</target>
+        <target state="final">प्रतिक्रियाका प्रकार:</target>
       </trans-unit>
       <trans-unit id="2990758986298089631" datatype="html">
         <source>Your Feedback</source>
@@ -383,13 +383,13 @@
         </context-group>
         <target state="needs-translation">Error, your feedback cannot be submitted</target>
       </trans-unit>
-      <trans-unit id="8429316238784832901" datatype="html">
+      <trans-unit id="8429316238784832901" datatype="html" approved="yes">
         <source>Feedback</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/feedback/feedback.directive.ts</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="translated">प्रतिकृया</target>
+        <target state="final">प्रतिकृया</target>
       </trans-unit>
       <trans-unit id="fb30a6dd16b2455ffcaf94d40b840980f8f9dfed" datatype="html">
         <source>There are no items to select</source>
@@ -419,21 +419,21 @@
         </context-group>
         <target state="final">खाेज्नुहाेस्</target>
       </trans-unit>
-      <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html">
+      <trans-unit id="941ab9c3a5e0e0e758f7daa0a7d53355b96135d5" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, yes {Deselect} no {Select}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, yes {नछान्नु} no {छान्नु} }</target>
+        <target state="final">{VAR_SELECT, select, yes {नछान्नु} no {छान्नु} }</target>
       </trans-unit>
-      <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
+      <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}} "/> all </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10,11</context>
         </context-group>
-        <target state="translated">     सबै <x id="ICU" equiv-text="{isAllSelected(), select, yes {छान्नु} no {नछान्नु}}"/>    </target>
+        <target state="final">     सबै <x id="ICU" equiv-text="{isAllSelected(), select, yes {छान्नु} no {नछान्नु}}"/>    </target>
       </trans-unit>
       <trans-unit id="9c7e2ec4e504d0f26f4c6c5dc299b4f9ea1c58d9" datatype="html">
         <source>{VAR_SELECT, select, members {{VAR_PLURAL, plural, =0 {members} =1 {member} other {members}}} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses}}} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups}}} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items}}}}</source>
@@ -459,7 +459,7 @@
         </context-group>
         <target state="final">लोड हुँदै</target>
       </trans-unit>
-      <trans-unit id="2397816345463091163" datatype="html">
+      <trans-unit id="2397816345463091163" datatype="html" approved="yes">
         <source>Old Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
@@ -469,9 +469,9 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">पुरानो पासवर्ड</target>
+        <target state="final">पुरानो पासवर्ड</target>
       </trans-unit>
-      <trans-unit id="1431416938026210429" datatype="html">
+      <trans-unit id="1431416938026210429" datatype="html" approved="yes">
         <source>Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
@@ -489,9 +489,9 @@
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">पासवर्ड</target>
+        <target state="final">पासवर्ड</target>
       </trans-unit>
-      <trans-unit id="3241357959735682038" datatype="html">
+      <trans-unit id="3241357959735682038" datatype="html" approved="yes">
         <source>Confirm Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
@@ -501,15 +501,15 @@
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="translated">पासवर्ड सुनिश्चित गर्नुहोस</target>
+        <target state="final">पासवर्ड सुनिश्चित गर्नुहोस</target>
       </trans-unit>
-      <trans-unit id="6582573664846559511" datatype="html">
+      <trans-unit id="6582573664846559511" datatype="html" approved="yes">
         <source>Change Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/change-password.directive.ts</context>
           <context context-type="linenumber">111</context>
         </context-group>
-        <target state="translated">पासवर्ड बदल्नुहोस्</target>
+        <target state="final">पासवर्ड बदल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="8348734508103087089" datatype="html">
         <source>Syncing started</source>
@@ -607,7 +607,7 @@
         </context-group>
         <target state="needs-translation">There are new resources in the Library. Click to see them!</target>
       </trans-unit>
-      <trans-unit id="8186245387967147088" datatype="html">
+      <trans-unit id="8186245387967147088" datatype="html" approved="yes">
         <source>Nation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.service.ts</context>
@@ -617,9 +617,9 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">राष्ट्र</target>
+        <target state="final">राष्ट्र</target>
       </trans-unit>
-      <trans-unit id="1274247756500564795" datatype="html">
+      <trans-unit id="1274247756500564795" datatype="html" approved="yes">
         <source>Community</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.service.ts</context>
@@ -629,15 +629,15 @@
           <context context-type="sourcefile">src/app/logs-myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">समुदाय</target>
+        <target state="final">समुदाय</target>
       </trans-unit>
-      <trans-unit id="3041841225755615388" datatype="html">
+      <trans-unit id="3041841225755615388" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.service.ts</context>
           <context context-type="linenumber">222</context>
         </context-group>
-        <target state="translated"><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> विवरण</target>
+        <target state="final"><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> विवरण</target>
       </trans-unit>
       <trans-unit id="4014896326011468687" datatype="html">
         <source>Admin Confirmation</source>
@@ -647,13 +647,13 @@
         </context-group>
         <target state="needs-translation">Admin Confirmation</target>
       </trans-unit>
-      <trans-unit id="1922027233506151042" datatype="html">
+      <trans-unit id="1922027233506151042" datatype="html" approved="yes">
         <source>Password is incorrect.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/sync.service.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="needs-translation">Password is incorrect.</target>
+        <target state="final">पासवर्ड गलत छ।</target>
       </trans-unit>
       <trans-unit id="8288238877926002807" datatype="html">
         <source>Invalid password</source>
@@ -687,13 +687,13 @@
         </context-group>
         <target state="needs-translation"><x id="PH" equiv-text="title"/> added to your dashboard</target>
       </trans-unit>
-      <trans-unit id="4478983912693286511" datatype="html">
+      <trans-unit id="4478983912693286511" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="countChanged"/> courses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/courses.service.ts</context>
           <context context-type="linenumber">227</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="countChanged"/> courses</target>
+        <target state="final"><x id="PH" equiv-text="{}"/> पाठ्यक्रम</target>
       </trans-unit>
       <trans-unit id="8967779035598464251" datatype="html">
         <source>You are not authorized. Please contact administrator.</source>
@@ -735,7 +735,7 @@
         </context-group>
         <target state="needs-translation">Deadline Time</target>
       </trans-unit>
-      <trans-unit id="4902817035128594900" datatype="html">
+      <trans-unit id="4902817035128594900" datatype="html" approved="yes">
         <source>Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/tasks/tasks.service.ts</context>
@@ -749,7 +749,7 @@
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements-update.component.ts</context>
           <context context-type="linenumber">125</context>
         </context-group>
-        <target state="needs-translation">Description</target>
+        <target state="final">विवरण</target>
       </trans-unit>
       <trans-unit id="6597680371820382343" datatype="html">
         <source>validateDates(): startDate control is not found in parent group</source>
@@ -807,13 +807,13 @@
         </context-group>
         <target state="needs-translation">Last Synced</target>
       </trans-unit>
-      <trans-unit id="b24f1cd32cbc1ec9537af28c4fe1b8204097714b" datatype="html">
+      <trans-unit id="b24f1cd32cbc1ec9537af28c4fe1b8204097714b" datatype="html" approved="yes">
         <source>Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">Time</target>
+        <target state="final">समय</target>
       </trans-unit>
       <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html" approved="yes">
         <source>Type</source>
@@ -835,13 +835,13 @@
         </context-group>
         <target state="final">प्रकार</target>
       </trans-unit>
-      <trans-unit id="8fe73a4787b8068b2ba61f54ab7e0f9af2ea1fc9" datatype="html">
+      <trans-unit id="8fe73a4787b8068b2ba61f54ab7e0f9af2ea1fc9" datatype="html" approved="yes">
         <source>Version</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Version</target>
+        <target state="final">संस्करण</target>
       </trans-unit>
       <trans-unit id="7ae7814bc0d4339fb5ff68a37494b48dac6dacc1" datatype="html">
         <source>No of Visits</source>
@@ -851,7 +851,7 @@
         </context-group>
         <target state="needs-translation">No of Visits</target>
       </trans-unit>
-      <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html">
+      <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html" approved="yes">
         <source>Details</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
@@ -861,7 +861,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-table.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-translation">Details</target>
+        <target state="final">विवरणहरू</target>
       </trans-unit>
       <trans-unit id="6623257de867bbe8003919a76d9e5daaec6c3023" datatype="html">
         <source>Used Time</source>
@@ -891,7 +891,7 @@
         </context-group>
         <target state="needs-translation">View Exchange</target>
       </trans-unit>
-      <trans-unit id="968e0a59387a849f7d6a11a84735edf18e6c4577" datatype="html">
+      <trans-unit id="968e0a59387a849f7d6a11a84735edf18e6c4577" datatype="html" approved="yes">
         <source> View Report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community-list.component.html</context>
@@ -901,7 +901,7 @@
           <context context-type="sourcefile">src/app/community/community-list.component.html</context>
           <context context-type="linenumber">26,27</context>
         </context-group>
-        <target state="needs-translation"> View Report </target>
+        <target state="final">रिपोर्ट हेर्न</target>
       </trans-unit>
       <trans-unit id="11eb38ace36c45d1a3d10bb8d177b8fe51c553a4" datatype="html">
         <source>Sandbox Planets</source>
@@ -1023,7 +1023,7 @@
         </context-group>
         <target state="needs-translation">Completed:</target>
       </trans-unit>
-      <trans-unit id="019d4bd6a5690f0cfa0ecf346a4e6bf7f0d8debb" datatype="html">
+      <trans-unit id="019d4bd6a5690f0cfa0ecf346a4e6bf7f0d8debb" datatype="html" approved="yes">
         <source>Remove</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/tasks/tasks.component.html</context>
@@ -1041,7 +1041,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">169</context>
         </context-group>
-        <target state="needs-translation">Remove</target>
+        <target state="final">हटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="b17bf9ca0517ccff0a58545362c0866a5bca5774" datatype="html">
         <source>Showing <x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> of <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/></source>
@@ -1199,7 +1199,7 @@
         </context-group>
         <target state="needs-translation">Subcollection of...</target>
       </trans-unit>
-      <trans-unit id="8953033926734869941" datatype="html">
+      <trans-unit id="8953033926734869941" datatype="html" approved="yes">
         <source>Name</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
@@ -1225,7 +1225,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="needs-translation">Name</target>
+        <target state="final">नाम</target>
       </trans-unit>
       <trans-unit id="6829390231101249587" datatype="html">
         <source>Tag deleted: <x id="PH" equiv-text="tag.name"/></source>
@@ -1275,13 +1275,13 @@
         </context-group>
         <target state="needs-translation">Change Collections</target>
       </trans-unit>
-      <trans-unit id="52ba668e67efcdd7de6110b1e2b3cd9b53337bb3" datatype="html">
+      <trans-unit id="52ba668e67efcdd7de6110b1e2b3cd9b53337bb3" datatype="html" approved="yes">
         <source>Create New Collection</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Create New Collection</target>
+        <target state="final">नयाँ सङ्ग्रह बनाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="40cf215f61708390d3aba0212e49596e0d3d981c" datatype="html">
         <source>Collection</source>
@@ -1319,7 +1319,7 @@
         </context-group>
         <target state="needs-translation">You may only delete a collection with no subcollections</target>
       </trans-unit>
-      <trans-unit id="28f86ffd419b869711aa13f5e5ff54be6d70731c" datatype="html">
+      <trans-unit id="28f86ffd419b869711aa13f5e5ff54be6d70731c" datatype="html" approved="yes">
         <source>Edit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.html</context>
@@ -1353,7 +1353,7 @@
           <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="needs-translation">Edit</target>
+        <target state="final">सम्पादन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="826b25211922a1b46436589233cb6f1a163d89b7" datatype="html" approved="yes">
         <source>Delete</source>
@@ -1451,7 +1451,7 @@
         </context-group>
         <target state="final">सबै</target>
       </trans-unit>
-      <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html">
+      <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html" approved="yes">
         <source>Reset</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.html</context>
@@ -1461,15 +1461,15 @@
           <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">Reset</target>
+        <target state="final">रिसेट</target>
       </trans-unit>
-      <trans-unit id="2600619208257894408" datatype="html">
+      <trans-unit id="2600619208257894408" datatype="html" approved="yes">
         <source>Add Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target state="needs-translation">Add Image</target>
+        <target state="final">चित्र थप्नुहोस्</target>
       </trans-unit>
       <trans-unit id="e3eabe4bc26223eb279394f47a58891af68b61c0" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</source>
@@ -1479,13 +1479,13 @@
         </context-group>
         <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</target>
       </trans-unit>
-      <trans-unit id="680d5c75b7fd8d37961083608b9fcdc4167b4c43" datatype="html">
+      <trans-unit id="680d5c75b7fd8d37961083608b9fcdc4167b4c43" datatype="html" approved="yes">
         <source>Previous</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-step-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Previous</target>
+        <target state="final">पछिल्लो</target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html" approved="yes">
         <source>Next</source>
@@ -1543,29 +1543,29 @@
         </context-group>
         <target state="needs-translation">Add Collections</target>
       </trans-unit>
-      <trans-unit id="5639297788212274461" datatype="html">
+      <trans-unit id="5639297788212274461" datatype="html" approved="yes">
         <source>Rate</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">Rate</target>
+        <target state="final">मूल्याङ्कन</target>
       </trans-unit>
-      <trans-unit id="1463626174028575334" datatype="html">
+      <trans-unit id="1463626174028575334" datatype="html" approved="yes">
         <source>Your Rating</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Your Rating</target>
+        <target state="final">तपाईको मूल्याङ्कन</target>
       </trans-unit>
-      <trans-unit id="2662644497259948010" datatype="html">
+      <trans-unit id="2662644497259948010" datatype="html" approved="yes">
         <source>Comment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Comment</target>
+        <target state="final">प्रतिकृया</target>
       </trans-unit>
       <trans-unit id="1114700465921225367" datatype="html">
         <source>Would you like to leave a comment?</source>
@@ -1591,13 +1591,13 @@
         </context-group>
         <target state="needs-translation">Thank you for your additional comments</target>
       </trans-unit>
-      <trans-unit id="3706222784708785028" datatype="html">
+      <trans-unit id="3706222784708785028" datatype="html" approved="yes">
         <source>Rating</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.ts</context>
           <context context-type="linenumber">135</context>
         </context-group>
-        <target state="needs-translation">Rating</target>
+        <target state="final">मूल्याङ्कन</target>
       </trans-unit>
       <trans-unit id="1028171187763989633" datatype="html">
         <source>There was an issue updating your rating</source>
@@ -1625,13 +1625,13 @@
         </context-group>
         <target state="final">औसत</target>
       </trans-unit>
-      <trans-unit id="925fd251ad6cb24868d235cace4245a23e2aee16" datatype="html">
+      <trans-unit id="925fd251ad6cb24868d235cace4245a23e2aee16" datatype="html" approved="yes">
         <source>Your Rating</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-rating.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Your Rating</target>
+        <target state="final">तपाईको मूल्याङ्कन</target>
       </trans-unit>
       <trans-unit id="6551521192680179651" datatype="html">
         <source>Letters, numbers and _ . - allowed.</source>
@@ -1805,13 +1805,13 @@
         </context-group>
         <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{ createMode ? 'Already have an account?' : 'Become a member' }}"/> </target>
       </trans-unit>
-      <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html">
+      <trans-unit id="f1adeb464690291902a4274d6b90f25e335c2ae6" datatype="html" approved="yes">
         <source>Repeat Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">पासवर्ड दाेहाेर्याउनुहाेस्</target>
+        <target state="final">पासवर्ड दाेहाेर्याउनुहाेस्</target>
       </trans-unit>
       <trans-unit id="1500ba926857544c30b5bfa8fe322e025dcaee1f" datatype="html" approved="yes">
         <source>Planet Learning</source>
@@ -1917,13 +1917,13 @@
         </context-group>
         <target state="needs-translation">No User Found</target>
       </trans-unit>
-      <trans-unit id="9008968878373693685" datatype="html">
+      <trans-unit id="9008968878373693685" datatype="html" approved="yes">
         <source>Teams</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community-link-dialog.component.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="needs-translation">Teams</target>
+        <target state="final">समूहहरू</target>
       </trans-unit>
       <trans-unit id="2691415103769178647" datatype="html">
         <source>Enterprises</source>
@@ -1941,13 +1941,13 @@
         </context-group>
         <target state="needs-translation">Type of Link</target>
       </trans-unit>
-      <trans-unit id="9ca82952a6bc860b5391d5975322d8af8ceddfa4" datatype="html">
+      <trans-unit id="9ca82952a6bc860b5391d5975322d8af8ceddfa4" datatype="html" approved="yes">
         <source>Select</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community-link-dialog.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Select</target>
+        <target state="final">चयन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html" approved="yes">
         <source>Title</source>
@@ -2109,7 +2109,7 @@
         </context-group>
         <target state="needs-translation">Add Description</target>
       </trans-unit>
-      <trans-unit id="1d0974afae70914072a4fbf19e53328e517bae73" datatype="html">
+      <trans-unit id="1d0974afae70914072a4fbf19e53328e517bae73" datatype="html" approved="yes">
         <source>News</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
@@ -2119,7 +2119,7 @@
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">News</target>
+        <target state="final">समाचारहरू</target>
       </trans-unit>
       <trans-unit id="4e4d16b4259fded9bd56f912a7a11f0e2002aa22" datatype="html">
         <source>Community Leaders</source>
@@ -2129,13 +2129,13 @@
         </context-group>
         <target state="needs-translation">Community Leaders</target>
       </trans-unit>
-      <trans-unit id="419d940613972cc3fae9c8ea0a4306dbf80616e5" datatype="html">
+      <trans-unit id="419d940613972cc3fae9c8ea0a4306dbf80616e5" datatype="html" approved="yes">
         <source>Services</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">Services</target>
+        <target state="final">सेवाहरू</target>
       </trans-unit>
       <trans-unit id="ae740a04776b9e932df442d2da2ee02433f99c90" datatype="html">
         <source>Finances</source>
@@ -2149,7 +2149,7 @@
         </context-group>
         <target state="needs-translation">Finances</target>
       </trans-unit>
-      <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html">
+      <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html" approved="yes">
         <source>Reports</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
@@ -2171,7 +2171,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="needs-translation">Reports</target>
+        <target state="final">रिपाेर्टहरू</target>
       </trans-unit>
       <trans-unit id="cd7656fe48014ee16c6ea30692bda6fbf8ad344a" datatype="html">
         <source>New Story</source>
@@ -2208,13 +2208,13 @@
               <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}} "/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} "/> Description
             </target>
       </trans-unit>
-      <trans-unit id="72ea393a8941d9c78b055e5c4597a7f760b713a7" datatype="html">
+      <trans-unit id="72ea393a8941d9c78b055e5c4597a7f760b713a7" datatype="html" approved="yes">
         <source>Add Link</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Add Link</target>
+        <target state="final">लिंक थप्नुहोस्</target>
       </trans-unit>
       <trans-unit id="f5952c35586047a991bb204e509e710918e2160d" datatype="html">
         <source>Remove Links</source>
@@ -2232,15 +2232,15 @@
         </context-group>
         <target state="needs-translation">Done Removing Links</target>
       </trans-unit>
-      <trans-unit id="6642147ee5ae8acb8b128faedfc7985d39637911" datatype="html">
+      <trans-unit id="6642147ee5ae8acb8b128faedfc7985d39637911" datatype="html" approved="yes">
         <source>Communities</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">Communities</target>
+        <target state="final">समुदायहरू</target>
       </trans-unit>
-      <trans-unit id="33629999fd41361c48d5a60a5783dfdbd09276b7" datatype="html">
+      <trans-unit id="33629999fd41361c48d5a60a5783dfdbd09276b7" datatype="html" approved="yes">
         <source>Calendar</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
@@ -2250,9 +2250,9 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="needs-translation">Calendar</target>
+        <target state="final">पात्रो</target>
       </trans-unit>
-      <trans-unit id="5542145703978693926" datatype="html">
+      <trans-unit id="5542145703978693926" datatype="html" approved="yes">
         <source>Start upgrade</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
@@ -2262,15 +2262,15 @@
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">144</context>
         </context-group>
-        <target state="needs-translation">Start upgrade</target>
+        <target state="final">अपग्रेड गर्न सुरु गर्नुहोस्</target>
       </trans-unit>
-      <trans-unit id="2827276519893025325" datatype="html">
+      <trans-unit id="2827276519893025325" datatype="html" approved="yes">
         <source>Not started</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <target state="needs-translation">Not started</target>
+        <target state="final">सुरु भएन</target>
       </trans-unit>
       <trans-unit id="8112791383751618441" datatype="html">
         <source>Upgrading</source>
@@ -2288,21 +2288,21 @@
         </context-group>
         <target state="needs-translation">Server request started</target>
       </trans-unit>
-      <trans-unit id="4648900870671159218" datatype="html">
+      <trans-unit id="4648900870671159218" datatype="html" approved="yes">
         <source>Success</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target state="needs-translation">Success</target>
+        <target state="final">सफल</target>
       </trans-unit>
-      <trans-unit id="5073641160383339539" datatype="html">
+      <trans-unit id="5073641160383339539" datatype="html" approved="yes">
         <source>Request timed-out</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.ts</context>
           <context context-type="linenumber">128</context>
         </context-group>
-        <target state="needs-translation">Request timed-out</target>
+        <target state="final">अनुरोधको समय समाप्त भयो</target>
       </trans-unit>
       <trans-unit id="6986107250042682583" datatype="html">
         <source>Request timed-out 5 times. Please try again later.</source>
@@ -2404,13 +2404,13 @@
         </context-group>
         <target state="needs-translation"> There has been an error when trying to upgrade the system </target>
       </trans-unit>
-      <trans-unit id="ce7cd29b4d687aa96dde43c0437d58d6c7efcc92" datatype="html">
+      <trans-unit id="ce7cd29b4d687aa96dde43c0437d58d6c7efcc92" datatype="html" approved="yes">
         <source>Send feedback</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">Send feedback</target>
+        <target state="final">प्रतिक्रिया पठाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="5516871186038324585" datatype="html">
         <source>There was an error removing <x id="PH" equiv-text="item.title"/></source>
@@ -2452,7 +2452,7 @@
         </context-group>
         <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </target>
       </trans-unit>
-      <trans-unit id="7623976547869428392" datatype="html">
+      <trans-unit id="7623976547869428392" datatype="html" approved="yes">
         <source>my</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
@@ -2474,7 +2474,7 @@
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="needs-translation">my</target>
+        <target state="final">मेरो</target>
       </trans-unit>
       <trans-unit id="374853214608917577" datatype="html">
         <source>Submissions</source>
@@ -2492,21 +2492,21 @@
         </context-group>
         <target state="needs-translation">Personals</target>
       </trans-unit>
-      <trans-unit id="1130914636248035703" datatype="html">
+      <trans-unit id="1130914636248035703" datatype="html" approved="yes">
         <source>Achievements</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">Achievements</target>
+        <target state="final">उपलब्धिहरू</target>
       </trans-unit>
-      <trans-unit id="3691499168461931503" datatype="html">
+      <trans-unit id="3691499168461931503" datatype="html" approved="yes">
         <source>Surveys</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="needs-translation">Surveys</target>
+        <target state="final">सर्वेक्षणहरू</target>
       </trans-unit>
       <trans-unit id="2041675390931385838" datatype="html">
         <source>Health</source>
@@ -2516,13 +2516,13 @@
         </context-group>
         <target state="needs-translation">Health</target>
       </trans-unit>
-      <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html">
+      <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html" approved="yes">
         <source>Visits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">भ्रमण</target>
+        <target state="final">भ्रमण</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html" approved="yes">
         <source>Messages</source>
@@ -2532,13 +2532,13 @@
         </context-group>
         <target state="final">सन्देशहरू</target>
       </trans-unit>
-      <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html">
+      <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html" approved="yes">
         <source>View Profile</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="translated">प्रोफाइल खोल्नुहोस्</target>
+        <target state="final">प्रोफाइल खोल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="d3781ad331fdd0bc9055c45a41664ac467de63af" datatype="html">
         <source>Edit Profile</source>
@@ -2568,7 +2568,7 @@
         </context-group>
         <target state="final">बाहिरिनुहाेस्</target>
       </trans-unit>
-      <trans-unit id="68a21f8fd3f86fe246ed20b3cf43e5044f6dc621" datatype="html">
+      <trans-unit id="68a21f8fd3f86fe246ed20b3cf43e5044f6dc621" datatype="html" approved="yes">
         <source>Mark all as Read</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
@@ -2578,15 +2578,15 @@
           <context context-type="sourcefile">src/app/notifications/notifications.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-translation">Mark all as Read</target>
+        <target state="final">पढिएको भनि चिन्ह लगाउनुहोस्</target>
       </trans-unit>
-      <trans-unit id="273401819238e72d16213b90c247eb5d63d95f5b" datatype="html">
+      <trans-unit id="273401819238e72d16213b90c247eb5d63d95f5b" datatype="html" approved="yes">
         <source>See All</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">83</context>
         </context-group>
-        <target state="needs-translation">See All</target>
+        <target state="final">सबै हेर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="41aac9cecddc9f345c263d3742192e68e227e413" datatype="html" approved="yes">
         <source>Menu</source>
@@ -2768,7 +2768,7 @@
         </context-group>
         <target state="final">राष्ट्र</target>
       </trans-unit>
-      <trans-unit id="25299a278bea66449842e0dccfa161b178b780b7" datatype="html">
+      <trans-unit id="25299a278bea66449842e0dccfa161b178b780b7" datatype="html" approved="yes">
         <source>Earth</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
@@ -2786,9 +2786,9 @@
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">167</context>
         </context-group>
-        <target state="needs-translation">Earth</target>
+        <target state="final">पृथ्वी</target>
       </trans-unit>
-      <trans-unit id="d2bcd3296d2850de762fb943060b7e086a893181" datatype="html">
+      <trans-unit id="d2bcd3296d2850de762fb943060b7e086a893181" datatype="html" approved="yes">
         <source>Health</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
@@ -2798,7 +2798,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">189</context>
         </context-group>
-        <target state="translated">स्वास्थ्य</target>
+        <target state="final">स्वास्थ्य</target>
       </trans-unit>
       <trans-unit id="e9b20820eab2b7caad859fd12f5e211cdb4eae88" datatype="html" approved="yes">
         <source>Feedback</source>
@@ -2848,7 +2848,7 @@
         </context-group>
         <target state="final">प्रतिकृया</target>
       </trans-unit>
-      <trans-unit id="c042c28e4b743a7aaa943e9f7d8714f78662d54c" datatype="html">
+      <trans-unit id="c042c28e4b743a7aaa943e9f7d8714f78662d54c" datatype="html" approved="yes">
         <source>Sync</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
@@ -2862,7 +2862,7 @@
           <context context-type="sourcefile">src/app/home/home.component.html</context>
           <context context-type="linenumber">185</context>
         </context-group>
-        <target state="needs-translation">Sync</target>
+        <target state="final">सिंक गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html" approved="yes">
         <source>Manager Settings</source>
@@ -2892,7 +2892,7 @@
         </context-group>
         <target state="final">सूचनाहरू छैनन्</target>
       </trans-unit>
-      <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
+      <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html" approved="yes">
         <source>Change Password</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/home/home.component.html</context>
@@ -2902,7 +2902,7 @@
           <context context-type="sourcefile">src/app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated">पासवर्ड बदल्नुहोस्</target>
+        <target state="final">पासवर्ड बदल्नुहोस्</target>
       </trans-unit>
       <trans-unit id="f65253954b66e929a8b4d5ecaf61f9129f8cec64" datatype="html">
         <source>Dashboard</source>
@@ -3004,13 +3004,13 @@
         </context-group>
         <target state="needs-translation">Notification Status</target>
       </trans-unit>
-      <trans-unit id="fb55bc908a9ef04a80dcf464cd899a559e579d35" datatype="html">
+      <trans-unit id="fb55bc908a9ef04a80dcf464cd899a559e579d35" datatype="html" approved="yes">
         <source>Mark as Read</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/notifications/notifications.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">पढिएको भनि चिन्ह लगाउनुहोस्</target>
+        <target state="final">पढिएको भनि चिन्ह लगाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="e622ce9ab68cd52b342c42bf773498311171662f" datatype="html">
         <source>No Notification Found</source>
@@ -3312,13 +3312,13 @@
         </context-group>
         <target state="final">केन्द्र</target>
       </trans-unit>
-      <trans-unit id="c6f14fe5d54aa6241a252b99b4074454ae6c8570" datatype="html">
+      <trans-unit id="c6f14fe5d54aa6241a252b99b4074454ae6c8570" datatype="html" approved="yes">
         <source>Advanced Options:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target state="needs-translation">Advanced Options:</target>
+        <target state="final">उन्नत विकल्पहरू:</target>
       </trans-unit>
       <trans-unit id="063125ee37ca96a5bd74734bebe4cce2c0c62152" datatype="html" approved="yes">
         <source>Local URL</source>
@@ -3954,7 +3954,7 @@
         </context-group>
         <target state="needs-translation">Inactive</target>
       </trans-unit>
-      <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html">
+      <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html" approved="yes">
         <source>Action</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-table.component.html</context>
@@ -3972,7 +3972,7 @@
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="translated">कार्य</target>
+        <target state="final">कार्य</target>
       </trans-unit>
       <trans-unit id="07c3f1fcd2bcc42b303507418b0f4cc276a9f2d6" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>visibility<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> View Profile </source>
@@ -5935,7 +5935,7 @@
         </context-group>
         <target state="needs-translation"> Allow your achievements to be shared with the nation </target>
       </trans-unit>
-      <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html">
+      <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html" approved="yes">
         <source>Update</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements-update.component.html</context>
@@ -5945,7 +5945,7 @@
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="translated">अपडेट</target>
+        <target state="final">अपडेट</target>
       </trans-unit>
       <trans-unit id="21dc4e7557f22576bea26af2b023d2e44476f41b" datatype="html">
         <source>Sort by Date</source>
@@ -6277,7 +6277,7 @@
         </context-group>
         <target state="needs-translation"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Time:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> <x id="INTERPOLATION" equiv-text="{{meetupDetail?.startTime}}"/> <x id="INTERPOLATION_1" equiv-text="{{ meetupDetail?.endTime ? '-' : '' }}"/> <x id="INTERPOLATION_2" equiv-text="{{meetupDetail?.endTime}}"/></target>
       </trans-unit>
-      <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html">
+      <trans-unit id="405862228f4faf715d905ec5e3202e338e26707b" datatype="html" approved="yes">
         <source>Recurring:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.html</context>
@@ -6287,9 +6287,9 @@
           <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
           <context context-type="linenumber">98</context>
         </context-group>
-        <target state="translated">पुनरावर्ती:</target>
+        <target state="final">पुनरावर्ती:</target>
       </trans-unit>
-      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html">
+      <trans-unit id="c39d806f5070ad24be254b304614747039197aa5" datatype="html" approved="yes">
         <source>Recurring Days: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.html</context>
@@ -6299,7 +6299,7 @@
           <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">आवर्ती दिनहरू: </target>
+        <target state="final">आवर्ती दिनहरू: </target>
       </trans-unit>
       <trans-unit id="4bebbae34f84157c0b5b852529f0bc2c39a5a38a" datatype="html" approved="yes">
         <source>Location:</source>
@@ -6403,7 +6403,7 @@
         </context-group>
         <target state="final">लिङ्ग</target>
       </trans-unit>
-      <trans-unit id="097b5dfee5665aa0f7daba8b696acecde6445474" datatype="html">
+      <trans-unit id="097b5dfee5665aa0f7daba8b696acecde6445474" datatype="html" approved="yes">
         <source>Male</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
@@ -6413,9 +6413,9 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <target state="translated">पुरुष</target>
+        <target state="final">पुरुष</target>
       </trans-unit>
-      <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html">
+      <trans-unit id="18f3bafdc69b800737e303bc1cb0753bd9dd3f32" datatype="html" approved="yes">
         <source>Female</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
@@ -6425,15 +6425,15 @@
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="translated">महिला</target>
+        <target state="final">महिला</target>
       </trans-unit>
-      <trans-unit id="a9aa4a447e7a64b1744ee9ec9581cdf5ba73501c" datatype="html">
+      <trans-unit id="a9aa4a447e7a64b1744ee9ec9581cdf5ba73501c" datatype="html" approved="yes">
         <source>Survey Profile</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">सर्वेक्षण प्राेफाइल</target>
+        <target state="final">सर्वेक्षण प्राेफाइल</target>
       </trans-unit>
       <trans-unit id="a23f09223b84ff03acbc95c825e32bb8a20d2a81" datatype="html">
         <source>Edit Member Profile</source>
@@ -6725,13 +6725,13 @@
         </context-group>
         <target state="needs-translation">{VAR_SELECT, select, Steps {Steps} Quest. {Quest.} other {Steps}}</target>
       </trans-unit>
-      <trans-unit id="86115ad60b7ce4af831b92927f338007ce7dd2f5" datatype="html">
+      <trans-unit id="86115ad60b7ce4af831b92927f338007ce7dd2f5" datatype="html" approved="yes">
         <source>Total Errors</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-chart.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">कुल त्रुटिहरू</target>
+        <target state="final">कुल त्रुटिहरू</target>
       </trans-unit>
       <trans-unit id="ec490c91ae671414c19940bfbaedd560e03fc158" datatype="html">
         <source>Click to see test detail</source>
@@ -6801,7 +6801,7 @@
         </context-group>
         <target state="needs-translation">Notes</target>
       </trans-unit>
-      <trans-unit id="d06b629de380097d079d86bf4dd188b3fae78d81" datatype="html">
+      <trans-unit id="d06b629de380097d079d86bf4dd188b3fae78d81" datatype="html" approved="yes">
         <source>myHealth</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health.component.html</context>
@@ -6815,7 +6815,7 @@
           <context context-type="sourcefile">src/app/health/health-event.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">मेरो स्वास्थ्य</target>
+        <target state="final">मेरो स्वास्थ्य</target>
       </trans-unit>
       <trans-unit id="83e0458959f65cb1dce0f84d5d276a7bce3b7c3a" datatype="html">
         <source>Update Details</source>
@@ -6861,13 +6861,13 @@
         </context-group>
         <target state="needs-translation">Contact Type</target>
       </trans-unit>
-      <trans-unit id="34746fb1c7f3d2194d99652bdff89e6e14c9c4f4" datatype="html">
+      <trans-unit id="34746fb1c7f3d2194d99652bdff89e6e14c9c4f4" datatype="html" approved="yes">
         <source>Contact</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-update.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">सम्पर्क</target>
+        <target state="final">सम्पर्क</target>
       </trans-unit>
       <trans-unit id="8c145c0568d0e5b46a510cacccab5b7affc44396" datatype="html">
         <source>Other Notes</source>
@@ -6925,13 +6925,13 @@
         </context-group>
         <target state="needs-translation">Pulse in bpm</target>
       </trans-unit>
-      <trans-unit id="46f647e15f8d8c5033b5a6b1d435f5c74488e851" datatype="html">
+      <trans-unit id="46f647e15f8d8c5033b5a6b1d435f5c74488e851" datatype="html" approved="yes">
         <source>Blood Pressure</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">रक्तचाप</target>
+        <target state="final">रक्तचाप</target>
       </trans-unit>
       <trans-unit id="194b4329dfe85c1a7e95587b0b688cd58ebba5b3" datatype="html">
         <source>Height in cm</source>
@@ -7057,29 +7057,29 @@
         </context-group>
         <target state="needs-translation">Performed by: </target>
       </trans-unit>
-      <trans-unit id="80a277f23baf5597a59796b6934b654df82d10eb" datatype="html">
+      <trans-unit id="80a277f23baf5597a59796b6934b654df82d10eb" datatype="html" approved="yes">
         <source>Temperature: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">तापक्रम: </target>
+        <target state="final">तापक्रम: </target>
       </trans-unit>
-      <trans-unit id="8a3902521a4a7ddd3927f57b2d08468d1afe1579" datatype="html">
+      <trans-unit id="8a3902521a4a7ddd3927f57b2d08468d1afe1579" datatype="html" approved="yes">
         <source>Pulse: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">पल्स: </target>
+        <target state="final">पल्स: </target>
       </trans-unit>
-      <trans-unit id="a688c208e7fc78c6db76b4968a84d96d843c3e96" datatype="html">
+      <trans-unit id="a688c208e7fc78c6db76b4968a84d96d843c3e96" datatype="html" approved="yes">
         <source>Blood Pressure: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">रक्तचाप: </target>
+        <target state="final">रक्तचाप: </target>
       </trans-unit>
       <trans-unit id="9b868eb282ba919fd6752fefff77a0432b8be77c" datatype="html">
         <source>Height: </source>
@@ -7309,13 +7309,13 @@
         </context-group>
         <target state="final">जानकारी</target>
       </trans-unit>
-      <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html">
+      <trans-unit id="922f626fd7ebb7ceb33f1a9e144d54ab6443e1a6" datatype="html" approved="yes">
         <source>at</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target state="translated">मा</target>
+        <target state="final">मा</target>
       </trans-unit>
       <trans-unit id="7005b4050f47f5f3e6dec3533b30ecd3b2896031" datatype="html">
         <source>No Meetups Found</source>
@@ -7789,7 +7789,7 @@
         </context-group>
         <target state="final">वर्ष</target>
       </trans-unit>
-      <trans-unit id="2af7efecfae8d7fed3b07f718a623eca1ad8163f" datatype="html">
+      <trans-unit id="2af7efecfae8d7fed3b07f718a623eca1ad8163f" datatype="html" approved="yes">
         <source>Labels</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
@@ -7799,7 +7799,7 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">लेबल</target>
+        <target state="final">लेबल</target>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html" approved="yes">
         <source>Publisher/Attribution</source>
@@ -7841,13 +7841,13 @@
         </context-group>
         <target state="final">खोल्नुहोस्</target>
       </trans-unit>
-      <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
+      <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html" approved="yes">
         <source>Resource For</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="translated">स्रोत लागि</target>
+        <target state="final">स्रोत लागि</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html" approved="yes">
         <source>Default</source>
@@ -8198,13 +8198,13 @@
         </context-group>
         <target state="needs-translation">Open Date</target>
       </trans-unit>
-      <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html">
+      <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html" approved="yes">
         <source>Close Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
           <context context-type="linenumber">80</context>
         </context-group>
-        <target state="translated">बन्द मिति</target>
+        <target state="final">बन्द मिति</target>
       </trans-unit>
       <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html" approved="yes">
         <source>Source</source>
@@ -8214,13 +8214,13 @@
         </context-group>
         <target state="final">श्रोत</target>
       </trans-unit>
-      <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html">
+      <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html" approved="yes">
         <source> Action </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target state="translated"> कार्यहरू </target>
+        <target state="final"> कार्यहरू </target>
       </trans-unit>
       <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html" approved="yes">
         <source>View</source>
@@ -9298,13 +9298,13 @@
         </context-group>
         <target state="final">पाठ्यक्रमहरू सूचीकृत गर्नुहाेस्</target>
       </trans-unit>
-      <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html">
+      <trans-unit id="c38bd7025ea550a9a0ddf8564f1a843e03df1cbe" datatype="html" approved="yes">
         <source>Checking request status...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="translated">अनुरोध स्थिति जाँच गर्दै...</target>
+        <target state="final">अनुरोध स्थिति जाँच गर्दै...</target>
       </trans-unit>
       <trans-unit id="4ef4955380453184df847c308888e43f5bc3a07d" datatype="html">
         <source>{VAR_SELECT, select, community {nation} nation {center}}</source>
@@ -9846,13 +9846,13 @@
         </context-group>
         <target state="needs-translation">Course Progress Report</target>
       </trans-unit>
-      <trans-unit id="e5146d25810fd7e2853a30412580f078f3e0e84c" datatype="html">
+      <trans-unit id="e5146d25810fd7e2853a30412580f078f3e0e84c" datatype="html" approved="yes">
         <source>Health Report</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="translated">स्वास्थ्य रिपोर्ट</target>
+        <target state="final">स्वास्थ्य रिपोर्ट</target>
       </trans-unit>
       <trans-unit id="69102aacca3e9ebdd5a6cfde463136058efaa253" datatype="html">
         <source>There are no visits</source>
@@ -9894,21 +9894,21 @@
         </context-group>
         <target state="needs-translation">There are no course ratings</target>
       </trans-unit>
-      <trans-unit id="aeda6bb806809d0c214547f8be69995df91ef479" datatype="html">
+      <trans-unit id="aeda6bb806809d0c214547f8be69995df91ef479" datatype="html" approved="yes">
         <source>Total Examinations:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">कुल परीक्षण:</target>
+        <target state="final">कुल परीक्षण:</target>
       </trans-unit>
-      <trans-unit id="f669274b7f3973eb555aff7d6103e4b73b6a454f" datatype="html">
+      <trans-unit id="f669274b7f3973eb555aff7d6103e4b73b6a454f" datatype="html" approved="yes">
         <source>Patients Seen:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">हेरिएका बिरामीहरू:</target>
+        <target state="final">हेरिएका बिरामीहरू:</target>
       </trans-unit>
       <trans-unit id="2a22a0a41e6aacd119ac6a533c8c60c1f7819f51" datatype="html">
         <source>Diagnoses</source>
@@ -9982,13 +9982,13 @@
         </context-group>
         <target state="needs-translation">Courses Completed</target>
       </trans-unit>
-      <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html">
+      <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html" approved="yes">
         <source>Steps</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">चरणहरू</target>
+        <target state="final">चरणहरू</target>
       </trans-unit>
       <trans-unit id="be8e1a199c0f65656ec614786777a1552a968979" datatype="html">
         <source>Tests</source>
