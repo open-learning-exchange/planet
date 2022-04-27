@@ -81,20 +81,20 @@
           <context context-type="linenumber">69</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-table.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-event.component.html</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-table.component.html</context>
+          <context context-type="linenumber">6</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-update.component.html</context>
           <context context-type="linenumber">72</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-event.component.html</context>
+          <context context-type="linenumber">75</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
@@ -113,12 +113,12 @@
           <context context-type="linenumber">82</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-event.component.html</context>
-          <context context-type="linenumber">74</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-update.component.html</context>
           <context context-type="linenumber">71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-event.component.html</context>
+          <context context-type="linenumber">74</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
@@ -173,12 +173,12 @@
           <context context-type="linenumber">8</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-table.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-table.component.html</context>
+          <context context-type="linenumber">7</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-submissions.component.ts</context>
@@ -1213,16 +1213,16 @@
           <context context-type="linenumber">148</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">212</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">212</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">101</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">212</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">212</context>
         </context-group>
         <target state="needs-translation">Name</target>
       </trans-unit>
@@ -1347,6 +1347,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements-update.component.html</context>
           <context context-type="linenumber">83</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
+          <context context-type="linenumber">30</context>
         </context-group>
         <target state="needs-translation">Edit</target>
       </trans-unit>
@@ -1685,12 +1689,12 @@
         <target state="needs-translation">Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace('org.couchdb.user:', '')"/>&lt;/b&gt; to the Planet Learning</target>
       </trans-unit>
       <trans-unit id="1260359891793768927" datatype="html">
-        <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</source>
+        <source>Welcome to Planet Learning, <x id="PH" equiv-text="e, {}))     ).subscribe(       res =&gt;"/>!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
           <context context-type="linenumber">130</context>
         </context-group>
-        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace('org.couchdb.user:', '')"/>!</target>
+        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="e, {}))     ).subscribe(       res =&gt;"/>!</target>
       </trans-unit>
       <trans-unit id="1496185008827271823" datatype="html">
         <source>An error occurred please try again</source>
@@ -5133,6 +5137,10 @@
           <context context-type="linenumber">23</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
           <context context-type="linenumber">137</context>
         </context-group>
@@ -6799,11 +6807,11 @@
           <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-event.component.html</context>
+          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
+          <context context-type="sourcefile">src/app/health/health-event.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
         <target state="needs-translation">myHealth</target>
@@ -6843,6 +6851,34 @@
           <context context-type="linenumber">93</context>
         </context-group>
         <target state="needs-translation">Self Examination</target>
+      </trans-unit>
+      <trans-unit id="d0139a4b47bcc8b15e6c544f7d72be72cd0e9371" datatype="html">
+        <source>Contact Type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+        <target state="needs-translation">Contact Type</target>
+      </trans-unit>
+      <trans-unit id="34746fb1c7f3d2194d99652bdff89e6e14c9c4f4" datatype="html">
+        <source>Contact</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+        <target state="needs-translation">Contact</target>
+      </trans-unit>
+      <trans-unit id="8c145c0568d0e5b46a510cacccab5b7affc44396" datatype="html">
+        <source>Other Notes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <target state="needs-translation">Other Notes</target>
       </trans-unit>
       <trans-unit id="1552831590018565676" datatype="html">
         <source>This examination can no longer be changed.</source>
@@ -7012,34 +7048,6 @@
         </context-group>
         <target state="needs-translation">Referrals</target>
       </trans-unit>
-      <trans-unit id="d0139a4b47bcc8b15e6c544f7d72be72cd0e9371" datatype="html">
-        <source>Contact Type</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
-          <context context-type="linenumber">53</context>
-        </context-group>
-        <target state="needs-translation">Contact Type</target>
-      </trans-unit>
-      <trans-unit id="34746fb1c7f3d2194d99652bdff89e6e14c9c4f4" datatype="html">
-        <source>Contact</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
-          <context context-type="linenumber">59</context>
-        </context-group>
-        <target state="needs-translation">Contact</target>
-      </trans-unit>
-      <trans-unit id="8c145c0568d0e5b46a510cacccab5b7affc44396" datatype="html">
-        <source>Other Notes</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-update.component.html</context>
-          <context context-type="linenumber">66</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-        <target state="needs-translation">Other Notes</target>
-      </trans-unit>
       <trans-unit id="318774a5708c08349195b145ecf4420982fa5e40" datatype="html">
         <source>Performed by: </source>
         <context-group purpose="location">
@@ -7184,14 +7192,6 @@
         </context-group>
         <target state="needs-translation">Referrals: </target>
       </trans-unit>
-      <trans-unit id="8a0db24e7e3ed40395f039792c8bd90a33be14f7" datatype="html">
-        <source> Edit <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;minutes&quot;&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/health/health-event-dialog.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-        <target state="needs-translation"> Edit <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;minutes&quot;&gt;"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/></target>
-      </trans-unit>
       <trans-unit id="4342510535269152024" datatype="html">
         <source>You have deleted selected meetups</source>
         <context-group purpose="location">
@@ -7283,14 +7283,6 @@
           <context context-type="linenumber">54</context>
         </context-group>
         <target state="needs-translation">Joined Meetup</target>
-      </trans-unit>
-      <trans-unit id="884535df42a54a2c00582c299326273b3eaa8c3d" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="        &lt;s"/>clear<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="ngIf=&quot;eleme"/>Leave</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
-          <context context-type="linenumber">65</context>
-        </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="        &lt;s"/>clear<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="ngIf=&quot;eleme"/>Leave</target>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html">
         <source>Manage</source>
@@ -8239,12 +8231,12 @@
           <context context-type="linenumber">39</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
-          <context context-type="linenumber">44</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <target state="translated">عرض التفاصيل</target>
       </trans-unit>
@@ -8928,13 +8920,13 @@
       </trans-unit>
       <trans-unit id="7f7633a79c20dbf87ac0cbb83ef96c48e56afa7d" datatype="html">
         <source>
-          <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || &apos;Step &apos; + (step.index + 1) }}"/>
+          <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || &apos;Step &apos; + (step.ind"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
-        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || 'Step ' + (step.index + 1) }}"/> </target>
+        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || 'Step ' + (step.ind"/> </target>
       </trans-unit>
       <trans-unit id="a79d938b5ed20249b4ab6bef86c12633d2f346a0" datatype="html">
         <source>Test</source>
@@ -9511,12 +9503,12 @@
           <context context-type="linenumber">25</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
-          <context context-type="linenumber">53</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">36</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <target state="needs-translation">Sandbox</target>
       </trans-unit>
@@ -10402,6 +10394,112 @@
         </context-group>
         <target state="needs-translation">{VAR_SELECT, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</target>
       </trans-unit>
+      <trans-unit id="6095875067730636945" datatype="html">
+        <source>Planet was not accepted</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+        <target state="needs-translation">Planet was not accepted</target>
+      </trans-unit>
+      <trans-unit id="2972014593505653665" datatype="html">
+        <source>There was a problem deleting this community</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+        <target state="needs-translation">There was a problem deleting this community</target>
+      </trans-unit>
+      <trans-unit id="3096098546617387266" datatype="html">
+        <source>Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">211</context>
+        </context-group>
+        <target state="needs-translation">Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</target>
+      </trans-unit>
+      <trans-unit id="2012917231300508078" datatype="html">
+        <source><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">232</context>
+        </context-group>
+        <target state="needs-translation"><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</target>
+      </trans-unit>
+      <trans-unit id="4685838598500716603" datatype="html">
+        <source>There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">235</context>
+        </context-group>
+        <target state="needs-translation">There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</target>
+      </trans-unit>
+      <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
+        <source>URL</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <target state="translated">رابط</target>
+      </trans-unit>
+      <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html">
+        <source>Created Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <target state="translated">تاريخ الإنشاء</target>
+      </trans-unit>
+      <trans-unit id="03a50faaf426ee668aecb37f5b0aa8ae6d78baac" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">48,49</context>
+        </context-group>
+        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </target>
+      </trans-unit>
+      <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html">
+        <source> Edit Name </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+        <target state="needs-translation"> Edit Name </target>
+      </trans-unit>
+      <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html">
+        <source> Communities </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+        <target state="needs-translation"> Communities </target>
+      </trans-unit>
+      <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html">
+        <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">27,30</context>
+        </context-group>
+        <target state="needs-translation">{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</target>
+      </trans-unit>
+      <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html">
+        <source>
+          <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">27,31</context>
+        </context-group>
+        <target state="needs-translation"> <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/> </target>
+      </trans-unit>
+      <trans-unit id="b784ca273d1611e93718c5ba67ec552f383d0e1d" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </target>
+      </trans-unit>
       <trans-unit id="1415060111017347427" datatype="html">
         <source>Network</source>
         <context-group purpose="location">
@@ -10509,112 +10607,6 @@
           <context context-type="linenumber">46,47</context>
         </context-group>
         <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </target>
-      </trans-unit>
-      <trans-unit id="6095875067730636945" datatype="html">
-        <source>Planet was not accepted</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">111</context>
-        </context-group>
-        <target state="needs-translation">Planet was not accepted</target>
-      </trans-unit>
-      <trans-unit id="2972014593505653665" datatype="html">
-        <source>There was a problem deleting this community</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">134</context>
-        </context-group>
-        <target state="needs-translation">There was a problem deleting this community</target>
-      </trans-unit>
-      <trans-unit id="3096098546617387266" datatype="html">
-        <source>Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">211</context>
-        </context-group>
-        <target state="needs-translation">Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</target>
-      </trans-unit>
-      <trans-unit id="2012917231300508078" datatype="html">
-        <source><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">232</context>
-        </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</target>
-      </trans-unit>
-      <trans-unit id="4685838598500716603" datatype="html">
-        <source>There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">235</context>
-        </context-group>
-        <target state="needs-translation">There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</target>
-      </trans-unit>
-      <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html">
-        <source>URL</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-        <target state="translated">رابط</target>
-      </trans-unit>
-      <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html">
-        <source>Created Date</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-        <target state="translated">تاريخ الإنشاء</target>
-      </trans-unit>
-      <trans-unit id="03a50faaf426ee668aecb37f5b0aa8ae6d78baac" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">48,49</context>
-        </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </target>
-      </trans-unit>
-      <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html">
-        <source> Edit Name </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">39,40</context>
-        </context-group>
-        <target state="needs-translation"> Edit Name </target>
-      </trans-unit>
-      <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html">
-        <source> Communities </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">24,25</context>
-        </context-group>
-        <target state="needs-translation"> Communities </target>
-      </trans-unit>
-      <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html">
-        <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">27,30</context>
-        </context-group>
-        <target state="needs-translation">{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</target>
-      </trans-unit>
-      <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html">
-        <source>
-          <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">27,31</context>
-        </context-group>
-        <target state="needs-translation"> <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/> </target>
-      </trans-unit>
-      <trans-unit id="b784ca273d1611e93718c5ba67ec552f383d0e1d" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">44,45</context>
-        </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </target>
       </trans-unit>
       <trans-unit id="8605994873123160708" datatype="html">
         <source>Cancer</source>
