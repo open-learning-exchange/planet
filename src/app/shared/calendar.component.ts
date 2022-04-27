@@ -1,8 +1,8 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
+import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import allLocales from "@fullcalendar/core/locales-all";
+import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
 import { days, millisecondsToDay } from '../meetups/constants';
@@ -72,7 +72,7 @@ export class PlanetCalendarComponent implements OnInit {
         }
       } :
       {};
-    this.calendarOptions.customButtons = this.buttons
+    this.calendarOptions.customButtons = this.buttons;
   }
 
   getMeetups() {
