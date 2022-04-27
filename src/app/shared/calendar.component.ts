@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { DOCUMENT } from "@angular/common";
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import allLocales from "@fullcalendar/core/locales-all";
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
 import { days, millisecondsToDay } from '../meetups/constants';
@@ -43,6 +45,8 @@ export class PlanetCalendarComponent implements OnInit {
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
+    locales: allLocales,
+    locale: this.document.documentElement.lang,
     events: this.events,
     headerToolbar: this.header,
     customButtons: this.buttons,
@@ -52,6 +56,7 @@ export class PlanetCalendarComponent implements OnInit {
   };
 
   constructor(
+    @Inject(DOCUMENT) private document: Document,
     private dialog: MatDialog,
     private couchService: CouchService
   ) {}
