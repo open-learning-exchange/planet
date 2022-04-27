@@ -10116,7 +10116,7 @@
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">25,26</context>
         </context-group>
-        <target state="needs-translation"> Surveys </target>
+        <target state="translated">सर्वेक्षणहरू</target>
       </trans-unit>
       <trans-unit id="0c2d0e97890355f5113f8101d505cf8374a577ad" datatype="html">
         <source>Course Name</source>
@@ -10190,7 +10190,7 @@
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="needs-translation">Updated On</target>
+        <target state="translated">अपडेट गरिएको मिति</target>
       </trans-unit>
       <trans-unit id="03d5be56a7492a2dc241f6def42cd6c14a5e58e2" datatype="html">
         <source>Graded On</source>
@@ -10214,7 +10214,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Question</target>
+        <target state="translated">प्रश्न</target>
       </trans-unit>
       <trans-unit id="8c59014d8eea11db1d53f74fab28900072a9b1b2" datatype="html">
         <source> on <x id="INTERPOLATION" equiv-text="{{(updatedOn | date: &apos;short&apos;) || &apos;--&apos;}}"/></source>
@@ -10246,7 +10246,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Unknown</target>
+        <target state="translated">अज्ञात</target>
       </trans-unit>
       <trans-unit id="9d860be103f8ece570caa0ada1cb1cb253c80e01" datatype="html" approved="yes">
         <source>Enter answer here</source>
@@ -10466,7 +10466,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">39,40</context>
         </context-group>
-        <target state="needs-translation"> Edit Name </target>
+        <target state="translated">नाम सम्पादन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html">
         <source> Communities </source>
@@ -10474,7 +10474,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">24,25</context>
         </context-group>
-        <target state="needs-translation"> Communities </target>
+        <target state="translated">समुदायहरू</target>
       </trans-unit>
       <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html">
         <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
@@ -10516,7 +10516,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">Region</target>
+        <target state="translated">क्षेत्र</target>
       </trans-unit>
       <trans-unit id="5258595085525200029" datatype="html">
         <source>Add <x id="PH" equiv-text="type"/></source>
@@ -10532,7 +10532,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="needs-translation">Planet</target>
+        <target state="translated">Planet</target>
       </trans-unit>
       <trans-unit id="3047897875233101157" datatype="html">
         <source>Select Planet</source>
@@ -10616,7 +10616,7 @@
           <context context-type="sourcefile">src/app/health/health.constants.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">Cancer</target>
+        <target state="translated">क्यान्सर </target>
       </trans-unit>
       <trans-unit id="6983399986398818397" datatype="html">
         <source>Cardiovascular disorders</source>
@@ -10816,7 +10816,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">Food and Nutrition</target>
+        <target state="translated">खाना र पाेषण</target>
       </trans-unit>
       <trans-unit id="3012231561587019282" datatype="html">
         <source>Geography</source>
@@ -10824,7 +10824,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="needs-translation">Geography</target>
+        <target state="translated">भूगाेल</target>
       </trans-unit>
       <trans-unit id="3777412283914602087" datatype="html">
         <source>Health and Medicine</source>
@@ -10832,7 +10832,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation">Health and Medicine</target>
+        <target state="translated">स्वास्थ र अाैषधि</target>
       </trans-unit>
       <trans-unit id="186236568870281953" datatype="html">
         <source>History</source>
@@ -10840,7 +10840,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">History</target>
+        <target state="translated">इतिहास</target>
       </trans-unit>
       <trans-unit id="5919166821404055179" datatype="html">
         <source>Human Development</source>
@@ -10848,7 +10848,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Human Development</target>
+        <target state="translated">मानविय विकास</target>
       </trans-unit>
       <trans-unit id="1949800099101277248" datatype="html">
         <source>Languages</source>
@@ -10856,7 +10856,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Languages</target>
+        <target state="translated">भाषाहरू</target>
       </trans-unit>
       <trans-unit id="764493010691736851" datatype="html">
         <source>Law</source>
@@ -10864,7 +10864,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">Law</target>
+        <target state="translated">कानुन</target>
       </trans-unit>
       <trans-unit id="8832343684695963710" datatype="html">
         <source>Learning</source>
@@ -10880,7 +10880,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-translation">Literature</target>
+        <target state="translated">साहित्य</target>
       </trans-unit>
       <trans-unit id="3080099711511142058" datatype="html">
         <source>Math</source>
@@ -10888,7 +10888,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation">Math</target>
+        <target state="translated">गणित</target>
       </trans-unit>
       <trans-unit id="855872803871324523" datatype="html">
         <source>Music</source>
@@ -10896,7 +10896,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">Music</target>
+        <target state="translated">संगीत</target>
       </trans-unit>
       <trans-unit id="7436221208101133694" datatype="html">
         <source>Politics and Government</source>
@@ -10920,7 +10920,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">Religion</target>
+        <target state="translated">धर्म</target>
       </trans-unit>
       <trans-unit id="8597364861447301684" datatype="html">
         <source>Science</source>
@@ -10928,7 +10928,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Science</target>
+        <target state="translated">विज्ञान</target>
       </trans-unit>
       <trans-unit id="2421530779333047465" datatype="html">
         <source>Social Sciences</source>
@@ -10944,7 +10944,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">Sports</target>
+        <target state="translated">खेलकुद</target>
       </trans-unit>
       <trans-unit id="5765523585863707029" datatype="html">
         <source>Technology</source>
@@ -10952,7 +10952,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">Technology</target>
+        <target state="translated">प्रविधि</target>
       </trans-unit>
       <trans-unit id="4910083311358584278" datatype="html">
         <source>Early Education</source>
@@ -10960,7 +10960,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">Early Education</target>
+        <target state="translated">प्रारम्भिक शिक्षा</target>
       </trans-unit>
       <trans-unit id="18057945953021900" datatype="html">
         <source>Lower Primary</source>
@@ -10968,7 +10968,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="needs-translation">Lower Primary</target>
+        <target state="translated">निम्न प्राथमिक</target>
       </trans-unit>
       <trans-unit id="8759628242708447609" datatype="html">
         <source>Upper Primary</source>
@@ -10976,7 +10976,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="needs-translation">Upper Primary</target>
+        <target state="translated">उच्च प्राथमिक</target>
       </trans-unit>
       <trans-unit id="7375716016988559491" datatype="html">
         <source>Lower Secondary</source>
@@ -10984,7 +10984,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="needs-translation">Lower Secondary</target>
+        <target state="translated">निम्न माध्यामिक</target>
       </trans-unit>
       <trans-unit id="2146568470813983071" datatype="html">
         <source>Upper Secondary</source>
@@ -10992,7 +10992,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-translation">Upper Secondary</target>
+        <target state="translated">उच्च माध्यामिक</target>
       </trans-unit>
       <trans-unit id="4331721931629393735" datatype="html">
         <source>Undergraduate</source>
@@ -11048,7 +11048,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">Video</target>
+        <target state="translated">भिडियो</target>
       </trans-unit>
       <trans-unit id="1592662511626645756" datatype="html">
         <source>Just download</source>
@@ -11056,7 +11056,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="needs-translation">Just download</target>
+        <target state="translated">डाउनलोड मात्र</target>
       </trans-unit>
       <trans-unit id="7913678223536081420" datatype="html">
         <source>HTML</source>
@@ -11064,7 +11064,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-translation">HTML</target>
+        <target state="translated">HTML</target>
       </trans-unit>
       <trans-unit id="5794539423374616988" datatype="html">
         <source>PDF.js</source>
@@ -11072,7 +11072,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="needs-translation">PDF.js</target>
+        <target state="translated">PDF.js</target>
       </trans-unit>
       <trans-unit id="117089467365527130" datatype="html">
         <source>Bell-Reader</source>
@@ -11088,7 +11088,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="needs-translation">MP3</target>
+        <target state="translated">MP3</target>
       </trans-unit>
       <trans-unit id="3067037062048660869" datatype="html">
         <source>Flow Video Player</source>
@@ -11120,7 +11120,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="needs-translation">Textbook</target>
+        <target state="translated">पाठ्यपुस्तक</target>
       </trans-unit>
       <trans-unit id="7789101779167400829" datatype="html">
         <source>Lesson Plan</source>
@@ -11144,7 +11144,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="needs-translation">Exercises</target>
+        <target state="translated">अभ्यासहरू</target>
       </trans-unit>
       <trans-unit id="8368569603919141747" datatype="html">
         <source>Discussion Questions</source>
@@ -11152,7 +11152,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">Discussion Questions</target>
+        <target state="translated">छलफल प्रश्नहरू</target>
       </trans-unit>
       <trans-unit id="6317134853623145512" datatype="html">
         <source>New survey added</source>
@@ -11414,7 +11414,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="1567cf7bdefe1d40e39cdaf3505317ddb1d0f2fa" datatype="html">
         <source>Certification Name</source>
@@ -11422,7 +11422,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Certification Name</target>
+        <target state="translated">प्रमाणपत्रको नाम</target>
       </trans-unit>
       <trans-unit id="3c05c3a780c4558a662e672a89bdeb44fb2e08b4" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </source>
@@ -11438,7 +11438,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="needs-translation">No Certifications Found</target>
+        <target state="translated">कुनै प्रमाणपत्रहरू पाइएनन्</target>
       </trans-unit>
       <trans-unit id="1211727562750778121" datatype="html">
         <source>New certification added</source>
