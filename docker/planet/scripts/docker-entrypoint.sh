@@ -32,6 +32,8 @@ sed -i -e "s#planet-center-address#$CENTER_ADDRESS#g" /usr/share/nginx/html/**/m
 sed -i -e "s#planet-parent-protocol#$P_PROTOCOL#g" /usr/share/nginx/html/**/main*
 sed -i -e "s#planet-sync-address#$S_ADDRESS#g" /usr/share/nginx/html/**/main*
 
+cd / && ./create_version_json.sh
+
 cd /usr/share/nginx/html && ./credentials.sh
 
 spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
