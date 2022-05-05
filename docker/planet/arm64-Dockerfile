@@ -15,7 +15,6 @@ RUN apk add --no-cache \
 
 COPY docker/planet/default.conf /etc/nginx/conf.d/
 RUN touch /etc/nginx/conf.d/auth.txt
-COPY docker/planet/scripts/docker-entrypoint.sh ./
 COPY package.json ./
 COPY docker/planet/scripts/ ./
 RUN mkdir -p /usr/share/nginx/html \
