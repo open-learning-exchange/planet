@@ -22,9 +22,6 @@ RUN mkdir -p /usr/share/nginx/html \
 COPY ./ng-app/dist /usr/share/nginx/html
 COPY docker/planet/nginx/ /usr/share/nginx/html
 
-RUN ls -la
-RUN sync
-RUN ls -la
 RUN ./create_version_json.sh
 
 CMD ./docker-entrypoint.sh
