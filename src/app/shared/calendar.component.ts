@@ -67,7 +67,7 @@ export class PlanetCalendarComponent implements OnInit {
         }
       } :
       {};
-    this.calendarOptions.customButtons = this.buttons
+    this.calendarOptions.customButtons = this.buttons;
   }
 
   getMeetups() {
