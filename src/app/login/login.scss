@@ -65,6 +65,38 @@
     display: block;
   }
 
+  // Target Tablet devices Whatever orientation
+  @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .login-container {
+      padding: 0;
+      overflow: hidden;
+    }
+    .login-card {
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: 1fr;
+      grid-auto-rows: 1fr;
+    }
+    .login-left-tile-container {
+      display: inline;
+    }
+    .right-tile {
+      grid-area: rt;
+      grid-row-start: rt-start;
+      grid-row-end: rt-end;
+      grid-column-start: rt-end;
+      grid-column-end: rt-start;
+    }
+    .ole-logo {
+      display: inline ;
+      width: 5rem ;
+    }
+  
+    .myplanet-link {
+      display: inline ;
+    }
+  }
+
+  // Targeting Smaller Screens in portait mode 
   @media only screen and (max-width: 550px) and (orientation: portrait) {
     .login-container {
       padding: 0;
@@ -108,6 +140,8 @@
       margin: 0;
     }
   }
+
+  // Targeting smaller devices in Landscape mode
   @media only screen and (max-height: 375px) and (orientation: "landscape") {
     .login-container {
       padding: 0;
