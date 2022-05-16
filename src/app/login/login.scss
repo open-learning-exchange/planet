@@ -70,13 +70,12 @@
     .login-container {
       padding: 0;
       overflow: hidden;
-      height: 100%;
-      margin: 0;
     }
     .login-card {
       grid-template-columns: 1fr 2fr;
       grid-template-rows: 1fr;
       grid-auto-rows: 1fr;
+      min-height: 100vh;
     }
     .login-left-tile-container {
       display: inline;
@@ -92,14 +91,8 @@
       display: inline ;
       width: 5rem ;
     }
-  
     .myplanet-link {
       display: inline ;
-    }
-
-    mat-card {
-      height: 100%;
-      margin: 0;
     }
   }
 
@@ -108,13 +101,12 @@
     .login-container {
       padding: 0;
       overflow: hidden;
-      height: 100%;
-      margin: 0;
     }
     .login-card {
       grid-template-columns: 1fr ;
       grid-template-rows: 1fr 2fr ;
       grid-auto-rows: 1fr;
+      min-height: 100vh;
     }
     .left-tile {
       grid-area: lt;
@@ -148,11 +140,6 @@
     h3 {
       margin: 0;
     }
-
-    mat-card {
-      height: 100%;
-      margin: 0;
-    }
   }
 
   // Targeting smaller devices in Landscape mode
@@ -160,13 +147,12 @@
     .login-container {
       padding: 0;
       overflow: hidden;
-      height: 100%;
-      margin: 0;
     }
     .login-card {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr;
       grid-auto-rows: 1fr;
+      min-height: 100vh;
     }
     .login-left-tile-container {
       display: inline;
@@ -182,14 +168,8 @@
       display: inline ;
       width: 5rem ;
     }
-  
     .myplanet-link {
       display: inline ;
-    }
-
-    mat-card {
-      height: 100%;
-      margin: 0;
     }
   }
 }
