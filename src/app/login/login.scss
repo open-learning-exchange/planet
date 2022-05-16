@@ -70,6 +70,8 @@
     .login-container {
       padding: 0;
       overflow: hidden;
+      height: 100%;
+      margin: 0;
     }
     .login-card {
       grid-template-columns: 1fr 2fr;
@@ -94,6 +96,11 @@
     .myplanet-link {
       display: inline ;
     }
+
+    mat-card {
+      height: 100%;
+      margin: 0;
+    }
   }
 
   // Targeting Smaller Screens in portait mode 
@@ -101,6 +108,8 @@
     .login-container {
       padding: 0;
       overflow: hidden;
+      height: 100%;
+      margin: 0;
     }
     .login-card {
       grid-template-columns: 1fr ;
@@ -139,6 +148,11 @@
     h3 {
       margin: 0;
     }
+
+    mat-card {
+      height: 100%;
+      margin: 0;
+    }
   }
 
   // Targeting smaller devices in Landscape mode
@@ -146,6 +160,8 @@
     .login-container {
       padding: 0;
       overflow: hidden;
+      height: 100%;
+      margin: 0;
     }
     .login-card {
       grid-template-columns: 1fr 1fr;
@@ -169,6 +185,11 @@
   
     .myplanet-link {
       display: inline ;
+    }
+
+    mat-card {
+      height: 100%;
+      margin: 0;
     }
   }
 }
