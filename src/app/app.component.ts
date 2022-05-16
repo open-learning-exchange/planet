@@ -8,7 +8,7 @@ declare let gtag: Function;
 @Component({
   selector: 'planet-app',
   template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>',
-  styles: ['div { height: 100%; margin: 0} ']
+  styles: [ 'div { height: 100%; margin: 0} ' ]
 })
 export class AppComponent {
   constructor(
