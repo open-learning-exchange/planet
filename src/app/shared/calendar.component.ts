@@ -45,6 +45,7 @@ export class PlanetCalendarComponent implements OnInit {
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
+    contentHeight: 'auto',
     locales: allLocales,
     locale: this.document.documentElement.lang,
     events: this.events,
