@@ -88,23 +88,23 @@
       grid-column-end: rt-start;
     }
     .ole-logo {
-      display: inline ;
-      width: 5rem ;
+      display: inline;
+      width: 5rem;
     }
     .myplanet-link {
-      display: inline ;
+      display: inline;
     }
   }
 
-  // Targeting Smaller Screens in portait mode 
+  // Targeting Smaller Screens in portait mode
   @media only screen and (max-width: 550px) and (orientation: portrait) {
     .login-container {
       padding: 0;
       overflow: hidden;
     }
     .login-card {
-      grid-template-columns: 1fr ;
-      grid-template-rows: 1fr 2fr ;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 2fr;
       grid-auto-rows: 1fr;
       min-height: 100vh;
     }
@@ -127,7 +127,7 @@
       flex-direction: row;
     }
     .ole-logo {
-      display: inline ;
+      display: inline;
       width: 5rem;
     }
     h1 {
@@ -165,11 +165,19 @@
       grid-column-end: rt-start;
     }
     .ole-logo {
-      display: inline ;
-      width: 5rem ;
+      display: inline;
+      width: 5rem;
     }
     .myplanet-link {
-      display: inline ;
+      display: inline;
+    }
+  }
+
+  // Add line break for `try planet` statement
+  @media only screen and (max-width: 650px) {
+    .myplanet-link {
+      flex-direction: column;
+      margin-top: 10px;
     }
   }
 }
