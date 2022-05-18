@@ -14,9 +14,11 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() item;
+  @Input() comments;
+  @Input() newReplies: any[];
   @Input() replyObject;
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
@@ -34,6 +36,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
+  replyExist = false;
+  unreadReplies: any[] = [];
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
 
   constructor(
@@ -46,6 +50,15 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     private stateService: StateService,
     private dialog: MatDialog
   ) {}
+
+  ngOnInit() {
+    if (this.comments && this.newReplies.length > 0) {
+      this.unreadReplies = this.newReplies.filter(reply => reply.doc.replyTo === this.item.doc._id);
+      if (this.unreadReplies.length > 0) {
+          this.replyExist = true;
+        }
+    }
+  }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
@@ -68,16 +81,24 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
 
   addReply(news) {
     const label = this.formLabel(news);
+    const newNews = {
+        replyTo: news._id,
+        messagePlanetCode: news.messagePlanetCode,
+        messageType: news.messageType,
+        viewIn: news.viewIn,
+        teamId: news.teamId,
+        reportId: news.reportId,
+      };
+
+    if (this.comments) {
+      newNews[ 'viewedBy' ] = [ this.currentUser._id ];
+    }
+
     this.updateNews.emit({
       title: $localize`Reply to ${label}`,
       placeholder:  $localize`Your ${label}`,
       initialValue: '',
-      news: {
-        replyTo: news._id,
-        messagePlanetCode: news.messagePlanetCode,
-        messageType: news.messageType,
-        viewIn: news.viewIn
-      }
+      news: newNews
     });
     this.sendNewsNotifications(news);
   }
@@ -116,8 +137,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     return news.viewableBy === 'teams' ? $localize`Message` : $localize`Story`;
   }
 
-  showReplies(news) {
-    this.changeReplyViewing.emit(news);
+  showReplies(news, replies) {
+    this.changeReplyViewing.emit({ news, replies });
   }
 
   openDeleteDialog(news) {

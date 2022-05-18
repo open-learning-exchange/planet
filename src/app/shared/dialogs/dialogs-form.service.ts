@@ -30,11 +30,11 @@ export class DialogsFormService {
     return dialogRef.afterClosed();
   }
 
-  openDialogsForm(title: string, fields: any[], formGroup: any, options: any) {
+  openDialogsForm(title: string, fields: any[], formGroup: any, options: any ) {
     this.dialogRef = this.dialog.open(DialogsFormComponent, {
       width: '600px',
       autoFocus: options.autoFocus,
-      data: { title, formGroup, fields, ...options }
+      data: { title, formGroup, fields, ...options },
     });
   }
 

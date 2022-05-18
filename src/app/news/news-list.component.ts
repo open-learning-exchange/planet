@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -9,6 +9,8 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { forkJoin } from 'rxjs';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
+import { UserService } from '../shared/user.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-news-list',
@@ -19,7 +21,7 @@ import { dedupeShelfReduce } from '../shared/utils';
     }
   ` ]
 })
-export class NewsListComponent implements OnChanges {
+export class NewsListComponent implements OnInit, OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`News has been updated successfully.`;
@@ -27,6 +29,9 @@ export class NewsListComponent implements OnChanges {
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() comments = false;
+  @Input() closeComment?: any;
+
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
@@ -34,6 +39,8 @@ export class NewsListComponent implements OnChanges {
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
+  currentUser = this.userService.get();
+  newReplies: any[] = [];
   @Output() viewChange = new EventEmitter<any>();
 
   constructor(
@@ -41,8 +48,15 @@ export class NewsListComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private userService: UserService,
   ) {}
+
+  ngOnInit() {
+    if (this.comments) {
+      this.newReplies = this.items.filter(item => item.doc.replyTo !== undefined && !item.doc.viewedBy.includes(this.currentUser._id));
+    }
+  }
 
   ngOnChanges() {
     this.replyObject = {};
@@ -55,7 +69,16 @@ export class NewsListComponent implements OnChanges {
     }
   }
 
-  showReplies(news) {
+  showReplies(data: any) {
+    let news;
+    let replies;
+    if (data.news !== undefined) {
+      news = data.news;
+      replies = data.replies;
+    } else {
+      news = data;
+    }
+
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
@@ -65,6 +88,22 @@ export class NewsListComponent implements OnChanges {
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
+
+        // reading replies
+    if (replies.length > 0) {
+      this.viewReplies(replies);
+    }
+  }
+
+  viewReplies(replies) {
+    replies.map(item => {
+      if (!item.doc.viewedBy.includes(this.currentUser._id)) {
+        item.doc.viewedBy.push(this.currentUser._id);
+        return this.newsService.updateNews(item.doc).pipe(
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(() => {});
+      }
+    });
   }
 
   showPreviousReplies() {
@@ -98,10 +137,12 @@ export class NewsListComponent implements OnChanges {
   postNews(oldNews, newNews) {
     this.newsService.postNews(
       { ...oldNews, ...newNews },
-      oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
+      oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`,
+      this.comments ? 'report-notes' : 'message'
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
+      this.closeComment.close();
     });
   }
 
@@ -127,6 +168,7 @@ export class NewsListComponent implements OnChanges {
           this.showReplies({ _id: parentId });
         }
         this.deleteDialog.close();
+        this.closeComment.close();
       },
       onError: (error) => {
         this.planetMessageService.showAlert($localize`There was a problem deleting this news.`);

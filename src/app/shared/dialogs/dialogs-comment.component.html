@@ -1,0 +1,12 @@
+<div class="comment-btn-group">
+    <button mat-raised-button color="primary" (click)="addComment()">Add Comment</button>
+    <button mat-raised-button color="primary" (click)="closeDialog()">Close Dialog</button>
+</div>
+<div style="margin-top: 14px" *ngIf="comments.length > 0">
+    <mat-dialog-content>
+        <planet-news-list [items]="comments" [comments]="true" viewableBy="teams" [viewableId]="comments[0].doc.teamId"
+            [shareTarget]="configuration?.planetType" editSuccessMessage="Message has been updated successfully"
+            (viewChange)="toggleAdd($event)" [editable]="userStatus === 'member'" [closeComment]="dialogRef" 
+            ></planet-news-list>
+    </mat-dialog-content>
+</div>

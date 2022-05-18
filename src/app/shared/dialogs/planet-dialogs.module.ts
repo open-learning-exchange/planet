@@ -18,6 +18,8 @@ import { MeetupsModule } from '../../meetups/meetups.module';
 import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsImagesComponent } from './dialogs-images.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
+import { NewsModule } from '../../news/news.module';
+import { DialogsCommentComponent } from './dialogs-comment.component';
 
 
 @NgModule({
@@ -27,11 +29,13 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    NewsModule
   ],
   exports: [
     DialogsFormComponent,
     DialogsViewComponent,
+    DialogsCommentComponent,
     DialogsPromptComponent,
     FeedbackDirective,
     DialogsListComponent,
@@ -45,6 +49,7 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
   declarations: [
     DialogsFormComponent,
     DialogsViewComponent,
+    DialogsCommentComponent,
     DialogsPromptComponent,
     FeedbackDirective,
     DialogsListComponent,

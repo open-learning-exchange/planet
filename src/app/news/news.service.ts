@@ -18,6 +18,7 @@ export class NewsService {
   dbName = 'news';
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
+  newsCollection$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
 
   constructor(
@@ -33,9 +34,14 @@ export class NewsService {
       this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
       this.couchService.findAll('attachments')
     ]).subscribe(([ newsItems, avatars ]) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatars), _id: item._id }
-      )));
+      this.newsUpdated$.next(
+        newsItems.map((item: any) => ({
+          doc: item,
+          sharedDate: this.findShareDate(item, viewId),
+          avatar: this.findAvatar(item.user, avatars),
+          _id: item._id
+        })
+      ));
     });
   }
 
@@ -54,12 +60,12 @@ export class NewsService {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
   }
 
-  postNews(post, successMessage = $localize`Thank you for submitting your news`, isMessageEdit = true) {
+  postNews(post, successMessage = $localize`Thank you for submitting your news`, docType ?: string, isMessageEdit = true) {
     const configuration = this.stateService.configuration;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
     const images = this.createImagesArray(post, message);
     const newPost = {
-      docType: 'message',
+      docType: docType || 'message',
       time: this.couchService.datePlaceholder,
       createdOn: configuration.code,
       parentCode: configuration.parentCode,
@@ -71,6 +77,12 @@ export class NewsService {
     };
     return this.couchService.updateDocument(this.dbName, newPost).pipe(map(() => {
       this.planetMessageService.showMessage(successMessage);
+      this.requestNews();
+    }));
+  }
+
+  updateNews(post) {
+    return this.couchService.updateDocument(this.dbName, post).pipe(map(() => {
       this.requestNews();
     }));
   }
@@ -109,6 +121,7 @@ export class NewsService {
         ]
       },
       $localize`News has been successfully shared`,
+      'message',
       false
     );
   }

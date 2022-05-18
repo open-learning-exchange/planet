@@ -13,6 +13,11 @@
         <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
       </mat-card-content>
       <mat-card-footer class="action-buttons margin-lr-10">
+        <button *ngIf="editable" class="report-comment-btn" mat-button type="button" (click)="$event.stopPropagation(); addComment(report)" i18n>
+          Comment 
+          <span *ngIf="showCommentsCount(report) !== 0">({{commentCount}})</span>
+          <span [ngClass]="{'circle': showNewComment(report) > 0}">{{}}</span>
+        </button>
         <ng-container *ngIf="editable">
           <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
           <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(report)"><mat-icon>edit</mat-icon></button>

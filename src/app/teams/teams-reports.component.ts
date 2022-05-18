@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, DoCheck, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -8,23 +8,45 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { tap } from 'rxjs/operators';
-import { convertUtcDate } from './teams.utils';
+import { takeUntil, tap, switchMap, finalize, catchError } from 'rxjs/operators';
+import { convertUtcDate, mapNews } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
+import { NewsService } from '../news/news.service';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { StateService } from '../shared/state.service';
+import { Subject } from 'rxjs';
+import { UserService } from '../shared/user.service';
+import { DialogsCommentComponent } from '../shared/dialogs/dialogs-comment.component';
 
 @Component({
   selector: 'planet-teams-reports',
   styleUrls: [ './teams-reports.scss' ],
   templateUrl: './teams-reports.component.html'
 })
-export class TeamsReportsComponent implements DoCheck {
+export class TeamsReportsComponent implements DoCheck, OnInit {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() team;
+  @Input() viewableId: string;
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;
   minColumnWidth = 300;
+  report: any;
+  teamId: string;
+  news: any[] = [];
+  mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
+  commentCount: number;
+  newComments: any[] = [];
+  onDestroy$ = new Subject<void>();
+  comments: any[];
+  currentUser = this.userService.get();
+  commentDialog: any;
+  userStatus = 'unrelated';
+  readonly dbName = 'teams';
+  requests = [];
+  members = [];
 
   constructor(
     private couchService: CouchService,
@@ -32,9 +54,20 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
+    private newsService: NewsService,
     private csvService: CsvService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private route: ActivatedRoute,
+    private stateService: StateService,
+    private userService: UserService,
   ) {}
+
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
+      this.getNews(this.teamId);
+    });
+  }
 
   ngDoCheck() {
     const gridElement = this.elementRef.nativeElement.children['report-grid'];
@@ -45,6 +78,24 @@ export class TeamsReportsComponent implements DoCheck {
     if (this.columns !== newColumns) {
       this.columns = newColumns;
     }
+  }
+
+  getNews(teamId: string) {
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
+      .subscribe(news => {
+        this.news = mapNews(news, teamId);
+    });
+  }
+
+  // for individual comments count of the report
+  showCommentsCount(report) {
+    this.commentCount = this.filterCommentsFromNews(report).length;
+    return this.commentCount;
+  }
+
+  // to show new comments related to the report
+  showNewComment(report) {
+    return this.filterCommentsFromNews(report).filter(item => !item.doc.viewedBy.includes(this.currentUser._id)).length;
   }
 
   openAddReportDialog(oldReport = {}) {
@@ -138,6 +189,35 @@ export class TeamsReportsComponent implements DoCheck {
       this.reportsChanged.emit();
       this.dialogsLoadingService.stop();
     }));
+  }
+
+  addComment(report) {
+    this.report = report;
+    const comments = this.filterCommentsFromNews(report);
+    this.dialog.open(DialogsCommentComponent, {
+      data: { comments, report: this.report, team: this.team, newComments: this.newComments },
+      width: '70ch'
+    });
+    // viewing comments
+    this.viewComments(comments);
+  }
+
+  viewComments(comments) {
+    // separating the comments from replies
+    const commentsOnly = comments.filter(comment => comment.doc.replyTo === undefined);
+    commentsOnly.map(item => {
+      if (!item.doc.viewedBy.includes(this.currentUser._id)) {
+        item.doc.viewedBy.push(this.currentUser._id);
+        return this.newsService.updateNews(item.doc).pipe(
+      // switchMap(() => this.sendNotifications('message')),
+          finalize(() => this.dialogsLoadingService.stop())
+        ).subscribe(() => {});
+      }
+    });
+  }
+
+  filterCommentsFromNews (report) {
+    return this.news.filter(item => item.doc.reportId === report._id);
   }
 
   openReportDialog(report) {

@@ -1,9 +1,15 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnChanges } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
+import { StateService } from '../state.service';
+import { NewsService } from '../../news/news.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -17,12 +23,17 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: any;
+  public comments = [];
   public modalForm: FormGroup;
   passwordVisibility = new Map();
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  configuration = this.stateService.configuration;
+  isRoot = true;
+  userStatus = 'member';
+  onDestroy$ = new Subject<void>();
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -39,7 +50,10 @@ export class DialogsFormComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private stateService: StateService,
+    private newsService: NewsService,
+    private route: ActivatedRoute,
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
@@ -66,6 +80,11 @@ export class DialogsFormComponent {
       dialog.close(mForm.value);
     }
   }
+
+  toggleAdd(data) {
+    this.isRoot = data._id === 'root';
+  }
+
 
   togglePasswordVisibility(fieldName) {
     const visibility = this.passwordVisibility.get(fieldName) || false;

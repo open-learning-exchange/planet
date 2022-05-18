@@ -55,7 +55,7 @@ jobs:
     - stage: docker-creation
       name: "English"
       script:
-        - bash ./.travis/deploy_single_language.sh 'eng' 'en'
+        - travis_wait 30 bash ./.travis/deploy_single_language.sh 'eng' 'en'
     - stage: docker-creation
       if: tag = branch
       name: "Arabic"
