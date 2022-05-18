@@ -63,16 +63,6 @@ import { DialogsCommentComponent } from './dialogs-comment.component';
   providers: [
     DialogsFormService,
     DialogsListService
-  ],
-  entryComponents: [
-    DialogsFormComponent,
-    DialogsViewComponent,
-    DialogsCommentComponent,
-    DialogsPromptComponent,
-    DialogsListComponent,
-    DialogsLoadingComponent,
-    DialogsImagesComponent,
-    DialogsRatingsComponent
   ]
 })
 export class PlanetDialogsModule {}

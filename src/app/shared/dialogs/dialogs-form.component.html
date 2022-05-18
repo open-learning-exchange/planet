@@ -21,7 +21,7 @@
       <!-- selectbox -->
       <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
         <mat-select placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
-          <mat-option *ngIf="field.reset">None</mat-option>
+          <mat-option *ngIf="field.reset" i18n>None</mat-option>
           <mat-option *ngFor="let option of field.options" [value]="option.value">{{option.name}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
@@ -77,7 +77,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions *ngIf="title !== 'Rating'">
-    <span i18n class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
+    <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
     <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
     <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
   </mat-dialog-actions>

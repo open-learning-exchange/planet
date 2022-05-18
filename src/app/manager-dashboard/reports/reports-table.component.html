@@ -3,7 +3,7 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
       <a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a>
-      <button (click)="viewDetails(element.doc)" mat-stroked-button color="primary">Details</button>
+      <button (click)="viewDetails(element.doc)" mat-stroked-button color="primary" i18n>Details</button>
     </mat-cell>
   </ng-container>
   <!-- <ng-container matColumnDef="downloads">

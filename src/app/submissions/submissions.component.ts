@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -41,13 +43,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @Output() submissionClick = new EventEmitter<any>();
   submissions = new MatTableDataSource();
   onDestroy$ = new Subject<void>();
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   initTable = true;
   statusOptions: any = [
-    { text: 'Pending', value: 'pending' },
-    { text: 'Not Graded', value: 'requires grading' },
-    { text: 'Completed', value: 'complete' }
+    { text: $localize`Pending`, value: 'pending' },
+    { text: $localize`Not Graded`, value: 'requires grading' },
+    { text: $localize`Completed`, value: 'complete' }
   ];
   mode = 'grade';
   emptyData = false;

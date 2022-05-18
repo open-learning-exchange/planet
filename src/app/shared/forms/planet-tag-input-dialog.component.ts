@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -139,7 +139,7 @@ export class PlanetTagInputDialogComponent {
     if (this.addTagForm.valid) {
       this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
         this.newTagInfo = { id: res[0].id, parentId: this.addTagForm.controls.attachedTo.value };
-        this.planetMessageService.showMessage('New collection added');
+        this.planetMessageService.showMessage($localize`New collection added`);
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.get('name').reset('');
@@ -154,7 +154,7 @@ export class PlanetTagInputDialogComponent {
     const onSubmit = ((newTag) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
-        this.planetMessageService.showMessage('Collection updated');
+        this.planetMessageService.showMessage($localize`Collection updated`);
         this.selected.set(newTagId, this.selected.get(tag._id));
         this.indeterminate.set(newTagId, this.indeterminate.get(tag._id));
         this.data.initTags(this.mode === 'add' ? newTagId : undefined);
@@ -165,12 +165,12 @@ export class PlanetTagInputDialogComponent {
     event.stopPropagation();
     const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
       {
-        placeholder: 'Subcollection of...', name: 'attachedTo', type: 'selectbox',
+        placeholder: $localize`Subcollection of...`, name: 'attachedTo', type: 'selectbox',
         options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
       }
     ];
     this.dialogsFormService.openDialogsForm('Edit Collection', [
-      { placeholder: 'Name', name: 'name', required: true, type: 'textbox' },
+      { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
       ...subcollectionField
     ], this.tagForm(tag), { onSubmit });
   }
@@ -202,9 +202,9 @@ export class PlanetTagInputDialogComponent {
       onNext: (data) => {
         this.data.initTags();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('Tag deleted: ' + tag.name);
+        this.planetMessageService.showMessage($localize`Tag deleted: ${tag.name}`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this tag.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this tag.`)
     };
   }
 

@@ -5,7 +5,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -37,7 +37,7 @@ const removeProtocol = (str: string) => {
   ` ]
 })
 export class ConfigurationComponent implements OnInit {
-  @ViewChild('stepper', { static: false }) stepper: MatStepper;
+  @ViewChild('stepper') stepper: MatStepper;
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
@@ -189,7 +189,7 @@ export class ConfigurationComponent implements OnInit {
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;
-      }, (error) => this.planetMessageService.showAlert('There is a problem getting the list of nations'));
+      }, (error) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`));
   }
 
   onChange(selectedValue: string) {
@@ -251,18 +251,18 @@ export class ConfigurationComponent implements OnInit {
       this.configurationService.updateConfiguration(configuration).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
         err => {
-          this.planetMessageService.showAlert('There was an error updating the configuration');
+          this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
         }, () => {
           this.router.navigate([ '/manager' ]);
-          this.planetMessageService.showMessage('Configuration Updated Successfully');
+          this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
         }
       );
     } else {
       const admin = Object.assign(credentials, this.contactFormGroup.value);
       this.configurationService.createPlanet(admin, configuration, credentials).pipe(finalize(spinnerOff)).subscribe((data) => {
-        this.planetMessageService.showMessage('Admin created: ' + credentials.name);
+        this.planetMessageService.showMessage($localize`Admin created: ${credentials.name}`);
         this.router.navigate([ '/login' ]);
-      }, (error) => this.planetMessageService.showAlert('There was an error creating planet'));
+      }, (error) => this.planetMessageService.showAlert($localize`There was an error creating planet`));
     }
   }
 

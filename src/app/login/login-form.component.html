@@ -23,8 +23,8 @@
       <planet-form-error-messages [control]="userForm.controls.repeatPassword"></planet-form-error-messages>
     </mat-error>
   </mat-form-field>
-  <button mat-raised-button color="primary" [planetSubmit]="userForm.valid">{{ createMode ? 'Become a member' : 'SIGN-IN' }}</button>
-  <a class = "addUser" [routerLink]="createMode ? ['/login'] : ['newmember']">
+  <button mat-raised-button color="primary" [planetSubmit]="userForm.valid" i18n>{{ createMode ? 'Become a member' : 'SIGN-IN' }}</button>
+  <a class="addUser" [routerLink]="createMode ? ['/login'] : ['newmember']" i18n>
     {{ createMode ? 'Already have an account?' : 'Become a member' }}
   </a>
 </form>

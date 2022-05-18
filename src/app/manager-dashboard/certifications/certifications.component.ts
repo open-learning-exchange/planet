@@ -1,5 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -16,8 +18,8 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
     'name',
     'action'
   ];
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private certificationsService: CertificationsService

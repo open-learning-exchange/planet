@@ -1,6 +1,6 @@
 <planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
   <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
-    <span>{{step.stepTitle || 'Step ' + (i+1)}}</span>
+    <span i18n>{{step.stepTitle || 'Step ' + (i+1)}}</span>
     <planet-course-icon *ngIf="step?.exam?.questions.length" [icon]="'assignment'"></planet-course-icon>
     <planet-course-icon *ngIf="step?.resources?.length" [icon]="'attach_file'"></planet-course-icon>
     <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
@@ -16,7 +16,7 @@
         <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" placeholder="Description" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" i18n-placeholder placeholder="Description" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </form>
@@ -31,9 +31,9 @@
     </ng-container>
   </div>
   <div planetStepListActions>
-    <a mat-raised-button color="primary" (click)="addExam()">{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>
-    <button mat-raised-button color="primary" (click)="addResources()">Add Resource</button>
-    <a mat-raised-button color="primary" (click)="addExam('survey')">{{ activeStep?.survey ? 'Update' : 'Add' }} Survey</a>
+    <a mat-raised-button color="primary" (click)="addExam()" i18n>{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>
+    <button mat-raised-button color="primary" (click)="addResources()" i18n>Add Resource</button>
+    <a mat-raised-button color="primary" (click)="addExam('survey')" i18n>{{ activeStep?.survey ? 'Update' : 'Add' }} Survey</a>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </div>
 </planet-step-list>

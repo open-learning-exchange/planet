@@ -2,7 +2,8 @@ import {
   Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatFormFieldControl, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
@@ -25,7 +26,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
-  @ViewChild('editor', { static: false }) editor;
+  @ViewChild('editor') editor;
   @Input() _value: ValueWithImages | string;
   get value(): ValueWithImages | string {
     return this._value;
@@ -105,7 +106,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       name: 'custom',
       action: this.addImage.bind(this),
       className: 'fa fa-picture-o',
-      title: 'Add Image'
+      title: $localize`Add Image`
     };
     this.options = {
       ...this.options,
@@ -176,7 +177,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       if (image) {
         const markdown = `![](resources/${image._id}/${encodeURI(image.filename)})`;
         this.editor.options.insertTexts.image = [ markdown, '' ];
-        this.editor._simpleMDE.drawImage();
+        this.editor.easyMDE.drawImage();
         this.value = {
           ...<ValueWithImages>this._value,
           images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, markdown } ]

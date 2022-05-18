@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
 import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
@@ -21,7 +21,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: any[] = [];
   pageType = 'Add';
   disableRemove = true;
-  @ViewChild(CoursesComponent, { static: false }) courseTable: CoursesComponent;
+  @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -80,7 +80,9 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
-      this.planetMessageService.showMessage(this.pageType === 'Add' ? 'New certification added' : 'Certification updated');
+      this.planetMessageService.showMessage(
+        this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
+      );
       if (reroute) {
         this.goBack();
       }

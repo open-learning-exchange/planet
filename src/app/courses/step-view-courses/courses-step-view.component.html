@@ -13,7 +13,7 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="attempts > 0"
-        (click)="openReviewDialog()">
+        (click)="openReviewDialog()" i18n>
         Review Attempts
       </a>
       <a
@@ -21,7 +21,7 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
-        (click)="goToExam()">
+        (click)="goToExam()" i18n>
         {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
       </a>
       <a
@@ -29,21 +29,21 @@
         color="accent"
         class="margin-lr-10"
         *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
-        (click)="goToExam('survey')">
+        (click)="goToExam('survey')" i18n>
         Take Survey
       </a>
-      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()">
+      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
         Preview
       </button>
       <mat-menu #previewMenu="matMenu">
         <a mat-menu-item
           *ngIf="stepDetail?.exam?.questions.length"
-          (click)="goToExam('exam', true)">
+          (click)="goToExam('exam', true)" i18n>
           Preview Test
         </a>
         <a mat-menu-item
           *ngIf="stepDetail?.survey?.questions.length"
-          (click)="goToExam('survey', true)">
+          (click)="goToExam('survey', true)" i18n>
           Preview Survey
         </a>
       </mat-menu>
@@ -64,7 +64,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <span i18n>{{stepNum}}/{{maxStep}}</span>
+      <span>{{stepNum}}/{{maxStep}}</span>
       <button mat-icon-button [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
       <button mat-icon-button [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length > 0 && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
     </div>

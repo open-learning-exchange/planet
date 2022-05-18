@@ -30,7 +30,6 @@ import { ExamsPreviewComponent } from './exams-preview.component';
   exports: [
     ExamsAddComponent,
     ExamsViewComponent
-  ],
-  entryComponents: [ ExamsPreviewComponent ]
+  ]
 })
 export class ExamsModule {}

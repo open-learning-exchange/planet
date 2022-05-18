@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="ru">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="uk">
     <body>
-      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html">
+      <trans-unit id="def755457793d5ad40597886d2d317bc5f415a2f" datatype="html" approved="yes">
         <source>Loading</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-loading.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">Загрузка</target>
+        <target state="final">Завантаження</target>
       </trans-unit>
       <trans-unit id="fb30a6dd16b2455ffcaf94d40b840980f8f9dfed" datatype="html">
         <source>There are no items to select</source>
@@ -18,7 +18,7 @@
         </context-group>
         <target state="needs-translation">There are no items to select</target>
       </trans-unit>
-      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html">
+      <trans-unit id="7e6c975ebea8b5f8b120905ca7acf9f8edf59d8e" datatype="html" approved="yes">
         <source>OK</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -72,7 +72,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard-notifications-dialog.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated">Ок</target>
+        <target state="final">Гаразд</target>
       </trans-unit>
       <trans-unit id="d3ab3de29c6830f5fbea1295082d055aac7a23dc" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {...} no {...}}"/> all
@@ -91,9 +91,9 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, выбрать, да {Deselect} нет {Select}}</target>
+        <target state="translated">{VAR_SELECT, select, yes {Зняти вибір з} no {Оберіть} }</target>
       </trans-unit>
-      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html">
+      <trans-unit id="7e892ba15f2c6c17e83510e273b3e10fc32ea016" datatype="html" approved="yes">
         <source>Search</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -111,7 +111,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Поиск</target>
+        <target state="final">Пошук</target>
       </trans-unit>
       <trans-unit id="9e90121dcc9d53ed86f36f40fae54c5968662dcf" datatype="html">
         <source><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> selected
@@ -120,7 +120,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> выбранный
+        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select, members {...} resources {...} courses {...} meetups {...} other {...}}"/> вибрано
       </target>
       </trans-unit>
       <trans-unit id="9c7e2ec4e504d0f26f4c6c5dc299b4f9ea1c58d9" datatype="html">
@@ -129,9 +129,9 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, members {{VAR_PLURAL, plural, =0 {members} =1 {member} other {members} }} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses} }} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups} }} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items} }} }</target>
+        <target state="translated">{VAR_SELECT, select, members {{VAR_PLURAL, plural, one {} few {members} many {members} =0 {members} =1 {member} other {members} }} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses} }} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups} }} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items} }} }</target>
       </trans-unit>
-      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html" approved="yes">
         <source>Cancel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-list.component.html</context>
@@ -189,7 +189,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">75</context>
         </context-group>
-        <target state="translated">Отменить</target>
+        <target state="final">Скасувати</target>
       </trans-unit>
       <trans-unit id="a2f14a73f7a6e94479f67423cc51102da8d6f524" datatype="html">
         <source>None</source>
@@ -231,7 +231,7 @@
         </context-group>
         <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{errorMessage}}"/></target>
       </trans-unit>
-      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
+      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html" approved="yes">
         <source>Submit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-form.component.html</context>
@@ -253,7 +253,7 @@
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="translated">Отправить</target>
+        <target state="final">Подати</target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -261,7 +261,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Имя: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target state="translated">Ім'я: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="04b61ed888bf05ac8ddf0ae24d67758fb94b0751" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
@@ -269,7 +269,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Код: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target state="needs-translation">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="610dfc31e076227ce3e383a06494dc896e9a0602" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
@@ -277,7 +277,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Локальный URL-адрес: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target state="needs-translation">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4a6770b15dac93402d82185064355eb78d53d233" datatype="html">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -285,7 +285,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL-адрес: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="needs-translation"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -293,7 +293,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, выбрать, сообщество {Nation} народ {Center} }</target>
+        <target state="needs-translation">{VAR_SELECT, select, community {Nation} nation {Center} }</target>
       </trans-unit>
       <trans-unit id="e153663a0911a85e2b3883d75272fdb965156085" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -301,7 +301,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Тип Планеты: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="44b37bb9fed042f141d5c79fe458c8f0b9a997d0" datatype="html">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: &apos;fullDate&apos;}}"/></source>
@@ -309,7 +309,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated">Дата Создания: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
+        <target state="needs-translation">Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: 'fullDate'}}"/></target>
       </trans-unit>
       <trans-unit id="83ecbbc9f029db432f8293a42a3e1b7b53459b36" datatype="html">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
@@ -317,7 +317,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Язык: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="57fb904f6ac17ac3b3a3810a764ecca39a652e80" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
@@ -325,7 +325,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Статус: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target state="needs-translation">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="8ec813e4e432bd07acac694c4500c9059e15f91a" datatype="html">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
@@ -333,7 +333,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Адрес электронный почты: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="a864f36778765a449818710df830920e458adc24" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
@@ -341,7 +341,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Номер Телофона: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target state="needs-translation">Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="86725057828a4156eafa87a09cf87c9d7c91a78e" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </source>
@@ -349,7 +349,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">Имя: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </target>
+        <target state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.deviceName || data.allData.customDeviceName}}"/> </target>
       </trans-unit>
       <trans-unit id="57f6d432b2042a0b37f2aec23164d075be873f0d" datatype="html">
         <source>Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></source>
@@ -357,7 +357,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">Версия: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
+        <target state="needs-translation">Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
       </trans-unit>
       <trans-unit id="73ac5a30eb2a3c1f47634ef13142493bbc438b92" datatype="html">
         <source>Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></source>
@@ -365,7 +365,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">Время: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
+        <target state="needs-translation">Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
       </trans-unit>
       <trans-unit id="ba72b767930550fbd74ff07316967967a98fae2d" datatype="html">
         <source>Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></source>
@@ -373,7 +373,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Ошибка: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
+        <target state="needs-translation">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
       <trans-unit id="2fd60ce3dceb8501216bd735ed4eacd2cfbd0f07" datatype="html">
         <source>
@@ -395,7 +395,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, выбрать, принять {accept} отклонять {reject} удалить {delete} покинуть {leave} убирать {remove} возглавить {give leadership to} }</target>
+        <target state="needs-translation">{VAR_SELECT, select, accept {accept} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} }</target>
       </trans-unit>
       <trans-unit id="f6791629b2f59f7c3619150ff20496d074dcb409" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} meetup {meetup} user {member} change {change} team {team} task {task} certification {certification} event {event} transaction {transaction} link {link} report {report} }?
@@ -431,7 +431,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-images.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Добавить Новое Изображение</target>
+        <target state="needs-translation">Add New Image</target>
       </trans-unit>
       <trans-unit id="8e4e342b8f4170a90c32e4ce5023f8c474025cb7" datatype="html">
         <source>Ratings for</source>
@@ -439,7 +439,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">Рейтинги для</target>
+        <target state="needs-translation">Ratings for</target>
       </trans-unit>
       <trans-unit id="e0666c1be03bca95833a011f9bb8436e5b07a09d" datatype="html">
         <source>Most Recent</source>
@@ -447,7 +447,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Недавные</target>
+        <target state="needs-translation">Most Recent</target>
       </trans-unit>
       <trans-unit id="726c63f6217ab0d9f67dc9f3eafbcb3df159a0e9" datatype="html">
         <source>Oldest</source>
@@ -455,7 +455,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Самый старшый</target>
+        <target state="needs-translation">Oldest</target>
       </trans-unit>
       <trans-unit id="f1c3d90b66e7121d8843511573944a791f324c91" datatype="html">
         <source>Best Rating</source>
@@ -463,7 +463,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Наилучшый рейтинг</target>
+        <target state="translated">Найкращий рейтинг</target>
       </trans-unit>
       <trans-unit id="8ab4f31599a0e38a844e4b1a712ab62b6790657f" datatype="html">
         <source>Worst Rating</source>
@@ -471,7 +471,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-ratings.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Худший рейтинг</target>
+        <target state="translated">Найгірша оцінка</target>
       </trans-unit>
       <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
         <source>ltr</source>
@@ -479,7 +479,7 @@
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">слева направо</target>
+        <target state="needs-translation">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
@@ -487,7 +487,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">Извините, страница не найдена</target>
+        <target state="translated">Вибачте, сторінку не знайдено</target>
       </trans-unit>
       <trans-unit id="8c000e81f174c6e177323227a376cd91bdc1772d" datatype="html">
         <source>Back to Planet Learning</source>
@@ -495,7 +495,7 @@
           <context context-type="sourcefile">app/page-not-found/page-not-found.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="translated">Вернуться к Planet Learning</target>
+        <target state="needs-translation">Back to Planet Learning</target>
       </trans-unit>
       <trans-unit id="ab3d26166235cd0712cbf521c86feb139ab01877" datatype="html">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list} }</source>
@@ -521,7 +521,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-rating.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Средний</target>
+        <target state="needs-translation">Average</target>
       </trans-unit>
       <trans-unit id="925fd251ad6cb24868d235cace4245a23e2aee16" datatype="html">
         <source>Your Rating</source>
@@ -541,7 +541,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Коллекции</target>
+        <target state="needs-translation">Collections</target>
       </trans-unit>
       <trans-unit id="cde3bee9c9751a6125943387703f6a7bd5e3aa23" datatype="html">
         <source>Change Collections</source>
@@ -553,7 +553,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Изменить подборки</target>
+        <target state="needs-translation">Change Collections</target>
       </trans-unit>
       <trans-unit id="0539092f5642901cc44e32b1a841270c2448aa40" datatype="html">
         <source>Filter by Collection Name</source>
@@ -577,7 +577,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Коллекция</target>
+        <target state="needs-translation">Collection</target>
       </trans-unit>
       <trans-unit id="7e2845f1f9090146de98255260992d96189dd5e6" datatype="html">
         <source>Subcollection of...</source>
@@ -593,7 +593,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-input-dialog.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">Добавить коллекцию</target>
+        <target state="needs-translation">Add Collection</target>
       </trans-unit>
       <trans-unit id="28f86ffd419b869711aa13f5e5ff54be6d70731c" datatype="html">
         <source>Edit</source>
@@ -689,7 +689,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="translated">Удалить</target>
+        <target state="needs-translation">Delete</target>
       </trans-unit>
       <trans-unit id="9ba17ca8634cb5f3d9f8a66f15f424451d9ead0c" datatype="html">
         <source>You may only delete a collection with no subcollections</source>
@@ -733,7 +733,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="translated">Все</target>
+        <target state="needs-translation">All</target>
       </trans-unit>
       <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html">
         <source>Reset</source>
@@ -745,7 +745,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Сбросить</target>
+        <target state="needs-translation">Reset</target>
       </trans-unit>
       <trans-unit id="79de54bc65f84280345d21f5d246b53b57bcc306" datatype="html">
         <source>Add Collections</source>
@@ -769,7 +769,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-tag-selected-input.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Выбранный:</target>
+        <target state="needs-translation">Selected:</target>
       </trans-unit>
       <trans-unit id="4407e6b9ee13f362826989ee0fa04fbeaf93db00" datatype="html">
         <source>Hover to see selected collections</source>
@@ -785,7 +785,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-selector.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Выберите Planet</target>
+        <target state="needs-translation">Select Planet</target>
       </trans-unit>
       <trans-unit id="e3eabe4bc26223eb279394f47a58891af68b61c0" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</source>
@@ -801,7 +801,7 @@
           <context context-type="sourcefile">app/shared/forms/planet-step-list.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Предыдущие</target>
+        <target state="needs-translation">Previous</target>
       </trans-unit>
       <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html">
         <source>Next</source>
@@ -825,7 +825,7 @@
           <context context-type="sourcefile">app/configuration/migration.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated">Следующий</target>
+        <target state="needs-translation">Next</target>
       </trans-unit>
       <trans-unit id="1e1b81bc44eb078f50afc06365f530ca2677d91c" datatype="html">
         <source>Upto date</source>
@@ -841,7 +841,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Более новый</target>
+        <target state="needs-translation">Newer</target>
       </trans-unit>
       <trans-unit id="a5eb07587a845a6e31ac6faee94ba465ed733e06" datatype="html">
         <source>Older</source>
@@ -849,7 +849,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">Старый</target>
+        <target state="needs-translation">Older</target>
       </trans-unit>
       <trans-unit id="84bbbe38f927eaeddf081648c8783d06b4348b24" datatype="html">
         <source>Does not match</source>
@@ -857,7 +857,7 @@
           <context context-type="sourcefile">app/shared/planet-local-status.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated">Нет совпадения</target>
+        <target state="needs-translation">Does not match</target>
       </trans-unit>
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
@@ -893,7 +893,7 @@
           <context context-type="sourcefile">app/health/health-event-dialog.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated">Закрыть</target>
+        <target state="needs-translation">Close</target>
       </trans-unit>
       <trans-unit id="344f589e3d011f328342c72a85d7ccef574a8f87" datatype="html">
         <source>{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {resources} =1 {resource} other {resources} }} courses {{VAR_PLURAL_1, plural, =0 {courses} =1 {course} other {courses} }} }</source>
@@ -913,7 +913,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile-dialog.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Профиль участника</target>
+        <target state="needs-translation">Member Profile</target>
       </trans-unit>
       <trans-unit id="60d301d4b9b3cf3eb97f2adde5eca44c79d55686" datatype="html">
         <source>View Achievements</source>
@@ -921,7 +921,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="translated">Просмотр достижений</target>
+        <target state="needs-translation">View Achievements</target>
       </trans-unit>
       <trans-unit id="d3781ad331fdd0bc9055c45a41664ac467de63af" datatype="html">
         <source>Edit Profile</source>
@@ -933,7 +933,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target state="translated">Редактировать профиль</target>
+        <target state="needs-translation">Edit Profile</target>
       </trans-unit>
       <trans-unit id="5edf054f14aa57bc25a28cb7db01956fee53dac8" datatype="html">
         <source>Change Password</source>
@@ -945,7 +945,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated">Изменить пароль</target>
+        <target state="needs-translation">Change Password</target>
       </trans-unit>
       <trans-unit id="484b0e541230d60ddb5fbd771a34a5c8d90e7a57" datatype="html">
         <source>Full Name</source>
@@ -957,7 +957,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="translated">Ф. И. О</target>
+        <target state="needs-translation">Full Name</target>
       </trans-unit>
       <trans-unit id="244aae9346da82b0922506c2d2581373a15641cc" datatype="html">
         <source>Email</source>
@@ -985,7 +985,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">Адрес электронной почты</target>
+        <target state="needs-translation">Email</target>
       </trans-unit>
       <trans-unit id="fe46ccaae902ce974e2441abe752399288298619" datatype="html">
         <source>Language</source>
@@ -1013,7 +1013,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="translated">Язык</target>
+        <target state="needs-translation">Language</target>
       </trans-unit>
       <trans-unit id="40185bb9b49a3a0f134360efbd378bdcc42206a0" datatype="html">
         <source>Number of Visits</source>
@@ -1021,7 +1021,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="translated">Количество посещений</target>
+        <target state="needs-translation">Number of Visits</target>
       </trans-unit>
       <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html">
         <source>DOB</source>
@@ -1033,7 +1033,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="translated">Дата рождения</target>
+        <target state="needs-translation">DOB</target>
       </trans-unit>
       <trans-unit id="6934d8edd276d59e050006fe91b695ebad0218f8" datatype="html">
         <source>Phone</source>
@@ -1045,7 +1045,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">Телефон</target>
+        <target state="needs-translation">Phone</target>
       </trans-unit>
       <trans-unit id="a446fb0eb11fbffcac805ece5a2d306d24e733d8" datatype="html">
         <source>Level</source>
@@ -1053,7 +1053,7 @@
           <context context-type="sourcefile">app/users/users-profile/users-profile.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="translated">Уровень</target>
+        <target state="needs-translation">Level</target>
       </trans-unit>
       <trans-unit id="6d7e2367c01ebe9ded9f210439d4b61a94894673" datatype="html">
         <source>Last Login</source>
@@ -1081,7 +1081,7 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="translated">Добавить задачу</target>
+        <target state="needs-translation">Add a task</target>
       </trans-unit>
       <trans-unit id="2b6b20ad71426cea34a1821a95b321370e3d8e2c" datatype="html">
         <source>
@@ -1091,8 +1091,8 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">
-    мои задания
+        <target state="needs-translation">
+    myTasks
   </target>
       </trans-unit>
       <trans-unit id="98c204852bf501b6fc0016709f9f33b1f71aa1a1" datatype="html">
@@ -1103,8 +1103,8 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">
-    Все задачи
+        <target state="needs-translation">
+    All Tasks
   </target>
       </trans-unit>
       <trans-unit id="287628a9d3c31a07593caf82ddd3986582074273" datatype="html">
@@ -1117,7 +1117,7 @@
           <context context-type="sourcefile">app/meetups/view-meetups/meetups-view.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="translated">Крайний срок:</target>
+        <target state="needs-translation">Deadline:</target>
       </trans-unit>
       <trans-unit id="502e1c27d4e9533cdf8e42c1a4f8f2735e4c3fb2" datatype="html">
         <source>Completed:</source>
@@ -1125,7 +1125,7 @@
           <context context-type="sourcefile">app/tasks/tasks.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <target state="translated">Завершено:</target>
+        <target state="needs-translation">Completed:</target>
       </trans-unit>
       <trans-unit id="019d4bd6a5690f0cfa0ecf346a4e6bf7f0d8debb" datatype="html">
         <source>Remove</source>
@@ -1145,7 +1145,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">Удалить</target>
+        <target state="needs-translation">Remove</target>
       </trans-unit>
       <trans-unit id="f5e42d395dc5053923334a858982ae5467009853" datatype="html">
         <source>{VAR_SELECT, select, leader {Leader} monitor {Monitor} health {Health Provider} learner {Learner} manager {Manager} admin {Admin} }</source>
@@ -1179,8 +1179,8 @@
           <context context-type="sourcefile">app/community/community-list.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="translated">
-            Просмотр Отчета
+        <target state="needs-translation">
+            View Report
           </target>
       </trans-unit>
       <trans-unit id="11eb38ace36c45d1a3d10bb8d177b8fe51c553a4" datatype="html">
@@ -1237,7 +1237,7 @@
           <context context-type="sourcefile">app/health/health-update.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated">Имя</target>
+        <target state="needs-translation">Name</target>
       </trans-unit>
       <trans-unit id="dbf317c1cf220ebe88387d1debd5fa1e36f8bc44" datatype="html">
         <source>Last Synced</source>
@@ -1253,7 +1253,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Время</target>
+        <target state="needs-translation">Time</target>
       </trans-unit>
       <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html">
         <source>Type</source>
@@ -1273,7 +1273,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="translated">Тип</target>
+        <target state="needs-translation">Type</target>
       </trans-unit>
       <trans-unit id="8fe73a4787b8068b2ba61f54ab7e0f9af2ea1fc9" datatype="html">
         <source>Version</source>
@@ -1281,7 +1281,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/myplanet-table.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="translated">Версия</target>
+        <target state="needs-translation">Version</target>
       </trans-unit>
       <trans-unit id="7ae7814bc0d4339fb5ff68a37494b48dac6dacc1" datatype="html">
         <source>No of Visits</source>
@@ -1720,7 +1720,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">Фильтр</target>
+        <target state="needs-translation">Filter</target>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
@@ -1772,7 +1772,7 @@
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="translated">Название</target>
+        <target state="needs-translation">Title</target>
       </trans-unit>
       <trans-unit id="99ee4faa69cd2ea8e3678c1f557c0ff1f05aae46" datatype="html">
         <source>Clear</source>
@@ -1816,7 +1816,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">122</context>
         </context-group>
-        <target state="translated">Добавить в мою библиотеку</target>
+        <target state="needs-translation">Add to myLibrary</target>
       </trans-unit>
       <trans-unit id="95b8dfb6cc7200a7c8c8637c610ee8f40ff1a42d" datatype="html">
         <source>Remove from myLibrary</source>
@@ -1828,7 +1828,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">125</context>
         </context-group>
-        <target state="translated">Удалить из библиотеки</target>
+        <target state="needs-translation">Remove from myLibrary</target>
       </trans-unit>
       <trans-unit id="a1909dacbd962a1a89b8fcd04b72585a9dbe7bde" datatype="html">
         <source>Manager Actions</source>
@@ -1848,7 +1848,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="translated">Отправить ресурсы</target>
+        <target state="needs-translation">Send Resources</target>
       </trans-unit>
       <trans-unit id="0b9c06a21269f0947cf4d61652ab975e3d6b57e9" datatype="html">
         <source>Push To <x id="ICU" equiv-text="{planetType, select, center {...} other {...}}"/></source>
@@ -1936,7 +1936,7 @@
           <context context-type="sourcefile">app/feedback/feedback-view.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Отзывы</target>
+        <target state="needs-translation">Feedback</target>
       </trans-unit>
       <trans-unit id="68949525c4d9a901e0cd15a94e3fc8d2711e9918" datatype="html">
         <source>Manage</source>
@@ -1952,7 +1952,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="translated">Управлять</target>
+        <target state="needs-translation">Manage</target>
       </trans-unit>
       <trans-unit id="8f20ac8857e97b28cef31916b010b88c648ad035" datatype="html">
         <source>View Ratings</source>
@@ -1964,7 +1964,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">165</context>
         </context-group>
-        <target state="translated">Просмотр рейтингов</target>
+        <target state="needs-translation">View Ratings</target>
       </trans-unit>
       <trans-unit id="a2c7c63a5295f224e0c84f1a5e4c8ccd50c996ca" datatype="html">
         <source>Download file</source>
@@ -1972,7 +1972,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">148</context>
         </context-group>
-        <target state="translated">Скачать файл</target>
+        <target state="needs-translation">Download file</target>
       </trans-unit>
       <trans-unit id="ca5f52f1dad1f8a54935512271342eb73f803b5d" datatype="html">
         <source>Created On</source>
@@ -1984,7 +1984,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">180</context>
         </context-group>
-        <target state="translated">Создан</target>
+        <target state="needs-translation">Created On</target>
       </trans-unit>
       <trans-unit id="a9b941f25f425bd907b8e23cbaed9e96a85e7db7" datatype="html">
         <source>Rating</source>
@@ -1996,7 +1996,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">184</context>
         </context-group>
-        <target state="translated">Рейтинг</target>
+        <target state="needs-translation">Rating</target>
       </trans-unit>
       <trans-unit id="b5996752a23f7941534c9914f0c262756407a332" datatype="html">
         <source>No Resource Found</source>
@@ -2012,7 +2012,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Ресурс</target>
+        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{pageType}}"/> Resource</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html">
         <source>Author</source>
@@ -2020,7 +2020,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="translated">Автор</target>
+        <target state="needs-translation">Author</target>
       </trans-unit>
       <trans-unit id="f6e04edea3bb3a59d5904725bfbc2c440e793001" datatype="html">
         <source>Year</source>
@@ -2028,7 +2028,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">18</context>
         </context-group>
-        <target state="translated">Год</target>
+        <target state="needs-translation">Year</target>
       </trans-unit>
       <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html">
         <source>Description</source>
@@ -2060,7 +2060,7 @@
           <context context-type="sourcefile">app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">Метки</target>
+        <target state="needs-translation">Labels</target>
       </trans-unit>
       <trans-unit id="3d71ff30a26e58d842a6da8457c3ba56163d9d93" datatype="html">
         <source>Publisher/Attribution</source>
@@ -2076,7 +2076,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="translated">Ссылка на лицензию</target>
+        <target state="needs-translation">Link to License</target>
       </trans-unit>
       <trans-unit id="e022dd2288479588a2321e0078be1851b082c324" datatype="html">
         <source>Subject(s)</source>
@@ -2084,7 +2084,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">Тема(ы)</target>
+        <target state="needs-translation">Subject(s)</target>
       </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html">
         <source>Level(s)</source>
@@ -2092,7 +2092,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="translated">Уровень(уровни)</target>
+        <target state="needs-translation">Level(s)</target>
       </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
@@ -2100,7 +2100,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="translated">Открыть</target>
+        <target state="needs-translation">Open</target>
       </trans-unit>
       <trans-unit id="ff7cee38a2259526c519f878e71b964f41db4348" datatype="html">
         <source>Default</source>
@@ -2108,7 +2108,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">По умолчанию</target>
+        <target state="needs-translation">Default</target>
       </trans-unit>
       <trans-unit id="314de06d6f64d39149e78e6d796585c0246fec0b" datatype="html">
         <source>Leader</source>
@@ -2116,7 +2116,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="translated">Лидер</target>
+        <target state="needs-translation">Leader</target>
       </trans-unit>
       <trans-unit id="af3cd82fe334585bd755e6f7a2093baa3271b87f" datatype="html">
         <source>Learner</source>
@@ -2128,7 +2128,7 @@
           <context context-type="sourcefile">app/users/users-table.component.html</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="translated">Учащийся</target>
+        <target state="needs-translation">Learner</target>
       </trans-unit>
       <trans-unit id="586126419621f6652ee9737cebb58520c5027913" datatype="html">
         <source>Resource For</source>
@@ -2136,7 +2136,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="translated">Ресурс для</target>
+        <target state="needs-translation">Resource For</target>
       </trans-unit>
       <trans-unit id="8a27a855a00b08d2ca981207638ea9097032412b" datatype="html">
         <source>Media</source>
@@ -2144,7 +2144,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="translated">Медиа</target>
+        <target state="needs-translation">Media</target>
       </trans-unit>
       <trans-unit id="a15e0231f8585af4515291b8ce367eb13749e391" datatype="html">
         <source>Resource Type</source>
@@ -2152,7 +2152,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">72</context>
         </context-group>
-        <target state="translated">Тип ресурса</target>
+        <target state="needs-translation">Resource Type</target>
       </trans-unit>
       <trans-unit id="272fdb76614a26106d64a15bdd059e2c8b2e5414" datatype="html">
         <source>Added By</source>
@@ -2160,7 +2160,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="translated">Добавлено</target>
+        <target state="needs-translation">Added By</target>
       </trans-unit>
       <trans-unit id="b8b0ff24acc2df6a8482367d06e3801ae977b370" datatype="html">
         <source>Open Which File</source>
@@ -2168,7 +2168,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">82</context>
         </context-group>
-        <target state="translated">Открыть какой файл</target>
+        <target state="needs-translation">Open Which File</target>
       </trans-unit>
       <trans-unit id="ab2d402efd915ef9b8988853c468d37fec83a57d" datatype="html">
         <source>File Upload:</source>
@@ -2176,7 +2176,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="translated">Загрузка файлов:</target>
+        <target state="needs-translation">File Upload:</target>
       </trans-unit>
       <trans-unit id="2295cec19ae4dc9478249809afc1902d3b940d46" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -2184,7 +2184,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">93</context>
         </context-group>
-        <target state="translated">Размер файла не может превышать 512 МБ</target>
+        <target state="needs-translation">File size cannot exceed more than 512 MB</target>
       </trans-unit>
       <trans-unit id="264153a66e508d3e1eb2d4df32e01531e5151575" datatype="html">
         <source>Existing Resource/file:</source>
@@ -2192,7 +2192,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="translated">Существующий ресурс/файл:</target>
+        <target state="needs-translation">Existing Resource/file:</target>
       </trans-unit>
       <trans-unit id="87c429a02a8fff9cdba0a1868386ea4242c37216" datatype="html">
         <source>File downloadable</source>
@@ -2208,7 +2208,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">99</context>
         </context-group>
-        <target state="translated">Удалить файл</target>
+        <target state="needs-translation">Delete File</target>
       </trans-unit>
       <trans-unit id="10f20613f4ef9d2f17b38bb2209ddfb534363b65" datatype="html">
         <source>Private Resource</source>
@@ -2216,7 +2216,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="translated">Частный ресурс</target>
+        <target state="needs-translation">Private Resource</target>
       </trans-unit>
       <trans-unit id="d6af811890f1c725736146b2f039bf6f42c27269" datatype="html">
         <source>If checked, resource will only be viewable by this team</source>
@@ -2224,7 +2224,7 @@
           <context context-type="sourcefile">app/resources/resources-add.component.html</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="translated">Если отмечено, ресурс будет доступен только этой команде</target>
+        <target state="needs-translation">If checked, resource will only be viewable by this team</target>
       </trans-unit>
       <trans-unit id="8f682eab5ea777a1fc15ea6f4d7ccfecddf65037" datatype="html">
         <source>
@@ -2252,7 +2252,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">ИЛИ</target>
+        <target state="needs-translation">OR</target>
       </trans-unit>
       <trans-unit id="e5e6b5da7615bac233cece47c6edea29c783e6a0" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Subject Level:<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/><x id="INTERPOLATION" equiv-text="{{courseDetail?.subjectLevel}}"/></source>
@@ -2308,7 +2308,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="translated">Описание:</target>
+        <target state="needs-translation">Description:</target>
       </trans-unit>
       <trans-unit id="beed332f1562199b0a99c6216be53aa1d7d2171b" datatype="html">
         <source>View Course</source>
@@ -2360,7 +2360,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">36</context>
         </context-group>
-        <target state="translated">Получить курс</target>
+        <target state="needs-translation">Get Course</target>
       </trans-unit>
       <trans-unit id="ab0226f9e7f956b0cb48bc1dd2e3610bdfa4c5b0" datatype="html">
         <source>Join Selected</source>
@@ -2372,7 +2372,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="translated">Присоединиться к выбранному</target>
+        <target state="needs-translation">Join Selected</target>
       </trans-unit>
       <trans-unit id="bee78d2d1f16068474dc66a0f6f719b285eb856e" datatype="html">
         <source>Leave Selected</source>
@@ -2384,7 +2384,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="translated">Покинуть выбранное</target>
+        <target state="needs-translation">Leave Selected</target>
       </trans-unit>
       <trans-unit id="9883cb29ace06daf7eff455945ea6685cfbe1f23" datatype="html">
         <source>Send Courses</source>
@@ -2392,7 +2392,7 @@
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">Отправить курсы</target>
+        <target state="needs-translation">Send Courses</target>
       </trans-unit>
       <trans-unit id="1c9f4ce85f463611a742ff1835a9878489d5104a" datatype="html">
         <source> Title </source>
@@ -2404,7 +2404,7 @@
           <context context-type="sourcefile">app/meetups/meetups.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated"> Название </target>
+        <target state="needs-translation"> Title </target>
       </trans-unit>
       <trans-unit id="8c44a63206a1c03263857a6078d5f05d5ec4e520" datatype="html">
         <source>In myCourses</source>
@@ -2864,7 +2864,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Кабинет</target>
+        <target state="needs-translation">Office</target>
       </trans-unit>
       <trans-unit id="aacd0200c0a48b7e3518c5ddbac3605a58292bb4" datatype="html">
         <source>Services Directory</source>
@@ -2882,8 +2882,8 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">
-          Добавить участников
+        <target state="needs-translation">
+          Add Members
         </target>
       </trans-unit>
       <trans-unit id="4496d99eacb6048071ad968e68bfd4817145ea4d" datatype="html">
@@ -2914,8 +2914,8 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="translated">
-          Добавить курсы
+        <target state="needs-translation">
+          Add Courses
         </target>
       </trans-unit>
       <trans-unit id="4277bb6581c6db21c073b4c21de2a7bb30679d6a" datatype="html">
@@ -2928,7 +2928,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="translated">Запрос на присоединение</target>
+        <target state="needs-translation">Request to Join</target>
       </trans-unit>
       <trans-unit id="e02541aa75000deb64476b3d7cbde55627d1d919" datatype="html">
         <source>Request pending</source>
@@ -2948,7 +2948,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="translated">Новое сообщение</target>
+        <target state="needs-translation">New message</target>
       </trans-unit>
       <trans-unit id="5adf337be1ad12c915ae18012f1bfa1f2ca4628b" datatype="html">
         <source>Chat</source>
@@ -2956,7 +2956,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="translated">Чат</target>
+        <target state="needs-translation">Chat</target>
       </trans-unit>
       <trans-unit id="865fe39293d3ee489a05c290fd746b42e0f54d2c" datatype="html">
         <source>
@@ -3052,7 +3052,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="translated">Создано</target>
+        <target state="needs-translation">Created</target>
       </trans-unit>
       <trans-unit id="b7c444ccad32a9bfe9d1e5d8c3816d0fe328e502" datatype="html">
         <source>Edit Services</source>
@@ -3060,7 +3060,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target state="translated">Редактировать службу</target>
+        <target state="needs-translation">Edit Services</target>
       </trans-unit>
       <trans-unit id="f92a9eefff1fa5c3a11f6f8e95465ea938cf5c57" datatype="html">
         <source>{VAR_SELECT, select, team {Members} enterprise {Team} services {Members} }</source>
@@ -3116,7 +3116,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="translated">Календарь</target>
+        <target state="needs-translation">Calendar</target>
       </trans-unit>
       <trans-unit id="ae740a04776b9e932df442d2da2ee02433f99c90" datatype="html">
         <source>Finances</source>
@@ -3128,7 +3128,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">Финансы</target>
+        <target state="needs-translation">Finances</target>
       </trans-unit>
       <trans-unit id="24968c3b9f7cb940df7e5bf46f61a11710481829" datatype="html">
         <source>Reports</source>
@@ -3252,7 +3252,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">186</context>
         </context-group>
-        <target state="translated">Курсы</target>
+        <target state="needs-translation">Courses</target>
       </trans-unit>
       <trans-unit id="0877db69579c323bf3894f87d7b44a1ca8accee5" datatype="html">
         <source>There are no courses associated with this team.</source>
@@ -3260,7 +3260,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">155</context>
         </context-group>
-        <target state="translated">Нет курсов, связанных с этой командой.</target>
+        <target state="needs-translation">There are no courses associated with this team.</target>
       </trans-unit>
       <trans-unit id="694b96f3f5a1769e984959aebdac59456b86fff1" datatype="html">
         <source>{VAR_SELECT, select, team {Join Requests} enterprise {Applicants} }</source>
@@ -3308,7 +3308,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">192</context>
         </context-group>
-        <target state="translated">Принять</target>
+        <target state="needs-translation">Accept</target>
       </trans-unit>
       <trans-unit id="20c3d69c0b67a74df0aa3920485016b2080578f6" datatype="html">
         <source>Reject</source>
@@ -3316,7 +3316,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">193</context>
         </context-group>
-        <target state="translated">Отклонить</target>
+        <target state="needs-translation">Reject</target>
       </trans-unit>
       <trans-unit id="6c2e769f6f2270892dfab2ff1d829b849fe4c804" datatype="html">
         <source>{VAR_SELECT_1, select, team {{VAR_SELECT, select, on {myTeams} off {Teams} }} enterprise {Enterprises} }</source>
@@ -3336,7 +3336,7 @@
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="translated">Введите имя для поиска...</target>
+        <target state="needs-translation">Type name to search...</target>
       </trans-unit>
       <trans-unit id="5ff0a1019f3760676fce8b5cc9421bb56235ecab" datatype="html">
         <source>All Members</source>
@@ -3348,7 +3348,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="translated">Все участники</target>
+        <target state="needs-translation">All Members</target>
       </trans-unit>
       <trans-unit id="49aa962eb8cd5e5111a068af146b6b4ba15a2e5c" datatype="html">
         <source>Joined Team</source>
@@ -3356,7 +3356,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="translated">Присоединённая команда</target>
+        <target state="needs-translation">Joined Team</target>
       </trans-unit>
       <trans-unit id="4ea0e590d72ebac13cbc7f154b2aefd2b1052d70" datatype="html">
         <source>Most recent visit</source>
@@ -3380,7 +3380,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="translated">Локальный</target>
+        <target state="needs-translation">Local</target>
       </trans-unit>
       <trans-unit id="515ff315db5d049de822a007fcc689bcf7b2e2ed" datatype="html">
         <source>
@@ -3408,7 +3408,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="translated">Связан с</target>
+        <target state="needs-translation">Connected with</target>
       </trans-unit>
       <trans-unit id="1489224595fc40491dc65e81b0fc7da54e4f51ef" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/> Delete</source>
@@ -3820,7 +3820,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">189</context>
         </context-group>
-        <target state="translated">Здоровье</target>
+        <target state="needs-translation">Health</target>
       </trans-unit>
       <trans-unit id="ea965d544a7dfd8185064c52cdfff553cf94d585" datatype="html">
         <source>Messages</source>
@@ -3828,7 +3828,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated">Сообщения</target>
+        <target state="needs-translation">Messages</target>
       </trans-unit>
       <trans-unit id="c042c28e4b743a7aaa943e9f7d8714f78662d54c" datatype="html">
         <source>Sync</source>
@@ -3844,7 +3844,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">183</context>
         </context-group>
-        <target state="translated">Синхронизация</target>
+        <target state="needs-translation">Sync</target>
       </trans-unit>
       <trans-unit id="a103503b612f1db83363d283a16c1f834c38d9f5" datatype="html">
         <source>Manager Settings</source>
@@ -3864,7 +3864,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated">Уведомления</target>
+        <target state="needs-translation">Notifications</target>
       </trans-unit>
       <trans-unit id="ee60751c14fb21666683c27c9ead4eeb4aae736d" datatype="html">
         <source>No Notification</source>
@@ -3872,7 +3872,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="translated">Без уведомлений</target>
+        <target state="needs-translation">No Notification</target>
       </trans-unit>
       <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html">
         <source>View Profile</source>
@@ -3880,7 +3880,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="translated">Просмотреть профиль</target>
+        <target state="needs-translation">View Profile</target>
       </trans-unit>
       <trans-unit id="bb694b49d408265c91c62799c2b3a7e3151c824d" datatype="html">
         <source>Logout</source>
@@ -3896,7 +3896,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">190</context>
         </context-group>
-        <target state="translated">Выход</target>
+        <target state="needs-translation">Logout</target>
       </trans-unit>
       <trans-unit id="68a21f8fd3f86fe246ed20b3cf43e5044f6dc621" datatype="html">
         <source>Mark all as Read</source>
@@ -3908,7 +3908,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Отметить все как прочтенные</target>
+        <target state="needs-translation">Mark all as Read</target>
       </trans-unit>
       <trans-unit id="273401819238e72d16213b90c247eb5d63d95f5b" datatype="html">
         <source>See All</source>
@@ -3924,7 +3924,7 @@
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">118</context>
         </context-group>
-        <target state="translated">Панель</target>
+        <target state="needs-translation">Dashboard</target>
       </trans-unit>
       <trans-unit id="687d5cd60860002543ad2e0adda8bc5c0796ea97" datatype="html">
         <source>Visits</source>
@@ -3932,7 +3932,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Посещения</target>
+        <target state="needs-translation">Visits</target>
       </trans-unit>
       <trans-unit id="aff965645e0356df240c830c90946ba825854888" datatype="html">
         <source>My Progress</source>
@@ -3960,7 +3960,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="translated">Ваши уведомления</target>
+        <target state="needs-translation">Your Notifications</target>
       </trans-unit>
       <trans-unit id="fb55bc908a9ef04a80dcf464cd899a559e579d35" datatype="html">
         <source>Mark as Read</source>
@@ -3968,7 +3968,7 @@
           <context context-type="sourcefile">app/notifications/notifications.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">Отметить как прочитанное</target>
+        <target state="needs-translation">Mark as Read</target>
       </trans-unit>
       <trans-unit id="e622ce9ab68cd52b342c42bf773498311171662f" datatype="html">
         <source>No Notification Found</source>
@@ -3988,7 +3988,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="translated">Улучшить</target>
+        <target state="needs-translation">Upgrade</target>
       </trans-unit>
       <trans-unit id="c647b3d5498b15dac0193e63a10d95f5f5a2b915" datatype="html">
         <source>Success!</source>
@@ -3996,7 +3996,7 @@
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="translated">Успешно!</target>
+        <target state="needs-translation">Success!</target>
       </trans-unit>
       <trans-unit id="0304a96390641c3dd368efd0e054961b6466919e" datatype="html">
         <source>Reboot is required</source>
@@ -4004,7 +4004,7 @@
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="translated">Необходима перезагрузка</target>
+        <target state="needs-translation">Reboot is required</target>
       </trans-unit>
       <trans-unit id="e454f61ced6b5dd4a1c1097d863c5a3119444da4" datatype="html">
         <source>
@@ -4032,7 +4032,7 @@
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="translated">Подтвердить</target>
+        <target state="needs-translation">Verify</target>
       </trans-unit>
       <trans-unit id="4cbd98a0063e75a63b8977954b06e338ad3f4ea7" datatype="html">
         <source>Error :(</source>
@@ -4040,7 +4040,7 @@
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="translated">Ошибка :(</target>
+        <target state="needs-translation">Error :(</target>
       </trans-unit>
       <trans-unit id="b6d36f80e564bf800a998cee94569cadcfb5b4ce" datatype="html">
         <source>Please let us know</source>
@@ -4048,7 +4048,7 @@
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="translated">Пожалуйста, сообщите нам</target>
+        <target state="needs-translation">Please let us know</target>
       </trans-unit>
       <trans-unit id="fb877473be8fdd971458f2fb6001438f7ee5a4f9" datatype="html">
         <source>
@@ -4112,7 +4112,7 @@
           <context context-type="sourcefile">app/community/community-link-dialog.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Выбор</target>
+        <target state="needs-translation">Select</target>
       </trans-unit>
       <trans-unit id="1d0974afae70914072a4fbf19e53328e517bae73" datatype="html">
         <source>News</source>
@@ -4124,7 +4124,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated">Новости</target>
+        <target state="needs-translation">News</target>
       </trans-unit>
       <trans-unit id="cd7656fe48014ee16c6ea30692bda6fbf8ad344a" datatype="html">
         <source>New Story</source>
@@ -4132,7 +4132,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="translated">Новая история</target>
+        <target state="needs-translation">New Story</target>
       </trans-unit>
       <trans-unit id="4e4d16b4259fded9bd56f912a7a11f0e2002aa22" datatype="html">
         <source>Community Leaders</source>
@@ -4140,7 +4140,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="translated">Лидеры сообщества</target>
+        <target state="needs-translation">Community Leaders</target>
       </trans-unit>
       <trans-unit id="647da294f8330bf8f435abff9a895e872e6eae79" datatype="html">
         <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {...} Add {...}}"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {...} nation {...} center {...}}"/> Description
@@ -4149,8 +4149,8 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="translated">
-              <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {...} Add {...}}"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {...} nation {...} center {...}}"/> Описание
+        <target state="needs-translation">
+              <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {...} Add {...}}"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {...} nation {...} center {...}}"/> Description
             </target>
       </trans-unit>
       <trans-unit id="185db144040cb5b95b3b3bad6bf4fb4387351e57" datatype="html">
@@ -4175,7 +4175,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">44</context>
         </context-group>
-        <target state="translated">Добавить ссылку</target>
+        <target state="needs-translation">Add Link</target>
       </trans-unit>
       <trans-unit id="f5952c35586047a991bb204e509e710918e2160d" datatype="html">
         <source>Remove Links</source>
@@ -4183,7 +4183,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="translated">Удалить ссылки</target>
+        <target state="needs-translation">Remove Links</target>
       </trans-unit>
       <trans-unit id="8be41741b06bf3ee6cb732add78e375d5d6af5d4" datatype="html">
         <source>Done Removing Links</source>
@@ -4191,7 +4191,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="translated">Удаление ссылок завершено</target>
+        <target state="needs-translation">Done Removing Links</target>
       </trans-unit>
       <trans-unit id="419d940613972cc3fae9c8ea0a4306dbf80616e5" datatype="html">
         <source>Services</source>
@@ -4199,7 +4199,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="translated">Услуги</target>
+        <target state="needs-translation">Services</target>
       </trans-unit>
       <trans-unit id="6642147ee5ae8acb8b128faedfc7985d39637911" datatype="html">
         <source>Communities</source>
@@ -4207,7 +4207,7 @@
           <context context-type="sourcefile">app/community/community.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="translated">Сообщества</target>
+        <target state="needs-translation">Communities</target>
       </trans-unit>
       <trans-unit id="d946dc6859dddb1dd1aee7ddadab233128787317" datatype="html">
         <source>Health Care</source>
@@ -4219,7 +4219,7 @@
           <context context-type="sourcefile">app/health/health.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="translated">Здравоохранение</target>
+        <target state="needs-translation">Health Care</target>
       </trans-unit>
       <trans-unit id="4bcba4864c0ade18ad95f58b67643b5de4f4efb7" datatype="html">
         <source>My Course Progress</source>
@@ -4227,7 +4227,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-learner.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">Прогресс моего курса</target>
+        <target state="needs-translation">My Course Progress</target>
       </trans-unit>
       <trans-unit id="812234027d039ff707dd67391f893846b8c2bfde" datatype="html">
         <source>No Progress record available</source>
@@ -6047,7 +6047,7 @@
           <context context-type="sourcefile">app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Очистить<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="fdb49ad5f69a1206c2d9acdca4afaf2cb93279ed" datatype="html">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/></source>

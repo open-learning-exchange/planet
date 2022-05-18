@@ -6,7 +6,6 @@ import { StateService } from '../state.service';
 import { findDocuments } from '../mangoQueries';
 import { createDeleteArray } from '../table-helpers';
 import { Router, ActivatedRoute, UrlTree, UrlSegmentGroup, UrlSegment, PRIMARY_OUTLET } from '@angular/router';
-import { link } from 'pouchdb-find';
 
 @Injectable({
   providedIn: 'root'

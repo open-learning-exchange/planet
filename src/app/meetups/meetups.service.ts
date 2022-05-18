@@ -7,7 +7,7 @@ import { Subject, of, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { dedupeShelfReduce } from '../shared/utils';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Injectable()
@@ -78,7 +78,7 @@ export class MeetupService {
   attendMeetups(meetupIds, type) {
     return this.userService.changeShelf(meetupIds, 'meetupIds', type).pipe(map(({ shelf, countChanged }) => {
       const message = type === 'remove' ?
-        'You have left ' + countChanged + ' meetups' : 'You have joined ' + countChanged + ' meetups';
+        $localize`You have left ${countChanged} meetups` : $localize`You have joined ${countChanged} meetups`;
       this.planetMessageService.showMessage(message);
       return shelf;
     }));
@@ -115,9 +115,9 @@ export class MeetupService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage(`You have deleted the ${displayName ? `${displayName} event` : 'selected events'}`);
+        this.planetMessageService.showMessage($localize`You have deleted the ${displayName ? `${displayName} event` : 'selected events'}`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this meetup')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this meetup`)
     };
   }
 

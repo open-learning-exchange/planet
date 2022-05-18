@@ -4,7 +4,9 @@
  */
 
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource, MAT_DIALOG_DATA, MatPaginator, PageEvent } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
 
@@ -36,7 +38,7 @@ export class DialogsListComponent implements AfterViewInit {
   selectedElements: any[];
   selectedNames: string[] = [];
   tooltipText = '';
-  @ViewChild('paginator', { static: false }) paginator: MatPaginator;
+  @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: {
     tableData: any[],

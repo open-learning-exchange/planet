@@ -16,9 +16,6 @@ import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
   ],
   declarations: [
     DialogsAddMeetupsComponent
-  ],
-  entryComponents: [
-    DialogsAddMeetupsComponent
   ]
 })
 export class DialogsAddMeetupsModule {}

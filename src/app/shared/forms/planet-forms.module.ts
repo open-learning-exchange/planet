@@ -69,7 +69,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     PlanetTimeMaskDirective,
     PlanetNumberValidatorDirective,
     PlanetRoundDirective
-  ],
-  entryComponents: [ PlanetTagInputDialogComponent ]
+  ]
 })
 export class PlanetFormsModule {}

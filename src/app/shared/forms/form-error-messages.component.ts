@@ -92,7 +92,7 @@ export class FormErrorMessagesComponent implements OnInit {
   tooltipText() {
     switch (this.error) {
       case 'pattern':
-        return 'Letters, numbers and _ . - allowed.';
+        return $localize`Letters, numbers and _ . - allowed.`;
       default:
         return '';
     }

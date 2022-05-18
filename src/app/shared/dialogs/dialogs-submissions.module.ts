@@ -18,9 +18,6 @@ import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
   ],
   declarations: [
     DialogsSubmissionsComponent
-  ],
-  entryComponents: [
-    DialogsSubmissionsComponent
   ]
 })
 export class DialogsSubmissionsModule {}

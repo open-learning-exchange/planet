@@ -4,7 +4,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 // Main page once logged in.  At this stage is more of a placeholder.
@@ -21,7 +21,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   @Input() emptyLink;
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
-  @ViewChild('items', { static: false }) itemDiv: ElementRef;
+  @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
 
@@ -68,7 +68,7 @@ export class DashboardTileComponent implements AfterViewChecked {
             this.dialogPrompt.close();
             this.removeMessage(item);
           },
-          onError: () => this.planetMessageService.showMessage('There was an error removing ' + item.title)
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
         },
         changeType: 'leave',
         type: 'team',
@@ -78,7 +78,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   removeMessage(item) {
-    this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+    this.planetMessageService.showMessage($localize`${item.title} removed from ${this.cardTitle}`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -88,7 +88,7 @@ export class DashboardTileComponent implements AfterViewChecked {
     this.userService.updateShelf(ids, this.shelfName).subscribe(
       () => {},
       () => {
-        this.planetMessageService.showAlert('There was an error reordering ' + this.cardTitle);
+        this.planetMessageService.showAlert($localize`There was an error reordering ${this.cardTitle}`);
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );

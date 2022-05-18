@@ -59,7 +59,7 @@ export class SyncDirective {
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
     ).subscribe(data => {
-      this.planetMessageService.showMessage('Syncing started');
+      this.planetMessageService.showMessage($localize`Syncing started`);
       this.syncComplete.emit();
     }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
   }

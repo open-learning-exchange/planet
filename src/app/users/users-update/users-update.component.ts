@@ -30,7 +30,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 })
 export class UsersUpdateComponent implements OnInit {
   user: any = {};
-  educationLevel = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
+  educationLevel = [ $localize`Beginner`, $localize`Intermediate`, $localize`Advanced`, $localize`Expert` ];
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   currentImgKey: string;

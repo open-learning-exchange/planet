@@ -5,7 +5,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
@@ -205,12 +205,12 @@ export class ReportsService {
     return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
   }
 
-  minTime(activities, timeField) {
-    return activities.reduce((minTime, { [timeField]: time }) => minTime && minTime < time ? minTime : time, undefined);
+  minTime(activities, timeField: string) {
+    return activities.reduce((minTime, { [timeField as keyof Object]: time }) => minTime && minTime < time ? minTime : time, undefined);
   }
 
   planetTypeText(planetType) {
-    return planetType === 'nation' ? 'Nation' : 'Community';
+    return planetType === 'nation' ? $localize`Nation` : $localize`Community`;
   }
 
   viewPlanetDetails(planet) {
@@ -219,7 +219,7 @@ export class ReportsService {
       autoFocus: false,
       data: {
         allData: planet,
-        title: `${this.planetTypeText(planet.planetType)} Details`
+        title: $localize`${this.planetTypeText(planet.planetType)} Details`
       }
     });
   }

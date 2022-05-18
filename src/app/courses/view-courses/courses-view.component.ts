@@ -6,7 +6,7 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -25,7 +25,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
+  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,

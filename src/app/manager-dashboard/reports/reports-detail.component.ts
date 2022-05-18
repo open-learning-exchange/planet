@@ -16,7 +16,7 @@ import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
   titleOfChartName, monthDataLabels, filterByMember
 } from './reports.utils';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
@@ -33,7 +33,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') readonly hostClass = 'manager-reports-detail';
-  @ViewChild(ReportsHealthComponent, { static: false }) healthComponent: ReportsHealthComponent;
+  @ViewChild(ReportsHealthComponent) healthComponent: ReportsHealthComponent;
   parentCode = '';
   planetCode = '';
   planetName = '';
@@ -314,10 +314,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          datasetObject('Male', xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          datasetObject('Female', xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          datasetObject('Did not specify', xyChartData(genderFilter(undefined), unique), styleVariables.grey),
-          datasetObject('Total', xyChartData(totals(), unique), styleVariables.primary)
+          datasetObject($localize`Male`, xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
+          datasetObject($localize`Female`, xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
+          datasetObject($localize`Did not specify`, xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
       labels: months.map(month => monthDataLabels(month))
@@ -353,22 +353,22 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const teamOptions = [
-      { name: 'All Members', value: 'All' },
+      { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': 'From', 'name': 'startDate', ...commonProps },
-      { 'placeholder': 'To', 'name': 'endDate', ...commonProps }
+      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
+      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': 'Team', 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
     const fields = [ ...commonFields, ...(reportType === 'health' ? [] : [ teamField ]) ];
     const formGroup = {
       startDate: this.dateFilterForm.controls.startDate.value,
       endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ],
       team: reportType === 'health' ? 'All' : this.selectedTeam
     };
-    this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
+    this.dialogsFormService.openDialogsForm($localize`Select Date Range for Data Export`, fields, formGroup, {
       onSubmit: (formValue: any) => {
         this.getTeamMembers(formValue.team).subscribe(members => {
           this.exportCSV(reportType, { startDate: formValue.startDate, endDate: formValue.endDate }, members);
@@ -383,7 +383,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.csvService.exportCSV({
           data: filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
             .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
-          title: 'Member Visits'
+          title: $localize`Member Visits`
         });
         break;
       case 'resourceViews':
@@ -427,10 +427,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'health': this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = {
-      'resourceViews': 'Resource Views',
-      'courseViews': 'Course Views',
-      'health': 'Community Health',
-      'stepCompletions': 'Courses Progress' }[reportType];
+      'resourceViews': $localize`Resource Views`,
+      'courseViews': $localize`Course Views`,
+      'health': $localize`Community Health`,
+      'stepCompletions': $localize`Courses Progress` }[reportType];
     this.csvService.exportCSV({
       data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),

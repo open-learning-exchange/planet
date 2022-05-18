@@ -19,7 +19,7 @@ export class LogsMyPlanetComponent implements OnInit {
   searchValue = '';
   planetType = this.stateService.configuration.planetType;
   get childType() {
-    return this.planetType === 'center' ? 'Community' : 'Nation';
+    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
 
   constructor(
@@ -61,7 +61,7 @@ export class LogsMyPlanetComponent implements OnInit {
       );
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
+    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
   }
 
 }

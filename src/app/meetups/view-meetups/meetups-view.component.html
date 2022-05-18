@@ -43,13 +43,13 @@
       <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
-      <span i18n><b>Joined Members: ({{members.length}})</b></span>
+      <span><b i18n>Joined Members: ({{members.length}})</b></span>
       <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
       <ng-template #memberList>
         <ul>
           <li *ngFor="let mem of members">
             <a [routerLink]="['/users/profile', mem]">
-              <span *ngIf="mem === currentUserName; else otherMember">{{mem}} (You)</span>
+              <span *ngIf="mem === currentUserName; else otherMember" i18n>{{mem}} (You)</span>
               <ng-template #otherMember><span>{{mem}}</span></ng-template>
             </a>
           </li>

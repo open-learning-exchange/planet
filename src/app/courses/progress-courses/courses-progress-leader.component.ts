@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
@@ -19,7 +19,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   course: any;
   // Need to define this variable for template which is shared with CoursesProgressLearner
   headingStart = '';
-  chartLabel = 'Steps';
+  chartLabel = $localize`Steps`;
   selectedStep: any;
   allChartData: any[] = [];
   chartData: any[];
@@ -77,7 +77,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onStepChange(value: any) {
     this.selectedStep = value;
     this.setSingleStep(this.submissions);
-    this.chartLabel = 'Quest.';
+    this.chartLabel = $localize`Quest.`;
   }
 
   setSubmissions() {
@@ -163,12 +163,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.selectedStep = this.course.steps[courseIndex];
       this.setSingleStep(this.submissions);
     }
-    this.chartLabel = 'Quest.';
+    this.chartLabel = $localize`Quest.`;
   }
 
   resetToFullCourse() {
     this.setFullCourse(this.submissions);
-    this.chartLabel = 'Steps';
+    this.chartLabel = $localize`Steps`;
   }
 
   userProgress(user) {

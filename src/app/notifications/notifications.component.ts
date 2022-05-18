@@ -6,7 +6,8 @@ import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { NotificationsService } from './notifications.service';
 
@@ -14,7 +15,7 @@ import { NotificationsService } from './notifications.service';
   templateUrl: './notifications.component.html',
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();

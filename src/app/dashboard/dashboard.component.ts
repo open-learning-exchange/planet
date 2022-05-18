@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -39,11 +39,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
 
   myLifeItems: any[] = [
-    { firstLine: 'my', title: 'Submissions', link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
-    { firstLine: 'my', title: 'Personals', link: 'myPersonals' },
-    { firstLine: 'my', title: 'Achievements', link: 'myAchievements' },
-    { firstLine: 'my', title: 'Surveys', link: 'mySurveys', badge: this.surveysCount },
-    { firstLine: 'my', title: 'Health', link: 'myHealth' }
+    { firstLine: 'my', title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { firstLine: 'my', title: $localize`Personals`, link: 'myPersonals' },
+    { firstLine: 'my', title: $localize`Achievements`, link: 'myAchievements' },
+    { firstLine: 'my', title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
+    { firstLine: 'my', title: $localize`Health`, link: 'myHealth' }
   ];
 
   constructor(

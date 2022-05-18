@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { from, forkJoin, of, throwError } from 'rxjs';
@@ -96,7 +96,7 @@ export class LoginFormComponent {
   welcomeNotification(userId) {
     const data = {
       'user': userId,
-      'message': `Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
+      'message': $localize`Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
       'link': '',
       'type': 'register',
       'priority': 1,
@@ -127,11 +127,11 @@ export class LoginFormComponent {
       switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
     ).subscribe(
       res => {
-        this.planetMessageService.showMessage('Welcome to Planet Learning, ' + res.id.replace('org.couchdb.user:', '') + '!');
+        this.planetMessageService.showMessage($localize`Welcome to Planet Learning, ${res.id.replace('org.couchdb.user:', '')}!`);
         this.welcomeNotification(res.id);
         this.login(this.userForm.value, true);
       },
-      this.errorHandler('An error occurred please try again')
+      this.errorHandler($localize`An error occurred please try again`)
     );
   }
 
@@ -166,12 +166,12 @@ export class LoginFormComponent {
 
   loginError() {
     this.couchService.get('_users/org.couchdb.user:' + this.userForm.value.name).subscribe((data: any) => {
-      this.errorHandler('Username and/or password do not match')();
+      this.errorHandler($localize`Username and/or password do not match`)();
     }, (err) => {
       if (err.error.reason === 'missing') {
-        this.errorHandler('Member ' + this.userForm.value.name + ' is not registered')();
+        this.errorHandler($localize`Member ${this.userForm.value.name} is not registered`)();
       } else {
-        this.errorHandler('There was an error connecting to Planet')();
+        this.errorHandler($localize`There was an error connecting to Planet`)();
       }
     });
   }
@@ -186,7 +186,7 @@ export class LoginFormComponent {
   sendNotifications(userName, addedMember) {
     const data = {
       'user': 'org.couchdb.user:' + userName,
-      'message': `New member <b>${addedMember}</b> has joined.`,
+      'message': $localize`New member <b>${addedMember}</b> has joined.`,
       'link': '/manager/users/profile/' + addedMember,
       'type': 'new user',
       'priority': 1,
@@ -204,9 +204,9 @@ export class LoginFormComponent {
       return forkJoin(obsArr).pipe(catchError(error => {
         // 401 is for Unauthorized
         if (error.status === 401) {
-          this.planetMessageService.showMessage('Can not login to ' + msg + ' planet.');
+          this.planetMessageService.showMessage($localize`Can not login to ${msg} planet.`);
         } else {
-          this.planetMessageService.showMessage('Error connecting to ' + msg + '.');
+          this.planetMessageService.showMessage($localize`Error connecting to ${msg}.`);
         }
         return of(error);
       }));

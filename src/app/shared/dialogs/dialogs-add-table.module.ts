@@ -17,9 +17,6 @@ import { DialogsAddTableComponent } from './dialogs-add-table.component';
   ],
   declarations: [
     DialogsAddTableComponent
-  ],
-  entryComponents: [
-    DialogsAddTableComponent
   ]
 })
 export class DialogsAddTableModule {}
