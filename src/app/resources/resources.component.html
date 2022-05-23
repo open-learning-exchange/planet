@@ -85,7 +85,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="title">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
             <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{element.doc.title}}</a>
@@ -151,11 +151,11 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Created On</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.doc.createdDate | date}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Rating</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>

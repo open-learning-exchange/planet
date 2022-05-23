@@ -1,18 +1,18 @@
 <mat-table #table [dataSource]="communities" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="code">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Code</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="code" i18n>Code</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.doc.code}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="localDomain">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>URL</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="localDomain" i18n>URL</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.doc.localDomain}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="createdDate">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created Date</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Created Date</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.doc.createdDate | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="action">

@@ -18,7 +18,7 @@
   <div *ngIf="!emptyData; else notFoundMessage" class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
-        <mat-header-cell i18n *matHeaderCellDef mat-sort-header>Certification Name</mat-header-cell>
+        <mat-header-cell i18n *matHeaderCellDef mat-sort-header="name">Certification Name</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
