@@ -84,7 +84,12 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   @Output() searchChange = new EventEmitter<any>();
   @ViewChildren(ResourcesSearchListComponent) searchListComponents: QueryList<ResourcesSearchListComponent>;
 
-  categories = [ {'label': 'subject', 'options': constants.subjectList}, {'label': 'language', 'options': languages}, {'label': 'mediaType', 'options': constants.media}, {'label': 'level', 'options': constants.levelList} ];
+  categories = [ 
+    { 'label': 'subject', 'options': constants.subjectList },
+    { 'label': 'language', 'options': languages },
+    { 'label': 'mediaType', 'options': constants.media },
+    { 'label': 'level', 'options': constants.levelList }
+  ];
   
   searchLists = [];
   selected: any = {};
