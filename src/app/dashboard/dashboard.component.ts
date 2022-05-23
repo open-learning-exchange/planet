@@ -39,7 +39,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
 
   myLifeItems: any[] = [
-    { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
+    { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
+    badge: this.examsCount },
     { firstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
     { firstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
     { firstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },

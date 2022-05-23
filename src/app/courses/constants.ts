@@ -17,11 +17,11 @@ export const gradeLevels = [
   { 'label': $localize`Post-Graduate`, 'value': 'Post-Graduate' }
 ];
 
-export const subjectLevels = [ 
-  { 'label': $localize`Beginner`, value:'Beginner' },
-  { 'label': $localize`Intermediate`, value:'Intermediate' },
-  { 'label': $localize`Advanced`, value:'Advanced' },
-  { 'label': $localize`Expert`, value:'Expert' }
+export const subjectLevels = [
+  { 'label': $localize`Beginner`, value: 'Beginner' },
+  { 'label': $localize`Intermediate`, value: 'Intermediate' },
+  { 'label': $localize`Advanced`, value: 'Advanced' },
+  { 'label': $localize`Expert`, value: 'Expert' }
 ];
 
 export const foundations = [

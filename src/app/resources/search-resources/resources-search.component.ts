@@ -84,13 +84,13 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   @Output() searchChange = new EventEmitter<any>();
   @ViewChildren(ResourcesSearchListComponent) searchListComponents: QueryList<ResourcesSearchListComponent>;
 
-  categories = [ 
+  categories = [
     { 'label': 'subject', 'options': constants.subjectList },
     { 'label': 'language', 'options': languages },
     { 'label': 'mediaType', 'options': constants.media },
     { 'label': 'level', 'options': constants.levelList }
   ];
-  
+
   searchLists = [];
   selected: any = {};
 
@@ -118,7 +118,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
     return ({
       category: category.label,
       items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
-        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value == item))
+        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
     });
   }
 
