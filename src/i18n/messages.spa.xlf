@@ -1688,13 +1688,13 @@
         </context-group>
         <target state="final">Bienvenido &lt;b&gt;<x id="PH" equiv-text="userId.replace('org.couchdb.user:', '')"/>&lt;/b&gt; al aprendizaje de planetas</target>
       </trans-unit>
-      <trans-unit id="1260359891793768927" datatype="html">
+      <trans-unit id="1260359891793768927" datatype="html" approved="yes">
         <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
           <context context-type="linenumber">130</context>
         </context-group>
-        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace('org.couchdb.user:', '')"/>!</target>
+        <target state="final">¡Bienvenido a Planet Learning, <x id="PH" equiv-text="res.id.replace('org.couchdb.user:', '')"/>!</target>
       </trans-unit>
       <trans-unit id="1496185008827271823" datatype="html" approved="yes">
         <source>An error occurred please try again</source>
@@ -6386,117 +6386,117 @@
         </context-group>
         <target state="final">No hay ninguna respuesta de encuesta</target>
       </trans-unit>
-      <trans-unit id="1281444288588164689" datatype="html">
+      <trans-unit id="1281444288588164689" datatype="html" approved="yes">
         <source>Drag and drop</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">51</context>
         </context-group>
-        <target state="needs-translation">Drag and drop</target>
+        <target state="final">Arrastre y suelte</target>
       </trans-unit>
-      <trans-unit id="2211262445238742136" datatype="html">
+      <trans-unit id="2211262445238742136" datatype="html" approved="yes">
         <source>Drag and drop or click</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">52</context>
         </context-group>
-        <target state="needs-translation">Drag and drop or click</target>
+        <target state="final">Arrastra y suelta o haz clic</target>
       </trans-unit>
-      <trans-unit id="5429481539069429354" datatype="html">
+      <trans-unit id="5429481539069429354" datatype="html" approved="yes">
         <source>Choose File</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="needs-translation">Choose File</target>
+        <target state="final">Elegir archivo</target>
       </trans-unit>
-      <trans-unit id="8679806927601731663" datatype="html">
+      <trans-unit id="8679806927601731663" datatype="html" approved="yes">
         <source>Try Again</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
-        <target state="needs-translation">Try Again</target>
+        <target state="final">Inténtalo de nuevo</target>
       </trans-unit>
-      <trans-unit id="4656923892660600007" datatype="html">
+      <trans-unit id="4656923892660600007" datatype="html" approved="yes">
         <source>Drag and drop or click to replace</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <target state="needs-translation">Drag and drop or click to replace</target>
+        <target state="final">Arrastre y suelte o haga clic para reemplazar</target>
       </trans-unit>
-      <trans-unit id="4814285799071780083" datatype="html">
+      <trans-unit id="4814285799071780083" datatype="html" approved="yes">
         <source>Remove</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">56</context>
         </context-group>
-        <target state="needs-translation">Remove</target>
+        <target state="final">Eliminar</target>
       </trans-unit>
-      <trans-unit id="4039751093788707597" datatype="html">
+      <trans-unit id="4039751093788707597" datatype="html" approved="yes">
         <source>Oops, something wrong happened.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="needs-translation">Oops, something wrong happened.</target>
+        <target state="final">Vaya, ha ocurrido algo mal.</target>
       </trans-unit>
-      <trans-unit id="292648121842724487" datatype="html">
+      <trans-unit id="292648121842724487" datatype="html" approved="yes">
         <source>The file size is too big ({{ value }} max).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
-        <target state="needs-translation">The file size is too big ({{ value }} max).</target>
+        <target state="final">El tamaño del archivo es demasiado grande ({{ value }} max).</target>
       </trans-unit>
-      <trans-unit id="5787084777373387136" datatype="html">
+      <trans-unit id="5787084777373387136" datatype="html" approved="yes">
         <source>The image width is too small ({{ value }}}px min).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
-        <target state="needs-translation">The image width is too small ({{ value }}}px min).</target>
+        <target state="final">El ancho de la imagen es demasiado pequeño ({{ value }}}px min).</target>
       </trans-unit>
-      <trans-unit id="1137249493826411204" datatype="html">
+      <trans-unit id="1137249493826411204" datatype="html" approved="yes">
         <source>The image width is too big ({{ value }}}px max).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="needs-translation">The image width is too big ({{ value }}}px max).</target>
+        <target state="final">El ancho de la imagen es demasiado grande ({{ value }}}px max).</target>
       </trans-unit>
-      <trans-unit id="4472469312886273696" datatype="html">
+      <trans-unit id="4472469312886273696" datatype="html" approved="yes">
         <source>The image height is too small ({{ value }}}px min).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="needs-translation">The image height is too small ({{ value }}}px min).</target>
+        <target state="final">La altura de la imagen es demasiado pequeña ({{ value }}}px min).</target>
       </trans-unit>
-      <trans-unit id="192459789732614247" datatype="html">
+      <trans-unit id="192459789732614247" datatype="html" approved="yes">
         <source>The image height is too big ({{ value }}}px max).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">64</context>
         </context-group>
-        <target state="needs-translation">The image height is too big ({{ value }}}px max).</target>
+        <target state="final">La altura de la imagen es demasiado grande ({{ value }}}px max).</target>
       </trans-unit>
-      <trans-unit id="3692081346464046395" datatype="html">
+      <trans-unit id="3692081346464046395" datatype="html" approved="yes">
         <source>The image format is not allowed ({{ value }} only).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="needs-translation">The image format is not allowed ({{ value }} only).</target>
+        <target state="final">El formato de imagen no está permitido (solo{{ value }}).</target>
       </trans-unit>
-      <trans-unit id="936996750300899642" datatype="html">
+      <trans-unit id="936996750300899642" datatype="html" approved="yes">
         <source>The file type is not allowed.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">66</context>
         </context-group>
-        <target state="needs-translation">The file type is not allowed.</target>
+        <target state="final">El tipo de archivo no está permitido.</target>
       </trans-unit>
       <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
@@ -9032,13 +9032,13 @@
       </trans-unit>
       <trans-unit id="7f7633a79c20dbf87ac0cbb83ef96c48e56afa7d" datatype="html">
         <source>
-          <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || &apos;Step &apos; + (step.ind"/>
+          <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || &apos;Step &apos; + (step.index + 1) }}"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
-        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || 'Step ' + (step.ind"/> </target>
+        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || 'Step ' + (step.index + 1) }}"/> </target>
       </trans-unit>
       <trans-unit id="a79d938b5ed20249b4ab6bef86c12633d2f346a0" datatype="html" approved="yes">
         <source>Test</source>
@@ -9797,12 +9797,12 @@
         <target state="final">{VAR_SELECT, select, center {Naciones} other {Comunidades}}</target>
       </trans-unit>
       <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html">
-        <source>myPlanet on <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Nations} other"/></source>
+        <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-translation">myPlanet on <x id="ICU" equiv-text="18n&gt;myPlanet on { planetType, select, center {Nations} other"/></target>
+        <target state="needs-translation">myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></target>
       </trans-unit>
       <trans-unit id="2467446332932372407" datatype="html" approved="yes">
         <source>There was a problem deleting item</source>
