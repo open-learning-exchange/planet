@@ -1213,16 +1213,16 @@
           <context context-type="linenumber">148</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">212</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">212</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">101</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">212</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">212</context>
         </context-group>
         <target state="final">Name</target>
       </trans-unit>
@@ -1389,16 +1389,16 @@
           <context context-type="linenumber">79</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
           <context context-type="linenumber">139</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">102</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
@@ -1689,12 +1689,12 @@
         <target state="final">Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace('org.couchdb.user:', '')"/>&lt;/b&gt; to the Planet Learning</target>
       </trans-unit>
       <trans-unit id="1260359891793768927" datatype="html">
-        <source>Welcome to Planet Learning, <x id="PH" equiv-text="e, {}))     ).subscribe(       res =&gt;"/>!</source>
+        <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
           <context context-type="linenumber">130</context>
         </context-group>
-        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="e, {}))     ).subscribe(       res =&gt;"/>!</target>
+        <target state="needs-translation">Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace('org.couchdb.user:', '')"/>!</target>
       </trans-unit>
       <trans-unit id="1496185008827271823" datatype="html" approved="yes">
         <source>An error occurred please try again</source>
@@ -1963,6 +1963,10 @@
           <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
@@ -1973,10 +1977,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
           <context context-type="linenumber">11</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">35</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
@@ -2822,16 +2822,16 @@
           <context context-type="linenumber">70</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
           <context context-type="linenumber">127</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
           <context context-type="linenumber">129</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">4</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
@@ -4364,7 +4364,7 @@
         <source>Today</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">32</context>
         </context-group>
         <target state="final">Today</target>
       </trans-unit>
@@ -4372,7 +4372,7 @@
         <source>Add Event</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">71</context>
         </context-group>
         <target state="final">Add Event</target>
       </trans-unit>
@@ -6386,6 +6386,118 @@
         </context-group>
         <target state="final">There is no survey response</target>
       </trans-unit>
+      <trans-unit id="1281444288588164689" datatype="html">
+        <source>Drag and drop</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+        <target state="needs-translation">Drag and drop</target>
+      </trans-unit>
+      <trans-unit id="2211262445238742136" datatype="html">
+        <source>Drag and drop or click</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <target state="needs-translation">Drag and drop or click</target>
+      </trans-unit>
+      <trans-unit id="5429481539069429354" datatype="html">
+        <source>Choose File</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+        <target state="needs-translation">Choose File</target>
+      </trans-unit>
+      <trans-unit id="8679806927601731663" datatype="html">
+        <source>Try Again</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+        <target state="needs-translation">Try Again</target>
+      </trans-unit>
+      <trans-unit id="4656923892660600007" datatype="html">
+        <source>Drag and drop or click to replace</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <target state="needs-translation">Drag and drop or click to replace</target>
+      </trans-unit>
+      <trans-unit id="4814285799071780083" datatype="html">
+        <source>Remove</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+        <target state="needs-translation">Remove</target>
+      </trans-unit>
+      <trans-unit id="4039751093788707597" datatype="html">
+        <source>Oops, something wrong happened.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">57</context>
+        </context-group>
+        <target state="needs-translation">Oops, something wrong happened.</target>
+      </trans-unit>
+      <trans-unit id="292648121842724487" datatype="html">
+        <source>The file size is too big ({{ value }} max).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+        <target state="needs-translation">The file size is too big ({{ value }} max).</target>
+      </trans-unit>
+      <trans-unit id="5787084777373387136" datatype="html">
+        <source>The image width is too small ({{ value }}}px min).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <target state="needs-translation">The image width is too small ({{ value }}}px min).</target>
+      </trans-unit>
+      <trans-unit id="1137249493826411204" datatype="html">
+        <source>The image width is too big ({{ value }}}px max).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+        <target state="needs-translation">The image width is too big ({{ value }}}px max).</target>
+      </trans-unit>
+      <trans-unit id="4472469312886273696" datatype="html">
+        <source>The image height is too small ({{ value }}}px min).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+        <target state="needs-translation">The image height is too small ({{ value }}}px min).</target>
+      </trans-unit>
+      <trans-unit id="192459789732614247" datatype="html">
+        <source>The image height is too big ({{ value }}}px max).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+        <target state="needs-translation">The image height is too big ({{ value }}}px max).</target>
+      </trans-unit>
+      <trans-unit id="3692081346464046395" datatype="html">
+        <source>The image format is not allowed ({{ value }} only).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <target state="needs-translation">The image format is not allowed ({{ value }} only).</target>
+      </trans-unit>
+      <trans-unit id="936996750300899642" datatype="html">
+        <source>The file type is not allowed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+        <target state="needs-translation">The file type is not allowed.</target>
+      </trans-unit>
       <trans-unit id="73b9e89ce3c82d82896749991d83659e9ea8bccf" datatype="html" approved="yes">
         <source>level</source>
         <context-group purpose="location">
@@ -7356,6 +7468,284 @@
         </context-group>
         <target state="final">There was a problem deleting this meetup</target>
       </trans-unit>
+      <trans-unit id="865399858281657162" datatype="html" approved="yes">
+        <source>There was an error adding your message</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
+          <context context-type="linenumber">98</context>
+        </context-group>
+        <target state="final">There was an error adding your message</target>
+      </trans-unit>
+      <trans-unit id="4134363829131250255" datatype="html" approved="yes">
+        <source>You have unread messages in feedback</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+        <target state="final">You have unread messages in feedback</target>
+      </trans-unit>
+      <trans-unit id="4043485503367594778" datatype="html" approved="yes">
+        <source>There was an error changing title</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
+          <context context-type="linenumber">138</context>
+        </context-group>
+        <target state="final">There was an error changing title</target>
+      </trans-unit>
+      <trans-unit id="6514209522678414154" datatype="html" approved="yes">
+        <source>There was an error closing this feedback.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+        <target state="final">There was an error closing this feedback.</target>
+      </trans-unit>
+      <trans-unit id="6459035999285254114" datatype="html" approved="yes">
+        <source>There has been an error opening the feedback.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
+          <context context-type="linenumber">171</context>
+        </context-group>
+        <target state="final">There has been an error opening the feedback.</target>
+      </trans-unit>
+      <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html" approved="yes">
+        <source>Type your reply here</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <target state="final">Type your reply here</target>
+      </trans-unit>
+      <trans-unit id="adeb18c405fc0a3bf37aaf56814b7504d0370e6c" datatype="html" approved="yes">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>reply<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Reply</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>reply<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Reply</target>
+      </trans-unit>
+      <trans-unit id="2c4a668aba8c558485dde8ffdb15633b015b8a2b" datatype="html" approved="yes">
+        <source>
+          <x id="INTERPOLATION" equiv-text="{{feedback.title || feedback.type + &apos; regarding &apos; + feedback.url}}"/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{feedback.title || feedback.type + ' regarding ' + feedback.url}}"/></target>
+      </trans-unit>
+      <trans-unit id="cd42facac1d103107bab3d9deae24d03c2d4777f" datatype="html" approved="yes">
+        <source>
+          <x id="INTERPOLATION" equiv-text="{{showParams===&apos;on&apos; ? &apos;Hide Details&apos; : &apos;Show Details&apos;}}"/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{showParams==='on' ? 'Hide Details' : 'Show Details'}}"/></target>
+      </trans-unit>
+      <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html" approved="yes">
+        <source>Feedback title</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <target state="final">Feedback title</target>
+      </trans-unit>
+      <trans-unit id="1ae5b586df824664d2c2a98ceae13ac5fa53ee2a" datatype="html" approved="yes">
+        <source>Page Parameters</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <target state="final">Page Parameters</target>
+      </trans-unit>
+      <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html" approved="yes">
+        <source>Re-open</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">110</context>
+        </context-group>
+        <target state="final">Re-open</target>
+      </trans-unit>
+      <trans-unit id="2872318890095035538" datatype="html" approved="yes">
+        <source>There is a problem of getting data.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.ts</context>
+          <context context-type="linenumber">109</context>
+        </context-group>
+        <target state="final">There is a problem of getting data.</target>
+      </trans-unit>
+      <trans-unit id="8011419309391088951" datatype="html" approved="yes">
+        <source>You have deleted feedback.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.ts</context>
+          <context context-type="linenumber">135</context>
+        </context-group>
+        <target state="final">You have deleted feedback.</target>
+      </trans-unit>
+      <trans-unit id="8526463939027231875" datatype="html" approved="yes">
+        <source>There is a problem deleting this feedback.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.ts</context>
+          <context context-type="linenumber">137</context>
+        </context-group>
+        <target state="final">There is a problem deleting this feedback.</target>
+      </trans-unit>
+      <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html" approved="yes">
+        <source>Feedback List</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <target state="final">Feedback List</target>
+      </trans-unit>
+      <trans-unit id="b69a1e208f1a50542d4cab92f8d5775527d99725" datatype="html" approved="yes">
+        <source>Feedback Type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <target state="final">Feedback Type</target>
+      </trans-unit>
+      <trans-unit id="f1c8c801a79ce78bbc8443c9b18cbf2d4b1bbc5a" datatype="html" approved="yes">
+        <source>Feedback Status</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <target state="final">Feedback Status</target>
+      </trans-unit>
+      <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html" approved="yes">
+        <source>Your Current Lists of Feedback</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <target state="final">Your Current Lists of Feedback</target>
+      </trans-unit>
+      <trans-unit id="5d3a2aed8fdce39225ffbeedbda703432e09d539" datatype="html" approved="yes">
+        <source>
+          <x id="INTERPOLATION" equiv-text="{{element.title || element.type + &apos; regarding &apos; + element.url}}"/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{element.title || element.type + ' regarding ' + element.url}}"/></target>
+      </trans-unit>
+      <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
+        <source>Priority</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <target state="final">Priority</target>
+      </trans-unit>
+      <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html" approved="yes">
+        <source>Yes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+        <target state="final">Yes</target>
+      </trans-unit>
+      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html" approved="yes">
+        <source>No</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <target state="final">No</target>
+      </trans-unit>
+      <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html" approved="yes">
+        <source>Owner</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+        <target state="final">Owner</target>
+      </trans-unit>
+      <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html" approved="yes">
+        <source>Status</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+        <target state="final">Status</target>
+      </trans-unit>
+      <trans-unit id="73c8ea027d594b211a22ad250947eb93b9ab235f" datatype="html" approved="yes">
+        <source>Open Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">75</context>
+        </context-group>
+        <target state="final">Open Date</target>
+      </trans-unit>
+      <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html" approved="yes">
+        <source>Close Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+        <target state="final">Close Date</target>
+      </trans-unit>
+      <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html" approved="yes">
+        <source>Source</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+        <target state="final">Source</target>
+      </trans-unit>
+      <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html" approved="yes">
+        <source> Action </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+        <target state="final"> Action </target>
+      </trans-unit>
+      <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html" approved="yes">
+        <source>View</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">98</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <target state="final">View</target>
+      </trans-unit>
+      <trans-unit id="40947875ad7e7497eda2063e21e48861eb120b4b" datatype="html" approved="yes">
+        <source>No Feedback Found</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
+          <context context-type="linenumber">122</context>
+        </context-group>
+        <target state="final">No Feedback Found</target>
+      </trans-unit>
       <trans-unit id="3929692497484294202" datatype="html" approved="yes">
         <source>You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></source>
         <context-group purpose="location">
@@ -7956,7 +8346,7 @@
         <source>{VAR_SELECT, select, subject {Subject} language {Language} mediaType {Medium} level {Level}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/search-resources/resources-search.component.ts</context>
-          <context context-type="linenumber">18,23</context>
+          <context context-type="linenumber">20,25</context>
         </context-group>
         <target state="final">{VAR_SELECT, select, subject {Subject} language {Language} mediaType {Medium} level {Level}}</target>
       </trans-unit>
@@ -7966,287 +8356,9 @@
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/search-resources/resources-search.component.ts</context>
-          <context context-type="linenumber">18,24</context>
+          <context context-type="linenumber">20,26</context>
         </context-group>
         <target state="final"><x id="ICU" equiv-text="{category, select,       subject {Subject}       language {Language}       mediaType {Medium}       level {Level}     }     "/> </target>
-      </trans-unit>
-      <trans-unit id="865399858281657162" datatype="html" approved="yes">
-        <source>There was an error adding your message</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
-          <context context-type="linenumber">98</context>
-        </context-group>
-        <target state="final">There was an error adding your message</target>
-      </trans-unit>
-      <trans-unit id="4134363829131250255" datatype="html" approved="yes">
-        <source>You have unread messages in feedback</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
-          <context context-type="linenumber">111</context>
-        </context-group>
-        <target state="final">You have unread messages in feedback</target>
-      </trans-unit>
-      <trans-unit id="4043485503367594778" datatype="html" approved="yes">
-        <source>There was an error changing title</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
-          <context context-type="linenumber">138</context>
-        </context-group>
-        <target state="final">There was an error changing title</target>
-      </trans-unit>
-      <trans-unit id="6514209522678414154" datatype="html" approved="yes">
-        <source>There was an error closing this feedback.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
-          <context context-type="linenumber">161</context>
-        </context-group>
-        <target state="final">There was an error closing this feedback.</target>
-      </trans-unit>
-      <trans-unit id="6459035999285254114" datatype="html" approved="yes">
-        <source>There has been an error opening the feedback.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.ts</context>
-          <context context-type="linenumber">171</context>
-        </context-group>
-        <target state="final">There has been an error opening the feedback.</target>
-      </trans-unit>
-      <trans-unit id="5a55a3f6fd0b0ea6c811eb33dd379a8b7a82160f" datatype="html" approved="yes">
-        <source>Type your reply here</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">61</context>
-        </context-group>
-        <target state="final">Type your reply here</target>
-      </trans-unit>
-      <trans-unit id="adeb18c405fc0a3bf37aaf56814b7504d0370e6c" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>reply<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Reply</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">63</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>reply<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Reply</target>
-      </trans-unit>
-      <trans-unit id="2c4a668aba8c558485dde8ffdb15633b015b8a2b" datatype="html" approved="yes">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{feedback.title || feedback.type + &apos; regarding &apos; + feedback.url}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{feedback.title || feedback.type + ' regarding ' + feedback.url}}"/></target>
-      </trans-unit>
-      <trans-unit id="cd42facac1d103107bab3d9deae24d03c2d4777f" datatype="html" approved="yes">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{showParams===&apos;on&apos; ? &apos;Hide Details&apos; : &apos;Show Details&apos;}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{showParams==='on' ? 'Hide Details' : 'Show Details'}}"/></target>
-      </trans-unit>
-      <trans-unit id="9e3af11b272bec34c68121484254996fc184b25e" datatype="html" approved="yes">
-        <source>Feedback title</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">25</context>
-        </context-group>
-        <target state="final">Feedback title</target>
-      </trans-unit>
-      <trans-unit id="1ae5b586df824664d2c2a98ceae13ac5fa53ee2a" datatype="html" approved="yes">
-        <source>Page Parameters</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">48</context>
-        </context-group>
-        <target state="final">Page Parameters</target>
-      </trans-unit>
-      <trans-unit id="e6d6a51c1dc971ef7bda4a044017dc4b83ad9091" datatype="html" approved="yes">
-        <source>Re-open</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback-view.component.html</context>
-          <context context-type="linenumber">65</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">110</context>
-        </context-group>
-        <target state="final">Re-open</target>
-      </trans-unit>
-      <trans-unit id="2872318890095035538" datatype="html" approved="yes">
-        <source>There is a problem of getting data.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">109</context>
-        </context-group>
-        <target state="final">There is a problem of getting data.</target>
-      </trans-unit>
-      <trans-unit id="8011419309391088951" datatype="html" approved="yes">
-        <source>You have deleted feedback.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">135</context>
-        </context-group>
-        <target state="final">You have deleted feedback.</target>
-      </trans-unit>
-      <trans-unit id="8526463939027231875" datatype="html" approved="yes">
-        <source>There is a problem deleting this feedback.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.ts</context>
-          <context context-type="linenumber">137</context>
-        </context-group>
-        <target state="final">There is a problem deleting this feedback.</target>
-      </trans-unit>
-      <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html" approved="yes">
-        <source>Feedback List</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-        <target state="final">Feedback List</target>
-      </trans-unit>
-      <trans-unit id="b69a1e208f1a50542d4cab92f8d5775527d99725" datatype="html" approved="yes">
-        <source>Feedback Type</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <target state="final">Feedback Type</target>
-      </trans-unit>
-      <trans-unit id="f1c8c801a79ce78bbc8443c9b18cbf2d4b1bbc5a" datatype="html" approved="yes">
-        <source>Feedback Status</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-        <target state="final">Feedback Status</target>
-      </trans-unit>
-      <trans-unit id="4ba068be5eda46b9cbf6cb16e2b88d7c96ebb13f" datatype="html" approved="yes">
-        <source>Your Current Lists of Feedback</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">27</context>
-        </context-group>
-        <target state="final">Your Current Lists of Feedback</target>
-      </trans-unit>
-      <trans-unit id="5d3a2aed8fdce39225ffbeedbda703432e09d539" datatype="html" approved="yes">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{element.title || element.type + &apos; regarding &apos; + element.url}}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{element.title || element.type + ' regarding ' + element.url}}"/></target>
-      </trans-unit>
-      <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
-        <source>Priority</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">52</context>
-        </context-group>
-        <target state="final">Priority</target>
-      </trans-unit>
-      <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html" approved="yes">
-        <source>Yes</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">54</context>
-        </context-group>
-        <target state="final">Yes</target>
-      </trans-unit>
-      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html" approved="yes">
-        <source>No</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">55</context>
-        </context-group>
-        <target state="final">No</target>
-      </trans-unit>
-      <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html" approved="yes">
-        <source>Owner</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">60</context>
-        </context-group>
-        <target state="final">Owner</target>
-      </trans-unit>
-      <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html" approved="yes">
-        <source>Status</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">67</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
-          <context context-type="linenumber">51</context>
-        </context-group>
-        <target state="final">Status</target>
-      </trans-unit>
-      <trans-unit id="73c8ea027d594b211a22ad250947eb93b9ab235f" datatype="html" approved="yes">
-        <source>Open Date</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">75</context>
-        </context-group>
-        <target state="final">Open Date</target>
-      </trans-unit>
-      <trans-unit id="d0e674fe0aaae7960ef7f40e77e257f4392f1507" datatype="html" approved="yes">
-        <source>Close Date</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">80</context>
-        </context-group>
-        <target state="final">Close Date</target>
-      </trans-unit>
-      <trans-unit id="6834fa6b43d1ecbdf147c48dd9c4d72f1484571d" datatype="html" approved="yes">
-        <source>Source</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">85</context>
-        </context-group>
-        <target state="final">Source</target>
-      </trans-unit>
-      <trans-unit id="01a32bb7e93373cbc305329319efc67c0bd85226" datatype="html" approved="yes">
-        <source> Action </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">90</context>
-        </context-group>
-        <target state="final"> Action </target>
-      </trans-unit>
-      <trans-unit id="6829218544e108e152f5fa72cb79c4ccb82e0d06" datatype="html" approved="yes">
-        <source>View</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">98</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
-          <context context-type="linenumber">39</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
-          <context context-type="linenumber">44</context>
-        </context-group>
-        <target state="final">View</target>
-      </trans-unit>
-      <trans-unit id="40947875ad7e7497eda2063e21e48861eb120b4b" datatype="html" approved="yes">
-        <source>No Feedback Found</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
-          <context context-type="linenumber">122</context>
-        </context-group>
-        <target state="final">No Feedback Found</target>
       </trans-unit>
       <trans-unit id="2270713094750834385" datatype="html" approved="yes">
         <source>Course deleted: <x id="PH" equiv-text="course.courseTitle"/></source>
@@ -8920,13 +9032,13 @@
       </trans-unit>
       <trans-unit id="7f7633a79c20dbf87ac0cbb83ef96c48e56afa7d" datatype="html">
         <source>
-          <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || &apos;Step &apos; + (step.ind"/>
+          <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || &apos;Step &apos; + (step.index + 1) }}"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">17,19</context>
         </context-group>
-        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="          {{ step.stepTitle || 'Step ' + (step.ind"/> </target>
+        <target state="needs-translation"> <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || 'Step ' + (step.index + 1) }}"/> </target>
       </trans-unit>
       <trans-unit id="a79d938b5ed20249b4ab6bef86c12633d2f346a0" datatype="html" approved="yes">
         <source>Test</source>
@@ -9503,12 +9615,12 @@
           <context context-type="linenumber">25</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">36</context>
         </context-group>
         <target state="final">Sandbox</target>
       </trans-unit>
@@ -9535,6 +9647,210 @@
           <context context-type="linenumber">18</context>
         </context-group>
         <target state="final">Member Visits</target>
+      </trans-unit>
+      <trans-unit id="aeda6bb806809d0c214547f8be69995df91ef479" datatype="html" approved="yes">
+        <source>Total Examinations:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <target state="final">Total Examinations:</target>
+      </trans-unit>
+      <trans-unit id="f669274b7f3973eb555aff7d6103e4b73b6a454f" datatype="html" approved="yes">
+        <source>Patients Seen:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <target state="final">Patients Seen:</target>
+      </trans-unit>
+      <trans-unit id="2a22a0a41e6aacd119ac6a533c8c60c1f7819f51" datatype="html" approved="yes">
+        <source>Diagnoses</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <target state="final">Diagnoses</target>
+      </trans-unit>
+      <trans-unit id="5b878cd960dc94f6688fc7df6631383689269c0c" datatype="html" approved="yes">
+        <source>Diagnosis Trend</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+        <target state="final">Diagnosis Trend</target>
+      </trans-unit>
+      <trans-unit id="b005ae273ee83982ebdbfc30331028367c433efc" datatype="html" approved="yes">
+        <source>Select diagnosis to view trend:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <target state="final">Select diagnosis to view trend:</target>
+      </trans-unit>
+      <trans-unit id="91b3ae022fa18ae6137685227939a8baebfa7dd8" datatype="html" approved="yes">
+        <source>Weekly Data</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <target state="final">Weekly Data</target>
+      </trans-unit>
+      <trans-unit id="061dde2212f990858543682a4660f3df65c58f11" datatype="html" approved="yes">
+        <source>Week Starting</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <target state="final">Week Starting</target>
+      </trans-unit>
+      <trans-unit id="b7641aed03492978b4ec6843b1e53f30464294d9" datatype="html" approved="yes">
+        <source>Views</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <target state="final">Views</target>
+      </trans-unit>
+      <trans-unit id="27522fe80e008cfe4909c923da2a42e532758754" datatype="html" approved="yes">
+        <source>Patients Seen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <target state="final">Patients Seen</target>
+      </trans-unit>
+      <trans-unit id="bfd0b38247f6c4c5c80afe653b923e048882bae2" datatype="html" approved="yes">
+        <source>Average Rating</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
+          <context context-type="linenumber">133</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
+          <context context-type="linenumber">168</context>
+        </context-group>
+        <target state="final">Average Rating</target>
+      </trans-unit>
+      <trans-unit id="943777234ea0f773a8bd30f32f4db1bca680df38" datatype="html" approved="yes">
+        <source>Enrolled</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <target state="final">Enrolled</target>
+      </trans-unit>
+      <trans-unit id="5985b116fe1eb22428263212b7910cf4b4700ca2" datatype="html" approved="yes">
+        <source>Courses Completed</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <target state="final">Courses Completed</target>
+      </trans-unit>
+      <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html" approved="yes">
+        <source>Steps</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <target state="final">Steps</target>
+      </trans-unit>
+      <trans-unit id="be8e1a199c0f65656ec614786777a1552a968979" datatype="html" approved="yes">
+        <source>Tests</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+        <target state="final">Tests</target>
+      </trans-unit>
+      <trans-unit id="dba22ab8721b7c54b344898a2b6422b855e6b68b" datatype="html" approved="yes">
+        <source>Steps Completed</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
+          <context context-type="linenumber">153</context>
+        </context-group>
+        <target state="final">Steps Completed</target>
+      </trans-unit>
+      <trans-unit id="9a1128da70d2bd440f3633c3fce70b54289665e5" datatype="html" approved="yes">
+        <source>myPlanet Report</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <target state="final">myPlanet Report</target>
+      </trans-unit>
+      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html" approved="yes">
+        <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <target state="final">{VAR_SELECT, select, center {Nations} other {Communities}}</target>
+      </trans-unit>
+      <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html">
+        <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <target state="needs-translation">myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></target>
+      </trans-unit>
+      <trans-unit id="2467446332932372407" datatype="html" approved="yes">
+        <source>There was a problem deleting item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/pending-table.component.ts</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+        <target state="final">There was a problem deleting item</target>
+      </trans-unit>
+      <trans-unit id="5712931470313882827" datatype="html" approved="yes">
+        <source>There was a problem getting <x id="PH" equiv-text="this.childType"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+        <target state="final">There was a problem getting <x id="PH" equiv-text="this.childType"/></target>
+      </trans-unit>
+      <trans-unit id="5ca560193c762090e39d5d677cf3c79173673ef5" datatype="html" approved="yes">
+        <source>Pending Report</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <target state="final">Pending Report</target>
+      </trans-unit>
+      <trans-unit id="78f05c4f33f1fafaeb5c1ba610979dfceaad12db" datatype="html" approved="yes">
+        <source>{VAR_SELECT, select, nation {Communities} center {Nations}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <target state="final">{VAR_SELECT, select, nation {Communities} center {Nations}}</target>
+      </trans-unit>
+      <trans-unit id="56b1baecac043b12fd134a53c9f0fcd549fcde02" datatype="html" approved="yes">
+        <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <target state="final">Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }"/></target>
       </trans-unit>
       <trans-unit id="6783237823517394918" datatype="html" approved="yes">
         <source>All Members</source>
@@ -9752,22 +10068,6 @@
         </context-group>
         <target state="final">Highest Rated</target>
       </trans-unit>
-      <trans-unit id="bfd0b38247f6c4c5c80afe653b923e048882bae2" datatype="html" approved="yes">
-        <source>Average Rating</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
-          <context context-type="linenumber">133</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
-          <context context-type="linenumber">168</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-        <target state="final">Average Rating</target>
-      </trans-unit>
       <trans-unit id="fdd60f9b4f5184188fc280602ec21a56d2bb5f51" datatype="html" approved="yes">
         <source>Total Courses</source>
         <context-group purpose="location">
@@ -9775,18 +10075,6 @@
           <context context-type="linenumber">149</context>
         </context-group>
         <target state="final">Total Courses</target>
-      </trans-unit>
-      <trans-unit id="dba22ab8721b7c54b344898a2b6422b855e6b68b" datatype="html" approved="yes">
-        <source>Steps Completed</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-        <target state="final">Steps Completed</target>
       </trans-unit>
       <trans-unit id="c018f56794850abdb05f2a46b323b9d751b359ea" datatype="html" approved="yes">
         <source>Total Visits by Course</source>
@@ -9891,182 +10179,6 @@
           <context context-type="linenumber">170</context>
         </context-group>
         <target state="final">There are no course ratings</target>
-      </trans-unit>
-      <trans-unit id="aeda6bb806809d0c214547f8be69995df91ef479" datatype="html" approved="yes">
-        <source>Total Examinations:</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
-          <context context-type="linenumber">2</context>
-        </context-group>
-        <target state="final">Total Examinations:</target>
-      </trans-unit>
-      <trans-unit id="f669274b7f3973eb555aff7d6103e4b73b6a454f" datatype="html" approved="yes">
-        <source>Patients Seen:</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
-          <context context-type="linenumber">5</context>
-        </context-group>
-        <target state="final">Patients Seen:</target>
-      </trans-unit>
-      <trans-unit id="2a22a0a41e6aacd119ac6a533c8c60c1f7819f51" datatype="html" approved="yes">
-        <source>Diagnoses</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-        <target state="final">Diagnoses</target>
-      </trans-unit>
-      <trans-unit id="5b878cd960dc94f6688fc7df6631383689269c0c" datatype="html" approved="yes">
-        <source>Diagnosis Trend</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-        <target state="final">Diagnosis Trend</target>
-      </trans-unit>
-      <trans-unit id="b005ae273ee83982ebdbfc30331028367c433efc" datatype="html" approved="yes">
-        <source>Select diagnosis to view trend:</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-        <target state="final">Select diagnosis to view trend:</target>
-      </trans-unit>
-      <trans-unit id="91b3ae022fa18ae6137685227939a8baebfa7dd8" datatype="html" approved="yes">
-        <source>Weekly Data</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-health.component.html</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
-        <target state="final">Weekly Data</target>
-      </trans-unit>
-      <trans-unit id="061dde2212f990858543682a4660f3df65c58f11" datatype="html" approved="yes">
-        <source>Week Starting</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <target state="final">Week Starting</target>
-      </trans-unit>
-      <trans-unit id="b7641aed03492978b4ec6843b1e53f30464294d9" datatype="html" approved="yes">
-        <source>Views</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-        <target state="final">Views</target>
-      </trans-unit>
-      <trans-unit id="27522fe80e008cfe4909c923da2a42e532758754" datatype="html" approved="yes">
-        <source>Patients Seen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">18</context>
-        </context-group>
-        <target state="final">Patients Seen</target>
-      </trans-unit>
-      <trans-unit id="943777234ea0f773a8bd30f32f4db1bca680df38" datatype="html" approved="yes">
-        <source>Enrolled</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
-        <target state="final">Enrolled</target>
-      </trans-unit>
-      <trans-unit id="5985b116fe1eb22428263212b7910cf4b4700ca2" datatype="html" approved="yes">
-        <source>Courses Completed</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-        <target state="final">Courses Completed</target>
-      </trans-unit>
-      <trans-unit id="02f8ee7117d0f306f5726d1c578a9f18c4ba5b6d" datatype="html" approved="yes">
-        <source>Steps</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
-        <target state="final">Steps</target>
-      </trans-unit>
-      <trans-unit id="be8e1a199c0f65656ec614786777a1552a968979" datatype="html" approved="yes">
-        <source>Tests</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail-activities.component.html</context>
-          <context context-type="linenumber">38</context>
-        </context-group>
-        <target state="final">Tests</target>
-      </trans-unit>
-      <trans-unit id="9a1128da70d2bd440f3633c3fce70b54289665e5" datatype="html" approved="yes">
-        <source>myPlanet Report</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <target state="final">myPlanet Report</target>
-      </trans-unit>
-      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">17</context>
-        </context-group>
-        <target state="final">{VAR_SELECT, select, center {Nations} other {Communities}}</target>
-      </trans-unit>
-      <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html" approved="yes">
-        <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">17</context>
-        </context-group>
-        <target state="final">myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></target>
-      </trans-unit>
-      <trans-unit id="2467446332932372407" datatype="html" approved="yes">
-        <source>There was a problem deleting item</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/pending-table.component.ts</context>
-          <context context-type="linenumber">45</context>
-        </context-group>
-        <target state="final">There was a problem deleting item</target>
-      </trans-unit>
-      <trans-unit id="5712931470313882827" datatype="html" approved="yes">
-        <source>There was a problem getting <x id="PH" equiv-text="this.childType"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.ts</context>
-          <context context-type="linenumber">52</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
-          <context context-type="linenumber">93</context>
-        </context-group>
-        <target state="final">There was a problem getting <x id="PH" equiv-text="this.childType"/></target>
-      </trans-unit>
-      <trans-unit id="5ca560193c762090e39d5d677cf3c79173673ef5" datatype="html" approved="yes">
-        <source>Pending Report</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <target state="final">Pending Report</target>
-      </trans-unit>
-      <trans-unit id="78f05c4f33f1fafaeb5c1ba610979dfceaad12db" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, nation {Communities} center {Nations}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <target state="final">{VAR_SELECT, select, nation {Communities} center {Nations}}</target>
-      </trans-unit>
-      <trans-unit id="56b1baecac043b12fd134a53c9f0fcd549fcde02" datatype="html" approved="yes">
-        <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-pending.component.html</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-        <target state="final">Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }"/></target>
       </trans-unit>
       <trans-unit id="4416413576346763682" datatype="html" approved="yes">
         <source>Pending</source>
@@ -10394,112 +10506,6 @@
         </context-group>
         <target state="final">{VAR_SELECT, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</target>
       </trans-unit>
-      <trans-unit id="6095875067730636945" datatype="html" approved="yes">
-        <source>Planet was not accepted</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">111</context>
-        </context-group>
-        <target state="final">Planet was not accepted</target>
-      </trans-unit>
-      <trans-unit id="2972014593505653665" datatype="html" approved="yes">
-        <source>There was a problem deleting this community</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">134</context>
-        </context-group>
-        <target state="final">There was a problem deleting this community</target>
-      </trans-unit>
-      <trans-unit id="3096098546617387266" datatype="html" approved="yes">
-        <source>Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">211</context>
-        </context-group>
-        <target state="final">Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</target>
-      </trans-unit>
-      <trans-unit id="2012917231300508078" datatype="html" approved="yes">
-        <source><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">232</context>
-        </context-group>
-        <target state="final"><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</target>
-      </trans-unit>
-      <trans-unit id="4685838598500716603" datatype="html" approved="yes">
-        <source>There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
-          <context context-type="linenumber">235</context>
-        </context-group>
-        <target state="final">There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</target>
-      </trans-unit>
-      <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html" approved="yes">
-        <source>URL</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
-        <target state="final">URL</target>
-      </trans-unit>
-      <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html" approved="yes">
-        <source>Created Date</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-        <target state="final">Created Date</target>
-      </trans-unit>
-      <trans-unit id="03a50faaf426ee668aecb37f5b0aa8ae6d78baac" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">48,49</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </target>
-      </trans-unit>
-      <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html" approved="yes">
-        <source> Edit Name </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">39,40</context>
-        </context-group>
-        <target state="final"> Edit Name </target>
-      </trans-unit>
-      <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html" approved="yes">
-        <source> Communities </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">24,25</context>
-        </context-group>
-        <target state="final"> Communities </target>
-      </trans-unit>
-      <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html" approved="yes">
-        <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">27,30</context>
-        </context-group>
-        <target state="final">{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</target>
-      </trans-unit>
-      <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html" approved="yes">
-        <source>
-          <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">27,31</context>
-        </context-group>
-        <target state="final"> <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/> </target>
-      </trans-unit>
-      <trans-unit id="b784ca273d1611e93718c5ba67ec552f383d0e1d" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">44,45</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </target>
-      </trans-unit>
       <trans-unit id="1415060111017347427" datatype="html" approved="yes">
         <source>Network</source>
         <context-group purpose="location">
@@ -10607,6 +10613,112 @@
           <context context-type="linenumber">46,47</context>
         </context-group>
         <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </target>
+      </trans-unit>
+      <trans-unit id="6095875067730636945" datatype="html" approved="yes">
+        <source>Planet was not accepted</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+        <target state="final">Planet was not accepted</target>
+      </trans-unit>
+      <trans-unit id="2972014593505653665" datatype="html" approved="yes">
+        <source>There was a problem deleting this community</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+        <target state="final">There was a problem deleting this community</target>
+      </trans-unit>
+      <trans-unit id="3096098546617387266" datatype="html" approved="yes">
+        <source>Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">211</context>
+        </context-group>
+        <target state="final">Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</target>
+      </trans-unit>
+      <trans-unit id="2012917231300508078" datatype="html" approved="yes">
+        <source><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">232</context>
+        </context-group>
+        <target state="final"><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</target>
+      </trans-unit>
+      <trans-unit id="4685838598500716603" datatype="html" approved="yes">
+        <source>There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.ts</context>
+          <context context-type="linenumber">235</context>
+        </context-group>
+        <target state="final">There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</target>
+      </trans-unit>
+      <trans-unit id="801b98c6f02fe3b32f6afa3ee854c99ed83474e6" datatype="html" approved="yes">
+        <source>URL</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <target state="final">URL</target>
+      </trans-unit>
+      <trans-unit id="472f2890e75d2f37dbe1da8bb859594b5e22a933" datatype="html" approved="yes">
+        <source>Created Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <target state="final">Created Date</target>
+      </trans-unit>
+      <trans-unit id="03a50faaf426ee668aecb37f5b0aa8ae6d78baac" datatype="html" approved="yes">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">48,49</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </target>
+      </trans-unit>
+      <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html" approved="yes">
+        <source> Edit Name </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+        <target state="final"> Edit Name </target>
+      </trans-unit>
+      <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html" approved="yes">
+        <source> Communities </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+        <target state="final"> Communities </target>
+      </trans-unit>
+      <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html" approved="yes">
+        <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">27,30</context>
+        </context-group>
+        <target state="final">{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</target>
+      </trans-unit>
+      <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html" approved="yes">
+        <source>
+          <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/>
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">27,31</context>
+        </context-group>
+        <target state="final"> <x id="ICU" equiv-text="{ hub, select,             sandbox {Add to { planetType, select, nation {Network} center {Region} }}             other {Move { planetType, select, nation {Networks} center {Regions} }}           }         "/> </target>
+      </trans-unit>
+      <trans-unit id="b784ca273d1611e93718c5ba67ec552f383d0e1d" datatype="html" approved="yes">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Accept </target>
       </trans-unit>
       <trans-unit id="8605994873123160708" datatype="html" approved="yes">
         <source>Cancer</source>
@@ -11442,7 +11554,7 @@
         <source>New certification added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">84</context>
         </context-group>
         <target state="final">New certification added</target>
       </trans-unit>
@@ -11450,7 +11562,7 @@
         <source>Certification updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">84</context>
         </context-group>
         <target state="final">Certification updated</target>
       </trans-unit>
