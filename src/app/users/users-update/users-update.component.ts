@@ -47,6 +47,24 @@ export class UsersUpdateComponent implements OnInit {
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
+  ngxImgText = {
+    default: $localize`Drag and drop`,
+    _default: $localize`Drag and drop or click`,
+    button: $localize`Choose File`,
+    try_again: $localize`Try Again`,
+    replace: $localize`Drag and drop or click to replace`,
+    reset: $localize`Remove`,
+    error: $localize`Oops, something wrong happened.`
+  };
+  ngxImgErrText = {
+    fileSize: $localize`The file size is too big ({{ value }} max).`,
+    minWidth: $localize`The image width is too small ({{ value }}}px min).`,
+    maxWidth: $localize`The image width is too big ({{ value }}}px max).`,
+    minHeight: $localize`The image height is too small ({{ value }}}px min).`,
+    maxHeight: $localize`The image height is too big ({{ value }}}px max).`,
+    imageFormat: $localize`The image format is not allowed ({{ value }} only).`,
+    fileType: $localize`The file type is not allowed.`
+  };
 
   constructor(
     private fb: FormBuilder,
