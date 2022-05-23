@@ -51,7 +51,7 @@
           <span *ngIf="selectedEnrolled > 0"> ({{selectedEnrolled}})</span>
         </button>
         <ng-container *ngIf="user.isUserAdmin">
-          <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+          <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
           <mat-menu #managerMenu="matMenu">
             <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
             <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
