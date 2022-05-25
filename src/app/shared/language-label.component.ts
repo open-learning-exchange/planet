@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 
 @Component({
-  selector: 'language-label',
+  selector: 'planet-language-label',
   template: `
     {{ displayText }}<ng-content></ng-content>
   `
@@ -9,9 +9,9 @@ import { Component, Input, OnChanges } from '@angular/core';
 export class LanguageLabelComponent implements OnChanges {
 
   @Input() options = [];
-  @Input() label: string = '';
-  displayText: string = '';
-  
+  @Input() label = '';
+  displayText = '';
+
   ngOnChanges() {
     this.displayText = this.options.find(opt => opt.value === this.label)?.label;
   }
