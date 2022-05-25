@@ -10,6 +10,8 @@ import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { languages } from '../../shared/languages';
+import * as constants from '../resources-constants';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -51,6 +53,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   // Use string rather than boolean for i18n select
   fullView = 'on';
   resourceId: string;
+  constantsOptions = constants;
+  languageOptions = languages;
 
   ngOnInit() {
     this.route.paramMap

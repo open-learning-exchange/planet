@@ -60,3 +60,9 @@ export const resourceType = [
   { 'label': $localize`Exercises`, 'value': 'Exercises' },
   { 'label': $localize`Discussion Questions`, 'value': 'Discussion Questions' }
 ];
+
+export const resourceFor = [
+  { 'label': $localize`Default`, 'value': 'default' },
+  { 'label': $localize`Leader`, 'value': 'leader' },
+  { 'label': $localize`Learner`, 'value': 'learner' }
+];

@@ -1796,7 +1796,7 @@
       </trans-unit>
       <trans-unit id="7369a7af265c375ffa335a804f9600bcf2564e2b" datatype="html" approved="yes">
         <source>
-          <x id="INTERPOLATION" equiv-text="{{ createMode ? 'Already have an account?&apos; : &apos;Become a member&apos; }}"/>
+          <x id="INTERPOLATION" equiv-text="{{ createMode ? &apos;Already have an account?&apos; : &apos;Become a member&apos; }}"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
