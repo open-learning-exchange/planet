@@ -1,26 +1,38 @@
 export const languages = [
   {
     'shortCode': 'eng',
-    'name': 'English'
+    'name': 'English',
+    'label': $localize`English`,
+    'value': 'English'
   },
   {
     'shortCode': 'nep',
-    'name': 'नेपाली'
+    'name': 'नेपाली',
+    'label': $localize`Nepali`,
+    'value': 'नेपाली'
   },
   {
     'shortCode': 'fra',
-    'name': 'Français'
+    'name': 'Français',
+    'label': $localize`French`,
+    'value': 'Français'
   },
   {
     'shortCode': 'spa',
-    'name': 'Español'
+    'name': 'Español',
+    'label': $localize`Spanish`,
+    'value': 'Español'
   },
   {
     'shortCode': 'ara',
-    'name': 'عربى'
+    'name': 'عربى',
+    'label': $localize`Arabic`,
+    'value': 'عربى'
   },
   {
     'shortCode': 'som',
-    'name': 'Somali'
+    'name': 'Somali',
+    'label': $localize`Somali`,
+    'value': 'Somali'
   }
 ];
