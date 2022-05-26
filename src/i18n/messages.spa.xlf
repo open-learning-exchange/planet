@@ -6408,7 +6408,7 @@
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="final">Elegir archivo</target>
+        <target state="final">Escoger archivo</target>
       </trans-unit>
       <trans-unit id="8679806927601731663" datatype="html" approved="yes">
         <source>Try Again</source>
@@ -11078,7 +11078,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="final">Menor primario</target>
+        <target state="final">Primaria baja</target>
       </trans-unit>
       <trans-unit id="8759628242708447609" datatype="html" approved="yes">
         <source>Upper Primary</source>
@@ -11086,7 +11086,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="final">Principal superior</target>
+        <target state="final">Primaria alta</target>
       </trans-unit>
       <trans-unit id="7375716016988559491" datatype="html" approved="yes">
         <source>Lower Secondary</source>
@@ -11094,7 +11094,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="final">Bajo secundario</target>
+        <target state="final">Secundaria alta</target>
       </trans-unit>
       <trans-unit id="2146568470813983071" datatype="html" approved="yes">
         <source>Upper Secondary</source>
@@ -11102,7 +11102,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="final">Secundario superior</target>
+        <target state="final">Secundaria alta</target>
       </trans-unit>
       <trans-unit id="4331721931629393735" datatype="html" approved="yes">
         <source>Undergraduate</source>
@@ -11118,7 +11118,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="final">Graduado</target>
+        <target state="final">Graduado de la escuela</target>
       </trans-unit>
       <trans-unit id="7722828221329169436" datatype="html" approved="yes">
         <source>Professional</source>
@@ -11230,7 +11230,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="final">Textobook</target>
+        <target state="final">Libro de texto</target>
       </trans-unit>
       <trans-unit id="7789101779167400829" datatype="html" approved="yes">
         <source>Lesson Plan</source>
