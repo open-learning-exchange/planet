@@ -1792,11 +1792,11 @@
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Hazte miembro' : 'REGISTRARSE' }}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Regístrate' : 'INICIA SESIÓN' }}"/></target>
       </trans-unit>
       <trans-unit id="7369a7af265c375ffa335a804f9600bcf2564e2b" datatype="html" approved="yes">
         <source>
-          <x id="INTERPOLATION" equiv-text="{{ createMode ? &apos;Already have an account?&apos; : &apos;Become a member&apos; }}"/>
+          <x id="INTERPOLATION" equiv-text="{{ createMode ? 'Already have an account?&apos; : &apos;Become a member&apos; }}"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
@@ -2034,7 +2034,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">171</context>
         </context-group>
-        <target state="final">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(':')[1]"/>&lt;/b&gt; publicó una &lt;b&gt;nueva historia&lt;/b&gt;.</target>
+        <target state="final">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(':')[1]"/>&lt;/b&gt; publicó una &lt;b&gt;nueva noticia&lt;/b&gt;.</target>
       </trans-unit>
       <trans-unit id="107919773961635369" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="link.title"/> deleted</source>
@@ -2178,7 +2178,7 @@
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="final">Nueva historia</target>
+        <target state="final">Nueva noticia</target>
       </trans-unit>
       <trans-unit id="185db144040cb5b95b3b3bad6bf4fb4387351e57" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, Edit {Edit} Add {Add}}</source>
@@ -2473,7 +2473,7 @@
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="final">mi</target>
+        <target state="final">mimis</target>
       </trans-unit>
       <trans-unit id="374853214608917577" datatype="html" approved="yes">
         <source>Submissions</source>
@@ -2481,7 +2481,7 @@
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="final">Envíos</target>
+        <target state="final">Trabajos enviados</target>
       </trans-unit>
       <trans-unit id="4184985715484513258" datatype="html" approved="yes">
         <source>Personals</source>
@@ -5098,7 +5098,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {Añade recursos} enterprise {Añade documentos} services {¡Añade documentos}}</target>
+        <target state="final">{VAR_SELECT, select, team {Añadir recursos} enterprise {Añadir documentos} services {Añadir documentos}}</target>
       </trans-unit>
       <trans-unit id="4496d99eacb6048071ad968e68bfd4817145ea4d" datatype="html" approved="yes">
         <source>
@@ -5364,7 +5364,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">178</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {¡Únete a Solicitudes} enterprise {¡Solicitantes}}</target>
+        <target state="final">{VAR_SELECT, select, team {Acepta solicitudes} enterprise {¡Solicitantes}}</target>
       </trans-unit>
       <trans-unit id="7d6da2a009a9b2853b7eb0aa9bad21180b80490c" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, team {requests} enterprise {applications}}</source>
@@ -6120,7 +6120,7 @@
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="final">Principal</target>
+        <target state="final">Inicial</target>
       </trans-unit>
       <trans-unit id="1311606986429558406" datatype="html" approved="yes">
         <source>Intermediate</source>
@@ -6408,7 +6408,7 @@
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="final">Elegir archivo</target>
+        <target state="final">Escoger archivo</target>
       </trans-unit>
       <trans-unit id="8679806927601731663" datatype="html" approved="yes">
         <source>Try Again</source>
@@ -6688,7 +6688,7 @@
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="final">Frecuencia recurrente</target>
+        <target state="final">Cada cuánto se repite el evento</target>
       </trans-unit>
       <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html" approved="yes">
         <source>Daily</source>
@@ -8462,7 +8462,7 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="final">Nivel de tema</target>
+        <target state="final">Nivel del curso</target>
       </trans-unit>
       <trans-unit id="1907c8d64231feef5a240e23eb61d723b9a428cf" datatype="html" approved="yes">
         <source>Get Course</source>
@@ -8542,7 +8542,7 @@
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
           <context context-type="linenumber">175</context>
         </context-group>
-        <target state="final">Nivel de tema:</target>
+        <target state="final">Nivel del curso:</target>
       </trans-unit>
       <trans-unit id="6199a44140626b7b149ee0303f5a079db87aac1d" datatype="html" approved="yes">
         <source>No Course Found</source>
@@ -8784,7 +8784,7 @@
           <context context-type="sourcefile">src/app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="final">Tomar Encuesta</target>
+        <target state="final">Iniciar Encuesta</target>
       </trans-unit>
       <trans-unit id="3298733287f1ed79ab22facfbf42e75c5c9137a3" datatype="html" approved="yes">
         <source> Preview </source>
@@ -8924,7 +8924,7 @@
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">33,34</context>
         </context-group>
-        <target state="final"> Tomar Encuesta </target>
+        <target state="final">Iniciar Encuesta </target>
       </trans-unit>
       <trans-unit id="0210c438bacd6f4eb23961f1eb778cf263fdc7f5" datatype="html" approved="yes">
         <source> Preview </source>
@@ -10462,7 +10462,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, survey {¡Finaliza la encuesta} exam {¡Finaliza la prueba}}</target>
+        <target state="final">{VAR_SELECT, select, survey {Finaliza encuesta} exam {¡Finaliza la prueba}}</target>
       </trans-unit>
       <trans-unit id="32ac591a2c27504838d629c5e35afec2c97788ed" datatype="html" approved="yes">
         <source>
@@ -11078,7 +11078,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">29</context>
         </context-group>
-        <target state="final">Menor primario</target>
+        <target state="final">Primaria baja</target>
       </trans-unit>
       <trans-unit id="8759628242708447609" datatype="html" approved="yes">
         <source>Upper Primary</source>
@@ -11086,7 +11086,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="final">Principal superior</target>
+        <target state="final">Primaria alta</target>
       </trans-unit>
       <trans-unit id="7375716016988559491" datatype="html" approved="yes">
         <source>Lower Secondary</source>
@@ -11094,7 +11094,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="final">Bajo secundario</target>
+        <target state="final">Secundaria alta</target>
       </trans-unit>
       <trans-unit id="2146568470813983071" datatype="html" approved="yes">
         <source>Upper Secondary</source>
@@ -11102,7 +11102,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="final">Secundario superior</target>
+        <target state="final">Secundaria alta</target>
       </trans-unit>
       <trans-unit id="4331721931629393735" datatype="html" approved="yes">
         <source>Undergraduate</source>
@@ -11118,7 +11118,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="final">Graduado</target>
+        <target state="final">Graduado de la escuela</target>
       </trans-unit>
       <trans-unit id="7722828221329169436" datatype="html" approved="yes">
         <source>Professional</source>
@@ -11230,7 +11230,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="final">Textobook</target>
+        <target state="final">Libro de texto</target>
       </trans-unit>
       <trans-unit id="7789101779167400829" datatype="html" approved="yes">
         <source>Lesson Plan</source>
