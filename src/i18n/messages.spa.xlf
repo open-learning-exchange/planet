@@ -1792,11 +1792,11 @@
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Hazte miembro' : 'REGISTRARSE' }}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Regístrate' : 'INICIA SESIÓN' }}"/></target>
       </trans-unit>
       <trans-unit id="7369a7af265c375ffa335a804f9600bcf2564e2b" datatype="html" approved="yes">
         <source>
-          <x id="INTERPOLATION" equiv-text="{{ createMode ? &apos;Already have an account?&apos; : &apos;Become a member&apos; }}"/>
+          <x id="INTERPOLATION" equiv-text="{{ createMode ? 'Already have an account?&apos; : &apos;Become a member&apos; }}"/>
         </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
@@ -2034,7 +2034,7 @@
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
           <context context-type="linenumber">171</context>
         </context-group>
-        <target state="final">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(':')[1]"/>&lt;/b&gt; publicó una &lt;b&gt;nueva historia&lt;/b&gt;.</target>
+        <target state="final">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(':')[1]"/>&lt;/b&gt; publicó una &lt;b&gt;nueva noticia&lt;/b&gt;.</target>
       </trans-unit>
       <trans-unit id="107919773961635369" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="link.title"/> deleted</source>
@@ -2178,7 +2178,7 @@
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="final">Nueva historia</target>
+        <target state="final">Nueva noticia</target>
       </trans-unit>
       <trans-unit id="185db144040cb5b95b3b3bad6bf4fb4387351e57" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, Edit {Edit} Add {Add}}</source>
@@ -2473,7 +2473,7 @@
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="final">mi</target>
+        <target state="final">mimis</target>
       </trans-unit>
       <trans-unit id="374853214608917577" datatype="html" approved="yes">
         <source>Submissions</source>
@@ -2481,7 +2481,7 @@
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="final">Envíos</target>
+        <target state="final">Trabajos enviados</target>
       </trans-unit>
       <trans-unit id="4184985715484513258" datatype="html" approved="yes">
         <source>Personals</source>
@@ -6120,7 +6120,7 @@
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="final">Principal</target>
+        <target state="final">Inicial</target>
       </trans-unit>
       <trans-unit id="1311606986429558406" datatype="html" approved="yes">
         <source>Intermediate</source>
@@ -6688,7 +6688,7 @@
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="final">Frecuencia recurrente</target>
+        <target state="final">Cada cuánto se repite el evento</target>
       </trans-unit>
       <trans-unit id="2534f13e7f4e270e4799921aacd78f69ef80f254" datatype="html" approved="yes">
         <source>Daily</source>
