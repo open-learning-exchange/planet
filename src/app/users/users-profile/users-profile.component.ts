@@ -8,6 +8,7 @@ import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
+import { educationLevel } from '../user-constants';
 
 @Component({
   selector: 'planet-users-profile',
@@ -32,6 +33,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
+  educationLevel = educationLevel;
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;

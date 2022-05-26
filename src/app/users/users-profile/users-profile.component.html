@@ -60,7 +60,7 @@
         <mat-divider></mat-divider>
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Level</h4>
-          <p matLine><b>{{userDetail.level || 'N/A'}}</b></p>
+          <p matLine><b><planet-language-label [options]="educationLevel" [label]="userDetail.level || 'N/A'"></planet-language-label></b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>

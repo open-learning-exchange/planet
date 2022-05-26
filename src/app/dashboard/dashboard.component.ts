@@ -46,6 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { firstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
     { firstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
   ];
+  cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   constructor(
     private userService: UserService,

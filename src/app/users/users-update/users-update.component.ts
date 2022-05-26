@@ -15,6 +15,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { educationLevel } from '../user-constants';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -30,7 +31,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 })
 export class UsersUpdateComponent implements OnInit {
   user: any = {};
-  educationLevel = [ $localize`Beginner`, $localize`Intermediate`, $localize`Advanced`, $localize`Expert` ];
+  educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   currentImgKey: string;
