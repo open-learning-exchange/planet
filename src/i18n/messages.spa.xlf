@@ -5668,7 +5668,7 @@
         </context-group>
         <target state="final">compartido en</target>
       </trans-unit>
-      <trans-unit id="6cf9006ec076125ca182af753ecc14cfb27306e7" datatype="html" approved="yes">
+      <trans-unit id="6cf9006ec076125ca182af753ecc14cfb27306e7" datatype="html">
         <source>
           <x id="INTERPOLATION" equiv-text="{{ showLess ? 'Show More' : 'Show Less' }}"/>
         </source>
@@ -5676,7 +5676,7 @@
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="final"><x id="INTERPOLATION" equiv-text="{{ showLess ? 'Mostrar más' : 'Muestra menos' }}"/></target>
+        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ showLess ? 'Show More' : 'Show Less' }}"/></target>
       </trans-unit>
       <trans-unit id="cb23d4d98007aa4d7123837f4c17a671848377d6" datatype="html" approved="yes">
         <source>Reply</source>
