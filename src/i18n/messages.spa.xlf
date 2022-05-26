@@ -5098,7 +5098,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {Añade recursos} enterprise {Añade documentos} services {¡Añade documentos}}</target>
+        <target state="final">{VAR_SELECT, select, team {Añadir recursos} enterprise {Añadir documentos} services {Añadir documentos}}</target>
       </trans-unit>
       <trans-unit id="4496d99eacb6048071ad968e68bfd4817145ea4d" datatype="html" approved="yes">
         <source>
@@ -5364,7 +5364,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">178</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {¡Únete a Solicitudes} enterprise {¡Solicitantes}}</target>
+        <target state="final">{VAR_SELECT, select, team {Acepta solicitudes} enterprise {¡Solicitantes}}</target>
       </trans-unit>
       <trans-unit id="7d6da2a009a9b2853b7eb0aa9bad21180b80490c" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, team {requests} enterprise {applications}}</source>
@@ -8462,7 +8462,7 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <target state="final">Nivel de tema</target>
+        <target state="final">Nivel del curso</target>
       </trans-unit>
       <trans-unit id="1907c8d64231feef5a240e23eb61d723b9a428cf" datatype="html" approved="yes">
         <source>Get Course</source>
@@ -8542,7 +8542,7 @@
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
           <context context-type="linenumber">175</context>
         </context-group>
-        <target state="final">Nivel de tema:</target>
+        <target state="final">Nivel del curso:</target>
       </trans-unit>
       <trans-unit id="6199a44140626b7b149ee0303f5a079db87aac1d" datatype="html" approved="yes">
         <source>No Course Found</source>
@@ -8784,7 +8784,7 @@
           <context context-type="sourcefile">src/app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">79</context>
         </context-group>
-        <target state="final">Tomar Encuesta</target>
+        <target state="final">Iniciar Encuesta</target>
       </trans-unit>
       <trans-unit id="3298733287f1ed79ab22facfbf42e75c5c9137a3" datatype="html" approved="yes">
         <source> Preview </source>
@@ -8924,7 +8924,7 @@
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">33,34</context>
         </context-group>
-        <target state="final"> Tomar Encuesta </target>
+        <target state="final">Iniciar Encuesta </target>
       </trans-unit>
       <trans-unit id="0210c438bacd6f4eb23961f1eb778cf263fdc7f5" datatype="html" approved="yes">
         <source> Preview </source>
@@ -10462,7 +10462,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, survey {¡Finaliza la encuesta} exam {¡Finaliza la prueba}}</target>
+        <target state="final">{VAR_SELECT, select, survey {Finaliza encuesta} exam {¡Finaliza la prueba}}</target>
       </trans-unit>
       <trans-unit id="32ac591a2c27504838d629c5e35afec2c97788ed" datatype="html" approved="yes">
         <source>
