@@ -17,7 +17,7 @@ export class FileInputComponent {
   selectedFile: any = null;
   onFileSelected(event: any): void {
       this.selectedFile = event.target.files[0] ?? null;
-      this.fileChange.emit(event)
+      this.fileChange.emit(event);
   }
 
 }
