@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostListener, OnInit } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -13,7 +13,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
   templateUrl: './dashboard-tile.component.html',
   styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileComponent implements AfterViewChecked {
+export class DashboardTileComponent implements OnInit {
   @Input() cardTitle: string;
   @Input() cardType: string;
   @Input() color: string;
@@ -22,30 +22,20 @@ export class DashboardTileComponent implements AfterViewChecked {
   @Input() emptyLink;
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
-  @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
-  tileLines = 2;
+  screenWidth: number;
+  showAccordion: boolean;
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private cd: ChangeDetectorRef
   ) { }
 
-  ngAfterViewChecked() {
-    const divHeight = this.itemDiv.nativeElement.offsetHeight;
-    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
-    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
-    const fontSize = +(itemStyle.fontSize.replace('px', ''));
-    const tileHeight = divHeight - tilePadding;
-    // line-height: normal varies by browser, but should be between 1-1.2
-    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
-    if (tileLines !== this.tileLines) {
-      this.tileLines = tileLines;
-      this.cd.detectChanges();
-    }
+  ngOnInit(): void {
+    this.screenWidth = window.innerWidth;
+    this.setAccordion();
   }
 
   removeFromShelf(event, item: any) {
@@ -94,6 +84,15 @@ export class DashboardTileComponent implements AfterViewChecked {
       }
     );
   }
+
+  setAccordion() {
+    this.screenWidth <= 600 ? this.showAccordion = true : this.showAccordion = false;
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.screenWidth = window.innerWidth;
+    this.setAccordion();
+  }
 }
 
 @Component({
@@ -109,4 +108,70 @@ export class DashboardTileTitleComponent {
   @Input() cardTitle;
   @Input() cardType;
 
+}
+
+@Component({
+  selector: 'planet-dashboard-row-layout',
+  template: `
+   <planet-dashboard-left-tile></planet-dashboard-left-tile>
+   <planet-dashboard-right-tile></planet-dashboard-right-tile> 
+  `
+})
+export class DashboardTileRowLayout {}
+
+@Component({
+  selector: 'planet-dashboard-accordion-layout',
+  templateUrl: './dashboard-tile-accordion-layout.component.html'
+})
+export class DashboardTileAccordionLayout {
+
+  @Input() showAccordion;
+}
+
+@Component({
+  selector: 'planet-dashboard-left-tile',
+  templateUrl: './dashboard-tile-left-tile.component.html'
+})
+export class DashboardTileLeftTile {
+  
+  @Input() cardTitle;
+  @Input() cardType;
+  @Input() link;
+  @Input() emptyLink
+}
+
+
+@Component({
+  selector: 'planet-dashboard-right-tile',
+  templateUrl: './dashboard-tile-right-tile.component.html'
+})
+export class DashboardTileRightTile implements AfterViewChecked {
+  
+  @Input() cardTitle;
+  @Input() itemData;
+  @Input() link;
+  @Input() emptyLink
+  @Output() droppedEvent = new EventEmitter<any>();
+  @ViewChild('items') itemDiv: ElementRef;
+  tileLines = 2;
+
+  constructor( private cd: ChangeDetectorRef ) {}
+
+  ngAfterViewChecked() {
+    const divHeight = this.itemDiv.nativeElement.offsetHeight;
+    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
+    const fontSize = +(itemStyle.fontSize.replace('px', ''));
+    const tileHeight = divHeight - tilePadding;
+    // line-height: normal varies by browser, but should be between 1-1.2
+    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
+    if (tileLines !== this.tileLines) {
+      this.tileLines = tileLines;
+      this.cd.detectChanges();
+    }
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.droppedEvent.emit(event);
+  }
 }

@@ -25,7 +25,9 @@
         flex-wrap: wrap;
         font-size: 1.25rem;
       }
-
+      // .show-accordion {
+      //   visibility: hidden;
+      // }
     }
 
     .right-tile {
@@ -73,5 +75,42 @@
       }
     }
   }
+
+  // @media (max-width: 600px) {
+    
+  //   .dashboard-card {
+  //     display: block;
+
+  //     .left-tile {
+  //       &,
+  //       & planet-dashboard-tile-title {
+  //         justify-content: center;
+  //         transition: 0.5s;
+  //       }
+  //       .show-accordion {
+  //         cursor: pointer;
+  //         visibility: visible;
+  //         position: absolute;
+  //         top: -0.25rem;
+  //         right: -0.25rem;
+  //       }
+  //     }
+
+  //     .right-tile {
+  //       overflow: hidden;
+
+  //       .dashboard-items {
+  //         display: block;
+
+  //         .dashboard-item {
+  //           display: flex;
+  //           flex-wrap: wrap;
+  //           flex-direction: row;
+  //         }
+  //       }
+  //     }
+  //   }
+
+  // }
 
 }
