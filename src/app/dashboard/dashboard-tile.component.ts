@@ -114,30 +114,31 @@ export class DashboardTileTitleComponent {
   selector: 'planet-dashboard-row-layout',
   template: `
    <planet-dashboard-left-tile></planet-dashboard-left-tile>
-   <planet-dashboard-right-tile></planet-dashboard-right-tile> 
+   <planet-dashboard-right-tile></planet-dashboard-right-tile>
   `
 })
-export class DashboardTileRowLayout {}
+export class DashboardTileRowLayoutComponent {}
 
 @Component({
   selector: 'planet-dashboard-accordion-layout',
   templateUrl: './dashboard-tile-accordion-layout.component.html'
 })
-export class DashboardTileAccordionLayout {
+export class DashboardTileAccordionLayoutComponent {
 
   @Input() showAccordion;
+
 }
 
 @Component({
   selector: 'planet-dashboard-left-tile',
   templateUrl: './dashboard-tile-left-tile.component.html'
 })
-export class DashboardTileLeftTile {
-  
+export class DashboardTileLeftTileComponent {
+
   @Input() cardTitle;
   @Input() cardType;
   @Input() link;
-  @Input() emptyLink
+  @Input() emptyLink;
 }
 
 
@@ -145,12 +146,12 @@ export class DashboardTileLeftTile {
   selector: 'planet-dashboard-right-tile',
   templateUrl: './dashboard-tile-right-tile.component.html'
 })
-export class DashboardTileRightTile implements AfterViewChecked {
-  
+export class DashboardTileRightTileComponent implements AfterViewChecked {
+
   @Input() cardTitle;
   @Input() itemData;
   @Input() link;
-  @Input() emptyLink
+  @Input() emptyLink;
   @Output() droppedEvent = new EventEmitter<any>();
   @ViewChild('items') itemDiv: ElementRef;
   tileLines = 2;
