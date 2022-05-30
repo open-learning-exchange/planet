@@ -1,5 +1,5 @@
 <div class="left-tile accent-color">
-  <!-- <a *ngIf="link || emptyLink; else noLink" [routerLink]="[link || emptyLink]">
+  <a *ngIf="link || emptyLink; else noLink" [routerLink]="[link || emptyLink]">
     <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
   </a>
   <ng-template #noLink>
@@ -7,6 +7,5 @@
       <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
     </span>
   </ng-template>
-  <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="myProgress" i18n>My Progress</a> -->
-  Potato
+  <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="myProgress" i18n>My Progress</a>
 </div>

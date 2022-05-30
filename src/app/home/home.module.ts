@@ -12,10 +12,10 @@ import { MaterialModule } from '../shared/material.module';
 import {
   DashboardTileComponent,
   DashboardTileTitleComponent,
-  DashboardTileLeftTile,
-  DashboardTileRightTile,
-  DashboardTileRowLayout,
-  DashboardTileAccordionLayout
+  DashboardTileLeftTileComponent,
+  DashboardTileRightTileComponent,
+  DashboardTileRowLayoutComponent,
+  DashboardTileAccordionLayoutComponent
 } from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
@@ -58,10 +58,10 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
     DashboardComponent,
     DashboardTileComponent,
     DashboardTileTitleComponent,
-    DashboardTileLeftTile,
-    DashboardTileRightTile,
-    DashboardTileRowLayout,
-    DashboardTileAccordionLayout,
+    DashboardTileLeftTileComponent,
+    DashboardTileRightTileComponent,
+    DashboardTileRowLayoutComponent,
+    DashboardTileAccordionLayoutComponent,
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
