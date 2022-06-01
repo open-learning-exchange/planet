@@ -5,7 +5,7 @@
 </mat-toolbar>
 
 <div [ngClass]="{'space-container':!isDialog}">
-  <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Meetup</mat-toolbar>
   <div class="view-container">
     <form class="form-spacing" [formGroup]="meetupForm" novalidate>
       <mat-form-field>
