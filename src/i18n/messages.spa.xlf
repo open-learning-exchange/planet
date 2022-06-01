@@ -8536,7 +8536,7 @@
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, on {misCursos} off {¡Cursos}}</target>
+        <target state="final">{VAR_SELECT, select, on {misCursos} off {Cursos}}</target>
       </trans-unit>
       <trans-unit id="e2ec6c55b25c3243cda9a5e14ca9cf5cb6457433" datatype="html" approved="yes">
         <source>Grade Level</source>
@@ -10562,7 +10562,7 @@
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target state="final">Contraseña incorrecta, vuelve a intentarlo</target>
+        <target state="final">Respuesta incorrecta, inténtalo de nuevo</target>
       </trans-unit>
       <trans-unit id="2e387d7da8f0af49c148be54826069b2d68f0d59" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {Survey is complete.} exam {Test is complete.}}</source>
