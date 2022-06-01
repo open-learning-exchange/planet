@@ -263,7 +263,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   openChangeTitleDialog({ member: councillor }) {
     this.dialogsFormService.openDialogsForm(
       councillor.doc.leadershipTitle ? $localize`Change Leader Title` : $localize`Add Leader Title`,
-      [ { name: 'leadershipTitle', placeholder: 'Title', type: 'textbox' } ],
+      [ { name: 'leadershipTitle', placeholder: $localize`Title`, type: 'textbox' } ],
       { leadershipTitle: councillor.doc.leadershipTitle || '' },
       { autoFocus: true, onSubmit: this.updateTitle(councillor).bind(this) }
     );
