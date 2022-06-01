@@ -2461,13 +2461,13 @@
         </context-group>
         <target state="final">Mi progreso</target>
       </trans-unit>
-      <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html">
+      <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html" approved="yes">
         <source> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">34,36</context>
         </context-group>
-        <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </target>
+        <target state="final"> Añadir elemento a <x id="INTERPOLATION" equiv-text="cardTitle"/> </target>
       </trans-unit>
       <trans-unit id="7623976547869428392" datatype="html" approved="yes">
         <source>my</source>
@@ -5668,7 +5668,7 @@
         </context-group>
         <target state="final">compartido en</target>
       </trans-unit>
-      <trans-unit id="6cf9006ec076125ca182af753ecc14cfb27306e7" datatype="html">
+      <trans-unit id="6cf9006ec076125ca182af753ecc14cfb27306e7" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{ showLess ? 'Show More' : 'Show Less' }}"/>
         </source>
@@ -5676,7 +5676,7 @@
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{ showLess ? 'Mostrar más': 'Muestra menos' }}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ showLess ? 'Mostrar más': 'Muestra menos' }}"/></target>
       </trans-unit>
       <trans-unit id="cb23d4d98007aa4d7123837f4c17a671848377d6" datatype="html" approved="yes">
         <source>Reply</source>
@@ -6684,15 +6684,15 @@
         </context-group>
         <target state="final">Hubo un problema al eliminar esta certificación</target>
       </trans-unit>
-      <trans-unit id="4614742327471833249" datatype="html">
+      <trans-unit id="4614742327471833249" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="meetupInfo.title"/> Updated Successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">145</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="meetupInfo.title"/> Updated Successfully</target>
+        <target state="final"><x id="PH" equiv-text="meetupInfo.title"/> Actualizado correctamente</target>
       </trans-unit>
-      <trans-unit id="5180235218535596239" datatype="html">
+      <trans-unit id="5180235218535596239" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="meetupInfo.title"/> Added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.ts</context>
@@ -6702,7 +6702,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">116</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="meetupInfo.title"/> Added</target>
+        <target state="final"><x id="PH" equiv-text="meetupInfo.title"/> Añadido</target>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html" approved="yes">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
@@ -6712,7 +6712,7 @@
         </context-group>
         <target state="final">&lt;b&gt;"<x id="PH" equiv-text="meetupInfo.title"/>"&lt;/b&gt; ha sido actualizado.</target>
       </trans-unit>
-      <trans-unit id="648fe77b7d78413a14f7ee0c338f22b1cf1072e8" datatype="html">
+      <trans-unit id="648fe77b7d78413a14f7ee0c338f22b1cf1072e8" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, Add new {Add new} Update {Update}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
@@ -6726,15 +6726,15 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, Add new {Agregar nueva} Update {¡Actualiza}}</target>
+        <target state="final">{VAR_SELECT, select, Add new {Agregar nueva} Update {¡Actualiza}}</target>
       </trans-unit>
-      <trans-unit id="c3a952338a0241c0efc10f58525323cf28efed8c" datatype="html">
+      <trans-unit id="c3a952338a0241c0efc10f58525323cf28efed8c" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}} "/> Meetup</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {Agregar nueva} Update {¡Actualiza}} "/> Reuniones</target>
+        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add new {Agregar nueva} Update {¡Actualiza}} "/> Reuniones</target>
       </trans-unit>
       <trans-unit id="ed31c09fd77c36238c13d83635f3fe5294c733d2" datatype="html" approved="yes">
         <source>Location</source>
@@ -7990,13 +7990,13 @@
         </context-group>
         <target state="final">Hubo un error con este recurso</target>
       </trans-unit>
-      <trans-unit id="2024fee2e98ec8b76606139cde07b7ae7ec56c19" datatype="html">
+      <trans-unit id="2024fee2e98ec8b76606139cde07b7ae7ec56c19" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}} "/> Resource</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {Agregar nueva} Update {¡Actualiza}} "/> Recurso</target>
+        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add new {Agregar nueva} Update {¡Actualiza}} "/> Recurso</target>
       </trans-unit>
       <trans-unit id="d7293b61e9088c66421df2e367e0ccc00346cf9f" datatype="html" approved="yes">
         <source>Author</source>
@@ -8642,13 +8642,13 @@
         </context-group>
         <target state="final">Añadir título</target>
       </trans-unit>
-      <trans-unit id="b9f5e6192f1708367882e3aaaedbc00a50a1e7d8" datatype="html">
+      <trans-unit id="b9f5e6192f1708367882e3aaaedbc00a50a1e7d8" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}} "/> Course</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {Agregar nueva} Update {¡Actualiza}} "/> Curso</target>
+        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add new {Agregar nueva} Update {¡Actualiza}} "/> Curso</target>
       </trans-unit>
       <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html" approved="yes">
         <source>Course Title</source>
@@ -11402,13 +11402,13 @@
         </context-group>
         <target state="final">Prueba actualizada correctamente</target>
       </trans-unit>
-      <trans-unit id="3a6a5e26101cbbcd518b981aa1bac40d3a1a7044" datatype="html">
+      <trans-unit id="3a6a5e26101cbbcd518b981aa1bac40d3a1a7044" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, Add {Add} Update {Update} Copy {Copy}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, Add {Agregar} Update {Actualiza} Copy {Copia}}</target>
+        <target state="final">{VAR_SELECT, select, Add {Agregar} Update {Actualiza} Copy {Copia}}</target>
       </trans-unit>
       <trans-unit id="eabbe399bdf428d10ac22766a9cb96652c87290b" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, exam {Test} survey {Survey}}</source>
@@ -11680,21 +11680,21 @@
         </context-group>
         <target state="final">Certificación actualizada</target>
       </trans-unit>
-      <trans-unit id="35a1c2daac6329811efe35f2da28838a6f5f7d8d" datatype="html">
+      <trans-unit id="35a1c2daac6329811efe35f2da28838a6f5f7d8d" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, Add {Add} Update {Update}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated">{VAR_SELECT, select, Add {Agregar} Update {Actualiza}}</target>
+        <target state="final">{VAR_SELECT, select, Add {Agregar} Update {Actualiza}}</target>
       </trans-unit>
-      <trans-unit id="57c2017152ebb984be84482baf3376433b78c309" datatype="html">
+      <trans-unit id="57c2017152ebb984be84482baf3376433b78c309" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}} "/> Certification</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{pageType, select, Add {Agregar} Update {¡Actualiza}} "/> Certificación</target>
+        <target state="final"><x id="ICU" equiv-text="{pageType, select, Add {Agregar} Update {¡Actualiza}} "/> Certificación</target>
       </trans-unit>
       <trans-unit id="cc3f46865e8205bc59118fcba179c9a5b26f2044" datatype="html" approved="yes">
         <source>Add Courses</source>
