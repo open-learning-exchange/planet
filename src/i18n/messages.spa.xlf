@@ -1802,7 +1802,7 @@
         </context-group>
         <target state="final">Contraseña</target>
       </trans-unit>
-      <trans-unit id="5b22ff15f832d415a19f50e6322b17c1fc87e7df" datatype="html">
+      <trans-unit id="5b22ff15f832d415a19f50e6322b17c1fc87e7df" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{ createMode ? &apos;Become a member&apos; : &apos;SIGN-IN&apos;"/>
         </source>
@@ -1810,7 +1810,7 @@
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Become a member' : 'SIGN-IN'"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ createMode ? 'Regístrate' : 'INICIA SESIÓN' }}"/></target>
       </trans-unit>
       <trans-unit id="7369a7af265c375ffa335a804f9600bcf2564e2b" datatype="html" approved="yes">
         <source>
@@ -5680,7 +5680,7 @@
         </context-group>
         <target state="final">compartido en</target>
       </trans-unit>
-      <trans-unit id="ff948502ebb976037c6474c589ad62913e948d04" datatype="html">
+      <trans-unit id="ff948502ebb976037c6474c589ad62913e948d04" datatype="html" approved="yes">
         <source>
           <x id="INTERPOLATION" equiv-text="{{ showLess ? &apos;Show More&apos; : &apos;Show Less&apos; }}"/>
         </source>
@@ -5688,7 +5688,7 @@
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ showLess ? 'Show More' : 'Show Less' }}"/></target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="{{ showLess ? 'Mostrar más': 'Muestra menos' }}"/></target>
       </trans-unit>
       <trans-unit id="cb23d4d98007aa4d7123837f4c17a671848377d6" datatype="html" approved="yes">
         <source>Reply</source>
