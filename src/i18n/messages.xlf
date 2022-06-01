@@ -2250,7 +2250,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html">
-        <source> Add item to <x id="INTERPOLATION" equiv-text="]=&quot;[emptyLink"/> </source><source> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </source>
+        <source> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">34,36</context>
@@ -6016,14 +6016,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4614742327471833249" datatype="html">
-        <source><x id="PH" equiv-text=" meetupInfo, thi"/> Updated Successfully</source>
+        <source><x id="PH" equiv-text="meetupInfo.title"/> Updated Successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5180235218535596239" datatype="html">
-        <source><x id="PH" equiv-text="    &apos;endDate&apos;: D"/> Added</source>
+        <source><x id="PH" equiv-text="meetupInfo.title"/> Added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">159</context>
