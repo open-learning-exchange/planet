@@ -2462,13 +2462,12 @@
         <target state="final">My Progress</target>
       </trans-unit>
       <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html">
-        <source> Add item to <x id="INTERPOLATION" equiv-text="]=&quot;[emptyLink"/> </source>
         <source> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">34,36</context>
         </context-group>
-        <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="]=&quot;[emptyLink"/> </target>
+        <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="cardTitle"/> </target>
       </trans-unit>
       <trans-unit id="7623976547869428392" datatype="html" approved="yes">
         <source>my</source>
@@ -6686,15 +6685,15 @@
         <target state="final">There was a problem deleting this certification</target>
       </trans-unit>
       <trans-unit id="4614742327471833249" datatype="html">
-        <source><x id="PH" equiv-text=" meetupInfo, thi"/> Updated Successfully</source>
+        <source><x id="PH" equiv-text="meetupInfo.title"/> Updated Successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">145</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text=" meetupInfo, thi"/> Updated Successfully</target>
+        <target state="needs-translation"><x id="PH" equiv-text="meetupInfo.title"/> Updated Successfully</target>
       </trans-unit>
       <trans-unit id="5180235218535596239" datatype="html">
-        <source><x id="PH" equiv-text="    &apos;endDate&apos;: D"/> Added</source>
+        <source><x id="PH" equiv-text="meetupInfo.title"/> Added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.ts</context>
           <context context-type="linenumber">159</context>
@@ -6703,7 +6702,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">116</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="    'endDate': D"/> Added</target>
+        <target state="needs-translation"><x id="PH" equiv-text="meetupInfo.title"/> Added</target>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html" approved="yes">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
