@@ -26,7 +26,7 @@
   <div class="primary-link-hover" *ngIf="!emptyData; else notFoundMessage" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
     <mat-table #table [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3>
             {{element.doc.name}}
@@ -35,19 +35,19 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.lastVisit">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Most recent visit</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.lastVisit" i18n>Most recent visit</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{(element.visitLog.lastVisit | date: 'medium') || 'N/A'}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.visitCount">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Total visits from last 30 days</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.visitCount" i18n>Total visits from last 30 days</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{element.visitLog.visitCount}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="doc.teamType">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="doc.teamType" i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container [ngSwitch]="element.doc.teamType">
             <ng-container *ngSwitchCase="'local'" i18n>Local</ng-container>

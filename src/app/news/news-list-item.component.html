@@ -25,7 +25,7 @@
     <div [ngClass]="{'show-less': showLess}" #content>
       <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
     </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="showExpand || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? "Show More" : "Show Less" }}</span>
+    <span class="primary-text-color cursor-pointer" *ngIf="showExpand || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
@@ -33,14 +33,14 @@
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
     </button>
     <ng-container *ngIf="item.doc.user.name === currentUser.name">
-      <button mat-icon-button type="button" (click)="editNews(item.doc)" i18n><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)" i18n><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
     </ng-container>
     <button mat-button i18n *ngIf="item.doc.user.name === currentUser.name && editable" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
     <mat-menu #labelMenu="matMenu">
-      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label i18n-label [label]="label"></planet-label></button>
+      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
     </mat-menu>
-    <button mat-button i18n *ngIf="showShare" (click)="shareStory(item.doc)">Share with {
+    <button mat-button i18n *ngIf="showShare" (click)="shareStory(item.doc)" i8n>Share with {
       shareTarget, select, community {Community} nation {Nation} center {Earth}
     }</button>
   </mat-card-actions>

@@ -23,8 +23,12 @@
       <planet-form-error-messages [control]="userForm.controls.repeatPassword"></planet-form-error-messages>
     </mat-error>
   </mat-form-field>
-  <button mat-raised-button color="primary" [planetSubmit]="userForm.valid" i18n>{{ createMode ? 'Become a member' : 'SIGN-IN' }}</button>
-  <a class="addUser" [routerLink]="createMode ? ['/login'] : ['newmember']" i18n>
-    {{ createMode ? 'Already have an account?' : 'Become a member' }}
+  <button mat-raised-button color="primary" [planetSubmit]="userForm.valid">
+    <ng-container *ngIf="createMode; else signIn" i18n>Become a member</ng-container>
+    <ng-template #signIn i18n>SIGN-IN</ng-template>
+  </button>
+  <a class="addUser" [routerLink]="createMode ? ['/login'] : ['newmember']">
+    <ng-container *ngIf="createMode; else registerMember" i18n>Already have an account</ng-container>
+    <ng-template #registerMember i18n>Become a member</ng-template>
   </a>
 </form>

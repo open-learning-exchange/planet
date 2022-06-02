@@ -1,6 +1,6 @@
 <mat-table #table [dataSource]="logs" matSortActive="lastSync" matSortDirection="desc" [matSortDisableClear]="true" matSort>
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
       <a [routerLink]="['detail', { parentCode: element.doc.parentCode, code: element.doc.code }]">{{element.nameDoc ? element.nameDoc.name : element.doc.name}}</a>
       <button (click)="viewDetails(element.doc)" mat-stroked-button color="primary" i18n>Details</button>
@@ -23,7 +23,7 @@
     <mat-cell *matCellDef="let element">{{element?.doc?.lastUpgrade?.max?.time | date:'medium'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="lastSync">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Sync</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="lastSync" i18n>Last Sync</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.doc?.lastSync?.max?.time | date:'medium'}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

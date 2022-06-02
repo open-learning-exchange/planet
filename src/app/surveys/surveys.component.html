@@ -40,19 +40,19 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Survey</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Survey</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="taken">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Number of Times Taken</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Linked</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Linked</mat-header-cell>
         <mat-cell *matCellDef="let element"><span class="cursor-pointer course-title" *ngIf="element.course" [routerLink]="['/courses/view', element.course._id]">{{element.courseTitle}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Created/Updated on</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Created/Updated on</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{element.createdDate | date: 'mediumDate'}}
         </mat-cell>

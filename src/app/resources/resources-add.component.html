@@ -3,7 +3,7 @@
 </mat-toolbar>
 
 <div [ngClass]="{'space-container':!isDialog}">
-  <mat-toolbar class="primary-color font-size-1" i18n>{{pageType}} Resource</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Resource</mat-toolbar>
   <div class="view-container view-full-height">
     <div class="form-container">
       <form class="form-spacing" [formGroup]="resourceForm" novalidate>
@@ -37,41 +37,39 @@
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple required>
-            <mat-option *ngFor="let subject of constants.subjectList" [value]="subject">{{subject}}</mat-option>
+            <mat-option *ngFor="let subject of constants.subjectList" [value]="subject.value">{{subject.label}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple required>
-            <mat-option *ngFor="let level of constants.levelList" [value]="level">{{level}}</mat-option>
+            <mat-option *ngFor="let level of constants.levelList" [value]="level.value">{{level.label}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
-            <mat-option *ngFor="let open of constants.openWith" [value]="open">
-            {{ open }}
+            <mat-option *ngFor="let open of constants.openWith" [value]="open.value">
+            {{ open.label }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" multiple>
-            <mat-option i18n value="default">Default</mat-option>
-            <mat-option i18n value="leader">Leader</mat-option>
-            <mat-option i18n value="learner">Learner</mat-option>
+            <mat-option *ngFor="let role of constants.resourceFor" [value]="role.value">{{role.label}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Media" formControlName="medium">
-            <mat-option *ngFor="let medium of constants.media" [value]="medium">
-            {{ medium }}
+            <mat-option *ngFor="let medium of constants.media" [value]="medium.value">
+            {{ medium.label }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
-            <mat-option *ngFor="let type of constants.resourceType" [value]="type">
-            {{ type }}
+            <mat-option *ngFor="let type of constants.resourceType" [value]="type.value">
+            {{ type.label}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -89,7 +87,7 @@
         </mat-form-field>
         <div class="inner-gaps by-column full-width">
           <label i18n>File Upload:</label>
-          <input type="file" (change)="bindFile($event)" />
+          <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
         </div>
         <p *ngIf="existingResource.doc?._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>

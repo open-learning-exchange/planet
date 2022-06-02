@@ -19,6 +19,7 @@ import { LabelComponent } from './label.component';
 import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
+import { LanguageLabelComponent } from './language-label.component';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { AvatarComponent } from './avatar.component';
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
+    LanguageLabelComponent,
     MyPlanetTableComponent,
     AvatarComponent
   ],
@@ -59,6 +61,7 @@ import { AvatarComponent } from './avatar.component';
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
+    LanguageLabelComponent,
     MyPlanetTableComponent,
     TimePipe,
     AvatarComponent

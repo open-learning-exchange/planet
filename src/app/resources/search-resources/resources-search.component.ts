@@ -10,6 +10,8 @@ import {
   QueryList,
   ViewChild
 } from '@angular/core';
+import * as constants from '../resources-constants';
+import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { MatSelectionList } from '@angular/material/list';
 
@@ -23,8 +25,8 @@ import { MatSelectionList } from '@angular/material/list';
     }
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
-      <mat-list-option *ngFor="let item of items" [value]="item" [selected]="isSelected(item)" checkboxPosition="before">
-        {{item}}
+      <mat-list-option *ngFor="let item of items" [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
+        {{item.label}}
       </mat-list-option>
     </mat-selection-list>
   `,
@@ -82,7 +84,13 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   @Output() searchChange = new EventEmitter<any>();
   @ViewChildren(ResourcesSearchListComponent) searchListComponents: QueryList<ResourcesSearchListComponent>;
 
-  categories = [ 'subject', 'language', 'mediaType', 'level' ];
+  categories = [
+    { 'label': 'subject', 'options': constants.subjectList },
+    { 'label': 'language', 'options': languages },
+    { 'label': 'mediaType', 'options': constants.media },
+    { 'label': 'level', 'options': constants.levelList }
+  ];
+
   searchLists = [];
   selected: any = {};
 
@@ -99,7 +107,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {
-    this.selected = this.categories.reduce((select, category) => ({ ...select, [category]: [] }), {});
+    this.selected = this.categories.reduce((select, category) => ({ ...select, [category.label]: [] }), {});
     this.selected = { ...this.selected, ...startingSelection };
     if (!isInit) {
       this.searchListComponents.forEach((component) => component.reset());
@@ -108,9 +116,9 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
 
   createSearchList(category, data) {
     return ({
-      category,
-      items: data.reduce((list, { doc }) => list.concat(doc[category]), []).reduce(dedupeShelfReduce, []).filter(item => item)
-        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+      category: category.label,
+      items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
+        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
     });
   }
 

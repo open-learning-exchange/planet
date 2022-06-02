@@ -2,7 +2,7 @@
   <a mat-icon-button (click)="goBack()" i18n><mat-icon>arrow_back</mat-icon></a>
   {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
   {{examType === 'exam' && courseName ? courseName + ':' : ''}}
-  {{pageType}}
+  {pageType, select, Add {Add} Update {Update} Copy {Copy}}
   <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
 </mat-toolbar>
 

@@ -15,6 +15,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 })
 export class DashboardTileComponent implements AfterViewChecked {
   @Input() cardTitle: string;
+  @Input() cardType: string;
   @Input() color: string;
   @Input() itemData;
   @Input() link;
@@ -98,7 +99,7 @@ export class DashboardTileComponent implements AfterViewChecked {
 @Component({
   selector: 'planet-dashboard-tile-title',
   template: `
-    <mat-icon svgIcon={{cardTitle}}></mat-icon>
+    <mat-icon svgIcon={{cardType}}></mat-icon>
     <span>{{cardTitle}}</span>
   `,
   styleUrls: [ './dashboard-tile-title.scss' ]
@@ -106,5 +107,6 @@ export class DashboardTileComponent implements AfterViewChecked {
 export class DashboardTileTitleComponent {
 
   @Input() cardTitle;
+  @Input() cardType;
 
 }

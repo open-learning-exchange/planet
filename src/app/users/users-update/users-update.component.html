@@ -48,9 +48,7 @@
         </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
-            <mat-option *ngFor="let level of educationLevel" [value]="level">
-              {{level}}
-            </mat-option>
+            <mat-option *ngFor="let level of educationLevel" [value]="level.value">{{level.label}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
@@ -84,7 +82,7 @@
     <div *ngIf="!submissionMode">
       <img class="profile-image-update" [src]="previewSrc">
       <div>
-        <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig"></ngx-img>
+        <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig" [text]="ngxImgText" [errorTexts]="ngxImgErrText"></ngx-img>
       </div>
     </div>
   </div>

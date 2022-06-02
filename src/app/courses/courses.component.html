@@ -8,13 +8,13 @@
   <mat-form-field class="font-size-1 margin-lr-3">
     <mat-select i18n-placeholder placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of gradeOptions" value={{option}}>{{option}}</mat-option>
+      <mat-option *ngFor="let option of gradeOptions" value={{option.value}}>{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
     <mat-select i18n-placeholder placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
       <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of subjectOptions" value={{option}}>{{option}}</mat-option>
+      <mat-option *ngFor="let option of subjectOptions" value={{option.value}}>{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="font-size-1 margin-lr-3">
@@ -90,7 +90,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n> Title </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
         <mat-cell  *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
             <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
@@ -171,17 +171,17 @@
         <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <p><ng-container i18n>Grade Level:</ng-container>{{ " " + element.doc.gradeLevel}}</p>
-            <p><ng-container i18n>Subject Level:</ng-container>{{ " " + element.doc.subjectLevel}}</p>
+            <p><ng-container i18n>Grade Level:</ng-container>{{ " " }}<planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></p>
+            <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
           </div>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Created On</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element.doc.createdDate | date}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef mat-sort-header start="desc" i18n>Rating</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
