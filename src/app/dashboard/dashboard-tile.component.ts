@@ -133,7 +133,7 @@ export class DashboardTileTitleComponent {
   styleUrls: [ './dashboard-tile.scss' ]
 })
 export class DashboardTileRowLayoutComponent {
-  
+
   @Input() cardTitle;
   @Input() link;
   @Input() emptyLink;
@@ -148,7 +148,7 @@ export class DashboardTileRowLayoutComponent {
   removeFromShelf(element: {event, item: any}) {
     this.removeEvent.emit(element);
   }
-  
+
 }
 
 @Component({
@@ -227,6 +227,6 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
   }
 
   removeFromShelf(event, item: any) {
-    this.removeEvent.emit({event, item});
+    this.removeEvent.emit({ event, item });
   }
 }
