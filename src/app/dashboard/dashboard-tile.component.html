@@ -1,4 +1,48 @@
 <mat-card class="dashboard-card">
-  <planet-dashboard-row-layout *ngIf="!showAccordion" (drop)="drop($event)"></planet-dashboard-row-layout>
-  <planet-dashboard-accordion-layout *ngIf="showAccordion" (drop)="drop($event)"></planet-dashboard-accordion-layout>
+  <planet-dashboard-row-layout [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
+    (drop)="drop($event)" (removeFromShelf)="removeFromShelf(element)" *ngIf="!showAccordion">
+  </planet-dashboard-row-layout>
+  <planet-dashboard-accordion-layout [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
+    (drop)="drop($event)" (removeFromShelf)="removeFromShelf(element)" *ngIf="showAccordion">
+  </planet-dashboard-accordion-layout>
 </mat-card>
+
+<!-- <mat-card class="dashboard-card">
+  <div class="left-tile accent-color">
+    <a *ngIf="link || emptyLink; else noLink" [routerLink]="[link || emptyLink]">
+      <planet-dashboard-tile-title [cardTitle]="cardTitle"></planet-dashboard-tile-title>
+    </a>
+    <ng-template #noLink>
+      <span *ngIf="cardTitle==='myLife'">
+        <planet-dashboard-tile-title [cardTitle]="cardTitle"></planet-dashboard-tile-title>
+      </span>
+    </ng-template>
+    <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="myProgress" i18n>My Progress</a>
+  </div>
+  <div class="right-tile" #items>
+    <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+      <ng-container *ngFor="let item of itemData;let even=even">
+        <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
+          <div
+            class="dashboard-item"
+            [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link}"
+            [routerLink]="item.link"
+            [matTooltip]="item.tooltip"
+            cdkDrag
+            [cdkDragDisabled]="cardTitle==='myLife'"
+            #dashboardTile
+          >
+            <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
+            <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': tileLines }">{{item.title}}</p>
+            <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife' && !item?.canRemove">
+              <mat-icon i18n-matTooltip [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
+      <span *ngIf="itemData.length === 0" class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]" i18n>
+        Add item to {{cardTitle}}
+      </span>
+    </div>
+  </div>
+</mat-card> -->

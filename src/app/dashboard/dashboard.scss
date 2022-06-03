@@ -16,16 +16,16 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
     grid-template-rows: auto repeat(4, minmax(70px, 1fr));
   }
 
-  // @media (min-width: 600px) {
-  //   planet-dashboard-tile {
-  //     overflow: hidden;
-  //     padding: 0 2px;
-  //   } 
-  // }
+  @media (min-width: 600px) {
+    planet-dashboard-tile {
+      overflow: hidden;
+      padding: 0 2px;
+    } 
+  }
 
-  // @media (max-width: 600px) {
-  //   grid-template-rows: auto repeat(4, minmax(auto, 1fr));
-  // }
+  @media (max-width: 600px) {
+    grid-template-rows: auto repeat(4, minmax(auto, 1fr));
+  }
 
   mat-card {
 

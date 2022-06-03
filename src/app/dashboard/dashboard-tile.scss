@@ -1,116 +1,117 @@
-@import '../mixins.scss';
-@import '../variables';
+@import "../mixins.scss";
+@import "../variables";
 
 :host {
-
   @include left-right-grid-areas;
   // For Firefox.  Otherwise grid tile will expand to fit text.
   min-width: 0;
 
   .dashboard-card {
+    height: 100%;
+    padding: 0;
+  }
+
+  .dashboard-card > planet-dashboard-row-layout {
     display: grid;
     grid-template-areas: "lt rt";
     grid-template-rows: 1fr;
     grid-template-columns: $dashboard-tile-width 1fr;
     height: 100%;
-    padding: 0;
+  }
 
-    .left-tile {
-      border-radius: 2px 0 0 2px;
-      &, & planet-dashboard-tile-title {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        flex-wrap: wrap;
-        font-size: 1.25rem;
-      }
-      // .show-accordion {
-      //   visibility: hidden;
-      // }
+  planet-dashboard-row-layout & .left-tile {
+    border-radius: 2px 0 0 2px;
+    height: 100%;
+    &,
+    & planet-dashboard-tile-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      flex-wrap: wrap;
+      font-size: 1.25rem;
+    }
+  }
+
+  planet-dashboard-row-layout & .right-tile {
+    display: grid;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 100%;
+
+    .dashboard-items.dashboard-empty {
+      grid-auto-columns: auto;
     }
 
-    .right-tile {
+    .dashboard-items {
       display: grid;
-      overflow-x: auto;
-      overflow-y: hidden;
+      grid-auto-columns: $dashboard-tile-width;
+      transition: transform 0.5s;
 
-      .dashboard-items.dashboard-empty {
-        grid-auto-columns: auto;
-      }
+      .dashboard-item {
+        grid-column-end: span 1;
+        grid-row-end: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 1rem 0.5rem;
+        position: relative;
+        word-break: break-word;
+        .delete-item {
+          position: absolute;
+          top: -0.25rem;
+          right: -0.25rem;
+        }
+        p {
+          margin: 0;
+        }
 
-      .dashboard-items {
-        display: grid;
-        grid-auto-columns: $dashboard-tile-width;
-        transition: transform 0.5s;
-
-        .dashboard-item {
-          grid-column-end: span 1;
-          grid-row-end: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          padding: 1rem 0.5rem;
-          position: relative;
-          word-break: break-word;
-          .delete-item {
-            position: absolute;
-            top: -0.25rem;
-            right: -0.25rem;
-          }
-          p {
-            margin: 0;
-          }
-
-          .dashboard-text {
-            display: -webkit-box;
-            width: calc(125px - 1rem);
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-
+        .dashboard-text {
+          display: -webkit-box;
+          width: calc(125px - 1rem);
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       }
     }
   }
 
-  // @media (max-width: 600px) {
-    
-  //   .dashboard-card {
-  //     display: block;
-
-  //     .left-tile {
-  //       &,
-  //       & planet-dashboard-tile-title {
-  //         justify-content: center;
-  //         transition: 0.5s;
-  //       }
-  //       .show-accordion {
-  //         cursor: pointer;
-  //         visibility: visible;
-  //         position: absolute;
-  //         top: -0.25rem;
-  //         right: -0.25rem;
-  //       }
-  //     }
-
-  //     .right-tile {
-  //       overflow: hidden;
-
-  //       .dashboard-items {
-  //         display: block;
-
-  //         .dashboard-item {
-  //           display: flex;
-  //           flex-wrap: wrap;
-  //           flex-direction: row;
-  //         }
-  //       }
-  //     }
-  //   }
-
+  // planet-dashboard-accordion-layout & .dashboard-card {
+  //   height: auto;
   // }
+  
+
+  .dashboard-card > planet-dashboard-accordion-layout {
+    display: block;
+  }
+
+  planet-dashboard-accordion-layout {
+    height: 100%;
+    padding: 0;
+  }
+
+  planet-dashboard-accordion-layout & .left-tile {
+    &,
+    & planet-dashboard-tile-title {
+      justify-content: center;
+      transition: 0.5s;
+    }
+  }
+
+  planet-dashboard-accordion-layout & .right-tile {
+    overflow: hidden;
+
+    .dashboard-items {
+      display: block;
+
+      .dashboard-item {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+    }
+  }
 
 }

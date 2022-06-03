@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostListener, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { elementAt, tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
@@ -22,7 +22,9 @@ export class DashboardTileComponent implements OnInit {
   @Input() emptyLink;
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
+  // @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
+  // tileLines = 2;
   screenWidth: number;
   showAccordion: boolean;
 
@@ -31,21 +33,36 @@ export class DashboardTileComponent implements OnInit {
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
+    // private cd: ChangeDetectorRef
   ) { }
+
+  // ngAfterViewChecked() {
+  //   const divHeight = this.itemDiv.nativeElement.offsetHeight;
+  //   const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+  //   const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
+  //   const fontSize = +(itemStyle.fontSize.replace('px', ''));
+  //   const tileHeight = divHeight - tilePadding;
+  //   // line-height: normal varies by browser, but should be between 1-1.2
+  //   const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
+  //   if (tileLines !== this.tileLines) {
+  //     this.tileLines = tileLines;
+  //     this.cd.detectChanges();
+  //   }
+  // }
 
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
     this.setAccordion();
   }
 
-  removeFromShelf(event, item: any) {
-    event.stopPropagation();
+  removeFromShelf(element: {event, item: any}) {
+    element.event.stopPropagation();
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
-      this.removeTeam(item, userId, userPlanetCode);
+      this.removeTeam(element.item, userId, userPlanetCode);
     } else {
-      const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
-      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
+      const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== element.item._id);
+      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(element.item));
     }
   }
 
@@ -112,26 +129,57 @@ export class DashboardTileTitleComponent {
 
 @Component({
   selector: 'planet-dashboard-row-layout',
-  template: `
-   <planet-dashboard-left-tile></planet-dashboard-left-tile>
-   <planet-dashboard-right-tile></planet-dashboard-right-tile>
-  `
+  templateUrl: './dashboard-tile-row-layout.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileRowLayoutComponent {}
+export class DashboardTileRowLayoutComponent {
+  
+  @Input() cardTitle;
+  @Input() link;
+  @Input() emptyLink;
+  @Input() itemData;
+  @Output() droppedEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<any>();
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.droppedEvent.emit(event);
+  }
+
+  removeFromShelf(element: {event, item: any}) {
+    this.removeEvent.emit(element);
+  }
+  
+}
 
 @Component({
   selector: 'planet-dashboard-accordion-layout',
-  templateUrl: './dashboard-tile-accordion-layout.component.html'
+  templateUrl: './dashboard-tile-accordion-layout.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
 })
 export class DashboardTileAccordionLayoutComponent {
 
   @Input() showAccordion;
+  @Input() cardTitle;
+  @Input() link;
+  @Input() emptyLink;
+  @Input() itemData;
+  @Output() droppedEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<Object>();
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.droppedEvent.emit(event);
+  }
+
+  removeFromShelf(element: {event, item: any}) {
+    this.removeEvent.emit(element);
+  }
 
 }
 
 @Component({
   selector: 'planet-dashboard-left-tile',
-  templateUrl: './dashboard-tile-left-tile.component.html'
+  templateUrl: './dashboard-tile-left-tile.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
 })
 export class DashboardTileLeftTileComponent {
 
@@ -144,7 +192,8 @@ export class DashboardTileLeftTileComponent {
 
 @Component({
   selector: 'planet-dashboard-right-tile',
-  templateUrl: './dashboard-tile-right-tile.component.html'
+  templateUrl: './dashboard-tile-right-tile.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
 })
 export class DashboardTileRightTileComponent implements AfterViewChecked {
 
@@ -153,6 +202,7 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
   @Input() link;
   @Input() emptyLink;
   @Output() droppedEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<Object>();
   @ViewChild('items') itemDiv: ElementRef;
   tileLines = 2;
 
@@ -174,5 +224,10 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
 
   drop(event: CdkDragDrop<string[]>) {
     this.droppedEvent.emit(event);
+  }
+
+  removeFromShelf(event, item: any) {
+    const element = {event, item}
+    this.removeEvent.emit(element);
   }
 }
