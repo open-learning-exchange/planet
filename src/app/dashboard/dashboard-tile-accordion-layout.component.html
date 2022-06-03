@@ -7,7 +7,7 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <planet-dashboard-right-tile [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
-      (drop)="drop($event)" (removeFromShelf)="removeFromShelf(element)">
+      (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf(element)">
     </planet-dashboard-right-tile>
   </mat-expansion-panel>
 </mat-accordion>

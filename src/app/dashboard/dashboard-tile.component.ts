@@ -227,7 +227,6 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
   }
 
   removeFromShelf(event, item: any) {
-    const element = {event, item}
-    this.removeEvent.emit(element);
+    this.removeEvent.emit({event, item});
   }
 }
