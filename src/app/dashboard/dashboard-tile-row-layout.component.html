@@ -1,5 +1,5 @@
 <planet-dashboard-left-tile [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink">
 </planet-dashboard-left-tile>
 <planet-dashboard-right-tile [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
-  (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf(element)">
+  (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf($event)">
 </planet-dashboard-right-tile>

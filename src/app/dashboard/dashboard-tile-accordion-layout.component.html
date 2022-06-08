@@ -1,13 +1,13 @@
 <mat-accordion>
   <mat-expansion-panel (opened)="showAccordion = true" (closed)="showAccordion = false">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
+    <mat-expansion-panel-header class="accent-color">
+      <mat-panel-title class="accent-color">
         <planet-dashboard-left-tile [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink">
         </planet-dashboard-left-tile>
       </mat-panel-title>
     </mat-expansion-panel-header>
     <planet-dashboard-right-tile [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
-      (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf(element)">
+      (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf($event)">
     </planet-dashboard-right-tile>
   </mat-expansion-panel>
 </mat-accordion>

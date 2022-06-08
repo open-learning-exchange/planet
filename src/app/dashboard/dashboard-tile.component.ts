@@ -55,14 +55,14 @@ export class DashboardTileComponent implements OnInit {
     this.setAccordion();
   }
 
-  removeFromShelf(element: {event, item: any}) {
-    element.event.stopPropagation();
+  removeFromShelf({event, item}) {
+    event.stopPropagation();
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
-      this.removeTeam(element.item, userId, userPlanetCode);
+      this.removeTeam(item, userId, userPlanetCode);
     } else {
-      const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== element.item._id);
-      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(element.item));
+      const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
+      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
     }
   }
 
@@ -139,14 +139,14 @@ export class DashboardTileRowLayoutComponent {
   @Input() emptyLink;
   @Input() itemData;
   @Output() droppedEvent = new EventEmitter<any>();
-  @Output() removeEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<{event, item}>();
 
   drop(event: CdkDragDrop<string[]>) {
     this.droppedEvent.emit(event);
   }
 
-  removeFromShelf(element: {event, item: any}) {
-    this.removeEvent.emit(element);
+  removeFromShelf({event, item}) {
+    this.removeEvent.emit({event, item});
   }
 
 }
@@ -164,14 +164,14 @@ export class DashboardTileAccordionLayoutComponent {
   @Input() emptyLink;
   @Input() itemData;
   @Output() droppedEvent = new EventEmitter<any>();
-  @Output() removeEvent = new EventEmitter<Object>();
+  @Output() removeEvent = new EventEmitter<{event, item}>();
 
   drop(event: CdkDragDrop<string[]>) {
     this.droppedEvent.emit(event);
   }
 
-  removeFromShelf(element: {event, item: any}) {
-    this.removeEvent.emit(element);
+  removeFromShelf({event, item}) {
+    this.removeEvent.emit({event, item});
   }
 
 }
@@ -202,7 +202,7 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
   @Input() link;
   @Input() emptyLink;
   @Output() droppedEvent = new EventEmitter<any>();
-  @Output() removeEvent = new EventEmitter<Object>();
+  @Output() removeEvent = new EventEmitter<{event, item}>();
   @ViewChild('items') itemDiv: ElementRef;
   tileLines = 2;
 
@@ -227,6 +227,6 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
   }
 
   removeFromShelf(event, item: any) {
-    this.removeEvent.emit({ event, item });
+    this.removeEvent.emit({event, item});
   }
 }
