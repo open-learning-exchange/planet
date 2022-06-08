@@ -55,7 +55,7 @@ export class DashboardTileComponent implements OnInit {
     this.setAccordion();
   }
 
-  removeFromShelf({event, item}) {
+  removeFromShelf({ event, item }) {
     event.stopPropagation();
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
@@ -145,8 +145,8 @@ export class DashboardTileRowLayoutComponent {
     this.droppedEvent.emit(event);
   }
 
-  removeFromShelf({event, item}) {
-    this.removeEvent.emit({event, item});
+  removeFromShelf({ event, item }) {
+    this.removeEvent.emit({ event, item });
   }
 
 }
@@ -170,8 +170,8 @@ export class DashboardTileAccordionLayoutComponent {
     this.droppedEvent.emit(event);
   }
 
-  removeFromShelf({event, item}) {
-    this.removeEvent.emit({event, item});
+  removeFromShelf({ event, item }) {
+    this.removeEvent.emit({ event, item });
   }
 
 }
@@ -227,6 +227,6 @@ export class DashboardTileRightTileComponent implements AfterViewChecked {
   }
 
   removeFromShelf(event, item: any) {
-    this.removeEvent.emit({event, item});
+    this.removeEvent.emit({ event, item });
   }
 }
