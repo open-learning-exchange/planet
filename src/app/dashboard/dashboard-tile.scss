@@ -6,9 +6,11 @@
   // For Firefox.  Otherwise grid tile will expand to fit text.
   min-width: 0;
 
-  .dashboard-card {
-    height: 100%;
-    padding: 0;
+  @media (min-width: 601px) {
+    .dashboard-card {
+      height: 100%;
+      padding: 0;
+    }
   }
 
   .dashboard-card > planet-dashboard-row-layout {
@@ -78,18 +80,8 @@
     }
   }
 
-  // planet-dashboard-accordion-layout & .dashboard-card {
-  //   height: auto;
-  // }
-  
-
   .dashboard-card > planet-dashboard-accordion-layout {
     display: block;
-  }
-
-  planet-dashboard-accordion-layout {
-    height: 100%;
-    padding: 0;
   }
 
   planet-dashboard-accordion-layout & .left-tile {
@@ -99,6 +91,10 @@
       transition: 0.5s;
     }
   }
+
+  mat-expansion-panel-header:hover {
+    background: revert;
+  } 
 
   planet-dashboard-accordion-layout & .right-tile {
     overflow: hidden;
@@ -110,13 +106,12 @@
         display: flex;
         flex-wrap: wrap;
         flex-direction: row;
+        .delete-item {
+          position: absolute;
+          right: 1rem;
+        }
       }
     }
   }
-
-  // planet-dashboard-accordion-layout & mat-accordion {
-  //   height: 100%;
-  //   margin: 0;
-  // }
 
 }
