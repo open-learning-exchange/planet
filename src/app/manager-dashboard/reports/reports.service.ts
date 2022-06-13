@@ -3,7 +3,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce } from '../../shared/utils';
+import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
@@ -194,6 +194,16 @@ export class ReportsService {
         ...item,
         gender: user.gender
       });
+    });
+  }
+
+  appendAge(array, time) {
+    return array.map((item: any) => {
+      const user = this.users.find((u: any) => u.name === item.user) || {};
+        return ({
+        ...item,
+        age: ageFromBirthDate(time, user.birthDate)
+        });
     });
   }
 

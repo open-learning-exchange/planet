@@ -432,7 +432,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'health': $localize`Community Health`,
       'stepCompletions': $localize`Courses Progress` }[reportType];
     this.csvService.exportCSV({
-      data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
+      data: filterByMember(this.activityService.appendAge(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), this.today), members)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title
     });
