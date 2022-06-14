@@ -200,10 +200,10 @@ export class ReportsService {
   appendAge(array, time) {
     return array.map((item: any) => {
       const user = this.users.find((u: any) => u.name === item.user) || {};
-        return ({
+      return ({
         ...item,
         age: ageFromBirthDate(time, user.birthDate)
-        });
+      });
     });
   }
 
