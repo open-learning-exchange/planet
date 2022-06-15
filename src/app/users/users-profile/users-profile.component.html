@@ -25,7 +25,7 @@
           <img class="profile-image-large" src="assets/image.png">
         </ng-template>
       </div>
-      <mat-list class="profile-list-1">
+      <mat-list class="profile-list-lt">
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Full Name</h4>
           <p matLine><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
@@ -47,7 +47,7 @@
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
-      <mat-list class="profile-list-2">
+      <mat-list class="profile-list-rt">
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>DOB</h4>
           <p matLine><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>

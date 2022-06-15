@@ -12,25 +12,26 @@
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;
+      text-align: center
     }
 
-    .profile-list-1 {
-      grid-area: list-1;
+    .profile-list-lt {
+      grid-area: list-lt;
     }
 
-    .profile-list-1 {
-      grid-area: list-2;
+    .profile-list-rt {
+      grid-area: list-rt;
     }
-
 
     .profile-container {
-      max-width: 900px;
-      display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-column-gap: 2rem;
       grid-template-areas: 
       "icon icon"
-      "list-1 list-2";
+      "list-lt list-rt";
+    }
+
+    .profile-image-large {
+      width: 50%;
     }
   }
 
