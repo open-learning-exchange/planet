@@ -1,18 +1,18 @@
-@import "../../variables";
+@import '../../variables';
 
 :host {
 
   .profile-container {
     max-width: 900px;
     display: grid;
-    grid-template-columns: 1fr 0.75fr 0.75fr;
+    grid-template-columns: 1fr .75fr .75fr;
     grid-column-gap: 2rem;
   }
-  
+
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;
-      text-align: center
+      text-align: center;
     }
 
     .profile-list-lt {
@@ -25,9 +25,9 @@
 
     .profile-container {
       grid-template-columns: 1fr 1fr;
-      grid-template-areas: 
-      "icon icon"
-      "list-lt list-rt";
+      grid-template-areas:
+      'icon icon'
+      'list-lt list-rt';
     }
 
     .profile-image-large {
