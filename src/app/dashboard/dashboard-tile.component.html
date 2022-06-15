@@ -1,8 +1,8 @@
 <mat-card class="dashboard-card">
-  <planet-dashboard-row-layout [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
+  <planet-dashboard-row-layout [cardTitle]="cardTitle" [cardType]="cardType" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
     (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf($event)" *ngIf="!showAccordion">
   </planet-dashboard-row-layout>
-  <planet-dashboard-accordion-layout [cardTitle]="cardTitle" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
+  <planet-dashboard-accordion-layout [cardTitle]="cardTitle" [cardType]="cardType" [link]="link" [emptyLink]="emptyLink" [itemData]="itemData"
     (droppedEvent)="drop($event)" (removeEvent)="removeFromShelf($event)" *ngIf="showAccordion">
   </planet-dashboard-accordion-layout>
 </mat-card>

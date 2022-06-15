@@ -135,6 +135,7 @@ export class DashboardTileTitleComponent {
 export class DashboardTileRowLayoutComponent {
 
   @Input() cardTitle;
+  @Input() cardType;
   @Input() link;
   @Input() emptyLink;
   @Input() itemData;
@@ -160,6 +161,7 @@ export class DashboardTileAccordionLayoutComponent {
 
   @Input() showAccordion;
   @Input() cardTitle;
+  @Input() cardType;
   @Input() link;
   @Input() emptyLink;
   @Input() itemData;
