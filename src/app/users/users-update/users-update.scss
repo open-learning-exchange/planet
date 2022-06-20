@@ -1,0 +1,45 @@
+@import '../../variables';
+
+.view-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.view-container form {
+  margin: 0 10px 10px 0;
+}
+
+@media (max-width: $screen-sm) {
+
+  .form-spacing {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'form-lt form-rt';
+    grid-column-gap: 2rem;
+  }
+
+  .profile-form-lt {
+    grid-area: form-lt
+  }
+  
+  .profile-form-rt {
+    grid-area: form-rt
+  }
+
+
+  .profile-image-section {
+    display: grid;
+    grid-template-columns: 1fr 0.75fr;
+    grid-template-areas: 'image-lt image-rt';
+    grid-column-gap: 2rem;
+  }
+  
+  .profile-image-update {
+    grid-area: image-lt
+  }
+  
+  .profile-image-upload {
+    grid-area: image-rt
+  }
+
+}
