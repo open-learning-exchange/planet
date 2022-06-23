@@ -1,5 +1,7 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
   <ng-container [ngSwitch]="submissionMode">
     <span *ngSwitchCase="true" i18n>Survey Profile</span>
     <span *ngSwitchCase="false" i18n>Edit Member Profile</span>
@@ -12,81 +14,102 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="form-container">
-      <form [formGroup]="editForm" class="form-spacing" (ngSubmit)="onSubmit()">
+      <form [formGroup]="editForm" class="form-spacing form-space" (ngSubmit)="onSubmit()">
         <div class="profile-form-lt">
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" [required]="!submissionMode">
-            <mat-error><planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages></mat-error>
+            <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName"
+              [required]="!submissionMode">
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages>
+            </mat-error>
           </mat-form-field>
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
           </mat-form-field>
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" [required]="!submissionMode">
-            <mat-error><planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages></mat-error>
+            <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName"
+              [required]="!submissionMode">
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages>
+            </mat-error>
           </mat-form-field>
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
-            <mat-error><planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages></mat-error>
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages>
+            </mat-error>
           </mat-form-field>
+        </div>
+        <div class="profile-form-rt">
           <mat-form-field>
             <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode">
               <mat-option *ngFor="let language of languages" [value]="language.name">
                 {{language.name}}
               </mat-option>
             </mat-select>
-            <mat-error><planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages></mat-error>
-          </mat-form-field>
-        </div>
-        <div class="profile-form-rt">
-          <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" [required]="!submissionMode">
-            <mat-error><planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages>
+            </mat-error>
           </mat-form-field>
           <mat-form-field>
-            <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate" [required]="!submissionMode" [min]="minBirthDate">
+            <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber"
+              [required]="!submissionMode">
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate"
+              [required]="!submissionMode" [min]="minBirthDate">
             <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
             <mat-datepicker #dp></mat-datepicker>
-            <mat-error><planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages></mat-error>
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages>
+            </mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
               <mat-option *ngFor="let level of educationLevel" [value]="level.value">{{level.label}}</mat-option>
             </mat-select>
-            <mat-error><planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages></mat-error>
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages>
+            </mat-error>
           </mat-form-field>
-          <mat-radio-group formControlName="gender" [required]="!submissionMode" class="full-width">
-            <label i18n>Gender</label>
-            <mat-radio-button class="planet-radio-button" value="male">
-              <div class="radio-icon-label">
-                <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span i18n>Male</span>
-              </div>
-            </mat-radio-button>
-            <mat-radio-button class="planet-radio-button" value="female">
-              <div class="radio-icon-label">
-                <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span i18n>Female</span>
-              </div>
-            </mat-radio-button>
-            <mat-error><planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages></mat-error>
-            <mat-slide-toggle
-              *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
-              formControlName="betaEnabled"
-              i18n i18n-matTooltip
-              matTooltip="Beta features may not work as intended. It's recommended to leave this off">
-              Enable Beta features
-            </mat-slide-toggle>
-          </mat-radio-group>
-          <div class="action-buttons">
-            <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
-            <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
-          </div>
+        </div>
+        <mat-radio-group class="radio-group" formControlName="gender" [required]="!submissionMode" class="full-width">
+          <label i18n>Gender</label>
+          <mat-radio-button class="planet-radio-button" value="male">
+            <div class="radio-icon-label">
+              <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span
+                i18n>Male</span>
+            </div>
+          </mat-radio-button>
+          <mat-radio-button class="planet-radio-button" value="female">
+            <div class="radio-icon-label">
+              <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span
+                i18n>Female</span>
+            </div>
+          </mat-radio-button>
+          <mat-error>
+            <planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages>
+          </mat-error>
+          <mat-slide-toggle *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
+            formControlName="betaEnabled" i18n i18n-matTooltip
+            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+            Enable Beta features
+          </mat-slide-toggle>
+        </mat-radio-group>
+        <div class="action-buttons">
+          <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+          <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
         </div>
       </form>
     </div>
     <div *ngIf="!submissionMode" class="profile-image-section">
       <img class="profile-image-update" [src]="previewSrc">
       <div class="profile-image-upload">
-        <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig" [text]="ngxImgText" [errorTexts]="ngxImgErrText"></ngx-img>
+        <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig"
+          [text]="ngxImgText" [errorTexts]="ngxImgErrText"></ngx-img>
       </div>
     </div>
   </div>
