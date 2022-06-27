@@ -1,3 +1,5 @@
+@import '../variables';
+
 :host {
   .view-container {
     display: grid;
@@ -9,5 +11,15 @@
 
   .actions-container {
     align-self: center;
+  }
+
+  @media (max-width: $screen-sm) {
+    .form-container {
+      width: auto;
+    }
+
+    .form-spacing {
+      width: auto;
+    }
   }
 }
