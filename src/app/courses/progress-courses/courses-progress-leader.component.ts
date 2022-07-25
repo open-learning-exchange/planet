@@ -213,12 +213,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   structureChartData(data) {
-    let dataArr = [];
+    const dataArr = [];
     data.forEach(element => {
-      let dataDict = {};
-      dataDict["Username"] = element.label;
-      for (var i = 0; i < element.items.length; i++) {
-        dataDict[`Step  ${(i+1)}`] = element.items[i].number;
+      const dataDict = {};
+      dataDict['Username'] = element.label;
+      for (let i = 0; i < element.items.length; i++) {
+        dataDict[`Step ${(i + 1)}`] = element.items[i].number;
       }
 
       dataArr.push(dataDict);
@@ -231,6 +231,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       data:  this.structureChartData(this.chartData),
       title: $localize`Course Progress Data`
     });
-  };
+  }
 
 }
