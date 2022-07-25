@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { CsvService } from '../../shared/csv.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -23,6 +24,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedStep: any;
   allChartData: any[] = [];
   chartData: any[];
+  csvChartData: any[];
   submissions: any[] = [];
   progress: any[] = [];
   onDestroy$ = new Subject<void>();
@@ -36,6 +38,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
+    private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog
   ) {
@@ -208,5 +211,26 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       maxHeight: '90vh'
     });
   }
+
+  structureChartData(data) {
+    let dataArr = [];
+    data.forEach(element => {
+      let dataDict = {};
+      dataDict["Username"] = element.label;
+      for (var i = 0; i < element.items.length; i++) {
+        dataDict[`Step  ${(i+1)}`] = element.items[i].number;
+      }
+
+      dataArr.push(dataDict);
+    });
+    return dataArr;
+  }
+
+  exportChartData() {
+    this.csvService.exportCSV({
+      data:  this.structureChartData(this.chartData),
+      title: $localize`Course Progress Data`
+    });
+  };
 
 }
