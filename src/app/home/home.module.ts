@@ -26,6 +26,7 @@ import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
 import { PlanetComponent } from './planet.component';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
+// import { LandingComponent } from '../landing/landing.component';
 
 @NgModule({
   imports: [
@@ -58,7 +59,8 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
     CommunityComponent,
     CommunityLinkDialogComponent,
     PlanetComponent,
-    HealthListComponent
+    HealthListComponent,
+    // LandingComponent
   ]
 })
 export class HomeModule {}
