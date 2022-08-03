@@ -61,7 +61,7 @@ const routes: Routes = [
       { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
       { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent },
       { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
-      
+
       { path: dashboardPath('myProgress'), component: CoursesProgressLearnerComponent },
       {
         path: dashboardPath('myLibrary'),

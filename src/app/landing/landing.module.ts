@@ -17,6 +17,6 @@ import { LandingFooterComponent } from './landing-footer/landing-footer.componen
     LandingComponent,
     LandingFooterComponent
   ],
-  exports: [ LandingComponent]
+  exports: [ LandingComponent ]
 })
 export class LandingModule {}

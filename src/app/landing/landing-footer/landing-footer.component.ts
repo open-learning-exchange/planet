@@ -1,9 +1,9 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'planet-landing-footer',
   templateUrl: './landing-footer.component.html',
-  styles: [`
+  styles: [ `
     .image-card {
       display: 'flex';
       background: '#F4F4F4';
@@ -20,7 +20,7 @@ import { Component } from "@angular/core";
         width: 'auto';
       };
     }
-  `]
+  ` ]
 })
 
 export class LandingFooterComponent {

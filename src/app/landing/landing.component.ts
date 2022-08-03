@@ -1,10 +1,10 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 
- @Component({
+@Component({
    selector: 'planet-landing-page',
    templateUrl: './landing.component.html',
    styleUrls: [ './landing.scss' ]
  })
  export class LandingComponent {
-   
+
  }
