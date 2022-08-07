@@ -1,20 +1,20 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../shared/material.module';
+// import { CommonModule } from '@angular/common';
 
 import { LandingComponent } from './landing.component';
+import { LandingHeroComponent } from './landing-hero/landing-hero.component';
 import { LandingFooterComponent } from './landing-footer/landing-footer.component';
+
+import { MaterialModule } from '../shared/material.module';
 
 @NgModule({
   imports: [
     // CommonModule,
-    // FormsModule,
-    // ReactiveFormsModule,
     MaterialModule
   ],
   declarations: [
     LandingComponent,
+    LandingHeroComponent,
     LandingFooterComponent
   ],
   exports: [ LandingComponent ]

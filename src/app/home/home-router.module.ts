@@ -29,9 +29,7 @@ const routes: Routes = [
       { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
       { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
-      // { path: 'notifications', component: NotificationsComponent },
-      { path: 'landing', component: LandingComponent },
-      { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) },
+      { path: 'notifications', component: NotificationsComponent },
       { path: 'upgrade', component: UpgradeComponent },
       { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
@@ -72,7 +70,9 @@ const routes: Routes = [
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
       }
     ]
-  }
+  },
+  { path: 'landing', component: LandingComponent },
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
 ];
 
 @NgModule({
