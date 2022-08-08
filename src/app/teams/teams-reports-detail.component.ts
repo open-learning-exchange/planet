@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { StateService } from '../shared/state.service';
 
 @Component({
   selector: 'planet-teams-reports-detail',
@@ -25,6 +26,12 @@ export class TeamsReportsDetailComponent implements OnChanges {
   income: number;
   net: number;
   endingBalance: number;
+  curCode = this.stateService.configuration.currency || undefined;
+
+  constructor(
+    private stateService: StateService
+  ) {}
+  
 
   ngOnChanges() {
     this.expenses = this.report.wages + this.report.otherExpenses;
