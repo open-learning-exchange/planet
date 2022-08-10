@@ -11,6 +11,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { millisecondsToDay } from '../meetups/constants';
+import { StateService } from '../shared/state.service';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -32,6 +33,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   endDate: Date;
   emptyTable = true;
   showBalanceWarning = false;
+  curCode = this.stateService.configuration.currency || undefined;
 
   constructor(
     private teamsService: TeamsService,
@@ -39,7 +41,8 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService
   ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
