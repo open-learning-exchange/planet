@@ -11,14 +11,14 @@ import { Component } from '@angular/core';
     width: 100%;
     flex-wrap: wrap;
     padding: 8px;
-    position: absolute;
-    bottom: 0;
-    min-height: 5.5rem;
     & img {
       margin: 12px;
       max-height: 50px;
       width: auto;
     };
+    position: absolute;
+    bottom: 0;
+    min-height: 5.5rem;
   }
   ` ]
 })

@@ -1,10 +1,19 @@
 import { Component } from '@angular/core';
 
 @Component({
-   selector: 'planet-landing-page',
-   templateUrl: './landing.component.html',
-   styleUrls: [ './landing.scss' ]
- })
- export class LandingComponent {
+  selector: 'planet-landing',
+  templateUrl: './landing.component.html',
+  styles: [`
+   .layoutbox {
+    position: relative;
+    min-height: 100vh;
+  }
 
- }
+  .childrenbox {
+    padding-bottom: 6rem;
+  }
+   `]
+})
+export class LandingComponent {
+
+}

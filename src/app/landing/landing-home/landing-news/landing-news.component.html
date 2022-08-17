@@ -1,0 +1,21 @@
+<div class="newscard-container">
+  <landing-news-detail *ngIf="selectedNews"></landing-news-detail>
+  <div style="margin: 16px;">
+    <!-- Iterate over the news cards couch else display errorblock -->
+    <landing-card-item *ngIf="!selectedNews"></landing-card-item>
+
+    <!-- <div *ngIf="isError" class="error-block">
+      <h3>No hay noticias destacadas aún</h3>
+      <img src='assets/landing-page/icon/empty-news.svg' alt='no news' height="100" />
+    </div> -->
+
+    <!-- <div *ngIf="isLoading" class="loading-block">
+      <div class="skeleton-container">
+        Implement Card skeleton
+        <CardSkeleton />
+        <CardSkeleton />
+      </div>
+    </div> -->
+
+  </div>
+</div>

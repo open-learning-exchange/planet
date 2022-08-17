@@ -1,0 +1,29 @@
+.app-bar-container {
+  display: flex;
+  flex-grow: 1;
+}
+
+.toolbar-container {
+  background: white;
+}
+
+.menu-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.menu-row {
+  display: flex;
+  flex-direction: row;
+  margin-right: 8px;
+}
+
+.navbar-button {
+  text-transform: none;
+  color: #951fcc;
+}
+
+.icon-item {
+  color: #676767;
+}

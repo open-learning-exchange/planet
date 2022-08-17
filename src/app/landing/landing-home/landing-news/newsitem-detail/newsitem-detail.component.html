@@ -1,0 +1,47 @@
+<div class="item-details-container">
+  <!-- Handle go back onclick  -->
+  <button mat-icon-button>
+    <mat-icon>keyboard_arrow_left</mat-icon>
+    Volver
+  </button>
+
+  <div class="item-details-content">
+    <div>
+      <!-- variant="subtitle2"
+          color="text.secondary" -->
+      Publicado
+      <!-- {' '} -->
+      <!-- {timeAgo} -->
+    </div>
+    <a mat-icon-button href="">
+      <!-- variant="text"
+          endIcon={<LinkIcon />}
+          {`${frontendApiUrl}/spa`} -->
+      <mat-icon>link</mat-icon>
+      Noticia original
+    </a>
+  </div>
+
+
+  <planet-markdown>
+    Content in Markdown sheet
+  </planet-markdown>
+
+  <!-- <ReactMarkdown
+        transformImageUri={transformImage}
+        components={{
+          h1: ({node, ...props}) => (
+            <Box class={{'& img': {width: '100%', padding: '2%'}}}>
+              <h3 {...props} />
+              <Divider sx={{borderColor: '#016EB1', opacity: '50%'}} />
+            </Box>
+          ),
+          img: ({node, ...props}) => (
+            <img onError={onErrorImg} {...props} css={{maxWidth: '100%'}} />
+          ),
+        }}
+      >
+        {markDown}
+
+      </ReactMarkdown> -->
+</div>
