@@ -1,8 +1,8 @@
 <div class="newscard-container">
-  <landing-news-detail *ngIf="selectedNews"></landing-news-detail>
+  <planet-landing-news-detail *ngIf="selectedNews"></planet-landing-news-detail>
   <div style="margin: 16px;">
     <!-- Iterate over the news cards couch else display errorblock -->
-    <landing-card-item *ngIf="!selectedNews"></landing-card-item>
+    <planet-landing-card-item *ngIf="!selectedNews"></planet-landing-card-item>
 
     <!-- <div *ngIf="isError" class="error-block">
       <h3>No hay noticias destacadas aún</h3>

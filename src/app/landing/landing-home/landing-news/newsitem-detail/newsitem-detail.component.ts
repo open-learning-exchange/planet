@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'landing-news-detail',
+  selector: 'planet-landing-news-detail',
   templateUrl: './newsitem-detail.component.html',
-  styles: [`
+  styles: [ `
    .item-details-container {
     & h3 {
       color: #016eb1;
@@ -14,12 +14,12 @@ import { Component } from '@angular/core';
       border-left: solid 4px #016eb1;
     }
   }
-  
+
   .item-details-content {
       display: flex;
       justify-content: space-between;
-  }  
-   `]
+  }
+   ` ]
 })
 export class NewsItemDetailsComponent {
 
