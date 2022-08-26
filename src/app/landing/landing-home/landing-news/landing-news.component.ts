@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'planet-landing-news',
   templateUrl: './landing-news.component.html',
-  styleUrls: ['./landing-news.scss']
+  styleUrls: [ './landing-news.scss' ]
 })
 export class LandingNewsComponent implements OnInit {
   private reqNum = 0;
@@ -19,7 +19,7 @@ export class LandingNewsComponent implements OnInit {
   uParentCode = environment.uParentCode;
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
-  readonly dbName: string = "news";
+  readonly dbName: string = 'news';
   selectedNews: any;
   isError: boolean;
   isLoading: boolean;
@@ -31,11 +31,11 @@ export class LandingNewsComponent implements OnInit {
     private planetMessageService: PlanetMessageService
   ) { }
 
-  private getNews(opts : any, uPlanetCode: any, uParentCode: any): Observable<any> {
-    const url = this.baseUrl + '/pb/' + this.dbName + "/_find";
+  private getNews(opts: any, uPlanetCode: any, uParentCode: any): Observable<any> {
+    const url = this.baseUrl + '/pb/' + this.dbName + '/_find';
 
-    const queryPlanet = uPlanetCode ? {messagePlanetCode: uPlanetCode, viewableBy: 'community'} : {viewableBy: 'community'};
-    const queryParent = uParentCode ? {_id: uParentCode, section: 'community'} : {section: 'community'};
+    const queryPlanet = uPlanetCode ? { messagePlanetCode: uPlanetCode, viewableBy: 'community' } : { viewableBy: 'community' };
+    const queryParent = uParentCode ? { _id: uParentCode, section: 'community' } : { section: 'community' };
 
     const queryData = JSON.stringify({
       selector: {
@@ -43,16 +43,16 @@ export class LandingNewsComponent implements OnInit {
           {
             $or: [
               queryPlanet,
-              {viewIn: {$elemMatch: queryParent}},
+              { viewIn: { $elemMatch: queryParent } },
             ],
           },
           {
-            replyTo: {$exists: false},
+            replyTo: { $exists: false },
           },
         ],
       }
-    })
-    
+    });
+
     let httpReq: Observable<any>;
     httpReq = this.http.post(url, queryData, opts);
     return httpReq

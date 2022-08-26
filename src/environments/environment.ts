@@ -11,8 +11,8 @@ export const environment = {
   uplanetAddress: 'https://uplanet.gt',
   centerProtocol: 'https',
   parentProtocol: 'https',
-  uPlanetCode: "guatemala",
-  uParentCode: "guatemala@earth",
+  uPlanetCode: 'guatemala',
+  uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: window.location.protocol + '//localhost:5984'
 };
