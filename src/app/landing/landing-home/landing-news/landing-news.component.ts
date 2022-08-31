@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { Observable, throwError } from 'rxjs';
@@ -9,22 +9,22 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'planet-landing-news',
   templateUrl: './landing-news.component.html',
-  styleUrls: [ './landing-news.scss' ]
+  styleUrls: ['./landing-news.scss']
 })
 export class LandingNewsComponent implements OnInit {
   private reqNum = 0;
-  // private baseUrl = environment.uplanetAddress;
-  private baseUrl = environment.couchAddress;
+  private baseUrl = environment.uplanetAddress;
+  // private baseUrl = environment.couchAddress;
   private uPlanetCode = environment.uPlanetCode;
   uParentCode = environment.uParentCode;
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
   readonly dbName: string = 'news';
   selectedNews: any;
+  // Obtained via useNews 
   isError: boolean;
   isLoading: boolean;
-
-  news: any[] = [];
+  data: { docs: [] };
 
   constructor(
     private http: HttpClient,
@@ -50,7 +50,10 @@ export class LandingNewsComponent implements OnInit {
             replyTo: { $exists: false },
           },
         ],
-      }
+      },
+      skip: 0,
+      limit: 1000,
+      sort: [{ time: 'desc' }],
     });
 
     let httpReq: Observable<any>;
@@ -65,10 +68,37 @@ export class LandingNewsComponent implements OnInit {
       }));
   }
 
-  ngOnInit() {
+  useNews() {
+    this.isError = false;
+    this.isLoading = true;
     this.getNews(this.defaultOpts, this.uPlanetCode, this.uParentCode).subscribe(data => {
-      console.log(data);
+      this.data = data.docs;
+      console.log(this.data);
+      this.isLoading = false;
+    }, err => {
+      this.isError = true;
+      this.isLoading = false;
     });
   }
+
+  ngOnInit() {
+    this.useNews();
+
+    // this.getNews(this.defaultOpts, this.uPlanetCode, this.uParentCode).subscribe(data => {
+    //   console.log(data.docs);
+    // });
+  }
+
+  // seeDetails(id: Number) {
+  //   const aux = this.data.find(element => element._id === id);
+  //   this.selectedNews = aux;
+  //   // Scroll function
+  // }
+
+  // closeDetails() {
+  //   this.selectedNews = null;
+  // }
+
+
 
 }

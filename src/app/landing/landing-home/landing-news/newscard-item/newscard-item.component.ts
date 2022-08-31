@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
    selector: 'planet-landing-card-item',
@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
    styleUrls: [ './newscard-item.scss' ]
  })
  export class NewsCardItemComponent {
-
+  // @Input id: Number;
+  // @Input doc: any;
+  // @Input seeDetails: boolean;
+  
+  
  }

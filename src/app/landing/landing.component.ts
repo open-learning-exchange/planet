@@ -7,6 +7,8 @@ import { Component } from '@angular/core';
    .layoutbox {
     position: relative;
     min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   .childrenbox {
@@ -17,3 +19,4 @@ import { Component } from '@angular/core';
 export class LandingComponent {
 
 }
+ 
