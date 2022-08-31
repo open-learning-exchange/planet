@@ -1,12 +1,9 @@
-.card-content-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
 .image-class {
   border-radius: 7px;
-  margin: 1em;
+  margin: 8px;
+  // Be sure to implement 90px mobile
+  width: 130px;
+  height: 130px;
   // width: {
   //   xs: 90;
   //   sm: 90; 
@@ -42,6 +39,8 @@
   & blockquote {
     margin: 0px;
   }
+  // Implement 1.2 mobile
+  line-height: 1.5em;
   // lineHeight: {
   //   xs: '1.2em';
   //   sm: '1.2em';
@@ -55,7 +54,7 @@
   display: flex;
   border: none;
   box-shadow: none;
-  gap: 1em;
+  gap: 8px;
   transition: 0.3s;
   &:hover {
     background: #e1e1e1;
@@ -63,7 +62,14 @@
   }
 }
 
+.card-content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .content-time {
   display: flex;
   align-items: baseline;
+  color: #666870;
 }

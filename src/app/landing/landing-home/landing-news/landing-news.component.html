@@ -1,15 +1,19 @@
 <div class="newscard-container">
-  <!-- <planet-landing-news-detail *ngIf="selectedNews"></planet-landing-news-detail> -->
+  <!-- && !isError && !isLoading -->
+  <planet-landing-news-detail *ngIf="selectedNews"></planet-landing-news-detail>
   <div style="margin: 16px;">
-    <!-- Iterate over the news cards couch else display errorblock -->
-    <planet-landing-card-item></planet-landing-card-item>
+    <!--  && !isError && !isLoading" -->
+    <ng-container *ngIf="!selectedNews">
+      <planet-landing-card-item *ngFor="let doc of data" [doc]="doc" (seeDetailsEvent)="seeDetails($event, id)">
+      </planet-landing-card-item>
+    </ng-container>
 
-    <!-- <div *ngIf="isError" class="error-block">
+    <!-- <div *ngIf="isError && !isLoading" class="error-block">
       <h3>No hay noticias destacadas aún</h3>
       <img src='assets/landing-page/icon/empty-news.svg' alt='no news' height="100" />
     </div> -->
 
-    <!-- <div *ngIf="isLoading" class="loading-block">
+    <!-- <div *ngIf="isLoading && !isLoading" class="loading-block">
       <div class="skeleton-container">
         Implement Card skeleton
         <CardSkeleton />

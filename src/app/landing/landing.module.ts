@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetCalendarModule } from '../shared/calendar.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
@@ -14,6 +15,7 @@ import { NewsItemDetailsComponent } from './landing-home/landing-news/newsitem-d
 
 @NgModule({
   imports: [
+    CommonModule,
     MaterialModule,
     PlanetCalendarModule,
     SharedComponentsModule

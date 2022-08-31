@@ -11,20 +11,21 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './landing-news.component.html',
   styleUrls: ['./landing-news.scss']
 })
-export class LandingNewsComponent implements OnInit {
+export class LandingNewsComponent implements OnInit, AfterViewInit {
   private reqNum = 0;
   private baseUrl = environment.uplanetAddress;
-  // private baseUrl = environment.couchAddress;
   private uPlanetCode = environment.uPlanetCode;
   uParentCode = environment.uParentCode;
   private headers = new HttpHeaders().set('Content-Type', 'application/json');
   private defaultOpts = { headers: this.headers, withCredentials: true };
   readonly dbName: string = 'news';
-  selectedNews: any;
-  // Obtained via useNews 
+  selectedNews: any = null;
   isError: boolean;
   isLoading: boolean;
-  data: { docs: [] };
+  // Evaluate length neccessity
+  data: any = {
+    length, docs: []
+  };
 
   constructor(
     private http: HttpClient,
@@ -34,8 +35,11 @@ export class LandingNewsComponent implements OnInit {
   private getNews(opts: any, uPlanetCode: any, uParentCode: any): Observable<any> {
     const url = this.baseUrl + '/pb/' + this.dbName + '/_find';
 
-    const queryPlanet = uPlanetCode ? { messagePlanetCode: uPlanetCode, viewableBy: 'community' } : { viewableBy: 'community' };
-    const queryParent = uParentCode ? { _id: uParentCode, section: 'community' } : { section: 'community' };
+    // const queryPlanet = uPlanetCode ? { messagePlanetCode: uPlanetCode, viewableBy: 'community' } : { viewableBy: 'community' };
+    // const queryParent = uParentCode ? { _id: uParentCode, section: 'community' } : { section: 'community' };
+
+    const queryPlanet = { viewableBy: 'community' };
+    const queryParent = { section: 'community' };
 
     const queryData = JSON.stringify({
       selector: {
@@ -72,8 +76,7 @@ export class LandingNewsComponent implements OnInit {
     this.isError = false;
     this.isLoading = true;
     this.getNews(this.defaultOpts, this.uPlanetCode, this.uParentCode).subscribe(data => {
-      this.data = data.docs;
-      console.log(this.data);
+      this.data = data.docs;      
       this.isLoading = false;
     }, err => {
       this.isError = true;
@@ -83,21 +86,22 @@ export class LandingNewsComponent implements OnInit {
 
   ngOnInit() {
     this.useNews();
-
-    // this.getNews(this.defaultOpts, this.uPlanetCode, this.uParentCode).subscribe(data => {
-    //   console.log(data.docs);
-    // });
   }
 
-  // seeDetails(id: Number) {
-  //   const aux = this.data.find(element => element._id === id);
-  //   this.selectedNews = aux;
-  //   // Scroll function
-  // }
+  ngAfterViewInit() {
+   console.log(this.data);
+  }
 
-  // closeDetails() {
-  //   this.selectedNews = null;
-  // }
+  seeDetails(id: string) {
+    const aux = this.data.find(element => element._id === id);
+    this.selectedNews = aux;
+    console.log(this.selectedNews);
+    // Scroll function
+  }
+
+  closeDetails() {
+    this.selectedNews = null;
+  }
 
 
 

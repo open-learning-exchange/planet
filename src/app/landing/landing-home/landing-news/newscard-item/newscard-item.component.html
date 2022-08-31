@@ -1,30 +1,17 @@
-<mat-card class="news-card-style">
+<mat-card class="news-card-style" (click)="clickSeeDetails()">
   <!-- variant="outlined"  onClick={seeDetails} -->
   <div class="image-container-class">
-    <!-- Handle img source from News API and Error msg with placeholder -->
-    <img src="assets/landing-page/img/news-placeholder.png" alt="noticia" class="image-class">
+    <img [src]="imageUrl" (error)="$event.target.src = 'assets/landing-page/img/news-placeholder.png'" alt="noticia" class="image-class">
   </div>
   <div class="card-content-container">
     <mat-card-content class="content-class">
-      <planet-markdown>
-        Implement Angular Markdown 
+      <planet-markdown [content]="message" >
       </planet-markdown>
-      <!-- <ReactMarkdown
-            transformImageUri={() => ''}
-            components={{
-              h1: 'h3',
-              img: () => null,
-            }}
-          >
-            {markDown.slice(0, 500)}
-          </ReactMarkdown> -->
     </mat-card-content>
 
     <div class="content-time">
       <div>
-        <!-- Handle div styles      variant="subtitle1"       color="text.secondary" -->
-        <!-- Handle Dynamic Time Ago -->
-        timeAgo
+        {{timeAgo}}
       </div>
     </div>
   </div>
