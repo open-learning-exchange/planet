@@ -7,12 +7,16 @@
   display: flex;
   flex-direction: column;
   width: 60%;
+  max-height: 60vh; 
+  overflow-y: auto;
 }
 
 .containerR {
   display: flex;
   flex-direction: column;
   width: 40%;
+  max-height: 60vh; 
+  overflow-y: auto;
 }
 
 .title {

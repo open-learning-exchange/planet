@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { Observable, throwError } from 'rxjs';
@@ -11,7 +11,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './landing-news.component.html',
   styleUrls: ['./landing-news.scss']
 })
-export class LandingNewsComponent implements OnInit, AfterViewInit {
+export class LandingNewsComponent implements OnInit {
   private reqNum = 0;
   private baseUrl = environment.uplanetAddress;
   private uPlanetCode = environment.uPlanetCode;
@@ -22,9 +22,8 @@ export class LandingNewsComponent implements OnInit, AfterViewInit {
   selectedNews: any = null;
   isError: boolean;
   isLoading: boolean;
-  // Evaluate length neccessity
   data: any = {
-    length, docs: []
+    docs: []
   };
 
   constructor(
@@ -88,21 +87,14 @@ export class LandingNewsComponent implements OnInit, AfterViewInit {
     this.useNews();
   }
 
-  ngAfterViewInit() {
-   console.log(this.data);
-  }
-
   seeDetails(id: string) {
     const aux = this.data.find(element => element._id === id);
     this.selectedNews = aux;
-    console.log(this.selectedNews);
     // Scroll function
   }
 
   closeDetails() {
     this.selectedNews = null;
   }
-
-
 
 }
