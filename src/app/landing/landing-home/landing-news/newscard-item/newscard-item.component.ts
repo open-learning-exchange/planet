@@ -1,12 +1,12 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { head } from 'ramda';
-import { formatTimeAgo } from "../../../helpers/timeFormat";
+import { formatTimeAgo } from '../../../helpers/timeFormat';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'planet-landing-card-item',
   templateUrl: './newscard-item.component.html',
-  styleUrls: ['./newscard-item.scss']
+  styleUrls: [ './newscard-item.scss' ]
 })
 export class NewsCardItemComponent implements OnInit {
   private baseUrl = environment.uplanetAddress;

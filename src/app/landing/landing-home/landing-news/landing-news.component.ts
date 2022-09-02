@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'planet-landing-news',
   templateUrl: './landing-news.component.html',
-  styleUrls: ['./landing-news.scss']
+  styleUrls: [ './landing-news.scss' ]
 })
 export class LandingNewsComponent implements OnInit {
   private reqNum = 0;
@@ -56,7 +56,7 @@ export class LandingNewsComponent implements OnInit {
       },
       skip: 0,
       limit: 1000,
-      sort: [{ time: 'desc' }],
+      sort: [ { time: 'desc' } ],
     });
 
     let httpReq: Observable<any>;
@@ -75,7 +75,7 @@ export class LandingNewsComponent implements OnInit {
     this.isError = false;
     this.isLoading = true;
     this.getNews(this.defaultOpts, this.uPlanetCode, this.uParentCode).subscribe(data => {
-      this.data = data.docs;      
+      this.data = data.docs;
       this.isLoading = false;
     }, err => {
       this.isError = true;

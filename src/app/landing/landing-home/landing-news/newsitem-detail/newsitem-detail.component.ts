@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { head } from 'ramda';
-import { formatTimeAgo } from "../../../helpers/timeFormat";
+import { formatTimeAgo } from '../../../helpers/timeFormat';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'planet-landing-news-detail',
   templateUrl: './newsitem-detail.component.html',
-  styleUrls: ['./newsitem-detail.scss']
+  styleUrls: [ './newsitem-detail.scss' ]
 })
 export class NewsItemDetailsComponent implements OnInit {
   baseUrl = environment.uplanetAddress;
@@ -29,9 +29,9 @@ export class NewsItemDetailsComponent implements OnInit {
 
   transformImage({ img }) {
     const { markdown } = img;
-    const split_url = markdown.split('](')[1].split(')')[0];
-    
-    return `![Noticia](${this.baseUrl}/pb/${split_url})`;
+    const splitUrl = markdown.split('](')[1].split(')')[0];
+
+    return `![Noticia](${this.baseUrl}/pb/${splitUrl})`;
   }
 
   // (error)="$event.target.src = 'assets/landing-page/img/news-placeholder.png'"
