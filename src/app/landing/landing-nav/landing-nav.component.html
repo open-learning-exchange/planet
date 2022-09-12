@@ -1,0 +1,32 @@
+<div class="app-bar-container">
+  <mat-toolbar class="toolbar-container">
+    <div class="menu-container">
+      <!-- Handle Mobile view -->
+      <!-- Handle Navbar sizes -->
+      <img src="assets/landing-page/logos/uplanet.png" alt="Logo" width="180" height="30" />
+      <div class="menu-row">
+        <a mat-button class="navbar-button" [href]="baseUrl + '/spa/myDashboard'">
+          <!-- size="small" -->
+          <mat-icon class="icon-item">person</mat-icon>
+          miDashboard
+        </a>
+        <a mat-button class="navbar-button" [href]="baseUrl + '/spa/resources'">
+          <mat-icon class="icon-item">local_library</mat-icon>
+          Biblioteca
+        </a>
+        <a mat-button class="navbar-button" [href]="baseUrl + '/spa/courses'">
+          <mat-icon class="icon-item">book</mat-icon>
+          Cursos
+        </a>
+        <a mat-button class="navbar-button" [href]="baseUrl + '/spa/teams'">
+          <mat-icon class="icon-item">group</mat-icon>
+          Equipos
+        </a>
+        <a mat-button class="navbar-button" [href]="baseUrl + '/spa/enterprises'">
+          <mat-icon class="icon-item">business</mat-icon>
+          Empresas
+        </a>
+      </div>
+    </div>
+  </mat-toolbar>
+</div>

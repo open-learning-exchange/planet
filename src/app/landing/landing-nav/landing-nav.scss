@@ -1,0 +1,33 @@
+.app-bar-container {
+  display: flex;
+  flex-grow: 1;
+}
+
+.toolbar-container {
+  position: static;
+  background: white;
+}
+
+.menu-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.menu-row {
+  display: flex;
+  flex-direction: row;
+  margin-right: 8px;
+}
+
+.navbar-button {
+  text-transform: none;
+  color: #951fcc;
+  font-size: 0.8125rem;
+  padding: 4px 5px;
+}
+
+.icon-item {
+  color: #676767;
+  font-size: 18px;
+}

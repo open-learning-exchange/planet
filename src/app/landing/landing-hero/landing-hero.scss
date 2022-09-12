@@ -1,0 +1,78 @@
+:host {
+  .welcome-hero {
+    position: relative;
+    width: 100%;
+    height: 250px;
+  }
+
+  .hero-background {
+    width: 100%;
+    height: 250px;
+    background-image: linear-gradient(to bottom, #C300FF 0%, #7E00B0 47.4%, #450066 100%);;
+    display: block;
+    overflow: hidden;
+  }
+
+  .hero-background-img {
+    opacity: 0.2;
+    object-fit: cover;
+    width: 100%;
+    min-height: 250px;
+  }
+
+  .hero-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .hero-title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    margin-top: 8px;
+  }
+
+  .play-btn {
+    font-weight: 700;
+    text-transform: none;
+    font-size: 20px;
+    // font-size: {
+    //   xs: '14px';
+    //   sm: '16px';
+    //   md: '18px';
+    //   lg: '20px';
+    //   xl: '20px';
+    // };
+  }
+
+  .hero-flag-stack {
+    display: flex;
+    flex-direction: row;
+    // justify-content: center;
+    margin-top: 16px;
+  }
+
+  .hero-discover-container {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .discover-btn {
+    background-color: #FFFFFF;
+    color: #1976d2;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .discover-btn-text {
+    font-weight: 700;
+    margin-bottom: 2.8px;
+    text-overflow: ellipsis;
+    white-space: no-wrap;
+  }
+}

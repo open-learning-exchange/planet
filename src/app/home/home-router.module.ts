@@ -12,6 +12,7 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
+import { LandingComponent } from '../landing/landing.component';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -58,10 +59,7 @@ const routes: Routes = [
       { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
       { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent },
       { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
-      {
-        path: dashboardPath('myCourses'),
-        loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true }
-      },
+
       { path: dashboardPath('myProgress'), component: CoursesProgressLearnerComponent },
       {
         path: dashboardPath('myLibrary'),
@@ -72,7 +70,9 @@ const routes: Routes = [
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
       }
     ]
-  }
+  },
+  { path: 'landing', component: LandingComponent },
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
 ];
 
 @NgModule({
