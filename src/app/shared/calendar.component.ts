@@ -2,6 +2,8 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
@@ -22,15 +24,15 @@ export class PlanetCalendarComponent implements OnInit {
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
 
-  calendarPlugins = [ dayGridPlugin ];
-  header = {
+  @Input() header?: any = {
     left: 'title',
     center: '',
     right: 'addEventButton today prev,next'
   };
-  buttonText = {
+  @Input() buttonText?: any = {
     today: $localize`Today`
   };
+  calendarPlugins = [ dayGridPlugin, timeGridPlugin, interactionPlugin ];
   buttons = {};
   eventTimeFormat = {
     hour: '2-digit',
@@ -49,9 +51,7 @@ export class PlanetCalendarComponent implements OnInit {
     locales: allLocales,
     locale: this.document.documentElement.lang,
     events: this.events,
-    headerToolbar: this.header,
     customButtons: this.buttons,
-    buttonText: this.buttonText,
     firstDay: 6,
     eventClick: this.eventClick.bind(this)
   };
@@ -73,6 +73,8 @@ export class PlanetCalendarComponent implements OnInit {
         }
       } :
       {};
+    this.calendarOptions.headerToolbar = this.header;
+    this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
   }
 

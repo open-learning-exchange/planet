@@ -12,7 +12,6 @@ import { LandingFooterComponent } from './landing-footer/landing-footer.componen
 import { LandingNewsComponent } from './landing-home/landing-news/landing-news.component';
 import { NewsCardItemComponent } from './landing-home/landing-news/newscard-item/newscard-item.component';
 import { NewsItemDetailsComponent } from './landing-home/landing-news/newsitem-detail/newsitem-detail.component';
-// import { LandingNavbarMobileComponent } from './landing-nav/landing-nav.mobile.component';
 
 @NgModule({
   imports: [
@@ -24,7 +23,6 @@ import { NewsItemDetailsComponent } from './landing-home/landing-news/newsitem-d
   declarations: [
     LandingComponent,
     LandingNavbarComponent,
-    // LandingNavbarMobileComponent,
     LandingHeroComponent,
     LandingHomeComponent,
     LandingNewsComponent,

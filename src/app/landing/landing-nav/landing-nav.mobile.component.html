@@ -1,17 +1,41 @@
-<!-- <mat-sidenav-container class="example-container" *ngIf="shouldRun">
-  <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
-               (closed)="events.push('close!')">
-    Sidenav content
+<mat-toolbar class="toolbar-container">
+  <button mat-icon-button class="hamburger-button"
+    (click)="toggleNav()" i18n-title title="Menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <img src="assets/landing-page/logos/uplanet.png" alt="Logo" width="180" height="30" />
+</mat-toolbar>
+<mat-sidenav-container autosize [@slideInOut]="menuState" planetClickOutside (planetClickOutside)="closeMenu()">
+  <mat-sidenav #sidenav mode="side" class="main-sidenav" opened="true">
+    <mat-nav-list>
+      <a mat-button class="navbar-button" [href]="baseUrl + '/spa/myDashboard'">
+        <mat-icon class="icon-item">person</mat-icon>
+        <label>miDashboard</label>
+      </a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-button class="navbar-button" [href]="baseUrl + '/spa/resources'">
+        <mat-icon class="icon-item">local_library</mat-icon>
+        <label>Biblioteca</label>
+      </a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-button class="navbar-button" [href]="baseUrl + '/spa/courses'">
+        <mat-icon class="icon-item">book</mat-icon>
+        <label>Cursos</label>
+      </a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-button class="navbar-button" [href]="baseUrl + '/spa/teams'">
+        <mat-icon class="icon-item">group</mat-icon>
+        <label>Equipos</label>
+      </a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-button class="navbar-button" [href]="baseUrl + '/spa/enterprises'">
+        <mat-icon class="icon-item">business</mat-icon>
+        <label>Empresas</label>
+      </a>
+    </mat-nav-list>
   </mat-sidenav>
-
-  <mat-sidenav-content>
-    <p><mat-checkbox [(ngModel)]="opened">sidenav.opened</mat-checkbox></p>
-    <p><button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button></p>
-    <p>Events:</p>
-    <div class="example-events">
-      <div *ngFor="let e of events">{{e}}</div>
-    </div>
-  </mat-sidenav-content>
 </mat-sidenav-container>
-
-<div *ngIf="!shouldRun">Please open on Stackblitz to see result</div> -->

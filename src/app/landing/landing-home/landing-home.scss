@@ -48,3 +48,40 @@
 
   overflow-y: auto,
 };
+
+
+.calendar-container {
+  min-height: 300px;
+  margin-top: 24px; 
+  max-height: 100%;
+}
+
+.calendar-box {
+  font-size: 0.7rem;
+  & .fc-button {
+    background-color: #951FCC !important;
+    border-color: #951FCC !important;
+  }
+  & .fc-button-active:focus {
+    box-shadow: inset 0px 0px 12px 20rem rgb(74 15 102 / 50%) !important;
+  }
+  & .fc-view-harness {
+    background-color: rgb(244, 244, 244, 0.5);
+    min-height: 330px;
+  }
+  & .fc .fc-toolbar-title {
+    @media (max-width: 400px) {
+      font-size: 0.7rem;
+      margin-right: 4px;
+      margin-left: 4px;
+    }
+  }
+}
+
+.calendar-spinner-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; 
+  align-content: center;
+  min-height: 460px;
+}
