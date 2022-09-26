@@ -23,7 +23,7 @@
   background: #F4F4F4;
   color: #951FCC;
   min-height: 50px;
-  border: 1px solid;
+  border: 8px;
   border-color: rgba(0, 0, 0, 0.12);
 }
 
@@ -84,4 +84,20 @@
   justify-content: center; 
   align-content: center;
   min-height: 460px;
+}
+
+// Mobile View styles
+.tabs-container {
+  border-bottom: 8px;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.tabs-group {
+  background: #F4F4F4;
+}
+
+.mat-tab-label {
+  width: 50%;
+  font-weight: 700;
+  color: #951FCC
 }

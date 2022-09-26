@@ -1,4 +1,4 @@
-<div class="noticias-destacadas-jojo">
+<div class="noticias-destacadas-jojo" *ngIf="!isMobile">
   <div class="containerL">
     <div class="title">
       <div class="tab">
@@ -32,5 +32,30 @@
         <mat-spinner></mat-spinner>
       </div> -->
     </div>
+  </div>
+</div>
+<div style="width: 100%;" *ngIf="isMobile">
+  <div class="tabs-container">
+    <!-- tabs-padding -->
+    <mat-tab-group class="tabs-group">
+      <mat-tab>
+        <ng-template mat-tab-label>
+            <img class="image" src="assets/landing-page/icon/noticias.svg" alt="noticias" />
+            Noticias destacadas
+          </ng-template>
+        <planet-landing-news></planet-landing-news>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+            <img class="image" src="assets/landing-page/icon/calendario.svg" alt="noticias" />
+            Calendario y eventos
+        </ng-template>
+        <div class="calendar-container">
+          <div class="calendar-box">
+            <planet-calendar [header]="header" [buttonText]="buttonText"></planet-calendar>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div>

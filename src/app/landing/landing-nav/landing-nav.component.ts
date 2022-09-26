@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CheckMobileService } from '../../shared/checkMobile.service';
@@ -33,6 +33,10 @@ export class LandingNavbarComponent {
   constructor(
     private checkMobileService: CheckMobileService
   ) {}
+
+  @HostListener('window:resize') OnResize() {    
+    this.isMobile = this.checkMobileService.checkIsMobile();
+  }
 
   toggleNav() {
     this.menuState = this.menuState === 'out' ? 'in' : 'out';
