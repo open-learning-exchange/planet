@@ -8,15 +8,11 @@ import { CheckMobileService } from '../../shared/checkMobile.service';
    encapsulation: ViewEncapsulation.None
  })
  export class LandingHomeComponent {
-  isMobile: boolean = this.checkMobileService.checkIsMobile();
 
   constructor(
     private checkMobileService: CheckMobileService
   ) {}
-
-  @HostListener('window:resize') OnResize() {    
-    this.isMobile = this.checkMobileService.checkIsMobile();
-  }
+  isMobile: boolean = this.checkMobileService.checkIsMobile();
 
   header = {
     left: 'prev,next today',
@@ -29,4 +25,8 @@ import { CheckMobileService } from '../../shared/checkMobile.service';
     day: 'Día',
     week: 'Semana'
   };
+
+  @HostListener('window:resize') OnResize() {
+    this.isMobile = this.checkMobileService.checkIsMobile();
+  }
  }

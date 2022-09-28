@@ -34,7 +34,7 @@ export class LandingNavbarComponent {
     private checkMobileService: CheckMobileService
   ) {}
 
-  @HostListener('window:resize') OnResize() {    
+  @HostListener('window:resize') OnResize() {
     this.isMobile = this.checkMobileService.checkIsMobile();
   }
 
