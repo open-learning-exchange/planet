@@ -25,6 +25,7 @@
       <div class="calendar-container">
         <div class="calendar-box">
           <planet-calendar [header]="header" [buttonText]="buttonText"></planet-calendar>
+          <planet-landing-event></planet-landing-event>
         </div>
       </div>
       <!-- handle Spinner for loading -->
@@ -37,7 +38,7 @@
 <div style="width: 100%;" *ngIf="isMobile">
   <div class="tabs-container">
     <!-- tabs-padding -->
-    <mat-tab-group class="tabs-group">
+    <mat-tab-group class="tabs-group" (selectedTabChange)="tabChanged($event);">
       <mat-tab>
         <ng-template mat-tab-label>
             <img class="image" src="assets/landing-page/icon/noticias.svg" alt="noticias" />
@@ -52,7 +53,8 @@
         </ng-template>
         <div class="calendar-container">
           <div class="calendar-box">
-            <planet-calendar [header]="header" [buttonText]="buttonText"></planet-calendar>
+            <planet-calendar [header]="header" [buttonText]="buttonText" [events]="events"></planet-calendar>
+            <planet-landing-event></planet-landing-event>
           </div>
         </div>
       </mat-tab>

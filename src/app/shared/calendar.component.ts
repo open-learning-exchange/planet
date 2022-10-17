@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -15,11 +15,13 @@ import { addDateAndTime, styleVariables } from './utils';
 @Component({
   selector: 'planet-calendar',
   template: `
-    <full-calendar [options]="calendarOptions"></full-calendar>
+    <full-calendar (calendarTabbedEvent)="rerenderCalendar()" #calendar [options]="calendarOptions"></full-calendar>
   `
 })
 export class PlanetCalendarComponent implements OnInit {
 
+  @ViewChild('calendar') calendar: any;
+  // @Input() rerenderCalendar?: boolean = false;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
@@ -41,7 +43,7 @@ export class PlanetCalendarComponent implements OnInit {
   };
   dbName = 'meetups';
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
-  events: any[] = [ {} ];
+  @Input() events?: any[] = [ {} ];
   meetups: any[] = [];
   tasks: any[] = [];
 
@@ -63,6 +65,10 @@ export class PlanetCalendarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('Events Here new');
+    console.log(this.events);
+    
+    
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
@@ -176,6 +182,11 @@ export class PlanetCalendarComponent implements OnInit {
         onMeetupsChange: this.onMeetupsChange.bind(this)
       }
     });
+  }
+
+  rerenderCalendar() {
+    console.log('rerendering');
+    this.calendar.render();
   }
 
 }
