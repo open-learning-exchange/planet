@@ -23,6 +23,7 @@ export class LandingHomeComponent implements OnInit {
     day: 'Día',
     week: 'Semana'
   };
+  resizeCalendar: any;
 
   constructor(
     private checkMobileService: CheckMobileService,
@@ -41,7 +42,8 @@ export class LandingHomeComponent implements OnInit {
 
   tabChanged({ index }) {
     if (index == 1) {
-      this.calendarTabbedEvent.emit();
+      // this.calendarTabbedEvent.emit();
+      this.resizeCalendar = true;
     }
   }
 }

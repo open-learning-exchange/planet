@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -15,13 +15,13 @@ import { addDateAndTime, styleVariables } from './utils';
 @Component({
   selector: 'planet-calendar',
   template: `
-    <full-calendar (calendarTabbedEvent)="rerenderCalendar()" #calendar [options]="calendarOptions"></full-calendar>
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
   `
 })
-export class PlanetCalendarComponent implements OnInit {
+export class PlanetCalendarComponent implements OnInit, OnChanges {
 
   @ViewChild('calendar') calendar: any;
-  // @Input() rerenderCalendar?: boolean = false;
+  @Input() resizeCalendar: boolean = false;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
@@ -84,6 +84,12 @@ export class PlanetCalendarComponent implements OnInit {
     this.calendarOptions.customButtons = this.buttons;
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
+      this.calendar.getApi().updateSize();
+    }
+  }
+
   getMeetups() {
     this.couchService.findAll(this.dbName, findDocuments({ link: this.link })).subscribe((meetups: any[]) => {
       this.meetups = meetups.map(meetup => {
@@ -98,6 +104,8 @@ export class PlanetCalendarComponent implements OnInit {
         }
       }).flat();
       this.events = [ ...this.meetups, ...this.tasks ];
+      console.log('Meetup Events Here');
+      console.log(this.events);
       this.calendarOptions.events = this.events;
     });
   }
@@ -182,11 +190,6 @@ export class PlanetCalendarComponent implements OnInit {
         onMeetupsChange: this.onMeetupsChange.bind(this)
       }
     });
-  }
-
-  rerenderCalendar() {
-    console.log('rerendering');
-    this.calendar.render();
   }
 
 }

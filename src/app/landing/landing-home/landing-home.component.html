@@ -2,7 +2,11 @@
   <div class="containerL">
     <div class="title">
       <div class="tab">
-        <img class="image" src="assets/landing-page/icon/noticias.svg" alt="noticias" />
+        <img
+          class="image"
+          src="assets/landing-page/icon/noticias.svg"
+          alt="noticias"
+        />
         Noticias destacadas
       </div>
     </div>
@@ -17,14 +21,21 @@
   <div class="containerR">
     <div class="title">
       <div class="tab">
-        <img class="image" src="assets/landing-page/icon/calendario.svg" alt="noticias" />
+        <img
+          class="image"
+          src="assets/landing-page/icon/calendario.svg"
+          alt="noticias"
+        />
         Calendario y eventos
       </div>
     </div>
-    <div class="news" style="padding: 30px;">
+    <div class="news" style="padding: 30px">
       <div class="calendar-container">
         <div class="calendar-box">
-          <planet-calendar [header]="header" [buttonText]="buttonText"></planet-calendar>
+          <planet-calendar
+            [header]="header"
+            [buttonText]="buttonText"
+          ></planet-calendar>
           <planet-landing-event></planet-landing-event>
         </div>
       </div>
@@ -35,25 +46,38 @@
     </div>
   </div>
 </div>
-<div style="width: 100%;" *ngIf="isMobile">
+<div style="width: 100%" *ngIf="isMobile">
   <div class="tabs-container">
     <!-- tabs-padding -->
-    <mat-tab-group class="tabs-group" (selectedTabChange)="tabChanged($event);">
+    <mat-tab-group class="tabs-group" (selectedTabChange)="tabChanged($event)">
       <mat-tab>
         <ng-template mat-tab-label>
-            <img class="image" src="assets/landing-page/icon/noticias.svg" alt="noticias" />
-            Noticias destacadas
-          </ng-template>
+          <img
+            class="image"
+            src="assets/landing-page/icon/noticias.svg"
+            alt="noticias"
+          />
+          Noticias destacadas
+        </ng-template>
         <planet-landing-news></planet-landing-news>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-            <img class="image" src="assets/landing-page/icon/calendario.svg" alt="noticias" />
-            Calendario y eventos
+          <img
+            class="image"
+            src="assets/landing-page/icon/calendario.svg"
+            alt="noticias"
+          />
+          Calendario y eventos
         </ng-template>
         <div class="calendar-container">
           <div class="calendar-box">
-            <planet-calendar [header]="header" [buttonText]="buttonText" [events]="events"></planet-calendar>
+            <planet-calendar
+              [header]="header"
+              [buttonText]="buttonText"
+              [resizeCalendar]="resizeCalendar"
+              [events]="events"
+            ></planet-calendar>
             <planet-landing-event></planet-landing-event>
           </div>
         </div>
