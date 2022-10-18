@@ -65,10 +65,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    console.log('Events Here new');
-    console.log(this.events);
-    
-    
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
@@ -104,8 +100,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         }
       }).flat();
       this.events = [ ...this.meetups, ...this.tasks ];
-      console.log('Meetup Events Here');
-      console.log(this.events);
       this.calendarOptions.events = this.events;
     });
   }
