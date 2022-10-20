@@ -32,13 +32,14 @@
     flex-direction: column;
     align-items: center;
     color: white;
-    margin-top: 8px;
+    margin-top: 2px;
   }
 
   .play-btn {
     font-weight: 700;
     text-transform: none;
     font-size: 20px;
+    right: 32%;
     // font-size: {
     //   xs: '14px';
     //   sm: '16px';
@@ -48,31 +49,40 @@
     // };
   }
 
+  .header-text {
+    font-weight: 900; 
+    text-align: center;
+    margin: 3px;
+  }
+
   .hero-flag-stack {
     display: flex;
     flex-direction: row;
-    // justify-content: center;
-    margin-top: 16px;
+    margin-top: 4px;
+  }
+
+  .hero-flag-stack h2 {
+    margin: 0;
+    margin-left: 2px;
   }
 
   .hero-discover-container {
-    margin-top: 16px;
+    margin-top: 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .discover-btn {
-    background-color: #FFFFFF;
-    color: #1976d2;
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
-
   .discover-btn-text {
     font-weight: 700;
-    margin-bottom: 2.8px;
     text-overflow: ellipsis;
-    white-space: no-wrap;
+    white-space: nowrap;
+  }
+
+  .discover-btn {
+    background-color: #FFFFFF;
+    color: #951FCC;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 }

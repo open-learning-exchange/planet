@@ -21,7 +21,7 @@ import { addDateAndTime, styleVariables } from './utils';
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 
   @ViewChild('calendar') calendar: any;
-  @Input() resizeCalendar: boolean = false;
+  @Input() resizeCalendar: boolean;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
@@ -34,6 +34,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() buttonText?: any = {
     today: $localize`Today`
   };
+  // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
+  @Input() events?: any[] = [ {} ];
   calendarPlugins = [ dayGridPlugin, timeGridPlugin, interactionPlugin ];
   buttons = {};
   eventTimeFormat = {
@@ -42,8 +44,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     hour12: false
   };
   dbName = 'meetups';
-  // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
-  @Input() events?: any[] = [ {} ];
   meetups: any[] = [];
   tasks: any[] = [];
 
@@ -65,6 +65,12 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
+    console.log('Events Here')
+    console.log(this.events);
+    console.log(this.events?.pop())
+    console.log(this.events?.length);
+    console.log(this.calendarOptions);
+
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
@@ -78,11 +84,16 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.headerToolbar = this.header;
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
+    this.calendarOptions.events = this.events;
+
+    console.log('Updated Calendar Options')
+    console.log(this.calendarOptions);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
       this.calendar.getApi().updateSize();
+      this.resizeCalendar = false;
     }
   }
 
