@@ -45,6 +45,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
   isCalendarInTabs = window.innerWidth < 800;
+  resizeCalendar: any = false;
 
   constructor(
     private dialog: MatDialog,
@@ -309,4 +310,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
+  tabChanged({ index }) {
+    if (index === 5) {
+      this.resizeCalendar = true;
+    } else {
+      this.resizeCalendar = false;
+    }
+  }
 }
