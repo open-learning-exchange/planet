@@ -7,7 +7,7 @@ export class CheckMobileService {
   screenWidth: number;
 
   setScreenWidth(): void {
-    this.screenWidth = window.innerWidth; 
+    this.screenWidth = window.innerWidth;
   }
 
   getScreenWidth(): number {

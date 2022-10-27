@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
-import { Time } from "@angular/common";
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Time } from '@angular/common';
 
 @Component({
-  selector: "planet-landing-eventcard",
-  templateUrl: "./landing-eventcard.component.html",
-  styles: [`
+  selector: 'planet-landing-eventcard',
+  templateUrl: './landing-eventcard.component.html',
+  styles: [ `
     .root-style {
       display: flex;
       background-color: #f4f4f4;

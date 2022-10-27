@@ -1,13 +1,13 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { LandingEventsService } from "./landing-events.service";
-import { LandingEventDetailComponent } from "./landing-eventdetail/landing-eventdetail.component";
-import { isEmpty } from "ramda";
+import { LandingEventsService } from './landing-events.service';
+import { LandingEventDetailComponent } from './landing-eventdetail/landing-eventdetail.component';
+import { isEmpty } from 'ramda';
 
 @Component({
-  selector: "planet-landing-event",
-  templateUrl: "./landing-event.component.html",
-  styles: [`
+  selector: 'planet-landing-event',
+  templateUrl: './landing-event.component.html',
+  styles: [ `
     .gutter-bottom {
       margin-bottom: 0.35em;
     }
@@ -30,7 +30,7 @@ import { isEmpty } from "ramda";
       margin-top: 8px;
       margin-bottom: 8px;
     }
-  `]
+  ` ]
 })
 export class LandingEventComponent implements OnInit {
 
@@ -51,8 +51,8 @@ export class LandingEventComponent implements OnInit {
   }
 
   findEvent(id: string) {
-    for(let event of this.events) {
-      if(event.id === id) {
+    for (const event of this.events) {
+      if (event.id === id) {
         return event;
       }
     }

@@ -34,9 +34,6 @@ export class LandingNewsComponent implements OnInit {
   private getNews(opts: any, uPlanetCode: any, uParentCode: any): Observable<any> {
     const url = this.baseUrl + '/pb/' + this.dbName + '/_find';
 
-    // const queryPlanet = uPlanetCode ? { messagePlanetCode: uPlanetCode, viewableBy: 'community' } : { viewableBy: 'community' };
-    // const queryParent = uParentCode ? { _id: uParentCode, section: 'community' } : { section: 'community' };
-
     const queryPlanet = { viewableBy: 'community' };
     const queryParent = { section: 'community' };
 

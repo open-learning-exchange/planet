@@ -5,11 +5,11 @@ import { LandingEventsService } from './landing-event/landing-events.service';
 @Component({
   selector: 'planet-landing-home',
   templateUrl: './landing-home.component.html',
-  styleUrls: ['./landing-home.scss'],
+  styleUrls: [ './landing-home.scss' ],
   encapsulation: ViewEncapsulation.None
 })
 export class LandingHomeComponent implements OnInit {
-  
+
   isMobile: boolean = this.checkMobileService.checkIsMobile();
   events: any = [];
   header = {
@@ -31,7 +31,7 @@ export class LandingHomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.landingEventsService.getEvents().subscribe((data) => {      
+    this.landingEventsService.getEvents().subscribe((data) => {
       data.rows.map((event) => {
         this.events.push({
           title: event.doc.title,
@@ -39,9 +39,9 @@ export class LandingHomeComponent implements OnInit {
           end: new Date(event.doc.endDate),
           // allDay: true,
           // editable: true,
-          textColor: "white",
-          backgroundColor: "#951FCC",
-          borderColor: "#951FCC",
+          textColor: 'white',
+          backgroundColor: '#951FCC',
+          borderColor: '#951FCC',
           extendedProps: {
             meetup: event.doc
           }
@@ -55,7 +55,7 @@ export class LandingHomeComponent implements OnInit {
   }
 
   tabChanged({ index }) {
-    if (index == 1) {
+    if (index === 1) {
       this.resizeCalendar = true;
     } else {
       this.resizeCalendar = false;

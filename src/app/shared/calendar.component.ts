@@ -65,9 +65,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    console.log('Events Here')
+    console.log('Events Here');
     console.log(this.events);
-    console.log(this.events?.pop())
+    console.log(this.events?.pop());
     console.log(this.events?.length);
     console.log(this.calendarOptions);
 
@@ -86,7 +86,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.customButtons = this.buttons;
     this.calendarOptions.events = this.events;
 
-    console.log('Updated Calendar Options')
+    console.log('Updated Calendar Options');
     console.log(this.calendarOptions);
   }
 
