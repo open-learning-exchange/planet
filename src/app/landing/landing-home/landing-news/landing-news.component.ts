@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { CouchService } from '../../../shared/couchdb.service';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { debug } from '../../../debug-operator';
@@ -28,7 +29,8 @@ export class LandingNewsComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private couchService: CouchService
   ) { }
 
   private getNews(opts: any, uPlanetCode: any, uParentCode: any): Observable<any> {
@@ -58,14 +60,7 @@ export class LandingNewsComponent implements OnInit {
 
     let httpReq: Observable<any>;
     httpReq = this.http.post(url, queryData, opts);
-    return httpReq
-      .pipe(debug('Http ' + 'post' + ' ' + this.reqNum + ' request'))
-      .pipe(catchError(err => {
-        if (err.status === 403) {
-          this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
-        }
-        return throwError(err);
-      }));
+    return this.couchService.formatHttpReq(httpReq, 'post', this.reqNum);
   }
 
   useNews() {
