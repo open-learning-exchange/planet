@@ -12,6 +12,11 @@ import { isEmpty } from "ramda";
       margin-bottom: 0.35em;
     }
 
+    .event-title {
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
     .event-container {
       margin-top: 16px;
       margin-bottom: 16px;

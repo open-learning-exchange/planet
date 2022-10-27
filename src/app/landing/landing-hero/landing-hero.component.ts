@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'planet-landing-hero',
@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: [ 'landing-hero.scss' ]
 })
 export class LandingHeroComponent {
+  @Output() playVideoEvent = new EventEmitter<boolean>();
 
+  playVideo() {
+    this.playVideoEvent.emit(true);
+  }
 }

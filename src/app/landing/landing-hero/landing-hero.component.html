@@ -5,9 +5,9 @@
   </div>
   <div class="hero-title">
     <div class="hero-title-container">
-      <button mat-icon-button class="play-btn">
+      <button mat-button class="play-btn" (click)="playVideo()">
         <mat-icon>play_circle_filled</mat-icon>
-        Bienvenidos a UPlanet
+        <span style="padding: 10px;">Bienvenidos a UPlanet</span>
       </button>
       <h2 class="header-text">
         Todos Conectados
@@ -17,7 +17,7 @@
       </h2>
       <div class="hero-flag-stack">
         <img src="assets/landing-page/img/guatemala-flag.svg" width="25" height="25" alt="flag" />
-        <h2 style="font-weight: 900px;">
+        <h2 style="font-weight: 500px;">
           #SanPablo
         </h2>
       </div>
@@ -25,7 +25,7 @@
         <p class="discover-btn-text">Biblioteca UcloudNet y más...</p>
         <a href="" mat-button class="discover-btn">
           Descubre
-          <img src="assets/landing-page/icon/arrow-right.svg" alt="Arrow Right" />
+          <img src="assets/landing-page/icon/arrow-right.svg" class="discover-icon" alt="Arrow Right" />
         </a>
       </div>
     </div>

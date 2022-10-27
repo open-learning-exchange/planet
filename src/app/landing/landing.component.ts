@@ -9,6 +9,9 @@ import { Component } from '@angular/core';
     min-height: 100vh;
     overflow-x: hidden;
     max-width: 100%;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;    
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .childrenbox {

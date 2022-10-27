@@ -3,6 +3,10 @@
     position: relative;
     width: 100%;
     height: 250px;
+    // font-weight: 400;
+    // font-size: 1rem;
+    // line-height: 1.5;
+    // letter-spacing: 0.00938em;
   }
 
   .hero-background {
@@ -32,14 +36,14 @@
     flex-direction: column;
     align-items: center;
     color: white;
-    margin-top: 2px;
+    // margin-top: 2px;
   }
 
   .play-btn {
-    font-weight: 700;
+    font-weight: 500;
     text-transform: none;
-    font-size: 20px;
-    right: 32%;
+    font-size: 20px;    
+    padding-bottom: 5px;
     // font-size: {
     //   xs: '14px';
     //   sm: '16px';
@@ -50,7 +54,7 @@
   }
 
   .header-text {
-    font-weight: 900; 
+    font-weight: 600;
     text-align: center;
     margin: 3px;
   }
@@ -59,6 +63,8 @@
     display: flex;
     flex-direction: row;
     margin-top: 4px;
+    padding-top: 10px;
+    // line-height: 1.5;
   }
 
   .hero-flag-stack h2 {
@@ -74,15 +80,23 @@
   }
 
   .discover-btn-text {
-    font-weight: 700;
+    font-weight: 500;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-bottom: 8px;
+  }
+
+  .discover-icon {
+    padding: 0px 5px 5px;
   }
 
   .discover-btn {
     background-color: #FFFFFF;
     color: #951FCC;
     text-transform: uppercase;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 3px 12px;
   }
 }
