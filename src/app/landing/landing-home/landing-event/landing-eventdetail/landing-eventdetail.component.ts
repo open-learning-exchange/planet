@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { Time } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { environment } from '../../../../../environments/environment';
 
@@ -10,43 +9,25 @@ import { environment } from '../../../../../environments/environment';
 export class LandingEventDetailComponent implements OnInit {
 
   baseUrl = environment.uplanetAddress;
-  event: any;
+  event: any = {};
   renderedStartDate: any;
   renderedEndDate: any;
-
-  title: string;
-  startDate: Date;
-  endDate: Date;
-  startTime: Time;
-  endTime: Time;
-  description: string;
-  location: string;
 
   constructor(
     private dialogRef: MatDialogRef<LandingEventDetailComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.event = this.data.event || {};
+    this.event = this.data.event.doc || {};
   }
 
-  // HandleClose
   ngOnInit() {
-    const { title, startDate, endDate, startTime, endTime, description, meetupLocation } = this.event.doc;
-    this.title = title;
-    this.startDate = new Date(startDate);
-    this.endDate = new Date(endDate);
-    this.startTime = startTime;
-    this.endTime = endTime;
-    this.description = description;
-    this.location = meetupLocation;
-
-    this.renderedStartDate = this.renderedDate(this.startDate, 'de inicio');
-    this.renderedEndDate = this.renderedDate(this.endDate, 'de fin');
+    this.renderedStartDate = this.renderedDate(new Date(this.event.startDate), 'de inicio');
+    this.renderedEndDate = this.renderedDate(new Date(this.event.endDate), 'de fin');
   }
 
   renderedDate(date: Date, statement: String) {
     return date && !Number.isNaN(date) && date.getFullYear() !== 1969
-      ? `${date.toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })} ${this.endTime ?? ''}`
+      ? `${date.toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })} ${this.event.endTime ?? ''}`
       : `No hay fecha ${statement}`;
   }
 

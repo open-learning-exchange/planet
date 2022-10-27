@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  {{ title }}
+  {{ event.title }}
 </h2>
 
 <mat-dialog-content class="content-text">
@@ -17,13 +17,13 @@
   <br />
   <span class="gutter-bottom subtitle2"> Descripción de evento: </span>
   <div class="event-description-box">
-    <planet-markdown [content]="description"> </planet-markdown>
+    <planet-markdown [content]="event.description"> </planet-markdown>
   </div>
-  <div *ngIf="location">
+  <div *ngIf="event.meetupLocation">
     <span class="gutter-bottom subtitle2"> Ubicación de evento: </span>
     <br />
     <span class="subtitle1">
-      {{ location }}
+      {{ event.meetupLocation }}
     </span>
   </div>
 </mat-dialog-content>

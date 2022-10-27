@@ -32,20 +32,12 @@ export class LandingEventCardComponent implements OnInit {
   title: string;
   startDate: string;
   endDate: string;
-  startTime: Time;
-  endTime: Time;
-  description: string;
-  location: string;
 
   ngOnInit() {
-    const { title, startDate, endDate, startTime, endTime, description, meetupLocation } = this.event.doc;
+    const { title, startDate, endDate } = this.event.doc;
     this.title = title;
     this.startDate = new Date(startDate).toLocaleDateString('es-PE');
     this.endDate = new Date(endDate).toLocaleDateString('es-PE');
-    this.startTime = startTime;
-    this.endTime = endTime;
-    this.description = description;
-    this.location = meetupLocation;
   }
 
   clickCardDetails() {
