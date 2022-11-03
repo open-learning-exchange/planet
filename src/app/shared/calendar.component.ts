@@ -80,7 +80,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.headerToolbar = this.header;
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
-    this.calendarOptions.events = [...this.events, ...this._events];    
+    this.calendarOptions.events = [ ...this.events, ...this._events ];
   }
 
   // ngAfterViewChecked(): void {
@@ -92,7 +92,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       this.calendar.getApi().updateSize();
       this.resizeCalendar = false;
     }
-    this.calendarOptions.events = [...this.events, ...this._events];
+    this.calendarOptions.events = [ ...this.events, ...this._events ];
   }
 
   getMeetups() {

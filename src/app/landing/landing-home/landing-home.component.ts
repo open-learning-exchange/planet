@@ -46,7 +46,7 @@ export class LandingHomeComponent implements OnInit {
             meetup: event.doc
           }
         });
-      });      
+      });
     });
   }
 
