@@ -6,6 +6,8 @@
           class="image"
           src="assets/landing-page/icon/noticias.svg"
           alt="noticias"
+          height="24px"
+          width="24px"
         />
         Noticias destacadas
       </div>
@@ -25,6 +27,8 @@
           class="image"
           src="assets/landing-page/icon/calendario.svg"
           alt="noticias"
+          height="24px"
+          width="24px"
         />
         Calendario y eventos
       </div>
@@ -36,7 +40,7 @@
             [header]="header"
             [buttonText]="buttonText"
             [resizeCalendar]="resizeCalendar"
-            [events]="events"
+            [_events]="events"
           ></planet-calendar>
           <planet-landing-event></planet-landing-event>
         </div>
@@ -51,13 +55,15 @@
 <div style="width: 100%" *ngIf="isMobile">
   <div class="tabs-container">
     <!-- tabs-padding -->
-    <mat-tab-group class="tabs-group" (selectedTabChange)="tabChanged($event)">
+    <mat-tab-group class="tabs-group" [color]="secondary" (selectedTabChange)="tabChanged($event)">
       <mat-tab>
         <ng-template mat-tab-label>
           <img
             class="image"
             src="assets/landing-page/icon/noticias.svg"
             alt="noticias"
+            height="32px"
+            width="32px"
           />
           Noticias destacadas
         </ng-template>
@@ -69,6 +75,8 @@
             class="image"
             src="assets/landing-page/icon/calendario.svg"
             alt="noticias"
+            height="32px"
+            width="32px"
           />
           Calendario y eventos
         </ng-template>
@@ -78,7 +86,7 @@
               [header]="header"
               [buttonText]="buttonText"
               [resizeCalendar]="resizeCalendar"
-              [events]="events"
+              [_events]="events"
             ></planet-calendar>
             <planet-landing-event></planet-landing-event>
           </div>

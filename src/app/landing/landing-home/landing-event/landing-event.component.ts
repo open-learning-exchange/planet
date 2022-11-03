@@ -62,7 +62,7 @@ export class LandingEventComponent implements OnInit {
     this.selectedEvent = id;
     this.dialog.open(LandingEventDetailComponent, {
       data: { event: this.findEvent(id) },
-      width: '40vw',
+      width: '50vw',
       maxHeight: '90vh'
     });
   }

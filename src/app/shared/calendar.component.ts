@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -7,6 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
+// import { LandingEventDetailComponent } from "../landing/landing-home/landing-event/landing-eventdetail/landing-eventdetail.component";
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
@@ -34,8 +35,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() buttonText?: any = {
     today: $localize`Today`
   };
+  @Input() _events: any[] = [ {} ];
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
-  @Input() events?: any[] = [ {} ];
+  events: any[] = [ {} ];
   calendarPlugins = [ dayGridPlugin, timeGridPlugin, interactionPlugin ];
   buttons = {};
   eventTimeFormat = {
@@ -65,12 +67,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    console.log('Events Here');
-    console.log(this.events);
-    console.log(this.events?.pop());
-    console.log(this.events?.length);
-    console.log(this.calendarOptions);
-
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
@@ -84,17 +80,19 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.headerToolbar = this.header;
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
-    this.calendarOptions.events = this.events;
-
-    console.log('Updated Calendar Options');
-    console.log(this.calendarOptions);
+    this.calendarOptions.events = [...this.events, ...this._events];    
   }
+
+  // ngAfterViewChecked(): void {
+  //   this.calendarOptions.events = [...this.events, ...this._events];
+  // }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
       this.calendar.getApi().updateSize();
       this.resizeCalendar = false;
     }
+    this.calendarOptions.events = [...this.events, ...this._events];
   }
 
   getMeetups() {
@@ -196,5 +194,13 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       }
     });
   }
+
+  // uplanetEventClick({ event }) {
+  //   this.dialog.open(LandingEventDetailComponent, {
+  //     data: event.extendedProps.meetup,
+  //     width: '40vw',
+  //     maxHeight: '90vh'
+  //   });
+  // }
 
 }

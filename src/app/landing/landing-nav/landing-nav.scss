@@ -19,6 +19,7 @@
 
   .hamburger-button {
     color: #951fcc;
+    margin-right: 25px;
   }
 
   .app-bar-container {
@@ -28,7 +29,10 @@
 
   .toolbar-container {
     position: static;
-    background: white;
+  }
+
+  .mat-toolbar {
+    background-color: white;
   }
 
   .menu-container {
@@ -51,7 +55,23 @@
     text-transform: none;
     color: #951fcc;
     font-size: 0.8125rem;
-    padding: 4px 5px;
+    padding: 4px 8px;
+  }
+  
+  .mobile-navbar-button {
+    text-transform: none;
+    color: #000000DE;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 4px 25px;
+  }
+
+  .mobile-navbar-button mat-icon {
+    margin-right: 20px;
+  }
+
+  .mobile-navbar-button label {
+    padding-right: 30px;
   }
 
   .icon-item {

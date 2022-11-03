@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, HostListener, ViewEncapsulation, OnInit, OnChanges } from '@angular/core';
 import { CheckMobileService } from '../../shared/checkMobile.service';
 import { LandingEventsService } from './landing-event/landing-events.service';
 
@@ -46,7 +46,7 @@ export class LandingHomeComponent implements OnInit {
             meetup: event.doc
           }
         });
-      });
+      });      
     });
   }
 

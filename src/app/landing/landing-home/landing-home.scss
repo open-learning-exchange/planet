@@ -37,7 +37,6 @@
 
 .image {
   color: #951FCC;
-  max-height: 24px;
   padding-right: 5%;
 }
 
@@ -52,7 +51,7 @@
 
 .calendar-container {
   min-height: 300px;
-  margin-top: 24px; 
+  margin-top: 24px;
   max-height: 100%;
 }
 
@@ -99,5 +98,18 @@
 .mat-tab-label {
   width: 50%;
   font-weight: 700;
-  color: #951FCC
+  color: #951FCC;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  min-height: 72px;
+  letter-spacing: 0.03em;
+  line-height: 1.25;
+}
+
+.mat-tab-label.mat-tab-label-active:not(.mat-tab-disabled){
+  opacity: 1;
+}
+
+.mat-tab-group.mat-primary .mat-ink-bar {
+  background-color: #951FCC;
 }
