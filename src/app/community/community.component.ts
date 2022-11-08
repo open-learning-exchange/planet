@@ -18,6 +18,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { CheckMobileService } from '../shared/checkMobile.service';
 
 @Component({
   selector: 'planet-community',
@@ -44,8 +45,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  isCalendarInTabs = window.innerWidth < 800;
   resizeCalendar: any = false;
+  isMobile: boolean = this.checkMobileService.checkIsMobile();
 
   constructor(
     private dialog: MatDialog,
@@ -58,7 +59,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private checkMobileService: CheckMobileService
   ) {}
 
   ngOnInit() {
@@ -81,7 +83,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isCalendarInTabs = window.innerWidth < 800;
+    this.isMobile = this.checkMobileService.checkIsMobile();
   }
 
   ngOnDestroy() {
