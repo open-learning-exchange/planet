@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -31,6 +31,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
 import { SearchService } from '../shared/forms/search.service';
 import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
+import { CheckMobileService } from '../shared/checkMobile.service';
 
 @Component({
   selector: 'planet-courses',
@@ -119,6 +120,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
+  isMobileView: boolean = this.checkMobileService.checkIsMobile();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -136,7 +138,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private checkMobileService: CheckMobileService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -144,6 +147,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.setupList(this.courses.data, shelf.courseIds);
       });
     this.dialogsLoadingService.start();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.isMobileView = this.checkMobileService.checkIsMobile();
   }
 
   ngOnInit() {
