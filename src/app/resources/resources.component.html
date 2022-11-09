@@ -33,7 +33,44 @@
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
           </button>
         </span>
-        <span *ngIf="!parent">
+        <span *ngIf="!parent && isMobileView">
+          <button *ngIf="!parent && !isDialog && isMobileView" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #actionsMenu="matMenu">
+            <ng-container *planetAuthorizedRoles="'manager'">
+              <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
+                <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
+              </mat-form-field>
+            </ng-container>
+            <button mat-menu-item [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
+              <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
+              <span *ngIf="selectedNotAdded > 0"> ({{selectedNotAdded}})</span>
+            </button>
+            <button mat-menu-item [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
+              <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
+              <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
+            </button>
+            <button mat-menu-item [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+            <mat-menu #managerMenu="matMenu">
+              <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
+                <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>
+                <span i18n>Send Resources</span>
+                <span *ngIf="selectedSync?.length"> ({{selectedSync.length}})</span>
+              </button>
+              <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
+                <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+                <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+                <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+              </button>
+              <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
+                <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+                <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+              </button>
+            </mat-menu>
+          </mat-menu>
+        </span>
+        <span *ngIf="!parent && !isMobileView">
           <ng-container *planetAuthorizedRoles="'manager'">
             <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
               <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
