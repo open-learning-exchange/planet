@@ -31,7 +31,7 @@ export class TeamsReportsDetailComponent implements OnChanges {
   constructor(
     private stateService: StateService
   ) {}
-  
+
 
   ngOnChanges() {
     this.expenses = this.report.wages + this.report.otherExpenses;
