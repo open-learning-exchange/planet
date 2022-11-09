@@ -1,26 +1,54 @@
 <mat-toolbar *ngIf="!isForm">
-  <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
-  <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
-    <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
-  </mat-form-field>
-  <span class="toolbar-fill"></span>
-  <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of gradeOptions" value={{option.value}}>{{option.label}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="font-size-1 margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of subjectOptions" value={{option.value}}>{{option.label}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field class="font-size-1 margin-lr-3">
-    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="courses.filter === ''"><span i18n>Clear</span></button>
+  <mat-toolbar-row *ngIf="!isMobileView">
+    <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
+    <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+      <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
+    </mat-form-field>
+    <span class="toolbar-fill"></span>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-select i18n-placeholder placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
+        <mat-option i18n value="All">All</mat-option>
+        <mat-option *ngFor="let option of gradeOptions" value={{option.value}}>{{option.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-select i18n-placeholder placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
+        <mat-option i18n value="All">All</mat-option>
+        <mat-option *ngFor="let option of subjectOptions" value={{option.value}}>{{option.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="courses.filter === ''"><span i18n>Clear</span></button>
+  </mat-toolbar-row>
+  
+  <mat-toolbar-row *ngIf="isMobileView">
+    <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
+    <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+      <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
+    </mat-form-field>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="isMobileView">
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-select i18n-placeholder placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
+        <mat-option i18n value="All">All</mat-option>
+        <mat-option *ngFor="let option of gradeOptions" value={{option.value}}>{{option.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-select i18n-placeholder placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
+        <mat-option i18n value="All">All</mat-option>
+        <mat-option *ngFor="let option of subjectOptions" value={{option.value}}>{{option.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="courses.filter === ''"><span i18n>Clear</span></button>
+  </mat-toolbar-row>
 </mat-toolbar>
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog && !isForm">
