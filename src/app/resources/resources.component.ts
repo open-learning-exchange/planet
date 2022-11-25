@@ -28,7 +28,6 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
-import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
 
 @Component({
   selector: 'planet-resources',
