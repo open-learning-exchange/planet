@@ -8,7 +8,7 @@ export const environment = {
   test: false,
   couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
   centerAddress: 'planet.earth.ole.org/db',
-  uplanetAddress: 'https://uplanet.gt',
+  uplanetAddress: window.location.origin,
   centerProtocol: 'https',
   parentProtocol: 'https',
   uPlanetCode: 'guatemala',
