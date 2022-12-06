@@ -58,7 +58,7 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
     CommunityComponent,
     CommunityLinkDialogComponent,
     PlanetComponent,
-    HealthListComponent
+    HealthListComponent,
   ]
 })
 export class HomeModule {}
