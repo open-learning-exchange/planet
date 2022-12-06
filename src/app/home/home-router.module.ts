@@ -59,9 +59,9 @@ const routes: Routes = [
       { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
       { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent },
       { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
-      {	
-        path: dashboardPath('myCourses'),	
-        loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true }	
+      {
+        path: dashboardPath('myCourses'),
+        loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { myCourses: true }
       },
       { path: dashboardPath('myProgress'), component: CoursesProgressLearnerComponent },
       {

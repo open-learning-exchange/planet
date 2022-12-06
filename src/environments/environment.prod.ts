@@ -12,4 +12,4 @@ export const environment = {
   uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: 'planet-sync-address'
-};  
+};
