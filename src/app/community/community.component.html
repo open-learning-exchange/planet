@@ -4,7 +4,7 @@
       <span>{{configuration?.name}}</span>
     </mat-toolbar>
     <div class="community-news">
-      <mat-tab-group class="tabs-padding">
+      <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="News">
           <h3>
             <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
@@ -58,11 +58,11 @@
         <mat-tab i18n-label label="Reports">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
-        <mat-tab i18n-label label="Calendar" *ngIf="isCalendarInTabs">
-          <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+        <mat-tab i18n-label label="Calendar" *ngIf="isMobile">
+          <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
         </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-calendar *ngIf="!isCalendarInTabs" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    <planet-calendar *ngIf="!isMobile" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>
