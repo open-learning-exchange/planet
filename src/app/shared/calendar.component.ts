@@ -1,10 +1,13 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
+// import { LandingEventDetailComponent } from "../landing/landing-home/landing-event/landing-eventdetail/landing-eventdetail.component";
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
@@ -13,24 +16,29 @@ import { addDateAndTime, styleVariables } from './utils';
 @Component({
   selector: 'planet-calendar',
   template: `
-    <full-calendar [options]="calendarOptions"></full-calendar>
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
   `
 })
-export class PlanetCalendarComponent implements OnInit {
+export class PlanetCalendarComponent implements OnInit, OnChanges {
 
+  @ViewChild('calendar') calendar: any;
+  @Input() resizeCalendar: boolean;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
 
-  calendarPlugins = [ dayGridPlugin ];
-  header = {
+  @Input() header?: any = {
     left: 'title',
     center: '',
     right: 'addEventButton today prev,next'
   };
-  buttonText = {
+  @Input() buttonText?: any = {
     today: $localize`Today`
   };
+  @Input() _events: any[] = [ {} ];
+  // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
+  events: any[] = [ {} ];
+  calendarPlugins = [ dayGridPlugin, timeGridPlugin, interactionPlugin ];
   buttons = {};
   eventTimeFormat = {
     hour: '2-digit',
@@ -38,8 +46,6 @@ export class PlanetCalendarComponent implements OnInit {
     hour12: false
   };
   dbName = 'meetups';
-  // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
-  events: any[] = [ {} ];
   meetups: any[] = [];
   tasks: any[] = [];
 
@@ -49,9 +55,7 @@ export class PlanetCalendarComponent implements OnInit {
     locales: allLocales,
     locale: this.document.documentElement.lang,
     events: this.events,
-    headerToolbar: this.header,
     customButtons: this.buttons,
-    buttonText: this.buttonText,
     firstDay: 6,
     eventClick: this.eventClick.bind(this)
   };
@@ -73,7 +77,22 @@ export class PlanetCalendarComponent implements OnInit {
         }
       } :
       {};
+    this.calendarOptions.headerToolbar = this.header;
+    this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
+    this.calendarOptions.events = [ ...this.events, ...this._events ];
+  }
+
+  // ngAfterViewChecked(): void {
+  //   this.calendarOptions.events = [...this.events, ...this._events];
+  // }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
+      this.calendar.getApi().updateSize();
+      this.resizeCalendar = false;
+    }
+    this.calendarOptions.events = [ ...this.events, ...this._events ];
   }
 
   getMeetups() {
@@ -175,5 +194,13 @@ export class PlanetCalendarComponent implements OnInit {
       }
     });
   }
+
+  // uplanetEventClick({ event }) {
+  //   this.dialog.open(LandingEventDetailComponent, {
+  //     data: event.extendedProps.meetup,
+  //     width: '40vw',
+  //     maxHeight: '90vh'
+  //   });
+  // }
 
 }

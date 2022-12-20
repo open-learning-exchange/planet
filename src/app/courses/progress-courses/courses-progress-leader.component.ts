@@ -105,7 +105,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   answerErrorCount(answer) {
-    return answer.grade === undefined ? '' : answer.mistakes || (1 - answer.grade);
+    return answer?.grade === undefined ? '' : answer?.mistakes || (1 - answer?.grade);
   }
 
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
