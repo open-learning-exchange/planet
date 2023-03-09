@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
 [![Docker Stars](https://img.shields.io/docker/stars/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/open-learning-exchange/chat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 # **Planet Learning**
@@ -10,6 +9,8 @@
 Planet Learning is a generic learning system built in Angular & CouchDB.
 
 Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://material.angular.io/).
+
+This project is tested with [BrowserStack](https://www.browserstack.com/).
 
 ## To work on this
 
