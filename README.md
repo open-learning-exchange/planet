@@ -10,8 +10,6 @@ Planet Learning is a generic learning system built in Angular & CouchDB.
 
 Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://material.angular.io/).
 
-This project is tested with [BrowserStack](https://www.browserstack.com/).
-
 ## To work on this
 
 The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up dev` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
@@ -110,3 +108,6 @@ sudo npm install --unsafe-perm
 ```
 
 The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `screen -dmS build bash -c 'cd /vagrant; ng serve'`.
+
+---
+This project is tested with [BrowserStack](https://www.browserstack.com/).
