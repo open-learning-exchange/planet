@@ -1,22 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-const { Configuration, OpenAIApi } = require('openai');
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+const { Configuration, OpenAIApi } = require("openai");
 
 @Component({
-  selector: 'planet-gpt',
-  templateUrl: './gpt.component.html'
+  selector: "planet-gpt",
+  templateUrl: "./gpt.component.html",
 })
 export class GptComponent implements OnInit {
   promptForm: FormGroup;
   response: string;
+  conversations: any[] = [];
 
   constructor(private formBuilder: FormBuilder, private http: HttpClient) {}
 
   ngOnInit() {
     this.promptForm = this.formBuilder.group({
-      prompt: '',
+      prompt: "",
     });
   }
 
@@ -25,17 +26,15 @@ export class GptComponent implements OnInit {
       apiKey: environment.openAIKey,
     });
     const openai = new OpenAIApi(configuration);
-    const prompt = this.promptForm.get('prompt').value;
 
-    const res = await openai.createCompletion({
-      model: 'text-davinci-003',
-      prompt,
-      temperature: 0,
-      max_tokens: 256,
+    const content = this.promptForm.get("prompt").value;
+    this.conversations.push({ role: "user", content });
+
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: this.conversations,
     });
 
-    this.response = res['data']['choices'][0]['text'];
-
+    this.response = completion.data.choices[0].message.content;
   }
-
 }
