@@ -1,0 +1,22 @@
+<mat-toolbar>
+  <button mat-icon-button><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>GPT Prompts</span>
+  <span class="toolbar-fill"></span>
+</mat-toolbar>
+<!-- (click)="goBack()" -->
+
+<div class="space-container">
+  <form [formGroup]="promptForm" (ngSubmit)="submitPrompt()">
+    <label>
+      Prompt:
+      <input type="text" formControlName="prompt" />
+    </label>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <div *ngIf="response">
+    <h2>Response:</h2>
+    <p>{{ response }}</p>
+  </div>
+</div>
