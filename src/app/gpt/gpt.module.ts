@@ -1,9 +1,9 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../shared/material.module';
 
-import { GptComponent } from "./gpt.component";
+import { GptComponent } from './gpt.component';
 
 
 @NgModule({
@@ -13,7 +13,7 @@ import { GptComponent } from "./gpt.component";
         ReactiveFormsModule,
         MaterialModule
     ],
-    exports: [GptComponent],
-    declarations: [GptComponent]
+    exports: [ GptComponent ],
+    declarations: [ GptComponent ]
 })
 export class GptModule { }

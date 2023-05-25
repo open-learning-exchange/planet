@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
-import { HttpClient } from "@angular/common/http";
-import { environment } from "../../environments/environment";
-const { Configuration, OpenAIApi } = require("openai");
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+const { Configuration, OpenAIApi } = require('openai');
 
 @Component({
-  selector: "planet-gpt",
-  templateUrl: "./gpt.component.html"
+  selector: 'planet-gpt',
+  templateUrl: './gpt.component.html'
 })
 export class GptComponent implements OnInit {
   promptForm: FormGroup;
@@ -16,7 +16,7 @@ export class GptComponent implements OnInit {
 
   ngOnInit() {
     this.promptForm = this.formBuilder.group({
-      prompt: "",
+      prompt: '',
     });
   }
 
@@ -28,7 +28,7 @@ export class GptComponent implements OnInit {
     const prompt = this.promptForm.get('prompt').value;
 
     const res = await openai.createCompletion({
-      model: "text-davinci-003",
+      model: 'text-davinci-003',
       prompt,
       temperature: 0,
       max_tokens: 256,
