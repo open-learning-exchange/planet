@@ -13,6 +13,7 @@ import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { LandingComponent } from '../landing/landing.component';
+import { GptComponent } from '../gpt/gpt.component';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -39,6 +40,8 @@ const routes: Routes = [
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
+      { path: 'gpt', component: GptComponent },
+      { path: 'gpt', loadChildren: () => import('../gpt/gpt.module').then(m => m.GptModule) },
       { path: myDashboardRoute, component: DashboardComponent },
       {
         path: dashboardPath('mySurveys'),
@@ -75,7 +78,7 @@ const routes: Routes = [
     ]
   },
   { path: 'landing', component: LandingComponent },
-  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) },
 ];
 
 @NgModule({
