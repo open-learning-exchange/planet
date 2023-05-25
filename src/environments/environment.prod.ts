@@ -11,5 +11,6 @@ export const environment = {
   uPlanetCode: 'guatemala',
   uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
-  syncAddress: 'planet-sync-address'
+  syncAddress: 'planet-sync-address',
+  openAIKey: 'planet-openai-key'
 };

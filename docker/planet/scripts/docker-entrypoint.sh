@@ -31,6 +31,7 @@ sed -i -e "s#planet-db-port#$DB_PORT#g" /usr/share/nginx/html/**/main*
 sed -i -e "s#planet-center-address#$CENTER_ADDRESS#g" /usr/share/nginx/html/**/main*
 sed -i -e "s#planet-parent-protocol#$P_PROTOCOL#g" /usr/share/nginx/html/**/main*
 sed -i -e "s#planet-sync-address#$S_ADDRESS#g" /usr/share/nginx/html/**/main*
+sed -i -e "s#planet-openai-key#$OPEN_AI_API#g" /usr/share/nginx/html/**/main*
 
 cd / && ./create_version_json.sh
 

@@ -23,6 +23,7 @@ services:
       - DB_HOST=127.0.0.1
       - DB_PORT=2200
       - CENTER_ADDRESS=planet.earth.ole.org/db
+      - OPEN_AI_API=${OPEN_AI_API}
     depends_on:
       - couchdb
 version: "2"
