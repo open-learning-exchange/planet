@@ -21,6 +21,13 @@
       "news";
   }
 
+  @media only screen and (max-width: 1080px) {
+    .fc .fc-toolbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 }
 
 .view-container mat-toolbar {
