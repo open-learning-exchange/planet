@@ -14,7 +14,7 @@
     "news calendar";
   gap: 0.5rem;
 
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: 780px) {
     grid-template-columns: 1fr;
     grid-template-areas:
       "links"
