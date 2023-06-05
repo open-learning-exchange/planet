@@ -6,7 +6,7 @@
 
 <div class="space-container">
   <div>
-    <div class="chat-container">
+    <div class="chat-container" #chat>
       <div *ngFor="let conversation of conversations">
         <p class="conversation-query">{{conversation.query}}</p>
         <p class="conversation-response">{{conversation.response}}</p>

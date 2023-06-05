@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CustomValidators } from "../validators/custom-validators";
@@ -16,6 +16,8 @@ export class GptComponent implements OnInit {
   messages: any[] = [];
   conversations: any[] = [];
 
+  @ViewChild('chat') chatContainer: ElementRef;
+
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -25,6 +27,10 @@ export class GptComponent implements OnInit {
 
   ngOnInit() {
     this.createForm();
+  }
+
+  scrollToBottom(): void {
+    this.chatContainer.nativeElement.scrollTo({ top: this.chatContainer.nativeElement.scrollHeight, behavior: 'smooth' });
   }
 
   createForm() {
@@ -60,5 +66,6 @@ export class GptComponent implements OnInit {
       query: content,
       response: completion
     });
+    this.scrollToBottom();
   }
 }
