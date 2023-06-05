@@ -1,11 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { environment } from "../../environments/environment";
 import { CustomValidators } from "../validators/custom-validators";
 import { showFormErrors } from "../shared/table-helpers";
-
-const { Configuration, OpenAIApi } = require("openai");
+import { GptPromptService } from "../shared/gpt-prompt.service";
 
 @Component({
   selector: "planet-gpt",
@@ -15,13 +13,14 @@ const { Configuration, OpenAIApi } = require("openai");
 export class GptComponent implements OnInit {
   // spinnerOn=true;
   promptForm: FormGroup;
-  questions: any[] = [];
+  messages: any[] = [];
   conversations: any[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private gptPromptService: GptPromptService
   ) {}
 
   ngOnInit() {
@@ -50,26 +49,16 @@ export class GptComponent implements OnInit {
   }
 
   async submitPrompt() {
-    try {
-      const configuration = new Configuration({
-        apiKey: environment.openAIKey,
-      });
-      const openai = new OpenAIApi(configuration);
+    const content = this.promptForm.get("prompt").value;
+    console.log(content)
+    console.log(typeof content)
+    this.messages.push({ role: "user", content });
 
-      const content = this.promptForm.get("prompt").value;
-      this.questions.push({ role: "user", content });
+    const completion = await this.gptPromptService.prompt(this.messages);
 
-      const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: this.questions,
-      });
-
-      this.conversations.push({
-        query: content,
-        response: completion.data.choices[0].message.content,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    this.conversations.push({
+      query: content,
+      response: completion
+    });
   }
 }
