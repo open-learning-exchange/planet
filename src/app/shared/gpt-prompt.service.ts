@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { Configuration, OpenAIApi } from "openai";
+import { Observable, from, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 
 // interface Message {
 //   role: string;
@@ -11,7 +13,7 @@ import { Configuration, OpenAIApi } from "openai";
   providedIn: "root",
 })
 export class GptPromptService {
-  openai: OpenAIApi;
+  private openai: OpenAIApi;
 
   constructor() {
     const configuration = new Configuration({
@@ -20,16 +22,18 @@ export class GptPromptService {
     this.openai = new OpenAIApi(configuration);
   }
 
-  async prompt(messages): Promise<string> {
-    try {
-      const completion = await this.openai.createChatCompletion({
+  prompt(messages): Observable<string> {
+    return from(
+      this.openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages,
-      });
-      return completion.data.choices[0].message.content;
-    } catch(err) {
-      console.error(err);
-    }
+      })
+    ).pipe(
+      map((completion) => completion.data.choices[0].message.content),
+      catchError((error) => {
+        console.log(error);
+        return throwError(error);
+      })
+    );
   }
-
 }

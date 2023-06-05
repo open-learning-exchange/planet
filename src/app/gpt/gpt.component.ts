@@ -16,7 +16,7 @@ export class GptComponent implements OnInit {
   messages: any[] = [];
   conversations: any[] = [];
 
-  @ViewChild('chat') chatContainer: ElementRef;
+  @ViewChild("chat") chatContainer: ElementRef;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -30,7 +30,10 @@ export class GptComponent implements OnInit {
   }
 
   scrollToBottom(): void {
-    this.chatContainer.nativeElement.scrollTo({ top: this.chatContainer.nativeElement.scrollHeight, behavior: 'smooth' });
+    this.chatContainer.nativeElement.scrollTo({
+      top: this.chatContainer.nativeElement.scrollHeight,
+      behavior: "smooth",
+    });
   }
 
   createForm() {
@@ -43,29 +46,32 @@ export class GptComponent implements OnInit {
     this.router.navigate(["/"], { relativeTo: this.route });
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (!this.promptForm.valid) {
       showFormErrors(this.promptForm.controls);
       return;
     }
 
     // this.spinnerOn=true;
-    await this.submitPrompt();
+    this.submitPrompt();
     // this.spinnerOn=false;
   }
 
-  async submitPrompt() {
+  submitPrompt() {
     const content = this.promptForm.get("prompt").value;
-    console.log(content)
-    console.log(typeof content)
     this.messages.push({ role: "user", content });
 
-    const completion = await this.gptPromptService.prompt(this.messages);
-
-    this.conversations.push({
-      query: content,
-      response: completion
-    });
-    this.scrollToBottom();
+    this.gptPromptService.prompt(this.messages).subscribe(
+      (completion: string) => {
+        this.conversations.push({
+          query: content,
+          response: completion,
+        });
+        this.scrollToBottom();
+      },
+      (error: any) => {
+        console.log(error);
+      }
+    );
   }
 }
