@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
-import { environment } from "../../environments/environment";
-import { Configuration, OpenAIApi } from "openai";
-import { Observable, from, throwError } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { Configuration, OpenAIApi } from 'openai';
+import { Observable, from, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 // interface Message {
 //   role: string;
@@ -10,7 +10,7 @@ import { catchError, map } from "rxjs/operators";
 // }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class GptPromptService {
   private openai: OpenAIApi;
@@ -25,7 +25,7 @@ export class GptPromptService {
   prompt(messages): Observable<string> {
     return from(
       this.openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: 'gpt-3.5-turbo',
         messages,
       })
     ).pipe(
