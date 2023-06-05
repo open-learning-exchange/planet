@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CustomValidators } from "../validators/custom-validators";
@@ -22,7 +22,8 @@ export class GptComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private gptPromptService: GptPromptService
+    private gptPromptService: GptPromptService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -67,6 +68,7 @@ export class GptComponent implements OnInit {
           query: content,
           response: completion,
         });
+        this.changeDetectorRef.detectChanges();
         this.scrollToBottom();
       },
       (error: any) => {
