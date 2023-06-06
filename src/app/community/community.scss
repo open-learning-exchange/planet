@@ -7,11 +7,11 @@
   }
 
   display: grid;
-  grid-template-columns: 4fr 3fr;
+  grid-template-columns: 4fr 1fr;
   grid-template-rows: 64px calc(100% - 64px - 0.5rem);
   grid-template-areas:
-    "links calendar"
-    "news calendar";
+    "links events"
+    "news events";
   gap: 0.5rem;
 
   @media only screen and (max-width: 800px) {
@@ -45,8 +45,8 @@
 
 }
 
-planet-calendar {
-  grid-area: calendar;
+.events-list {
+  grid-area: events;
   overflow-y: auto;
 }
 
