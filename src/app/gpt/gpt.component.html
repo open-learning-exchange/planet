@@ -9,7 +9,7 @@
     <div class="chat-container" #chat>
       <div *ngFor="let conversation of conversations">
         <p class="conversation-query">{{conversation.query}}</p>
-        <p class="conversation-response">{{conversation.response}}</p>
+        <p [ngClass]="{'conversation-error': conversation.error}" class="conversation-err">{{conversation.response}}</p>
       </div>
     </div>
 

@@ -73,6 +73,11 @@ export class GptComponent implements OnInit {
       },
       (error: any) => {
         console.log(error);
+        this.conversations.push({
+          query: content,
+          response: 'Error: ' + error.message,
+          error: true,
+        });
       }
     );
   }
