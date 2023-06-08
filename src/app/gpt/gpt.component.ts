@@ -11,7 +11,7 @@ import { GptPromptService } from '../shared/gpt-prompt.service';
   styleUrls: [ './gpt.component.scss' ],
 })
 export class GptComponent implements OnInit {
-  spinnerOn=true;
+  spinnerOn = true;
   promptForm: FormGroup;
   messages: any[] = [];
   conversations: any[] = [];
@@ -66,10 +66,10 @@ export class GptComponent implements OnInit {
           query: content,
           response: completion,
         });
-        this.spinnerOn=false;
+        this.spinnerOn = false;
         this.changeDetectorRef.detectChanges();
         this.scrollToBottom();
-        this.spinnerOn=true;
+        this.spinnerOn = true;
       },
       (error: any) => {
         console.log(error);
