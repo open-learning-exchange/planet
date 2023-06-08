@@ -19,9 +19,8 @@
           <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Prompt" [formControl]="promptForm.controls.prompt"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <button type="submit" mat-raised-button  color="primary" i18n>Chat</button>
+        <button type="submit" mat-raised-button [planetSubmit]="spinnerOn" color="primary" i18n>Chat</button>
       </form>
-      <!-- [planetSubmit]="spinnerOn" -->
     </div>
 
 
