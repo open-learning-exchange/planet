@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostListener, OnInit } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostListener } from '@angular/core';
 import { elementAt, tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -6,6 +6,7 @@ import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { CheckMobileService } from '../shared/checkMobile.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -13,7 +14,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
   templateUrl: './dashboard-tile.component.html',
   styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileComponent implements OnInit {
+export class DashboardTileComponent {
   @Input() cardTitle: string;
   @Input() cardType: string;
   @Input() color: string;
@@ -25,14 +26,14 @@ export class DashboardTileComponent implements OnInit {
   // @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   // tileLines = 2;
-  screenWidth: number;
-  showAccordion: boolean;
+  isMobile: boolean = this.checkMobileService.checkIsMobile();
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
+    private checkMobileService: CheckMobileService
     // private cd: ChangeDetectorRef
   ) { }
 
@@ -49,11 +50,6 @@ export class DashboardTileComponent implements OnInit {
   //     this.cd.detectChanges();
   //   }
   // }
-
-  ngOnInit(): void {
-    this.screenWidth = window.innerWidth;
-    this.setAccordion();
-  }
 
   removeFromShelf({ event, item }) {
     event.stopPropagation();
@@ -102,13 +98,9 @@ export class DashboardTileComponent implements OnInit {
     );
   }
 
-  setAccordion() {
-    this.screenWidth <= 600 ? this.showAccordion = true : this.showAccordion = false;
-  }
-
   @HostListener('window:resize') onResize() {
-    this.screenWidth = window.innerWidth;
-    this.setAccordion();
+    this.isMobile = this.checkMobileService.checkIsMobile();
+    console.log(this.isMobile);
   }
 }
 
@@ -159,7 +151,7 @@ export class DashboardTileRowLayoutComponent {
 })
 export class DashboardTileAccordionLayoutComponent {
 
-  @Input() showAccordion;
+  @Input() isMobile;
   @Input() cardTitle;
   @Input() cardType;
   @Input() link;
