@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,11 @@ export class CheckMobileService {
 
   checkIsMobile(): boolean {
     this.setScreenWidth();
-    return this.getScreenWidth() <= 780 ? true : false;
+    return this.getScreenWidth() <= environment.mobileBreakpoint ? true : false;
+  }
+
+  checkIsTablet(): boolean {
+    this.setScreenWidth();
+    return this.getScreenWidth() <= environment.tabletBreakpoint ? true : false;
   }
 }
