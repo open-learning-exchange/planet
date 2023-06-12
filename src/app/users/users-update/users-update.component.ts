@@ -19,15 +19,7 @@ import { educationLevel } from '../user-constants';
 
 @Component({
   templateUrl: './users-update.component.html',
-  styles: [ `
-    .view-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .view-container form {
-      margin: 0 10px 10px 0;
-    }
-  ` ]
+  styleUrls: [ './users-update.scss' ]
 })
 export class UsersUpdateComponent implements OnInit {
   user: any = {};
