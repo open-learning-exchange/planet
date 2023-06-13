@@ -14,7 +14,5 @@ export const environment = {
   uPlanetCode: 'guatemala',
   uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
-  syncAddress: window.location.protocol + '//localhost:5984',
-  mobileBreakpoint: 780,
-  tabletBreakpoint: 1024,
+  syncAddress: window.location.protocol + '//localhost:5984'
 };
