@@ -40,7 +40,7 @@ export async function chatWithGpt(user_input: string): Promise<string | undefine
     if (error.response) {
       console.log(error.response.status);
       console.log(error.response.data);
-      throw new Error(`OpenAI Error ${error.response.status} - ${error.response.data?.error?.code}`);
+      throw new Error(`OpenAI Error: ${error.response.status} - ${error.response.data?.error?.code}`);
     } else {
       console.log(error.message);
       throw new Error(error.message);
