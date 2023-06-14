@@ -1,0 +1,31 @@
+{
+  "name": "gpt-proxy",
+  "version": "1.0.0",
+  "description": "A proxy service to make API calls to GPT and other LLMS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open-learning-exchange/planet.git"
+  },
+  "keywords": [
+    "GPT",
+    "LLM",
+    "API",
+    "Proxy"
+  ],
+  "author": "Open Learning Exchange",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/open-learning-exchange/planet/issues"
+  },
+  "homepage": "https://github.com/open-learning-exchange/planet#readme",
+  "dependencies": {
+    "openai": "^3.3.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.1.4"
+  }
+}
