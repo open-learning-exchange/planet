@@ -15,7 +15,11 @@ app.post('/chat', async (req: Request, res: Response, next: NextFunction) => {
 
     if (userInput && typeof userInput === 'string') {
       const response = await chatWithGpt(userInput);
-      res.status(200).json({response});
+      res.status(200).json({
+        message: 'Success',
+        chat: response?.completionText,
+        history: response?.history
+      });
     } else {
       res.status(400).json({ error: 'Bad Request', message: 'The "content" field must be a non-empty string.' });
     }
