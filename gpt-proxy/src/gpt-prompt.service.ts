@@ -8,18 +8,23 @@ interface Message {
   content: string;
 }
 
+interface HistoryItem {
+  query: string;
+  response: string;
+}
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-const history: Array<[string, string]> = [];
+const history: HistoryItem[] = [];
 
-export async function chatWithGpt(user_input: string): Promise<{ completionText: string, history: Array<[string, string]> } | undefined> {
+export async function chatWithGpt(user_input: string): Promise<{ completionText: string, history: HistoryItem[] } | undefined> {
   const messages: Message[] = [];
-  for (const [input_text, completion_text] of history) {
-    messages.push({ role: "user", content: input_text });
-    messages.push({ role: "assistant", content: completion_text });
+  for (const {query, response} of history) {
+    messages.push({ role: "user", content: query });
+    messages.push({ role: "assistant", content: response });
   }
 
   messages.push({ role: "user", content: user_input });
@@ -36,7 +41,7 @@ export async function chatWithGpt(user_input: string): Promise<{ completionText:
 
     const completion_text = completion.data.choices[0]?.message?.content;
 
-    history.push([user_input, completion_text]);
+    history.push({ query: user_input, response: completion_text });
 
     return {
       completionText: completion_text,
