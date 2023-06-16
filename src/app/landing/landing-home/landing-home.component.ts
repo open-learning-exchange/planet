@@ -1,5 +1,5 @@
 import { Component, HostListener, ViewEncapsulation, OnInit, OnChanges } from '@angular/core';
-import { CheckMobileService } from '../../shared/checkMobile.service';
+import { DeviceInfoService } from '../../shared/device-info.service';
 import { LandingEventsService } from './landing-event/landing-events.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { LandingEventsService } from './landing-event/landing-events.service';
 })
 export class LandingHomeComponent implements OnInit {
 
-  isMobile: boolean = this.checkMobileService.checkIsMobile();
+  isMobile: boolean = this.deviceInfoService.getDeviceSize().isMobile;
   events: any = [];
   header = {
     left: 'prev,next today',
@@ -26,7 +26,7 @@ export class LandingHomeComponent implements OnInit {
   resizeCalendar: any = false;
 
   constructor(
-    private checkMobileService: CheckMobileService,
+    private deviceInfoService: DeviceInfoService,
     private landingEventsService: LandingEventsService
   ) { }
 
@@ -51,7 +51,7 @@ export class LandingHomeComponent implements OnInit {
   }
 
   @HostListener('window:resize') OnResize() {
-    this.isMobile = this.checkMobileService.checkIsMobile();
+    this.isMobile = this.deviceInfoService.getDeviceSize().isMobile;
   }
 
   tabChanged({ index }) {

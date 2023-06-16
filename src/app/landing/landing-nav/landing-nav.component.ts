@@ -1,7 +1,7 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { CheckMobileService } from '../../shared/checkMobile.service';
+import { DeviceInfoService } from '../../shared/device-info.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -28,14 +28,14 @@ export class LandingNavbarComponent {
 
   menuState = 'out';
   isExpanded = false;
-  isMobile: boolean = this.checkMobileService.checkIsMobile();
+  isMobile: boolean = this.deviceInfoService.getDeviceSize().isMobile;
 
   constructor(
-    private checkMobileService: CheckMobileService
+    private deviceInfoService: DeviceInfoService
   ) {}
 
   @HostListener('window:resize') OnResize() {
-    this.isMobile = this.checkMobileService.checkIsMobile();
+    this.isMobile = this.deviceInfoService.getDeviceSize().isMobile;
   }
 
   toggleNav() {
