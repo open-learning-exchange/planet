@@ -1,27 +1,23 @@
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from 'dotenv';
 
+import { ChatItem, ChatMessage } from "../shared/chat.model";
+import { NanoCouchService } from "./nano-couchdb.service";
+
 dotenv.config();
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
-interface HistoryItem {
-  query: string;
-  response: string;
-}
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-const history: HistoryItem[] = [];
+const history: ChatItem[] = [];
 
-export async function chatWithGpt(user_input: string): Promise<{ completionText: string, history: HistoryItem[] } | undefined> {
-  const messages: Message[] = [];
+const couch = new NanoCouchService('admin', history);
+
+export async function chatWithGpt(user_input: string): Promise<{ completionText: string, history: ChatItem[], couchSaveResponse: any } | undefined> {
+  const messages: ChatMessage[] = [];
+
   for (const {query, response} of history) {
     messages.push({ role: "user", content: query });
     messages.push({ role: "assistant", content: response });
@@ -43,9 +39,12 @@ export async function chatWithGpt(user_input: string): Promise<{ completionText:
 
     history.push({ query: user_input, response: completion_text });
 
+    const couchSaveResponse = await couch.save();
+
     return {
       completionText: completion_text,
-      history
+      history,
+      couchSaveResponse
     };
   } catch (error: any) {
     if (error.response) {

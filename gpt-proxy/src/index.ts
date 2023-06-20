@@ -18,7 +18,8 @@ app.post('/chat', async (req: Request, res: Response, next: NextFunction) => {
       res.status(200).json({
         message: 'Success',
         chat: response?.completionText,
-        history: response?.history
+        history: response?.history,
+        couchDBResponse: response?.couchSaveResponse
       });
     } else {
       res.status(400).json({ error: 'Bad Request', message: 'The "content" field must be a non-empty string.' });
