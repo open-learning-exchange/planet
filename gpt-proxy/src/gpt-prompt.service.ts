@@ -1,8 +1,9 @@
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi } from 'openai';
 import dotenv from 'dotenv';
+import { DocumentInsertResponse } from 'nano';
 
-import { ChatItem, ChatMessage } from "../shared/chat.model";
-import { NanoCouchService } from "./nano-couchdb.service";
+import { ChatItem, ChatMessage } from '../shared/chat.model';
+import { NanoCouchService } from './nano-couchdb.service';
 
 dotenv.config();
 
@@ -15,44 +16,45 @@ const history: ChatItem[] = [];
 
 const couch = new NanoCouchService('admin', history);
 
-export async function chatWithGpt(user_input: string): Promise<{ completionText: string, history: ChatItem[], couchSaveResponse: any } | undefined> {
+export async function chatWithGpt(user_input: string): Promise<{
+  completionText: string,
+  history: ChatItem[],
+  couchSaveResponse: DocumentInsertResponse
+} | undefined> {
   const messages: ChatMessage[] = [];
 
   for (const {query, response} of history) {
-    messages.push({ role: "user", content: query });
-    messages.push({ role: "assistant", content: response });
+    messages.push({ role: 'user', content: query });
+    messages.push({ role: 'assistant', content: response });
   }
 
-  messages.push({ role: "user", content: user_input });
+  messages.push({ role: 'user', content: user_input });
 
   try {
     const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+      model: 'gpt-3.5-turbo',
       messages,
     });
 
     if (!completion.data.choices[0]?.message?.content) {
-      throw new Error("Unexpected API response");
+      throw new Error('Unexpected API response');
     }
 
-    const completion_text = completion.data.choices[0]?.message?.content;
+    const completionText = completion.data.choices[0]?.message?.content;
 
-    history.push({ query: user_input, response: completion_text });
+    history.push({ query: user_input, response: completionText });
 
     const couchSaveResponse = await couch.save();
 
     return {
-      completionText: completion_text,
+      completionText,
       history,
       couchSaveResponse
     };
-  } catch (error: any) {
+  } catch (error) {
     if (error.response) {
-      console.log(error.response.status);
-      console.log(error.response.data);
       throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
     } else {
-      console.log(error.message);
       throw new Error(error.message);
     }
   }

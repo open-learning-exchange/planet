@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { chatWithGpt } from "./gpt-prompt.service";
+import { chatWithGpt } from './gpt-prompt.service';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -29,11 +29,10 @@ app.post('/chat', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err);
+app.use((err: Error, req: Request, res: Response) => {
   res.status(500).json({ error: 'Internal Server Error', message: err.message });
 });
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console
