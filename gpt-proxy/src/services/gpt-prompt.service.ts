@@ -1,14 +1,14 @@
-import {Configuration, OpenAIApi} from 'openai';
+import { Configuration, OpenAIApi } from 'openai';
 import dotenv from 'dotenv';
-import {DocumentInsertResponse} from 'nano';
+import { DocumentInsertResponse } from 'nano';
 
-import {ChatItem, ChatMessage} from '../models/chat.model';
-import {NanoCouchService} from '../utils/nano-couchdb.service';
+import { ChatItem, ChatMessage } from '../models/chat.model';
+import { NanoCouchService } from '../utils/nano-couchdb.service';
 
 dotenv.config();
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  'apiKey': process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -23,16 +23,16 @@ export async function chatWithGpt(userInput: string): Promise<{
 } | undefined> {
   const messages: ChatMessage[] = [];
 
-  for (const {query, response} of history) {
-    messages.push({role: 'user', content: query});
-    messages.push({role: 'assistant', content: response});
+  for (const { query, response } of history) {
+    messages.push({ 'role': 'user', 'content': query });
+    messages.push({ 'role': 'assistant', 'content': response });
   }
 
-  messages.push({role: 'user', content: userInput});
+  messages.push({ 'role': 'user', 'content': userInput });
 
   try {
     const completion = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      'model': 'gpt-3.5-turbo',
       messages,
     });
 
@@ -42,7 +42,7 @@ export async function chatWithGpt(userInput: string): Promise<{
 
     const completionText = completion.data.choices[0]?.message?.content;
 
-    history.push({query: userInput, response: completionText});
+    history.push({ 'query': userInput, 'response': completionText });
 
     const couchSaveResponse = await couch.save();
 
