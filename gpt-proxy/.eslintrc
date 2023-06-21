@@ -6,16 +6,17 @@
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
+    // "arrow-return-shorthand": "error",
     "curly": "error",
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "max-len": ["error", { "code": 140 }],
     "no-console": ["error", { "allow": ["debug", "info", "time", "timeEnd", "trace"] }],
     "no-debugger": "error",
     "no-empty": "off",
+    // "no-inferrable-types": ["error", { "ignoreParameters": true }],
     "no-unused-expressions": "error",
     "prefer-const": "error",
     "quotes": ["error", "single"],
@@ -30,6 +31,14 @@
         "leadingUnderscore": "allow"
       }
     ],
-    "no-multi-spaces": "error"
+    "no-multi-spaces": "error",
+    "array-bracket-spacing": "error",
+    "member-access": "off",
+    "no-bitwise": "error",
+    "no-eval": "error",
+    "no-string-literal": "off",
+    "object-curly-spacing": "error",
+    "object-literal-sort-keys": "off",
+    "radix": "error"
   }
 }

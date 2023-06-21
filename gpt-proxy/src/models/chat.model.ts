@@ -1,4 +1,4 @@
-import { MaybeDocument } from 'nano';
+import {MaybeDocument} from 'nano';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
