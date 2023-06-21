@@ -1,10 +1,10 @@
 import nano, {DocumentInsertResponse} from 'nano';
-import {ChatItem, iChat} from '../models/chat.model';
+import {ChatItem, ChatDocumentModel} from '../models/chat.model';
 
 const nanoDB = nano('http://localhost:2200/');
 const db = nanoDB.use('chat_history');
 
-export class NanoCouchService implements iChat {
+export class NanoCouchService implements ChatDocumentModel {
   _id?: string;
   _rev?: string;
   user: string;

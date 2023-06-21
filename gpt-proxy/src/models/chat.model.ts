@@ -10,7 +10,6 @@ export interface ChatItem {
   response: string;
 }
 
-export interface iChat extends MaybeDocument {
-  user: string
-  conversations: ChatItem[]
+export interface ChatDocumentModel extends MaybeDocument {
+  conversations: ChatItem[];
 }

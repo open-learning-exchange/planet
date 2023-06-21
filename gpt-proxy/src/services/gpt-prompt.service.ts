@@ -16,10 +16,10 @@ const history: ChatItem[] = [];
 
 const couch = new NanoCouchService('admin', history);
 
-export async function chatWithGpt(user_input: string): Promise<{
-  completionText: string,
-  history: ChatItem[],
-  couchSaveResponse: DocumentInsertResponse
+export async function chatWithGpt(userInput: string): Promise<{
+  completionText: string;
+  history: ChatItem[];
+  couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
   const messages: ChatMessage[] = [];
 
@@ -28,7 +28,7 @@ export async function chatWithGpt(user_input: string): Promise<{
     messages.push({role: 'assistant', content: response});
   }
 
-  messages.push({role: 'user', content: user_input});
+  messages.push({role: 'user', content: userInput});
 
   try {
     const completion = await openai.createChatCompletion({
@@ -42,7 +42,7 @@ export async function chatWithGpt(user_input: string): Promise<{
 
     const completionText = completion.data.choices[0]?.message?.content;
 
-    history.push({query: user_input, response: completionText});
+    history.push({query: userInput, response: completionText});
 
     const couchSaveResponse = await couch.save();
 
