@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 
-// Set the same as the screen sizes in _variables.scss
-const mobileBreakpoint = 780;
-const tabletBreakpoint = 1000;
-
-interface DeviceSize {
-  isMobile: boolean;
-  isTablet: boolean;
+export enum DeviceType {
+  MOBILE = 'MOBILE',
+  TABLET = 'TABLET',
+  DESKTOP = 'DESKTOP'
 }
 
 @Injectable({
@@ -20,14 +17,17 @@ export class DeviceInfoService {
     window.addEventListener('resize', this.updateScreenWidth.bind(this));
   }
 
-  updateScreenWidth(): void {
+  private updateScreenWidth(): void {
     this.screenWidth = window.innerWidth;
   }
 
-  getDeviceSize(): DeviceSize {
-    const isMobile = this.screenWidth <= mobileBreakpoint;
-    const isTablet = this.screenWidth >= mobileBreakpoint && this.screenWidth <= tabletBreakpoint;
-
-    return { isMobile, isTablet };
+  public getDeviceType(): DeviceType {
+    if (this.screenWidth <= 780) {
+      return DeviceType.MOBILE;
+    } else if (this.screenWidth <= 1000) {
+      return DeviceType.TABLET;
+    } else {
+      return DeviceType.DESKTOP;
+    }
   }
 }

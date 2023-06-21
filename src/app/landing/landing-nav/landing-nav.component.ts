@@ -1,7 +1,7 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { DeviceInfoService } from '../../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -28,14 +28,15 @@ export class LandingNavbarComponent {
 
   menuState = 'out';
   isExpanded = false;
-  isMobile: boolean = this.deviceInfoService.getDeviceSize().isMobile;
+  deviceType: DeviceType = this.deviceInfoService.getDeviceType();
+  deviceTypes = DeviceType;
 
   constructor(
     private deviceInfoService: DeviceInfoService
   ) {}
 
   @HostListener('window:resize') OnResize() {
-    this.isMobile = this.deviceInfoService.getDeviceSize().isMobile;
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   toggleNav() {

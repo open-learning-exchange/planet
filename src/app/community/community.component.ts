@@ -18,7 +18,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { DeviceInfoService } from '../shared/device-info.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-community',
@@ -46,7 +46,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
   resizeCalendar: any = false;
-  isMobile: boolean = this.deviceInfoService.getDeviceSize().isMobile;
+  deviceType: DeviceType = this.deviceInfoService.getDeviceType();
+  deviceTypes = DeviceType;
 
   constructor(
     private dialog: MatDialog,
@@ -83,7 +84,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isMobile = this.deviceInfoService.getDeviceSize().isMobile;
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    console.log(this.deviceType);
   }
 
   ngOnDestroy() {

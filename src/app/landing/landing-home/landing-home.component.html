@@ -1,4 +1,4 @@
-<div class="noticias-destacadas-jojo" *ngIf="!isMobile">
+<div class="noticias-destacadas-jojo" *ngIf="deviceType != deviceTypes.MOBILE">
   <div class="containerL">
     <div class="title">
       <div class="tab">
@@ -52,7 +52,7 @@
     </div>
   </div>
 </div>
-<div style="width: 100%" *ngIf="isMobile">
+<div style="width: 100%" *ngIf="deviceType === deviceTypes.MOBILE">
   <div class="tabs-container">
     <!-- tabs-padding -->
     <mat-tab-group class="tabs-group" [color]="secondary" (selectedTabChange)="tabChanged($event)">
