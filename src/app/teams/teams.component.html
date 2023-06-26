@@ -102,13 +102,6 @@
                 <ng-template #mobileView>
                   <mat-icon>add_circle</mat-icon>
                 </ng-template>
-
-                <!-- <ng-container *ngIf="!isMobile; else mobileView">
-                  <span>Request to Join</span>
-                </ng-container>
-                <ng-template #mobileView>
-                  <span>Request</span><br><span>to Join</span>
-                </ng-template> -->
               </button>
               <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled i18n>
                 <ng-container *ngIf="!isMobile; else mobileView">
@@ -117,13 +110,6 @@
                 <ng-template #mobileView>
                   <mat-icon>hourglass_empty</mat-icon>
                 </ng-template>
-
-                <!-- <ng-container *ngIf="!isMobile; else mobileView">
-                  <span>Request pending</span>
-                </ng-container>
-                <ng-template #mobileView>
-                  <span>Request</span><br><span>pending</span>
-                </ng-template> -->
               </button>
             </ng-container>
             <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id}" (click)="$event.stopPropagation()" i18n>
