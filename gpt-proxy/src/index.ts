@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import { chatWithGpt } from './services/gpt-prompt.service';
 import dotenv from 'dotenv';
 
@@ -9,7 +9,7 @@ const app = express();
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.post('/', async (req: Request, res: Response, next: NextFunction) => {
+app.post('/', async (req: any, res: any, next: any) => {
   try {
     const userInput = req.body.content;
 
@@ -29,7 +29,7 @@ app.post('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.use((err: Error, req: Request, res: Response) => {
+app.use((err: Error, req: any, res: any) => {
   res.status(500).json({ 'error': 'Internal Server Error', 'message': err.message });
 });
 

@@ -1,9 +1,11 @@
-import { Configuration, OpenAIApi } from 'openai';
 import dotenv from 'dotenv';
+import { Configuration, OpenAIApi } from 'openai';
 import { DocumentInsertResponse } from 'nano';
 
-import { ChatItem, ChatMessage } from '../models/chat.model';
-import { NanoCouchService } from '../utils/nano-couchdb.service';
+import { ChatItem } from '../models/chat-item.model';
+import { ChatMessage } from '../models/chat-message.model';
+import { DbInitService } from '../services/db-init.service';
+import { NanoCouchService } from '../utils/nano-couchdb';
 
 dotenv.config();
 
@@ -12,9 +14,14 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const history: ChatItem[] = [];
+const dbInit = new DbInitService(
+  process.env.COUCHDB_URL || 'http://localhost:2200/',
+  process.env.COUCHDB_NAME || 'chat_history',
+);
+const db = new NanoCouchService(dbInit.db);
 
-const couch = new NanoCouchService('admin', history);
+// history = db.get the history | [] if empty;
+const history: ChatItem[] = [];
 
 export async function chatWithGpt(userInput: string): Promise<{
   completionText: string;
@@ -29,6 +36,7 @@ export async function chatWithGpt(userInput: string): Promise<{
   }
 
   messages.push({ 'role': 'user', 'content': userInput });
+  // Should insert query to db here
 
   try {
     const completion = await openai.createChatCompletion({
@@ -41,17 +49,18 @@ export async function chatWithGpt(userInput: string): Promise<{
     }
 
     const completionText = completion.data.choices[0]?.message?.content;
-
     history.push({ 'query': userInput, 'response': completionText });
 
-    const couchSaveResponse = await couch.save();
+    db.conversations = history;
+    const couchSaveResponse = await db.insert();
+    // Should update the db with query response here
 
     return {
       completionText,
       history,
       couchSaveResponse
     };
-  } catch (error) {
+  } catch (error: any) {
     if (error.response) {
       throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
     } else {
