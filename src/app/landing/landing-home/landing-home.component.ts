@@ -10,7 +10,7 @@ import { LandingEventsService } from './landing-event/landing-events.service';
 })
 export class LandingHomeComponent implements OnInit {
 
-  deviceType: DeviceType = this.deviceInfoService.getDeviceType();
+  deviceType: DeviceType;
   deviceTypes = DeviceType;
   events: any = [];
   header = {
@@ -29,7 +29,9 @@ export class LandingHomeComponent implements OnInit {
   constructor(
     private deviceInfoService: DeviceInfoService,
     private landingEventsService: LandingEventsService
-  ) { }
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit(): void {
     this.landingEventsService.getEvents().subscribe((data) => {

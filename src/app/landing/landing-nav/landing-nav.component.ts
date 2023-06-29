@@ -28,12 +28,14 @@ export class LandingNavbarComponent {
 
   menuState = 'out';
   isExpanded = false;
-  deviceType: DeviceType = this.deviceInfoService.getDeviceType();
+  deviceType: DeviceType;
   deviceTypes = DeviceType;
 
   constructor(
     private deviceInfoService: DeviceInfoService
-  ) {}
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();

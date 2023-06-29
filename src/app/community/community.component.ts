@@ -46,7 +46,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
   resizeCalendar: any = false;
-  deviceType: DeviceType = this.deviceInfoService.getDeviceType();
+  deviceType: DeviceType;
   deviceTypes = DeviceType;
 
   constructor(
@@ -62,7 +62,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private usersService: UsersService,
     private deviceInfoService: DeviceInfoService
-  ) {}
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
@@ -85,7 +87,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    console.log(this.deviceType);
   }
 
   ngOnDestroy() {
