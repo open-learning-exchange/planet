@@ -14,5 +14,6 @@ export const environment = {
   uPlanetCode: 'guatemala',
   uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
-  syncAddress: window.location.protocol + '//localhost:5984'
+  syncAddress: window.location.protocol + '//localhost:5984',
+  uPlanetVideo: 'https://res.cloudinary.com/dezt8mocb/video/upload/v1688415252/Landing/video/landing_o5zpgv.mp4'
 };
