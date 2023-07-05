@@ -1,5 +1,5 @@
 <div class="app-bar-container">
-  <mat-toolbar class="toolbar-container" *ngIf="!isMobile">
+  <mat-toolbar class="toolbar-container" *ngIf="deviceType != deviceTypes.MOBILE">
     <div class="menu-container">
       <!-- Handle Mobile view -->
       <!-- Handle Navbar sizes -->
@@ -29,7 +29,7 @@
       </div>
     </div>
   </mat-toolbar>
-  <mat-toolbar *ngIf="isMobile" style="color: #ffffff;">
+  <mat-toolbar *ngIf="deviceType === deviceTypes.MOBILE" style="color: #ffffff;">
     <button mat-icon-button class="hamburger-button"
       (click)="toggleNav()" i18n-title title="Menu">
       <mat-icon>menu</mat-icon>
