@@ -30,7 +30,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
-import { CheckMobileService } from '../shared/checkMobile.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-courses',
@@ -119,7 +119,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
-  isMobileView: boolean = this.checkMobileService.checkIsMobile();
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -138,7 +139,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
     private searchService: SearchService,
-    private checkMobileService: CheckMobileService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -146,10 +147,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.setupList(this.courses.data, shelf.courseIds);
       });
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   @HostListener('window:resize') OnResize() {
-    this.isMobileView = this.checkMobileService.checkIsMobile();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {

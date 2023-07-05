@@ -1,5 +1,5 @@
 <mat-toolbar *ngIf="!isForm">
-  <ng-container *ngIf="!isMobileView; else mobileView">
+  <ng-container *ngIf="deviceType !== deviceTypes.MOBILE && deviceType !== deviceTypes.TABLET; else mobileOrTabletView">
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
@@ -13,7 +13,7 @@
     </mat-toolbar-row>
   </ng-container>
 
-  <ng-template #mobileView>
+  <ng-template #mobileOrTabletView>
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
@@ -21,13 +21,22 @@
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
     </mat-toolbar-row>
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
-      <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
-    </mat-toolbar-row>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
+        <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
+      </mat-toolbar-row>
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
+      </mat-toolbar-row>
+    </ng-container>
+    <ng-container *ngIf="deviceType === deviceTypes.TABLET">
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
+        <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
+        <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
+      </mat-toolbar-row>
+    </ng-container>
   </ng-template>
 </mat-toolbar>
 

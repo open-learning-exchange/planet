@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <ng-container *ngIf="!isMobileView; else mobileView">
+  <ng-container *ngIf="deviceType !== deviceTypes.MOBILE; else mobileView">
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
       <span class="toolbar-fill margin-lr-10"></span>

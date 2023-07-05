@@ -28,7 +28,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
-import { CheckMobileService } from '../shared/checkMobile.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-resources',
@@ -88,7 +88,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   trackById = trackById;
   initialSort = '';
-  isMobileView: boolean = this.checkMobileService.checkIsMobile();
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -106,13 +107,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private searchService: SearchService,
-    private checkMobileService: CheckMobileService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   @HostListener('window:resize') OnResize() {
-    this.isMobileView = this.checkMobileService.checkIsMobile();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
