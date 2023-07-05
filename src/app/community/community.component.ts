@@ -18,6 +18,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-community',
@@ -44,7 +45,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  isCalendarInTabs = window.innerWidth < 800;
+  resizeCalendar: any = false;
+  deviceType: DeviceType;
+  deviceTypes = DeviceType;
 
   constructor(
     private dialog: MatDialog,
@@ -57,8 +60,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private usersService: UsersService
-  ) {}
+    private usersService: UsersService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
@@ -80,7 +86,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isCalendarInTabs = window.innerWidth < 800;
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnDestroy() {
@@ -309,4 +315,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
+  tabChanged({ index }) {
+    if (index === 5) {
+      this.resizeCalendar = true;
+    } else {
+      this.resizeCalendar = false;
+    }
+  }
 }
