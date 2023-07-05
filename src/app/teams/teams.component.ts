@@ -15,7 +15,7 @@ import {
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { CheckMobileService } from '../shared/checkMobile.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
@@ -59,7 +59,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
   filter: string;
-  isMobile: boolean = this.checkMobileService.checkIsMobile();
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   constructor(
     private userService: UserService,
@@ -71,8 +72,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private checkMobileService: CheckMobileService
-  ) {}
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.getTeams();
@@ -88,7 +92,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isMobile = this.checkMobileService.checkIsMobile();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   getTeams() {
