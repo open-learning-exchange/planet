@@ -6,7 +6,7 @@ import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { CheckMobileService } from '../shared/checkMobile.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -26,16 +26,19 @@ export class DashboardTileComponent {
   // @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   // tileLines = 2;
-  isMobile: boolean = this.checkMobileService.checkIsMobile();
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private checkMobileService: CheckMobileService
+    private deviceInfoService: DeviceInfoService
     // private cd: ChangeDetectorRef
-  ) { }
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   // ngAfterViewChecked() {
   //   const divHeight = this.itemDiv.nativeElement.offsetHeight;
@@ -99,8 +102,7 @@ export class DashboardTileComponent {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isMobile = this.checkMobileService.checkIsMobile();
-    console.log(this.isMobile);
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 }
 
@@ -151,7 +153,8 @@ export class DashboardTileRowLayoutComponent {
 })
 export class DashboardTileAccordionLayoutComponent {
 
-  @Input() isMobile;
+  @Input() deviceType;
+  @Input() deviceTypes;
   @Input() cardTitle;
   @Input() cardType;
   @Input() link;
