@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
 [![Docker Stars](https://img.shields.io/docker/stars/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/open-learning-exchange/chat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 # **Planet Learning**
@@ -109,3 +108,6 @@ sudo npm install --unsafe-perm
 ```
 
 The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `screen -dmS build bash -c 'cd /vagrant; ng serve'`.
+
+---
+This project is tested with [BrowserStack](https://www.browserstack.com/).
