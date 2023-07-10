@@ -1,0 +1,108 @@
+name: Planet Chat API Builder
+
+on:
+  push:
+    branches-ignore:
+      - l10n_i18n
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  DOCKER_ORG: treehouses
+  DOCKER_REPO_TAG: planet-tags
+  DOCKER_REPO: planet
+
+jobs:
+
+  build-prepare:
+    name: Preparing
+    runs-on: ubuntu-latest
+    outputs:
+      planet_version: ${{ steps.step1.outputs.version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setting Env
+        id: step1
+        run: |
+          version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          echo "::set-output name=version::$version"
+
+  build:
+    name: Chat API build
+    needs: [ build-prepare ]
+    runs-on: ubuntu-latest
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+
+    strategy:
+      matrix:
+        arch: [ amd64, arm, arm64 ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Build image
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME"
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker build -f './docker/chat-api/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker images
+          docker tag $repo $branchrepo
+          docker push $repo
+          docker push $branchrepo
+
+  multiarch:
+    name: Manifest build
+    needs: [ build-prepare, build ]
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Multiarch Deploy
+        run: |
+          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+          sudo chmod +x /usr/local/bin/manifest_tool
+          mkdir -p /tmp/MA_manifests
+          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          yq e '.manifests[0].platform.architecture = "amd64"' - | \
+          yq e '.manifests[0].platform.os = "linux"' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          yq e '.manifests[1].platform.architecture = "arm"' - | \
+          yq e '.manifests[1].platform.os = "linux"' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          yq e '.manifests[2].platform.architecture = "arm64"' - | \
+          yq e '.manifests[2].platform.os = "linux"' - | \
+          tee /tmp/MA_manifests/MA_chat-api_latest.yaml
+          manifest_tool push from-spec /tmp/MA_manifests/MA_chat-api_latest.yaml
+
+      - name: Multiarch Deploy Versioned
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+          sudo chmod +x /usr/local/bin/manifest_tool
+          mkdir -p /tmp/MA_manifests
+          versiontag="$DOCKER_ORG/$DOCKER_REPO:chat-api-$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
+          yq e '.tags |= . + ["chat-api"] ' - | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          yq e '.manifests[0].platform.architecture = "amd64"' - | \
+          yq e '.manifests[0].platform.os = "linux"' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          yq e '.manifests[1].platform.architecture = "arm"' - | \
+          yq e '.manifests[1].platform.os = "linux"' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          yq e '.manifests[2].platform.architecture = "arm64"' - | \
+          yq e '.manifests[2].platform.os = "linux"' - | \
+          tee /tmp/MA_manifests/MA_chat-api_versioned.yaml
+          manifest_tool push from-spec /tmp/MA_manifests/MA_chat-api_versioned.yaml
