@@ -11,6 +11,13 @@ services:
       - couchdb
     environment:
       - COUCHDB_HOST=http://couchdb:5984
+  # chat-api:
+  #   image: treehouses/chat-api:local
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - COUCHDB_URL=http://couchdb:5984
+  #     - OPENAI_API_KEY=$OPENAI_API_KEY
   planet:
     image: treehouses/planet:local
     ports:

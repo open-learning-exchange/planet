@@ -1,8 +1,5 @@
 import express from 'express';
 import { chatWithGpt } from './services/gpt-prompt.service';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app = express();
 
@@ -33,6 +30,4 @@ app.use((err: Error, req: any, res: any) => {
   res.status(500).json({ 'error': 'Internal Server Error', 'message': err.message });
 });
 
-const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console
+app.listen(() => console.log('Chat Service running')); // eslint-disable-line no-console

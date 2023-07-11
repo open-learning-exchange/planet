@@ -5,18 +5,10 @@ RUN apk update ;\
 
 RUN npm install -g typescript
 
-RUN ls -l
-
-RUN pwd
-
-WORKDIR /root/gpt-proxy
-
-RUN ls -l
-
-RUN pwd
+COPY gpt-proxy/package.json ./gpt-proxy
 
 RUN npm install
 
-COPY ./docker/chat-api/docker-entrypoint.sh /root/gpt-proxy/docker-entrypoint.sh
+RUN ls -la
 
 CMD npm run dev
