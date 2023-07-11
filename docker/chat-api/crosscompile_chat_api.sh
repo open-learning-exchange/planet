@@ -19,12 +19,12 @@ export CXX="${TRIPLE}-g++-${GCC}"
 export STRIP="${TRIPLE}-strip"
 export ZMQ_BUILD_OPTIONS="--host=${TRIPLE}"
 
-echo "Building db-init for ${ARCH}"
+echo "Building chat api for ${ARCH}"
 
 if [[ "${ACT}" == "install" ]]; then
   apt-get update -qq
   apt-get install -y curl gnupg
-  curl -sL https://deb.nodesource.com/setup_10.x | bash -
+  curl -sL https://deb.nodesource.com/setup_14.x | bash -
   apt-get install -y nodejs build-essential ${PACKAGES}
   npm install "--arch=${TRIPLE}" -g add-cors-to-couchdb
 else
