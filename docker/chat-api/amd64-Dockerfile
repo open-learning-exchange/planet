@@ -3,10 +3,12 @@ FROM treehouses/node
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates
 
-WORKDIR /planet/gpt-proxy
+RUN npm install -g typescript
+
+WORKDIR /root/gpt-proxy
 
 RUN npm install
 
-COPY ./docker/chat-api/docker-entrypoint.sh /planet/gpt-proxy/docker-entrypoint.sh
+COPY ./docker/chat-api/docker-entrypoint.sh /root/gpt-proxy/docker-entrypoint.sh
 
-CMD bash ./docker-entrypoint.sh
+CMD bash ./gpt-proxy/docker-entrypoint.sh
