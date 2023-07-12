@@ -11,6 +11,12 @@ FROM treehouses/node-tags:arm
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates;
 
-WORKDIR /root
+WORKDIR /usr/share/gpt-proxy
 
-CMD bash ./docker-entrypoint.sh
+COPY ./gpt-proxy/package*.json ./
+RUN npm install
+
+COPY ./gpt-proxy/src ./src/
+COPY ./gpt-proxy/tsconfig.json ./tsconfig.json
+
+CMD ["npm", "run", "dev"]

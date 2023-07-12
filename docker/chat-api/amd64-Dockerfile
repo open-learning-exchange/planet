@@ -1,7 +1,7 @@
 FROM treehouses/node
 
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates tree
+    apk add --no-cache bash curl git jq ca-certificates
 
 WORKDIR /usr/share/gpt-proxy
 
@@ -13,9 +13,7 @@ RUN npm install
 COPY ./gpt-proxy/src ./src/
 COPY ./gpt-proxy/tsconfig.json ./tsconfig.json
 
-RUN tree
-
 # # Build the TypeScript code
-# RUN cd gpt-proxy && npm run build
+# RUN npm run build
 
 CMD ["npm", "run", "dev"]
