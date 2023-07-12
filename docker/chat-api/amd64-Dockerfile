@@ -25,9 +25,7 @@ COPY ./gpt-proxy/src ./src/
 COPY ./gpt-proxy/tsconfig.json ./tsconfig.json
 
 RUN pwd
-RUN ls -la gpt-proxy
-
-RUN ls -la /usr/share/gpt-proxy
+RUN ls -la
 
 # # Build the TypeScript code
 # RUN cd gpt-proxy && npm run build
