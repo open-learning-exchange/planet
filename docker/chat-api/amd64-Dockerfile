@@ -1,31 +1,19 @@
 FROM treehouses/node
 
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates
-
-RUN pwd
-RUN ls -la
+    apk add --no-cache bash curl git jq ca-certificates tree
 
 WORKDIR /usr/share/gpt-proxy
-
-RUN pwd
-RUN ls -la
-
-# RUN npm install -g typescript
 
 # Install dependencies
 COPY ./gpt-proxy/package*.json ./
 RUN npm install
 
-RUN pwd
-RUN ls -la
-
 # Copy the application code
 COPY ./gpt-proxy/src ./src/
 COPY ./gpt-proxy/tsconfig.json ./tsconfig.json
 
-RUN pwd
-RUN ls -la
+RUN tree
 
 # # Build the TypeScript code
 # RUN cd gpt-proxy && npm run build
