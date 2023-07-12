@@ -1,5 +1,5 @@
 FROM ubuntu:xenial as builder
-LABEL maintainer="sahil@ole.org,mappuji@ole.org"
+LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY docker/db-init/crosscompile_db-init.sh .
 RUN bash ./crosscompile_db-init.sh armv8 install

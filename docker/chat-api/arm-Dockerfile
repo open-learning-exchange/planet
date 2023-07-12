@@ -9,11 +9,7 @@ RUN bash ./crosscompile_chat_api.sh armv7 install
 FROM treehouses/node-tags:arm
 
 RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates;\
-    mkdir -p /usr/local/lib/node_modules; \
-    ln -s /usr/local/lib/node_modules/add-cors-to-couchdb/bin.js /usr/local/bin/add-cors-to-couchdb
-
-COPY --from=builder /usr/lib/node_modules /usr/local/lib/node_modules
+    apk add --no-cache bash curl git jq ca-certificates;
 
 WORKDIR /root
 

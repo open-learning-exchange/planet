@@ -3,12 +3,20 @@ FROM treehouses/node
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates
 
-RUN npm install -g typescript
+WORKDIR /root
 
-COPY gpt-proxy/package.json ./gpt-proxy
+# RUN npm install -g typescript
 
-RUN npm install
+# Install dependencies
+COPY ./gpt-proxy/package.json /root/gpt-proxy/
+COPY ./gpt-proxy/package-lock.json /root/gpt-proxy/
+RUN cd /root/gpt-proxy && npm install
 
-RUN ls -la
+# Copy the application code
+COPY ./gpt-proxy/src /root/gpt-proxy/src/
+COPY ./gpt-proxy/tsconfig.json /root/gpt-proxy/tsconfig.json
 
-CMD npm run dev
+# # Build the TypeScript code
+# RUN cd gpt-proxy && npm run build
+
+CMD ["npm", "run", "dev"]
