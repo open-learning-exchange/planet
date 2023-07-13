@@ -1,7 +1,7 @@
 {
-  "name": "gpt-proxy",
-  "version": "1.0.0",
-  "description": "A proxy service to make API calls to GPT and other LLMS",
+  "name": "chatapi",
+  "version": "0.0.7",
+  "description": "A proxy service to make API calls to GPT and other LLMs",
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
@@ -14,9 +14,10 @@
   },
   "keywords": [
     "GPT",
+    "chat",
     "LLM",
     "API",
-    "Proxy"
+    "proxy"
   ],
   "author": "Open Learning Exchange",
   "license": "AGPL-3.0",
