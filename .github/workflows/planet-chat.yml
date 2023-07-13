@@ -52,7 +52,7 @@ jobs:
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chat-api-$PLANET_VERSION-$GITHUB_REF_NAME"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build -f './docker/chat-api/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker build -f './docker/chatapi/${{ matrix.arch }}-Dockerfile' -t $repo .
           docker images
           docker tag $repo $branchrepo
           docker push $repo
