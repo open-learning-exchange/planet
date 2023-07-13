@@ -1,7 +1,6 @@
 FROM treehouses/node
 
-RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates
+RUN apk update
 
 # Install dependencies
 COPY ./chatapi/package*.json ./

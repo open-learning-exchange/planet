@@ -1,15 +1,14 @@
 FROM ubuntu:xenial as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-COPY docker/chatapi/crosscompile_chatapi.sh .
+COPY .docker/chatapi/crosscompile_chatapi.sh .
 RUN bash ./crosscompile_chatapi.sh armv7 install
 
 #####
 
 FROM treehouses/node-tags:arm
 
-RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates;
+RUN apk update
 
 COPY ./chatapi/package*.json ./
 RUN npm install

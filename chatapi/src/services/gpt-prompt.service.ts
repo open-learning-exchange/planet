@@ -14,7 +14,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const db = new NanoCouchService(
-  process.env.COUCHDB_URL || 'http://localhost:2200/',
+  process.env.COUCHDB_HOST || 'http://localhost:2200/',
   process.env.COUCHDB_NAME || 'chat_history',
 );
 
