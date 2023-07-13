@@ -4,7 +4,7 @@ import { DocumentInsertResponse } from 'nano';
 
 import { ChatItem } from '../models/chat-item.model';
 import { ChatMessage } from '../models/chat-message.model';
-import { DbInitService } from '../services/db-init.service';
+import { DbInitService } from './db-init.service';
 import { NanoCouchService } from '../utils/nano-couchdb';
 
 dotenv.config();

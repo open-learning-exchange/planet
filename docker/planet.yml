@@ -5,20 +5,24 @@ services:
     image: treehouses/couchdb:2.3.1
     ports:
       - "2200:5984"
+  chatapi:
+    image: treehouses/planet:chat-api-local
+    depends_on:
+      - couchdb
+    ports:
+      - "5000:5000"
+    environment:
+      - COUCHDB_URL=http://couchdb:5984
+      - COUCHDB_NAME=chat_history
+      - SERVE_PORT=5000
+    env_file:
+      - .chat.env
   db-init:
     image: treehouses/planet:db-init-local
     depends_on:
       - couchdb
     environment:
       - COUCHDB_HOST=http://couchdb:5984
-  chat-api:
-    image: treehouses/planet:chat-api-local
-    depends_on:
-      - couchdb
-    ports:
-      - "5000:5000"
-    env_file:
-      - .chat.env
   planet:
     image: treehouses/planet:local
     ports:
