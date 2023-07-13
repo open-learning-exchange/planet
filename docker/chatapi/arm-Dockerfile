@@ -1,8 +1,8 @@
 FROM ubuntu:xenial as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-COPY docker/chat-api/crosscompile_chat_api.sh .
-RUN bash ./crosscompile_chat_api.sh armv7 install
+COPY docker/chatapi/crosscompile_chatapi.sh .
+RUN bash ./crosscompile_chatapi.sh armv7 install
 
 #####
 
@@ -11,12 +11,10 @@ FROM treehouses/node-tags:arm
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates;
 
-WORKDIR /usr/share/gpt-proxy
-
-COPY ./gpt-proxy/package*.json ./
+COPY ./chatapi/package*.json ./
 RUN npm install
 
-COPY ./gpt-proxy/src ./src/
-COPY ./gpt-proxy/tsconfig.json ./tsconfig.json
+COPY ./chatapi/src ./src/
+COPY ./chatapi/tsconfig.json ./tsconfig.json
 
 CMD ["npm", "run", "dev"]
