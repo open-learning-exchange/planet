@@ -1,4 +1,4 @@
-import { DocumentInsertResponse } from 'nano';
+import nano, { DocumentInsertResponse } from 'nano';
 import { DatabaseActions } from '../models/database-actions.model';
 
 export class NanoCouchService implements DatabaseActions {
@@ -7,8 +7,9 @@ export class NanoCouchService implements DatabaseActions {
   [key: string]: any;
   private db: DatabaseActions;
 
-  constructor(db: DatabaseActions) {
-    this.db = db;
+  constructor(databaseUrl: string, databaseName: string) {
+    const nanoDB = nano(databaseUrl);
+    this.db = nanoDB.use(databaseName);
   }
 
   async processAPIResponse(response: DocumentInsertResponse): Promise<void> {
@@ -20,7 +21,8 @@ export class NanoCouchService implements DatabaseActions {
 
   async insert(): Promise<DocumentInsertResponse> {
     try {
-      const res = await this.db.insert(this);
+      const { db, ...document } = this; // eslint-disable-line @typescript-eslint/no-unused-vars
+      const res = await this.db.insert(document);
       this.processAPIResponse(res);
       return res;
     } catch (error) {

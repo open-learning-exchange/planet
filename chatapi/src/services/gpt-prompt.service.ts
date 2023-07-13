@@ -4,7 +4,6 @@ import { DocumentInsertResponse } from 'nano';
 
 import { ChatItem } from '../models/chat-item.model';
 import { ChatMessage } from '../models/chat-message.model';
-import { DbInitService } from './db-init.service';
 import { NanoCouchService } from '../utils/nano-couchdb';
 
 dotenv.config();
@@ -14,11 +13,10 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const dbInit = new DbInitService(
+const db = new NanoCouchService(
   process.env.COUCHDB_URL || 'http://localhost:2200/',
   process.env.COUCHDB_NAME || 'chat_history',
 );
-const db = new NanoCouchService(dbInit.db);
 
 // history = db.get the history | [] if empty;
 const history: ChatItem[] = [];
