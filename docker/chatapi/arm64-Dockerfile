@@ -1,7 +1,7 @@
 FROM ubuntu:xenial as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-COPY .docker/chatapi/crosscompile_chatapi.sh .
+COPY ./docker/chatapi/crosscompile_chatapi.sh .
 RUN bash ./crosscompile_chatapi.sh armv8 install
 
 #####
