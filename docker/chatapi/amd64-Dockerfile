@@ -11,7 +11,4 @@ RUN npm install
 COPY ./chatapi/src ./src/
 COPY ./chatapi/tsconfig.json ./tsconfig.json
 
-# # Build the TypeScript code
-# RUN npm run build
-
 CMD ["npm", "run", "dev"]
