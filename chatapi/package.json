@@ -4,6 +4,7 @@
   "description": "A proxy service to make API calls to GPT and other LLMs",
   "main": "index.ts",
   "scripts": {
+    "start": "ts-node src/index.ts",
     "dev": "nodemon --exec ts-node src/index.ts",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix"
