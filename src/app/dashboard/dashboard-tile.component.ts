@@ -1,11 +1,12 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostListener } from '@angular/core';
+import { elementAt, tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -13,7 +14,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
   templateUrl: './dashboard-tile.component.html',
   styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileComponent implements AfterViewChecked {
+export class DashboardTileComponent {
   @Input() cardTitle: string;
   @Input() cardType: string;
   @Input() color: string;
@@ -22,33 +23,38 @@ export class DashboardTileComponent implements AfterViewChecked {
   @Input() emptyLink;
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
-  @ViewChild('items') itemDiv: ElementRef;
+  // @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
-  tileLines = 2;
+  // tileLines = 2;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private cd: ChangeDetectorRef
-  ) { }
-
-  ngAfterViewChecked() {
-    const divHeight = this.itemDiv.nativeElement.offsetHeight;
-    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
-    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
-    const fontSize = +(itemStyle.fontSize.replace('px', ''));
-    const tileHeight = divHeight - tilePadding;
-    // line-height: normal varies by browser, but should be between 1-1.2
-    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
-    if (tileLines !== this.tileLines) {
-      this.tileLines = tileLines;
-      this.cd.detectChanges();
-    }
+    private deviceInfoService: DeviceInfoService
+    // private cd: ChangeDetectorRef
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
-  removeFromShelf(event, item: any) {
+  // ngAfterViewChecked() {
+  //   const divHeight = this.itemDiv.nativeElement.offsetHeight;
+  //   const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+  //   const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
+  //   const fontSize = +(itemStyle.fontSize.replace('px', ''));
+  //   const tileHeight = divHeight - tilePadding;
+  //   // line-height: normal varies by browser, but should be between 1-1.2
+  //   const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
+  //   if (tileLines !== this.tileLines) {
+  //     this.tileLines = tileLines;
+  //     this.cd.detectChanges();
+  //   }
+  // }
+
+  removeFromShelf({ event, item }) {
     event.stopPropagation();
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
@@ -94,6 +100,10 @@ export class DashboardTileComponent implements AfterViewChecked {
       }
     );
   }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 }
 
 @Component({
@@ -109,4 +119,111 @@ export class DashboardTileTitleComponent {
   @Input() cardTitle;
   @Input() cardType;
 
+}
+
+@Component({
+  selector: 'planet-dashboard-row-layout',
+  templateUrl: './dashboard-tile-row-layout.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
+})
+export class DashboardTileRowLayoutComponent {
+
+  @Input() cardTitle;
+  @Input() cardType;
+  @Input() link;
+  @Input() emptyLink;
+  @Input() itemData;
+  @Output() droppedEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<{event, item}>();
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.droppedEvent.emit(event);
+  }
+
+  removeFromShelf({ event, item }) {
+    this.removeEvent.emit({ event, item });
+  }
+
+}
+
+@Component({
+  selector: 'planet-dashboard-accordion-layout',
+  templateUrl: './dashboard-tile-accordion-layout.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
+})
+export class DashboardTileAccordionLayoutComponent {
+
+  @Input() deviceType;
+  @Input() deviceTypes;
+  @Input() cardTitle;
+  @Input() cardType;
+  @Input() link;
+  @Input() emptyLink;
+  @Input() itemData;
+  @Output() droppedEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<{event, item}>();
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.droppedEvent.emit(event);
+  }
+
+  removeFromShelf({ event, item }) {
+    this.removeEvent.emit({ event, item });
+  }
+
+}
+
+@Component({
+  selector: 'planet-dashboard-left-tile',
+  templateUrl: './dashboard-tile-left-tile.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
+})
+export class DashboardTileLeftTileComponent {
+
+  @Input() cardTitle;
+  @Input() cardType;
+  @Input() link;
+  @Input() emptyLink;
+}
+
+
+@Component({
+  selector: 'planet-dashboard-right-tile',
+  templateUrl: './dashboard-tile-right-tile.component.html',
+  styleUrls: [ './dashboard-tile.scss' ]
+})
+export class DashboardTileRightTileComponent implements AfterViewChecked {
+
+  @Input() cardTitle;
+  @Input() itemData;
+  @Input() link;
+  @Input() emptyLink;
+  @Output() droppedEvent = new EventEmitter<any>();
+  @Output() removeEvent = new EventEmitter<{event, item}>();
+  @ViewChild('items') itemDiv: ElementRef;
+  tileLines = 2;
+
+  constructor( private cd: ChangeDetectorRef ) {}
+
+  ngAfterViewChecked() {
+    const divHeight = this.itemDiv.nativeElement.offsetHeight;
+    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
+    const fontSize = +(itemStyle.fontSize.replace('px', ''));
+    const tileHeight = divHeight - tilePadding;
+    // line-height: normal varies by browser, but should be between 1-1.2
+    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
+    if (tileLines !== this.tileLines) {
+      this.tileLines = tileLines;
+      this.cd.detectChanges();
+    }
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    this.droppedEvent.emit(event);
+  }
+
+  removeFromShelf(event, item: any) {
+    this.removeEvent.emit({ event, item });
+  }
 }

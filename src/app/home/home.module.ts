@@ -9,7 +9,14 @@ import { HomeRouterModule } from './home-router.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 
 import { MaterialModule } from '../shared/material.module';
-import { DashboardTileComponent, DashboardTileTitleComponent } from '../dashboard/dashboard-tile.component';
+import {
+  DashboardTileComponent,
+  DashboardTileTitleComponent,
+  DashboardTileLeftTileComponent,
+  DashboardTileRightTileComponent,
+  DashboardTileRowLayoutComponent,
+  DashboardTileAccordionLayoutComponent
+} from '../dashboard/dashboard-tile.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
@@ -51,6 +58,10 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
     DashboardComponent,
     DashboardTileComponent,
     DashboardTileTitleComponent,
+    DashboardTileLeftTileComponent,
+    DashboardTileRightTileComponent,
+    DashboardTileRowLayoutComponent,
+    DashboardTileAccordionLayoutComponent,
     NotificationsComponent,
     PulsateIconDirective,
     UpgradeComponent,
@@ -61,4 +72,4 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
     HealthListComponent,
   ]
 })
-export class HomeModule {}
+export class HomeModule { }
