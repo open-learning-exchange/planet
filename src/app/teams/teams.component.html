@@ -66,59 +66,35 @@
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element" class>
           <div [ngClass]="{'horizontal-align': isMobile, 'button-container': isMobile}">
-            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc); $event.stopPropagation()" i18n>
-              <ng-container *ngIf="!isMobile;else mobileView">
-                <mat-icon>delete_forever</mat-icon> Delete
-              </ng-container>
-              <ng-template #mobileView>
-                <mat-icon>delete_forever</mat-icon>
-              </ng-template>
+            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc); $event.stopPropagation()">
+              <mat-icon>delete_forever</mat-icon>
+              <label *ngIf="!isMobile" i18n> Delete </label>
             </button>
             <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
               <ng-container *ngSwitchCase="'member'">
                 <ng-container *ngIf="!element.isLeader">
-                  <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()" i18n>
-                    <ng-container *ngIf="!isMobile; else mobileView">
-                      <mat-icon>remove_circle</mat-icon> Leave
-                    </ng-container>
-                    <ng-template #mobileView>
-                      <mat-icon>remove_circle</mat-icon>
-                    </ng-template>
+                  <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
+                    <mat-icon>remove_circle</mat-icon>
+                    <label *ngIf="!isMobile" i18n> Leave </label>
                   </button>
                 </ng-container>
-                <button *ngIf="element.isLeader" mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()" i18n>
-                  <ng-container *ngIf="!isMobile; else mobileView">
-                    <mat-icon>edit</mat-icon> Edit
-                  </ng-container>
-                  <ng-template #mobileView>
-                    <mat-icon>edit</mat-icon>
-                  </ng-template>
+                <button *ngIf="element.isLeader" mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()">
+                  <mat-icon>edit</mat-icon>
+                  <label *ngIf="!isMobile" i18n> Edit </label>
                 </button>
               </ng-container>
               <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc); $event.stopPropagation()">
-                <ng-container *ngIf="!isMobile; else mobileView">
-                  <mat-icon>add_circle</mat-icon> Request to Join
-                </ng-container>
-                <ng-template #mobileView>
-                  <mat-icon>add_circle</mat-icon>
-                </ng-template>
+                <mat-icon>add_circle</mat-icon>
+                <label *ngIf="!isMobile" i18n> Request to Join </label>
               </button>
-              <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled i18n>
-                <ng-container *ngIf="!isMobile; else mobileView">
-                  <mat-icon>hourglass_empty</mat-icon> Request pending
-                </ng-container>
-                <ng-template #mobileView>
-                  <mat-icon>hourglass_empty</mat-icon>
-                </ng-template>
+              <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>
+                <mat-icon>hourglass_empty</mat-icon>
+                <label *ngIf="isMobile" i18n> Request pending </label>
               </button>
             </ng-container>
-            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id}" (click)="$event.stopPropagation()" i18n>
-              <ng-container *ngIf="!isMobile; else mobileView">
-                <mat-icon>feedback</mat-icon> Feedback
-              </ng-container>
-              <ng-template #mobileView>
-                <mat-icon>feedback</mat-icon>
-              </ng-template>
+            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id}" (click)="$event.stopPropagation()">
+              <mat-icon>feedback</mat-icon>
+              <label *ngIf="!isMobile" i18n> Feedback </label>
             </button>
           </div>
         </mat-cell>
