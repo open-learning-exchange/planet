@@ -15,7 +15,7 @@ const openai = new OpenAIApi(configuration);
 
 const db = new NanoCouchService(
   process.env.COUCHDB_HOST || 'http://couchdb:5984',
-  process.env.COUCHDB_NAME || 'chat_history',
+  'chat_history',
 );
 
 // history = db.get the history | [] if empty;
