@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
     <img src="assets/landing-page/logos/usaid.svg" width="100" height="100" alt="usaid-logo" />
   </div>
   `,
-  styles: [`
+  styles: [ `
   .image-card {
     display: flex;
     background: #F4F4F4;
@@ -27,7 +27,7 @@ import { Component } from '@angular/core';
     bottom: 0;
     min-height: 5.5rem;
   }
-  `]
+  ` ]
 })
 
 export class LandingFooterComponent {
