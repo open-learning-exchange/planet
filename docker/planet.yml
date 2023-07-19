@@ -6,7 +6,7 @@ services:
     ports:
       - "2200:5984"
   chatapi:
-    image: treehouses/planet:chat-api-local
+    image: treehouses/planet:chatapi-local
     depends_on:
       - couchdb
     ports:
