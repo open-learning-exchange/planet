@@ -18,7 +18,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { CheckMobileService } from '../shared/checkMobile.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-community',
@@ -46,7 +46,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
   resizeCalendar: any = false;
-  isMobile: boolean = this.checkMobileService.checkIsMobile();
+  deviceType: DeviceType;
+  deviceTypes = DeviceType;
 
   constructor(
     private dialog: MatDialog,
@@ -60,8 +61,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private checkMobileService: CheckMobileService
-  ) {}
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
@@ -83,7 +86,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isMobile = this.checkMobileService.checkIsMobile();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnDestroy() {

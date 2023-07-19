@@ -78,6 +78,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Remove Landing Video
+        run: |
+          rm -rf ./src/assets/landing-page/video/landing.mp4
+
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
