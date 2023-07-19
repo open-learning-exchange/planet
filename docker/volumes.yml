@@ -1,6 +1,5 @@
-# Run `git clone https://github.com/open-learning-exchange/planet.git src`
-# before running `docker compose -f planet.yml -f volumes.yml up -d`
-# to create the src directory.
+# eun `git clone https://github.com/open-learning-exchange/planet.git src`
+# and then uncomment below landing video file mounts
 
 services:
   couchdb:
