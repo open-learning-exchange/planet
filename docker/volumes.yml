@@ -1,4 +1,4 @@
-# eun `git clone https://github.com/open-learning-exchange/planet.git src`
+# run `git clone https://github.com/open-learning-exchange/planet.git src`
 # and then uncomment below landing video file mounts
 
 services:
