@@ -1,3 +1,7 @@
+# Run `git clone https://github.com/open-learning-exchange/planet.git src`
+# before running `docker compose -f planet.yml -f volumes.yml up -d`
+# to create the src directory.
+
 services:
   couchdb:
     volumes:
@@ -8,4 +12,10 @@ services:
     volumes:
       - "/srv/planet/pwd:/usr/share/nginx/html/credentials"
       - "/srv/planet/fs:/usr/share/nginx/html/fs"
+      # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/nep/assets/landing-page/video/landing.mp4"
+      # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/som/assets/landing-page/video/landing.mp4"
+      # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/ara/assets/landing-page/video/landing.mp4"
+      # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/spa/assets/landing-page/video/landing.mp4"
+      # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/fra/assets/landing-page/video/landing.mp4"
+      # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/eng/assets/landing-page/video/landing.mp4"
 version: "2"
