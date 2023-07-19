@@ -13,7 +13,6 @@
     "@typescript-eslint/comma-spacing": "error",
     "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "as", "objectLiteralTypeAssertions": "allow" }],
     "@typescript-eslint/explicit-function-return-type": "off",
-    // "@typescript-eslint/explicit-member-accessibility": ["error", { "accessibility": "explicit" }],
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/member-delimiter-style": ["error", {
       "multiline": {
@@ -61,12 +60,10 @@
       {
         "selector": "interface",
         "format": ["PascalCase"]
-        // "prefix": ["I"]
       },
       {
         "selector": "class",
         "format": ["PascalCase"]
-        // "suffix": ["Component"]
       }
     ],
     "@typescript-eslint/no-empty-interface": "error",
@@ -93,8 +90,6 @@
     "guard-for-in": "error",
     "id-blacklist": ["error", "any", "number", "string", "boolean", "undefined"],
     "id-match": "error",
-    // "import/no-deprecated": "warn",
-    // "import/order": "error",
     "max-len": ["error", { "code": 140 }],
     "new-parens": "error",
     "no-array-constructor": "error",
@@ -129,7 +124,6 @@
     "no-var": "error",
     "object-curly-spacing": ["error", "always"],
     "object-shorthand": "error",
-    // "one-var": "error",
     "prefer-arrow-callback": "error",
     "prefer-const": "error",
     "prefer-rest-params": "error",
