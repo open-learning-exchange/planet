@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -15,30 +15,14 @@ import {
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-doc-teamType {
-      max-width: 150px;
-      padding-right: 0.5rem;
-    }
-    .mat-column-visitLog-visitCount {
-      max-width: 80px;
-      padding-right: 0.5rem;
-    }
-    .mat-column-visitLog-lastVisit {
-      max-width: 180px;
-      padding-right: 0.5rem;
-    }
-    mat-row {
-      cursor: pointer;
-    }
-  ` ],
+  styleUrls: [ './teams.scss' ],
   selector: 'planet-teams'
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
@@ -75,6 +59,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
   filter: string;
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   constructor(
     private userService: UserService,
@@ -85,8 +71,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
     private stateService: StateService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.getTeams();
@@ -99,6 +89,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   getTeams() {
