@@ -7,9 +7,9 @@ import { showFormErrors } from '../shared/table-helpers';
 import { ChatService } from '../shared/chat.service';
 
 @Component({
-  selector: "chat",
-  templateUrl: "./chat.component.html",
-  styleUrls: ["./chat.component.scss"],
+  selector: 'planet-chat',
+  templateUrl: './chat.component.html',
+  styleUrls: [ './chat.component.scss' ],
 })
 export class ChatComponent implements OnInit {
   spinnerOn = false;
