@@ -58,8 +58,6 @@ export class ChatComponent implements OnInit {
   }
 
   submitPrompt() {
-    console.log('submitting');
-
     const content = this.promptForm.get('prompt').value;
     this.messages.push({ role: 'user', content });
 
