@@ -64,10 +64,10 @@ export class ChatComponent implements OnInit {
     this.messages.push({ role: 'user', content });
 
     this.chatService.getPrompt(content).subscribe(
-      (completion: string) => {
+      (completion: any) => {
         this.conversations.push({
           query: content,
-          response: completion,
+          response: completion?.chat,
         });
         this.spinnerOn = false;
         this.changeDetectorRef.detectChanges();
