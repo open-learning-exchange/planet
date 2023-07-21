@@ -6,7 +6,7 @@
 export const environment = {
   production: false,
   test: false,
-  chatAddress: window.location.protocol + '//' + window.location.hostname + '/ml/',
+  chatAddress: window.location.protocol + '//' + window.location.hostname + ':5000',
   couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
   centerAddress: 'planet.earth.ole.org/db',
   uplanetAddress: window.location.origin,
