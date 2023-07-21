@@ -1,11 +1,13 @@
 import express from 'express';
 import { chatWithGpt } from './services/gpt-prompt.service';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 
+app.use(cors());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
