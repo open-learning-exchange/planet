@@ -20,9 +20,9 @@ app.get('/', (req: any, res: any) => {
 
 app.post('/', async (req: any, res: any) => {
   try {
-    const userInput = req.body.content;
+    const userInput = req.body.data;
 
-    if (userInput && typeof userInput === 'string') {
+    if (userInput) {
       const response = await chatWithGpt(userInput);
       res.status(200).json({
         'status': 'Success',
@@ -31,7 +31,7 @@ app.post('/', async (req: any, res: any) => {
         'couchDBResponse': response?.couchSaveResponse
       });
     } else {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "content" field must be a non-empty string.' });
+      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field is required' });
     }
   } catch (error: any) {
     res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });

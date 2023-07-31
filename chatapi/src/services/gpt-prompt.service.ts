@@ -21,7 +21,7 @@ const db = new NanoCouchService(
 // history = db.get the history | [] if empty;
 const history: ChatItem[] = [];
 
-export async function chatWithGpt(userInput: string): Promise<{
+export async function chatWithGpt(userInput: any): Promise<{
   completionText: string;
   history: ChatItem[];
   couchSaveResponse: DocumentInsertResponse;
@@ -33,7 +33,7 @@ export async function chatWithGpt(userInput: string): Promise<{
     messages.push({ 'role': 'assistant', 'content': response });
   }
 
-  messages.push({ 'role': 'user', 'content': userInput });
+  messages.push({ 'role': 'user', 'content': userInput?.content });
   // Should insert query to db here
 
   try {
@@ -50,6 +50,8 @@ export async function chatWithGpt(userInput: string): Promise<{
     history.push({ 'query': userInput, 'response': completionText });
 
     db.conversations = history;
+    db.user = userInput?.user;
+    db.time = userInput?.time;
     const couchSaveResponse = await db.insert();
     // Should update the db with query response here
 
@@ -60,7 +62,10 @@ export async function chatWithGpt(userInput: string): Promise<{
     };
   } catch (error: any) {
     if (error.response) {
-      throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
+      throw new Error(
+        `GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}\n\n
+         Full Error Response: ${error.response}`
+      );
     } else {
       throw new Error(error.message);
     }
