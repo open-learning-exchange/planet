@@ -12,7 +12,7 @@ import { ChatService } from '../shared/chat.service';
   styleUrls: [ './chat.component.scss' ],
 })
 export class ChatComponent implements OnInit {
-  spinnerOn = false;
+  spinnerOn = true;
   promptForm: FormGroup;
   messages: any[] = [];
   conversations: any[] = [];
