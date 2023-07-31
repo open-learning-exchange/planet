@@ -94,8 +94,6 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   searchLists = [];
   selected: any = {};
 
-  constructor () {}
-
   ngOnInit() {
     this.reset({ startingSelection: this.startingSelection, isInit: true });
   }
