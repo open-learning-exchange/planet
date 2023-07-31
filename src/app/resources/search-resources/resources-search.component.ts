@@ -87,7 +87,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   categories = [
     { 'label': 'subject', 'options': constants.subjectList },
     { 'label': 'language', 'options': languages },
-    { 'label': 'mediaType', 'options': constants.media },
+    { 'label': 'medium', 'options': constants.media },
     { 'label': 'level', 'options': constants.levelList }
   ];
 
