@@ -47,11 +47,13 @@ export async function chatWithGpt(userInput: any): Promise<{
     }
 
     const completionText = completion.data.choices[0]?.message?.content;
-    history.push({ 'query': userInput, 'response': completionText });
+    history.push({ 'query': userInput?.content, 'response': completionText });
 
     db.conversations = history;
     db.user = userInput?.user;
     db.time = userInput?.time;
+    db.teamId = userInput?.teamId;
+    db.teamType = userInput?.teamType;
     const couchSaveResponse = await db.insert();
     // Should update the db with query response here
 

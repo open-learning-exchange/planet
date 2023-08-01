@@ -22,7 +22,19 @@ app.post('/', async (req: any, res: any) => {
   try {
     const userInput = req.body.data;
 
-    if (userInput) {
+    if (userInput && typeof userInput === 'object') {
+      if(!userInput.content) {
+        throw new Error('The "content" field is required');
+      }
+
+      if(!userInput.user) {
+        throw new Error('The "user" field is required');
+      }
+
+      if(!userInput.time) {
+        throw new Error('The "time" field is required');
+      }
+
       const response = await chatWithGpt(userInput);
       res.status(200).json({
         'status': 'Success',
@@ -31,7 +43,7 @@ app.post('/', async (req: any, res: any) => {
         'couchDBResponse': response?.couchSaveResponse
       });
     } else {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field is required' });
+      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
   } catch (error: any) {
     res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
