@@ -14,8 +14,6 @@
     </div>
     <div class="news">
       <div>
-        <!-- Handle ref: ref="myRef" -->
-        <!-- <News scroll="executeScroll" /> -->
         <planet-landing-news></planet-landing-news>
       </div>
     </div>
@@ -45,16 +43,11 @@
           <planet-landing-event></planet-landing-event>
         </div>
       </div>
-      <!-- handle Spinner for loading -->
-      <!-- <div class="calendar-spinner-container" *ngIf="isLoading">
-        <mat-spinner></mat-spinner>
-      </div> -->
     </div>
   </div>
 </div>
 <div style="width: 100%" *ngIf="deviceType === deviceTypes.MOBILE">
   <div class="tabs-container">
-    <!-- tabs-padding -->
     <mat-tab-group class="tabs-group" [color]="secondary" (selectedTabChange)="tabChanged($event)">
       <mat-tab>
         <ng-template mat-tab-label>

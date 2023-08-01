@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { debug } from '../../../debug-operator';
+import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -29,7 +26,6 @@ export class LandingNewsComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private planetMessageService: PlanetMessageService,
     private couchService: CouchService
   ) { }
 
@@ -82,7 +78,6 @@ export class LandingNewsComponent implements OnInit {
   seeDetails(id: string) {
     const aux = this.data.find(element => element._id === id);
     this.selectedNews = aux;
-    // Scroll function
   }
 
   closeDetails() {
