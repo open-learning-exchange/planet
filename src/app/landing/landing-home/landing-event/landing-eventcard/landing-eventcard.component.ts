@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { Time } from '@angular/common';
 
 @Component({
   selector: 'planet-landing-eventcard',

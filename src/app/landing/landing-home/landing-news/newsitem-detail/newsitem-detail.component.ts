@@ -33,6 +33,4 @@ export class NewsItemDetailsComponent implements OnInit {
 
     return `![Noticia](${this.baseUrl}/pb/${splitUrl})`;
   }
-
-  // (error)="$event.target.src = 'assets/landing-page/img/news-placeholder.png'"
 }
