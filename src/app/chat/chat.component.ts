@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -16,7 +16,8 @@ export class ChatComponent implements OnInit {
   promptForm: FormGroup;
   messages: any[] = [];
   conversations: any[] = [];
-
+  @Input() chatTitle: string;
+  @Input() showButton: boolean;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -25,7 +26,10 @@ export class ChatComponent implements OnInit {
     private router: Router,
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService
-  ) {}
+  ) {
+    this.chatTitle = 'Planet Chat';
+    this.showButton = true;
+  }
 
   ngOnInit() {
     this.createForm();
