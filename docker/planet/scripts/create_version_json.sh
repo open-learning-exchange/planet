@@ -1,6 +1,6 @@
 PLANET_VERSION=$(cat package.json | jq -r .version)
-LATEST_APK_VERSION=$(cat package.json | jq -r .apk.latest)
-MIN_APK_VERSION=$(cat package.json | jq -r .apk.min)
+LATEST_APK_VERSION=$(cat package.json | jq -r .myplanet.latest)
+MIN_APK_VERSION=$(cat package.json | jq -r .myplanet.min)
 LATEST_APK_VER_CODE=$(echo $LATEST_APK_VERSION | awk -F'[v.]' '{printf "%d%02d%02d\n", $2, $3, $4}' | sed 's#^0*##')
 MIN_APK_VER_CODE=$(echo $MIN_APK_VERSION | awk -F'[v.]' '{printf "%d%02d%02d\n", $2, $3, $4}' | sed 's#^0*##')
 APK_PATH="https://github.com/open-learning-exchange/myplanet/releases/download/"$LATEST_APK_VERSION"/myPlanet.apk"
