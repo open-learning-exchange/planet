@@ -1,5 +1,5 @@
 import express from 'express';
-import { getChatDocument, chatWithGpt } from './services/gpt-prompt.service';
+import { getChatDocument, chatWithGpt } from './services/chat.service';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
