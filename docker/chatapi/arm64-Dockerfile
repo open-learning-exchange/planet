@@ -1,0 +1,21 @@
+FROM ubuntu:xenial as builder
+LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
+
+COPY ./docker/chatapi/crosscompile_chatapi.sh .
+RUN bash ./crosscompile_chatapi.sh armv8 install
+
+#####
+
+FROM treehouses/node-tags:arm64
+
+RUN apk update
+
+COPY ./chatapi/package*.json ./
+RUN npm install
+
+COPY ./chatapi/src ./src/
+COPY ./chatapi/tsconfig.json ./tsconfig.json
+
+EXPOSE 5000
+
+CMD ["npm", "run", "start"]

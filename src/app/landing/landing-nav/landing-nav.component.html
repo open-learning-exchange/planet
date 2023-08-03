@@ -1,12 +1,9 @@
 <div class="app-bar-container">
-  <mat-toolbar class="toolbar-container" *ngIf="!isMobile">
+  <mat-toolbar class="toolbar-container" *ngIf="deviceType != deviceTypes.MOBILE">
     <div class="menu-container">
-      <!-- Handle Mobile view -->
-      <!-- Handle Navbar sizes -->
       <img src="assets/landing-page/logos/uplanet.png" class="img-logo" alt="Logo" width="180" height="30" />
       <div class="menu-row">
         <a mat-button class="navbar-button" [href]="baseUrl + '/spa/myDashboard'">
-          <!-- size="small" -->
           <mat-icon class="icon-item">person</mat-icon>
           miDashboard
         </a>
@@ -29,7 +26,7 @@
       </div>
     </div>
   </mat-toolbar>
-  <mat-toolbar *ngIf="isMobile" style="color: #ffffff;">
+  <mat-toolbar *ngIf="deviceType === deviceTypes.MOBILE" style="color: #ffffff;">
     <button mat-icon-button class="hamburger-button"
       (click)="toggleNav()" i18n-title title="Menu">
       <mat-icon>menu</mat-icon>

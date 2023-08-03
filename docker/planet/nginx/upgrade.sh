@@ -11,8 +11,10 @@ function rename {
   curl --unix-socket /var/run/docker.sock -X POST "http://localhost/images/$1/tag?repo=$2"
 }
 
-upgrade "treehouses/planet:db-init-$PLANET_VERSION"
 upgrade "treehouses/planet:$PLANET_VERSION"
+upgrade "treehouses/planet:db-init-$PLANET_VERSION"
+upgrade "treehouses/planet:chatapi-$PLANET_VERSION"
 
 rename "treehouses/planet:$PLANET_VERSION" "treehouses/planet:local"
 rename "treehouses/planet:db-init-$PLANET_VERSION" "treehouses/planet:db-init-local"
+rename "treehouses/planet:chatapi-$PLANET_VERSION" "treehouses/planet:chatapi-local"

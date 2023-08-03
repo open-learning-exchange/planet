@@ -36,7 +36,7 @@ export class LandingEventDetailComponent implements OnInit {
   }
 
   handleURL() {
-    // should be changed in the future but we need more info abhout how meeting links are stored
+    // should be changed in the future but we need more info about how meeting links are stored
     window.open(`${this.baseUrl}/spa/meetups`, '_newtab');
   }
 
