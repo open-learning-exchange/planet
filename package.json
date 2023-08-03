@@ -1,6 +1,10 @@
 {
   "name": "planet-app",
   "version": "0.13.24",
+  "apk": {
+    "latest": "v0.9.55",
+    "min": "v0.9.30"
+  },
   "license": "AGPL-3.0",
   "scripts": {
     "ng": "ng",
