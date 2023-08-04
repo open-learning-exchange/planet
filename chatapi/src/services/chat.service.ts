@@ -1,46 +1,16 @@
-import dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from 'openai';
-import nano, { DocumentInsertResponse } from 'nano';
+import { DocumentInsertResponse } from 'nano';
 
-import { DbDoc } from '../models/db-doc.model';
+import db from '../config/nano.config';
+import { gptChat } from '../utils/gpt-chat.utils';
+import { getChatDocument } from '../utils/db.utils';
 import { ChatMessage } from '../models/chat-message.model';
 
-dotenv.config();
-
-// Initialize OpenAI API
-const configuration = new Configuration({
-  'apiKey': process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
-// Initialize CouchDB
-const db = nano(process.env.COUCHDB_HOST || 'http://couchdb:5984').use(
-  'chat_history',
-);
-
-
 /**
- * Retrieves chat history from CouchDB for a given document ID.
- * @param id - Document ID
- * @returns Array of chat conversations
- */
-export async function getChatDocument(id: string) {
-  try {
-    const res = await db.get(id) as DbDoc;
-    return res.conversations;
-    // Should return user, team data as well particularly for the /conversations endpoint
-  } catch (error) {
-    return [];
-  }
-}
-
-
-/**
- * Initiates a conversation with the GPT model.
+ * Create a chat conversation & save in couchdb
  * @param data - Chat data including content and additional information
  * @returns Object with completion text and CouchDB save response
  */
-export async function chatWithGpt(data: any): Promise<{
+export async function chat(data: any): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
@@ -70,13 +40,7 @@ export async function chatWithGpt(data: any): Promise<{
   messages.push({ 'role': 'user', content });
 
   try {
-    const completion = await openai.createChatCompletion({
-      'model': 'gpt-3.5-turbo',
-      messages,
-    });
-
-    const completionText = completion.data.choices[0]?.message?.content;
-    if(!completionText) throw new Error('Unexpected API response');
+    const completionText = await gptChat(messages);
 
     dbData.conversations.pop();
     dbData.conversations.push({ 'query': content, 'response': completionText });

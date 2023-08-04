@@ -1,7 +1,9 @@
 import express from 'express';
-import { getChatDocument, chatWithGpt } from './services/chat.service';
 import dotenv from 'dotenv';
 import cors from 'cors';
+
+import { getChatDocument } from './utils/db.utils';
+import { chat } from './services/chat.service';
 
 dotenv.config();
 
@@ -23,7 +25,7 @@ app.post('/', async (req: any, res: any) => {
     const { data } = req.body;
 
     if (data && typeof data === 'object') {
-      const response = await chatWithGpt(data);
+      const response = await chat(data);
       res.status(200).json({
         'status': 'Success',
         'chat': response?.completionText,
