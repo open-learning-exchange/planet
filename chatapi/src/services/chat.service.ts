@@ -17,7 +17,7 @@ export async function chat(data: any): Promise<{
   const { content, user, time, teamId, teamType, ...dbData } = data;
   const messages: ChatMessage[] = [];
 
-  if(dbData._id) {
+  if (dbData._id) {
     const history = await getChatDocument(dbData._id);
     dbData.conversations = history;
 
@@ -30,8 +30,12 @@ export async function chat(data: any): Promise<{
     dbData.user = user;
     dbData.time = time;
 
-    if(teamId) dbData.teamId = teamId;
-    if(teamType) dbData.teamType = teamType;
+    if (teamId) {
+      dbData.teamId = teamId;
+    }
+    if (teamType) {
+      dbData.teamType = teamType;
+    }
   }
 
   dbData.conversations.push({ 'query': content, 'response': '' });

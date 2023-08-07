@@ -13,7 +13,9 @@ export async function gptChat(messages: ChatMessage[]): Promise<string> {
   });
 
   const completionText = completion.data.choices[0]?.message?.content;
-  if(!completionText) throw new Error('Unexpected API response');
+  if (!completionText) {
+    throw new Error('Unexpected API response');
+  }
 
   return completionText;
 }

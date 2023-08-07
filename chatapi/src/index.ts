@@ -26,7 +26,7 @@ app.post('/', async (req: any, res: any) => {
 
     if (data && typeof data === 'object') {
       const response = await chat(data);
-      res.status(200).json({
+      res.status(201).json({
         'status': 'Success',
         'chat': response?.completionText,
         'couchDBResponse': response?.couchSaveResponse
