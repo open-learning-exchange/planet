@@ -16,6 +16,4 @@ RUN npm install
 COPY ./chatapi/src ./src/
 COPY ./chatapi/tsconfig.json ./tsconfig.json
 
-EXPOSE 5000
-
 CMD ["npm", "run", "start"]
