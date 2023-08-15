@@ -1,0 +1,41 @@
+@import '../variables.scss';
+
+.form-container {
+  width: auto;
+  height: calc(1 / 4 * #{$view-container-height});
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.chat-container {
+  height: calc(1 / 2 * #{$view-container-height});
+  overflow-y: auto;
+  border: 1px solid #{$primary};
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-query {
+  align-self: flex-start;
+  background-color: #{$primary};
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px;
+}
+
+.converstaion-response {
+  align-self: flex-end;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.conversation-error {
+  background-color: red;
+  border-radius: 10px;
+  padding: 10px;
+}

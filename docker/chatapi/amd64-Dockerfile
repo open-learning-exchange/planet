@@ -1,0 +1,15 @@
+FROM treehouses/node
+
+RUN apk update
+
+# Install dependencies
+COPY ./chatapi/package.json ./
+RUN npm install --production
+
+# Copy the application code
+COPY ./chatapi/src ./src/
+COPY ./chatapi/tsconfig.json ./tsconfig.json
+
+EXPOSE 5000
+
+CMD ["npm", "run", "start"]
