@@ -29,6 +29,8 @@
         </mat-chip>
       </mat-chip-list>
     </ng-container>
+    <button mat-raised-button color="basic" (click)="rateStep()" i18n>Rate course step</button>
+    <br><div>{{rating}}</div>
   </div>
   <div planetStepListActions>
     <a mat-raised-button color="primary" (click)="addExam()" i18n>{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>

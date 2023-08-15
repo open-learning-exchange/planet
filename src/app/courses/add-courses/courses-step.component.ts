@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { ChatService } from '../../shared/chat.service';
 
 @Component({
   selector: 'planet-courses-step',
@@ -24,6 +25,7 @@ export class CoursesStepComponent implements OnDestroy {
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
+  rating: Text;
   private onDestroy$ = new Subject<void>();
 
   constructor(
@@ -31,7 +33,8 @@ export class CoursesStepComponent implements OnDestroy {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private chatService: ChatService
   ) {
     this.stepForm = this.fb.group({
       id: '',
@@ -98,6 +101,20 @@ export class CoursesStepComponent implements OnDestroy {
 
   addStep() {
     this.addStepEvent.emit();
+  }
+
+  rateStep() {
+    const content = `In 3 clear blobs, 1. provide a rating for this course step(granular rating out of 100%), 2. Explain why you gave the rating 3. Explain how to improve the course step
+    ${this.stepForm.get('stepTitle').value} - ${this.stepForm.get('description').value.text}`;
+
+    this.chatService.getPrompt(content).subscribe(
+      (completion: any) => {
+        this.rating = completion?.chat;
+      },
+      (error: any) => {
+        console.log(error);
+      }
+    );
   }
 
 }
