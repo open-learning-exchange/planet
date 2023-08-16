@@ -30,20 +30,12 @@ export class LandingEventsService {
   }
 
   useEvents() {
-    // return useQuery(['events'], () => getEvents(), {retry: 2});
     this.getEvents().subscribe((data) => {
       return data;
     });
   }
 
   useEventsV2() {
-    // const {data, ...rest} = useQuery(['events'], () => getEvents(), {retry: 2});
-
-    // return {
-    //   ...rest,
-    //   data: this.formatEvents(data),
-    // };
-
     this.getEvents().subscribe((data) => {
       return this.formatEvents(data);
     });
@@ -58,16 +50,9 @@ export class LandingEventsService {
 
   filterToday(events) {
     return filter(this.isBetween, events ?? []);
-    // return events;
   }
 
   useEventsToday() {
-    // const {data, ...rest} = this.useEventsV2();
-    // return {
-    //   ...rest,
-    //   data: this.filterToday(data),
-    // };
-
     const data = this.useEventsV2();
     return this.filterToday(data);
   }

@@ -7,7 +7,6 @@ import { UsersService } from '../users/users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
-import { dedupeShelfReduce, arraySubField } from '../shared/utils';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 

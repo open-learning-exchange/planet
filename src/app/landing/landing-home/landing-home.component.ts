@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewEncapsulation, OnInit, OnChanges } from '@angular/core';
+import { Component, HostListener, ViewEncapsulation, OnInit } from '@angular/core';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { LandingEventsService } from './landing-event/landing-events.service';
 
@@ -40,8 +40,6 @@ export class LandingHomeComponent implements OnInit {
           title: event.doc.title,
           start: new Date(event.doc.startDate),
           end: new Date(event.doc.endDate),
-          // allDay: true,
-          // editable: true,
           textColor: 'white',
           backgroundColor: '#951FCC',
           borderColor: '#951FCC',

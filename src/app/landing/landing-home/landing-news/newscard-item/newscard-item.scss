@@ -2,23 +2,8 @@
   border-radius: 7px;
   margin: 8px;
   object-fit: cover;
-  // Be sure to implement 90px mobile
   width: 130px;
   height: 130px;
-  // width: {
-  //   xs: 90;
-  //   sm: 90; 
-  //   md: 90;
-  //   lg: 130;
-  //   xl: 130;
-  // };
-  // height: {
-  //   xs: 90;
-  //   sm: 90;
-  //   md: 90;
-  //   lg: 130;
-  //   xl: 130;
-  // };
 }
 
 .image-container-class {
@@ -40,15 +25,7 @@
   & blockquote {
     margin: 0px;
   }
-  // Implement 1.2 mobile
   line-height: 1.5em;
-  // lineHeight: {
-  //   xs: '1.2em';
-  //   sm: '1.2em';
-  //   md: '1.5em';
-  //   lg: '1.5em';
-  //   xl: '1.5em';
-  // };
 }
 
 .news-card-style {

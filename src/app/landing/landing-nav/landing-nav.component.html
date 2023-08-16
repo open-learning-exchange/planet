@@ -1,12 +1,9 @@
 <div class="app-bar-container">
   <mat-toolbar class="toolbar-container" *ngIf="deviceType != deviceTypes.MOBILE">
     <div class="menu-container">
-      <!-- Handle Mobile view -->
-      <!-- Handle Navbar sizes -->
       <img src="assets/landing-page/logos/uplanet.png" class="img-logo" alt="Logo" width="180" height="30" />
       <div class="menu-row">
         <a mat-button class="navbar-button" [href]="baseUrl + '/spa/myDashboard'">
-          <!-- size="small" -->
           <mat-icon class="icon-item">person</mat-icon>
           miDashboard
         </a>

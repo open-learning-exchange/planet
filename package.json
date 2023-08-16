@@ -1,7 +1,11 @@
 {
-  "name": "planet-app",
-  "version": "0.13.16",
+  "name": "planet",
   "license": "AGPL-3.0",
+  "version": "0.13.27",
+  "myplanet": {
+    "latest": "v0.9.67",
+    "min": "v0.9.44"
+  },
   "scripts": {
     "ng": "ng",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
