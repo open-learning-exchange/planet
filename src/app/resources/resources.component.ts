@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -28,6 +28,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-resources',
@@ -87,6 +88,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   trackById = trackById;
   initialSort = '';
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -103,9 +106,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsListService: DialogsListService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
