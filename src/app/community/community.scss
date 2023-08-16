@@ -7,7 +7,7 @@
   }
 
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 3fr 2.5fr;
   grid-template-rows: 64px calc(100% - 64px - 0.5rem);
   grid-template-areas:
     "links events"
@@ -71,4 +71,29 @@
 
 .community-news .tabs-padding .mat-tab-body {
   padding-right: 1rem;
+}
+
+.side-tab-group .mat-tab-body.mat-tab-body-active {
+  overflow-y: hidden;
+}
+
+.side-tab-group .mat-tab-body-content {
+  padding: 1rem;
+  height: 75vh;
+}
+
+.side-tab-group .mat-tab-labels {
+  justify-content: center;
+}
+
+.side-tab-group .mat-tab-label {
+  background-color: #f2f2f2;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+}
+
+.side-tab-group .mat-tab-label.mat-tab-label-active {
+  background-color: #2196f3;
+  color: white;
 }

@@ -18,6 +18,7 @@ export class ChatComponent implements OnInit {
   conversations: any[] = [];
   @Input() chatTitle: string;
   @Input() showButton: boolean;
+  @Input() showChatToolbar: boolean;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -29,6 +30,7 @@ export class ChatComponent implements OnInit {
   ) {
     this.chatTitle = 'Planet Chat';
     this.showButton = true;
+    this.showChatToolbar = true;
   }
 
   ngOnInit() {

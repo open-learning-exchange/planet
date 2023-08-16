@@ -58,11 +58,23 @@
         <mat-tab i18n-label label="Reports">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
-        <mat-tab i18n-label label="Calendar">
+        <mat-tab i18n-label label="Calendar" *ngIf="deviceType === deviceTypes.MOBILE">
           <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+        </mat-tab>
+        <mat-tab i18n-label label="Chat" *ngIf="deviceType === deviceTypes.MOBILE">
+          <planet-chat [chatTitle]="chatTitle" [showButton]="showButton"></planet-chat>
         </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-chat [chatTitle]="chatTitle" [showButton]="showButton"></planet-chat>
+    <div *ngIf="deviceType !== deviceTypes.MOBILE">
+      <mat-tab-group class="side-tab-group">
+        <mat-tab i18n-label label="Calendar">
+          <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+        </mat-tab>
+        <mat-tab i18n-label label="Chat">
+          <planet-chat [showChatToolbar]="showChatToolbar" [showButton]="showButton"></planet-chat>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
   </div>
 </div>
