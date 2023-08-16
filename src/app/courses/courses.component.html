@@ -83,15 +83,15 @@
           <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
         </button>
       </ng-container>
-      <ng-container *ngIf="!parent && isMobileView">
-        <button *ngIf="!parent && !isDialog && isMobileView" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+      <ng-container *ngIf="!parent && deviceType !== deviceTypes.DESKTOP">
+        <button *ngIf="!parent && !isDialog && deviceType !== deviceTypes.DESKTOP" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #actionsMenu="matMenu">
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         </mat-menu>
       </ng-container>
-      <ng-container *ngIf="!parent && !isMobileView">
+      <ng-container *ngIf="!parent && deviceType === deviceTypes.DESKTOP">
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </ng-container>
     </ng-container>
