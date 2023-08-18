@@ -6,6 +6,8 @@ services:
     ports:
       - "2200:5984"
   chatapi:
+    expose:
+      - 5000
     image: treehouses/planet:chatapi-local
     depends_on:
       - couchdb
