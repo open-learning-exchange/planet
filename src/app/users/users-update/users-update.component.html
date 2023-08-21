@@ -90,8 +90,8 @@
                 i18n>Female</span>
             </div>
           </mat-radio-button>
-          <mat-error>
-            <planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages>
+          <mat-error *ngIf="editForm.controls.gender.invalid && editForm.controls.gender.touched">
+            You must add a choice
           </mat-error>
           <mat-slide-toggle *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
             formControlName="betaEnabled" i18n i18n-matTooltip
