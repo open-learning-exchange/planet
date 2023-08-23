@@ -5,7 +5,6 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <div>
     <div class="chat-container" #chat>
       <div *ngFor="let conversation of conversations">
         <div class="conversation">
@@ -17,14 +16,15 @@
 
     <div class="form-container">
       <form [formGroup]="promptForm" class="form-spacing" (ngSubmit)="onSubmit()">
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Prompt" [formControl]="promptForm.controls.prompt"></planet-markdown-textbox>
-          <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <button type="submit" mat-raised-button [planetSubmit]="spinnerOn" color="primary" i18n>Chat</button>
+          <mat-form-field class="full-width mat-form-field-type-no-underline">
+            <mat-label>Send a Message</mat-label>
+            <textarea class="full-width" rows="5" required matInput i18n-placeholder placeholder="Send a message" [formControl]="promptForm.controls.prompt"></textarea>
+            <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <button type="submit" mat-raised-button [planetSubmit]="spinnerOn" color="primary" i18n>
+            Chat
+            <mat-icon>send</mat-icon>
+          </button>
       </form>
     </div>
-
-
-  </div>
 </div>
