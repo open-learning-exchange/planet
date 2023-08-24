@@ -40,7 +40,7 @@ export class ChatComponent implements OnInit {
 
   createForm() {
     this.promptForm = this.formBuilder.group({
-      prompt: [ '', CustomValidators.requiredMarkdown ],
+      prompt: [ '', CustomValidators.required ],
     });
   }
 
