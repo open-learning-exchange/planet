@@ -3,6 +3,7 @@ import { DocumentInsertResponse } from 'nano';
 import db from '../config/nano.config';
 import { gptChat } from '../utils/gpt-chat.utils';
 import { getChatDocument } from '../utils/db.utils';
+import { handleChatError } from '../utils/chat-error.utils';
 import { ChatMessage } from '../models/chat-message.model';
 
 /**
@@ -14,7 +15,7 @@ export async function chat(data: any): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
-  const { content, user, time, teamId, teamType, ...dbData } = data;
+  const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
 
   if (dbData._id) {
@@ -27,15 +28,6 @@ export async function chat(data: any): Promise<{
     }
   } else {
     dbData.conversations = [];
-    dbData.user = user;
-    dbData.time = time;
-
-    if (teamId) {
-      dbData.teamId = teamId;
-    }
-    if (teamType) {
-      dbData.teamType = teamType;
-    }
   }
 
   dbData.conversations.push({ 'query': content, 'response': '' });
@@ -58,10 +50,23 @@ export async function chat(data: any): Promise<{
       couchSaveResponse
     };
   } catch (error: any) {
-    if (error.response) {
-      throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
-    } else {
-      throw new Error(error.message);
-    }
+    handleChatError(error);
+  }
+}
+
+export async function chatNoSave(content: any): Promise< string | undefined> {
+  const messages: ChatMessage[] = [];
+
+  messages.push({ 'role': 'user', content });
+
+  try {
+    const completionText = await gptChat(messages);
+    messages.push({
+      'role': 'assistant', 'content': completionText
+    });
+
+    return completionText;
+  } catch(error: any) {
+    handleChatError(error);
   }
 }

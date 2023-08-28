@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 
 import { getChatDocument } from './utils/db.utils';
-import { chat } from './services/chat.service';
+import { chat, chatNoSave } from './services/chat.service';
 
 dotenv.config();
 
@@ -22,9 +22,15 @@ app.get('/', (req: any, res: any) => {
 
 app.post('/', async (req: any, res: any) => {
   try {
-    const { data } = req.body;
+    const { data, save } = req.body;
 
-    if (data && typeof data === 'object') {
+    if(!save) {
+      const response = await chatNoSave(data.content);
+      res.status(200).json({
+        'status': 'Success',
+        'chat': response
+      });
+    } else if (save && data && typeof data === 'object') {
       const response = await chat(data);
       res.status(201).json({
         'status': 'Success',
