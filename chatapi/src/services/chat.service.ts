@@ -66,7 +66,7 @@ export async function chatNoSave(content: any): Promise< string | undefined> {
     });
 
     return completionText;
-  } catch(error: any) {
+  } catch (error: any) {
     handleChatError(error);
   }
 }

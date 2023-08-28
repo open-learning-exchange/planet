@@ -24,7 +24,7 @@ app.post('/', async (req: any, res: any) => {
   try {
     const { data, save } = req.body;
 
-    if(!save) {
+    if (!save) {
       const response = await chatNoSave(data.content);
       res.status(200).json({
         'status': 'Success',
