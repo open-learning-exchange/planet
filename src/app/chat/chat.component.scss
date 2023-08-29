@@ -53,3 +53,25 @@ textarea:focus {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
+.fullscreen {
+  .space-container {
+    height: 100vh;
+  }
+
+  .form-container {
+    display: none;
+  }
+
+  .chat-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin: 0;
+  }
+
+  textarea {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: none;
+  }
+}

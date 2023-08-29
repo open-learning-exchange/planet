@@ -13,6 +13,7 @@ import { ChatService } from '../shared/chat.service';
 })
 export class ChatComponent implements OnInit {
   spinnerOn = true;
+  isFullscreen = false;
   promptForm: FormGroup;
   messages: any[] = [];
   conversations: any[] = [];
@@ -83,17 +84,21 @@ export class ChatComponent implements OnInit {
     );
   }
 
-sanitizeText(text: string): string {
-  // Replace newline characters with <br> tags
-  const textWithLineBreaks = text.replace(/\n/g, '<br>');
+  sanitizeText(text: string): string {
+    // Replace newline characters with <br> tags
+    const textWithLineBreaks = text.replace(/\n/g, '<br>');
 
-  // Replace code block markers with <code> tags
-  const codeBlockStart = /```/g;
-  const codeBlockEnd = /```/g;
-  const textWithCodeBlocks = textWithLineBreaks
-    .replace(codeBlockStart, '<code>')
-    .replace(codeBlockEnd, '</code>');
+    // Replace code block markers with <code> tags
+    const codeBlockStart = /```/g;
+    const codeBlockEnd = /```/g;
+    const textWithCodeBlocks = textWithLineBreaks
+      .replace(codeBlockStart, '<code>')
+      .replace(codeBlockEnd, '</code>');
 
-  return textWithCodeBlocks;
-}
+    return textWithCodeBlocks;
+  }
+
+  toggleFullScreen() {
+    this.isFullscreen = !this.isFullscreen;
+  }
 }
