@@ -40,7 +40,7 @@ export class ChatComponent implements OnInit {
 
   createForm() {
     this.promptForm = this.formBuilder.group({
-      prompt: [ '', CustomValidators.requiredMarkdown ],
+      prompt: [ '', CustomValidators.required ],
     });
   }
 
@@ -82,4 +82,18 @@ export class ChatComponent implements OnInit {
       }
     );
   }
+
+sanitizeText(text: string): string {
+  // Replace newline characters with <br> tags
+  const textWithLineBreaks = text.replace(/\n/g, '<br>');
+
+  // Replace code block markers with <code> tags
+  const codeBlockStart = /```/g;
+  const codeBlockEnd = /```/g;
+  const textWithCodeBlocks = textWithLineBreaks
+    .replace(codeBlockStart, '<code>')
+    .replace(codeBlockEnd, '</code>');
+
+  return textWithCodeBlocks;
+}
 }
