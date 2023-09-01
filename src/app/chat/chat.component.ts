@@ -73,12 +73,14 @@ export class ChatComponent implements OnInit {
         this.spinnerOn = true;
       },
       (error: any) => {
-        console.log(error);
+        this.spinnerOn = false;
+        this.changeDetectorRef.detectChanges();
         this.conversations.push({
           query: content,
           response: 'Error: ' + error.message,
           error: true,
         });
+        this.spinnerOn = true;
       }
     );
   }
