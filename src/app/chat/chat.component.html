@@ -24,7 +24,10 @@
       <button type="submit" mat-raised-button [planetSubmit]="spinnerOn" color="primary" i18n>
        Chat
        <mat-icon>send</mat-icon>
-     </button>
+      </button>
+      <mat-slide-toggle ngModel formControlName="saveChat" color="primary">
+        Save Chat
+      </mat-slide-toggle>
    </form>
   </div>
 </div>

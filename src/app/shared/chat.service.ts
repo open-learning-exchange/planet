@@ -13,9 +13,10 @@ import { environment } from '../../environments/environment';
     private httpClient: HttpClient
   ) {}
 
-  getPrompt(input: string): Observable<any> {
+  getPrompt(data: Object, save: boolean): Observable<any> {
     return this.httpClient.post(this.baseUrl, {
-      content: input
+      data,
+      save
     });
   }
 

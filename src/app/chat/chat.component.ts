@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { showFormErrors } from '../shared/table-helpers';
 import { ChatService } from '../shared/chat.service';
+import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   selector: 'planet-chat',
@@ -14,6 +16,11 @@ import { ChatService } from '../shared/chat.service';
 export class ChatComponent implements OnInit {
   spinnerOn = true;
   promptForm: FormGroup;
+  data = {
+    user: this.userService.get(),
+    time: this.couchService.datePlaceholder,
+    content: ''
+  };
   messages: any[] = [];
   conversations: any[] = [];
 
@@ -24,7 +31,9 @@ export class ChatComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private changeDetectorRef: ChangeDetectorRef,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private userService: UserService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -41,6 +50,7 @@ export class ChatComponent implements OnInit {
   createForm() {
     this.promptForm = this.formBuilder.group({
       prompt: [ '', CustomValidators.required ],
+      saveChat: [ false ],
     });
   }
 
@@ -58,10 +68,13 @@ export class ChatComponent implements OnInit {
   }
 
   submitPrompt() {
+    const save = this.promptForm.get('saveChat').value;
     const content = this.promptForm.get('prompt').value;
     this.messages.push({ role: 'user', content });
 
-    this.chatService.getPrompt(content).subscribe(
+    this.data.content = content;
+
+    this.chatService.getPrompt(this.data, save).subscribe(
       (completion: any) => {
         this.conversations.push({
           query: content,

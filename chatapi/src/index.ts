@@ -1,7 +1,9 @@
 import express from 'express';
-import { chatWithGpt } from './services/gpt-prompt.service';
 import dotenv from 'dotenv';
 import cors from 'cors';
+
+import { getChatDocument } from './utils/db.utils';
+import { chat, chatNoSave } from './services/chat.service';
 
 dotenv.config();
 
@@ -20,19 +22,37 @@ app.get('/', (req: any, res: any) => {
 
 app.post('/', async (req: any, res: any) => {
   try {
-    const userInput = req.body.content;
+    const { data, save } = req.body;
 
-    if (userInput && typeof userInput === 'string') {
-      const response = await chatWithGpt(userInput);
+    if (!save) {
+      const response = await chatNoSave(data.content);
       res.status(200).json({
         'status': 'Success',
+        'chat': response
+      });
+    } else if (save && data && typeof data === 'object') {
+      const response = await chat(data);
+      res.status(201).json({
+        'status': 'Success',
         'chat': response?.completionText,
-        'history': response?.history,
         'couchDBResponse': response?.couchSaveResponse
       });
     } else {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "content" field must be a non-empty string.' });
+      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
+  } catch (error: any) {
+    res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
+  }
+});
+
+app.get('/conversation/:id', async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const conversation = await getChatDocument(id);
+    res.status(200).json({
+      'status': 'Success',
+      conversation
+    });
   } catch (error: any) {
     res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
   }
