@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { CustomValidators } from '../validators/custom-validators';
 import { showFormErrors } from '../shared/table-helpers';
 import { ChatService } from '../shared/chat.service';
 
@@ -40,7 +39,7 @@ export class ChatComponent implements OnInit {
 
   createForm() {
     this.promptForm = this.formBuilder.group({
-      prompt: [ '', CustomValidators.required ],
+      prompt: [ '', Validators.required ],
     });
   }
 
@@ -49,12 +48,11 @@ export class ChatComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.promptForm.valid) {
+    if (this.promptForm.valid) {
+      this.submitPrompt();
+    } else {
       showFormErrors(this.promptForm.controls);
-      return;
     }
-
-    this.submitPrompt();
   }
 
   submitPrompt() {
@@ -74,12 +72,13 @@ export class ChatComponent implements OnInit {
       },
       (error: any) => {
         this.spinnerOn = false;
-        this.changeDetectorRef.detectChanges();
         this.conversations.push({
           query: content,
           response: 'Error: ' + error.message,
           error: true,
         });
+        this.changeDetectorRef.detectChanges();
+        this.scrollToBottom();
         this.spinnerOn = true;
       }
     );
