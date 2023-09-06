@@ -10,7 +10,7 @@ import { CouchService } from '../shared/couchdb.service';
   providedIn: 'root'
 }) export class ChatService {
   private baseUrl = environment.chatAddress;
-  private dbName = 'chat_history'
+  private dbName = 'chat_history';
 
   constructor(
     private httpClient: HttpClient,

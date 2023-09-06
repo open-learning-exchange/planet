@@ -57,3 +57,9 @@ textarea:focus {
 mat-slide-toggle {
   margin-right: auto;
 }
+
+.sideOpen {
+  .sidebar {
+    display: none;
+  }
+}

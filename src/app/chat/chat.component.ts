@@ -15,6 +15,7 @@ import { CouchService } from '../shared/couchdb.service';
 })
 export class ChatComponent implements OnInit {
   spinnerOn = true;
+  sidebarOpen = false;
   promptForm: FormGroup;
   data = {
     user: this.userService.get(),
@@ -119,4 +120,8 @@ sanitizeText(text: string): string {
 
   return textWithCodeBlocks;
 }
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
 }

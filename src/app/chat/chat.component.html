@@ -5,12 +5,13 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <div class="sidebar-container">
-    <planet-chat-sidebar [chats]="chats"></planet-chat-sidebar>
-  </div>
-
-
   <div class="chat-container" #chat>
+    <button mat-icon-button (click)="toggleSidebar()">
+      <mat-icon>{{ sidebarOpen ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+    </button>
+    <div [ngClass]="{'sideOpen': sidebarOpen}">
+      <planet-chat-sidebar class="sidebar" [chats]="chats"></planet-chat-sidebar>
+    </div>
     <div *ngFor="let conversation of conversations">
       <div class="conversation">
         <p class="conversation-query" [innerHTML]="sanitizeText(conversation.query)"></p>
