@@ -23,7 +23,7 @@ export class ChatComponent implements OnInit {
   };
   messages: any[] = [];
   conversations: any[] = [];
-  chats: any;
+  chats: any = {};
 
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -38,13 +38,14 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.getChatHistory();
     this.createForm();
   }
 
-  getAllChats() {
+  getChatHistory() {
     this.chatService.findChats([], {}).subscribe((chats) => {
       this.chats = chats;
-    });
+    }, (error) => console.log(error));
   }
 
   scrollToBottom(): void {

@@ -5,6 +5,11 @@
 </mat-toolbar>
 
 <div class="space-container">
+  <div class="sidebar-container">
+    <planet-chat-sidebar [chats]="chats"></planet-chat-sidebar>
+  </div>
+
+
   <div class="chat-container" #chat>
     <div *ngFor="let conversation of conversations">
       <div class="conversation">
