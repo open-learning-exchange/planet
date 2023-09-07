@@ -49,6 +49,7 @@ export class ChatComponent implements OnInit {
   onSubmit() {
     if (this.promptForm.valid) {
       this.submitPrompt();
+      this.promptForm.controls['prompt'].setValue(' ');
     } else {
       showFormErrors(this.promptForm.controls);
     }

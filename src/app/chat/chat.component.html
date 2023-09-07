@@ -17,7 +17,7 @@
   <div class="form-container">
     <form [formGroup]="promptForm" class="form-spacing" (ngSubmit)="onSubmit()">
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <mat-label>Send a Message</mat-label>
+        <mat-label>Chat</mat-label>
         <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
         <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
       </mat-form-field>
