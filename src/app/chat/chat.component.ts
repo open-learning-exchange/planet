@@ -13,7 +13,6 @@ import { ChatService } from '../shared/chat.service';
 export class ChatComponent implements OnInit {
   spinnerOn = true;
   promptForm: FormGroup;
-  messages: any[] = [];
   conversations: any[] = [];
 
   @ViewChild('chat') chatContainer: ElementRef;
@@ -58,7 +57,6 @@ export class ChatComponent implements OnInit {
 
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
-    this.messages.push({ role: 'user', content });
 
     this.chatService.getPrompt(content).subscribe(
       (completion: any) => {
