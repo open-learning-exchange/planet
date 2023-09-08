@@ -292,13 +292,27 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
       this.chatService.getPrompt(content).subscribe(
       (rating) => {
-        this.rating = rating?.chat;
+        this.rating = this.sanitizeText(rating?.chat);
       }
     );
     } else {
       showFormErrors(this.courseForm.controls);
       return;
     }
+  }
+
+  sanitizeText(text: any): any {
+    // Replace newline characters with <br> tags
+    const textWithLineBreaks = text.replace(/\n/g, '<br>');
+
+    // Replace code block markers with <code> tags
+    const codeBlockStart = /```/g;
+    const codeBlockEnd = /```/g;
+    const textWithCodeBlocks = textWithLineBreaks
+      .replace(codeBlockStart, '<code>')
+      .replace(codeBlockEnd, '</code>');
+
+    return textWithCodeBlocks;
   }
 
 }

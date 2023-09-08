@@ -109,12 +109,26 @@ export class CoursesStepComponent implements OnDestroy {
 
     this.chatService.getPrompt(content).subscribe(
       (completion: any) => {
-        this.rating = completion?.chat;
+        this.rating = this.sanitizeText(completion?.chat);
       },
       (error: any) => {
         console.log(error);
       }
     );
+  }
+
+  sanitizeText(text: any): any {
+    // Replace newline characters with <br> tags
+    const textWithLineBreaks = text.replace(/\n/g, '<br>');
+
+    // Replace code block markers with <code> tags
+    const codeBlockStart = /```/g;
+    const codeBlockEnd = /```/g;
+    const textWithCodeBlocks = textWithLineBreaks
+      .replace(codeBlockStart, '<code>')
+      .replace(codeBlockEnd, '</code>');
+
+    return textWithCodeBlocks;
   }
 
 }

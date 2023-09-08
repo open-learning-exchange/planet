@@ -42,7 +42,9 @@
     </div>
     <div class="steps-container">
       <planet-courses-step [(steps)]="steps" (addStepEvent)="addStep()"></planet-courses-step>
-      {{rating}}
+      <!-- {{sanitizeText(rating)}} -->
+      <!-- {{rating}} -->
+      <br><span [innerHTML]="rating"></span>
     </div>
     <div class="actions-container">
       <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
