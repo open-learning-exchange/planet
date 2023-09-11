@@ -21,6 +21,7 @@ import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-ta
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
+import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 
 @NgModule({
   imports: [
@@ -45,7 +46,8 @@ import { LanguageLabelComponent } from './language-label.component';
     LabelComponent,
     LanguageLabelComponent,
     MyPlanetTableComponent,
-    AvatarComponent
+    AvatarComponent,
+    RestrictDiacriticsDirective
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -67,7 +69,8 @@ import { LanguageLabelComponent } from './language-label.component';
     LanguageLabelComponent,
     MyPlanetTableComponent,
     TimePipe,
-    AvatarComponent
+    AvatarComponent,
+    RestrictDiacriticsDirective
   ]
 })
 export class SharedComponentsModule {}
