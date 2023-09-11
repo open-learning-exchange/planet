@@ -87,7 +87,7 @@
         <button *ngIf="!parent && !isDialog && deviceType !== deviceTypes.DESKTOP" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
-        <mat-menu #actionsMenu="matMenu">
+        <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         </mat-menu>
       </ng-container>
@@ -103,16 +103,16 @@
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
-    <button mat-menu-item [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
+    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
       <span *ngIf="selectedNotEnrolled > 0"> ({{selectedNotEnrolled}})</span>
     </button>
-    <button mat-menu-item [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
+    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
       <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
       <span *ngIf="selectedEnrolled > 0"> ({{selectedEnrolled}})</span>
     </button>
     <ng-container *ngIf="user.isUserAdmin">
-      <button mat-menu-item [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+      <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
       <mat-menu #managerMenu="matMenu">
         <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
         <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">

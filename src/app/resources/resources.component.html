@@ -57,7 +57,7 @@
           <button *ngIf="!parent && !isDialog && deviceType !== deviceTypes.DESKTOP" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
-          <mat-menu #actionsMenu="matMenu">
+          <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
             <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
           </mat-menu>
         </span>
@@ -74,15 +74,15 @@
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
-    <button mat-button [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
+    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
       <span *ngIf="selectedNotAdded > 0"> ({{selectedNotAdded}})</span>
     </button>
-    <button mat-button [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
+    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
       <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
       <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
     </button>
-    <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
     <mat-menu #managerMenu="matMenu">
       <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
         <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>
