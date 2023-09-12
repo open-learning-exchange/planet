@@ -59,6 +59,9 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
     .course-progress {
       margin-top: 0.5rem;
     }
+    .ellipsis-menu {
+      text-align: center;
+    }
   ` ]
 })
 
