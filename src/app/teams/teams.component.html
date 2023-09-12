@@ -89,7 +89,7 @@
               </button>
               <button *ngSwitchCase="'requesting'" mat-raised-button color="primary" disabled>
                 <mat-icon>hourglass_empty</mat-icon>
-                <label *ngIf="isMobile" i18n> Request pending </label>
+                <label *ngIf="!isMobile" i18n> Request pending </label>
               </button>
             </ng-container>
             <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id}" (click)="$event.stopPropagation()">
