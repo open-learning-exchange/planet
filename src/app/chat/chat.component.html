@@ -2,9 +2,12 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Chat Prompts</span>
   <span class="toolbar-fill"></span>
+  <button mat-icon-button (click)="toggleFullScreen()">
+    <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+  </button>
 </mat-toolbar>
 
-<div class="space-container">
+<div class="space-container" [ngClass]="{'fullscreen': isFullscreen}">
   <div class="chat-container" #chat>
     <div *ngFor="let conversation of conversations">
       <div class="conversation">
