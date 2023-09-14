@@ -33,20 +33,24 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return httpReq
-      .pipe(debug('Http ' + type + ' ' + this.reqNum + ' request'))
-      .pipe(catchError(err => {
-        if (err.status === 403) {
-          this.planetMessageService.showAlert('You are not authorized. Please contact administrator.');
-        }
-        return throwError(err);
-      }));
+    return this.formatHttpReq(httpReq, type, this.reqNum);
   }
 
   constructor(
     private http: HttpClient,
     private planetMessageService: PlanetMessageService
   ) {}
+
+  formatHttpReq(httpReq: Observable<any>, type: string, reqNum: Number) {
+    return httpReq
+      .pipe(debug('Http ' + type + ' ' + reqNum + ' request'))
+      .pipe(catchError(err => {
+        if (err.status === 403) {
+          this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
+        }
+        return throwError(err);
+      }));
+  }
 
   put(db: string, data: any, opts?: any): Observable<any> {
     return this.couchDBReq('put', db, this.setOpts(opts), JSON.stringify(data) || '');

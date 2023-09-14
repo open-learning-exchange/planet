@@ -16,9 +16,6 @@ import { DialogsAddMeetupsModule } from './dialogs/dialogs-add-meetups.module';
   ],
   declarations: [
     PlanetCalendarComponent
-  ],
-  entryComponents: [
-    PlanetCalendarComponent
   ]
 })
 export class PlanetCalendarModule {}

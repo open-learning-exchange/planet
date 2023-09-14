@@ -12,6 +12,17 @@ import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
+FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+  dayGridPlugin,
+  timeGridPlugin,
+  interactionPlugin
+]);
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -20,6 +31,7 @@ import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
     BrowserAnimationsModule,
     MaterialModule,
     PlanetDialogsModule,
+    FullCalendarModule,
     NgxImgModule.forRoot(),
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')

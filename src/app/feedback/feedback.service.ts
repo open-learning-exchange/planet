@@ -24,7 +24,7 @@ export class FeedbackService {
   openFeedback(feedback: any) {
     return this.modifyFeedback(
       { ...feedback, closeTime: '', status: 'Reopened' },
-      'You re-opened this feedback.'
+      $localize`You re-opened this feedback.`
     );
   }
 
@@ -32,7 +32,7 @@ export class FeedbackService {
   closeFeedback(feedback: any) {
     return this.modifyFeedback(
       { ...feedback, 'closeTime': this.couchService.datePlaceholder, 'status': 'Closed' },
-      'You closed this feedback.'
+      $localize`You closed this feedback.`
     );
   }
 

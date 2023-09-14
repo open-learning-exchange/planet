@@ -27,7 +27,7 @@ export class CsvService {
   }
 
   exportCSV({ data, title }: { data: any[], title: string }) {
-    const options = { title, filename: `Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
+    const options = { title, filename: $localize`Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
       return Object.entries(dataToDisplay).reduce(
         (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
@@ -35,16 +35,16 @@ export class CsvService {
       );
     });
     if (formattedData.length === 0) {
-      this.planetMessageService.showAlert('There was no data during that period to export');
+      this.planetMessageService.showAlert($localize`There was no data during that period to export`);
       return;
     }
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], planetName: string) {
+  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], planetName: string) {
     const options = {
-      title: `Summary report for ${planetName}`,
-      filename: `Report of ${planetName} on ${new Date().toDateString()}`,
+      title: $localize`Summary report for ${planetName}`,
+      filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
       showTitle: true,
       showLabels: false,
       useKeysAsHeaders: false
@@ -52,11 +52,12 @@ export class CsvService {
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
-    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews);
+    const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
+    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions);
     this.generate(formattedData, options);
   }
 
-  summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews) {
+  summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions) {
     const monthLabels = (data, header: boolean) => data.reduce(
       (csvObj, { date }) => {
         const dateLabel = monthDataLabels(date);
@@ -67,17 +68,20 @@ export class CsvService {
     const blankRow = monthLabels(groupedLogins, false);
     const headerRow = monthLabels(groupedLogins, true);
     return [
-      { label: 'Unique Member Visits by Month', ...headerRow },
+      { label: $localize`Unique Member Visits by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedLogins, true), headerRow),
       { label: '', ...blankRow },
-      { label: 'Total Member Visits by Month', ...headerRow },
+      { label: $localize`Total Member Visits by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedLogins), headerRow),
       { label: '', ...blankRow },
-      { label: 'Resource Views by Month', ...headerRow },
+      { label: $localize`Resource Views by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
       { label: '', ...blankRow },
-      { label: 'Course Views by Month', ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow)
+      { label: $localize`Course Views by Month`, ...headerRow },
+      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow),
+      { label: '', ...blankRow },
+      { label: $localize`Steps Completed by Month`, ...headerRow },
+      ...this.fillRows(this.summaryDataToTable(groupedStepCompletions), headerRow)
     ];
   }
 
@@ -90,7 +94,7 @@ export class CsvService {
       table[itemIndex] = { ...table[itemIndex], [dateLabel]: value };
       table[3] = { ...table[3], [dateLabel]: (table[3][dateLabel] || 0) + value };
       return table;
-    }, [ { label: 'Male' }, { label: 'Female' }, { label: 'Did not specify' }, { label: 'Total' } ]);
+    }, [ { label: $localize`Male` }, { label: $localize`Female` }, { label: $localize`Did not specify` }, { label: $localize`Total` } ]);
   }
 
   fillRows(data: any[], headerRow: any, fillValue = 0) {

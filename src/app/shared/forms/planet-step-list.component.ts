@@ -50,7 +50,7 @@ export class PlanetStepListService {
   `
 })
 export class PlanetStepListItemComponent {
-  @ViewChild(TemplateRef, { static: false }) template: TemplateRef<any>;
+  @ViewChild(TemplateRef) template: TemplateRef<any>;
   index: number;
   isFirst: boolean;
   isLast: boolean;

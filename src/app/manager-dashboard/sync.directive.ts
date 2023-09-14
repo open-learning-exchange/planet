@@ -59,7 +59,7 @@ export class SyncDirective {
       }),
       switchMap(res => this.managerService.addAdminLog('sync'))
     ).subscribe(data => {
-      this.planetMessageService.showMessage('Syncing started');
+      this.planetMessageService.showMessage($localize`Syncing started`);
       this.syncComplete.emit();
     }, error => this.planetMessageService.showMessage(error.error ? error.error.reason : error));
   }
@@ -79,7 +79,8 @@ export class SyncDirective {
     const pushList = [ ...this.pushList(), ...bothList ];
     const pullList = [ ...this.pullList(), ...bothList ];
     const internalList = [
-      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true }
+      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true },
+      { dbSource: 'meetups', db: 'community_meetups', selector: { 'link': { 'teams': { '$eq': `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } }, continuous: true }
     ];
     return pushList.map(mapFunc('push')).concat(pullList.map(mapFunc('pull'))).concat(internalList.map(mapFunc('internal')));
   }

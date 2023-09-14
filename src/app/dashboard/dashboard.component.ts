@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -39,12 +39,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
 
   myLifeItems: any[] = [
-    { firstLine: 'my', title: 'Submissions', link: 'submissions', authorization: 'leader,manager', badge: this.examsCount },
-    { firstLine: 'my', title: 'Personals', link: 'myPersonals' },
-    { firstLine: 'my', title: 'Achievements', link: 'myAchievements' },
-    { firstLine: 'my', title: 'Surveys', link: 'mySurveys', badge: this.surveysCount },
-    { firstLine: 'my', title: 'Health', link: 'myHealth' }
+    { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
+    badge: this.examsCount },
+    { firstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
+    { firstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
+    { firstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
+    { firstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
   ];
+  cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   constructor(
     private userService: UserService,
@@ -137,7 +139,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: '/teams/view/', addId: true })
       ])),
       map(([ memberships, teams ]: any[]) =>
-        teams.filter(team => team.type === undefined || team.type === 'team').map(team => ({
+        teams.filter(team => team.type === undefined || team.type === 'team' || team.type === 'enterprise').map(team => ({
           ...team, canRemove: memberships.some(membership => membership.teamId === team._id && membership.isLeader)
         }))
       )
@@ -170,14 +172,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
-      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Surveys' ? { ...item, badge: this.surveysCount } : item);
+      this.myLifeItems = this.myLifeItems.map(item => item.link === 'mySurveys' ? { ...item, badge: this.surveysCount } : item);
     });
   }
 
   getExams() {
     this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
       this.examsCount = exams.length;
-      this.myLifeItems = this.myLifeItems.map(item => item.title === 'Submissions' ? { ...item, badge: this.examsCount } : item);
+      this.myLifeItems = this.myLifeItems.map(item => item.link === 'submissions' ? { ...item, badge: this.examsCount } : item);
     });
   }
 

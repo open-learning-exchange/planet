@@ -14,6 +14,6 @@
     <planet-users-table #table [users]="users" [search]="searchValue" [filter]="{}" [(tableState)]="tableState" [displayedColumns]="displayedColumns" containerClass="view-container view-full-height no-toolbar view-table" (tableDataChange)="tableDataChange($event)"></planet-users-table>
   </ng-container>
   <ng-template #notFoundMessage>
-    <div class="view-container">No User Found</div>
+    <div class="view-container" i18n>No User Found</div>
   </ng-template>
 </div>

@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -66,7 +66,7 @@ export class TasksComponent implements OnInit {
   addTask(task?) {
     this.openAddDialog({ link: this.link, sync: this.sync }, task, () => {
       this.tasksService.getTasks();
-      const msg = task ? 'Task updated successfully' : 'Task created successfully';
+      const msg = task ? $localize`Task updated successfully` : $localize`Task created successfully`;
       this.planetMessageService.showMessage(msg);
       this.dialogsFormService.closeDialogsForm();
     });
@@ -74,7 +74,7 @@ export class TasksComponent implements OnInit {
 
   openAddDialog(additionalFields, task: any = {}, onSuccess = (res) => {}) {
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
-    this.dialogsFormService.openDialogsForm(task.title ? 'Edit Task' : 'Add Task', fields, formGroup, {
+    this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
       onSubmit: (newTask) => {
         if (newTask) {
           this.tasksService.addDialogSubmit(additionalFields, task, newTask, onSuccess.bind(this));
@@ -100,10 +100,10 @@ export class TasksComponent implements OnInit {
       request: this.tasksService.archiveTask(task)(),
       onNext: () => {
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted a task.');
+        this.planetMessageService.showMessage($localize`You have deleted a task.`);
         this.removeTaskFromTable();
       },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
     };
   }
 
@@ -147,7 +147,7 @@ export class TasksComponent implements OnInit {
     const link = this.mode === 'services' ? `community` : `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
-      'message': 'You were assigned a new task',
+      'message': $localize`You were assigned a new task`,
       link,
       linkParams: { activeTab: 'taskTab' },
       'type': 'newTask',

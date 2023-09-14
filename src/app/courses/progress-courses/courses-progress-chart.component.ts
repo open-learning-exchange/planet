@@ -22,8 +22,8 @@ export class CoursesProgressChartComponent implements OnChanges {
   @Output() changeData = new EventEmitter<{ set, index }>();
   @Output() clickAction = new EventEmitter<any>();
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;
-  @ViewChild('errorsUserTotal', { static: false }) xScrollElement;
-  @ViewChild('errorsUser', { static: false }) dataElement;
+  @ViewChild('errorsUserTotal') xScrollElement;
+  @ViewChild('errorsUser') dataElement;
   sets = [];
   horizTotals = [];
 

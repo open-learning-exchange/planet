@@ -1,5 +1,6 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
@@ -22,7 +23,7 @@ export class PendingTableComponent implements OnChanges, AfterViewInit {
   items = new MatTableDataSource();
   displayedColumns = [ 'item', 'date', 'actions' ];
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private couchService: CouchService,
@@ -41,7 +42,7 @@ export class PendingTableComponent implements OnChanges, AfterViewInit {
     const { _id: id, _rev: rev } = item;
     this.couchService.delete(`send_items/${id}?rev=${rev}`).subscribe(
       () => this.requestUpdate.emit(),
-      () => this.planetMessageService.showAlert('There was a problem deleting item')
+      () => this.planetMessageService.showAlert($localize`There was a problem deleting item`)
     );
   }
 }

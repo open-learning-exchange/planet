@@ -156,6 +156,8 @@ DBS=(
   "messages"
   "course_activities"
   "search_activities"
+  "community_meetups"
+  "chat_history"
 )
 
 insert_dbs $DBS

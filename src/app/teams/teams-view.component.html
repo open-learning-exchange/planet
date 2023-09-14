@@ -30,10 +30,10 @@
       <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
-      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected>Request pending</mat-chip></mat-chip-list>
+      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
-      <button *planetAuthorizedRoles mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
   </mat-toolbar>
   <div class="view-container view-full-height">
@@ -90,7 +90,7 @@
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab #taskTab>
           <ng-template mat-tab-label>
-            <ng-container i18n><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false">Tasks</span></ng-container>
+            <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
           </ng-template>
           <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members" [editable]="userStatus === 'member'"></planet-tasks>
         </mat-tab>
@@ -111,7 +111,7 @@
         <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
-        <mat-tab label="Resources">
+        <mat-tab i18n-label label="Resources">
           <ng-template mat-tab-label>
             <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} services {Documents} }</ng-container> ({{resources?.length || 0}})
           </ng-template>

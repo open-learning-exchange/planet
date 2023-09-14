@@ -35,9 +35,8 @@
         <span i18n>{planetType, select,
           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}
           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}
-        } with pending courses and/or resources for download.
-          <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
-        </span>
+        } with pending courses and/or resources for download.</span>
+        <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
       </p>
     </div>
     <div class="view-container" *ngIf="planetType !== 'community'">
@@ -84,8 +83,8 @@
     </p>
   </div>
   <mat-grid-list cols="4" rowHeight="2rem">
-    <mat-grid-tile>Last Upgrade</mat-grid-tile><mat-grid-tile>Last Sync</mat-grid-tile>
-    <mat-grid-tile>Resource Views Last 30 Days</mat-grid-tile><mat-grid-tile>Total Ratings Last 30 Days</mat-grid-tile>
+    <mat-grid-tile i18n>Last Upgrade</mat-grid-tile><mat-grid-tile i18n>Last Sync</mat-grid-tile>
+    <mat-grid-tile i18n>Resource Views Last 30 Days</mat-grid-tile><mat-grid-tile i18n>Total Ratings Last 30 Days</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastSync?.max.time | date: 'medium'}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.resourceVisits}}</mat-grid-tile>

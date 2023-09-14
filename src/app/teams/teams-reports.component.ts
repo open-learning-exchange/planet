@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CouchService } from '../shared/couchdb.service';
@@ -53,16 +53,16 @@ export class TeamsReportsComponent implements DoCheck {
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
       const lastMonthEnd = currentDate.setDate(0);
       this.dialogsFormService.openDialogsForm(
-        'Add Report',
+        $localize`Add Report`,
         [
-          { name: 'startDate', placeholder: 'Start Date', type: 'date', required: true },
-          { name: 'endDate', placeholder: 'End Date', type: 'date', required: true },
-          { name: 'description', placeholder: 'Summary', type: 'markdown', required: true },
-          { name: 'beginningBalance', placeholder: 'Beginning Balance', type: 'textbox', inputType: 'number', required: true },
-          { name: 'sales', placeholder: 'Sales', type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherIncome', placeholder: 'Other Income', type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'wages', placeholder: 'Personnel', type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherExpenses', placeholder: 'Non-Personnel', type: 'textbox', inputType: 'number', required: true, min: 0 }
+          { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
+          { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
+          { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
+          { name: 'beginningBalance', placeholder: $localize`Beginning Balance`, type: 'textbox', inputType: 'number', required: true },
+          { name: 'sales', placeholder: $localize`Sales`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'otherIncome', placeholder: $localize`Other Income`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'wages', placeholder: $localize`Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 }
         ],
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
@@ -161,7 +161,7 @@ export class TeamsReportsComponent implements DoCheck {
       'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
       'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
     }));
-    this.csvService.exportCSV({ data: exportData, title: `${this.team.name} Financial Report Summary` });
+    this.csvService.exportCSV({ data: exportData, title: $localize`${this.team.name} Financial Report Summary` });
   }
 
 }

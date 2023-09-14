@@ -26,34 +26,34 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.fullName}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="planet">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="planet" i18n>Planet</mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{element.planet.nameDoc?.name || element.planet.doc.name}}
-        <mat-chip class="planet-chip-label margin-lr-5 chip-no-style">{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+        <mat-chip class="planet-chip-label margin-lr-5 chip-no-style" i18n>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="visitCount">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No. of Visits</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="visitCount" i18n>No. of Visits</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.visitCount}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="joinDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Joined Date</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="joinDate" i18n>Joined Date</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.doc.joinDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="lastLogin">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Login</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="lastLogin" i18n>Last Login</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.lastLogin | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="startDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Date Started</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="startDate" i18n>Date Started</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.activityDates.createdDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="recentDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Most Recent Activity</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="recentDate" i18n>Most Recent Activity</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.activityDates.updatedDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="contact">
@@ -71,11 +71,11 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="birthDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Birthdate</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{(element.doc.birthDate | date: 'mediumDate') || 'Missing'}}</mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="birthDate" i18n>Birthdate</mat-header-cell>
+      <mat-cell *matCellDef="let element" i18n>{{(element.doc.birthDate | date: 'mediumDate') || 'Missing'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="lastVisit">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Examination</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="lastVisit" i18n>Last Examination</mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{(element.health?.lastVisit | date: 'mediumDate')}}
         <span *ngIf="element.health && !element.health?.lastVisit" i18n>Never</span>
@@ -93,7 +93,7 @@
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>
           </ng-container>
-          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">Admin</mat-chip>
+          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Admin</mat-chip>
         </mat-chip-list>
         <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
       </mat-cell>
@@ -110,7 +110,7 @@
               <mat-icon>lock</mat-icon><ng-container i18n>Deactivate</ng-container>
             </button>
           </span>
-          <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
+          <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0" i18n>
             <mat-icon>delete</mat-icon>Delete
           </button>
           <button

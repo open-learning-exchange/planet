@@ -79,10 +79,11 @@ export const datasetObject = (label, data, backgroundColor) => ({ label, data, b
 
 export const titleOfChartName = (chartName: string) => {
   const chartNames = {
-    resourceViewChart: 'Resource Views by Month',
-    courseViewChart: 'Course Views by Month',
-    visitChart: 'Total Member Visits by Month',
-    uniqueVisitChart: 'Unique Member Visits by Month'
+    resourceViewChart: $localize`Resource Views by Month`,
+    courseViewChart: $localize`Course Views by Month`,
+    visitChart: $localize`Total Member Visits by Month`,
+    uniqueVisitChart: $localize`Unique Member Visits by Month`,
+    stepCompletedChart: $localize`Steps Completed by Month`
   };
   return chartNames[chartName];
 };

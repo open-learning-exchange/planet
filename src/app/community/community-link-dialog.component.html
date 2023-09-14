@@ -1,6 +1,6 @@
 <div mat-dialog-title>
   <mat-form-field class="full-width">
-    <mat-label>Type of Link</mat-label>
+    <mat-label i18n>Type of Link</mat-label>
     <mat-select [(ngModel)]="selectedLink">
       <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
     </mat-select>
@@ -22,6 +22,6 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" mat-raised-button (click)="cancelForm()">Cancel</button>
-  <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid">OK</button>
+  <button type="button" mat-raised-button (click)="cancelForm()" i18n>Cancel</button>
+  <button mat-raised-button color="primary" type="button" (click)="linkSubmit()" [disabled]="!linkForm.valid" i18n>OK</button>
 </mat-dialog-actions>

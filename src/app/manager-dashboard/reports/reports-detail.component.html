@@ -18,13 +18,13 @@
   <ng-container *ngIf="minDate">
     <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
       <mat-form-field>
-        <mat-label>Start Date</mat-label>
+        <mat-label i18n>Start Date</mat-label>
         <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
         <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
         <mat-datepicker #startDate></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
-        <mat-label>End Date</mat-label>
+        <mat-label i18n>End Date</mat-label>
         <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
         <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
         <mat-datepicker #endDate></mat-datepicker>
@@ -59,6 +59,7 @@
         <button mat-menu-item *ngIf="loginActivities" (click)="openExportDialog('logins')" i18n>Login Report</button>
         <button mat-menu-item *ngIf="resourceActivities.total" (click)="openExportDialog('resourceViews')" i18n>Resources View Report</button>
         <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
+        <button mat-menu-item *ngIf="progress?.steps" (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
         <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
@@ -71,11 +72,12 @@
         <canvas id="visitChart"></canvas>
         <canvas id="resourceViewChart"></canvas>
         <canvas id="courseViewChart"></canvas>
+        <canvas id="stepCompletedChart"></canvas>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-title" i18n>Members</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="label">Total Members</mat-grid-tile>
+              <mat-grid-tile class="label" i18n>Total Members</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
               <mat-grid-tile class="label">
                 <mat-icon>chevron_right</mat-icon>
@@ -148,6 +150,8 @@
               <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
               <mat-grid-tile class="label" i18n>Total Views</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalCourseViews}}</mat-grid-tile>
+              <mat-grid-tile class="label" i18n>Steps Completed</mat-grid-tile>
+              <mat-grid-tile>{{reports?.totalStepCompleted}}</mat-grid-tile>
               <mat-grid-tile class="label" i18n>Most Visited</mat-grid-tile>
               <mat-grid-tile i18n>Total Visits by Course</mat-grid-tile>
               <ng-container *ngIf="!reports?.courses || reports?.courses.length === 0">

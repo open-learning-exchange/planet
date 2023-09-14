@@ -1,0 +1,199 @@
+name: Planet Builder
+
+on:
+  push:
+    branches-ignore:
+      - l10n_i18n
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      buildtype:
+        description: 'Build by "prebuild", "single-language", "planet", or "deploy"'
+        required: true
+        default: 'single-language'
+
+env:
+  DOCKER_ORG: treehouses
+  DOCKER_REPO_PRE: planet-base
+  DOCKER_REPO_LANG: planet-lang
+  DOCKER_REPO_TAG: planet-tags
+  DOCKER_REPO: planet
+
+jobs:
+
+  build-prepare:
+    name: Preparing
+    runs-on: ubuntu-latest
+    outputs:
+      planet_version: ${{ steps.step1.outputs.version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setting Env
+        id: step1
+        run: |
+          version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          echo "::set-output name=version::$version"
+
+  pre-build:
+    name: Pre-Planet build
+    needs: [build-prepare]
+    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
+    runs-on: ubuntu-latest
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Pre-Build Planet
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          mkdir -p ./ng-app/dist
+          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
+          docker images
+          docker tag $repo $latestrepo
+          docker push $repo
+          docker push $latestrepo
+
+  deploy-single-language:
+    name: Deploy single language build
+    needs: [build-prepare, pre-build]
+    if: ${{ (github.event.inputs.buildtype == 'prebuild' || ((github.event.inputs.buildtype == 'single-language' || github.event_name != 'workflow_dispatch') && always())) }}
+    runs-on: ubuntu-latest 
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+
+    #strategy:
+    #  matrix:
+    #    lang: [ eng, ara, fra, spa, nep, som ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Remove Landing Video
+        run: |
+          rm -rf ./src/assets/landing-page/video/landing.mp4
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Build single language build
+        # if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
+          export NODE_OPTIONS=--max_old_space_size=4096
+          mkdir -p ./ng-app/dist
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo . 
+          docker images
+          docker push $repo
+          docker tag $repo $branchrepo
+          docker push $branchrepo
+
+  build:
+    name: Planet build
+    needs: [build-prepare, deploy-single-language]
+    if: ${{ (github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always())) }}
+    runs-on: ubuntu-latest
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+    
+    strategy:
+      matrix:
+        arch: [ amd64, arm, arm64 ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Build image
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME"
+          LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
+          mkdir -p ./ng-app/dist
+          mkdir -p ./ng-app/langbuild
+          docker create --name langbuild "$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
+          docker export langbuild > langbuild.tar
+          tar -xf langbuild.tar -C ./ng-app/langbuild
+          for LANGUAGE in "${LANGUAGES[@]}"; do
+            case $LANGUAGE in
+              eng) : "en" ;;
+              ara) : "ar" ;;
+              fra) : "fr" ;;
+              spa) : "es" ;;
+              nep) : "ne" ;;
+              som) : "so" ;;
+            esac
+            lang2="$_"
+            cp -ar ./ng-app/langbuild/ng-app/dist/$lang2 ./ng-app/dist/
+            mv ./ng-app/dist/$lang2 ./ng-app/dist/$LANGUAGE
+          done
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker build -f './docker/planet/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker images
+          docker tag $repo $branchrepo
+          docker push $repo
+          docker push $branchrepo
+
+  multiarch:
+    name: Manifest build
+    needs: [ build-prepare, build ]
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+    if: ${{ always() }}
+    #if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Multiarch Deploy
+        run: |
+          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+          sudo chmod +x /usr/local/bin/manifest_tool
+          mkdir -p /tmp/MA_manifests
+          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          yq e '.manifests[0].platform.architecture = "amd64"' - | \
+          yq e '.manifests[0].platform.os = "linux"' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          yq e '.manifests[1].platform.architecture = "arm"' - | \
+          yq e '.manifests[1].platform.os = "linux"' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          yq e '.manifests[2].platform.architecture = "arm64"' - | \
+          yq e '.manifests[2].platform.os = "linux"' - | \
+          tee /tmp/MA_manifests/MA_planet_latest.yaml
+          manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
+
+      - name: Multiarch Deploy Versioned
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
+          sudo chmod +x /usr/local/bin/manifest_tool
+          mkdir -p /tmp/MA_manifests
+          versiontag="$DOCKER_ORG/$DOCKER_REPO:$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
+          yq e '.tags |= . + ["latest"] ' - | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          yq e '.manifests[0].platform.architecture = "amd64"' - | \
+          yq e '.manifests[0].platform.os = "linux"' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          yq e '.manifests[1].platform.architecture = "arm"' - | \
+          yq e '.manifests[1].platform.os = "linux"' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          yq e '.manifests[2].platform.architecture = "arm64"' - | \
+          yq e '.manifests[2].platform.os = "linux"' - | \
+          tee /tmp/MA_manifests/MA_planet_versioned.yaml
+          manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml

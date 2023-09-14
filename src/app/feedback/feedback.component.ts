@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { combineLatest } from 'rxjs';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
@@ -45,8 +48,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedback.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
   }
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   user: any = {};
   private onDestroy$ = new Subject<void>();
   emptyData = false;
@@ -103,7 +106,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.feedback.data = feedbackData.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
       this.emptyData = !this.feedback.data.length;
       this.dialogsLoadingService.stop();
-    }, (error) => this.message = 'There is a problem of getting data.');
+    }, (error) => this.message = $localize`There is a problem of getting data.`);
   }
 
   deleteClick(feedback) {
@@ -129,9 +132,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted feedback.');
+        this.planetMessageService.showMessage($localize`You have deleted feedback.`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There is a problem deleting this feedback.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There is a problem deleting this feedback.`)
     };
   }
 

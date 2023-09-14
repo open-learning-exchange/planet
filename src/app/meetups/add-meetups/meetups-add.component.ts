@@ -142,7 +142,7 @@ export class MeetupsAddComponent implements OnInit {
       })
     ).subscribe((res) => {
       this.goBack(res);
-      this.planetMessageService.showMessage(meetupInfo.title + ' Updated Successfully');
+      this.planetMessageService.showMessage($localize`${meetupInfo.title} Updated Successfully`);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -156,7 +156,7 @@ export class MeetupsAddComponent implements OnInit {
       'endDate': Date.parse(meetupInfo.endDate),
     }).subscribe((res) => {
       this.goBack(res);
-      this.planetMessageService.showMessage(meetupInfo.title + ' Added');
+      this.planetMessageService.showMessage($localize`${meetupInfo.title} Added`);
     }, (err) => console.log(err));
   }
 
@@ -205,7 +205,7 @@ export class MeetupsAddComponent implements OnInit {
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
       'user': user._id,
-      'message': `<b>"${meetupInfo.title}"</b> has been updated.`,
+      'message': $localize`<b>"${meetupInfo.title}"</b> has been updated.`,
       'link': '/meetups/view/' + meetupId,
       'item': meetupId,
       'type': 'meetup',

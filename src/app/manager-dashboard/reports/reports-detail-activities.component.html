@@ -1,42 +1,46 @@
 <mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="weekOf">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Week Starting</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="weekOf" i18n>Week Starting</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.weekOf | date}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="count">
       <ng-container *ngIf="activityType==='health'; else views" i18n>Examinations</ng-container>
       <ng-template #views i18n>Views</ng-template>
     </mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.count}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="unique">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Patients Seen</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="unique" i18n>Patients Seen</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.unique?.length}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="averageRating">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Average Rating</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="averageRating" i18n>Average Rating</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.averageRating}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="enrollments">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Enrolled</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="enrollments" i18n>Enrolled</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.enrollments}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="completions">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Completed</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="completions" i18n>Courses Completed</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.completions}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="steps">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Steps</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.steps}}</mat-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="steps" i18n>Steps</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.max?.steps}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="exams">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Tests</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.exams}}</mat-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="exams" i18n>Tests</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.max?.exams}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="stepsCompleted">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="stepsCompleted" i18n>Steps Completed</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.stepsCompleted}}</mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>

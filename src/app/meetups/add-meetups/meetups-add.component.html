@@ -5,7 +5,7 @@
 </mat-toolbar>
 
 <div [ngClass]="{'space-container':!isDialog}">
-  <mat-toolbar class="primary-color font-size-1" i18n>{{this.pageType}} Meetup</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Meetup</mat-toolbar>
   <div class="view-container">
     <form class="form-spacing" [formGroup]="meetupForm" novalidate>
       <mat-form-field>
@@ -21,7 +21,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" required="true" placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
+        <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>

@@ -1,3 +1,5 @@
+@import '../../variables';
+
 :host {
   .course-container {
     display: grid;
@@ -22,6 +24,25 @@
   .full-view-container.course-container {
     grid-template-columns: 0 1fr;
     grid-column-gap: 0;
+  }
+
+  @media (max-width: $screen-sm) {
+    .course-container {
+      grid-template-columns: 1fr;
+      grid-template-areas: 
+      'view'
+      'detail';
+      grid-row-gap: 1rem;
+    }
+
+    .full-view-container.course-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: 0 1fr;
+    } 
+
+    .course-detail, .course-view {
+      overflow: visible;
+    }
   }
 
 }

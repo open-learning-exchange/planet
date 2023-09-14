@@ -1,7 +1,10 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog, PageEvent, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
@@ -25,7 +28,7 @@ import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
-import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-resources',
@@ -36,9 +39,9 @@ import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.compo
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(ResourcesSearchComponent, { static: false }) searchComponent: ResourcesSearchComponent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(ResourcesSearchComponent) searchComponent: ResourcesSearchComponent;
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
@@ -85,8 +88,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   );
   trackById = trackById;
   initialSort = '';
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
-  @ViewChild(PlanetTagInputComponent, { static: false })
+  @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
@@ -101,9 +106,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsListService: DialogsListService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
@@ -135,7 +146,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
-    this.selection.onChange.subscribe(({ source }) => this.onSelectionChange(source.selected));
+    this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
@@ -241,9 +252,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted resource: ' + resource.doc.title);
+        this.planetMessageService.showMessage($localize`You have deleted resource: ${resource.doc.title}`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };
   }
 
@@ -255,9 +266,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' resources');
+        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} resources`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this resource.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };
   }
 
@@ -277,13 +288,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
     .subscribe((response: any) => {
-      this.planetMessageService.showMessage(resources.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
+      this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
   addTagsToSelected({ selected, indeterminate }) {
     this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
-      this.planetMessageService.showMessage('Collections updated');
+      this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
 
@@ -353,9 +364,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           center: selectedPlanets.length > 1 ? 'nations' : 'nation',
           nation: selectedPlanets.length > 1 ? 'communities' : 'community'
         }[this.planetType];
-        this.planetMessageService.showMessage(`Resources queued to push to ${childType}.`);
+        this.planetMessageService.showMessage($localize`Resources queued to push to ${childType}.`);
         this.dialogRef.close();
-      }, () => this.planetMessageService.showAlert('There was an error sending these resources'));
+      }, () => this.planetMessageService.showAlert($localize`There was an error sending these resources`));
     };
   }
 

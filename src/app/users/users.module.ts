@@ -37,7 +37,6 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     UsersUpdateComponent,
     UsersTableComponent,
     UserProfileDialogComponent
-  ],
-  entryComponents: [ UserProfileDialogComponent ]
+  ]
 })
 export class UsersModule {}

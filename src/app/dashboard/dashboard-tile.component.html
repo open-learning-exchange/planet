@@ -1,14 +1,14 @@
 <mat-card class="dashboard-card">
   <div class="left-tile accent-color">
     <a *ngIf="link || emptyLink; else noLink" [routerLink]="[link || emptyLink]">
-      <planet-dashboard-tile-title [cardTitle]="cardTitle"></planet-dashboard-tile-title>
+      <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
     </a>
     <ng-template #noLink>
-      <span *ngIf="cardTitle==='myLife'">
-        <planet-dashboard-tile-title [cardTitle]="cardTitle"></planet-dashboard-tile-title>
+      <span *ngIf="cardType==='myLife'">
+        <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
       </span>
     </ng-template>
-    <a class="small" *ngIf="cardTitle==='myCourses'" routerLink="myProgress">My Progress</a>
+    <a class="small" *ngIf="cardType==='myCourses'" routerLink="myProgress" i18n>My Progress</a>
   </div>
   <div class="right-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
@@ -20,18 +20,18 @@
             [routerLink]="item.link"
             [matTooltip]="item.tooltip"
             cdkDrag
-            [cdkDragDisabled]="cardTitle==='myLife'"
+            [cdkDragDisabled]="cardType==='myLife'"
             #dashboardTile
           >
             <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
             <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': tileLines }">{{item.title}}</p>
-            <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardTitle!=='myLife' && !item?.canRemove">
-              <mat-icon [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
+            <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardType!=='myLife' && !item?.canRemove">
+              <mat-icon i18n-matTooltip [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
             </button>
           </div>
         </ng-container>
       </ng-container>
-      <span *ngIf="itemData.length === 0" class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]">
+      <span *ngIf="itemData.length === 0" class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]" i18n>
         Add item to {{cardTitle}}
       </span>
     </div>

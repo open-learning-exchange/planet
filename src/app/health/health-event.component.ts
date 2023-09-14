@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
@@ -68,7 +68,7 @@ export class HealthEventComponent implements OnInit {
       ]);
     })).subscribe(([ [ event ], time ]: [ any[], number ]) => {
       if (event !== 'new' && (time - event.updatedDate) > 300000) {
-        this.planetMessageService.showAlert('This examination can no longer be changed.');
+        this.planetMessageService.showAlert($localize`This examination can no longer be changed.`);
         this.goBack();
         return;
       }
@@ -117,7 +117,7 @@ export class HealthEventComponent implements OnInit {
           }
         },
         showMainParagraph: false,
-        extraMessage: 'The following measurement(s) may be incorrect. Click <b>Cancel</b> to fix or click <b>OK</b> to submit.',
+        extraMessage: $localize`The following measurement(s) may be incorrect. Click <b>Cancel</b> to fix or click <b>OK</b> to submit.`,
         showLabels: invalidFields
       }
     });

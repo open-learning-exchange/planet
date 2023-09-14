@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -22,7 +22,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 export class NewsListComponent implements OnChanges {
 
   @Input() items: any[] = [];
-  @Input() editSuccessMessage = 'News has been updated successfully.';
+  @Input() editSuccessMessage = $localize`News has been updated successfully.`;
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;
@@ -98,7 +98,7 @@ export class NewsListComponent implements OnChanges {
   postNews(oldNews, newNews) {
     this.newsService.postNews(
       { ...oldNews, ...newNews },
-      oldNews._id ? this.editSuccessMessage : 'Reply has been posted successfully.'
+      oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
       this.dialogsLoadingService.stop();
@@ -129,7 +129,7 @@ export class NewsListComponent implements OnChanges {
         this.deleteDialog.close();
       },
       onError: (error) => {
-        this.planetMessageService.showAlert('There was a problem deleting this news.');
+        this.planetMessageService.showAlert($localize`There was a problem deleting this news.`);
       }
     };
   }
@@ -155,7 +155,7 @@ export class NewsListComponent implements OnChanges {
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
-    this.newsService.postNews({ ...news, labels }, `Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
+    this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
 
   trackById(index, item) {

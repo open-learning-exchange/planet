@@ -43,7 +43,6 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
     TeamsReportsDetailComponent,
     TeamsMemberComponent,
     TeamsReportsDialogComponent
-  ],
-  entryComponents: [ TeamsReportsDialogComponent ]
+  ]
 })
 export class TeamsModule {}
