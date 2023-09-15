@@ -1,17 +1,17 @@
 import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
 
 @Directive({
-  selector: '[planetChatFormat]'
+  selector: '[planetChatOutput]'
 })
-export class ChatFormatDirective {
+export class ChatOutputDirective {
   constructor(private el: ElementRef, private renderer: Renderer2) {}
 
-  @Input('planetChatFormat') set planetChatFormat(text: string) {
-    const formattedText = this.formatText(text);
+  @Input('planetChatOutput') set planetChatOutput(text: string) {
+    const formattedText = this.formatOutput(text);
     this.renderer.setProperty(this.el.nativeElement, 'innerHTML', formattedText);
   }
 
-  private formatText(text: string): string {
+  private formatOutput(text: string): string {
     // Escape HTML tags to prevent rendering as HTML
     const escapedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 

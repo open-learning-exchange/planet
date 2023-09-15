@@ -21,7 +21,7 @@ import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-ta
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
-import { ChatFormatDirective } from '../shared/chat-format.directive';
+import { ChatOutputDirective } from './chat-output.directive';
 
 @NgModule({
   imports: [
@@ -47,7 +47,7 @@ import { ChatFormatDirective } from '../shared/chat-format.directive';
     LanguageLabelComponent,
     MyPlanetTableComponent,
     AvatarComponent,
-    ChatFormatDirective
+    ChatOutputDirective
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -70,7 +70,7 @@ import { ChatFormatDirective } from '../shared/chat-format.directive';
     MyPlanetTableComponent,
     TimePipe,
     AvatarComponent,
-    ChatFormatDirective
+    ChatOutputDirective
   ]
 })
 export class SharedComponentsModule {}
