@@ -12,8 +12,11 @@ export class ChatFormatDirective {
   }
 
   private formatText(text: string): string {
-    // For example, replace newline characters with <br> tags
-    const textWithLineBreaks = text.replace(/\n/g, '<br>');
+    // Escape HTML tags to prevent rendering as HTML
+    const escapedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // Replace newline characters with <br> tags
+    const textWithLineBreaks = escapedText.replace(/\n/g, '<br>');
 
     // Replace code block markers with <code> tags
     const codeBlockStart = /```/g;
@@ -24,4 +27,5 @@ export class ChatFormatDirective {
 
     return textWithCodeBlocks;
   }
+
 }
