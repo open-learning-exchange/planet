@@ -35,34 +35,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-info {
-      max-width: 200px;
-    }
-    .mat-column-createdDate {
-      max-width: 95px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .column {
-      display: flex;
-      flex-direction: column;
-    }
-    .column > * {
-      line-height: normal;
-    }
-    .course-progress {
-      margin-top: 0.5rem;
-    }
-    .ellipsis-menu {
-      text-align: center;
-    }
-  ` ]
+  styleUrls: [ './courses.scss' ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
