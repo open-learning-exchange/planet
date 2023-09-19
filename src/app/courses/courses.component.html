@@ -237,11 +237,14 @@
       </ng-container>
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.doc.createdDate | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="created-label" i18n>Created: </span>
+          {{element.doc.createdDate | date}}
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
         <mat-header-cell *matHeaderCellDef mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" class="rating-cell">
           <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
       </ng-container>

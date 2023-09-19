@@ -1,0 +1,67 @@
+@import '../variables';
+
+/* Column Widths */
+.mat-column-select {
+  max-width: 44px;
+}
+
+.mat-column-info {
+  max-width: 200px;
+}
+
+.mat-column-createdDate {
+  max-width: 95px;
+}
+
+.mat-column-rating {
+  max-width: 225px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column > * {
+  line-height: normal;
+}
+
+.course-progress {
+  margin-top: 0.5rem;
+}
+
+.ellipsis-menu {
+  text-align: center;
+}
+
+.created-label {
+  display: none;
+}
+
+@media(max-width: $screen-sm) {
+  .created-label {
+    display: inline-block;
+  }
+
+  .mat-column-createdDate {
+    max-width: fit-content;
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-row {
+    flex-direction: column;
+    align-items: start;
+    padding: 8px 24px;
+  }
+
+  .table-selection-top {
+    align-self: center;
+  }
+
+  .rating-cell {
+    align-self: flex-end;
+  }
+}
