@@ -8,8 +8,8 @@
   <div class="chat-container" #chat>
     <div *ngFor="let conversation of conversations">
       <div class="conversation">
-        <p class="conversation-query" [innerHTML]="sanitizeText(conversation.query)"></p>
-        <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [innerHTML]="sanitizeText(conversation.response)"></p>
+        <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
+        <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [planetChatOutput]="conversation.response"></p>
       </div>
     </div>
   </div>
