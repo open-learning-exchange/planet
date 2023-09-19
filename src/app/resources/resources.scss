@@ -48,3 +48,20 @@ $label-height: 1rem;
 .ellipsis-menu {
   text-align: center;
 }
+
+
+@media(max-width: $screen-md) {
+  .resources-list {
+    .mat-column-createdDate {
+      max-width: 100px;
+    }
+
+    .mat-column-rating {
+      max-width: 115px;
+    }
+  }
+
+  .rating-header {
+    justify-content: center;
+  }
+}

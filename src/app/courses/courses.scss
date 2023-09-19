@@ -1,0 +1,53 @@
+@import '../variables';
+
+/* Column Widths */
+.mat-column-select {
+  max-width: 44px;
+}
+
+.mat-column-info {
+  max-width: 200px;
+}
+
+.mat-column-createdDate {
+  max-width: 95px;
+}
+
+.mat-column-rating {
+  max-width: 225px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.column > * {
+  line-height: normal;
+}
+
+.course-progress {
+  margin-top: 0.5rem;
+}
+
+.ellipsis-menu {
+  text-align: center;
+}
+
+@media(max-width: $screen-md) {
+  .mat-column-info {
+    max-width: 120px;
+  }
+
+  .mat-column-createdDate {
+    max-width: 70px;
+  }
+
+  .mat-column-rating {
+    max-width: 115px;
+  }
+
+  .rating-header {
+    justify-content: center;
+  }
+}
