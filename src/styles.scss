@@ -284,8 +284,7 @@ body {
 
   @media (max-width: $screen-md) {
     .rating-item .list-item-rating {
-      display: grid !important;
-      margin: 5px 0;
+      display: grid;
       grid-template-areas:
         'ratio'
         'total'
