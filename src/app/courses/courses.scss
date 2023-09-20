@@ -38,9 +38,31 @@
   display: none;
 }
 
+@media(max-width: $screen-md) {
+  .mat-column-info {
+    max-width: 120px;
+  }
+
+  .mat-column-createdDate {
+    max-width: 70px;
+  }
+
+  .mat-column-rating {
+    max-width: 115px;
+  }
+
+  .rating-header {
+    justify-content: center;
+  }
+}
+
 @media(max-width: $screen-sm) {
   .created-label {
     display: inline-block;
+  }
+
+  .mat-column-info {
+    max-width: fit-content;
   }
 
   .mat-column-createdDate {
