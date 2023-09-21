@@ -42,7 +42,6 @@ $label-height: 1rem;
       line-height: normal;
     }
   }
-
 }
 
 .ellipsis-menu {
@@ -62,5 +61,35 @@ $label-height: 1rem;
 
   .rating-header {
     justify-content: center;
+  }
+}
+
+@media(max-width: $screen-sm) {
+  .resources-list {
+    .mat-column-createdDate {
+      max-width: fit-content;
+    }
+
+    .created-label {
+      display: inline-block;
+    }
+
+    .table-selection-top {
+      align-self: center;
+    }
+  }
+
+  .mat-header-row {
+    display: none;
+  }
+
+  .mat-row {
+    flex-direction: column;
+    align-items: start;
+    padding: 8px 24px;
+  }
+
+  .rating-cell {
+    align-self: flex-end;
   }
 }
