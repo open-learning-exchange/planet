@@ -1,13 +1,27 @@
 @import '../variables.scss';
 
 .space-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-areas:
+    "sidebar chat"
+    "sidebar form";
   height: #{$view-container-height-no-toolbar};
-  overflow: hidden;
+  // flex-direction: column;
+  // overflow: hidden;
+}
+
+.sidebar-container {
+  grid-area: sidebar;
+}
+
+.chat-container {
+  grid-area: chat;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .form-container {
+  grid-area: form;
   background-color: #f4f4f4;
   border-top: 1px solid #ccc;
   display: flex;
@@ -19,11 +33,6 @@
   flex-grow: 1;
   padding: 10px;
   justify-content: center;
-}
-
-.chat-container {
-  flex-grow: 1;
-  overflow-y: auto;
 }
 
 .conversation-query {
@@ -56,10 +65,4 @@ textarea:focus {
 
 mat-slide-toggle {
   margin-right: auto;
-}
-
-.sideOpen {
-  .sidebar {
-    display: none;
-  }
 }

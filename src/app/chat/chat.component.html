@@ -5,12 +5,7 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <button mat-icon-button (click)="toggleSidebar()">
-    <mat-icon>{{ sidebarOpen ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-  </button>
-  <div [ngClass]="{'sideOpen': sidebarOpen}" class="chat-sidebar">
-    <planet-chat-sidebar class="sidebar"></planet-chat-sidebar>
-  </div>
+  <planet-chat-sidebar class="sidebar-container"></planet-chat-sidebar>
   <div class="chat-container" #chat>
     <div *ngFor="let conversation of conversations">
       <div class="conversation">
@@ -37,3 +32,6 @@
    </form>
   </div>
 </div>
+
+
+<!-- <planet-chat-sidebar class="sidebar-container"></planet-chat-sidebar> -->
