@@ -14,8 +14,8 @@
   </mat-toolbar>
   <div class="view-container">
     <div class="form-container">
-      <form [formGroup]="editForm" class="form-spacing form-space" (ngSubmit)="onSubmit()">
-        <div class="profile-form-lt">
+      <form [formGroup]="editForm" class="form-space" (ngSubmit)="onSubmit()">
+        <div class="profile-names">
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName"
               [required]="!submissionMode">
@@ -33,22 +33,12 @@
               <planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages>
             </mat-error>
           </mat-form-field>
+        </div>
+        <div class="profile-contacts">
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
             <mat-error>
               <planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="profile-form-rt">
-          <mat-form-field>
-            <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode">
-              <mat-option *ngFor="let language of languages" [value]="language.name">
-                {{language.name}}
-              </mat-option>
-            </mat-select>
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages>
             </mat-error>
           </mat-form-field>
           <mat-form-field>
@@ -65,6 +55,18 @@
             <mat-datepicker #dp></mat-datepicker>
             <mat-error>
               <planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="profile-dropdowns">
+          <mat-form-field>
+            <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode">
+              <mat-option *ngFor="let language of languages" [value]="language.name">
+                {{language.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error>
+              <planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages>
             </mat-error>
           </mat-form-field>
           <mat-form-field>
