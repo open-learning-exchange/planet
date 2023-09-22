@@ -37,7 +37,7 @@ h2 {
 
 .expand-button {
   position: fixed;
-  top: 20px;
+  top: 80px;
   left: 20px;
   border-radius: 50%;
   background-color: $accent;
@@ -48,22 +48,22 @@ h2 {
   padding: 0;
 }
 
-.sidebar-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.sidebar-drawer {
+  // position: absolute;
+  // top: 0;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
   background: #eee;
 }
 
-.sidebar-container-content {
-  display: flex;
+.window-box {
+  // display: flex;
   height: 100%;
-  align-items: center;
-  justify-content: center;
+  // align-items: center;
+  // justify-content: center;
 }
 
-.sidebar {
-  padding: 20px;
-}
+// .sidebar {
+//   padding: 20px;
+// }

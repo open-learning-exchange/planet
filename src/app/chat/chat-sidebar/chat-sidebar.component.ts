@@ -4,7 +4,7 @@ import { ChatService } from '../../shared/chat.service';
 @Component({
   selector: 'planet-chat-sidebar',
   templateUrl: './chat-sidebar.component.html',
-  styleUrls: [ './chat-sidebar.component.scss' ],
+  styleUrls: [ './chat-sidebar.scss' ],
 })
 export class ChatSidebarComponent implements OnInit {
   chats: any;

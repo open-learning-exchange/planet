@@ -6,32 +6,4 @@
 
 <div class="space-container">
   <planet-chat-sidebar class="sidebar-container"></planet-chat-sidebar>
-  <div class="chat-container" #chat>
-    <div *ngFor="let conversation of conversations">
-      <div class="conversation">
-        <p class="conversation-query" [innerHTML]="sanitizeText(conversation.query)"></p>
-        <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [innerHTML]="sanitizeText(conversation.response)"></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-container">
-    <form [formGroup]="promptForm" class="form-spacing" (ngSubmit)="onSubmit()">
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <mat-label>Send a Message</mat-label>
-        <textarea class="full-width" rows="5" required matInput i18n-placeholder placeholder="Send a message" [formControl]="promptForm.controls.prompt"></textarea>
-        <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <button type="submit" mat-raised-button [planetSubmit]="spinnerOn" color="primary" i18n>
-       Chat
-       <mat-icon>send</mat-icon>
-      </button>
-      <mat-slide-toggle ngModel formControlName="saveChat" color="primary">
-        Save Chat
-      </mat-slide-toggle>
-   </form>
-  </div>
 </div>
-
-
-<!-- <planet-chat-sidebar class="sidebar-container"></planet-chat-sidebar> -->

@@ -1,27 +1,12 @@
-@import '../variables.scss';
-
-.space-container {
-  display: grid;
-  grid-template-areas:
-    "sidebar chat"
-    "sidebar form";
-  height: #{$view-container-height-no-toolbar};
-  // flex-direction: column;
-  // overflow: hidden;
-}
-
-.sidebar-container {
-  grid-area: sidebar;
-}
+@import '../../variables.scss';
 
 .chat-container {
-  grid-area: chat;
   flex-grow: 1;
   overflow-y: auto;
+  height: 100%;
 }
 
 .form-container {
-  grid-area: form;
   background-color: #f4f4f4;
   border-top: 1px solid #ccc;
   display: flex;

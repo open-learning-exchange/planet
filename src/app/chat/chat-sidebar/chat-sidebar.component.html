@@ -1,5 +1,5 @@
-<mat-drawer-container class="sidebar-container" autosize>
-  <mat-drawer #drawer class="sidebar" mode="side">
+<mat-drawer-container class="sidebar-drawer" autosize>
+  <mat-drawer #drawer mode="side">
     <div class="header">
       <button type="button" mat-stroked-button color="primary" class="start-button"  mat-button >
         <!-- (click)="startNewChat.emit()" -->
@@ -18,11 +18,12 @@
     </ul>
   </mat-drawer>
 
-  <div class="sidebar-container-content">
+  <div class="window-box">
     <div class="expand-button">
       <button mat-icon-button (click)="drawer.toggle()">
         <i class="material-icons">chevron_right</i>
       </button>
     </div>
+    <planet-chat-window class="window-container"></planet-chat-window>
   </div>
 </mat-drawer-container>

@@ -8,6 +8,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 
 import { ChatComponent } from './chat.component';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
+import { ChatWindowComponent } from './chat-window/chat-window.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
   ],
   declarations: [
     ChatComponent,
-    ChatSidebarComponent
+    ChatSidebarComponent,
+    ChatWindowComponent
   ],
   exports: [ ChatComponent ]
 })
