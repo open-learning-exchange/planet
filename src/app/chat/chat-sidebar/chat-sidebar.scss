@@ -49,21 +49,13 @@ h2 {
 }
 
 .sidebar-drawer {
-  // position: absolute;
-  // top: 0;
-  // bottom: 0;
-  // left: 0;
-  // right: 0;
+  display: flex;
+  flex-direction: column;
   background: #eee;
+  height: #{$view-container-height-no-toolbar};
+  width: 100%;
 }
 
 .window-box {
-  // display: flex;
   height: 100%;
-  // align-items: center;
-  // justify-content: center;
 }
-
-// .sidebar {
-//   padding: 20px;
-// }
