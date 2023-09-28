@@ -74,7 +74,7 @@ export class UsersAchievementsComponent implements OnInit {
       if (error.status === 404) {
         this.achievementNotFound = true;
       } else {
-        this.planetMessageService.showAlert('There was an error getting achievements');
+        this.planetMessageService.showAlert($localize`There was an error getting achievements`);
       }
     });
   }

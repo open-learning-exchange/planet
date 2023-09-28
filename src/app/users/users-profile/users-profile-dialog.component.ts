@@ -1,5 +1,5 @@
 import { Component, Inject, ViewChild, AfterContentChecked } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UsersProfileComponent } from './users-profile.component';
 
 @Component({
@@ -18,7 +18,7 @@ import { UsersProfileComponent } from './users-profile.component';
 })
 export class UserProfileDialogComponent implements AfterContentChecked {
 
-  @ViewChild(UsersProfileComponent, { static: false }) usersProfileComponent: UsersProfileComponent;
+  @ViewChild(UsersProfileComponent) usersProfileComponent: UsersProfileComponent;
   name: string;
   planetCode: string;
   editable = false;

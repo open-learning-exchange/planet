@@ -15,22 +15,15 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { educationLevel } from '../user-constants';
 
 @Component({
   templateUrl: './users-update.component.html',
-  styles: [ `
-    .view-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .view-container form {
-      margin: 0 10px 10px 0;
-    }
-  ` ]
+  styleUrls: [ './users-update.scss' ]
 })
 export class UsersUpdateComponent implements OnInit {
   user: any = {};
-  educationLevel = [ 'Beginner', 'Intermediate', 'Advanced', 'Expert' ];
+  educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
   currentImgKey: string;
@@ -47,6 +40,24 @@ export class UsersUpdateComponent implements OnInit {
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
+  ngxImgText = {
+    default: $localize`Drag and drop`,
+    _default: $localize`Drag and drop or click`,
+    button: $localize`Choose File`,
+    try_again: $localize`Try Again`,
+    replace: $localize`Drag and drop or click to replace`,
+    reset: $localize`Remove`,
+    error: $localize`Oops, something wrong happened.`
+  };
+  ngxImgErrText = {
+    fileSize: $localize`The file size is too big ({{ value }} max).`,
+    minWidth: $localize`The image width is too small ({{ value }}}px min).`,
+    maxWidth: $localize`The image width is too big ({{ value }}}px max).`,
+    minHeight: $localize`The image height is too small ({{ value }}}px min).`,
+    maxHeight: $localize`The image height is too big ({{ value }}}px max).`,
+    imageFormat: $localize`The image format is not allowed ({{ value }} only).`,
+    fileType: $localize`The file type is not allowed.`
+  };
 
   constructor(
     private fb: FormBuilder,

@@ -49,7 +49,7 @@ export class ReportsPendingComponent implements OnInit {
       this.planets = attachNamesToPlanets(planets).filter((planet: any) => planet.doc.docType !== 'parentName');
       this.data = data;
       this.filterData();
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting ' + this.childType));
+    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting ${this.childType}`));
   }
 
 }

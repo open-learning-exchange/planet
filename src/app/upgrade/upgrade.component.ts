@@ -17,7 +17,7 @@ import { SyncService } from '../shared/sync.service';
 export class UpgradeComponent {
   mode = 'planet';
   enabled: Boolean = true;
-  message = 'Start upgrade';
+  message = $localize`Start upgrade`;
   output = '';
   working: Boolean = false;
   done: Boolean = false;
@@ -34,14 +34,14 @@ export class UpgradeComponent {
     private syncService: SyncService
   ) {
     this.mode = this.route.snapshot.data.myPlanet === true ? 'myPlanet' : 'planet';
-    this.addLine('Not started');
+    this.addLine($localize`Not started`);
   }
 
   start() {
     this.enabled = false;
-    this.message = 'Upgrading';
+    this.message = $localize`Upgrading`;
     this.working = true;
-    this.addLine('Server request started');
+    this.addLine($localize`Server request started`);
     this.timeoutTrials += 1;
   }
 
@@ -91,7 +91,7 @@ export class UpgradeComponent {
     }
 
     if (!this.error && this.working) {
-      this.message = 'Success';
+      this.message = $localize`Success`;
       this.error = false;
       this.done = true;
     }
@@ -125,23 +125,23 @@ export class UpgradeComponent {
     this.working = false;
 
     if (this.timeoutTrials >= 5) {
-      this.addLine('Request timed-out', 'upgrade_timeout');
-      this.addLine('Request timed-out 5 times. Please try again later.', 'upgrade_error');
+      this.addLine($localize`Request timed-out`, 'upgrade_timeout');
+      this.addLine($localize`Request timed-out 5 times. Please try again later.`, 'upgrade_error');
       this.enabled = false;
       this.error = true;
       this.done = true;
     } else {
-      this.addLine('Request timed-out, try again.', 'upgrade_timeout');
+      this.addLine($localize`Request timed-out, try again.`, 'upgrade_timeout');
     }
   }
 
   handleError(err) {
-    this.addLine('An error ocurred:', 'upgrade_error');
+    this.addLine($localize`An error ocurred:`, 'upgrade_error');
     JSON.stringify(err, null, 1).split('\n').forEach(line => {
       this.addLine(line, 'upgrade_error');
     });
     this.working = false;
-    this.message = 'Start upgrade';
+    this.message = $localize`Start upgrade`;
     this.error = true;
     this.done = true;
   }

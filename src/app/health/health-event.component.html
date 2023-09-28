@@ -7,7 +7,7 @@
   <div class="view-container view-full-height">
     <div class="form-container">
       <form class="form-spacing" [formGroup]="healthForm">
-        <h4 class="full-width primary-text-color">Vitals</h4>
+        <h4 class="full-width primary-text-color" i18n>Vitals</h4>
         <mat-form-field>
           <input matInput i18n-placeholder [planetRound]="1" placeholder="Temperature in °C" formControlName="temperature" type="number" step="any" min="1">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.temperature"></planet-form-error-messages></mat-error>
@@ -36,7 +36,7 @@
           <input matInput i18n-placeholder placeholder="Hearing" formControlName="hearing">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.hearing"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <h4 class="full-width primary-text-color">Condition and Treatment</h4>
+        <h4 class="full-width primary-text-color" i18n>Condition and Treatment</h4>
         <span class="small grey-text-color" i18n>Diagnosis</span>
         <section class="full-width checkbox-group">
           <mat-checkbox *ngFor="let condition of conditions" [checked]="healthForm.controls.conditions.value[condition]" (change)="conditionChange(condition)">{{condition}}</mat-checkbox>

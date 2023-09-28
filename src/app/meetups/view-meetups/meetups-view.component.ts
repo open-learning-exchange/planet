@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
@@ -96,9 +96,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   joinMeetup() {
     this.meetupService.attendMeetup(this.meetupDetail._id, this.meetupDetail.participate).subscribe((res) => {
-      const msg = res.participate ? 'left' : 'joined';
+      const msg = res.participate ? $localize`left` : $localize`joined`;
       this.meetupDetail.participate = !res.participate;
-      this.planetMessageService.showMessage('You have ' + msg + ' meetup.');
+      this.planetMessageService.showMessage($localize`You have ${msg} meetup.`);
       this.fixEnrolledList(res.participate, this.userService.get().name);
     });
   }
@@ -129,14 +129,14 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     });
     this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.listDialogRef.close();
-      this.planetMessageService.showMessage('Invitation' + (invites.length > 1 ? 's' : '') + ' sent successfully');
+      this.planetMessageService.showMessage($localize`Invitation${(invites.length > 1 ? 's' : '')} sent successfully`);
     });
   }
 
   inviteNotification(userId, meetupDetail) {
     return {
       'user': userId,
-      'message': `<b>${this.userService.get().name}</b> would like you to join <b>"${meetupDetail.title}"</b> meetup
+      'message': $localize`<b>${this.userService.get().name}</b> would like you to join <b>"${meetupDetail.title}"</b> meetup
         ${(meetupDetail.meetupLocation ? ' at ' + meetupDetail.meetupLocation : '')}`,
       'link': this.router.url,
       'item': meetupDetail._id,

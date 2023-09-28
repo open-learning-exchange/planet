@@ -1,11 +1,13 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
-  courses: [ 'title', 'count', 'averageRating', 'steps', 'exams', 'enrollments', 'completions' ],
+  courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
   health: [ 'weekOf', 'count', 'unique' ]
 };
 
@@ -17,7 +19,11 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   @Input() activitiesByDoc = [];
   @Input() ratings = [];
-  @Input() progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
+  @Input() progress = {
+    enrollments: new ReportsDetailData('time'),
+    completions: new ReportsDetailData('time'),
+    steps: new ReportsDetailData('time')
+  };
   @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
   matSortActive = '';
@@ -27,8 +33,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     'count',
     'averageRating'
   ];
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor() {}
 
@@ -46,6 +52,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
       enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
       completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+      stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
       ...activity
     }));
   }

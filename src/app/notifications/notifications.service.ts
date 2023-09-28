@@ -22,7 +22,7 @@ export class NotificationsService {
       .map(notification => ({ ...notification, status: 'read' }));
     this.couchService.bulkDocs('notifications', unreadArray).subscribe(() => {
       this.userService.setNotificationStateChange();
-    }, (err) => this.planetMessageService.showAlert('There was a problem marking all as read'));
+    }, (err) => this.planetMessageService.showAlert($localize`There was a problem marking all as read`));
   }
 
   sendNotificationToUser(notifications: any): Observable<any> {

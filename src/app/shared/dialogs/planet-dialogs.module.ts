@@ -17,6 +17,7 @@ import { SyncDirective } from '../../manager-dashboard/sync.directive';
 import { MeetupsModule } from '../../meetups/meetups.module';
 import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsImagesComponent } from './dialogs-images.component';
+import { DialogsVideoComponent } from './dialogs-video.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
 
 
@@ -37,6 +38,7 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsListComponent,
     DialogsLoadingComponent,
     DialogsImagesComponent,
+    DialogsVideoComponent,
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,
@@ -50,6 +52,7 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsListComponent,
     DialogsLoadingComponent,
     DialogsImagesComponent,
+    DialogsVideoComponent,
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,
@@ -58,15 +61,6 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
   providers: [
     DialogsFormService,
     DialogsListService
-  ],
-  entryComponents: [
-    DialogsFormComponent,
-    DialogsViewComponent,
-    DialogsPromptComponent,
-    DialogsListComponent,
-    DialogsLoadingComponent,
-    DialogsImagesComponent,
-    DialogsRatingsComponent
   ]
 })
 export class PlanetDialogsModule {}

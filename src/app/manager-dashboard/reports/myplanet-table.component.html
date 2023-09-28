@@ -4,27 +4,27 @@
     <mat-cell *matCellDef="let element">{{element.androidId}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.customDeviceName || element.deviceName}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="last_synced">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Synced</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="last_synced" i18n>Last Synced</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.time || element.last_synced | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="time">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Time</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Time</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.time | date: 'mediumDate'}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="type">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Type</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="type" i18n>Type</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.type}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="versionName">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Version</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="versionName" i18n>Version</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.versionName || element.version}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="count">
-    <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No of Visits</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header="count" i18n>No of Visits</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="detail">

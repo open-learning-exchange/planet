@@ -7,7 +7,6 @@ import { UsersService } from '../users/users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
-import { dedupeShelfReduce, arraySubField } from '../shared/utils';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 
@@ -92,7 +91,7 @@ export class ResourcesService {
   libraryAddRemove(resourceIds, type) {
     return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map(({ shelf, countChanged }) => {
       const message = type === 'remove' ?
-        countChanged + ' Resources successfully removed from myLibrary' : countChanged + ' Resources added to your dashboard';
+        countChanged + $localize` Resources successfully removed from myLibrary` : countChanged + $localize` Resources added to your dashboard`;
       this.planetMessageService.showMessage(message);
       return shelf;
     }));
@@ -149,7 +148,7 @@ export class ResourcesService {
   newResourceNotification(user) {
     return {
       'user': user._id,
-      'message': 'There are new resources in the Library. Click to see them!',
+      'message': $localize`There are new resources in the Library. Click to see them!`,
       'link' : '/resources',
       'linkParams': { sort: 'createdDate' },
       'type': 'newResource',

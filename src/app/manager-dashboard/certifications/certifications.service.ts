@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { dedupeShelfReduce } from '../../shared/utils';
 
@@ -45,9 +45,9 @@ export class CertificationsService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage(`You have deleted the ${displayName} certification`);
+        this.planetMessageService.showMessage($localize`You have deleted the ${displayName} certification`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this certification')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this certification`)
     };
   }
 

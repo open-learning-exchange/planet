@@ -65,10 +65,10 @@ export class TasksService {
       { deadline: '', deadlineTime: '09:00' };
     return {
       fields: [
-        { placeholder: 'Task', type: 'textbox', name: 'title', required: true },
-        { placeholder: 'Deadline', type: 'date', name: 'deadline', required: true },
-        { placeholder: 'Deadline Time', type: 'time', name: 'deadlineTime', required: true },
-        { placeholder: 'Description', type: 'markdown', name: 'description', required: false }
+        { placeholder: $localize`Task`, type: 'textbox', name: 'title', required: true },
+        { placeholder: $localize`Deadline`, type: 'date', name: 'deadline', required: true },
+        { placeholder: $localize`Deadline Time`, type: 'time', name: 'deadlineTime', required: true },
+        { placeholder: $localize`Description`, type: 'markdown', name: 'description', required: false }
       ],
       formGroup: {
         title: [ task.title || '', CustomValidators.required ],

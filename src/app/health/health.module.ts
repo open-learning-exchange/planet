@@ -34,7 +34,6 @@ const routes: Routes = [
     HealthUpdateComponent,
     HealthEventComponent,
     HealthEventDialogComponent
-  ],
-  entryComponents: [ HealthEventDialogComponent ]
+  ]
 })
 export class HealthModule {}

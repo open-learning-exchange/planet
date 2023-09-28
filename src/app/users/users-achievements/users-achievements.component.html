@@ -9,9 +9,9 @@
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="accent" i18n routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
-      <span *ngIf="achievementNotFound">Add Achievements</span>
-      <span *ngIf="!achievementNotFound">Edit Achievements</span>
+    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
+      <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
+      <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
     </a>
   </mat-toolbar>
   <div class="view-container">
@@ -75,8 +75,8 @@
       </div>
     </div>
     <div *ngIf="achievementNotFound">
-      <ng-container *ngIf="ownAchievements">You haven't entered any achievements yet. Click <a routerLink="update">Add Achievements</a> to add your achievements!</ng-container>
-      <ng-container *ngIf="!ownAchievements">No achievements found.</ng-container>
+      <ng-container *ngIf="ownAchievements"><span i18n>You haven't entered any achievements yet. Click </span><a routerLink="update" i18n>Add Achievements</a><span i18n> to add your achievements!</span></ng-container>
+      <ng-container *ngIf="!ownAchievements" i18n>No achievements found.</ng-container>
     </div>
   </div>
 </div>

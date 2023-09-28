@@ -1,0 +1,80 @@
+@import '../../variables';
+
+.view-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.view-container form {
+  margin: 0 10px 10px 0;
+}
+
+.form-container {
+  width: calc(#{$form-width-3} + 120px);
+}
+
+.form-space {
+  display: grid;
+  grid-template-areas:
+  'form-names'
+  'form-contacts'
+  'form-dropdowns'
+  'radio-group'
+  'action-buttons';
+  gap: 1rem;
+  padding: 1rem;
+  justify-content: center;
+}
+
+.profile-names {
+  grid-area: form-names;
+
+  mat-form-field {
+    margin-right: 1rem;
+  }
+}
+
+.profile-contacts {
+  grid-area: form-contacts;
+
+  mat-form-field {
+    margin-right: 1rem;
+  }
+}
+
+.profile-dropdowns {
+  grid-area: form-dropdowns;
+
+  mat-form-field {
+    margin-right: 1rem;
+  }
+}
+
+.radio-group {
+  grid-area: radio-group;
+}
+
+.action-buttons {
+  grid-area: action-buttons;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-image-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 'image-lt image-rt';
+  grid-column-gap: 1rem;
+  padding: 0 1rem;
+}
+
+.profile-image-update {
+  grid-area: image-lt;
+  margin-left: unset;
+}
+
+.profile-image-upload {
+  grid-area: image-rt;
+}
+

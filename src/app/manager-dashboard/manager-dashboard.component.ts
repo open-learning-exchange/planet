@@ -6,7 +6,7 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { debug } from '../debug-operator';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -99,9 +99,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   resendConfig() {
     const configuration = this.planetConfiguration;
     this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
-      error => this.planetMessageService.showAlert('An error occurred please try again.'),
+      error => this.planetMessageService.showAlert($localize`An error occurred please try again.`),
       () => {
-        this.planetMessageService.showMessage('Registration request has been sent successfully.');
+        this.planetMessageService.showMessage($localize`Registration request has been sent successfully.`);
         this.showResendConfiguration = false;
       }
     );
@@ -164,7 +164,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.deleteCommunityDialog.close();
         this.router.navigate([ '/login/configuration' ]);
       },
-      onError: error => this.planetMessageService.showAlert('An error occurred please try again.')
+      onError: error => this.planetMessageService.showAlert($localize`An error occurred please try again.`)
     };
   }
 
@@ -226,7 +226,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           break;
       }
       this.couchService.post(db + '/_bulk_docs', { docs: dataUpdate }).subscribe(res => {
-        this.planetMessageService.showMessage('Send on accept list updated');
+        this.planetMessageService.showMessage($localize`Send on accept list updated`);
       });
       this.dialogRef.close();
     };
@@ -261,8 +261,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       ]);
     })).subscribe((res) => {
       this.getSatellitePin();
-      this.planetMessageService.showMessage('Pin reset successfully');
-    }, (error) => this.planetMessageService.showAlert('Error to reset pin'));
+      this.planetMessageService.showMessage($localize`Pin reset successfully`);
+    }, (error) => this.planetMessageService.showAlert($localize`Error to reset pin`));
   }
 
   setVersions() {

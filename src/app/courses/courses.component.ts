@@ -1,7 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, PageEvent } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
@@ -26,37 +29,13 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
-import { DialogsRatingsComponent } from '../shared/dialogs/dialogs-ratings.component';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-info {
-      max-width: 200px;
-    }
-    .mat-column-createdDate {
-      max-width: 95px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .column {
-      display: flex;
-      flex-direction: column;
-    }
-    .column > * {
-      line-height: normal;
-    }
-    .course-progress {
-      margin-top: 0.5rem;
-    }
-  ` ]
+  styleUrls: [ './courses.scss' ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -68,8 +47,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     return this.courses;
   }
   courses = new MatTableDataSource();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @Input() isDialog = false;
   @Input() isForm = false;
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
@@ -116,8 +95,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
-  @ViewChild(PlanetTagInputComponent, { static: false })
+  @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
 
   constructor(
@@ -133,7 +114,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -141,6 +123,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.setupList(this.courses.data, shelf.courseIds);
       });
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
@@ -266,9 +253,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('Course deleted: ' + course.courseTitle);
+        this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting this course.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this course.`)
     };
   }
 
@@ -280,9 +267,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.getCourses();
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted ' + deleteArray.length + ' courses');
+        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} courses`);
       },
-      onError: (error) => this.planetMessageService.showAlert('There was a problem deleting courses.')
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting courses.`)
     };
   }
 
@@ -371,7 +358,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       newShelf._rev = res.rev;
       this.userService.shelf = newShelf;
       this.setupList(this.courses.data, this.userShelf.courseIds);
-      this.planetMessageService.showMessage(message + ' myCourses');
+      this.planetMessageService.showMessage($localize`${message} myCourses`);
     }, (error) => (error));
   }
 
@@ -380,7 +367,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const courseIds = courses.map((data) => {
       return data._id;
     }).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
-    const message = courses.length === 1 ? courses[0].courseTitle + ' have been added to' : courses.length + ' courses have been added to';
+    const message = courses.length === 1 ? $localize`${courses[0].courseTitle} have been added to` : $localize`${courses.length} courses have been added to`;
     this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
   }
 
@@ -406,7 +393,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(switchMap(replicators =>
       this.syncService.confirmPasswordAndRunReplicators(replicators)
     )).subscribe(() => {
-      this.planetMessageService.showMessage(courses.length + ' ' + this.dbName + ' ' + 'queued to ' + msg);
+      this.planetMessageService.showMessage($localize`${courses.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
   }
 
@@ -432,9 +419,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
           center: selected.length > 1 ? 'nations' : 'nation',
           nation: selected.length > 1 ? 'communities' : 'community'
         }[this.planetType];
-        this.planetMessageService.showMessage(`Courses queued to push to ${childType}.`);
+        this.planetMessageService.showMessage($localize`Courses queued to push to ${childType}.`);
         this.dialogRef.close();
-      }, () => this.planetMessageService.showAlert('There was an error sending these courses'));
+      }, () => this.planetMessageService.showAlert($localize`There was an error sending these courses`));
     };
   }
 
@@ -443,7 +430,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.courses.data, this.dbName, { selectedIds: this.selection.selected, tagIds: selected, indeterminateIds: indeterminate }
     ).subscribe(() => {
       this.getCourses();
-      this.planetMessageService.showMessage('Collections updated');
+      this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
 

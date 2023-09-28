@@ -12,10 +12,10 @@ import { UserService } from './user.service';
 
 const passwordFormFields = [
   {
-    'label': 'Password',
+    'label': $localize`Password`,
     'type': 'password',
     'name': 'password',
-    'placeholder': 'Password',
+    'placeholder': $localize`Password`,
     'required': true
   }
 ];
@@ -46,7 +46,7 @@ export class SyncService {
   }
 
   openPasswordConfirmation() {
-    const title = 'Admin Confirmation';
+    const title = $localize`Admin Confirmation`;
     const formGroup = {
       password: [ '', Validators.required, ac => this.validatorService.checkPassword$(ac) ]
     };
@@ -62,7 +62,7 @@ export class SyncService {
       takeWhile((value) => value.cancelled !== true),
       catchError((err) => {
         const errorMessage = err.error.reason;
-        return throwError(errorMessage === 'Name or password is incorrect.' ? 'Password is incorrect.' : errorMessage);
+        return throwError(errorMessage === 'Name or password is incorrect.' ? $localize`Password is incorrect.` : errorMessage);
       })
     );
   }
@@ -75,7 +75,7 @@ export class SyncService {
         { withCredentials: true, domain: this.stateService.configuration.parentDomain })
     ]).pipe(switchMap(([ localSession, parentSession ]) => {
       if (!localSession.ok || !parentSession.ok) {
-        return throwError('Invalid password');
+        return throwError($localize`Invalid password`);
       }
       return of({ name: this.userService.get().name, password });
     }));

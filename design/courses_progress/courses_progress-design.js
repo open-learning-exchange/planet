@@ -13,6 +13,15 @@ module.exports = {
         }
       },
       "reduce": "_stats"
+    },
+    "steps": {
+      "map": function (doc) {
+        // Found sometimes course progress record stepNum 0
+        if (doc.passed && doc.stepNum > 0) {
+          emit({ userId: doc.userId, courseId: doc.courseId, stepNum: doc.stepNum } , doc.updatedDate);
+        }
+      },
+      "reduce": "_stats"
     }
   }
 }

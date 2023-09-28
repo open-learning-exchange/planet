@@ -6,7 +6,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -37,7 +37,7 @@ export class ExamsAddComponent implements OnInit {
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
-  successMessage = this.examType === 'survey' ? 'New survey added' : 'New test added';
+  successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
   steps = [];
   showFormError = false;
   showPreviewError = false;
@@ -97,7 +97,7 @@ export class ExamsAddComponent implements OnInit {
     if (this.route.snapshot.url[0].path !== 'update') {
       return;
     }
-    this.successMessage = this.examType === 'survey' ? 'Survey updated successfully' : 'Test updated successfully';
+    this.successMessage = this.examType === 'survey' ? $localize`Survey updated successfully` : $localize`Test updated successfully`;
     forkJoin([
       this.couchService.get(this.dbName + '/' + this.route.snapshot.paramMap.get('id')),
       this.examType === 'survey' ?

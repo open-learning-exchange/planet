@@ -16,37 +16,37 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 const nameField = {
   'type': 'textbox',
   'name': 'name',
-  'placeholder': 'Name',
+  'placeholder': $localize`Name`,
   'required': true
 };
 const descriptionField = {
   'type': 'markdown',
   'name': 'description',
-  'placeholder': 'What is your team\'s plan?',
+  'placeholder': $localize`What is your team\'s plan?`,
   'required': false
 };
 const enterpriseDescField = [
   {
     'type': 'markdown',
     'name': 'description',
-    'placeholder': 'What is your enterprise\'s Mission?',
+    'placeholder': $localize`What is your enterprise\'s Mission?`,
     'required': false
   }, {
     'type': 'markdown',
     'name': 'services',
-    'placeholder': 'What are the Services your enterprise provides?',
+    'placeholder': $localize`What are the Services your enterprise provides?`,
     'required': false
   }, {
     'type': 'markdown',
     'name': 'rules',
-    'placeholder': 'What are the Rules of your enterprise?',
+    'placeholder': $localize`What are the Rules of your enterprise?`,
     'required': false
   }
 ];
 const publicField = {
   'type': 'toggle',
   'name': 'public',
-  'label': 'Public'
+  'label': $localize`Public`
 };
 
 @Injectable({
@@ -67,7 +67,7 @@ export class TeamsService {
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
-    const title = `${team._id ? 'Update' : 'Create'} ${toProperCase(type)}`;
+    const title = $localize`${team._id ? 'Update' : 'Create'} ${toProperCase(type)}`;
     const nameControl = type !== 'services' ? { name:
       [
         team.name || '', CustomValidators.required,
@@ -105,10 +105,10 @@ export class TeamsService {
     const typeField = {
       'type': 'selectbox',
       'name': 'teamType',
-      'placeholder': 'Team Type',
+      'placeholder': $localize`Team Type`,
       'options': [
-        { 'value': 'sync', 'name': configuration.planetType === 'community' ? 'Connect with nation' : 'Connect with earth' },
-        { 'value': 'local', 'name': 'Local team' }
+        { 'value': 'sync', 'name': $localize`${configuration.planetType === 'community' ? 'Connect with nation' : 'Connect with earth'}` },
+        { 'value': 'local', 'name': $localize`Local team` }
       ]
     };
     return [
@@ -263,17 +263,17 @@ export class TeamsService {
     const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${team.name}"</b> ${teamType}.`;
     switch (type) {
       case 'message':
-        return `<b>${fullName}</b> has posted a message on ${teamMessage}`;
+        return $localize`<b>${fullName}</b> has posted a message on ${teamMessage}`;
       case 'request':
-        return `<b>${fullName}</b> has requested to join ${teamMessage}`;
+        return $localize`<b>${fullName}</b> has requested to join ${teamMessage}`;
       case 'added':
-        return `You have been added to ${teamMessage}`;
+        return $localize`You have been added to ${teamMessage}`;
       case 'rejected':
-        return `You have not been accepted to ${teamMessage}`;
+        return $localize`You have not been accepted to ${teamMessage}`;
       case 'removed':
-        return `You have been removed from ${teamMessage}`;
+        return $localize`You have been removed from ${teamMessage}`;
       default:
-        return `${newMembersLength} member(s) has been added to ${teamMessage}`;
+        return $localize`${newMembersLength} member(s) has been added to ${teamMessage}`;
     }
   }
 

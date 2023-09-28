@@ -70,7 +70,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
             this.setExamPreview();
           },
           (err) => {
-            this.planetMessageService.showAlert('Preview is not available for this test');
+            this.planetMessageService.showAlert($localize`Preview is not available for this test`);
             this.goBack();
           }
         );

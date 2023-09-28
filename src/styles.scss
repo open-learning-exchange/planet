@@ -282,6 +282,31 @@ body {
 
   }
 
+  @media (max-width: $screen-md) {
+    .rating-item .list-item-rating {
+      display: grid;
+      grid-template-areas:
+        'ratio'
+        'total'
+        'rating'
+        'your'
+        'your-label';
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+
+      .stats-ratio {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+      }
+
+      .avg-rating {
+        .rating-number {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+
   // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
   .rating-bar {
     display: block;
@@ -454,6 +479,14 @@ body {
     }
     .mat-form-field-infix {
       border: 0;
+    }
+  }
+
+  @media only screen and (max-width: $screen-sm) {
+    .collections-search {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 

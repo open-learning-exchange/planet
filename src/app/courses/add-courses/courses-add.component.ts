@@ -57,7 +57,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   // from the languages import
   languageNames = languages.map(list => list.name);
 
-  mockStep = { stepTitle: 'Add title', description: '!!!' };
+  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
 
   constructor(
     private router: Router,
@@ -198,7 +198,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ])
     )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = courseInfo.courseTitle + (this.pageType === 'Update' ? ' Updated Successfully' : ' Added');
+      const message = courseInfo.courseTitle + (this.pageType === 'Update' ? $localize` Updated Successfully` : $localize` Added`);
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred

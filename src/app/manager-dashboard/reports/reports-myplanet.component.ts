@@ -75,7 +75,7 @@ export class ReportsMyPlanetComponent implements OnInit {
       );
       this.planets = this.allPlanets;
       this.isEmpty = areNoChildren(this.planets);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting myPlanet activity.'));
+    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
   }
 
   myPlanetRequest(hubId) {

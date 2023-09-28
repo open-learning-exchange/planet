@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
+import { CsvService } from '../../shared/csv.service';
 import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -19,10 +20,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   course: any;
   // Need to define this variable for template which is shared with CoursesProgressLearner
   headingStart = '';
-  chartLabel = 'Steps';
+  chartLabel = $localize`Steps`;
   selectedStep: any;
   allChartData: any[] = [];
   chartData: any[];
+  csvChartData: any[];
   submissions: any[] = [];
   progress: any[] = [];
   onDestroy$ = new Subject<void>();
@@ -36,6 +38,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
+    private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog
   ) {
@@ -77,7 +80,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onStepChange(value: any) {
     this.selectedStep = value;
     this.setSingleStep(this.submissions);
-    this.chartLabel = 'Quest.';
+    this.chartLabel = $localize`Quest.`;
   }
 
   setSubmissions() {
@@ -105,7 +108,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   answerErrorCount(answer) {
-    return answer.grade === undefined ? '' : answer.mistakes || (1 - answer.grade);
+    return answer?.grade === undefined ? '' : answer?.mistakes || (1 - answer?.grade);
   }
 
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
@@ -163,12 +166,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.selectedStep = this.course.steps[courseIndex];
       this.setSingleStep(this.submissions);
     }
-    this.chartLabel = 'Quest.';
+    this.chartLabel = $localize`Quest.`;
   }
 
   resetToFullCourse() {
     this.setFullCourse(this.submissions);
-    this.chartLabel = 'Steps';
+    this.chartLabel = $localize`Steps`;
   }
 
   userProgress(user) {
@@ -206,6 +209,27 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       data: { member: { name, userPlanetCode } },
       maxWidth: '90vw',
       maxHeight: '90vh'
+    });
+  }
+
+  structureChartData(data) {
+    const dataArr = [];
+    data.forEach(element => {
+      const dataDict = {};
+      dataDict['Username'] = element.label;
+      for (let i = 0; i < element.items.length; i++) {
+        dataDict[`Step ${(i + 1)}`] = element.items[i].number;
+      }
+
+      dataArr.push(dataDict);
+    });
+    return dataArr;
+  }
+
+  exportChartData() {
+    this.csvService.exportCSV({
+      data:  this.structureChartData(this.chartData),
+      title: $localize`Course Progress Data`
     });
   }
 

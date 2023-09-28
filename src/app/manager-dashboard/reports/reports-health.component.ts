@@ -36,7 +36,7 @@ export class ReportsHealthComponent implements OnChanges {
   @Input() isActive: boolean;
   @Output() changeDateRange = new EventEmitter<{ startDate: Date, endDate: Date }>();
   @Output() updateHealthData = new EventEmitter<any[]>();
-  @ViewChild('diagnosesChart', { static: false }) diagnosesChart;
+  @ViewChild('diagnosesChart') diagnosesChart;
   charts: any[] = [];
   showChart: boolean;
   examinations;

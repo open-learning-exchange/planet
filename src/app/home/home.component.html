@@ -3,7 +3,7 @@
     <button mat-icon-button class="menu-button" (click)="toggleNav()" i18n-title title="Menu" *ngIf="layout === 'modern' || forceModern"><mat-icon>menu</mat-icon></button>
     <a routerLink="/">
       <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo"/>
-      <h1><ng-container i18n>Planet</ng-container> {{planetName}}</h1>
+      <h1><ng-container>Planet</ng-container> {{planetName}}</h1>
     </a>
   </span>
   <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
@@ -42,6 +42,7 @@
     <ng-container *ngIf="planetType === 'community'">
       <button mat-icon-button *planetAuthorizedRoles="'only,health'" i18n-title title="Health" routerLink="/health"><mat-icon>local_hospital</mat-icon></button>
     </ng-container>
+    <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>chat_bubble_outline</mat-icon></button>
     <button mat-icon-button planetFeedback i18n-title title="Feedback" *ngIf="layout === 'classic' && !forceModern"><mat-icon>feedback_outline</mat-icon></button>
     <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
     <ng-container *planetAuthorizedRoles>
@@ -68,7 +69,7 @@
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
-        <a mat-menu-item (click)="readAllNotification()">Mark all as Read</a>
+        <a mat-menu-item (click)="readAllNotification()" i18n>Mark all as Read</a>
         <a [routerLink]="!notification.link ? '/notifications' : notification.link !== '/' ? [ notification.link, notification.linkParams || {} ] : '/'"
           class="menu-item-notification"
           [ngClass]="{'primary-text-color':notification.status==='unread'}"
@@ -80,7 +81,7 @@
           <mat-divider></mat-divider>
         </a>
       </div>
-      <a routerLink="/notifications" mat-menu-item>See All</a>
+      <a routerLink="/notifications" mat-menu-item i18n>See All</a>
     </mat-menu>
   </span>
 </mat-toolbar>
