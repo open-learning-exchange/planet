@@ -61,7 +61,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   handleIncomingMessage(message: string) {
     const lastConversation = this.conversations[this.conversations.length - 1];
-    lastConversation.response += ' ' + message;
+    lastConversation.response += message;
     this.spinnerOn = false;
     this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
@@ -71,7 +71,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.promptForm.valid) {
       this.submitPrompt();
-      this.promptForm.controls['prompt'].setValue('');
+      this.promptForm.controls['prompt'].setValue(' ');
     } else {
       showFormErrors(this.promptForm.controls);
     }
