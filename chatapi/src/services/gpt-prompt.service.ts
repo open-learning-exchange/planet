@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 import { DocumentInsertResponse } from 'nano';
 
 import { ChatItem } from '../models/chat-item.model';
@@ -8,10 +8,7 @@ import { NanoCouchService } from '../utils/nano-couchdb';
 
 dotenv.config();
 
-const configuration = new Configuration({
-  'apiKey': process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI();
 
 const db = new NanoCouchService(
   process.env.COUCHDB_HOST || 'http://couchdb:5984',
@@ -21,11 +18,13 @@ const db = new NanoCouchService(
 // history = db.get the history | [] if empty;
 const history: ChatItem[] = [];
 
-export async function chatWithGpt(userInput: string): Promise<{
-  completionText: string;
-  history: ChatItem[];
-  couchSaveResponse: DocumentInsertResponse;
-} | undefined> {
+export async function chatWithGpt(
+  userInput: string,
+  callback?: (response: string) => void): Promise<{
+    completionText: string;
+    history: ChatItem[];
+    couchSaveResponse: DocumentInsertResponse;
+  } | undefined> {
   const messages: ChatMessage[] = [];
 
   for (const { query, response } of history) {
@@ -37,21 +36,28 @@ export async function chatWithGpt(userInput: string): Promise<{
   // Should insert query to db here
 
   try {
-    const completion = await openai.createChatCompletion({
+    const stream = await openai.chat.completions.create({
       'model': 'gpt-3.5-turbo',
       messages,
+      'stream': true,
     });
 
-    if (!completion.data.choices[0]?.message?.content) {
-      throw new Error('Unexpected API response');
+    let completionText = '';
+
+    // Handle streaming data
+    for await (const chunk of stream) {
+      if (chunk.choices && chunk.choices.length > 0) {
+        const response = chunk.choices[0].delta?.content || '';
+        completionText += response;
+        if (callback) {
+          callback(response);
+        }
+      }
     }
 
-    const completionText = completion.data.choices[0]?.message?.content;
     history.push({ 'query': userInput, 'response': completionText });
-
     db.conversations = history;
     const couchSaveResponse = await db.insert();
-    // Should update the db with query response here
 
     return {
       completionText,
