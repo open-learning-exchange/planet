@@ -3,7 +3,7 @@
 :host {
   .view-container {
     display: grid;
-    grid-template-columns: min-content auto;
+    grid-template-columns: 1.5fr 1fr;
     grid-template-rows: auto 42px;
     grid-column-gap: 0.25rem;
     > * {
@@ -17,6 +17,14 @@
 
   .actions-container {
     align-self: center;
+  }
+
+  .form-container {
+    width: auto;
+  }
+
+  .form-spacing {
+    width: auto;
   }
 
   @media (max-width: $screen-md) {
