@@ -37,16 +37,15 @@ export async function chatWithGpt(
   // Should insert query to db here
 
   try {
-    const completion = await openai.chat.completions.create({
-      'model': 'gpt-3.5-turbo',
-      messages,
-      stream
-    });
-
     let completionText = '';
 
-
     if(stream) {
+      const completion = await openai.chat.completions.create({
+        'model': 'gpt-3.5-turbo',
+        messages,
+        stream
+      });
+
       // Handle streaming data
       for await (const chunk of completion) {
         if (chunk.choices && chunk.choices.length > 0) {
@@ -58,6 +57,11 @@ export async function chatWithGpt(
         }
       }
     } else {
+      const completion = await openai.chat.completions.create({
+        'model': 'gpt-3.5-turbo',
+        messages,
+      });
+
       if (!completion.choices[0]?.message?.content) {
         throw new Error('Unexpected API response');
       }
