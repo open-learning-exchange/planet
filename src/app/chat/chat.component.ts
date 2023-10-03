@@ -12,7 +12,7 @@ import { ChatService } from '../shared/chat.service';
 })
 export class ChatComponent implements OnInit, OnDestroy {
   spinnerOn = true;
-  streamingOn = false;
+  streamingOn = true;
   promptForm: FormGroup;
   conversations: any[] = [];
 
