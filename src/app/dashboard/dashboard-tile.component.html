@@ -8,7 +8,8 @@
         <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
       </span>
     </ng-template>
-    <a class="small" *ngIf="cardType==='myCourses'" routerLink="myProgress" i18n>My Progress</a>
+    <a class="small" *ngIf="cardType==='myLibrary'" routerLink="/chat" i18n>myChat</a>
+    <a class="small" *ngIf="cardType==='myCourses'" routerLink="myProgress" i18n>myProgress</a>
   </div>
   <div class="right-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
