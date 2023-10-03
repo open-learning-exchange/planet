@@ -29,7 +29,7 @@ wss.on('connection', (ws) => {
       const userInput = message.toString();
 
       if (userInput && typeof userInput === 'string') {
-        await chatWithGpt(userInput, (response) => {
+        await chatWithGpt(userInput, true, (response) => {
           ws.send(response);
         });
       }
@@ -41,10 +41,10 @@ wss.on('connection', (ws) => {
 
 app.post('/', async (req: any, res: any) => {
   try {
-    const userInput = req.body.content;
+    const { content } = req.body;
 
-    if (userInput && typeof userInput === 'string') {
-      const response = await chatWithGpt(userInput);
+    if (content && typeof content === 'string') {
+      const response = await chatWithGpt(content, false);
       res.status(200).json({
         'status': 'Success',
         'chat': response?.completionText,
