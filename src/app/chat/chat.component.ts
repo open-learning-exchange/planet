@@ -12,6 +12,7 @@ import { ChatService } from '../shared/chat.service';
 })
 export class ChatComponent implements OnInit, OnDestroy {
   spinnerOn = true;
+  streamingOn = false;
   promptForm: FormGroup;
   conversations: any[] = [];
 
@@ -80,9 +81,33 @@ export class ChatComponent implements OnInit, OnDestroy {
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
 
-    this.conversations.push({ role: 'user', query: content, response: '' });
-
-    // Send the user's query to the chat service
-    this.chatService.sendUserInput(content);
+    if (this.streamingOn) {
+      this.conversations.push({ role: 'user', query: content, response: '' });
+      this.chatService.sendUserInput(content);
+    } else {
+      this.chatService.getPrompt(content).subscribe(
+        (completion: any) => {
+          this.conversations.push({
+            query: content,
+            response: completion?.chat,
+          });
+          this.spinnerOn = false;
+          this.changeDetectorRef.detectChanges();
+          this.scrollToBottom();
+          this.spinnerOn = true;
+        },
+        (error: any) => {
+          this.spinnerOn = false;
+          this.conversations.push({
+            query: content,
+            response: 'Error: ' + error.message,
+            error: true,
+          });
+          this.changeDetectorRef.detectChanges();
+          this.scrollToBottom();
+          this.spinnerOn = true;
+        }
+      );
+    }
   }
 }
