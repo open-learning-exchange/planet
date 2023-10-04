@@ -7,7 +7,7 @@ import { ChatService } from '../../shared/chat.service';
   styleUrls: [ './chat-sidebar.scss' ],
 })
 export class ChatSidebarComponent implements OnInit {
-  chats: any;
+  conversations: any;
 
   constructor(private chatService: ChatService) {}
 
@@ -16,11 +16,15 @@ export class ChatSidebarComponent implements OnInit {
   }
 
   getChatHistory() {
-    this.chatService.findChats([], {}).subscribe(
-      (chats) => {
-        this.chats = chats;
+    this.chatService.findConversations([], {}).subscribe(
+      (conversations) => {
+        this.conversations = conversations;
       },
       (error) => console.log(error)
     );
+  }
+
+  selectConversation(conversation) {
+    this.chatService.setSelectedConversationId(conversation?._id);
   }
 }

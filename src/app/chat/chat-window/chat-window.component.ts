@@ -22,6 +22,7 @@ export class ChatWindowComponent implements OnInit {
   };
   messages: any[] = [];
   conversations: any[] = [];
+  selectedConversationId: string;
 
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -35,6 +36,10 @@ export class ChatWindowComponent implements OnInit {
 
   ngOnInit() {
     this.createForm();
+
+    this.chatService.selectedConversationId$.subscribe((conversationId) => {
+      this.selectedConversationId = conversationId;
+    });
   }
 
   scrollToBottom(): void {
