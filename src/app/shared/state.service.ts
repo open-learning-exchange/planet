@@ -37,13 +37,13 @@ export class StateService {
     }
   }
 
-  getCouchState(db: string, planetField: string, sort?: { [key: string]: 'asc' | 'desc' }) {
+  getCouchState(db: string, planetField: string, sort?: { [key: string]: 'asc' | 'desc' }, limit?) {
     const opts = this.optsFromPlanetField(planetField);
     this.state[planetField] = this.state[planetField] || {};
     this.state[planetField][db] = this.state[planetField][db] || { docs: [], lastSeq: 'now' };
     const currentData = this.state[planetField][db].docs;
     const isInitialFind = currentData.length === 0;
-    const getData = isInitialFind ? this.getAll(db, opts, planetField, sort && [ sort ]) : this.getChanges(db, opts, planetField);
+    const getData = isInitialFind ? this.getAll(db, opts, planetField, sort && [ sort ], limit) : this.getChanges(db, opts, planetField);
     return getData.pipe(
       map((changes) => {
         const newData = this.combineChanges(this.state[planetField][db].docs, changes, sort);
@@ -67,11 +67,11 @@ export class StateService {
     }
   }
 
-  getAll(db: string, opts: any, planetField: string, sort: any = 0) {
+  getAll(db: string, opts: any, planetField: string, sort: any = 0, limit?) {
     return this.getChanges(db, opts, planetField).pipe(switchMap(() =>
       this.couchService.findAllStream(db, findDocuments({
         '_id': { '$gt': null }
-      }, 0, sort, 1000), opts)
+      }, 0, sort, limit), opts)
     ));
   }
 
