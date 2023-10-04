@@ -14,6 +14,7 @@ full-calendar {
     line-height: 36px;
     padding: 0 16px;
     position: relative;
+    margin-bottom: 15px;
 
     &:disabled {
       background-color: $disabled-button;
