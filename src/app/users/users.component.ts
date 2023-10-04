@@ -80,6 +80,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
       this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
+      this.emptyData = !this.users.length;
     });
     this.searchChange.pipe(debounceTime(500), takeUntil(this.onDestroy$)).subscribe((searchText) => {
       if (this.isDialog) {

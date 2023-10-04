@@ -1,5 +1,5 @@
 <div [ngClass]="containerClass">
-  <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort [matSortActive]="matSortActive" matSortDirection="desc">
+  <mat-table #table *ngIf='!emptyData; else noUserFoundMessage' [dataSource]="usersTable" [trackBy]="trackByFn" matSort [matSortActive]="matSortActive" matSortDirection="desc">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -135,4 +135,7 @@
     [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
     (page)="onPaginateChange($event)">
   </mat-paginator>
+  <ng-template #noUserFoundMessage>
+    <div>No members available</div>
+  </ng-template>
 </div>
