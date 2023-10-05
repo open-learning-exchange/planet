@@ -39,7 +39,7 @@ export async function chatWithGpt(
   try {
     let completionText = '';
 
-    if(stream) {
+    if (stream) {
       const completion = await openai.chat.completions.create({
         'model': 'gpt-3.5-turbo',
         messages,
@@ -53,6 +53,10 @@ export async function chatWithGpt(
           completionText += response;
           if (callback) {
             callback(response);
+          }
+
+          if (callback && chunk.choices[0].finish_reason === 'stop') {
+            callback('[DONE]');
           }
         }
       }

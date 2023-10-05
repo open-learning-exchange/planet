@@ -21,7 +21,7 @@
         <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
         <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <button mat-raised-button [planetSubmit]="promptForm.valid && spinnerOn" color="primary" i18n>
+      <button mat-raised-button [disabled]="disabled || !promptForm.valid" [planetSubmit]="promptForm.valid && spinnerOn" color="primary" i18n>
        Chat
        <mat-icon>send</mat-icon>
      </button>
