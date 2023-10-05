@@ -66,13 +66,10 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.disabled = false;
     } else {
       this.disabled = true;
+      this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
       lastConversation.response += message;
-      this.spinnerOn = false;
-      this.changeDetectorRef.detectChanges();
-      this.spinnerOn = true;
-      this.scrollToBottom();
-      this.promptForm.controls['prompt'].setValue('');
+      this.postSubmit();
     }
   }
 
@@ -82,6 +79,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     } else {
       showFormErrors(this.promptForm.controls);
     }
+  }
+
+  postSubmit() {
+    this.changeDetectorRef.detectChanges();
+    this.spinnerOn = true;
+    this.scrollToBottom();
+    this.promptForm.controls['prompt'].setValue('');
   }
 
   submitPrompt() {
@@ -97,11 +101,7 @@ export class ChatComponent implements OnInit, OnDestroy {
             query: content,
             response: completion?.chat,
           });
-          this.spinnerOn = false;
-          this.changeDetectorRef.detectChanges();
-          this.scrollToBottom();
-          this.spinnerOn = true;
-          this.promptForm.controls['prompt'].setValue('');
+          this.postSubmit();
         },
         (error: any) => {
           this.spinnerOn = false;
@@ -110,10 +110,7 @@ export class ChatComponent implements OnInit, OnDestroy {
             response: 'Error: ' + error.message,
             error: true,
           });
-          this.changeDetectorRef.detectChanges();
-          this.scrollToBottom();
-          this.spinnerOn = true;
-          this.promptForm.controls['prompt'].setValue('');
+          this.postSubmit();
         }
       );
     }
