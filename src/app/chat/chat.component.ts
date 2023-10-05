@@ -30,6 +30,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.createForm();
     this.initializeChatStream();
+    this.initializeErrorStream();
   }
 
   ngOnDestroy() {
@@ -51,6 +52,18 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '/' ], { relativeTo: this.route });
+  }
+
+  initializeErrorStream() {
+    // Subscribe to WebSocket error messages
+    this.chatService.getErrorStream().subscribe((errorMessage) => {
+      this.conversations.push({
+        query: errorMessage,
+        response: 'Error: ' + errorMessage,
+        error: true,
+      });
+      this.postSubmit();
+    });
   }
 
   initializeChatStream() {

@@ -10,9 +10,14 @@ import { environment } from '../../environments/environment';
   private baseUrl = environment.chatAddress;
   private socket: WebSocket;
   private chatStreamSubject: Subject<string> = new Subject<string>();
+  private errorSubject: Subject<string> = new Subject<string>();
 
   constructor(private httpClient: HttpClient) {
     this.socket = new WebSocket('ws' + this.baseUrl.slice(4));
+
+    this.socket.onerror = (error) => {
+      this.errorSubject.next('WebSocket error');
+    };
 
     // Listen for messages
     this.socket.addEventListener('message', (event) => {
@@ -30,6 +35,10 @@ import { environment } from '../../environments/environment';
   // Subscribe to stream updates
   getChatStream(): Observable<string> {
     return this.chatStreamSubject.asObservable();
+  }
+
+  getErrorStream(): Observable<string> {
+    return this.errorSubject.asObservable();
   }
 
   // Method to send user input via WebSocket

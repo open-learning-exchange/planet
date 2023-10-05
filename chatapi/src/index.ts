@@ -34,7 +34,7 @@ wss.on('connection', (ws) => {
         });
       }
     } catch (error: any) {
-      throw new Error(error);
+      ws.send(`Error: ${error.message}`);
     }
   });
 });
