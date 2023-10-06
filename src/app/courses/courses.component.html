@@ -150,7 +150,7 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell  *matCellDef="let element" class="list-content-menu">
+        <mat-cell  *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
           <h3 class="header">
             <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
             <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{element.doc.courseTitle}}</a></ng-template>
