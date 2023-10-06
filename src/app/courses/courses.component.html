@@ -160,7 +160,7 @@
             </span>
           </h3>
           <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog && !isForm">
-            <span i18n>Your progress:</span>
+            <span i18n>myProgress:</span>
             <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
           <mat-chip-list #tagsList class="tags-list">
