@@ -13,8 +13,8 @@ import { UserService } from '../shared/user.service';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf, trackById, filterIds
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';

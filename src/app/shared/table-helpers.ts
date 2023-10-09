@@ -7,7 +7,7 @@ const dropdownString = (fieldValue: any, value: string) => {
   }
 
   if (fieldValue instanceof Array) {
-    return fieldValue.indexOf(value) === -1
+    return fieldValue.indexOf(value) === -1;
   }
 
   // Ensure both value and fieldValue are strings before calling toLowerCase
