@@ -527,6 +527,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       data: { courseId: courseId },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }
