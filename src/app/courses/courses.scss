@@ -7,14 +7,16 @@
 
 .mat-column-info {
   max-width: 200px;
+  align-self: start;
 }
 
 .mat-column-createdDate {
-  max-width: 95px;
+  max-width: 100px;
+  align-self: start;
 }
 
 .mat-column-rating {
-  max-width: 225px;
+  max-width: 115px;
 }
 
 .column {
@@ -38,6 +40,10 @@
   display: none;
 }
 
+.rating-header {
+  justify-content: center;
+}
+
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
@@ -45,14 +51,6 @@
 
   .mat-column-createdDate {
     max-width: 70px;
-  }
-
-  .mat-column-rating {
-    max-width: 115px;
-  }
-
-  .rating-header {
-    justify-content: center;
   }
 }
 
