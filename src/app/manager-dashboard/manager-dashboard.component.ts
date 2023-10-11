@@ -29,6 +29,16 @@ import { StateService } from '../shared/state.service';
     .mat-raised-button {
       margin: 0.25rem;
     }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .version-card {
+      flex: 1;
+      max-width: calc(50% - 20px);
+      margin: 1rem;
+    }
   ` ]
 })
 
