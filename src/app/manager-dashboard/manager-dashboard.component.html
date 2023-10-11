@@ -63,8 +63,8 @@
       <ng-container [ngSwitch]="requestStatus">
         <ng-container *ngSwitchCase="'accepted'">
           <span><b i18n> List all from the {planetType, select, community {Nation} nation {Center}}</b>
-          <a class="margin-lr-8" routerLink="resources" i18n mat-raised-button>List Resources</a>
-          <a class="margin-lr-8" routerLink="courses" i18n mat-raised-button>List Courses</a></span>
+          <a routerLink="resources" i18n mat-raised-button>List Resources</a>
+          <a routerLink="courses" i18n mat-raised-button>List Courses</a></span>
         </ng-container>
         <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
         <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by { planetType, select, community {nation} nation {center}}. You can retry or contact { planetType, select, community {nation} nation {center}} planet.</p>

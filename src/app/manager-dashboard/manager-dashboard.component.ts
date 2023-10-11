@@ -26,6 +26,9 @@ import { StateService } from '../shared/state.service';
     .view-container > *:last-child {
       margin-bottom: 0;
     }
+    .mat-raised-button {
+      margin: 0.25rem;
+    }
   ` ]
 })
 
