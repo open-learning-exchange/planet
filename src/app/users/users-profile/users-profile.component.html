@@ -7,7 +7,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{userDetail.name}}</span>
-    <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender}}"></mat-icon>
+    <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
     <span class="toolbar-fill"></span>
     <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
       <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>

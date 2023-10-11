@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ViewEncapsulation, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -30,35 +30,12 @@ import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-info {
-      max-width: 200px;
-    }
-    .mat-column-createdDate {
-      max-width: 95px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .column {
-      display: flex;
-      flex-direction: column;
-    }
-    .column > * {
-      line-height: normal;
-    }
-    .course-progress {
-      margin-top: 0.5rem;
-    }
-  ` ]
+  styleUrls: [ './courses.scss' ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -118,6 +95,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     filterIds(this.filterIds)
   ]);
   trackById = trackById;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -135,7 +114,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -143,6 +123,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.setupList(this.courses.data, shelf.courseIds);
       });
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {

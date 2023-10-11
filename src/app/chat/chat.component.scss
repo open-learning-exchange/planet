@@ -1,41 +1,55 @@
 @import '../variables.scss';
 
-.form-container {
-  width: auto;
-  height: calc(1 / 4 * #{$view-container-height});
-  margin-top: 30px;
+.space-container {
   display: flex;
+  flex-direction: column;
+  height: #{$view-container-height-no-toolbar};
+  overflow: hidden;
+}
+
+.form-container {
+  background-color: #f4f4f4;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.form-spacing {
+  flex-grow: 1;
+  padding: 10px;
   justify-content: center;
 }
 
 .chat-container {
-  height: calc(1 / 2 * #{$view-container-height});
+  flex-grow: 1;
   overflow-y: auto;
-  border: 1px solid #{$primary};
-  padding: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
 }
 
 .conversation-query {
-  align-self: flex-start;
+  text-align: left;
+  padding: 8px;
+  border-radius: 5px;
   background-color: #{$primary};
   color: white;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 5px;
 }
 
-.converstaion-response {
-  align-self: flex-end;
-  border-radius: 10px;
-  padding: 5px;
-  margin: 5px;
+.conversation-response {
+  margin: 8px 16px;
 }
 
 .conversation-error {
-  background-color: red;
-  border-radius: 10px;
-  padding: 10px;
+  color: #ff0000;
+  font-style: italic;
+}
+
+textarea {
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }

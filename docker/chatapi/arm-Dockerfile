@@ -10,8 +10,8 @@ FROM treehouses/node-tags:arm
 
 RUN apk update
 
-COPY ./chatapi/package*.json ./
-RUN npm install
+COPY ./chatapi/package.json ./
+RUN npm install --production
 
 COPY ./chatapi/src ./src/
 COPY ./chatapi/tsconfig.json ./tsconfig.json
