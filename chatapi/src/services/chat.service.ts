@@ -38,8 +38,7 @@ export async function chat(data: any): Promise<{
   try {
     const completionText = await gptChat(messages);
 
-    dbData.conversations.pop();
-    dbData.conversations.push({ 'query': content, 'response': completionText });
+    dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
     dbData._id = res?.id;
     dbData._rev = res?.rev;
