@@ -286,9 +286,7 @@ body {
 
   }
 
-  @media (max-width: $screen-md) {
-    .rating-item .list-item-rating {
-      display: grid;
+  .compress-rating .list-item-rating {
       grid-template-areas:
         'ratio'
         'total'
@@ -298,17 +296,11 @@ body {
       grid-template-columns: 1fr;
       grid-template-rows: 1fr;
 
-      .stats-ratio {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
-      }
-
       .avg-rating {
         .rating-number {
           font-size: 1.5rem;
         }
       }
-    }
   }
 
   // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS
