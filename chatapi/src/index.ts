@@ -2,7 +2,6 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-import { getChatDocument } from './utils/db.utils';
 import { chat, chatNoSave } from './services/chat.service';
 
 dotenv.config();
@@ -40,19 +39,6 @@ app.post('/', async (req: any, res: any) => {
     } else {
       res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
-  } catch (error: any) {
-    res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
-  }
-});
-
-app.get('/conversation/:id', async (req: any, res: any) => {
-  try {
-    const { id } = req.params;
-    const conversation = await getChatDocument(id);
-    res.status(200).json({
-      'status': 'Success',
-      conversation
-    });
   } catch (error: any) {
     res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
   }
