@@ -2,7 +2,7 @@ import { DocumentInsertResponse } from 'nano';
 
 import db from '../config/nano.config';
 import { gptChat } from '../utils/gpt-chat.utils';
-import { getChatDocument } from '../utils/db.utils';
+import { retrieveChatHistory } from '../utils/db.utils';
 import { handleChatError } from '../utils/chat-error.utils';
 import { ChatMessage } from '../models/chat-message.model';
 
@@ -19,13 +19,7 @@ export async function chat(data: any): Promise<{
   const messages: ChatMessage[] = [];
 
   if (dbData._id) {
-    const history = await getChatDocument(dbData._id);
-    dbData.conversations = history;
-
-    for (const { query, response } of history) {
-      messages.push({ 'role': 'user', 'content': query });
-      messages.push({ 'role': 'assistant', 'content': response });
-    }
+    retrieveChatHistory(dbData, messages);
   } else {
     dbData.conversations = [];
   }
