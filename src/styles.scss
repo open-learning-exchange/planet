@@ -191,6 +191,10 @@ body {
 
   }
 
+  .list-content-menu-auto {
+    grid-template-rows: auto 1fr min-content;
+  }
+
   // the colored stars are placed on top of the uncolored ones
   // the width is set dynamically with JS
   $stars-margin: 1px;
