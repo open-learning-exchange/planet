@@ -19,7 +19,7 @@ export async function chat(data: any): Promise<{
   const messages: ChatMessage[] = [];
 
   if (dbData._id) {
-    retrieveChatHistory(dbData, messages);
+    await retrieveChatHistory(dbData, messages);
   } else {
     dbData.conversations = [];
   }
