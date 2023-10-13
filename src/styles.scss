@@ -191,6 +191,10 @@ body {
 
   }
 
+  .list-content-menu-auto {
+    grid-template-rows: auto 1fr min-content;
+  }
+
   // the colored stars are placed on top of the uncolored ones
   // the width is set dynamically with JS
   $stars-margin: 1px;
@@ -282,9 +286,7 @@ body {
 
   }
 
-  @media (max-width: $screen-md) {
-    .rating-item .list-item-rating {
-      display: grid;
+  .compress-rating .list-item-rating {
       grid-template-areas:
         'ratio'
         'total'
@@ -294,17 +296,11 @@ body {
       grid-template-columns: 1fr;
       grid-template-rows: 1fr;
 
-      .stats-ratio {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
-      }
-
       .avg-rating {
         .rating-number {
           font-size: 1.5rem;
         }
       }
-    }
   }
 
   // create an empty bar with only the border and add another bar inside it with dynamic width calculated with JS

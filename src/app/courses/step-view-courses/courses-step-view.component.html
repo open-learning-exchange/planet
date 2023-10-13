@@ -70,7 +70,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-markdown *ngIf="stepDetail?.description" class="description img-wrap" [content]="stepDetail.description"></planet-markdown>
+    <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
       [fetchRating]="false"

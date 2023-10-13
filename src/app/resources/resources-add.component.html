@@ -5,7 +5,7 @@
 <div [ngClass]="{'space-container':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Resource</mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="form-container">
+    <div>
       <form class="form-spacing" [formGroup]="resourceForm" novalidate>
         <mat-form-field>
           <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
