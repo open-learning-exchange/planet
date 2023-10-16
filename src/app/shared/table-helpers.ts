@@ -5,7 +5,15 @@ const dropdownString = (fieldValue: any, value: string) => {
     // If there is no value to filter, include item.  If the data field is undefined, exclude item.
     return value !== undefined;
   }
-  return fieldValue instanceof Array ? fieldValue.indexOf(value) === -1 : value.toLowerCase() !== fieldValue.toLowerCase();
+
+  if (fieldValue instanceof Array) {
+    return fieldValue.indexOf(value) === -1;
+  }
+
+  // Ensure both value and fieldValue are strings before calling toLowerCase
+  if (typeof value === 'string' && typeof fieldValue === 'string') {
+    return value.toLowerCase() !== fieldValue.toLowerCase();
+  }
 };
 
 const dropdownArray = (fieldValue: any, values: string[]) => {
