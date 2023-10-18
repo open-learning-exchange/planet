@@ -7,7 +7,7 @@
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
       <span class="toolbar-fill"></span>
-      <ng-container style="margin-top: 5rem;" *ngTemplateOutlet="filterOptions"></ng-container>
+      <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
     </mat-toolbar-row>
   </ng-container>
 
