@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { showFormErrors } from '../shared/table-helpers';
 import { ChatService } from '../shared/chat.service';
+import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/couchdb.service';
 
 @Component({
   selector: 'planet-chat',
@@ -16,6 +18,11 @@ export class ChatComponent implements OnInit, OnDestroy {
   disabled = false;
   promptForm: FormGroup;
   conversations: any[] = [];
+  data = {
+    user: this.userService.get(),
+    time: this.couchService.datePlaceholder,
+    content: ''
+  };
 
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -24,7 +31,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private changeDetectorRef: ChangeDetectorRef,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private userService: UserService,
+    private couchService: CouchService
   ) {}
 
   ngOnInit() {
@@ -104,11 +113,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
 
+    this.data.content = content;
+
     if (this.setStreamOn) {
       this.conversations.push({ role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(content);
     } else {
-      this.chatService.getPrompt(content).subscribe(
+      this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
           this.conversations.push({
             query: content,

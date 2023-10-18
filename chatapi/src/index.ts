@@ -1,9 +1,10 @@
 import express from 'express';
-import { chatWithGpt } from './services/gpt-prompt.service';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import http from 'http';
 import WebSocket from 'ws';
+
+import { chat, chatNoSave } from './services/chat.service';
 
 dotenv.config();
 
@@ -41,18 +42,23 @@ wss.on('connection', (ws) => {
 
 app.post('/', async (req: any, res: any) => {
   try {
-    const { content } = req.body;
+    const { data, save } = req.body;
 
-    if (content && typeof content === 'string') {
-      const response = await chatWithGpt(content, false);
+    if (!save) {
+      const response = await chatNoSave(data.content, false);
       res.status(200).json({
         'status': 'Success',
+        'chat': response
+      });
+    } else if (save && data && typeof data === 'object') {
+      const response = await chat(data, false);
+      res.status(201).json({
+        'status': 'Success',
         'chat': response?.completionText,
-        'history': response?.history,
         'couchDBResponse': response?.couchSaveResponse
       });
     } else {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "content" field must be a non-empty string.' });
+      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
   } catch (error: any) {
     res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });

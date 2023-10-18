@@ -12,7 +12,7 @@ $label-height: 1rem;
     max-width: 125px;
   }
   .mat-column-rating {
-    max-width: 225px;
+    max-width: 115px;
   }
   .mat-column-createdDate {
     max-width: 125px;
@@ -48,19 +48,19 @@ $label-height: 1rem;
   text-align: center;
 }
 
+.created-label {
+  display: none;
+}
+
+.rating-header {
+  justify-content: center;
+}
+
 @media(max-width: $screen-md) {
   .resources-list {
     .mat-column-createdDate {
       max-width: 100px;
     }
-
-    .mat-column-rating {
-      max-width: 115px;
-    }
-  }
-
-  .rating-header {
-    justify-content: center;
   }
 }
 

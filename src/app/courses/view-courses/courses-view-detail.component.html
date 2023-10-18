@@ -5,4 +5,4 @@
 <p *ngIf="courseDetail?.creatorDoc"><b i18n>Creator:</b> {{courseDetail?.creatorDoc?.fullName}} </p>
 <p *ngIf="courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet"><b i18n>Source:</b> {{courseDetail?.sourcePlanet}}</p>
 <p><b i18n>Description:</b></p>
-<planet-markdown [content]="courseDetail?.description" [imageSource]="imageSource" class="img-wrap"></planet-markdown>
+<planet-markdown [content]="courseDetail?.description" [imageSource]="imageSource" class="img-resize"></planet-markdown>

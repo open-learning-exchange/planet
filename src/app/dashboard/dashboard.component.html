@@ -11,7 +11,7 @@
   </div>
   <div class="badges">
     <div *ngFor="let badgeGroup of badgeGroups">
-      <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseDialog(course)" [matTooltip]="course.doc.courseTitle">
+      <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
         <mat-icon
           [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
           fontSet="fa"

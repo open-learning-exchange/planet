@@ -150,17 +150,17 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell  *matCellDef="let element" class="list-content-menu">
+        <mat-cell  *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
           <h3 class="header">
-            <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{element.doc.courseTitle}}</a>
-            <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{element.doc.courseTitle}}</a></ng-template>
+            <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
+            <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a></ng-template>
             <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
               <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
               <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
             </span>
           </h3>
           <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog && !isForm">
-            <span i18n>Your progress:</span>
+            <span i18n>myProgress:</span>
             <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
           <mat-chip-list #tagsList class="tags-list">
@@ -245,7 +245,7 @@
       <ng-container matColumnDef="rating">
         <mat-header-cell *matHeaderCellDef class="rating-header"  mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element" class="rating-cell">
-          <planet-rating class="rating-item" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
+          <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
