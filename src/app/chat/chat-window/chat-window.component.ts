@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { CustomValidators } from '../../validators/custom-validators';
@@ -24,6 +24,7 @@ export class ChatWindowComponent implements OnInit {
   conversations: any[] = [];
   selectedConversationId: string;
 
+  // @Input() conversationId: any;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -39,7 +40,23 @@ export class ChatWindowComponent implements OnInit {
 
     this.chatService.selectedConversationId$.subscribe((conversationId) => {
       this.selectedConversationId = conversationId;
+      this.fetchConversation(this.selectedConversationId);
     });
+
+    // console.log(this.conversationId);
+    // this.fetchConversation(this.conversationId);
+  }
+
+  fetchConversation(id) {
+    if(id) {
+      this.chatService.findConversations([id], {}).subscribe(
+        (conversation: Object) => {
+          const messages = conversation[0]?.conversations;
+
+          this.conversations = messages
+        }
+      );
+    }
   }
 
   scrollToBottom(): void {

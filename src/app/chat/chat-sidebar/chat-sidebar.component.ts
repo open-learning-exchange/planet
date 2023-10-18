@@ -8,6 +8,7 @@ import { ChatService } from '../../shared/chat.service';
 })
 export class ChatSidebarComponent implements OnInit {
   conversations: any;
+  // conversationId: any;
 
   constructor(private chatService: ChatService) {}
 
@@ -26,5 +27,6 @@ export class ChatSidebarComponent implements OnInit {
 
   selectConversation(conversation) {
     this.chatService.setSelectedConversationId(conversation?._id);
+    // this.conversationId = conversation?._id;
   }
 }
