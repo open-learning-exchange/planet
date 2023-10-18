@@ -84,7 +84,7 @@
         </button>
       </ng-container>
       <ng-container *ngIf="!parent && deviceType !== deviceTypes.DESKTOP">
-        <button *ngIf="!parent && !isDialog && deviceType !== deviceTypes.DESKTOP" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
