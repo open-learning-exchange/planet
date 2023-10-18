@@ -27,10 +27,10 @@ app.get('/', (req: any, res: any) => {
 wss.on('connection', (ws) => {
   ws.on('message', async (message) => {
     try {
-      const userInput = message.toString();
+      const data = message.toString();
 
-      if (userInput && typeof userInput === 'string') {
-        await chatWithGpt(userInput, true, (response) => {
+      if (data && typeof data === 'string') {
+        await chat(data, true, (response) => {
           ws.send(response);
         });
       }

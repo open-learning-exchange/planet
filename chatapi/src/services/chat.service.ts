@@ -27,7 +27,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   dbData.conversations.push({ 'query': content, 'response': '' });
   const res = await db.insert(dbData);
 
-  messages.push({ 'role': 'user', content });
+  messages.push({ 'role': 'user', 'content': stream === true ? data : content });
 
   try {
     const completionText = await gptChat(messages, stream, callback);

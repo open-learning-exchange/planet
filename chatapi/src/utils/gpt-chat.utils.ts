@@ -6,10 +6,7 @@ import { ChatMessage } from '../models/chat-message.model';
  * @param messages - Array of chat messages
  * @returns Completion text
  */
-export async function gptChat(
-  messages: ChatMessage[],
-  stream?: boolean,
-  callback?: (response: string) => void): Promise<string> {
+export async function gptChat(messages: ChatMessage[], stream?: boolean, callback?: (response: string) => void): Promise<string> {
   let completionText = '';
 
   if (stream) {
@@ -44,10 +41,6 @@ export async function gptChat(
     }
 
     completionText = completion.choices[0]?.message?.content;
-  }
-
-  if (!completionText) {
-    throw new Error('Unexpected API response');
   }
 
   return completionText;
