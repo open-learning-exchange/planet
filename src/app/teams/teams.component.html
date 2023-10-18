@@ -65,7 +65,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element" class>
-          <div [ngClass]="{'horizontal-align': isMobile, 'button-container': isMobile}">
+          <div [ngClass]="{'horizontal-align button-container': isMobile}">
             <button *planetAuthorizedRoles="''" mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               <label *ngIf="!isMobile" i18n> Delete </label>
