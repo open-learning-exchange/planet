@@ -48,12 +48,12 @@ export class ChatWindowComponent implements OnInit {
   }
 
   fetchConversation(id) {
-    if(id) {
-      this.chatService.findConversations([id], {}).subscribe(
+    if (id) {
+      this.chatService.findConversations([ id ], {}).subscribe(
         (conversation: Object) => {
           const messages = conversation[0]?.conversations;
 
-          this.conversations = messages
+          this.conversations = messages;
         }
       );
     }

@@ -14,7 +14,8 @@
     <ul>
       <li *ngFor="let conversation of conversations; let i = index" (click)="selectConversation(conversation)">
         <!-- [conversationId]="conversationId" -->
-        {{ conversation.conversations[0].query }}
+        <!-- {{ conversation.conversations[0].query }} -->
+        {{ conversation.conversations[0].query.slice(0, 25) }}
       </li>
     </ul>
   </mat-drawer>
