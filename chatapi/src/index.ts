@@ -27,12 +27,16 @@ app.get('/', (req: any, res: any) => {
 wss.on('connection', (ws) => {
   ws.on('message', async (message) => {
     try {
-      const data = message.toString();
+      const data = {
+        'content': message.toString()
+      };
 
-      if (data && typeof data === 'string') {
+      if (data && typeof data === 'object') {
         await chat(data, true, (response) => {
           ws.send(response);
         });
+      } else {
+        ws.send('Error processing input data!');
       }
     } catch (error: any) {
       ws.send(`Error: ${error.message}`);
