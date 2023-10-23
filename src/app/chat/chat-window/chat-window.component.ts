@@ -18,11 +18,13 @@ export class ChatWindowComponent implements OnInit {
   data = {
     user: this.userService.get(),
     time: this.couchService.datePlaceholder,
-    content: ''
+    content: '',
+    _id: '',
+    _rev: ''
   };
   messages: any[] = [];
   conversations: any[] = [];
-  selectedConversationId: string;
+  selectedConversationId: any;
 
   // @Input() conversationId: any;
   @ViewChild('chat') chatContainer: ElementRef;
@@ -40,11 +42,8 @@ export class ChatWindowComponent implements OnInit {
 
     this.chatService.selectedConversationId$.subscribe((conversationId) => {
       this.selectedConversationId = conversationId;
-      this.fetchConversation(this.selectedConversationId);
+      this.fetchConversation(this.selectedConversationId?._id);
     });
-
-    // console.log(this.conversationId);
-    // this.fetchConversation(this.conversationId);
   }
 
   fetchConversation(id) {
@@ -86,6 +85,16 @@ export class ChatWindowComponent implements OnInit {
     const save = this.promptForm.get('saveChat').value;
     const content = this.promptForm.get('prompt').value;
     this.messages.push({ role: 'user', content });
+
+    if (this.selectedConversationId) {
+      this.data._id = this.selectedConversationId._id;
+      this.data._rev = this.selectedConversationId._rev;
+    } else {
+      delete this.data._id;
+      delete this.data._rev;
+    }
+
+    console.log(this.data);
 
     this.data.content = content;
 

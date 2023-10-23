@@ -11,8 +11,8 @@ import { CouchService } from '../shared/couchdb.service';
 }) export class ChatService {
   private baseUrl = environment.chatAddress;
   private dbName = 'chat_history';
-  private selectedConversationIdSubject = new BehaviorSubject<string | null>(null);
-  selectedConversationId$: Observable<string | null> = this.selectedConversationIdSubject.asObservable();
+  private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
+  selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
 
 
   constructor(
@@ -31,7 +31,7 @@ import { CouchService } from '../shared/couchdb.service';
     return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids) }), opts);
   }
 
-  setSelectedConversationId(conversationId: string) {
+  setSelectedConversationId(conversationId: object) {
     this.selectedConversationIdSubject.next(conversationId);
   }
 }

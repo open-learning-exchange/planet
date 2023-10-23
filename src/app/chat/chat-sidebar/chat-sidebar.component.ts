@@ -26,7 +26,10 @@ export class ChatSidebarComponent implements OnInit {
   }
 
   selectConversation(conversation) {
-    this.chatService.setSelectedConversationId(conversation?._id);
+    this.chatService.setSelectedConversationId({
+      '_id': conversation?._id,
+      '_rev': conversation?._rev
+    });
     // this.conversationId = conversation?._id;
   }
 }
