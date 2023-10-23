@@ -1,8 +1,8 @@
 <div class="chat-container" #chat>
   <div *ngFor="let conversation of conversations">
     <div class="conversation">
-      <p class="conversation-query" [innerHTML]="sanitizeText(conversation.query)"></p>
-      <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [innerHTML]="sanitizeText(conversation.response)"></p>
+      <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
+      <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [planetChatOutput]="conversation.response"></p>
     </div>
   </div>
 </div>
@@ -10,11 +10,11 @@
 <div class="form-container">
   <form [formGroup]="promptForm" class="form-spacing" (ngSubmit)="onSubmit()">
     <mat-form-field class="full-width mat-form-field-type-no-underline">
-      <mat-label>Send a Message</mat-label>
-      <textarea class="full-width" rows="5" required matInput i18n-placeholder placeholder="Send a message" [formControl]="promptForm.controls.prompt"></textarea>
+      <mat-label>Chat</mat-label>
+      <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
       <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
     </mat-form-field>
-    <button type="submit" mat-raised-button [planetSubmit]="spinnerOn" color="primary" i18n>
+    <button mat-raised-button [planetSubmit]="promptForm.valid && spinnerOn" color="primary" i18n>
       Chat
       <mat-icon>send</mat-icon>
     </button>

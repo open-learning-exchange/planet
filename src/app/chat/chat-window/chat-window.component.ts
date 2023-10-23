@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { CustomValidators } from '../../validators/custom-validators';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ChatService } from '../../shared/chat.service';
 import { UserService } from '../../shared/user.service';
@@ -22,11 +21,9 @@ export class ChatWindowComponent implements OnInit {
     _id: '',
     _rev: ''
   };
-  messages: any[] = [];
-  conversations: any[] = [];
   selectedConversationId: any;
+  conversations: any[] = [];
 
-  // @Input() conversationId: any;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -67,22 +64,29 @@ export class ChatWindowComponent implements OnInit {
 
   createForm() {
     this.promptForm = this.formBuilder.group({
-      prompt: [ '', CustomValidators.required ],
+      prompt: [ '', Validators.required ],
     });
   }
 
-  onSubmit() {
-    if (!this.promptForm.valid) {
-      showFormErrors(this.promptForm.controls);
-      return;
-    }
+  postSubmit() {
+    this.changeDetectorRef.detectChanges();
+    this.spinnerOn = true;
+    this.scrollToBottom();
+    this.promptForm.controls['prompt'].setValue('');
+  }
 
-    this.submitPrompt();
+  onSubmit() {
+    if (this.promptForm.valid) {
+      this.submitPrompt();
+    } else {
+      showFormErrors(this.promptForm.controls);
+    }
   }
 
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
-    this.messages.push({ role: 'user', content });
+
+    this.data.content = content;
 
     if (this.selectedConversationId) {
       this.data._id = this.selectedConversationId._id;
@@ -92,43 +96,32 @@ export class ChatWindowComponent implements OnInit {
       delete this.data._rev;
     }
 
-    this.data.content = content;
+    console.log(this.data);
 
     this.chatService.getPrompt(this.data, true).subscribe(
       (completion: any) => {
+        console.log(completion);
         this.conversations.push({
           query: content,
           response: completion?.chat,
         });
-        this.spinnerOn = false;
-        this.changeDetectorRef.detectChanges();
-        this.scrollToBottom();
-        this.spinnerOn = true;
+        this.selectedConversationId = {
+          '_id': completion.couchDBResponse?.id,
+          '_rev': completion.couchDBResponse?.rev
+        };
+        console.log(this.selectedConversationId);
+
+        this.postSubmit();
       },
       (error: any) => {
         this.spinnerOn = false;
-        this.changeDetectorRef.detectChanges();
         this.conversations.push({
           query: content,
           response: 'Error: ' + error.message,
           error: true,
         });
-        this.spinnerOn = true;
+        this.postSubmit();
       }
     );
   }
-
-sanitizeText(text: string): string {
-  // Replace newline characters with <br> tags
-  const textWithLineBreaks = text.replace(/\n/g, '<br>');
-
-  // Replace code block markers with <code> tags
-  const codeBlockStart = /```/g;
-  const codeBlockEnd = /```/g;
-  const textWithCodeBlocks = textWithLineBreaks
-    .replace(codeBlockStart, '<code>')
-    .replace(codeBlockEnd, '</code>');
-
-  return textWithCodeBlocks;
-}
 }
