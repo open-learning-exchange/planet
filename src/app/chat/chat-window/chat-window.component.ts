@@ -68,7 +68,6 @@ export class ChatWindowComponent implements OnInit {
   createForm() {
     this.promptForm = this.formBuilder.group({
       prompt: [ '', CustomValidators.required ],
-      saveChat: [ false ],
     });
   }
 
@@ -82,7 +81,6 @@ export class ChatWindowComponent implements OnInit {
   }
 
   submitPrompt() {
-    const save = this.promptForm.get('saveChat').value;
     const content = this.promptForm.get('prompt').value;
     this.messages.push({ role: 'user', content });
 
@@ -94,11 +92,9 @@ export class ChatWindowComponent implements OnInit {
       delete this.data._rev;
     }
 
-    console.log(this.data);
-
     this.data.content = content;
 
-    this.chatService.getPrompt(this.data, save).subscribe(
+    this.chatService.getPrompt(this.data, true).subscribe(
       (completion: any) => {
         this.conversations.push({
           query: content,
