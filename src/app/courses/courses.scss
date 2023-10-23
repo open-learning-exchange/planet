@@ -44,6 +44,10 @@
   justify-content: center;
 }
 
+.margin-tp {
+  margin-top: 0.75rem;
+}
+
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
