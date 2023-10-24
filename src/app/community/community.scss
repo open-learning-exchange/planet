@@ -7,7 +7,7 @@
   }
 
   display: grid;
-  grid-template-columns: 4fr 3fr;
+  grid-template-columns: 2fr 1fr;
   grid-template-rows: 64px calc(100% - 64px - 0.5rem);
   grid-template-areas:
     "links calendar"

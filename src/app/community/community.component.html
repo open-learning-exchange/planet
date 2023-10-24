@@ -7,9 +7,9 @@
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="News">
           <h3>
-            <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+            <span>Your Voices</span>
             <ng-container *planetAuthorizedRoles="'learner'">
-              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
+              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
           <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
