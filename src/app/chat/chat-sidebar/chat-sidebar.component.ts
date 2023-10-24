@@ -15,6 +15,10 @@ export class ChatSidebarComponent implements OnInit {
     this.getChatHistory();
   }
 
+  newChat() {
+    this.chatService.sendNewChatSignal();
+  }
+
   getChatHistory() {
     this.chatService.findConversations([], {}).subscribe(
       (conversations) => {

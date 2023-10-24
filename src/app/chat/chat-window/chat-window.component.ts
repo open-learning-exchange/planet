@@ -37,6 +37,11 @@ export class ChatWindowComponent implements OnInit {
   ngOnInit() {
     this.createForm();
 
+    this.chatService.newChatSelected$.subscribe(() => {
+      this.selectedConversationId = null;
+      this.conversations = [];
+    });
+
     this.chatService.selectedConversationId$.subscribe((conversationId) => {
       this.selectedConversationId = conversationId;
       this.fetchConversation(this.selectedConversationId?._id);

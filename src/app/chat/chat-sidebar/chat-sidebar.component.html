@@ -1,8 +1,7 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
   <mat-drawer #drawer mode="side">
     <div class="header">
-      <button type="button" mat-stroked-button color="primary" class="start-button" mat-button>
-        <!-- (click)="startNewChat.emit()" -->
+      <button type="button" mat-stroked-button color="primary" class="start-button" mat-button (click)="newChat()">
         <mat-icon>add</mat-icon>
         Start New Chat
       </button>

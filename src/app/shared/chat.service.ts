@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
@@ -11,7 +11,10 @@ import { CouchService } from '../shared/couchdb.service';
 }) export class ChatService {
   private baseUrl = environment.chatAddress;
   private dbName = 'chat_history';
+  private newChatSelected = new Subject<void>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
+
+  newChatSelected$ = this.newChatSelected.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
 
 
@@ -29,6 +32,10 @@ import { CouchService } from '../shared/couchdb.service';
 
   findConversations(ids, opts) {
     return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids) }), opts);
+  }
+
+  sendNewChatSignal() {
+    this.newChatSelected.next();
   }
 
   setSelectedConversationId(conversationId: object) {
