@@ -16,9 +16,6 @@ import { DialogsAddResourcesComponent } from './dialogs-add-resources.component'
   ],
   declarations: [
     DialogsAddResourcesComponent
-  ],
-  entryComponents: [
-    DialogsAddResourcesComponent
   ]
 })
 export class DialogsAddResourcesModule {}

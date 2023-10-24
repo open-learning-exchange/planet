@@ -6,7 +6,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { NewsService } from './news.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
@@ -27,7 +27,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
-  @ViewChild('content', { static: false }) content;
+  @ViewChild('content') content;
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -69,8 +69,8 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   addReply(news) {
     const label = this.formLabel(news);
     this.updateNews.emit({
-      title: `Reply to ${label}`,
-      placeholder: `Your ${label}`,
+      title: $localize`Reply to ${label}`,
+      placeholder:  $localize`Your ${label}`,
       initialValue: '',
       news: {
         replyTo: news._id,
@@ -91,7 +91,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     const link = this.router.url;
     const notification = {
       user: userId,
-      'message': `<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
       'priority': 1,
       'type': 'replyMessage',
@@ -105,15 +105,15 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   editNews(news) {
     const label = this.formLabel(news);
     this.updateNews.emit({
-      title: `Edit ${label}`,
-      placeholder: `Your ${label}`,
+      title:  $localize`Edit ${label}`,
+      placeholder:  $localize`Your ${label}`,
       initialValue: news.message,
       news
     });
   }
 
   formLabel(news) {
-    return news.viewableBy === 'teams' ? 'Message' : 'Story';
+    return news.viewableBy === 'teams' ? $localize`Message` : $localize`Story`;
   }
 
   showReplies(news) {

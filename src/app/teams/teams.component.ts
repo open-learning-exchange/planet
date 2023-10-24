@@ -1,5 +1,8 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
+import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -12,37 +15,21 @@ import {
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-doc-teamType {
-      max-width: 150px;
-      padding-right: 0.5rem;
-    }
-    .mat-column-visitLog-visitCount {
-      max-width: 80px;
-      padding-right: 0.5rem;
-    }
-    .mat-column-visitLog-lastVisit {
-      max-width: 180px;
-      padding-right: 0.5rem;
-    }
-    mat-row {
-      cursor: pointer;
-    }
-  ` ],
+  styleUrls: [ './teams.scss' ],
   selector: 'planet-teams'
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
   teams = new MatTableDataSource<any>();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   userMembership: any[] = [];
   teamActivities: any[] = [];
   dbName = 'teams';
@@ -72,6 +59,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
   filter: string;
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   constructor(
     private userService: UserService,
@@ -82,8 +71,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
     private stateService: StateService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.getTeams();
@@ -96,6 +89,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   getTeams() {
@@ -178,8 +176,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
     this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
-      const action = `${team._id ? 'updated' : 'created'}`;
-      const msg = `${toProperCase(this.mode)} ${action} successfully`;
+      const action = $localize`${team._id ? 'updated' : 'created'}`;
+      const msg = $localize`${toProperCase(this.mode)} ${action} successfully`;
       this.planetMessageService.showMessage(msg);
     });
   }
@@ -205,7 +203,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
             const msg = 'left';
-            this.planetMessageService.showMessage('You have ' + msg + ' ' + team.name);
+            this.planetMessageService.showMessage($localize`You have ${msg} ${team.name}`);
           },
         },
         changeType: 'leave',
@@ -220,10 +218,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted a team.');
+        this.planetMessageService.showMessage($localize`You have deleted a team.`);
         this.removeTeamFromTable(team);
       },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this team.')
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
     };
   }
 
@@ -251,7 +249,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      this.planetMessageService.showMessage('Request to join team sent');
+      this.planetMessageService.showMessage($localize`Request to join team sent`);
     });
   }
 

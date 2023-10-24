@@ -7,10 +7,10 @@
       class="margin-lr-5 font-size-1"
       (change)="changePlanetFilter(filterGroup.value)"
       #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="local" [checked]="tableState.filterType==='local'">
+      <mat-button-toggle value="local" [checked]="tableState.filterType==='local'" i18n>
         Local
       </mat-button-toggle>
-      <mat-button-toggle value="associated" [checked]="tableState.filterType==='associated'">
+      <mat-button-toggle value="associated" [checked]="tableState.filterType==='associated'" i18n>
         Associated
       </mat-button-toggle>
     </mat-button-toggle-group>
@@ -60,6 +60,6 @@
     <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog"></planet-users-table>
   </ng-container>
   <ng-template #notFoundMessage>
-    <div class="view-container">No User Found</div>
+    <div class="view-container" i18n>No User Found</div>
   </ng-template>
 </div>

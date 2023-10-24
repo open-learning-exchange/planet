@@ -1,16 +1,16 @@
 <div class="report-grid">
-  <b i18n>Beginning Balance</b><b>{{report.beginningBalance | currency:undefined:'symbol':'1.0-2'}}</b>
+  <b i18n>Beginning Balance</b><b>{{report.beginningBalance | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</b>
   <mat-divider class="full-width"></mat-divider>
-  <span i18n>Sales</span><span>{{report.sales | currency:undefined:'symbol':'1.0-2'}}</span>
-  <span i18n>Other</span><span>{{report.otherIncome | currency:undefined:'symbol':'1.0-2'}}</span>
-  <b i18n>Total Income</b><b>{{income | currency:undefined:'symbol':'1.0-2'}}</b>
+  <span i18n>Sales</span><span>{{report.sales | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</span>
+  <span i18n>Other</span><span>{{report.otherIncome | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</span>
+  <b i18n>Total Income</b><b>{{income | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</b>
   <mat-divider class="full-width"></mat-divider>
-  <span i18n>Personnel</span><span>{{report.wages | currency:undefined:'symbol':'1.0-2'}}</span>
-  <span i18n>Non-Personnel</span><span>{{report.otherExpenses | currency:undefined:'symbol':'1.0-2'}}</span>
-  <b i18n>Total Expenses</b><b>{{expenses | currency:undefined:'symbol':'1.0-2'}}</b>
+  <span i18n>Personnel</span><span>{{report.wages | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</span>
+  <span i18n>Non-Personnel</span><span>{{report.otherExpenses | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</span>
+  <b i18n>Total Expenses</b><b>{{expenses | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</b>
   <mat-divider class="full-width"></mat-divider>
-  <b i18n>Profit/Loss</b><b>{{net | currency:undefined:'symbol':'1.0-2'}}</b>
-  <b i18n>Ending Balance</b><b>{{endingBalance | currency:undefined:'symbol':'1.0-2'}}</b>
+  <b i18n>Profit/Loss</b><b>{{net | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</b>
+  <b i18n>Ending Balance</b><b>{{endingBalance | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</b>
 </div>
 <ng-container *ngIf="showSummary">
   <h4 i18n>Report Summary</h4>

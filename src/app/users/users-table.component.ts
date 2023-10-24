@@ -1,5 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator, PageEvent, MatDialog, MatDialogRef } from '@angular/material';
+import {
+  Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
+} from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
@@ -9,6 +14,7 @@ import {
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -23,21 +29,7 @@ export class TableState {
 @Component({
   selector: 'planet-users-table',
   templateUrl: './users-table.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-profile {
-      max-width: 100px;
-    }
-    .mat-column-birthDate, .mat-column-lastVisit, mat-progress-bar {
-      max-width: 225px;
-    }
-    mat-cell p {
-      margin: 0;
-    }
-  ` ]
+  styleUrls: [ './users-table.scss' ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
@@ -80,8 +72,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   @Input() shouldOpenProfileDialog = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;
@@ -90,6 +82,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -98,8 +92,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
-  ) {}
+    private planetMessageService: PlanetMessageService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -141,6 +139,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   onPaginateChange(e: PageEvent) {
@@ -203,23 +206,23 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
           request: this.usersService.deleteUser(user),
           onNext: () => {
             this.selection.deselect(user);
-            this.planetMessageService.showMessage('User deleted: ' + user.name);
+            this.planetMessageService.showMessage($localize`User deleted: ${user.name}`);
             this.deleteDialog.close();
           },
-          onError: () => this.planetMessageService.showAlert('There was a problem deleting this user.')
+          onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this user.`)
         },
         amount: 'single',
         changeType: 'delete',
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? 'Planet associated with it will be disconnected.' : ''
+        extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : ''
       }
     });
   }
 
   removeRole(user: any, roleIndex: number) {
     this.usersService.setRolesForUsers([ user ], [ ...user.roles.slice(0, roleIndex), ...user.roles.slice(roleIndex + 1) ])
-      .subscribe(() => {}, () => this.planetMessageService.showAlert('There was an error removing the member\'s role'));
+      .subscribe(() => {}, () => this.planetMessageService.showAlert($localize`There was an error removing the member\'s role`));
   }
 
   toggleStatus(event, user, type: 'admin' | 'manager', isDemotion: boolean) {
@@ -230,9 +233,9 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     request.subscribe(
       () => {
         this.usersService.requestUsers(true);
-        this.planetMessageService.showMessage(`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
+        this.planetMessageService.showMessage($localize`${user.name} ${isDemotion ? 'demoted from' : 'promoted to'} ${type}`);
       },
-      () => this.planetMessageService.showAlert(`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
+      () => this.planetMessageService.showAlert($localize`There was an error ${isDemotion ? 'demoting' : 'promoting'} user`)
     );
   }
 
@@ -240,7 +243,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     event.stopPropagation();
     this.usersService.setRoles(user, roles).subscribe(() => {
       this.usersService.requestUsers(true);
-      this.planetMessageService.showMessage(`${user.name} roles modified`);
+      this.planetMessageService.showMessage($localize`${user.name} roles modified`);
     });
   }
 

@@ -27,7 +27,7 @@ export class ConfigurationService {
     return mergeMap(data => {
       const requestNotification = {
         'user': 'SYSTEM',
-        'message': `New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
+        'message': $localize`New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
         'link': '/manager/requests/',
         'linkParams': { 'search': configuration.code },
         'type': 'request',
@@ -67,11 +67,14 @@ export class ConfigurationService {
       selector: { 'sendOnAccept': true }
     };
     const userReplicator = {
-      dbSource: '_users',
-      db: 'tablet_users',
+      dbSource: '_users', db: 'tablet_users',
       selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } },
-      continuous: true,
-      type: 'internal'
+      continuous: true, type: 'internal'
+    };
+    const meetupReplicator = {
+      dbSource: 'meetups', db: 'community_meetups',
+      selector: { 'link': { 'teams': { '$eq': `${configuration.code}@${configuration.parentCode}` } } },
+      continuous: true, type: 'internal'
     };
     return forkJoin([
       // create replicator for pulling from parent at first as we do not have session
@@ -79,7 +82,8 @@ export class ConfigurationService {
       this.syncService.sync({ ...replicatorObj, db: 'resources' }, credentials),
       this.syncService.sync({ ...replicatorObj, db: 'exams' }, credentials),
       this.syncService.sync({ ...replicatorObj, db: 'tags' }, credentials),
-      this.syncService.sync(userReplicator, credentials)
+      this.syncService.sync(userReplicator, credentials),
+      this.syncService.sync(meetupReplicator, credentials)
     ]);
   }
 

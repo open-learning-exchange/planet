@@ -74,7 +74,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         userVisits: this.findByPlanet(loginActivities, planet.code),
         ...this.activityService.mostRecentAdminActivities(planet, [], adminActivities)
       })), this.hubs);
-    }, (error) => this.planetMessageService.showAlert('There was a problem getting Activity Logs'));
+    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting Activity Logs`));
   }
 
   arrangePlanetData(planetDocs, hubData) {

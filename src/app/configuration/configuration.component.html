@@ -53,7 +53,7 @@
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div class="full-width" *ngIf="showAdvancedOptions">
-        <span>Advanced Options:</span>
+        <span i18n>Advanced Options:</span>
         <ng-container *ngIf="showAdvancedOptions">
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
@@ -64,6 +64,7 @@
               formControlName="betaEnabled"
               i18n-placeholder
               placeholder="Beta features"
+              i18n-matTooltip
               matTooltip="Beta features may not work as intended. It's recommended to leave this off">
               <mat-option value="off" i18n>Always off</mat-option>
               <mat-option value="on" i18n>Always on</mat-option>
@@ -80,7 +81,7 @@
     <div *ngIf="isAdvancedOptionsChanged">
       <mat-icon>warning</mat-icon><span i18n>You have changed the advanced option. Please confirm that you wanted to change it.</span><br/>
       <mat-checkbox [(ngModel)]="isAdvancedOptionConfirmed" i18n>I confirm the changes.</mat-checkbox><br/>
-      <span>I accidently changed it, Please reset to default</span>
+      <span i18n>I accidently changed it, Please reset to default</span>
       <button mat-mini-fab (click)="resetDefault()">
           <mat-icon>replay</mat-icon>
         </button>

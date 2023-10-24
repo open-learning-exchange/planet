@@ -49,8 +49,8 @@
           ></planet-markdown-textbox>
         </mat-form-field>
         <div>
-          <p class="mat-hint mat-caption">Add any materials demonstrating your achievements below</p>
-          <a mat-raised-button color="accent" class="margin-lr-3" i18n *ngIf="achievements.length > 1" (click)="sortAchievements()">
+          <p class="mat-hint mat-caption" i18n>Add any materials demonstrating your achievements below</p>
+          <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="achievements.length > 1" (click)="sortAchievements()">
             <ng-container i18n>Sort by Date</ng-container>
             <ng-container [ngSwitch]="editForm.controls.dateSortOrder.value">
               <mat-icon *ngSwitchCase="'desc'">keyboard_arrow_up</mat-icon>
@@ -60,7 +60,7 @@
           <planet-step-list [steps]="achievements" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
               <span>{{achievement.value.title || achievement.value}}
-                <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption">
+                <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption" i18n>
                   Attached resources:
                 </div>
                 <mat-chip-list mat-line>
@@ -73,17 +73,17 @@
               <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
             </planet-step-list-item>
           </planet-step-list>
-          <button type="button" (click)="addAchievement()" mat-stroked-button color="primary">Enter an Achievement</button>
+          <button type="button" (click)="addAchievement()" mat-stroked-button color="primary" i18n>Enter an Achievement</button>
         </div>
         <div>
-          <p class="mat-hint mat-caption">Add any references below</p>
+          <p class="mat-hint mat-caption" i18n>Add any references below</p>
           <planet-step-list [steps]="references" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let reference of references.controls; index as i">
               <span>{{reference.value.name}}</span>
               <button mat-stroked-button type="button" class="margin-lr-4" (click)="addReference(i, reference.value)" i18n>Edit</button>
             </planet-step-list-item>
           </planet-step-list>
-          <button type="button" (click)="addReference()" mat-stroked-button color="primary">Enter a Reference</button>
+          <button type="button" (click)="addReference()" mat-stroked-button color="primary" i18n>Enter a Reference</button>
         </div>
         <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
           Allow your achievements to be shared with the nation

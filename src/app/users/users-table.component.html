@@ -26,34 +26,34 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Name</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.fullName}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="planet">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Planet</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="planet" i18n>Planet</mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{element.planet.nameDoc?.name || element.planet.doc.name}}
-        <mat-chip class="planet-chip-label margin-lr-5 chip-no-style">{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+        <mat-chip class="planet-chip-label margin-lr-5 chip-no-style" i18n>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="visitCount">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>No. of Visits</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="visitCount" i18n>No. of Visits</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.visitCount}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="joinDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Joined Date</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="joinDate" i18n>Joined Date</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.doc.joinDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="lastLogin">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Login</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="lastLogin" i18n>Last Login</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.lastLogin | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="startDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Date Started</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="startDate" i18n>Date Started</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.activityDates.createdDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="recentDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Most Recent Activity</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="recentDate" i18n>Most Recent Activity</mat-header-cell>
       <mat-cell *matCellDef="let element">{{element.activityDates.updatedDate | date: 'mediumDate'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="contact">
@@ -71,18 +71,18 @@
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="birthDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Birthdate</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{(element.doc.birthDate | date: 'mediumDate') || 'Missing'}}</mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="birthDate" i18n>Birthdate</mat-header-cell>
+      <mat-cell *matCellDef="let element" i18n>{{(element.doc.birthDate | date: 'mediumDate') || 'Missing'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="lastVisit">
-      <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Examination</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header="lastVisit" i18n>Last Examination</mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{(element.health?.lastVisit | date: 'mediumDate')}}
         <span *ngIf="element.health && !element.health?.lastVisit" i18n>Never</span>
         <mat-progress-bar mode="buffer" *ngIf="!element.health"></mat-progress-bar>
       </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="roles">
+    <ng-container class="member-action-buttons" matColumnDef="roles">
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-list>
@@ -93,7 +93,7 @@
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>
           </ng-container>
-          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0">Admin</mat-chip>
+          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Admin</mat-chip>
         </mat-chip-list>
         <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
       </mat-cell>
@@ -101,30 +101,37 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <span *ngIf="isUserAdmin && filterType === 'local' && !isDialog">
-          <span *ngIf="!element.doc.isUserAdmin">
-            <button mat-raised-button color="primary" *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
-              <mat-icon>lock_open</mat-icon><ng-container i18n>Activate</ng-container>
+        <div [ngClass]="{'horizontal-align button-container': isMobile}">
+          <span *ngIf="isUserAdmin && filterType === 'local' && !isDialog">
+            <span *ngIf="!element.doc.isUserAdmin">
+              <button mat-raised-button color="primary" *ngIf="element.doc.roles.length === 0" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
+                <mat-icon>lock_open</mat-icon>
+                <label *ngIf="!isMobile">Activate</label>
+              </button>
+              <button mat-raised-button color="primary" *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
+                <mat-icon>lock</mat-icon>
+                <label *ngIf="!isMobile">Deactivate</label>
+              </button>
+            </span>
+            <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0" i18n>
+              <mat-icon>delete</mat-icon>
+              <label *ngIf="!isMobile"> Delete </label>
             </button>
-            <button mat-raised-button color="primary" *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
-              <mat-icon>lock</mat-icon><ng-container i18n>Deactivate</ng-container>
+            <button *ngIf="!element.doc.isUserAdmin && filterType === 'local'" (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary" i18n>
+              <mat-icon>vertical_align_top</mat-icon>
+              <label *ngIf="!isMobile"> Promote </label>
+            </button>
+            <button *ngIf="element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName"
+              (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)" mat-raised-button color="primary" i18n>
+              <mat-icon>vertical_align_bottom</mat-icon>
+              <label *ngIf="!isMobile"> Demote </label>
             </button>
           </span>
-          <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
-            <mat-icon>delete</mat-icon>Delete
-          </button>
-          <button
-            *ngIf="!element.doc.isUserAdmin && filterType === 'local'"
-            (click)="toggleStatus($event, element.doc, 'admin', false)"
-            mat-raised-button color="primary" i18n>Promote</button>
-          <button
-            *ngIf="element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName"
-            (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)"
-            mat-raised-button color="primary" i18n>Demote</button>
-        </span>
-        <a (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
-          <mat-icon>visibility</mat-icon> View Profile
-        </a>
+          <a class="visibility-cell" (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
+            <mat-icon>visibility</mat-icon>
+            <label *ngIf="!isMobile"> View Profile </label>
+          </a>
+        </div>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

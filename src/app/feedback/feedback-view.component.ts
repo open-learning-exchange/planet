@@ -28,7 +28,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParams = 'off';
   showParamsButton = false;
   users = {};
-  @ViewChild('chatList', { static: false }) chatListElement: ElementRef;
+  @ViewChild('chatList') chatListElement: ElementRef;
 
   constructor(
     private couchService: CouchService,
@@ -95,7 +95,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       })
       ).subscribe(
         ([ feedback, notificationRes ]) => { this.setFeedback(feedback); },
-        error => this.planetMessageService.showAlert('There was an error adding your message')
+        error => this.planetMessageService.showAlert($localize`There was an error adding your message`)
       );
   }
 
@@ -108,7 +108,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     ));
     const notificationDoc = ({ user, userPlanetCode }) => ({
       user,
-      'message': 'You have unread messages in feedback',
+      'message': $localize`You have unread messages in feedback`,
       link,
       'type': 'feedbackReply',
       'priority': 1,
@@ -135,7 +135,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         this.editTitleMode = false;
         this.feedback._rev = res.rev;
       },
-      () => this.planetMessageService.showAlert('There was an error changing title')
+      () => this.planetMessageService.showAlert($localize`There was an error changing title`)
     );
   }
 
@@ -158,7 +158,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   closeFeedback(feedback) {
     this.feedbackServive.closeFeedback(feedback).subscribe(
       () => this.router.navigate([ '/feedback' ]),
-      () => this.planetMessageService.showAlert('There was an error closing this feedback.')
+      () => this.planetMessageService.showAlert($localize`There was an error closing this feedback.`)
     );
   }
 
@@ -168,7 +168,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
       .pipe(switchMap(() => this.getFeedback(feedback.id)), finalize(() => this.dialogsLoadingService.stop()))
       .subscribe(
         res => this.setFeedback(res),
-        error => this.planetMessageService.showAlert('There has been an error opening the feedback.')
+        error => this.planetMessageService.showAlert($localize`There has been an error opening the feedback.`)
       );
   }
 

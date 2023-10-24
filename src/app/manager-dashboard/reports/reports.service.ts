@@ -3,9 +3,9 @@ import { forkJoin, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
-import { dedupeShelfReduce } from '../../shared/utils';
+import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
@@ -197,6 +197,16 @@ export class ReportsService {
     });
   }
 
+  appendAge(array, time) {
+    return array.map((item: any) => {
+      const user = this.users.find((u: any) => u.name === item.user) || {};
+      return ({
+        ...item,
+        age: ageFromBirthDate(time, user.birthDate)
+      });
+    });
+  }
+
   timeFilter(field, time) {
     return time !== undefined ? { [field]: { '$gt': time } } : {};
   }
@@ -205,12 +215,12 @@ export class ReportsService {
     return filter ? records.filter(rec => this.users.findIndex((u: any) => u.name === rec.user || u.name === rec.user.name) > -1) : records;
   }
 
-  minTime(activities, timeField) {
-    return activities.reduce((minTime, { [timeField]: time }) => minTime && minTime < time ? minTime : time, undefined);
+  minTime(activities, timeField: string) {
+    return activities.reduce((minTime, { [timeField as keyof Object]: time }) => minTime && minTime < time ? minTime : time, undefined);
   }
 
   planetTypeText(planetType) {
-    return planetType === 'nation' ? 'Nation' : 'Community';
+    return planetType === 'nation' ? $localize`Nation` : $localize`Community`;
   }
 
   viewPlanetDetails(planet) {
@@ -219,7 +229,7 @@ export class ReportsService {
       autoFocus: false,
       data: {
         allData: planet,
-        title: `${this.planetTypeText(planet.planetType)} Details`
+        title: $localize`${this.planetTypeText(planet.planetType)} Details`
       }
     });
   }
@@ -229,8 +239,9 @@ export class ReportsService {
     return forkJoin([
       this.couchService.get('courses_progress/_design/courses_progress/_view/enrollment?group=true'),
       this.couchService.get('courses_progress/_design/courses_progress/_view/completion?group=true'),
+      this.couchService.get('courses_progress/_design/courses_progress/_view/steps?group=true'),
       this.coursesService.coursesListener$().pipe(take(1))
-    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, courses ]) => {
+    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, { rows: steps }, courses ]) => {
       return {
         courses: courses.map(course => ({
           steps: course.doc.steps.length,
@@ -238,14 +249,23 @@ export class ReportsService {
           _id: course._id
         })),
         enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
-        completions: completions
-          .filter(({ key, value }) => {
+        completions: completions.filter(({ key, value }) => {
             const course = courses.find(c => c._id === key.courseId);
             return course && value.count === course.doc.steps.length;
           })
-          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count }))
+          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
+        steps: steps.map(({ key, value }) => {
+          const course = courses.find(c => c._id === key.courseId);
+          return { ...key, time: value.max, title: course ? course.doc.courseTitle : '' };
+        })
       };
     }));
+  }
+
+  groupStepCompletion(steps: any[]) {
+    return ({
+      byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')
+    });
   }
 
 }

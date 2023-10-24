@@ -5,7 +5,7 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -18,6 +18,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-community',
@@ -44,7 +45,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  isCalendarInTabs = window.innerWidth < 800;
+  resizeCalendar: any = false;
+  deviceType: DeviceType;
+  deviceTypes = DeviceType;
 
   constructor(
     private dialog: MatDialog,
@@ -57,8 +60,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
-    private usersService: UsersService
-  ) {}
+    private usersService: UsersService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
@@ -80,7 +86,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize') onResize() {
-    this.isCalendarInTabs = window.innerWidth < 800;
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnDestroy() {
@@ -135,8 +141,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
-      'Add Story',
-      [ { name: 'message', placeholder: 'Your Story', type: 'markdown', required: true, imageGroup: 'community' } ],
+      $localize`Add Story`,
+      [ { name: 'message', placeholder: $localize`Your Story`, type: 'markdown', required: true, imageGroup: 'community' } ],
       { message: [ message, CustomValidators.requiredMarkdown ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
@@ -148,7 +154,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       messageType: 'sync',
       messagePlanetCode: this.configuration.code,
       ...message
-    }, 'Message has been posted successfully').pipe(
+    }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => forkJoin([
         this.usersService.getAllUsers(),
         this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
@@ -168,7 +174,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   sendNotifications(user, currentUser) {
     return {
       'user': user,
-      'message': `<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
+      'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': '/',
       'type': 'communityMessage',
       'priority': 1,
@@ -240,10 +246,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
           request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
           onNext: (res) => {
             this.setLinksAndFinances(res);
-            this.planetMessageService.showMessage(`${link.title} deleted`);
+            this.planetMessageService.showMessage($localize`${link.title} deleted`);
             deleteDialog.close();
           },
-          onError: () => this.planetMessageService.showAlert(`There was an error deleting ${link.title}`)
+          onError: () => this.planetMessageService.showAlert($localize`There was an error deleting ${link.title}`)
         },
         changeType: 'delete',
         type: 'link',
@@ -262,8 +268,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openChangeTitleDialog({ member: councillor }) {
     this.dialogsFormService.openDialogsForm(
-      councillor.doc.leadershipTitle ? 'Change Leader Title' : 'Add Leader Title',
-      [ { name: 'leadershipTitle', placeholder: 'Title', type: 'textbox' } ],
+      councillor.doc.leadershipTitle ? $localize`Change Leader Title` : $localize`Add Leader Title`,
+      [ { name: 'leadershipTitle', placeholder: $localize`Title`, type: 'textbox' } ],
       { leadershipTitle: councillor.doc.leadershipTitle || '' },
       { autoFocus: true, onSubmit: this.updateTitle(councillor).bind(this) }
     );
@@ -280,10 +286,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         const msg = !leadershipTitle ?
-          'Title deleted' :
+          $localize`Title deleted` :
           !councillor.doc.leadershipTitle ?
-          'Title added' :
-          'Title updated';
+          $localize`Title added` :
+          $localize`Title updated`;
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
@@ -302,11 +308,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.dialogsFormService.closeDialogsForm();
     };
     this.dialogsFormService.openDialogsForm(
-      this.team.description ? 'Edit Description' : 'Add Description',
-      [ { name: 'description', placeholder: 'Description', type: 'markdown', required: true, imageGroup: 'community' } ],
+      this.team.description ? $localize`Edit Description` : $localize`Add Description`,
+      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: true, imageGroup: 'community' } ],
       { description: { text: this.team.description || '', images: this.team.images || [] } },
       { onSubmit: submitDescription }
     );
   }
 
+  tabChanged({ index }) {
+    if (index === 5) {
+      this.resizeCalendar = true;
+    } else {
+      this.resizeCalendar = false;
+    }
+  }
 }

@@ -16,7 +16,7 @@ import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
   titleOfChartName, monthDataLabels, filterByMember
 } from './reports.utils';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
@@ -33,7 +33,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   @HostBinding('class') readonly hostClass = 'manager-reports-detail';
-  @ViewChild(ReportsHealthComponent, { static: false }) healthComponent: ReportsHealthComponent;
+  @ViewChild(ReportsHealthComponent) healthComponent: ReportsHealthComponent;
   parentCode = '';
   planetCode = '';
   planetName = '';
@@ -46,7 +46,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
   courseActivities = { byDoc: [], total: new ReportsDetailData('time') };
-  progress = { enrollments: new ReportsDetailData('time'), completions: new ReportsDetailData('time') };
+  progress = {
+    enrollments: new ReportsDetailData('time'),
+    completions: new ReportsDetailData('time'),
+    steps: new ReportsDetailData('time')
+  };
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -152,6 +156,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setDocVisits('courseActivities');
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
+    this.progress.steps.filter(this.filter);
+    this.setStepCompletion();
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -174,6 +180,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.setLoginActivities();
     });
     this.usersService.requestUserData();
+  }
+
+  setStepCompletion() {
+    const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData);
+    this.reports.totalStepCompleted = byMonth.reduce((total, doc: any) => total + doc.count, 0);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
 
   setLoginActivities() {
@@ -204,10 +216,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, courses }) => {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
-      this.courseActivities.byDoc = this.courseActivities.byDoc.map(courseActivity => {
+      this.progress.steps.data = steps.map(step => ({ ...step, user: step.userId.replace('org.couchdb.user:', '') }));
+      this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
         return { ...course, ...courseActivity };
       });
@@ -301,10 +314,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          datasetObject('Male', xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          datasetObject('Female', xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          datasetObject('Did not specify', xyChartData(genderFilter(undefined), unique), styleVariables.grey),
-          datasetObject('Total', xyChartData(totals(), unique), styleVariables.primary)
+          datasetObject($localize`Male`, xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
+          datasetObject($localize`Female`, xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
+          datasetObject($localize`Did not specify`, xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
       labels: months.map(month => monthDataLabels(month))
@@ -336,26 +349,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
     const teamOptions = [
-      { name: 'All Members', value: 'All' },
+      { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': 'From', 'name': 'startDate', ...commonProps },
-      { 'placeholder': 'To', 'name': 'endDate', ...commonProps }
+      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
+      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': 'Team', 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
     const fields = [ ...commonFields, ...(reportType === 'health' ? [] : [ teamField ]) ];
     const formGroup = {
       startDate: this.dateFilterForm.controls.startDate.value,
       endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ],
       team: reportType === 'health' ? 'All' : this.selectedTeam
     };
-    this.dialogsFormService.openDialogsForm('Select Date Range for Data Export', fields, formGroup, {
+    this.dialogsFormService.openDialogsForm($localize`Select Date Range for Data Export`, fields, formGroup, {
       onSubmit: (formValue: any) => {
         this.getTeamMembers(formValue.team).subscribe(members => {
           this.exportCSV(reportType, { startDate: formValue.startDate, endDate: formValue.endDate }, members);
@@ -370,25 +383,31 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.csvService.exportCSV({
           data: filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
             .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
-          title: 'Member Visits'
+          title: $localize`Member Visits`
         });
         break;
       case 'resourceViews':
       case 'courseViews':
+      case 'stepCompletions':
       case 'health':
         this.exportDocView(reportType, dateRange, members);
         break;
       case 'summary':
-        this.csvService.exportSummaryCSV(
-          filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
-          filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
-          filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
-          this.planetName
-        );
+        this.exportSummary(dateRange, members);
         break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportSummary(dateRange, members) {
+    this.csvService.exportSummaryCSV(
+      filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
+      filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
+      filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
+      filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
+      this.planetName
+    );
   }
 
   openCourseView(courseId) {
@@ -396,6 +415,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data: { courseId: courseId },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }
@@ -404,11 +424,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
+      'stepCompletions': this.progress.steps.data,
       'health': this.healthComponent && this.healthComponent.examinations
     }[reportType];
-    const title = { 'resourceViews': 'Resource Views', 'courseViews': 'Course Views', 'health': 'Community Health' }[reportType];
+    const title = {
+      'resourceViews': $localize`Resource Views`,
+      'courseViews': $localize`Course Views`,
+      'health': $localize`Community Health`,
+      'stepCompletions': $localize`Courses Progress` }[reportType];
     this.csvService.exportCSV({
-      data: filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members)
+      data: this.activityService.appendAge(
+        filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
         .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
       title
     });

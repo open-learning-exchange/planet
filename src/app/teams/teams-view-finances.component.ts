@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
-import { MatTableDataSource, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
@@ -10,6 +11,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { millisecondsToDay } from '../meetups/constants';
+import { StateService } from '../shared/state.service';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -31,6 +33,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   endDate: Date;
   emptyTable = true;
   showBalanceWarning = false;
+  curCode = this.stateService.configuration.currency || undefined;
 
   constructor(
     private teamsService: TeamsService,
@@ -38,7 +41,8 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService
   ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
@@ -47,7 +51,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.table.filterPredicate = (data: any, filter) => {
       const fromDate = this.startDate || -Infinity;
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-      return data.date >= fromDate && data.date < toDate || data.date === 'Total';
+      return data.date >= fromDate && data.date < toDate || data.date === $localize`Total`;
     };
     this.table.connect().subscribe(transactions => {
       if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
@@ -74,7 +78,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
       this.emptyTable = true;
-      return [ { date: 'Total' } ];
+      return [ { date: $localize`Total` } ];
     }
     this.emptyTable = false;
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
@@ -107,15 +111,15 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   openEditTransactionDialog(transaction: any = {}) {
     this.couchService.currentTime().subscribe((time: number) => {
       this.dialogsFormService.openDialogsForm(
-        transaction._id ? 'Edit Transaction' : 'Add Transaction',
+        transaction._id ? $localize`Edit Transaction` : $localize`Add Transaction`,
         [
           {
-            name: 'type', placeholder: 'Type', type: 'selectbox',
-            options: [ { value: 'credit', name: 'Credit' }, { value: 'debit', name: 'Debit' } ], required: true
+            name: 'type', placeholder: $localize`Type`, type: 'selectbox',
+            options: [ { value: 'credit', name: $localize`Credit` }, { value: 'debit', name: $localize`Debit` } ], required: true
           },
-          { name: 'description', placeholder: 'Note', type: 'textbox', required: true },
-          { name: 'amount', placeholder: 'Amount', type: 'textbox', inputType: 'number', required: true },
-          { name: 'date', placeholder: 'Date', type: 'date', required: true }
+          { name: 'description', placeholder: $localize`Note`, type: 'textbox', required: true },
+          { name: 'amount', placeholder: $localize`Amount`, type: 'textbox', inputType: 'number', required: true },
+          { name: 'date', placeholder: $localize`Date`, type: 'date', required: true }
         ],
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
@@ -125,7 +129,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
         },
         {
           onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
-            this.planetMessageService.showMessage(transaction._id ? 'Transaction Updated' : 'Transaction Added');
+            this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
             this.dialogsFormService.closeDialogsForm();
           })
         }

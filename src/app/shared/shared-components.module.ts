@@ -4,6 +4,7 @@ import { CovalentMarkdownModule } from '@covalent/markdown';
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
+import { ClickOutsideDirective } from './clickoutside.directive';
 import { LowercaseDirective } from '../shared/lowercase.directive';
 import { PlanetLanguageComponent } from './planet-language.component';
 import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
@@ -19,6 +20,8 @@ import { LabelComponent } from './label.component';
 import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
+import { LanguageLabelComponent } from './language-label.component';
+import { ChatOutputDirective } from './chat-output.directive';
 
 @NgModule({
   imports: [
@@ -29,6 +32,7 @@ import { AvatarComponent } from './avatar.component';
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
+    ClickOutsideDirective,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
@@ -40,14 +44,17 @@ import { AvatarComponent } from './avatar.component';
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
+    LanguageLabelComponent,
     MyPlanetTableComponent,
-    AvatarComponent
+    AvatarComponent,
+    ChatOutputDirective
   ],
   declarations: [
     PlanetLocalStatusComponent,
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
+    ClickOutsideDirective,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
@@ -59,9 +66,11 @@ import { AvatarComponent } from './avatar.component';
     PlanetMarkdownComponent,
     CommunityListComponent,
     LabelComponent,
+    LanguageLabelComponent,
     MyPlanetTableComponent,
     TimePipe,
-    AvatarComponent
+    AvatarComponent,
+    ChatOutputDirective
   ]
 })
 export class SharedComponentsModule {}

@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef, MatTab } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatTab } from '@angular/material/tabs';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -35,8 +36,8 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
-  @ViewChild('taskTab', { static: false }) taskTab: MatTab;
-  @ViewChild('applicantTab', { static: false }) applicantTab: MatTab;
+  @ViewChild('taskTab') taskTab: MatTab;
+  @ViewChild('applicantTab') applicantTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -265,18 +266,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   dialogPromptConfig(item, change) {
     return {
-      leave: { request: this.toggleMembership(item, true), successMsg: 'left', errorMsg: 'leaving' },
+      leave: { request: this.toggleMembership(item, true), successMsg: $localize`left`, errorMsg: $localize`leaving` },
       archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
-        successMsg: 'deleted', errorMsg: 'deleting' },
+        successMsg: $localize`deleted`, errorMsg: $localize`deleting` },
       resource: {
-        request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: 'removed', errorMsg: 'removing'
+        request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
-      course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: 'removed', errorMsg: 'removing' },
+      course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: $localize`removed`, errorMsg: $localize`removing` },
       remove: {
         request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).fullName || item.name,
-        successMsg: 'removed', errorMsg: 'removing'
+        successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
-      leader: { request: this.makeLeader(item), successMsg: 'given leadership to', errorMsg: 'giving leadership to' }
+      leader: { request: this.makeLeader(item), successMsg: $localize`given leadership to`, errorMsg: $localize`giving leadership to` }
     }[change];
   }
 
@@ -293,13 +294,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           request: config.request(),
           onNext: (res) => {
             this.dialogPrompt.close();
-            this.planetMessageService.showMessage(`You have ${config.successMsg} ${displayName}`);
+            this.planetMessageService.showMessage($localize`You have ${config.successMsg} ${displayName}`);
             this.team = change === 'course' ? res : this.team;
             if (change === 'archive') {
               this.goBack();
             }
           },
-          onError: () => this.planetMessageService.showAlert(`There was a problem ${config.errorMsg} ${displayName}`)
+          onError: () => this.planetMessageService.showAlert($localize`There was a problem ${config.errorMsg} ${displayName}`)
         },
         displayName,
         ...dialogParams
@@ -314,7 +315,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => this.getMembers())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage('Role has been updated.');
+        this.planetMessageService.showMessage($localize`Role has been updated.`);
       });
     };
   }
@@ -322,8 +323,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
     if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
-        member.role ? 'Change Role' : 'Add Role',
-        [ { name: 'teamRole', placeholder: 'Role', type: 'textbox' } ],
+        member.role ? $localize`Change Role` : $localize`Add Role`,
+        [ { name: 'teamRole', placeholder: $localize`Role`, type: 'textbox' } ],
         { teamRole: member.role || '' },
         { autoFocus: true, onSubmit: this.updateRole(member).bind(this) }
       );
@@ -360,22 +361,22 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'request':
         return ({
           obs: this.teamsService.requestToJoinTeam(this.team, this.user),
-          message: 'Request to join team sent'
+          message: $localize`Request to join team sent`
         });
       case 'removed':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
-          message: memberName + ' removed from team'
+          message: $localize`{memberName} removed from team`
         });
       case 'added':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, { ...memberDoc, docType: 'membership' }),
-          message: memberName + ' accepted'
+          message: $localize`${memberName} accepted`
         });
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
-          message: memberName + ' rejected'
+          message: $localize`${memberName} rejected`
         });
     }
   }
@@ -383,7 +384,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
-      this.planetMessageService.showMessage((this.team.name || `${this.configuration.name} Services Directory`) + ' updated successfully');
+      this.planetMessageService.showMessage((this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
     });
   }
 
@@ -419,7 +420,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogRef.close();
-      this.planetMessageService.showMessage('Member' + (selected.length > 1 ? 's' : '') + ' added successfully');
+      this.planetMessageService.showMessage($localize`Member${(selected.length > 1 ? 's' : '')} added successfully`);
     });
   }
 
@@ -453,8 +454,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
-      'Add message',
-      [ { name: 'message', placeholder: 'Message', type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
+      $localize`Add message`,
+      [ { name: 'message', placeholder: $localize`Message`, type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
       { message: [ message, CustomValidators.requiredMarkdown ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
@@ -466,7 +467,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
-    }, 'Message has been posted successfully').pipe(
+    }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
@@ -512,7 +513,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   goBack(showMissingMessage = false) {
     if (showMissingMessage) {
-      this.planetMessageService.showAlert('This team was not found');
+      this.planetMessageService.showAlert($localize`This team was not found`);
     }
     if (this.mode === 'services') {
       this.router.navigate([ '../' ], { relativeTo: this.route });
@@ -526,6 +527,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       data: { courseId: courseId },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }

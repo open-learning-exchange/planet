@@ -12,6 +12,8 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
+import { LandingComponent } from '../landing/landing.component';
+import { ChatComponent } from '../chat/chat.component';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -35,6 +37,7 @@ const routes: Routes = [
       { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
       { path: 'logs/myplanet', component: LogsMyPlanetComponent },
       { path: 'health', component: HealthListComponent },
+      { path: 'chat', component: ChatComponent },
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
@@ -72,7 +75,9 @@ const routes: Routes = [
         loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
       }
     ]
-  }
+  },
+  { path: 'landing', component: LandingComponent },
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
 ];
 
 @NgModule({

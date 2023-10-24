@@ -1,5 +1,5 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { UsersComponent } from '../../users/users.component';
@@ -9,8 +9,8 @@ import { UsersComponent } from '../../users/users.component';
 })
 export class DialogsAddTableComponent implements AfterViewInit {
 
-  @ViewChild(CoursesComponent, { static: false }) coursesComponent: CoursesComponent;
-  @ViewChild(UsersComponent, { static: false }) usersComponent: UsersComponent;
+  @ViewChild(CoursesComponent) coursesComponent: CoursesComponent;
+  @ViewChild(UsersComponent) usersComponent: UsersComponent;
   mode: 'courses' | 'users' = 'courses';
   okDisabled = true;
   get component() {
@@ -30,7 +30,7 @@ export class DialogsAddTableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.component.selection.onChange.subscribe((selection) => {
+    this.component.selection.changed.subscribe((selection) => {
       this.okDisabled = selection.source.selected.length === 0;
     });
   }

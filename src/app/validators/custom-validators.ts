@@ -75,7 +75,7 @@ export class CustomValidators {
         startDate = ac.parent.get('startDate');
         if (!startDate) {
           throw new Error(
-            'validateDates(): startDate control is not found in parent group'
+            $localize`validateDates(): startDate control is not found in parent group`
           );
         }
 

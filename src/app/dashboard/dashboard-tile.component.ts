@@ -4,7 +4,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 // Main page once logged in.  At this stage is more of a placeholder.
@@ -15,13 +15,14 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 })
 export class DashboardTileComponent implements AfterViewChecked {
   @Input() cardTitle: string;
+  @Input() cardType: string;
   @Input() color: string;
   @Input() itemData;
   @Input() link;
   @Input() emptyLink;
   @Input() shelfName: string;
   @Output() teamRemoved = new EventEmitter<any>();
-  @ViewChild('items', { static: false }) itemDiv: ElementRef;
+  @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
 
@@ -68,7 +69,7 @@ export class DashboardTileComponent implements AfterViewChecked {
             this.dialogPrompt.close();
             this.removeMessage(item);
           },
-          onError: () => this.planetMessageService.showMessage('There was an error removing ' + item.title)
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
         },
         changeType: 'leave',
         type: 'team',
@@ -78,7 +79,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   removeMessage(item) {
-    this.planetMessageService.showMessage(item.title + ' removed from ' + this.cardTitle);
+    this.planetMessageService.showMessage($localize`${item.title} removed from ${this.cardTitle}`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -88,7 +89,7 @@ export class DashboardTileComponent implements AfterViewChecked {
     this.userService.updateShelf(ids, this.shelfName).subscribe(
       () => {},
       () => {
-        this.planetMessageService.showAlert('There was an error reordering ' + this.cardTitle);
+        this.planetMessageService.showAlert($localize`There was an error reordering ${this.cardTitle}`);
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );
@@ -98,7 +99,7 @@ export class DashboardTileComponent implements AfterViewChecked {
 @Component({
   selector: 'planet-dashboard-tile-title',
   template: `
-    <mat-icon svgIcon={{cardTitle}}></mat-icon>
+    <mat-icon svgIcon={{cardType}}></mat-icon>
     <span>{{cardTitle}}</span>
   `,
   styleUrls: [ './dashboard-tile-title.scss' ]
@@ -106,5 +107,6 @@ export class DashboardTileComponent implements AfterViewChecked {
 export class DashboardTileTitleComponent {
 
   @Input() cardTitle;
+  @Input() cardType;
 
 }

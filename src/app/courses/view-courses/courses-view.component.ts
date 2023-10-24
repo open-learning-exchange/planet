@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -6,7 +6,8 @@ import { CoursesService } from '../courses.service';
 import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
-import { MatMenuTrigger } from '@angular/material';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -25,7 +26,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
-  @ViewChild(MatMenuTrigger, { static: false }) previewButton: MatMenuTrigger;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
     private router: Router,
@@ -34,7 +37,14 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-  ) {}
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     this.coursesService.courseUpdated$.pipe(

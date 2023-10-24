@@ -21,7 +21,7 @@ describe('Login', () => {
     passInput.sendKeys('e2e');
     page.clickSignin();
     browser.getCurrentUrl().then((url) => {
-      expect(url).toEqual('http://localhost:3000/');
+      expect(url).toEqual('http://localhost:3000/login');
     });
   });
 

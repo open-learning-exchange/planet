@@ -4,7 +4,7 @@
       <span>{{configuration?.name}}</span>
     </mat-toolbar>
     <div class="community-news">
-      <mat-tab-group class="tabs-padding">
+      <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="News">
           <h3>
             <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
@@ -29,18 +29,18 @@
         <mat-tab i18n-label label="Services">
           <planet-markdown *ngIf="team.description" [content]="team.description || ''"></planet-markdown>
           <ng-container *ngIf="!planetCode">
-            <button *planetAuthorizedRoles (click)="openDescriptionDialog()" mat-stroked-button i18n>
+            <button *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
               { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
             </button>
           </ng-container>
           <mat-nav-list>
-            <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
+            <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
               <span matLine>{{link.title}}</span>
               <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
             </mat-list-item>
           </mat-nav-list>
           <ng-container *ngIf="!planetCode">
-            <div *planetAuthorizedRoles class="action-buttons">
+            <div *planetAuthorizedRoles="''" class="action-buttons">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
               <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
                 <span *ngIf="!deleteMode" i18n>Remove Links</span>
@@ -58,11 +58,11 @@
         <mat-tab i18n-label label="Reports">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
-        <mat-tab i18n-label label="Calendar" *ngIf="isCalendarInTabs">
-          <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+        <mat-tab i18n-label label="Calendar" *ngIf="deviceType === deviceTypes.MOBILE">
+          <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
         </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-calendar *ngIf="!isCalendarInTabs" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    <planet-calendar *ngIf="deviceType != deviceTypes.MOBILE" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>

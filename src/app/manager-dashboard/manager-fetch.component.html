@@ -29,7 +29,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="item">
-        <mat-header-cell *matHeaderCellDef mat-sort-header i18n>Title</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="item" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.db === 'resources'">{{ element.item.doc.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon></ng-container>
           <ng-container *ngIf="element.db === 'courses'">{{ element.item.doc.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
@@ -50,6 +50,6 @@
     </mat-paginator>
   </div>
   <ng-template #notFoundMessage>
-    <div class="view-container">No Record Found</div>
+    <div class="view-container" i18n>No Record Found</div>
   </ng-template>
 </div>

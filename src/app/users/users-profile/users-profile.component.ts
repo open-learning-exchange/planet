@@ -8,18 +8,12 @@ import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
+import { educationLevel } from '../user-constants';
 
 @Component({
   selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
-  styles: [ `
-    .profile-container {
-      max-width: 900px;
-      display: grid;
-      grid-template-columns: 1fr 0.75fr 0.75fr;
-      grid-column-gap: 2rem;
-    }
-  ` ]
+  styleUrls: [ './users-profile.scss' ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
@@ -32,6 +26,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   hasAchievement = false;
   totalLogins = 0;
   lastLogin = 0;
+  educationLevel = educationLevel;
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;

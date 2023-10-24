@@ -4,6 +4,34 @@
   "newProjectRoot": "projects",
   "projects": {
     "planet-app": {
+      "i18n": {
+        "locales": {
+          "en": {
+            "translation": "src/i18n/messages.eng.xlf",
+            "baseHref": "/eng/"
+          },
+          "so": {
+            "translation": "src/i18n/messages.som.xlf",
+            "baseHref": "/som/"
+          },
+          "fr": {
+            "translation": "src/i18n/messages.fra.xlf",
+            "baseHref": "/fra/"
+          },
+          "ne": {
+            "translation": "src/i18n/messages.nep.xlf",
+            "baseHref": "/nep/"
+          },
+          "ar": {
+            "translation": "src/i18n/messages.ara.xlf",
+            "baseHref": "/ara/"
+          },
+          "es": {
+            "translation": "src/i18n/messages.spa.xlf",
+            "baseHref": "/spa/"
+          }
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -11,6 +39,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -29,10 +58,17 @@
               "node_modules/@fortawesome/fontawesome-free/css/all.css"
             ],
             "scripts": [],
+            "i18nMissingTranslation": "ignore",
             "poll": 2000
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -52,6 +88,12 @@
               ]
             },
             "test": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -59,30 +101,66 @@
                 }
               ]
             },
-            "somali": {
+            "eng": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.som.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "so"
-            },
-            "french": {
+              "outputPath": "dist/eng",
+              "localize": ["en"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
+            "som": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.fra.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "fr"
-            },
-            "nepali": {
+              "outputPath": "dist/som",
+              "localize": ["so"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
+            "fra": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.nep.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "ne"
-            },
-            "arabic": {
+              "outputPath": "dist/fra",
+              "localize": ["fr"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
+            "nep": {
               "aot": true,
-              "i18nFile": "src/i18n/messages.ara.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "ar"
-            }
+              "outputPath": "dist/nep",
+              "localize": ["ne"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
+            "ara": {
+              "aot": true,
+              "outputPath": "dist/ara",
+              "localize": ["ar"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]},
+            "spa": {
+              "aot": true,
+              "outputPath": "dist/spa",
+              "localize": ["es"],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]}
           }
         },
         "serve": {
@@ -99,17 +177,20 @@
             "test": {
               "browserTarget": "planet-app:build:test"
             },
-            "somali": {
-              "browserTarget": "planet-app:build:somali"
+            "som": {
+              "browserTarget": "planet-app:build:som"
             },
-            "french": {
-              "browserTarget": "planet-app:build:french"
+            "fra": {
+              "browserTarget": "planet-app:build:fra"
             },
-            "nepali": {
-              "browserTarget": "planet-app:build:nepali"
+            "nep": {
+              "browserTarget": "planet-app:build:nep"
             },
-            "arabic": {
-              "browserTarget": "planet-app:build:arabic"
+            "ara": {
+              "browserTarget": "planet-app:build:ara"
+            },
+            "spa": {
+              "browserTarget": "planet-app:build:spa"
             }
           }
         },
@@ -117,7 +198,8 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "planet-app:build"
-          }
+          },
+          "ivy":true
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -176,14 +258,14 @@
   "defaultProject": "planet-app",
   "schematics": {
     "@schematics/angular:class": {
-      "spec": false
+      "skipTests": true
     },
     "@schematics/angular:component": {
-      "spec": true,
+      "skipTests": false,
       "inlineStyle": false,
       "inlineTemplate": false,
       "prefix": "app",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

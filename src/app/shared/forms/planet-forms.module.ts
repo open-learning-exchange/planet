@@ -19,6 +19,7 @@ import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
 import { PlanetSelectorComponent } from './planet-selector.component';
 import { PlanetNumberValidatorDirective } from './planet-number-validator.directive';
 import { PlanetRoundDirective } from './planet-round.directive';
+import { FileInputComponent } from './file-input.component';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { PlanetRoundDirective } from './planet-round.directive';
     CovalentMarkdownModule,
     PlanetSelectorComponent,
     PlanetStepListComponent,
+    FileInputComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,
     PlanetStepListNumberDirective,
@@ -61,6 +63,7 @@ import { PlanetRoundDirective } from './planet-round.directive';
     PlanetSelectorComponent,
     PlanetStackedBarComponent,
     PlanetStepListComponent,
+    FileInputComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,
     PlanetStepListNumberDirective,
@@ -69,7 +72,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     PlanetTimeMaskDirective,
     PlanetNumberValidatorDirective,
     PlanetRoundDirective
-  ],
-  entryComponents: [ PlanetTagInputDialogComponent ]
+  ]
 })
 export class PlanetFormsModule {}

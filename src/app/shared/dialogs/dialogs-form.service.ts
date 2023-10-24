@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { DialogsFormComponent } from './dialogs-form.component';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import {
   FormBuilder,

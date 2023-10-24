@@ -26,7 +26,6 @@ import { CommunityListDialogComponent } from '../community/community-list-dialog
     NewsListComponent,
     NewsListItemComponent,
     CommunityListDialogComponent
-  ],
-  entryComponents: [ CommunityListDialogComponent ]
+  ]
 })
 export class NewsModule {}

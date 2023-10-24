@@ -1,0 +1,63 @@
+name: Manual Deploy
+
+on:
+  #push:
+  #  branches:
+  #    - deploy
+  workflow_dispatch:
+    inputs:
+      hostname:
+        description: 'Server hostname Eg. "planet.dev.ole.org"'
+        required: true
+        default: 'planet.dev.ole.org'
+      buildname:
+        description: 'Planet Image name Eg. "0.13.4-deploy-d6b59441"'
+        required: false
+
+env:
+  DOCKER_ORG: treehouses
+  DOCKER_REPO_TAG: planet-tags
+  DOCKER_REPO: planet
+  
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: sshagent
+        uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: ${{ secrets.SSHKEY }}
+
+      - name: deploy
+        run: |
+          if [[ "${{ github.event.inputs.hostname }}" == "" ]]; then
+            SERVER_HOST="planet.dev.ole.org"  
+          else
+            SERVER_HOST="${{ github.event.inputs.hostname }}"
+          fi
+          PLANET_VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          if [[ "${{ github.event.inputs.buildname }}" == "" ]]; then
+            BUILD="$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+            # BUILD="0.13.4-deploy-d6b59441"
+          else
+            SERVER_HOST="${{ github.event.inputs.hostname }}"
+          fi
+          PLANET_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:$BUILD"
+          DBINIT_REPO="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$BUILD"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "planet.dev.ole.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
+          # echo "planet.earth.ole.org ...."
+          ssh root@$SERVER_HOST <<EOF
+          docker pull $PLANET_REPO
+          docker pull $DBINIT_REPO
+          docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local"
+          docker tag $DBINIT_REPO "$DOCKER_ORG/$DOCKER_REPO:db-init-local"
+          docker images
+          treehouses services planet restart
+          EOF

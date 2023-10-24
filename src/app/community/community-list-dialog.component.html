@@ -1,9 +1,9 @@
-<div mat-dialog-title>
+<div mat-dialog-title i18n>
   Select Communities
 </div>
 <mat-dialog-content>
   <planet-community-list [selectMode]="true" (selectionChange)="selectionChange($event)" [excludeIds]="data.excludeIds"></planet-community-list>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-raised-button color="primary" type="button" (click)="listSubmit()" [disabled]="false">OK</button>
+  <button mat-raised-button color="primary" type="button" (click)="listSubmit()" [disabled]="false" i18n>OK</button>
 </mat-dialog-actions>

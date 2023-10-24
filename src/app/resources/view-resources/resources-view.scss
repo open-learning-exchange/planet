@@ -1,3 +1,4 @@
+@import '../../variables';
 
 :host {
 
@@ -31,6 +32,26 @@
     * {
       max-width: 100%;
       max-height: 60vh;
+    }
+  }
+
+  @media (max-width: $screen-sm) {
+    .view-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      grid-template-areas: 
+      'view'
+      'detail';
+    }
+    
+    .full-view-container.view-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: 0 1fr;
+    } 
+
+    .resource-detail{
+      margin-top: 1rem;
+      overflow-y: visible;
     }
   }
 }

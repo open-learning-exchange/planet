@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
@@ -10,6 +10,9 @@ import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { languages } from '../../shared/languages';
+import * as constants from '../resources-constants';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -25,8 +28,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService
-  ) { }
+    private dialogsLoadingService: DialogsLoadingService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
@@ -51,6 +57,14 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   // Use string rather than boolean for i18n select
   fullView = 'on';
   resourceId: string;
+  constantsOptions = constants;
+  languageOptions = languages;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     this.route.paramMap
@@ -67,7 +81,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           if (this.resourcesService.isActiveResourceFetch) {
             return;
           }
-          this.planetMessageService.showAlert('Resource does not exist in Library');
+          this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
         }
         this.dialogsLoadingService.stop();

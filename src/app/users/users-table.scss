@@ -1,0 +1,37 @@
+@import '../variables';
+
+/* Column Widths */
+.mat-column-select {
+  max-width: 44px;
+}
+
+.mat-column-profile {
+  max-width: 100px;
+}
+
+mat-cell p {
+  margin: 0;
+}
+
+button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.horizontal-align {
+  justify-content: center;
+}
+
+@media(max-width: $screen-md) {
+  .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
+    max-width: 70px;
+  }
+}
+
+@media (max-width: $screen-sm) {
+  mat-cell button, .visibility-cell {
+    min-width: 0;
+    padding: 0 3px;
+  }
+}

@@ -1,10 +1,12 @@
 import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
+import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { languages } from '../../shared/languages';
 
 @Component({
   selector: 'planet-courses-detail',
@@ -16,6 +18,9 @@ export class CoursesViewDetailComponent implements OnChanges {
   @Input() parent = false;
   planetConfiguration = this.stateService.configuration;
   imageSource: 'parent' | 'local' = 'local';
+  gradeOptions: any = constants.gradeLevels;
+  subjectOptions: any = constants.subjectLevels;
+  languageOptions: any = languages;
 
   constructor(
     private stateService: StateService

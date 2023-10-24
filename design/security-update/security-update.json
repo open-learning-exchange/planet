@@ -284,5 +284,18 @@
         "roles": ["learner"]
       }
     }
+  },
+  {
+    "dbName": "community_meetups",
+    "json": {
+      "admins": {
+        "names": [],
+        "roles": ["manager"]
+      },
+      "members": {
+        "names": [],
+        "roles": []
+      }
+    }
   }
 ]
