@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { showFormErrors } from '../../shared/table-helpers';
 import { ChatService } from '../../shared/chat.service';
-import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { UserService } from '../../shared/user.service';
+import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
   selector: 'planet-chat-window',
@@ -13,6 +13,8 @@ import { CouchService } from '../../shared/couchdb.service';
 })
 export class ChatWindowComponent implements OnInit {
   spinnerOn = true;
+  conversations: any[] = [];
+  selectedConversationId: any;
   promptForm: FormGroup;
   data = {
     user: this.userService.get(),
@@ -21,17 +23,15 @@ export class ChatWindowComponent implements OnInit {
     _id: '',
     _rev: ''
   };
-  selectedConversationId: any;
-  conversations: any[] = [];
 
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
-    private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private userService: UserService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private formBuilder: FormBuilder,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -40,6 +40,12 @@ export class ChatWindowComponent implements OnInit {
     this.chatService.selectedConversationId$.subscribe((conversationId) => {
       this.selectedConversationId = conversationId;
       this.fetchConversation(this.selectedConversationId?._id);
+    });
+  }
+
+  createForm() {
+    this.promptForm = this.formBuilder.group({
+      prompt: [ '', Validators.required ],
     });
   }
 
@@ -62,10 +68,14 @@ export class ChatWindowComponent implements OnInit {
     });
   }
 
-  createForm() {
-    this.promptForm = this.formBuilder.group({
-      prompt: [ '', Validators.required ],
-    });
+  setSelectedConversation() {
+    if (this.selectedConversationId) {
+      this.data._id = this.selectedConversationId._id;
+      this.data._rev = this.selectedConversationId._rev;
+    } else {
+      delete this.data._id;
+      delete this.data._rev;
+    }
   }
 
   postSubmit() {
@@ -85,41 +95,22 @@ export class ChatWindowComponent implements OnInit {
 
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
-
     this.data.content = content;
-
-    if (this.selectedConversationId) {
-      this.data._id = this.selectedConversationId._id;
-      this.data._rev = this.selectedConversationId._rev;
-    } else {
-      delete this.data._id;
-      delete this.data._rev;
-    }
-
-    console.log(this.data);
+    this.setSelectedConversation();
 
     this.chatService.getPrompt(this.data, true).subscribe(
       (completion: any) => {
         console.log(completion);
-        this.conversations.push({
-          query: content,
-          response: completion?.chat,
-        });
+        this.conversations.push({ query: content, response: completion?.chat });
         this.selectedConversationId = {
           '_id': completion.couchDBResponse?.id,
           '_rev': completion.couchDBResponse?.rev
         };
-        console.log(this.selectedConversationId);
-
         this.postSubmit();
       },
       (error: any) => {
         this.spinnerOn = false;
-        this.conversations.push({
-          query: content,
-          response: 'Error: ' + error.message,
-          error: true,
-        });
+        this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
         this.postSubmit();
       }
     );
