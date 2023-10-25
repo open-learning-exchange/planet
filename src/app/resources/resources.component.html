@@ -54,7 +54,7 @@
           </button>
         </span>
         <span *ngIf="!parent && isTablet">
-          <button *ngIf="!parent && !isDialog && isTablet" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+          <button *ngIf="!isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
