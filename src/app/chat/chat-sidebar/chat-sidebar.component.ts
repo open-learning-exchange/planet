@@ -14,7 +14,7 @@ export class ChatSidebarComponent implements OnInit {
   ngOnInit() {
     this.getChatHistory();
 
-    // Listen for any new chats
+    // Listen for any new chats and update
     this.chatService.newChatAdded$.subscribe(() => {
       this.getChatHistory();
     });
