@@ -112,6 +112,7 @@ export class ChatWindowComponent implements OnInit {
           '_rev': completion.couchDBResponse?.rev
         };
         this.postSubmit();
+        this.chatService.sendNewChatAddedSignal();
       },
       (error: any) => {
         this.spinnerOn = false;

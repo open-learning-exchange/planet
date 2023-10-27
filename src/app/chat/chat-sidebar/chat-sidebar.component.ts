@@ -13,10 +13,15 @@ export class ChatSidebarComponent implements OnInit {
 
   ngOnInit() {
     this.getChatHistory();
+
+    // Listen for any new chats and update
+    this.chatService.newChatAdded$.subscribe(() => {
+      this.getChatHistory();
+    });
   }
 
   newChat() {
-    this.chatService.sendNewChatSignal();
+    this.chatService.sendNewChatSelectedSignal();
   }
 
   getChatHistory() {
@@ -29,7 +34,6 @@ export class ChatSidebarComponent implements OnInit {
   }
 
   selectConversation(conversation) {
-    this.getChatHistory();
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev

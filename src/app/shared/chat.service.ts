@@ -11,9 +11,11 @@ import { CouchService } from '../shared/couchdb.service';
 }) export class ChatService {
   private baseUrl = environment.chatAddress;
   private dbName = 'chat_history';
+  private newChatAdded = new Subject<void>();
   private newChatSelected = new Subject<void>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
 
+  newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
 
@@ -34,7 +36,11 @@ import { CouchService } from '../shared/couchdb.service';
     return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids) }), opts);
   }
 
-  sendNewChatSignal() {
+  sendNewChatAddedSignal() {
+    this.newChatAdded.next();
+  }
+
+  sendNewChatSelectedSignal() {
     this.newChatSelected.next();
   }
 

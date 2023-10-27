@@ -1,6 +1,6 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
   <mat-drawer #drawer mode="side">
-    <div class="header">
+    <div class="header" i18n>
       <button type="button" mat-stroked-button color="primary" class="start-button" mat-button (click)="newChat()">
         <mat-icon>add</mat-icon>
         Start New Chat
@@ -9,12 +9,18 @@
         <i class="material-icons">chevron_left</i>
       </button>
     </div>
-    <h2>Conversations</h2>
-    <ul>
-      <li *ngFor="let conversation of conversations; let i = index" (click)="selectConversation(conversation)">
-        {{ conversation.conversations[0].query.slice(0, 25) }}
-      </li>
-    </ul>
+    <h2 i18n>Conversations</h2>
+    <ng-container *ngIf="conversations.length; else noChats">
+      <ul>
+        <li *ngFor="let conversation of conversations.reverse(); let i = index" (click)="selectConversation(conversation)">
+          {{ conversation.conversations[0].query.slice(0, 25) }}
+        </li>
+      </ul>
+    </ng-container>
+
+    <ng-template #noChats>
+      <span i18n>No previous conversations.</span>
+    </ng-template>
   </mat-drawer>
 
   <div class="window-box">
