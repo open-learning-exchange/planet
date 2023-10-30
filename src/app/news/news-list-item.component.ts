@@ -113,7 +113,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   }
 
   formLabel(news) {
-    return news.viewableBy === 'teams' ? $localize`Message` : $localize`Story`;
+    return news.viewableBy === 'teams' ? $localize`Message` : $localize`Voice`;
   }
 
   showReplies(news) {
