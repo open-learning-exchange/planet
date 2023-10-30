@@ -8,6 +8,7 @@ import { ChatService } from '../../shared/chat.service';
 })
 export class ChatSidebarComponent implements OnInit {
   conversations: any;
+  selectedConversation: any;
 
   constructor(private chatService: ChatService) {}
 
@@ -22,6 +23,7 @@ export class ChatSidebarComponent implements OnInit {
 
   newChat() {
     this.chatService.sendNewChatSelectedSignal();
+    this.selectedConversation = null;
   }
 
   getChatHistory() {
@@ -34,6 +36,7 @@ export class ChatSidebarComponent implements OnInit {
   }
 
   selectConversation(conversation) {
+    this.selectedConversation = conversation;
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev

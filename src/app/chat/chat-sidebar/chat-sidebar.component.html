@@ -1,6 +1,6 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
   <mat-drawer #drawer mode="side">
-    <div class="header" i18n>
+    <div class="header">
       <button type="button" mat-stroked-button color="primary" class="start-button" mat-button (click)="newChat()">
         <mat-icon>add</mat-icon>
         Start New Chat
@@ -12,9 +12,10 @@
     <h2 i18n>Conversations</h2>
     <ng-container *ngIf="conversations.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of conversations.reverse(); let i = index" (click)="selectConversation(conversation)">
+        <li *ngFor="let conversation of conversations.reverse(); let i = index" (click)="selectConversation(conversation)" class="conversation-item">
           {{ conversation.conversations[0].query.slice(0, 25) }}
-        </li>
+          <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="edit-icon">edit</mat-icon>
+      </li>
       </ul>
     </ng-container>
 

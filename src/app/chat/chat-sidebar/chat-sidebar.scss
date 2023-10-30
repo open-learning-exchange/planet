@@ -59,3 +59,13 @@ h2 {
 .window-box {
   height: 100%;
 }
+
+.conversation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-icon {
+  align-self: flex-end;
+}
