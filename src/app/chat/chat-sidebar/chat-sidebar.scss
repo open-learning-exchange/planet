@@ -1,0 +1,61 @@
+@import '../../variables';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+
+  .start-button {
+    border: solid;
+    margin-right: 0.5rem;
+  }
+
+  .icon-button {
+    background-color: $accent;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+li:hover {
+  background-color: #ddd;
+}
+
+h2 {
+  margin: 10px;
+}
+
+.expand-button {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  border-radius: 50%;
+  background-color: $accent;
+  transition: width 0.3s ease;
+}
+
+.expand-button button {
+  padding: 0;
+}
+
+.sidebar-drawer {
+  display: flex;
+  flex-direction: column;
+  background: #eee;
+  height: #{$view-container-height-no-toolbar};
+  width: 100%;
+}
+
+.window-box {
+  height: 100%;
+}
