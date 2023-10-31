@@ -1,0 +1,8 @@
+@import '../variables.scss';
+
+.space-container {
+  display: flex;
+  flex-direction: column;
+  height: #{$view-container-height-no-toolbar};
+  overflow: hidden;
+}

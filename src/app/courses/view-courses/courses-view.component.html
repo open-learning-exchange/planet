@@ -5,6 +5,32 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{courseDetail.courseTitle}}</h3>
+    <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </ng-container>
+    <ng-container *ngIf=" deviceType === deviceTypes.TABLET">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+      <span class="toolbar-fill"></span>
+        <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #actionsMenu="matMenu" class="actions-menu">
+          <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+        </mat-menu>
+    </ng-container>
+  </mat-toolbar>
+
+   <ng-template #editDetails>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
@@ -12,7 +38,9 @@
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
-    <div>
+   </ng-template>
+
+   <ng-template #actionButtons>
       <ng-container *ngIf="!parent">
         <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
           Join
@@ -22,11 +50,11 @@
         </button>
       </ng-container>
       <button mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
-    </div>
-   </mat-toolbar>
+   </ng-template>
+
   <div class="view-container view-full-height">
     <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length">
-      <span i18n>My Progress:</span>
+      <span i18n>myProgress:</span>
       <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
     </div>
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
@@ -48,7 +76,7 @@
               <planet-course-icon *ngIf="step.progress && step.progress.passed" [icon]="'done'"></planet-course-icon>
               <planet-course-icon *ngIf="step.progress && !step.progress.passed" [icon]="'rotate_right'"></planet-course-icon>
             </mat-expansion-panel-header>
-            <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-wrap"></planet-markdown>
+            <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>
             <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0; else contentMessage" i18n>
               There is no content for this step.
             </div>

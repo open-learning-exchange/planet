@@ -415,6 +415,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data: { courseId: courseId },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }

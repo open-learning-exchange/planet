@@ -34,7 +34,7 @@
   </ng-container>
   <ng-container matColumnDef="balance">
     <mat-header-cell *matHeaderCellDef class="narrow-column" i18n>Balance</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="narrow-column">{{ element.balance | currency:this.curCode?.code:this.curCode?.symbol }}</mat-cell>
+    <mat-cell *matCellDef="let element" [ngClass]="element.balance < 0 ? 'negative-balance' : 'narrow-column'" [style.color]="element.balance < 0 ? 'red' : 'black'">{{ element.balance | currency:this.curCode?.code:this.curCode?.symbol }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef class="narrow-column" i18n>Actions</mat-header-cell>

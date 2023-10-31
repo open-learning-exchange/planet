@@ -10,12 +10,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, takeUntil, map } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
-  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf, trackById, filterIds
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -35,31 +34,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-info {
-      max-width: 200px;
-    }
-    .mat-column-createdDate {
-      max-width: 95px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .column {
-      display: flex;
-      flex-direction: column;
-    }
-    .column > * {
-      line-height: normal;
-    }
-    .course-progress {
-      margin-top: 0.5rem;
-    }
-  ` ]
+  styleUrls: [ './courses.scss' ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {

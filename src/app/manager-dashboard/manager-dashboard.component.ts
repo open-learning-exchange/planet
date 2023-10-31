@@ -26,6 +26,27 @@ import { StateService } from '../shared/state.service';
     .view-container > *:last-child {
       margin-bottom: 0;
     }
+    .send-view {
+      padding-bottom: 0;
+    }
+    .list-view {
+      padding-top: 0;
+    }
+    .mat-raised-button {
+      margin: 0.25rem;
+    }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .version-card {
+      flex: 1;
+      max-width: calc(50% - 20px);
+      margin: 1rem;
+    }
+    .pinClass {
+      font-size: 1.5rem;
+    }
   ` ]
 })
 
