@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
+import { CustomValidators } from '../../validators/custom-validators';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
@@ -50,7 +51,7 @@ export class ChatWindowComponent implements OnInit {
 
   createForm() {
     this.promptForm = this.formBuilder.group({
-      prompt: [ '', Validators.required ],
+      prompt: [ '', CustomValidators.required ],
     });
   }
 
@@ -91,6 +92,7 @@ export class ChatWindowComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log(this.promptForm);
     if (this.promptForm.valid) {
       this.submitPrompt();
     } else {
