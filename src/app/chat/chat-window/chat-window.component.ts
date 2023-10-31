@@ -92,7 +92,6 @@ export class ChatWindowComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.promptForm);
     if (this.promptForm.valid) {
       this.submitPrompt();
     } else {
