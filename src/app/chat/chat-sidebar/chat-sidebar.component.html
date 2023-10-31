@@ -10,7 +10,7 @@
       </button>
     </div>
     <h2 i18n>Conversations</h2>
-    <ng-container *ngIf="conversations.length; else noChats">
+    <ng-container *ngIf="conversations?.length; else noChats">
       <ul>
         <li *ngFor="let conversation of conversations.reverse(); let i = index" (click)="selectConversation(conversation)">
           {{ conversation.conversations[0].query.slice(0, 25) }}
