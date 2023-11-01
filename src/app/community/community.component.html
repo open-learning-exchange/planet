@@ -1,8 +1,5 @@
 <div class="space-container">
   <div class="view-container view-full-height community-view">
-    <mat-toolbar class="action-buttons">
-      <span>{{configuration?.name}}</span>
-    </mat-toolbar>
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="News">
@@ -58,11 +55,11 @@
         <mat-tab i18n-label label="Reports">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
-        <mat-tab i18n-label label="Calendar" *ngIf="deviceType === deviceTypes.MOBILE">
+        <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">
           <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
         </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-calendar *ngIf="deviceType != deviceTypes.MOBILE" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    <planet-calendar *ngIf="deviceType === deviceTypes.DESKTOP" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>
