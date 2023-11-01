@@ -10,14 +10,35 @@
       </button>
     </div>
     <h2 i18n>Conversations</h2>
-    <ng-container *ngIf="conversations.length; else noChats">
+    <ng-container *ngIf="conversations?.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of conversations.reverse(); let i = index" (click)="selectConversation(conversation)">
-          {{ conversation.conversations[0].query.slice(0, 25) }}
+        <li *ngFor="let conversation of conversations; let i = index" (click)="selectConversation(conversation)" class="conversation-item">
+          <ng-container *ngIf="isEditing; else notEditing">
+            <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
+              <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
+                <mat-form-field class="mat-form-field-type-no-underline">
+                  <input matInput [formControl]="titleForm[conversation?._id].controls.title" required>
+                  <mat-error>
+                    <planet-form-error-messages [formControl]="titleForm[conversation?._id].controls.title"></planet-form-error-messages>
+                  </mat-error>
+                </mat-form-field>
+                <button mat-icon-button class="sidebar-icon"><mat-icon>check</mat-icon></button>
+                <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()"><mat-icon>close</mat-icon></button>
+              </form>
+            </ng-container>
+          </ng-container>
+          <ng-template #notEditing>
+            <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
+            <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="sidebar-icon" (click)="toggleEditTitle()">
+              edit
+            </mat-icon>
+          </ng-template>
+          <ng-template #conversationTitle>
+            {{ conversation?.title?.slice(0, 25) || conversation.conversations[0].query.slice(0, 25) }}
+          </ng-template>
         </li>
       </ul>
     </ng-container>
-
     <ng-template #noChats>
       <span i18n>No previous conversations.</span>
     </ng-template>
