@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -10,8 +12,9 @@ import { showFormErrors } from '../../shared/table-helpers';
   templateUrl: './chat-sidebar.component.html',
   styleUrls: [ './chat-sidebar.scss' ],
 })
-export class ChatSidebarComponent implements OnInit {
+export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
+  private onDestroy$ = new Subject<void>();
   conversations: any;
   selectedConversation: any;
   isEditing: boolean;
@@ -25,11 +28,18 @@ export class ChatSidebarComponent implements OnInit {
 
   ngOnInit() {
     this.getChatHistory();
+    this.subscribeToNewChats();
+  }
 
-    // Listen for any new chats and update
-    this.chatService.newChatAdded$.subscribe(() => {
-      this.getChatHistory();
-    });
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  subscribeToNewChats() {
+    this.chatService.newChatAdded$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => this.getChatHistory());
   }
 
   newChat() {
