@@ -14,7 +14,7 @@ import { showFormErrors } from '../../shared/table-helpers';
   templateUrl: './chat-window.component.html',
   styleUrls: [ './chat-window.scss' ],
 })
-export class ChatWindowComponent implements OnInit {
+export class ChatWindowComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   conversations: any[] = [];
