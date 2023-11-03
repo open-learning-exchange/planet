@@ -1,6 +1,9 @@
 <mat-card>
   <mat-card-header>
     <img mat-card-avatar [src]="item.avatar" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
+    <button mat-icon-button *ngIf="item.sharedDate || item.doc.updatedDate !== item.doc.time && item.doc.updatedDate" (click)="toggleDatesInfo()" class="info-button">
+      <mat-icon>info</mat-icon>
+    </button>
     <mat-card-title>
       <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
         {{item.doc.user.firstName ?
@@ -11,8 +14,10 @@
     <mat-card-subtitle>
       <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
       <ng-container i18n>posted on</ng-container> {{item.doc.time | date: 'medium' }}
-      <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
-      <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
+      <ng-container *ngIf="showDatesInfo">
+        <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
+        <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
+      </ng-container>
       <mat-chip-list>
         <mat-chip color="primary" selected class="planet-chip-label chip-no-style" *ngFor="let label of item.doc.labels">
           <planet-label i18n-label [label]="label"></planet-label>

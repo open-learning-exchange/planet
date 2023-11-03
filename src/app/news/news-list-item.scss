@@ -2,6 +2,7 @@
 
 mat-card {
   margin: 0.25rem;
+  border-radius: 15px;
 }
 
 :host(.main-message) {
@@ -17,4 +18,11 @@ mat-card {
 
 mat-card-content {
   margin-bottom: 0;
+}
+
+.info-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 8px;
 }

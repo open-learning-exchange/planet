@@ -32,6 +32,7 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
   showExpand = false;
   showLess = true;
   showShare = false;
+  showDatesInfo = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
@@ -143,5 +144,9 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
+  }
+
+  toggleDatesInfo() {
+    this.showDatesInfo = !this.showDatesInfo;
   }
 }
