@@ -72,11 +72,11 @@ planet-calendar {
 }
 
 @media only screen and (min-width: #{$screen-md}) {
-  .fc-event-title-container {
-    max-width: 100px;
-  }
-
   .fc .fc-more-popover .fc-popover-body {
     min-width: unset !important;
+
+    .fc-event-title-container {
+      max-width: 100px;
+    }
   }
 }
