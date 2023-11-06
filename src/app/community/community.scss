@@ -66,3 +66,17 @@ planet-calendar {
     right: -0.25rem;
   }
 }
+
+@media only screen and (min-width: #{$screen-md}) {
+  .fc-event-title-container {
+    max-width: 100px;
+  }
+
+  .fc-h-event .fc-event-title {
+    text-overflow: ellipsis;
+  }
+
+  .fc .fc-more-popover .fc-popover-body {
+    min-width: unset !important;
+  }
+}
