@@ -2,9 +2,8 @@
   <div class="view-container view-full-height community-view">
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
-        <mat-tab i18n-label label="News">
-          <h3>
-            <span i18n>Your Voices</span>
+        <mat-tab i18n-label label="Voices">
+          <h3 style="text-align: right; margin-right: 0.5rem;">
             <ng-container *planetAuthorizedRoles="'learner'">
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
