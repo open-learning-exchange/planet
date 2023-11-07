@@ -91,7 +91,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   isTablet: boolean;
-  showFiltersRow: boolean = false;
+  showFiltersRow = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
