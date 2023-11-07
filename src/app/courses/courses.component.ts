@@ -96,6 +96,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   trackById = trackById;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  showFiltersRow: boolean = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -447,6 +448,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
     }
+  }
+
+  toggleFilters() {
+    this.showFiltersRow = !this.showFiltersRow;
   }
 
 }

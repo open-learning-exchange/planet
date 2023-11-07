@@ -10,8 +10,10 @@
   <ng-template #mobileView>
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
+      <span class="toolbar-fill"></span>
+      <button mat-icon-button (click)="toggleFiltersRow()" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
-    <mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="filterRow"></ng-container>
     </mat-toolbar-row>
   </ng-template>

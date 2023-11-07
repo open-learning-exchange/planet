@@ -18,20 +18,24 @@
       <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
+      <span class="toolbar-fill"></span>
+      <button mat-icon-button *ngIf="deviceType !== deviceTypes.DESKTOP" (click)="toggleFilters()" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
-        <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
-      </mat-toolbar-row>
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
-      </mat-toolbar-row>
-    </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.TABLET">
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-      </mat-toolbar-row>
+    <ng-container *ngIf="showFiltersRow">
+      <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
+          <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
+        </mat-toolbar-row>
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
+        </mat-toolbar-row>
+      </ng-container>
+      <ng-container *ngIf="deviceType === deviceTypes.TABLET">
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
+        </mat-toolbar-row>
+      </ng-container>
     </ng-container>
   </ng-template>
 </mat-toolbar>

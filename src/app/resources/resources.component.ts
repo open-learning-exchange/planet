@@ -91,6 +91,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   isTablet: boolean;
+  showFiltersRow: boolean = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -386,6 +387,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  toggleFiltersRow() {
+    this.showFiltersRow = !this.showFiltersRow;
   }
 
 }
