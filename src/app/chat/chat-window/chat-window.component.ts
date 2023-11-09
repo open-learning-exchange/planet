@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { CustomValidators } from '../../validators/custom-validators';
 import { ChatService } from '../../shared/chat.service';
@@ -12,7 +14,8 @@ import { showFormErrors } from '../../shared/table-helpers';
   templateUrl: './chat-window.component.html',
   styleUrls: [ './chat-window.scss' ],
 })
-export class ChatWindowComponent implements OnInit {
+export class ChatWindowComponent implements OnInit, OnDestroy {
+  private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   conversations: any[] = [];
   selectedConversationId: any;
@@ -37,16 +40,31 @@ export class ChatWindowComponent implements OnInit {
 
   ngOnInit() {
     this.createForm();
+    this.subscribeToNewChatSelected();
+    this.subscribeToSelectedConversation();
+  }
 
-    this.chatService.newChatSelected$.subscribe(() => {
-      this.selectedConversationId = null;
-      this.conversations = [];
-    });
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
-    this.chatService.selectedConversationId$.subscribe((conversationId) => {
-      this.selectedConversationId = conversationId;
-      this.fetchConversation(this.selectedConversationId?._id);
-    });
+  subscribeToNewChatSelected() {
+    this.chatService.newChatSelected$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.selectedConversationId = null;
+        this.conversations = [];
+      });
+  }
+
+  subscribeToSelectedConversation() {
+    this.chatService.selectedConversationId$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((conversationId) => {
+        this.selectedConversationId = conversationId;
+        this.fetchConversation(this.selectedConversationId?._id);
+      });
   }
 
   createForm() {
