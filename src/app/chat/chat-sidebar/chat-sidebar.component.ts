@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { SearchService } from '../../shared/forms/search.service';
 import { showFormErrors } from '../../shared/table-helpers';
 
 @Component({
@@ -16,17 +17,27 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
   conversations: any;
+  filteredConversations: any;
   selectedConversation: any;
   isEditing: boolean;
   titleForm: { [key: string]: FormGroup } = {};
+  private _titleSearch = '';
+  get titleSearch(): string { return this._titleSearch.trim(); }
+  set titleSearch(value: string) {
+    this._titleSearch = value;
+    this.recordSearch();
+    this.filterConversations();
+  }
 
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
+    private searchService: SearchService,
     private formBuilder: FormBuilder
   ) {}
 
   ngOnInit() {
+    this.titleSearch = '';
     this.getChatHistory();
     this.subscribeToNewChats();
   }
@@ -34,6 +45,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.recordSearch(true);
   }
 
   subscribeToNewChats() {
@@ -82,6 +94,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.chatService.findConversations([], {}).subscribe(
       (conversations) => {
         this.conversations = conversations;
+        this.filteredConversations = [ ...conversations ];
         this.initializeFormGroups();
       },
       (error) => console.log(error)
@@ -94,5 +107,35 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       '_id': conversation?._id,
       '_rev': conversation?._rev
     });
+  }
+
+  onSearchChange() {
+    this.titleSearch = this.titleSearch;
+  }
+
+  resetFilter() {
+    this.titleSearch = '';
+  }
+
+  recordSearch(complete = false) {
+    this.searchService.recordSearch({
+      type: this.dbName,
+      filter: { 'title': this.titleSearch }
+    }, complete);
+  }
+
+  filterConversations() {
+    if (this.titleSearch.trim() === '' ) {
+      this.getChatHistory();
+    } else {
+      this.filteredConversations = this.conversations.filter(conversation => {
+        const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
+        const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
+          this.titleSearch.toLowerCase()
+        );
+
+        return conversation.title ? titleMatch : initialQueryMatch;
+      });
+    }
   }
 }
