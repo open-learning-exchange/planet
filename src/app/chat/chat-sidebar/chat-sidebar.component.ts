@@ -63,7 +63,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   filterConversations() {
-    if(this.titleSearch.trim() === '' ) {
+    if (this.titleSearch.trim() === '' ) {
       this.getChatHistory();
     } else {
       this.filteredConversations = this.conversations.filter(conversation => {
@@ -117,7 +117,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.chatService.findConversations([], {}).subscribe(
       (conversations) => {
         this.conversations = conversations;
-        this.filteredConversations = [...conversations];
+        this.filteredConversations = [ ...conversations ];
         this.initializeFormGroups();
       },
       (error) => console.log(error)
