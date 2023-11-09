@@ -47,36 +47,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.recordSearch(true);
   }
 
-  onSearchChange() {
-    this.filterConversations();
-  }
-
-  resetFilter() {
-    this.titleSearch = '';
-  }
-
-  recordSearch(complete = false) {
-    this.searchService.recordSearch({
-      type: this.dbName,
-      filter: { 'title': this.titleSearch }
-    }, complete);
-  }
-
-  filterConversations() {
-    if (this.titleSearch.trim() === '' ) {
-      this.getChatHistory();
-    } else {
-      this.filteredConversations = this.conversations.filter(conversation => {
-        const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
-        const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
-          this.titleSearch.toLowerCase()
-        );
-
-        return conversation.title ? titleMatch : initialQueryMatch;
-      });
-    }
-  }
-
   newChat() {
     this.chatService.sendNewChatSelectedSignal();
     this.selectedConversation = null;
@@ -130,5 +100,35 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       '_id': conversation?._id,
       '_rev': conversation?._rev
     });
+  }
+
+  onSearchChange() {
+    this.titleSearch = this.titleSearch;
+  }
+
+  resetFilter() {
+    this.titleSearch = '';
+  }
+
+  recordSearch(complete = false) {
+    this.searchService.recordSearch({
+      type: this.dbName,
+      filter: { 'title': this.titleSearch }
+    }, complete);
+  }
+
+  filterConversations() {
+    if (this.titleSearch.trim() === '' ) {
+      this.getChatHistory();
+    } else {
+      this.filteredConversations = this.conversations.filter(conversation => {
+        const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
+        const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
+          this.titleSearch.toLowerCase()
+        );
+
+        return conversation.title ? titleMatch : initialQueryMatch;
+      });
+    }
   }
 }
