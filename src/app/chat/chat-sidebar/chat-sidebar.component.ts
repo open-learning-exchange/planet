@@ -48,7 +48,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   onSearchChange() {
-    this.titleSearch = this.titleSearch;
+    this.filterConversations();
   }
 
   resetFilter() {
@@ -66,13 +66,13 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     if(this.titleSearch.trim() === '' ) {
       this.getChatHistory();
     } else {
-      this.conversations = this.conversations.filter(conversation => {
+      this.filteredConversations = this.conversations.filter(conversation => {
         const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
         const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
           this.titleSearch.toLowerCase()
         );
 
-        return titleMatch || initialQueryMatch;
+        return conversation.title ? titleMatch : initialQueryMatch;
       });
     }
   }
@@ -117,6 +117,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.chatService.findConversations([], {}).subscribe(
       (conversations) => {
         this.conversations = conversations;
+        this.filteredConversations = [...conversations];
         this.initializeFormGroups();
       },
       (error) => console.log(error)

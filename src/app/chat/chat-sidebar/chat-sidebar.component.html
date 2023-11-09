@@ -14,9 +14,9 @@
       <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange()">
     </mat-form-field>
     <button mat-icon-button color="primary" (click)="resetFilter()"><mat-icon>delete</mat-icon></button>
-    <ng-container *ngIf="conversations?.length; else noChats">
+    <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of conversations; let i = index" (click)="selectConversation(conversation)" class="conversation-item">
+        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation)" class="conversation-item">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
               <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
