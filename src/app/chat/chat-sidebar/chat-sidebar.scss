@@ -38,13 +38,9 @@ li:hover {
   background-color: #ddd;
 }
 
-h2 {
-  margin: 10px;
-}
-
 .expand-button {
   position: fixed;
-  top: 80px;
+  top: 20px;
   left: 20px;
   border-radius: 50%;
   background-color: $accent;
@@ -59,7 +55,7 @@ h2 {
   display: flex;
   flex-direction: column;
   background: #eee;
-  height: #{$view-container-height-no-toolbar};
+  height: 100%;
   width: 100%;
 }
 
