@@ -14,7 +14,7 @@
     </mat-form-field>
     <button mat-icon-button color="primary" (click)="resetFilter()"><mat-icon>delete</mat-icon></button><br>
     <span style="font-size: small; font-style: italic;" i18n>Full Text Search </span>
-    <mat-checkbox [(ngModel)]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
+    <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
         <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation)" class="conversation-item">

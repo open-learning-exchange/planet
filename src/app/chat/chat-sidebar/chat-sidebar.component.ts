@@ -126,8 +126,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   toggleSearchType() {
-    this.fullTextSearch != this.fullTextSearch;
-    this.filterConversations()
+    this.fullTextSearch = !this.fullTextSearch;
+    this.filterConversations();
   }
 
   filterConversations() {
@@ -146,11 +146,11 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
         }
 
         const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
-          const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
-            this.titleSearch.toLowerCase()
-          );
+        const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
+          this.titleSearch.toLowerCase()
+        );
 
-          return conversation.title ? titleMatch : initialQueryMatch;
+        return conversation.title ? titleMatch : initialQueryMatch;
       });
     }
   }
