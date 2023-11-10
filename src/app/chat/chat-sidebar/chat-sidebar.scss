@@ -16,6 +16,13 @@
   }
 }
 
+.header-container {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+}
+
 ul {
   list-style: none;
   padding: 0;

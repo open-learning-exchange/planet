@@ -1,19 +1,21 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
   <mat-drawer #drawer mode="side">
-    <div class="header" i18n>
-      <button type="button" mat-stroked-button color="primary" class="start-button" mat-button (click)="newChat()">
-        <mat-icon>add</mat-icon>
-        Start New Chat
-      </button>
-      <button class="icon-button" mat-icon-button (click)="drawer.toggle()">
-        <i class="material-icons">chevron_left</i>
-      </button>
+    <div class="header-container">
+      <div class="header" i18n>
+        <button type="button" mat-stroked-button color="primary" class="start-button" mat-button (click)="newChat()">
+          <mat-icon>add</mat-icon>
+          Start New Chat
+        </button>
+        <button class="icon-button" mat-icon-button (click)="drawer.toggle()">
+          <i class="material-icons">chevron_left</i>
+        </button>
+      </div>
+      <h2 i18n>Conversations</h2>
+      <mat-form-field class="font-size-1 margin-lr-3">
+        <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange()">
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="resetFilter()"><mat-icon>delete</mat-icon></button>
     </div>
-    <h2 i18n>Conversations</h2>
-    <mat-form-field class="font-size-1 margin-lr-3">
-      <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange()">
-    </mat-form-field>
-    <button mat-icon-button color="primary" (click)="resetFilter()"><mat-icon>delete</mat-icon></button>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
         <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation)" class="conversation-item">
