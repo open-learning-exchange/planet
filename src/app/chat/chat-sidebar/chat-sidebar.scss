@@ -1,9 +1,6 @@
 @import '../../variables';
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 10px;
 
   .start-button {
@@ -40,7 +37,7 @@ li:hover {
 
 .expand-button {
   position: fixed;
-  top: 20px;
+  top: 10px;
   left: 20px;
   border-radius: 50%;
   background-color: $accent;
@@ -52,21 +49,12 @@ li:hover {
 }
 
 .sidebar-drawer {
-  display: flex;
-  flex-direction: column;
   background: #eee;
   height: 100%;
-  width: 100%;
 }
 
 .window-box {
   height: 100%;
-}
-
-.conversation-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .sidebar-icon {
