@@ -20,6 +20,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   filteredConversations: any;
   selectedConversation: any;
   isEditing: boolean;
+  fullTextSearch = false;
   titleForm: { [key: string]: FormGroup } = {};
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch.trim(); }
@@ -124,18 +125,33 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     }, complete);
   }
 
+  toggleSearchType() {
+    this.fullTextSearch = !this.fullTextSearch;
+    this.filterConversations();
+  }
+
   filterConversations() {
     if (this.titleSearch.trim() === '' ) {
       this.getChatHistory();
-    } else {
-      this.filteredConversations = this.conversations.filter(conversation => {
-        const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
-        const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
-          this.titleSearch.toLowerCase()
-        );
-
-        return conversation.title ? titleMatch : initialQueryMatch;
-      });
     }
+
+    this.filteredConversations = this.conversations.filter(conversation => {
+      // full-text search
+      if (this.fullTextSearch) {
+        const conversationMatches = conversation.conversations.some(chat => {
+          const queryMatch = chat.query?.toLowerCase().includes(this.titleSearch.toLowerCase());
+          const responseMatch = chat.response?.toLowerCase().includes(this.titleSearch.toLowerCase());
+          return queryMatch || responseMatch;
+        });
+        return conversationMatches;
+      }
+
+      const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
+      const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
+        this.titleSearch.toLowerCase()
+      );
+
+      return conversation.title ? titleMatch : initialQueryMatch;
+    });
   }
 }
