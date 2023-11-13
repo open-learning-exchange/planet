@@ -38,7 +38,7 @@ li:hover {
 
 .expand-button {
   position: fixed;
-  top: 10px;
+  top: 80px;
   left: 20px;
   border-radius: 50%;
   background-color: $accent;
@@ -60,4 +60,10 @@ li:hover {
 
 .sidebar-icon {
   align-self: flex-end;
+}
+
+@media only screen and (max-width: $screen-md) {
+  .expand-button {
+    top: 10px;
+  }
 }

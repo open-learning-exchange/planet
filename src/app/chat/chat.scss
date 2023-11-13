@@ -1,6 +1,12 @@
 @import '../variables.scss';
 
 .space-container {
-  height: 100%;
+  height: #{$view-container-height-no-toolbar};
   margin: 0;
+}
+
+@media only screen and (max-width: $screen-md) {
+  .titlebar {
+    display: none;
+  }
 }
