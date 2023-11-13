@@ -304,15 +304,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const { inShelf, notInShelf } = this.userService.countInShelf(selected.filter(id => this.hasSteps(id)), 'courseIds');
     this.selectedEnrolled = inShelf;
     this.selectedNotEnrolled = notInShelf;
-    this.selectedLocal = selected.filter(id => this.isLocal(id)).length;
+    this.selectedLocal = selected.filter(id => this.isLocalorEarthChild(id)).length;
   }
 
   hasSteps(id: string) {
     return this.courses.data.find((course: any) => course._id === id && course.doc.steps.length > 0);
   }
 
-  isLocal(id: string) {
-    return this.courses.data.find((course: any) => course._id === id && course.doc.sourcePlanet === this.planetConfiguration.code);
+  isLocalorEarthChild(id: string) {
+    return this.courses.data.find((course: any) =>
+      course._id === id && course.doc.sourcePlanet === this.planetConfiguration.code || this.planetConfiguration.parentCode === 'earth'
+    );
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -382,7 +384,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   shareLocal(selectedIds) {
-    const localSelections = selectedIds.filter(id => this.isLocal(id) !== undefined);
+    const localSelections = selectedIds.filter(id => this.isLocalorEarthChild(id) !== undefined);
     this.shareCourse('push', localSelections);
   }
 
