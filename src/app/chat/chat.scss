@@ -1,8 +1,12 @@
 @import '../variables.scss';
 
 .space-container {
-  display: flex;
-  flex-direction: column;
-  height: #{$view-container-height-no-toolbar};
-  overflow: hidden;
+  height: calc(#{$view-container-height-no-toolbar} + 1.5rem);
+  margin: 0;
+}
+
+@media only screen and (max-width: $screen-md) {
+  .titlebar {
+    display: none;
+  }
 }

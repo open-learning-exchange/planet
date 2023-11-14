@@ -1,9 +1,6 @@
 @import '../../variables';
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 10px;
 
   .start-button {
@@ -14,6 +11,14 @@
   .icon-button {
     background-color: $accent;
   }
+}
+
+.header-container {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+  padding: 0.25rem;
 }
 
 ul {
@@ -31,10 +36,6 @@ li:hover {
   background-color: #ddd;
 }
 
-h2 {
-  margin: 10px;
-}
-
 .expand-button {
   position: fixed;
   top: 80px;
@@ -49,23 +50,20 @@ h2 {
 }
 
 .sidebar-drawer {
-  display: flex;
-  flex-direction: column;
   background: #eee;
-  height: #{$view-container-height-no-toolbar};
-  width: 100%;
+  height: 100%;
 }
 
 .window-box {
   height: 100%;
 }
 
-.conversation-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .sidebar-icon {
   align-self: flex-end;
+}
+
+@media only screen and (max-width: $screen-md) {
+  .expand-button {
+    top: 10px;
+  }
 }
