@@ -1,29 +1,39 @@
-@import '../variables.scss';
+@import '../../variables.scss';
 
-.space-container {
-  display: flex;
-  flex-direction: column;
-  height: #{$view-container-height-no-toolbar};
-  overflow: hidden;
+.chat-container {
+  overflow-y: auto;
+  height: 64%;
+  padding: 2rem;
 }
 
 .form-container {
   background-color: #f4f4f4;
   border-top: 1px solid #ccc;
-  display: flex;
-  justify-content: center;
   width: 100%;
 }
 
-.form-spacing {
-  flex-grow: 1;
+.form-space {
   padding: 10px;
-  justify-content: center;
 }
 
-.chat-container {
-  flex-grow: 1;
-  overflow-y: auto;
+.textarea-container {
+  position: relative;
+  border: 1px solid $primary;
+  border-radius: 5px;
+}
+
+.textarea-container textarea {
+  border: transparent;
+  box-shadow: none;
+  outline: none;
+  width: calc(100% - 48px);
+}
+
+.textarea-container button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
 }
 
 .conversation-query {

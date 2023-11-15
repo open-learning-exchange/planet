@@ -57,6 +57,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     events: this.events,
     customButtons: this.buttons,
     firstDay: 6,
+    dayMaxEventRows: 2,
     eventClick: this.eventClick.bind(this)
   };
 

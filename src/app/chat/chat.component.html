@@ -1,30 +1,9 @@
-<mat-toolbar>
+<mat-toolbar class="titlebar">
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>Chat Prompts</span>
+  <span i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
 </mat-toolbar>
 
 <div class="space-container">
-  <div class="chat-container" #chat>
-    <div *ngFor="let conversation of conversations">
-      <div class="conversation">
-        <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-        <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [planetChatOutput]="conversation.response"></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-container">
-    <form [formGroup]="promptForm" class="form-spacing" (ngSubmit)="onSubmit()">
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <mat-label>Chat</mat-label>
-        <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
-        <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <button mat-raised-button [disabled]="disabled || !promptForm.valid" [planetSubmit]="promptForm.valid && spinnerOn" color="primary" i18n>
-       Chat
-       <mat-icon>send</mat-icon>
-     </button>
-   </form>
-  </div>
+  <planet-chat-sidebar></planet-chat-sidebar>
 </div>

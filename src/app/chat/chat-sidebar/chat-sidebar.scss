@@ -1,0 +1,69 @@
+@import '../../variables';
+
+.header {
+  padding: 10px;
+
+  .start-button {
+    border: solid;
+    margin-right: 0.5rem;
+  }
+
+  .icon-button {
+    background-color: $accent;
+  }
+}
+
+.header-container {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+  padding: 0.25rem;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+li:hover {
+  background-color: #ddd;
+}
+
+.expand-button {
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  border-radius: 50%;
+  background-color: $accent;
+  transition: width 0.3s ease;
+}
+
+.expand-button button {
+  padding: 0;
+}
+
+.sidebar-drawer {
+  background: #eee;
+  height: 100%;
+}
+
+.window-box {
+  height: 100%;
+}
+
+.sidebar-icon {
+  align-self: flex-end;
+}
+
+@media only screen and (max-width: $screen-md) {
+  .expand-button {
+    top: 10px;
+  }
+}

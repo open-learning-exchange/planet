@@ -21,6 +21,7 @@ import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-ta
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
+import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
 
 @NgModule({
@@ -47,6 +48,7 @@ import { ChatOutputDirective } from './chat-output.directive';
     LanguageLabelComponent,
     MyPlanetTableComponent,
     AvatarComponent,
+    RestrictDiacriticsDirective,
     ChatOutputDirective
   ],
   declarations: [
@@ -70,6 +72,7 @@ import { ChatOutputDirective } from './chat-output.directive';
     MyPlanetTableComponent,
     TimePipe,
     AvatarComponent,
+    RestrictDiacriticsDirective,
     ChatOutputDirective
   ]
 })
