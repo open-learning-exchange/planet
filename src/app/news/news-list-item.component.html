@@ -30,7 +30,7 @@
     <div [ngClass]="{'show-less': showLess}" #content>
       <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
     </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="showExpand || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
+    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>

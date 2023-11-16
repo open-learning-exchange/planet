@@ -48,9 +48,15 @@ export class NewsListComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
+    let isNotReply = true;
     this.replyObject = {};
     this.items.forEach(item => {
       this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
+
+      if (!item.doc.replyTo && isNotReply) {
+        item.latestMessage = true;
+        isNotReply = false;
+      }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
     if (this.replyViewing._id !== 'root') {
