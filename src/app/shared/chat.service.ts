@@ -27,10 +27,6 @@ import { CouchService } from '../shared/couchdb.service';
     private httpClient: HttpClient,
     private couchService: CouchService
   ) {
-    console.log(this.baseUrl);
-    console.log(this.baseUrl.slice(4));
-    console.log('ws' + this.baseUrl.slice(4));
-
     this.socket = new WebSocket('ws' + this.baseUrl.slice(4));
 
     this.socket.onerror = (error) => {
