@@ -17,9 +17,6 @@ import { dedupeShelfReduce } from '../shared/utils';
     mat-divider {
       margin: 1rem 0;
     }
-    planet-news-list-item {
-      margin: 0.1rem;
-    }
   ` ]
 })
 export class NewsListComponent implements OnChanges {
