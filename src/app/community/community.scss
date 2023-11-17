@@ -8,17 +8,12 @@
 
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: 64px calc(100% - 64px - 0.5rem);
-  grid-template-areas:
-    "links calendar"
-    "news calendar";
+  grid-template-areas: "news calendar";
   gap: 0.5rem;
 
-  @media only screen and (max-width: #{$screen-sm}) {
+  @media only screen and (max-width: #{$screen-md}) {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "links"
-      "news";
+    grid-template-areas: "news";
   }
 }
 
@@ -28,26 +23,17 @@
   align-items: center;
 }
 
-.view-container mat-toolbar {
-  grid-area: links;
-  overflow: hidden;
-}
-
 .community-news {
-
   grid-area: news;
   overflow-y: auto;
 
   h3 {
-
     margin: 0;
 
     *:not(:last-child) {
       margin-right: 0.25rem;
     }
-
   }
-
 }
 
 planet-calendar {
