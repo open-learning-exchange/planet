@@ -23,6 +23,11 @@
   align-items: center;
 }
 
+.fc .fc-toolbar-title {
+  font-size: 1.25em !important;
+  margin: 1rem !important;
+}
+
 .community-news {
   grid-area: news;
   overflow-y: auto;
