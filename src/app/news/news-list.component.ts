@@ -54,7 +54,6 @@ export class NewsListComponent implements OnChanges {
         isLatest = false;
       }
     });
-    console.log(this.items);
 
     this.displayedItems = this.replyObject[this.replyViewing._id];
     if (this.replyViewing._id !== 'root') {
