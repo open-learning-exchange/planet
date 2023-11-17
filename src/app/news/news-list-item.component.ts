@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnChanges, AfterViewChecked } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -13,7 +13,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
@@ -45,6 +45,13 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     private stateService: StateService,
     private dialog: MatDialog
   ) {}
+
+  ngOnInit() {
+    if (this.item.latestMessage) {
+      this.showExpand = true;
+      this.showLess = false;
+    }
+  }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
