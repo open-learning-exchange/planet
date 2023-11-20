@@ -21,6 +21,7 @@ export async function chat(data: any): Promise<{
   if (dbData._id) {
     await retrieveChatHistory(dbData, messages);
   } else {
+    dbData.title = content;
     dbData.conversations = [];
   }
 

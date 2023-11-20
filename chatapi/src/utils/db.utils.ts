@@ -10,18 +10,25 @@ import { ChatMessage } from '../models/chat-message.model';
 async function getChatDocument(id: string) {
   try {
     const res = await db.get(id) as DbDoc;
-    return res.conversations;
+    return {
+      'conversations': res.conversations,
+      'title': res.title
+    };
     // Should return user, team data as well particularly for the /conversations endpoint
   } catch (error) {
-    return [];
+    return {
+      'conversations': [],
+      'title': ''
+    };
   }
 }
 
 export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) {
-  const history = await getChatDocument(dbData._id);
-  dbData.conversations = history;
+  const { conversations, title } = await getChatDocument(dbData._id);
+  dbData.conversations = conversations;
+  dbData.title = title;
 
-  for (const { query, response } of history) {
+  for (const { query, response } of conversations) {
     messages.push({ 'role': 'user', 'content': query });
     messages.push({ 'role': 'assistant', 'content': response });
   }
