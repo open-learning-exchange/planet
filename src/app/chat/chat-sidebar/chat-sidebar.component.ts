@@ -135,8 +135,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.getChatHistory();
     }
 
-    this.filteredConversations = this.conversations.filter(conversation => {
-      // full-text search
+    this.filteredConversations = this.conversations?.filter(conversation => {
       if (this.fullTextSearch) {
         const conversationMatches = conversation.conversations.some(chat => {
           const queryMatch = chat.query?.toLowerCase().includes(this.titleSearch.toLowerCase());
@@ -146,12 +145,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
         return conversationMatches;
       }
 
-      const titleMatch = conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
-      const initialQueryMatch = conversation.conversations[0].query?.toLowerCase().includes(
-        this.titleSearch.toLowerCase()
-      );
-
-      return conversation.title ? titleMatch : initialQueryMatch;
+      return conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
     });
   }
 }
