@@ -17,17 +17,6 @@
   }
 }
 
-.fc .fc-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.fc .fc-toolbar-title {
-  font-size: 1.25em !important;
-  margin: 1rem !important;
-}
-
 .community-news {
   grid-area: news;
   overflow-y: auto;
@@ -55,19 +44,5 @@ planet-calendar {
     position: absolute;
     top: -0.25rem;
     right: -0.25rem;
-  }
-}
-
-.fc-h-event .fc-event-title {
-  text-overflow: ellipsis;
-}
-
-@media only screen and (min-width: #{$screen-md}) {
-  .fc .fc-more-popover .fc-popover-body {
-    min-width: unset !important;
-
-    .fc-event-title-container {
-      max-width: 100px;
-    }
   }
 }
