@@ -124,7 +124,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.chatService.getPrompt(this.data, true).subscribe(
       (completion: any) => {
-        console.log(completion);
         this.conversations.push({ query: content, response: completion?.chat });
         this.selectedConversationId = {
           '_id': completion.couchDBResponse?.id,
