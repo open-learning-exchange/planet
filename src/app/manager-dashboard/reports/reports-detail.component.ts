@@ -387,7 +387,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || '',
             customDeviceName: activity.customDeviceName || ''
-           })),
+          })),
           title: $localize`Member Visits`
         });
         break;
