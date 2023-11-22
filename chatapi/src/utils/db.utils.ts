@@ -14,7 +14,7 @@ async function getChatDocument(id: string) {
       'conversations': res.conversations,
       'title': res.title
     };
-    // Should return user, team data as well particularly for the /conversations endpoint
+    // Should return user, team data as well particularly for the "/conversations" endpoint
   } catch (error) {
     return {
       'conversations': [],
