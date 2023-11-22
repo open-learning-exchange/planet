@@ -382,7 +382,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'logins':
         this.csvService.exportCSV({
           data: filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-          .map(activity => ({...activity,
+          .map(activity => ({
+            ...activity,
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || '',
             customDeviceName: activity.customDeviceName || ''
