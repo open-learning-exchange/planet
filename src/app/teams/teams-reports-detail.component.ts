@@ -26,7 +26,7 @@ export class TeamsReportsDetailComponent implements OnChanges {
   income: number;
   net: number;
   endingBalance: number;
-  curCode = this.stateService.configuration.currency || undefined;
+  curCode = this.stateService.configuration.currency || '';
 
   constructor(
     private stateService: StateService
