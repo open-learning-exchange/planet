@@ -33,7 +33,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   endDate: Date;
   emptyTable = true;
   showBalanceWarning = false;
-  curCode = this.stateService.configuration.currency;
+  curCode = this.stateService.configuration.currency || {};
 
   constructor(
     private teamsService: TeamsService,
