@@ -49,7 +49,7 @@ export class DialogsImagesComponent implements OnInit {
   uploadImage(event) {
     const file = event.target.files[0];
 
-    const sanitizedFileName =  file.name.trim().replace(/\s+/g, '_');
+    const sanitizedFileName = file.name.trim().replace(/\s+/g, '_');
     const imageExists = this.images.some(img => sanitizedFileName === img.filename);
     if (imageExists) {
       this.planetMessageService.showAlert('An image with that filename exists. Please rename or select another image.');
