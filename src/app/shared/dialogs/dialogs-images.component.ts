@@ -48,7 +48,9 @@ export class DialogsImagesComponent implements OnInit {
 
   uploadImage(event) {
     const file = event.target.files[0];
-    const imageExists = this.images.some(img => file.name === img.filename);
+
+    const sanitizedFileName =  file.name.trim().replace(/\s+/g, '_');
+    const imageExists = this.images.some(img => sanitizedFileName === img.filename);
     if (imageExists) {
       this.planetMessageService.showAlert('An image with that filename exists. Please rename or select another image.');
       return;
@@ -60,8 +62,8 @@ export class DialogsImagesComponent implements OnInit {
       return;
     }
     const newResource = {
-      title: file.name,
-      filename: file.name,
+      title: sanitizedFileName,
+      filename: sanitizedFileName,
       private: true,
       privateFor: this.data.imageGroup,
       sourcePlanet: planet,
@@ -69,7 +71,7 @@ export class DialogsImagesComponent implements OnInit {
       addedBy: this.userService.get().name,
       mediaType
     };
-    this.resourcesService.updateResource(newResource, file).subscribe(([ resourceResponse ]) => {
+    this.resourcesService.updateResource(newResource, file, undefined, sanitizedFileName).subscribe(([ resourceResponse ]) => {
       this.selectImage({ ...newResource, _id: resourceResponse.id });
     });
   }
