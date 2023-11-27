@@ -10,12 +10,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, takeUntil, map } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
-  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf, trackById, filterIds
+  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -35,31 +34,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-info {
-      max-width: 200px;
-    }
-    .mat-column-createdDate {
-      max-width: 95px;
-    }
-    .mat-column-rating {
-      max-width: 225px;
-    }
-    .column {
-      display: flex;
-      flex-direction: column;
-    }
-    .column > * {
-      line-height: normal;
-    }
-    .course-progress {
-      margin-top: 0.5rem;
-    }
-  ` ]
+  styleUrls: [ './courses.scss' ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -121,6 +96,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   trackById = trackById;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  showFiltersRow = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -328,15 +304,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const { inShelf, notInShelf } = this.userService.countInShelf(selected.filter(id => this.hasSteps(id)), 'courseIds');
     this.selectedEnrolled = inShelf;
     this.selectedNotEnrolled = notInShelf;
-    this.selectedLocal = selected.filter(id => this.isLocal(id)).length;
+    this.selectedLocal = selected.filter(id => this.isLocalOrNation(id)).length;
   }
 
   hasSteps(id: string) {
     return this.courses.data.find((course: any) => course._id === id && course.doc.steps.length > 0);
   }
 
-  isLocal(id: string) {
-    return this.courses.data.find((course: any) => course._id === id && course.doc.sourcePlanet === this.planetConfiguration.code);
+  isLocalOrNation(id: string) {
+    return this.courses.data.find((course: any) =>
+      course._id === id && (course.doc.sourcePlanet === this.planetConfiguration.code || this.planetConfiguration.parentCode === 'earth')
+    );
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -406,7 +384,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   shareLocal(selectedIds) {
-    const localSelections = selectedIds.filter(id => this.isLocal(id) !== undefined);
+    const localSelections = selectedIds.filter(id => this.isLocalOrNation(id) !== undefined);
     this.shareCourse('push', localSelections);
   }
 
@@ -472,6 +450,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
     }
+  }
+
+  toggleFilters() {
+    this.showFiltersRow = !this.showFiltersRow;
   }
 
 }

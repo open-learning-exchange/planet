@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -7,7 +7,6 @@ import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
-// import { LandingEventDetailComponent } from "../landing/landing-home/landing-event/landing-eventdetail/landing-eventdetail.component";
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
@@ -57,6 +56,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     events: this.events,
     customButtons: this.buttons,
     firstDay: 6,
+    dayMaxEventRows: 2,
     eventClick: this.eventClick.bind(this)
   };
 
@@ -82,10 +82,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.customButtons = this.buttons;
     this.calendarOptions.events = [ ...this.events, ...this._events ];
   }
-
-  // ngAfterViewChecked(): void {
-  //   this.calendarOptions.events = [...this.events, ...this._events];
-  // }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
@@ -194,13 +190,5 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       }
     });
   }
-
-  // uplanetEventClick({ event }) {
-  //   this.dialog.open(LandingEventDetailComponent, {
-  //     data: event.extendedProps.meetup,
-  //     width: '40vw',
-  //     maxHeight: '90vh'
-  //   });
-  // }
 
 }

@@ -1,0 +1,65 @@
+@import '../../variables.scss';
+
+.chat-container {
+  overflow-y: auto;
+  height: 64%;
+  padding: 2rem;
+}
+
+.form-container {
+  background-color: #f4f4f4;
+  border-top: 1px solid #ccc;
+  width: 100%;
+}
+
+.form-space {
+  padding: 10px;
+}
+
+.textarea-container {
+  position: relative;
+  border: 1px solid $primary;
+  border-radius: 5px;
+}
+
+.textarea-container textarea {
+  border: transparent;
+  box-shadow: none;
+  outline: none;
+  width: calc(100% - 48px);
+}
+
+.textarea-container button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+.conversation-query {
+  text-align: left;
+  padding: 8px;
+  border-radius: 5px;
+  background-color: #{$primary};
+  color: white;
+}
+
+.conversation-response {
+  margin: 8px 16px;
+}
+
+.conversation-error {
+  color: #ff0000;
+  font-style: italic;
+}
+
+textarea {
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}

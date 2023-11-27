@@ -26,7 +26,7 @@ import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
 import { PlanetComponent } from './planet.component';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
-import { ChatComponent } from '../chat/chat.component';
+import { ChatModule } from '../chat/chat.module';
 
 @NgModule({
   imports: [
@@ -45,7 +45,8 @@ import { ChatComponent } from '../chat/chat.component';
     TeamsModule,
     PlanetCalendarModule,
     UsersModule,
-    CoursesViewDetailModule
+    CoursesViewDetailModule,
+    ChatModule
   ],
   declarations: [
     HomeComponent,
@@ -60,7 +61,6 @@ import { ChatComponent } from '../chat/chat.component';
     CommunityLinkDialogComponent,
     PlanetComponent,
     HealthListComponent,
-    ChatComponent
   ]
 })
 export class HomeModule {}

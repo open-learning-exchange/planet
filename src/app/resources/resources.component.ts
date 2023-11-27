@@ -90,6 +90,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   initialSort = '';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isTablet: boolean;
+  showFiltersRow = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -111,10 +113,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isTablet = window.innerWidth <= 1040;
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isTablet = window.innerWidth <= 1040;
   }
 
   ngOnInit() {
@@ -383,6 +387,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  toggleFiltersRow() {
+    this.showFiltersRow = !this.showFiltersRow;
   }
 
 }

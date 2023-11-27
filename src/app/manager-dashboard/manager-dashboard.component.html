@@ -22,7 +22,7 @@
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
-      <a routerLink="/upgrade/myplanet" *ngIf="versionLocal === versionParent && versionLocalApk !== versionLatestApk" i18n mat-raised-button>Upgrade planet apk</a>
+      <a routerLink="/upgrade/myplanet" *ngIf="versionLocal === versionParent && versionLocalApk !== versionLatestApk" i18n mat-raised-button>Upgrade myPlanet</a>
     </ng-container>
   </ng-container>
   <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
@@ -39,46 +39,48 @@
         <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
       </p>
     </div>
-    <div class="view-container" *ngIf="planetType !== 'community'">
+    <div class="view-container send-view" *ngIf="planetType !== 'community'">
       <h3 i18n>Send On Accept</h3><br />
       <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
       <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>
     </div>
-    <div class="view-container" *ngIf="planetType !== 'center'">
+    <div class="view-container list-view" *ngIf="planetType !== 'center'">
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
-      <mat-card>
-        <mat-card-title i18n>Planet Version</mat-card-title>
-        <mat-card-content>
-          <p><b i18n>{planetType, select, community {Nation} nation {Center}}:</b> {{versionParent || 'N/A'}}</p>
-          <p><b i18n>Local:</b> {{versionLocal}}</p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-title i18n>myPlanet Version</mat-card-title>
-        <mat-card-content>
-          <p><b i18n>Latest:</b> {{versionLatestApk || 'N/A'}}</p>
-          <p><b i18n>Local:</b> {{versionLocalApk || 'N/A'}}</p>
-        </mat-card-content>
-      </mat-card>
+      <div class="card-container">
+        <mat-card class="version-card">
+          <mat-card-title i18n>Planet Version</mat-card-title>
+          <mat-card-content>
+            <p><b i18n>{planetType, select, community {Nation} nation {Center}}:</b> {{versionParent || 'N/A'}}</p>
+            <p><b i18n>Local:</b> {{versionLocal}}</p>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="version-card">
+          <mat-card-title i18n>myPlanet Version</mat-card-title>
+          <mat-card-content>
+            <p><b i18n>Latest:</b> {{versionLatestApk || 'N/A'}}</p>
+            <p><b i18n>Local:</b> {{versionLocalApk || 'N/A'}}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
       <ng-container [ngSwitch]="requestStatus">
         <ng-container *ngSwitchCase="'accepted'">
-          <span><b i18n> List all from the {planetType, select, community {Nation} nation {Center}}</b>
-          <a class="margin-lr-8" routerLink="resources" i18n mat-raised-button>List Resources</a>
-          <a class="margin-lr-8" routerLink="courses" i18n mat-raised-button>List Courses</a></span>
+          <span><b i18n> List all from the {planetType, select, community {Nation} nation {Center}}</b><br><br>
+          <a routerLink="resources" i18n mat-raised-button>List Resources</a>
+          <a routerLink="courses" i18n mat-raised-button>List Courses</a></span>
         </ng-container>
         <p *ngSwitchCase="'loading'" i18n>Checking request status...</p>
         <p *ngSwitchCase="'deleted'" i18n>Your request has been rejected by { planetType, select, community {nation} nation {center}}. You can retry or contact { planetType, select, community {nation} nation {center}} planet.</p>
         <p *ngSwitchDefault i18n>Your request has not been accepted by { planetType, select, community {nation} nation {center}}</p>
       </ng-container>
     </div>
-    <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> {{pin}}
+    <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
       <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
     </div>
   </ng-container>
   <div>
     <p>
-      <b i18n>Activity on</b>
-      <i>{{ ' ' + planetConfiguration.name }}</i>
+      <span i18n>Activity on</span>
+      <b>{{ '  Planet  ' + planetConfiguration.name + ' ' }}</b>
       <a class="margin-lr-8" [routerLink]="['reports', 'detail']" i18n mat-raised-button>Report Detail</a>
     </p>
   </div>

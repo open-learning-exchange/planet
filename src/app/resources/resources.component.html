@@ -10,8 +10,10 @@
   <ng-template #mobileView>
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
+      <span class="toolbar-fill"></span>
+      <button mat-icon-button (click)="toggleFiltersRow()" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
-    <mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="filterRow"></ng-container>
     </mat-toolbar-row>
   </ng-template>
@@ -53,41 +55,53 @@
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
           </button>
         </span>
-        <span *ngIf="!parent">
-          <ng-container *planetAuthorizedRoles="'manager'">
-            <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width">
-              <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
-            </mat-form-field>
-          </ng-container>
-          <button mat-button [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
-            <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
-            <span *ngIf="selectedNotAdded > 0"> ({{selectedNotAdded}})</span>
+        <span *ngIf="!parent && isTablet">
+          <button *ngIf="!isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+            <mat-icon>more_vert</mat-icon>
           </button>
-          <button mat-button [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
-            <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
-            <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
-          </button>
-          <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
-          <mat-menu #managerMenu="matMenu">
-            <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
-              <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>
-              <span i18n>Send Resources</span>
-              <span *ngIf="selectedSync?.length"> ({{selectedSync.length}})</span>
-            </button>
-            <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
-              <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-              <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
-              <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
-            </button>
-            <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
-              <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-              <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
-            </button>
+          <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
+            <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
           </mat-menu>
+        </span>
+        <span *ngIf="!parent && !isTablet">
+          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         </span>
       </ng-container>
     </ng-container>
   </mat-toolbar>
+
+  <ng-template #actionButtons>
+    <ng-container *planetAuthorizedRoles="'manager'">
+      <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+        <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
+      </mat-form-field>
+    </ng-container>
+    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
+      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
+      <span *ngIf="selectedNotAdded > 0"> ({{selectedNotAdded}})</span>
+    </button>
+    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
+      <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
+      <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
+    </button>
+    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+    <mat-menu #managerMenu="matMenu">
+      <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
+        <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>
+        <span i18n>Send Resources</span>
+        <span *ngIf="selectedSync?.length"> ({{selectedSync.length}})</span>
+      </button>
+      <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
+        <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
+        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+      </button>
+      <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
+        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
+        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+      </button>
+    </mat-menu>
+  </ng-template>
 
   <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters==='on'}" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
@@ -106,14 +120,23 @@
       </ng-container>
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu">
+        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
           <h3 class="header">
-            <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{element.doc.title}}</a>
-            <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{element.doc.title}}</a></ng-template>
-            <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
+                [checked]="selection.isSelected(element._id)">
+              </mat-checkbox>
+              <span class="margin-lr-5"></span>
             </ng-container>
+            <ng-container *ngTemplateOutlet="headerText"></ng-container>
+            <ng-template #headerText>
+              <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
+              <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
+              <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
+                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
+                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+              </ng-container>
+            </ng-template>
           </h3>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
@@ -172,12 +195,15 @@
       </ng-container>
       <ng-container matColumnDef="createdDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.doc.createdDate | date}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="created-label" i18n>Created: </span>
+          {{element.doc.createdDate | date}}
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <planet-rating [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
+        <mat-header-cell *matHeaderCellDef class="rating-header" mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="rating-cell">
+          <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>

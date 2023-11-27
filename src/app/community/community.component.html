@@ -1,15 +1,11 @@
 <div class="space-container">
   <div class="view-container view-full-height community-view">
-    <mat-toolbar class="action-buttons">
-      <span>{{configuration?.name}}</span>
-    </mat-toolbar>
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
-        <mat-tab i18n-label label="News">
-          <h3>
-            <span>{{configuration?.name}} <ng-container i18n>News</ng-container></span>
+        <mat-tab i18n-label label="Our Voices">
+          <h3 style="text-align: right; margin-right: 0.5rem;">
             <ng-container *planetAuthorizedRoles="'learner'">
-              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Story</button>
+              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
           <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
