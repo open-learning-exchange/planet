@@ -103,7 +103,7 @@
       <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <div *ngIf="userNotInShelf" i18n style="text-align: center;">
-      You do not have access to some { mode, select, team {Teams} enterprise {Enterprises} } functions, contact your administrator
+      Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
     </div>
     <mat-paginator #paginator
       [pageSize]="50"
