@@ -126,15 +126,16 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.dialogsLoadingService.stop();
     }, (error) => {
       if (this.userNotInShelf) {
-        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ]
+        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
         this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((teams) => {
           this.teams.data = this.teamList(teams.filter((team: any) => {
-            return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
+            return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
+            && this.excludeIds.indexOf(team._id) === -1;
           }));
-        })
+        });
       }
       this.dialogsLoadingService.stop();
-      console.log(error)
+      console.log(error);
     });
   }
 
@@ -148,10 +149,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         ...(shelf.myTeamIds || []).map(id => ({ teamId: id, fromShelf: true, docType: 'membership', userId: this.user._id }))
       ]),
       catchError(error => {
-        if(error.status === 404) {
+        if (error.status === 404) {
           this.userNotInShelf = true;
         }
-        return throwError(error)
+        return throwError(error);
       })
     );
   }
