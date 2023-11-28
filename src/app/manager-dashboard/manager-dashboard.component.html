@@ -24,6 +24,7 @@
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" i18n mat-raised-button>Upgrade</a>
       <a routerLink="/upgrade/myplanet" *ngIf="versionLocal === versionParent && versionLocalApk !== versionLatestApk" i18n mat-raised-button>Upgrade myPlanet</a>
     </ng-container>
+    <button (click)="sanitizeImages()" i18n mat-raised-button>Sanitize Images</button>
   </ng-container>
   <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
   <a routerLink="certifications" i18n mat-raised-button *planetBeta>Certifications</a>

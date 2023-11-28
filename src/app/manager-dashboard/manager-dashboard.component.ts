@@ -2,7 +2,7 @@ import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -298,6 +298,45 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.versionLocalApk = localVersion.replace(/v/gi, '').trim();
       this.versionLatestApk = (latestVersion.latestapk || 'N/A').replace(/v/gi, '').trim();
     });
+  }
+
+  // Handle historically added images with whitespaces
+  sanitizeImages() {
+    this.couchService.findAll('resources', findDocuments({ }), { attachments: true })
+      .subscribe((resources) => {
+        resources.forEach((resource: any) => {
+          this.processResourceAttachments(resource);
+        });
+      });
+  }
+
+  processResourceAttachments(resource: any) {
+    if (resource._id === 'a31da02a8aad01b3cdc64bf645000ac6' && resource?._attachments) {
+      for (const [ filename, attachment ] of Object.entries<any>(resource._attachments)) {
+        const filenameContainsWhitespace = /\s/.test(filename);
+        const contentType = attachment.content_type.toLowerCase();
+
+        if (filenameContainsWhitespace && contentType.includes('image')) {
+          const sanitizedFileName = filename.trim().replace(/\s+/g, '_');
+          const updatedAttachments: { [filename: string]: any } = { [sanitizedFileName]: { ...attachment } };
+
+          // this.couchService.put(
+          //   'resources' + '/' + resource._id + '/' + filename + '?rev=' + resource._rev,
+          //   updatedAttachments, { headers: { 'Content-Type': updatedAttachments.type } }
+          // ).subscribe((data) => {
+          //   console.log(data);
+          // })
+
+          this.couchService.updateDocument(
+            'resources', { ...resource, title: sanitizedFileName, filename: sanitizedFileName, _attachments: updatedAttachments }
+          ).subscribe((data) => {
+            console.log(data);
+          }, (error) => {
+            console.error('Error updating document', error);
+          });
+        }
+      }
+    }
   }
 
 }
