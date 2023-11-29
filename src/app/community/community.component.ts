@@ -48,6 +48,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  showChatToolbar = false;
 
   constructor(
     private dialog: MatDialog,

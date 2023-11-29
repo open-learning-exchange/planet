@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: [ './chat.scss' ]
 })
 export class ChatComponent {
+  @Input() showToolbar = true;
 
   constructor(
     private route: ActivatedRoute,
