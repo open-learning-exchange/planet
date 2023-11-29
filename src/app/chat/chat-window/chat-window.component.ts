@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     _id: '',
     _rev: ''
   };
+  @Input() chatDataPreload;
 
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -118,13 +119,14 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   }
 
   submitPrompt() {
-    const content = this.promptForm.get('prompt').value;
+    const query = this.promptForm.get('prompt').value
+    const content = this.chatDataPreload ? this.chatDataPreload + query : query;
     this.data.content = content;
     this.setSelectedConversation();
 
     this.chatService.getPrompt(this.data, true).subscribe(
       (completion: any) => {
-        this.conversations.push({ query: content, response: completion?.chat });
+        this.conversations.push({ query, response: completion?.chat });
         this.selectedConversationId = {
           '_id': completion.couchDBResponse?.id,
           '_rev': completion.couchDBResponse?.rev
@@ -134,7 +136,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         this.spinnerOn = false;
-        this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
+        this.conversations.push({ query, response: 'Error: ' + error.message, error: true});
         this.postSubmit();
       }
     );
