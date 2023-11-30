@@ -49,6 +49,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   showChatToolbar = false;
+  dataPreload: string;
 
   constructor(
     private dialog: MatDialog,
@@ -120,6 +121,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(team => {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
+      this.dataPreload = this.team?.description
     });
   }
 

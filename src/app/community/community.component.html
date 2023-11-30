@@ -11,7 +11,7 @@
           <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
         </mat-tab>
         <mat-tab i18n-label label="Community Advisor">
-          <planet-chat [showToolbar]="showChatToolbar"></planet-chat>
+          <planet-chat [dataPreload]="dataPreload" [showToolbar]="showChatToolbar"></planet-chat>
         </mat-tab>
         <mat-tab i18n-label label="Community Leaders">
           <div class="card-grid">
