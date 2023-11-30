@@ -7,7 +7,7 @@ import { ChatMessage } from '../models/chat-message.model';
  * @returns Completion text
  */
 export async function gptChat(messages: ChatMessage[], dataPreload?: any): Promise<string> {
-  if(dataPreload) {
+  if (dataPreload) {
     messages[0].content = `${dataPreload} \t ${messages[0].content}`;
   }
   const completion = await openai.createChatCompletion({
