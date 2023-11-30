@@ -24,10 +24,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     user: this.userService.get(),
     time: this.couchService.datePlaceholder,
     content: '',
+    preload: null,
     _id: '',
     _rev: ''
   };
-  @Input() chatDataPreload;
+  @Input() dataPreload;
 
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -120,8 +121,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   submitPrompt() {
     const query = this.promptForm.get('prompt').value
-    const content = this.chatDataPreload ? this.chatDataPreload + query : query;
-    this.data.content = content;
+    if (this.dataPreload) {
+      this.data.preload = this.dataPreload
+    }
+    this.data.content = query;
     this.setSelectedConversation();
 
     this.chatService.getPrompt(this.data, true).subscribe(

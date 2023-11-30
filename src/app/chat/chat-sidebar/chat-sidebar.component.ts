@@ -30,7 +30,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.filterConversations();
   }
   @Input() dataPreload;
-  chatDataPreload: any;
 
   constructor(
     private chatService: ChatService,
@@ -40,7 +39,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.chatDataPreload = this.dataPreload;
     this.titleSearch = '';
     this.getChatHistory();
     this.subscribeToNewChats();
