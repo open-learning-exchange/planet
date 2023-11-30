@@ -34,8 +34,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
-    private searchService: SearchService,
     private formBuilder: FormBuilder,
+    private searchService: SearchService,
     private userService: UserService
   ) {}
 
