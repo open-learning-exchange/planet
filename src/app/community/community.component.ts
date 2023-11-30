@@ -302,7 +302,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openDescriptionDialog() {
     const submitDescription = ({ description }) => {
-      this.teamsService.updateTeam({ ...this.team, description: description.text, images: description.images }).pipe(
+      this.teamsService.updateTeam({ ...this.team, description: description.text }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(newTeam => {
         this.team = newTeam;
@@ -313,8 +313,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialogsFormService.openDialogsForm(
       this.team.description ? $localize`Edit Description` : $localize`Add Description`,
       [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: true, imageGroup: 'community' } ],
-      { description: { text: this.team.description || '', images: this.team.images || [] } },
-      { onSubmit: submitDescription }
+      { description: this.team.description || '' },
+      { autoFocus: true, onSubmit: submitDescription }
     );
   }
 
