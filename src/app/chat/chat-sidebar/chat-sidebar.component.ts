@@ -7,6 +7,7 @@ import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { SearchService } from '../../shared/forms/search.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   selector: 'planet-chat-sidebar',
@@ -34,7 +35,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private couchService: CouchService,
     private searchService: SearchService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -92,7 +94,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   getChatHistory() {
-    this.chatService.findConversations([], {}).subscribe(
+    this.chatService.findConversations([], [ this.userService.get().name ]).subscribe(
       (conversations) => {
         this.conversations = conversations;
         this.filteredConversations = [ ...conversations ];
