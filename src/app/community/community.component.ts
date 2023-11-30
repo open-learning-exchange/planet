@@ -121,7 +121,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(team => {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
-      this.dataPreload = this.team?.description
+      this.dataPreload = this.team?.description;
     });
   }
 

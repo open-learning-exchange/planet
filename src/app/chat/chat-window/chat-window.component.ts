@@ -120,7 +120,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   }
 
   submitPrompt() {
-    const query = this.promptForm.get('prompt').value
+    const query = this.promptForm.get('prompt').value;
     if (this.dataPreload) {
       this.data.preload = this.dataPreload;
     } else {
@@ -141,7 +141,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         this.spinnerOn = false;
-        this.conversations.push({ query, response: 'Error: ' + error.message, error: true});
+        this.conversations.push({ query, response: 'Error: ' + error.message, error: true });
         this.postSubmit();
       }
     );
