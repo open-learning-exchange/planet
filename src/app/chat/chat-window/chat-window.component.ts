@@ -122,7 +122,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   submitPrompt() {
     const query = this.promptForm.get('prompt').value
     if (this.dataPreload) {
-      this.data.preload = this.dataPreload
+      this.data.preload = this.dataPreload;
+    } else {
+      delete this.data.preload;
     }
     this.data.content = query;
     this.setSelectedConversation();
