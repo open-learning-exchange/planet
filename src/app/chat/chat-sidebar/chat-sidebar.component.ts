@@ -150,9 +150,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
           const queryMatch = chat.query?.toLowerCase().includes(this.titleSearch.toLowerCase());
           const responseMatch = chat.response?.toLowerCase().includes(this.titleSearch.toLowerCase());
 
-          if (this.searchType === "questions") {
+          if (this.searchType === 'questions') {
             return queryMatch;
-          } else if (this.searchType === "responses") {
+          } else if (this.searchType === 'responses') {
             return responseMatch;
           } else {
             return queryMatch || responseMatch;
