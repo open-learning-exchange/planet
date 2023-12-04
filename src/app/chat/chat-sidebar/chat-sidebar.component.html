@@ -10,16 +10,22 @@
       <mat-form-field class="font-size-1 margin-lr-3">
         <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange()">
       </mat-form-field>
-      <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch"><mat-icon>delete</mat-icon></button><br>
+      <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType"><mat-icon>delete</mat-icon></button><br>
       <div>
-        <span style="font-size: small; font-style: italic;" i18n>Full Text Search </span>
+        <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
         <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
-        <button mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+        <button style="text-align: end;" mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
           <mat-icon>help_outline</mat-icon>
         </button>
         <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
-          <span class="overlay-text">In addition to the title, search through the entire conversation</span>
+          <span class="overlay-text" i18n>search through the entire conversation, not just the title</span>
         </ng-template>
+        <div>
+          <mat-button-toggle-group *ngIf="fullTextSearch" [(ngModel)]="searchType" (change)="filterConversations()">
+            <mat-button-toggle value="questions" i18n>Questions</mat-button-toggle>
+            <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
       </div>
     </div>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
