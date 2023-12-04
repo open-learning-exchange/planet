@@ -22,6 +22,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   selectedConversation: any;
   isEditing: boolean;
   fullTextSearch = false;
+  overlayOpen = false;
   titleForm: { [key: string]: FormGroup } = {};
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch.trim(); }
@@ -64,6 +65,10 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   toggleEditTitle() {
     this.isEditing = !this.isEditing;
+  }
+
+  toggleOverlay() {
+    this.overlayOpen = !this.overlayOpen;
   }
 
   updateConversation(conversation, title) {
