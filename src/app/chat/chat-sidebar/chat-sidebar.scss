@@ -62,6 +62,16 @@ li:hover {
   align-self: flex-end;
 }
 
+.overlay-text {
+  width: 100px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  background: #fff;
+  text-align: center;
+  padding: 10px;
+  margin: 0;
+}
+
 @media only screen and (max-width: $screen-md) {
   .expand-button {
     top: 10px;
