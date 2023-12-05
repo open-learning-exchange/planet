@@ -1,7 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { showFormErrors } from '../../shared/table-helpers';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: './users-archive.component.html',
@@ -12,14 +15,24 @@ import { showFormErrors } from '../../shared/table-helpers';
   ` ]
 })
 export class UsersArchiveComponent implements OnInit {
+  readonly dbName = '_users';
+  user: any = {};
   confirmChoice = false;
-  spinnerOn = true;
   archiveForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {}
+
+  constructor(
+    private couchService: CouchService,
+    private formBuilder: FormBuilder,
+    private userService: UserService
+    ) {}
 
   ngOnInit() {
     this.createForm();
+    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.userService.get().name)
+      .subscribe((data) => {
+        this.user = data;
+      });
   }
 
   createForm() {
@@ -30,13 +43,26 @@ export class UsersArchiveComponent implements OnInit {
 
   onSubmit() {
     if (this.archiveForm.valid) {
-      const description = this.archiveForm.get('description').value;
-      console.log(description);
-      this.spinnerOn = false;
-
+      this.archiveUser();
     } else {
       showFormErrors(this.archiveForm.controls);
     }
+  }
+
+  archiveUser() {
+    const description = this.archiveForm.get('description').value;
+    this.user = {...this.user, isArchived: true, archiveReason: description }
+    console.log(this.user);
+    console.log({...this.user, isArchived: true, archiveReason: description });
+
+
+    this.userService.updateUser(this.user).subscribe((data) => {
+      console.log(data);
+      // logout user
+    }, (err) => {
+        // Connect to an error display component to show user that an error has occurred
+        console.log(err);
+      });
   }
 
 }

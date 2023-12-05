@@ -10,7 +10,7 @@
         </mat-form-field>
         <span style="font-style: italic; margin: 1rem;" i18n>I am aware that I will lose access to your account, resources, courses, teams/enterprises and achievements</span>
         <mat-checkbox [checked]="confirmChoice" (change)="confirmChoice = !confirmChoice"></mat-checkbox><br>
-        <button type="submit" [disabled]="!confirmChoice" [planetSubmit]="confirmChoice && archiveForm.valid && spinnerOn" mat-raised-button color="warn" style="margin: 1rem;" i18n>Delete User Data</button>
+        <button type="submit" [disabled]="!confirmChoice" mat-raised-button color="warn" style="margin: 1rem;" i18n>Delete User Data</button>
       </form>
     </div>
   </div>
