@@ -1,0 +1,9 @@
+<form class="form-spacing" [formGroup]="archiveForm">
+  <mat-form-field>
+    <input matInput i18n-placeholder placeholder="username" formControlName="name" required>
+    <mat-error><planet-form-error-messages [control]="archiveForm.controls.name"></planet-form-error-messages></mat-error>
+  </mat-form-field>
+  <div class="full-width">
+    <button mat-raised-button color="danger" matStepperNext i18n (click)="archiveUser()">Next</button>
+  </div>
+</form>
