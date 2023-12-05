@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { CouchService } from '../../shared/couchdb.service';
@@ -20,12 +20,11 @@ export class UsersArchiveComponent implements OnInit {
   confirmChoice = false;
   archiveForm: FormGroup;
 
-
   constructor(
     private couchService: CouchService,
     private formBuilder: FormBuilder,
     private userService: UserService
-    ) {}
+  ) {}
 
   ngOnInit() {
     this.createForm();
@@ -52,15 +51,9 @@ export class UsersArchiveComponent implements OnInit {
   archiveUser() {
     const description = this.archiveForm.get('description').value;
     this.user = {...this.user, isArchived: true, archiveReason: description }
-    console.log(this.user);
-    console.log({...this.user, isArchived: true, archiveReason: description });
-
-
-    this.userService.updateUser(this.user).subscribe((data) => {
-      console.log(data);
-      // logout user
+    this.userService.updateUser(this.user).subscribe(() => {
+    this.userService.setUserLogout();
     }, (err) => {
-        // Connect to an error display component to show user that an error has occurred
         console.log(err);
       });
   }
