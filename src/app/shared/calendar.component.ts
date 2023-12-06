@@ -175,13 +175,16 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     if (event?.start) {
       meetup = {
         startDate: event?.start,
-        endDate: event?.end
+        endDate: this.adjustEndDate(event?.end)
       };
     }
-
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });
+  }
+
+  adjustEndDate(endDate: Date): Date {
+    return new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - 1, 23, 59, 59, 999);
   }
 
   onMeetupsChange() {
