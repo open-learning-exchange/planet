@@ -57,6 +57,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     customButtons: this.buttons,
     firstDay: 6,
     dayMaxEventRows: 2,
+    selectable: true,
+    select: this.openAddEventDialog.bind(this),
     eventClick: this.eventClick.bind(this)
   };
 
@@ -168,9 +170,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     return events;
   }
 
-  openAddEventDialog() {
+  openAddEventDialog(event) {
+    let meetup;
+    if (event?.start) {
+      meetup = {
+        startDate: event?.start,
+        endDate: event?.end
+      };
+    }
+
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
+      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });
   }
 
