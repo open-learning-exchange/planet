@@ -243,8 +243,8 @@
         <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
-            <p><ng-container i18n>Grade Level:</ng-container>{{ " " }}<planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></p>
-            <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
+            <p><ng-container *ngIf="element.doc.gradeLevel" ngi18n>Grade Level:</ng-container>{{ " " }}<planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></p>
+            <p><ng-container *ngIf="element.doc.subjectLevel" i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
           </div>
         </mat-cell>
       </ng-container>
