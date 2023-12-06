@@ -55,9 +55,7 @@ export class MeetupsAddComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private stateService: StateService
-  ) {
-    this.createForm();
-  }
+  ) { }
 
   ngOnInit() {
     if (this.meetup._id) {
@@ -69,6 +67,7 @@ export class MeetupsAddComponent implements OnInit {
         error => console.log(error)
       );
     }
+    this.createForm();
   }
 
   setMeetupData(meetup: any) {
@@ -86,8 +85,8 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
-      startDate: '',
-      endDate: [ '', CustomValidators.endDateValidator() ],
+      startDate: this.meetup?.startDate ? this.meetup.startDate : '',
+      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
       startTime: [ '', CustomValidators.timeValidator() ],
