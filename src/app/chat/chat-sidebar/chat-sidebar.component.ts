@@ -7,6 +7,7 @@ import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { SearchService } from '../../shared/forms/search.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   selector: 'planet-chat-sidebar',
@@ -21,6 +22,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   selectedConversation: any;
   isEditing: boolean;
   fullTextSearch = false;
+  searchType: 'questions' | 'responses';
+  overlayOpen = false;
   titleForm: { [key: string]: FormGroup } = {};
   private _titleSearch = '';
   get titleSearch(): string { return this._titleSearch.trim(); }
@@ -33,8 +36,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
+    private formBuilder: FormBuilder,
     private searchService: SearchService,
-    private formBuilder: FormBuilder
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -62,6 +66,10 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   toggleEditTitle() {
     this.isEditing = !this.isEditing;
+  }
+
+  toggleOverlay() {
+    this.overlayOpen = !this.overlayOpen;
   }
 
   updateConversation(conversation, title) {
@@ -92,7 +100,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   getChatHistory() {
-    this.chatService.findConversations([], {}).subscribe(
+    this.chatService.findConversations([], [ this.userService.get().name ]).subscribe(
       (conversations) => {
         this.conversations = conversations;
         this.filteredConversations = [ ...conversations ];
@@ -116,6 +124,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   resetFilter() {
     this.titleSearch = '';
+    this.searchType = null;
   }
 
   recordSearch(complete = false) {
@@ -140,7 +149,13 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
         const conversationMatches = conversation.conversations.some(chat => {
           const queryMatch = chat.query?.toLowerCase().includes(this.titleSearch.toLowerCase());
           const responseMatch = chat.response?.toLowerCase().includes(this.titleSearch.toLowerCase());
-          return queryMatch || responseMatch;
+          if (this.searchType === 'questions') {
+            return queryMatch;
+          } else if (this.searchType === 'responses') {
+            return responseMatch;
+          } else {
+            return queryMatch || responseMatch;
+          }
         });
         return conversationMatches;
       }

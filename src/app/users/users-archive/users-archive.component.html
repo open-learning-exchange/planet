@@ -1,0 +1,17 @@
+<div class="space-container">
+  <div class="view-container">
+    <h1 class="primary-text-color" i18n>Request for User Data Deletion</h1>
+    <div i18n>You will lose access to your account, resources, courses, teams/enterprises and achievements</div><br>
+    <div style="display: flex;justify-content: center;">
+      <form [formGroup]="archiveForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox class="full-width" [required]="false" i18n-placeholder placeholder="Additional comments/Reason for data deletion request" [formControl]="archiveForm.controls.description"></planet-markdown-textbox>
+          <mat-error><planet-form-error-messages [control]="archiveForm.controls.description"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <span style="font-style: italic; margin: 1rem;" i18n>I am aware that I will lose access to your account, resources, courses, teams/enterprises and achievements</span>
+        <mat-checkbox [checked]="confirmChoice" (change)="confirmChoice = !confirmChoice"></mat-checkbox><br>
+        <button type="submit" [disabled]="!confirmChoice" [planetSubmit]="spinnerOn && archiveForm.valid" mat-raised-button color="warn" style="margin: 1rem;" i18n>Delete User Data</button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -20,7 +20,7 @@ import { MatSelectionList } from '@angular/material/list';
     <span class="mat-caption" i18n>{category, select,
       subject {Subject}
       language {Language}
-      mediaType {Medium}
+      medium {Medium}
       level {Level}
     }
     </span>
