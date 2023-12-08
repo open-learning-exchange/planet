@@ -1,5 +1,5 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
-  <mat-drawer #drawer mode="side" opened>
+  <mat-drawer #drawer mode="side" [opened]="deviceType !== deviceTypes.MOBILE">
     <div class="header-container">
       <div class="header" i18n>
         <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
