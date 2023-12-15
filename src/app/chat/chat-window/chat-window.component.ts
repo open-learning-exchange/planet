@@ -119,7 +119,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
     this.data = { ...this.data, content };
-    console.log(this.data);
 
     this.setSelectedConversation();
 
