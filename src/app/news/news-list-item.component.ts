@@ -4,7 +4,6 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
-import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { NewsService } from './news.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
@@ -14,7 +13,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
 
   @Input() item;
   @Input() replyObject;
@@ -46,6 +45,13 @@ export class NewsListItemComponent implements OnChanges, AfterViewChecked {
     private stateService: StateService,
     private dialog: MatDialog
   ) {}
+
+  ngOnInit() {
+    if (this.item.latestMessage) {
+      this.showExpand = true;
+      this.showLess = false;
+    }
+  }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;

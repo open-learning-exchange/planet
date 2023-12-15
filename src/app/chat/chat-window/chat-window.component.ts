@@ -6,8 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
-import { UserService } from '../../shared/user.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { UserService } from '../../shared/user.service';
 
 @Component({
   selector: 'planet-chat-window',
@@ -23,7 +23,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   selectedConversationId: any;
   promptForm: FormGroup;
   data = {
-    user: this.userService.get(),
+    user: this.userService.get().name,
     time: this.couchService.datePlaceholder,
     content: '',
     _id: '',
@@ -80,7 +80,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   fetchConversation(id) {
     if (id) {
-      this.chatService.findConversations([ id ], {}).subscribe(
+      this.chatService.findConversations([ id ]).subscribe(
         (conversation: Object) => {
           const messages = conversation[0]?.conversations;
 

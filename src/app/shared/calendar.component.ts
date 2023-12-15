@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -7,7 +7,6 @@ import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
-// import { LandingEventDetailComponent } from "../landing/landing-home/landing-event/landing-eventdetail/landing-eventdetail.component";
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
@@ -58,6 +57,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     customButtons: this.buttons,
     firstDay: 6,
     dayMaxEventRows: 2,
+    selectable: true,
+    select: this.openAddEventDialog.bind(this),
     eventClick: this.eventClick.bind(this)
   };
 
@@ -83,10 +84,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.customButtons = this.buttons;
     this.calendarOptions.events = [ ...this.events, ...this._events ];
   }
-
-  // ngAfterViewChecked(): void {
-  //   this.calendarOptions.events = [...this.events, ...this._events];
-  // }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
@@ -173,10 +170,21 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     return events;
   }
 
-  openAddEventDialog() {
+  openAddEventDialog(event) {
+    let meetup;
+    if (event?.start) {
+      meetup = {
+        startDate: event?.start,
+        endDate: this.adjustEndDate(event?.end)
+      };
+    }
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
+      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });
+  }
+
+  adjustEndDate(endDate: Date): Date {
+    return new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - 1, 23, 59, 59, 999);
   }
 
   onMeetupsChange() {
@@ -195,13 +203,5 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       }
     });
   }
-
-  // uplanetEventClick({ event }) {
-  //   this.dialog.open(LandingEventDetailComponent, {
-  //     data: event.extendedProps.meetup,
-  //     width: '40vw',
-  //     maxHeight: '90vh'
-  //   });
-  // }
 
 }

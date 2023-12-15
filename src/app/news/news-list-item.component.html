@@ -10,7 +10,7 @@
     </mat-card-title>
     <mat-card-subtitle>
       <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
-      <ng-container i18n>wrote on</ng-container> {{item.doc.time | date: 'medium' }}
+      <ng-container i18n>posted on</ng-container> {{item.doc.time | date: 'medium' }}
       <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
       <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
       <mat-chip-list>
@@ -25,13 +25,14 @@
     <div [ngClass]="{'show-less': showLess}" #content>
       <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
     </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="showExpand || !showLess" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
+    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
     <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
     </button>
+    <span class="toolbar-fill"></span>
     <ng-container *ngIf="item.doc.user.name === currentUser.name">
       <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>

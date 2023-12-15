@@ -70,8 +70,8 @@ import { CouchService } from '../shared/couchdb.service';
     }
   }
 
-  findConversations(ids, opts) {
-    return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids) }), opts);
+  findConversations(ids, user?, opts?) {
+    return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids), 'user': inSelector(user) }), opts);
   }
 
   sendNewChatAddedSignal() {

@@ -7,8 +7,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, map, finalize } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { switchMap, map, finalize, catchError } from 'rxjs/operators';
+import { forkJoin, throwError } from 'rxjs';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
 } from '../shared/table-helpers';
@@ -61,6 +61,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   filter: string;
   deviceType: DeviceType;
   isMobile: boolean;
+  userNotInShelf = false;
 
   constructor(
     private userService: UserService,
@@ -123,7 +124,19 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
-    }, (error) => console.log(error));
+    }, (error) => {
+      if (this.userNotInShelf) {
+        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
+        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((teams) => {
+          this.teams.data = this.teamList(teams.filter((team: any) => {
+            return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
+            && this.excludeIds.indexOf(team._id) === -1;
+          }));
+        });
+      }
+      this.dialogsLoadingService.stop();
+      console.log(error);
+    });
   }
 
   getMembershipStatus() {
@@ -134,7 +147,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       map(([ membershipDocs, shelf ]) => this.userMembership = [
         ...membershipDocs,
         ...(shelf.myTeamIds || []).map(id => ({ teamId: id, fromShelf: true, docType: 'membership', userId: this.user._id }))
-      ])
+      ]),
+      catchError(error => {
+        if (error.status === 404) {
+          this.userNotInShelf = true;
+        }
+        return throwError(error);
+      })
     );
   }
 
