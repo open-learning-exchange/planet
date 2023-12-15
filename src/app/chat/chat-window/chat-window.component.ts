@@ -120,6 +120,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
     this.data.content = content;
+    this.data.time = this.couchService.datePlaceholder,
+    console.log(this.data);
+
     this.setSelectedConversation();
 
     this.chatService.getPrompt(this.data, true).subscribe(
