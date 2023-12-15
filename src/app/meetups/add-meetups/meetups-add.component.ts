@@ -63,7 +63,6 @@ export class MeetupsAddComponent implements OnInit {
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
     } else {
-      // Reinitialize the form if form has new meetup data
       this.createForm();
     }
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
