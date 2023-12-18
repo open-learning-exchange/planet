@@ -191,7 +191,7 @@ export class UsersUpdateComponent implements OnInit {
     }
 
     this.currentProfileImg = 'assets/image.png';
-    this.removeImageFile()
+    this.removeImageFile();
   }
 
 
