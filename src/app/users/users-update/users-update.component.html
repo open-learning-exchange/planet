@@ -108,6 +108,7 @@
       </form>
     </div>
     <div *ngIf="!submissionMode" class="profile-image-section">
+      <button *ngIf="currentImgKey && !file" mat-raised-button color="warn" (click)="deleteImageAttachment()">Remove</button>
       <img class="profile-image-update" [src]="previewSrc">
       <div class="profile-image-upload">
         <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig"
