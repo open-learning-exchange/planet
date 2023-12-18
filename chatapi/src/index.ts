@@ -32,9 +32,17 @@ wss.on('connection', (ws) => {
       };
 
       if (data && typeof data === 'object') {
-        await chat(data, true, (response) => {
-          ws.send(response);
+        const chatResponse = await chat(data, true, (response) => {
+          ws.send(JSON.stringify({ 'type': 'partial', response }));
         });
+
+        if (chatResponse) {
+          ws.send(JSON.stringify({
+            'type': 'final',
+            'completionText': chatResponse.completionText,
+            'couchDBResponse': chatResponse.couchSaveResponse
+          }));
+        }
       } else {
         ws.send('Error processing input data!');
       }
