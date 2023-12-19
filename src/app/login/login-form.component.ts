@@ -144,7 +144,6 @@ export class LoginFormComponent {
   checkArchiveStatus(name) {
     this.couchService.get('_users/org.couchdb.user:' + name).subscribe((userData) => {
       if (userData?.isArchived) {
-        console.log(userData);
         this.errorHandler($localize`Member ${name} is archived`)();
       }
     });
