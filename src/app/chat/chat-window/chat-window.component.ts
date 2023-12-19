@@ -17,6 +17,8 @@ import { UserService } from '../../shared/user.service';
 export class ChatWindowComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
+  setStreamOn = true;
+  disabled = false;
   conversations: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
@@ -42,11 +44,14 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
+    this.initializeChatStream();
+    this.initializeErrorStream();
   }
 
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.chatService.closeWebSocket();
   }
 
   subscribeToNewChatSelected() {
@@ -102,11 +107,46 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     }
   }
 
+  initializeErrorStream() {
+    // Subscribe to WebSocket error messages
+    this.chatService.getErrorStream().subscribe((errorMessage) => {
+      this.conversations.push({
+        query: errorMessage,
+        response: 'Error: ' + errorMessage,
+        error: true,
+      });
+      this.postSubmit();
+    });
+  }
+
+  initializeChatStream() {
+    // Subscribe to WebSocket messages
+    this.chatService.getChatStream().subscribe((message) => {
+      // Handle incoming messages from the chat stream
+      this.handleIncomingMessage(JSON.parse(message));
+    });
+  }
+
+  handleIncomingMessage(message: any) {
+    if (message.type === 'final') {
+      this.selectedConversationId = {
+        '_id': message.couchDBResponse?.id,
+        '_rev': message.couchDBResponse?.rev
+      };
+    } else {
+      this.spinnerOn = false;
+      const lastConversation = this.conversations[this.conversations.length - 1];
+      lastConversation.response += message.response;
+      this.postSubmit();
+    }
+  }
+
   postSubmit() {
     this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
     this.scrollToBottom();
     this.promptForm.controls['prompt'].setValue('');
+    this.chatService.sendNewChatAddedSignal();
   }
 
   onSubmit() {
@@ -122,21 +162,25 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.data.content = content;
     this.setSelectedConversation();
 
-    this.chatService.getPrompt(this.data, true).subscribe(
-      (completion: any) => {
-        this.conversations.push({ query: content, response: completion?.chat });
-        this.selectedConversationId = {
-          '_id': completion.couchDBResponse?.id,
-          '_rev': completion.couchDBResponse?.rev
-        };
-        this.postSubmit();
-        this.chatService.sendNewChatAddedSignal();
-      },
-      (error: any) => {
-        this.spinnerOn = false;
-        this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
-        this.postSubmit();
-      }
-    );
+    if (this.setStreamOn) {
+      this.conversations.push({ role: 'user', query: content, response: '' });
+      this.chatService.sendUserInput(this.data);
+    } else {
+      this.chatService.getPrompt(this.data, true).subscribe(
+        (completion: any) => {
+          this.conversations.push({ query: content, response: completion?.chat });
+          this.selectedConversationId = {
+            '_id': completion.couchDBResponse?.id,
+            '_rev': completion.couchDBResponse?.rev
+          };
+          this.postSubmit();
+        },
+        (error: any) => {
+          this.spinnerOn = false;
+          this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
+          this.postSubmit();
+        }
+      );
+    }
   }
 }
