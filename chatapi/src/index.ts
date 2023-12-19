@@ -25,11 +25,9 @@ app.get('/', (req: any, res: any) => {
 
 // WebSocket connection handling
 wss.on('connection', (ws) => {
-  ws.on('message', async (message) => {
+  ws.on('message', async (data) => {
     try {
-      const data = {
-        'content': message.toString()
-      };
+      data = JSON.parse(data.toString());
 
       if (data && typeof data === 'object') {
         const chatResponse = await chat(data, true, (response) => {

@@ -17,10 +17,6 @@ async function gptChatStream(messages: ChatMessage[], callback?: (response: stri
       if (callback) {
         callback(response);
       }
-
-      if (callback && chunk.choices[0].finish_reason === 'stop') {
-        callback('[DONE]');
-      }
     }
   }
   return completionText;
@@ -39,11 +35,6 @@ async function gptChatNonStream(messages: ChatMessage[]) {
   return completion.choices[0]?.message?.content;
 }
 
-/**
- * Uses openai's createChatCompletion endpoint to generate chat completions
- * @param messages - Array of chat messages
- * @returns Completion text
- */
 export async function gptChat(messages: ChatMessage[], stream?: boolean, callback?: (response: string) => void): Promise<string> {
   if (stream) {
     return await gptChatStream(messages, callback);

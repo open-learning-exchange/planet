@@ -57,9 +57,9 @@ import { CouchService } from '../shared/couchdb.service';
   }
 
   // Method to send user input via WebSocket
-  sendUserInput(input: string): void {
+  sendUserInput(data: any): void {
     if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(input);
+      this.socket.send(JSON.stringify(data));
     }
   }
 

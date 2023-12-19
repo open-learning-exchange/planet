@@ -123,18 +123,20 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     // Subscribe to WebSocket messages
     this.chatService.getChatStream().subscribe((message) => {
       // Handle incoming messages from the chat stream
-      this.handleIncomingMessage(message);
+      this.handleIncomingMessage(JSON.parse(message));
     });
   }
 
-  handleIncomingMessage(message: string) {
-    if (message === '[DONE]') {
-      this.disabled = false;
+  handleIncomingMessage(message: any) {
+    if (message.type === 'final') {
+      this.selectedConversationId = {
+        '_id': message.couchDBResponse?.id,
+        '_rev': message.couchDBResponse?.rev
+      };
     } else {
-      this.disabled = true;
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
-      lastConversation.response += message;
+      lastConversation.response += message.response;
       this.postSubmit();
     }
   }
@@ -144,6 +146,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.spinnerOn = true;
     this.scrollToBottom();
     this.promptForm.controls['prompt'].setValue('');
+    this.chatService.sendNewChatAddedSignal();
   }
 
   onSubmit() {
@@ -161,7 +164,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     if (this.setStreamOn) {
       this.conversations.push({ role: 'user', query: content, response: '' });
-      this.chatService.sendUserInput(content);
+      this.chatService.sendUserInput(this.data);
     } else {
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
@@ -171,7 +174,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
             '_rev': completion.couchDBResponse?.rev
           };
           this.postSubmit();
-          this.chatService.sendNewChatAddedSignal();
         },
         (error: any) => {
           this.spinnerOn = false;
