@@ -5,7 +5,6 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
