@@ -6,7 +6,10 @@ import { ChatMessage } from '../models/chat-message.model';
  * @param messages - Array of chat messages
  * @returns Completion text
  */
-export async function gptChat(messages: ChatMessage[]): Promise<string> {
+export async function gptChat(messages: ChatMessage[], dataPreload?: any): Promise<string> {
+  if (dataPreload) {
+    messages[0].content = `${dataPreload} \t ${messages[0].content}`;
+  }
   const completion = await openai.createChatCompletion({
     'model': 'gpt-3.5-turbo',
     messages,

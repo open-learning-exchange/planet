@@ -52,7 +52,7 @@
             </mat-icon>
           </ng-template>
           <ng-template #conversationTitle>
-            {{ conversation?.title?.slice(0, 25) || conversation.conversations[0].query.slice(0, 25) }}
+            {{ conversation?.title?.slice(0, 25) }}
           </ng-template>
         </li>
       </ul>
@@ -68,6 +68,6 @@
         <i class="material-icons">chevron_right</i>
       </button>
     </div>
-    <planet-chat-window></planet-chat-window>
+    <planet-chat-window [dataPreload]="dataPreload"></planet-chat-window>
   </div>
 </mat-drawer-container>

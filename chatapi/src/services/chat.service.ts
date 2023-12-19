@@ -31,7 +31,7 @@ export async function chat(data: any): Promise<{
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await gptChat(messages);
+    const completionText = await gptChat(messages, dbData?.preload ? dbData.preload : null);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 

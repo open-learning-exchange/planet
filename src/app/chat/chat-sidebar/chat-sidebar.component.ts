@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -32,6 +32,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.recordSearch();
     this.filterConversations();
   }
+  @Input() dataPreload;
 
   constructor(
     private chatService: ChatService,
