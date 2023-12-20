@@ -23,6 +23,7 @@ export async function chat(data: any): Promise<{
   } else {
     dbData.title = content;
     dbData.conversations = [];
+    dbData.createdDate = Date.now();
   }
 
   dbData.conversations.push({ 'query': content, 'response': '' });
@@ -35,6 +36,7 @@ export async function chat(data: any): Promise<{
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
+    dbData.updatedDate = Date.now();
     dbData._id = res?.id;
     dbData._rev = res?.rev;
     const couchSaveResponse = await db.insert(dbData);
