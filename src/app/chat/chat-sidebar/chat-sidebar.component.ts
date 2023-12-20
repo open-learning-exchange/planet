@@ -101,8 +101,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   getChatHistory() {
     this.chatService.findConversations([], [ this.userService.get().name ]).subscribe(
-      (conversations) => {
-        this.conversations = conversations;
+      (conversations: any) => {
+        this.conversations = conversations.sort((a, b) => b.createdDate - a.createdDate);
         this.filteredConversations = [ ...conversations ];
         this.initializeFormGroups();
       },

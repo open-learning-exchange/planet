@@ -30,7 +30,7 @@
     </div>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of filteredConversations.reverse(); let i = index" (click)="selectConversation(conversation)">
+        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation)">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
               <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
