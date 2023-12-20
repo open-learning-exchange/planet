@@ -74,7 +74,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   updateConversation(conversation, title) {
     this.couchService.updateDocument(
-      this.dbName, { ...conversation, title: title, updatedTime: this.couchService.datePlaceholder }
+      this.dbName, { ...conversation, title: title, updatedDate: this.couchService.datePlaceholder }
     ).subscribe((data) => {
       this.getChatHistory();
       return data;
