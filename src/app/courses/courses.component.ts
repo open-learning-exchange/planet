@@ -18,6 +18,7 @@ import {
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
+import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -62,6 +63,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
+  languages: any = languages;
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
@@ -146,6 +148,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         return;
       }
       // Sort in descending createdDate order, so the new courses can be shown on the top
+      console.log(courses);
+
       courses.sort((a, b) => b.doc.createdDate - a.doc.createdDate);
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
