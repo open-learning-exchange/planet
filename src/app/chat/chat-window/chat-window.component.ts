@@ -22,7 +22,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   promptForm: FormGroup;
   data = {
     user: this.userService.get().name,
-    time: this.couchService.datePlaceholder,
     content: '',
     _id: '',
     _rev: ''
@@ -119,7 +118,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
-    this.data.content = content;
+    this.data = { ...this.data, content };
+
     this.setSelectedConversation();
 
     this.chatService.getPrompt(this.data, true).subscribe(
