@@ -67,6 +67,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
+    'doc.languageOfInstruction': '',
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
@@ -148,8 +149,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         return;
       }
       // Sort in descending createdDate order, so the new courses can be shown on the top
-      console.log(courses);
-
       courses.sort((a, b) => b.doc.createdDate - a.doc.createdDate);
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
@@ -344,6 +343,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   resetSearch() {
     this.tagFilter.setValue([]);
+    this.filter['doc.languageOfInstruction'] = '';
     this.filter['doc.gradeLevel'] = '';
     this.filter['doc.subjectLevel'] = '';
     this.titleSearch = '';
