@@ -23,13 +23,17 @@ app.post('/', async (req: any, res: any) => {
   try {
     const { data, save } = req.body;
 
+    if (typeof data !== 'object' || Array.isArray(data) || Object.keys(data).length === 0) {
+      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
+    }
+
     if (!save) {
       const response = await chatNoSave(data.content);
       res.status(200).json({
         'status': 'Success',
         'chat': response
       });
-    } else if (save && data && typeof data === 'object') {
+    } else if (save) {
       const response = await chat(data);
       res.status(201).json({
         'status': 'Success',
@@ -37,7 +41,7 @@ app.post('/', async (req: any, res: any) => {
         'couchDBResponse': response?.couchSaveResponse
       });
     } else {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
+      res.status(400).json({ 'error': 'Bad Request', 'message': 'Error processing "data" object' });
     }
   } catch (error: any) {
     res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
