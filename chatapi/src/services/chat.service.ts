@@ -18,6 +18,10 @@ export async function chat(data: any): Promise<{
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
 
+  if (!content) {
+    throw new Error('"data.content" is a required non-empty field');
+  }
+
   if (dbData._id) {
     await retrieveChatHistory(dbData, messages);
   } else {
