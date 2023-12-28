@@ -51,20 +51,15 @@ export class UsersArchiveComponent implements OnInit {
 
   archiveUser() {
     const description = this.archiveForm.get('description').value;
-    this.userService
-      .updateUser({
-        ...this.user,
-        isArchived: true,
-        archiveReason: description
-      })
-      .subscribe(
-        () => {
-          this.userService.setUserLogout();
-          this.spinnerOn = false;
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+    this.user = { ...this.user, isArchived: true, archiveReason: description };
+    this.userService.updateUser(this.user).subscribe(
+      () => {
+        this.userService.setUserLogout();
+        this.spinnerOn = false;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }
