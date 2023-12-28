@@ -18,8 +18,8 @@ export async function chat(data: any): Promise<{
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
 
-  if (!content) {
-    throw new Error('"data.content" is a required non-empty field');
+  if (!content || typeof content !== 'string') {
+    throw new Error('"data.content" is a required non-empty string field');
   }
 
   if (dbData._id) {
