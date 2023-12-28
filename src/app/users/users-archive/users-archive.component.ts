@@ -50,7 +50,7 @@ export class UsersArchiveComponent implements OnInit {
   }
 
   archiveUser() {
-    const description = this.archiveForm.get("description").value;
+    const description = this.archiveForm.get('description').value;
     this.userService
       .updateUser({
         ...this.user,
