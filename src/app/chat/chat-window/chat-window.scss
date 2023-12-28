@@ -17,16 +17,8 @@
 }
 
 .textarea-container {
-  position: relative;
   border: 1px solid $primary;
   border-radius: 5px;
-}
-
-.textarea-container textarea {
-  border: transparent;
-  box-shadow: none;
-  outline: none;
-  width: calc(100% - 48px);
 }
 
 .textarea-container button {
@@ -51,15 +43,4 @@
 .conversation-error {
   color: #ff0000;
   font-style: italic;
-}
-
-textarea {
-  border: 1px solid #007bff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-textarea:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
