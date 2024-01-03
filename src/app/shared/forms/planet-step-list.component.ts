@@ -26,8 +26,6 @@ export class PlanetStepListService {
   stepMoveClick$ = new Subject<any>();
   stepAdded$ = new Subject<number>();
 
-  constructor() {}
-
   moveStep(index, direction, listId) {
     this.stepMoveClick$.next({ index, direction, listId });
   }
