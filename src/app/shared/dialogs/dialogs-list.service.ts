@@ -3,7 +3,6 @@ import { map } from 'rxjs/operators';
 import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
 import { StateService } from '../state.service';
-import { ReplaySubject } from 'rxjs';
 import { CouchService } from '../couchdb.service';
 import { filterSpecificFields } from '../table-helpers';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
