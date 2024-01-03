@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, takeWhile, multicast } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
 import { StateService } from '../state.service';
