@@ -3,12 +3,8 @@
 .header {
   padding: 10px;
 
-  .start-button {
-    border: solid;
-    margin-right: 0.5rem;
-  }
-
   .icon-button {
+    margin-left: 10px;
     background-color: $accent;
   }
 }
