@@ -28,6 +28,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   conversations: any;
   filteredConversations: any;
   selectedConversation: any;
+  lastRenderedConversation: number;
   isEditing: boolean;
   fullTextSearch = false;
   searchType: 'questions' | 'responses';
@@ -125,12 +126,20 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     );
   }
 
-  selectConversation(conversation) {
+  selectConversation(conversation, index: number) {
     this.selectedConversation = conversation;
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev
     });
+    this.onConversationRender(index);
+  }
+
+  onConversationRender(index: number) {
+    if (index !== this.lastRenderedConversation) {
+      this.isEditing = false;
+    }
+    this.lastRenderedConversation = index;
   }
 
   onSearchChange() {
