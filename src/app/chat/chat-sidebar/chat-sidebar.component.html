@@ -47,7 +47,7 @@
           </ng-container>
           <ng-template #notEditing>
             <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
-            <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="sidebar-icon" (click)="toggleEditTitle()">
+            <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="sidebar-icon" (click)="toggleEditTitle()" style="font-size:larger;">
               edit
             </mat-icon>
           </ng-template>
