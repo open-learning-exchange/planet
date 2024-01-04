@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CustomValidators } from '../../validators/custom-validators';
-import { ChatData } from '../chat.model';
+import { ConversationForm } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { showFormErrors } from '../../shared/table-helpers';
@@ -21,11 +21,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   conversations: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
-  data: ChatData = {
-    user: this.userService.get().name,
-    content: '',
+  data: ConversationForm = {
     _id: '',
-    _rev: ''
+    _rev: '',
+    user: this.userService.get().name,
+    content: ''
   };
 
   @ViewChild('chat') chatContainer: ElementRef;

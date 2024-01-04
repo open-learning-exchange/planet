@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { Conversation } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
@@ -25,9 +26,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.recordSearch();
     this.filterConversations();
   }
-  conversations: any;
-  filteredConversations: any;
-  selectedConversation: any;
+  conversations: Conversation[];
+  filteredConversations: Conversation[];
+  selectedConversation: Conversation;
   isEditing: boolean;
   fullTextSearch = false;
   searchType: 'questions' | 'responses';
@@ -82,7 +83,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.overlayOpen = !this.overlayOpen;
   }
 
-  updateConversation(conversation, title) {
+  updateConversation(conversation: Conversation, title) {
     this.couchService.updateDocument(
       this.dbName, { ...conversation, title: title, updatedDate: this.couchService.datePlaceholder }
     ).subscribe((data) => {
@@ -91,7 +92,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  submitTitle(conversation) {
+  submitTitle(conversation: Conversation) {
     if (this.titleForm[conversation._id].valid) {
       const title = this.titleForm[conversation._id].get('title').value;
       this.updateConversation(conversation, title);
@@ -102,7 +103,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   initializeFormGroups() {
-    this.conversations.forEach((conversation) => {
+    this.conversations.forEach((conversation: Conversation) => {
       this.titleForm[conversation._id] = this.formBuilder.group({
         title: [ conversation?.title, Validators.required ]
       });
@@ -125,7 +126,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     );
   }
 
-  selectConversation(conversation) {
+  selectConversation(conversation: Conversation) {
     this.selectedConversation = conversation;
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
@@ -133,8 +134,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSearchChange() {
-    this.titleSearch = this.titleSearch;
+  onSearchChange(searchValue: string) {
+    this.titleSearch = searchValue;
   }
 
   resetFilter() {
@@ -158,11 +159,11 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     return value?.toLowerCase().includes(searchTerm.toLowerCase());
   }
 
-  filterByTitle(conversation): boolean {
+  filterByTitle(conversation: Conversation): boolean {
     return this.matchesSearchTerm(conversation.title, this.titleSearch);
   }
 
-  filterByFullText(conversation): boolean {
+  filterByFullText(conversation: Conversation): boolean {
     return conversation.conversations.some(chat => {
       const queryMatch = this.matchesSearchTerm(chat.query, this.titleSearch);
       const responseMatch = this.matchesSearchTerm(chat.response, this.titleSearch);
