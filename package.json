@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.13.91",
+  "version": "0.14.7",
   "myplanet": {
-    "latest": "v0.11.95",
-    "min": "v0.11.70"
+    "latest": "v0.12.63",
+    "min": "v0.12.0"
   },
   "scripts": {
     "ng": "ng",
