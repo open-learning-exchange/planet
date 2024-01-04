@@ -54,11 +54,11 @@
         <mat-tab i18n-label label="Reports">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
-        <mat-tab i18n-label label="Calendar" *ngIf="deviceType === deviceTypes.MOBILE">
+        <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">
           <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
         </mat-tab>
       </mat-tab-group>
     </div>
-    <planet-calendar *ngIf="deviceType != deviceTypes.MOBILE" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    <planet-calendar *ngIf="deviceType === deviceTypes.DESKTOP" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
   </div>
 </div>

@@ -141,9 +141,21 @@ export class LoginFormComponent {
       { withCredentials: true, domain: this.stateService.configuration.parentDomain });
   }
 
+  checkArchiveStatus(name) {
+    this.couchService.get('_users/org.couchdb.user:' + name).subscribe((userData) => {
+      if (userData?.isArchived) {
+        this.errorHandler($localize`Member ${name} is not registered`)();
+      }
+    });
+    return true;
+  }
+
   login({ name, password }: { name: string, password: string }, isCreate: boolean) {
     const configuration = this.stateService.configuration;
     const userId = `org.couchdb.user:${name}`;
+    if (this.checkArchiveStatus(name)) {
+      return;
+    }
     this.pouchAuthService.login(name, password).pipe(
       switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
       switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),

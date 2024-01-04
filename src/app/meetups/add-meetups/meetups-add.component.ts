@@ -55,11 +55,15 @@ export class MeetupsAddComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private stateService: StateService
-  ) { }
+  ) {
+    this.createForm();
+   }
 
   ngOnInit() {
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
+    } else {
+      this.createForm();
     }
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
@@ -67,7 +71,6 @@ export class MeetupsAddComponent implements OnInit {
         error => console.log(error)
       );
     }
-    this.createForm();
   }
 
   setMeetupData(meetup: any) {

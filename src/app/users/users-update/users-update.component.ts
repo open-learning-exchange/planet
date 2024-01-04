@@ -5,7 +5,6 @@ import {
   Validators
 } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
@@ -180,6 +179,20 @@ export class UsersUpdateComponent implements OnInit {
     this.file = null;
     this.uploadImage = false;
   }
+
+  deleteImageAttachment() {
+    if (!this.currentImgKey) {
+      return;
+    }
+
+    if (this.user._attachments && this.user._attachments[this.currentImgKey]) {
+      delete this.user._attachments[this.currentImgKey];
+    }
+
+    this.currentProfileImg = 'assets/image.png';
+    this.removeImageFile();
+  }
+
 
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
