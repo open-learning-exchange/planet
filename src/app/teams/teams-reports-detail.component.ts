@@ -26,12 +26,11 @@ export class TeamsReportsDetailComponent implements OnChanges {
   income: number;
   net: number;
   endingBalance: number;
-  curCode = this.stateService.configuration.currency || '';
+  curCode = this.stateService.configuration.currency || {};
 
   constructor(
     private stateService: StateService
   ) {}
-
 
   ngOnChanges() {
     this.expenses = this.report.wages + this.report.otherExpenses;

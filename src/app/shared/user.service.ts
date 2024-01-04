@@ -42,6 +42,8 @@ export class UserService {
   userChange$ = this.userChange.asObservable();
   private shelfChange = new BehaviorSubject<any>(this.emptyShelf);
   shelfChange$ = this.shelfChange.asObservable();
+  private userLogout = new Subject<void>();
+  userLogout$ = this.userLogout.asObservable();
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
   minBirthDate = new Date(1900, 0, 1);
@@ -59,6 +61,10 @@ export class UserService {
 
   setNotificationStateChange() {
     this.notificationStateChange.next();
+  }
+
+  setUserLogout() {
+    this.userLogout.next();
   }
 
   get(): any {

@@ -3,12 +3,8 @@
 .header {
   padding: 10px;
 
-  .start-button {
-    border: solid;
-    margin-right: 0.5rem;
-  }
-
   .icon-button {
+    margin-left: 10px;
     background-color: $accent;
   }
 }
@@ -60,6 +56,16 @@ li:hover {
 
 .sidebar-icon {
   align-self: flex-end;
+}
+
+.overlay-text {
+  width: 100px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  background: #fff;
+  text-align: center;
+  padding: 10px;
+  margin: 0;
 }
 
 @media only screen and (max-width: $screen-md) {

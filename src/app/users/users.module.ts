@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxImgModule } from 'ngx-img';
 
 import { UsersComponent } from './users.component';
+import { UsersArchiveComponent } from './users-archive/users-archive.component';
 import { UsersProfileComponent } from './users-profile/users-profile.component';
 import { UsersUpdateComponent } from './users-update/users-update.component';
 import { UsersRouterModule } from './users-router.module';
@@ -33,6 +34,7 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
   ],
   declarations: [
     UsersComponent,
+    UsersArchiveComponent,
     UsersProfileComponent,
     UsersUpdateComponent,
     UsersTableComponent,
