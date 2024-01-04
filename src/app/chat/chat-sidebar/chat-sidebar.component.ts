@@ -154,28 +154,37 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.filterConversations();
   }
 
+  matchesSearchTerm(value: string, searchTerm: string): boolean {
+    return value?.toLowerCase().includes(searchTerm.toLowerCase());
+  }
+
+  filterByTitle(conversation): boolean {
+    return this.matchesSearchTerm(conversation.title, this.titleSearch);
+  }
+
+  filterByFullText(conversation): boolean {
+    return conversation.conversations.some(chat => {
+      const queryMatch = this.matchesSearchTerm(chat.query, this.titleSearch);
+      const responseMatch = this.matchesSearchTerm(chat.response, this.titleSearch);
+      if (this.searchType === 'questions') {
+        return queryMatch;
+      } else if (this.searchType === 'responses') {
+        return responseMatch;
+      } else {
+        return queryMatch || responseMatch;
+      }
+    });
+  }
+
   filterConversations() {
     if (this.titleSearch.trim() === '' ) {
       this.getChatHistory();
     }
-
     this.filteredConversations = this.conversations?.filter(conversation => {
       if (this.fullTextSearch) {
-        const conversationMatches = conversation.conversations.some(chat => {
-          const queryMatch = chat.query?.toLowerCase().includes(this.titleSearch.toLowerCase());
-          const responseMatch = chat.response?.toLowerCase().includes(this.titleSearch.toLowerCase());
-          if (this.searchType === 'questions') {
-            return queryMatch;
-          } else if (this.searchType === 'responses') {
-            return responseMatch;
-          } else {
-            return queryMatch || responseMatch;
-          }
-        });
-        return conversationMatches;
+        return this.filterByFullText(conversation);
       }
-
-      return conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
+      return this.filterByTitle(conversation);
     });
   }
 }
