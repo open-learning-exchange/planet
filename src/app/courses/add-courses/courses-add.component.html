@@ -26,12 +26,12 @@
           </mat-autocomplete>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel">
+          <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel" required>
             <mat-option *ngFor="let grade of gradeLevels" [value]="grade.value">{{grade.label}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel">
+          <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel" required>
             <mat-option *ngFor="let sub of subjectLevels" [value]="sub.value">{{sub.label}}</mat-option>
           </mat-select>
         </mat-form-field>
