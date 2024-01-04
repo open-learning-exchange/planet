@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CustomValidators } from '../../validators/custom-validators';
+import { ChatData } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { showFormErrors } from '../../shared/table-helpers';
@@ -20,7 +21,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   conversations: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
-  data = {
+  data: ChatData = {
     user: this.userService.get().name,
     content: '',
     _id: '',
@@ -54,6 +55,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.selectedConversationId = null;
         this.conversations = [];
+      }, error => {
+        console.error('Error subscribing to newChatSelected$', error);
       });
   }
 
@@ -63,6 +66,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
+      }, error => {
+        console.error('Error subscribing to selectedConversationId$', error);
       });
   }
 
