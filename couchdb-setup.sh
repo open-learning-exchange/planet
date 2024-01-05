@@ -211,4 +211,4 @@ upsert_doc _node/nonode@nohost/_config replicator/connection_timeout '"300000"'
 # Make user database public
 upsert_doc _node/nonode@nohost/_config couch_httpd_auth/users_db_public '"true"'
 # Specify user public fields (note: adding spaces to string breaks upsert_doc)
-upsert_doc _node/nonode@nohost/_config couch_httpd_auth/public_fields '"name,firstName,middleName,lastName,roles,isUserAdmin,joinDate,email,phoneNumber,gender,planetCode,parentCode,language,birthDate,level,birthplace"'
+upsert_doc _node/nonode@nohost/_config couch_httpd_auth/public_fields '"name,firstName,middleName,lastName,roles,isUserAdmin,joinDate,email,phoneNumber,gender,planetCode,parentCode,language,birthDate,level,birthplace,isArchived"'
