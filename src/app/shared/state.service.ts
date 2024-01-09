@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { Subject, forkJoin, of } from 'rxjs';
-import { map, flatMap, toArray, switchMap, filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { map, switchMap, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
