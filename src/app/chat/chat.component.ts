@@ -13,7 +13,7 @@ export class ChatComponent {
     private router: Router,
   ) {}
 
-  goBack() {
+  goBack(): void {
     this.router.navigate([ '/' ], { relativeTo: this.route });
   }
 
