@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CustomValidators } from '../../validators/custom-validators';
+import { ConversationForm } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
@@ -19,11 +20,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   conversations: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
-  data = {
-    user: this.userService.get().name,
-    content: '',
+  data: ConversationForm = {
     _id: '',
-    _rev: ''
+    _rev: '',
+    user: this.userService.get().name,
+    content: ''
   };
 
   @ViewChild('chat') chatContainer: ElementRef;
@@ -52,6 +53,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.selectedConversationId = null;
         this.conversations = [];
+      }, error => {
+        console.error('Error subscribing to newChatSelected$', error);
       });
   }
 
@@ -61,6 +64,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
+      }, error => {
+        console.error('Error subscribing to selectedConversationId$', error);
       });
   }
 
@@ -72,27 +77,34 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   fetchConversation(id) {
     if (id) {
-      this.chatService.findConversations([ id ]).subscribe(
-        (conversation: Object) => {
-          const messages = conversation[0]?.conversations;
-
-          this.conversations = messages;
-        }
-      );
+      try {
+        this.chatService.findConversations([ id ]).subscribe(
+          (conversation: Object) => {
+            const messages = conversation[0]?.conversations;
+            this.conversations = messages;
+          }
+        );
+      } catch (error) {
+        console.error('Error fetching conversation: ', error);
+      }
     }
   }
 
-  scrollToBottom(): void {
+  scrollTo(position: 'top' | 'bottom'): void {
+    const target = position === 'top' ? 0 : this.chatContainer.nativeElement.scrollHeight;
     this.chatContainer.nativeElement.scrollTo({
-      top: this.chatContainer.nativeElement.scrollHeight,
+      top: target,
       behavior: 'smooth',
     });
   }
 
-  setSelectedConversation() {
+  setSelectedConversation(): void {
     if (this.selectedConversationId) {
-      this.data._id = this.selectedConversationId._id;
-      this.data._rev = this.selectedConversationId._rev;
+      this.data = {
+        ...this.data,
+        _id: this.selectedConversationId._id,
+        _rev: this.selectedConversationId._rev,
+      };
     } else {
       delete this.data._id;
       delete this.data._rev;
@@ -102,7 +114,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   postSubmit() {
     this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
-    this.scrollToBottom();
+    this.scrollTo('bottom');
     this.promptForm.controls['prompt'].setValue('');
   }
 
