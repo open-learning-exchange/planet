@@ -43,7 +43,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
-    this.subscribeToaiService();
+    this.subscribeToAIService();
   }
 
   ngOnDestroy() {
@@ -73,7 +73,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       });
   }
 
-  subscribeToaiService() {
+  subscribeToAIService() {
     this.chatService.toggleAIService$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((aiService => {
