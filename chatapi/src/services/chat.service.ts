@@ -11,7 +11,7 @@ import { ChatMessage } from '../models/chat-message.model';
  * @param data - Chat data including content and additional information
  * @returns Object with completion text and CouchDB save response
  */
-export async function chat(data: any): Promise<{
+export async function chat(data: any, usePerplexity: boolean): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
@@ -36,7 +36,7 @@ export async function chat(data: any): Promise<{
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await gptChat(messages);
+    const completionText = await gptChat(messages, usePerplexity);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -54,13 +54,13 @@ export async function chat(data: any): Promise<{
   }
 }
 
-export async function chatNoSave(content: any): Promise< string | undefined> {
+export async function chatNoSave(content: any, usePerplexity: boolean): Promise< string | undefined> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await gptChat(messages);
+    const completionText = await gptChat(messages, usePerplexity);
     messages.push({
       'role': 'assistant', 'content': completionText
     });
