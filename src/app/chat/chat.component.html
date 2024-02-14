@@ -2,6 +2,10 @@
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
+  <mat-button-toggle-group [(ngModel)]="aiService" (change)="toggleAIService()">
+    <mat-button-toggle value="openai" i18n>Open AI</mat-button-toggle>
+    <mat-button-toggle value="perplexity" i18n>Perplexity AI</mat-button-toggle>
+  </mat-button-toggle-group>
 </mat-toolbar>
 
 <div class="space-container">

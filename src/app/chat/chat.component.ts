@@ -1,20 +1,28 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { ChatService } from '../shared/chat.service';
+
 @Component({
   selector: 'planet-chat',
   templateUrl: './chat.component.html',
   styleUrls: [ './chat.scss' ]
 })
 export class ChatComponent {
+  aiService: 'openai' | 'perplexity' = 'openai';
 
   constructor(
+    private chatService: ChatService,
     private route: ActivatedRoute,
     private router: Router,
   ) {}
 
   goBack(): void {
     this.router.navigate([ '/' ], { relativeTo: this.route });
+  }
+
+  toggleAIService(): void {
+    this.chatService.toggleAIServiceSignal(this.aiService);
   }
 
 }
