@@ -10,7 +10,7 @@ import { ChatMessage } from '../models/chat-message.model';
 export async function gptChat(messages: ChatMessage[], usePerplexity: boolean): Promise<string> {
   const ai = usePerplexity ? perplexity : openai;
   const completion = await ai.chat.completions.create({
-    'model': usePerplexity ? 'mistral-7b-instruct' : 'gpt-3.5-turbo',
+    'model': usePerplexity ? 'pplx-7b-online' : 'gpt-3.5-turbo',
     messages,
   });
 

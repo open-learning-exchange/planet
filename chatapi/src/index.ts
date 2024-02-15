@@ -48,6 +48,13 @@ app.post('/', async (req: any, res: any) => {
   }
 });
 
+app.get('/checkproviders', (req: any, res: any) => {
+  res.status(200).json({
+    'openai': process.env.OPENAI_API_KEY ? true : false,
+    'perplexity': process.env.PERPLEXITY_API_KEY ? true : false
+  });
+});
+
 const port = process.env.SERVE_PORT || 5000;
 
 app.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console

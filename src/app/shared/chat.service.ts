@@ -27,6 +27,10 @@ import { CouchService } from '../shared/couchdb.service';
     private couchService: CouchService
   ) {}
 
+  fetchAIProviders() {
+    return this.httpClient.get(`${this.baseUrl}/checkproviders`);
+  }
+
   getPrompt(data: Object, save: boolean, usePerplexity: boolean): Observable<any> {
     return this.httpClient.post(this.baseUrl, {
       data,
