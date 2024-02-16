@@ -188,7 +188,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   exportTableData() {
-    let updatedData = [...this.table.filteredData]
+    let updatedData = [ ...this.table.filteredData ];
     updatedData.shift();
 
     updatedData = updatedData.map(row => ({
