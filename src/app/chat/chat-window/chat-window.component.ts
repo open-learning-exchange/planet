@@ -113,9 +113,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   postSubmit() {
     this.changeDetectorRef.detectChanges();
-    this.spinnerOn = true;
+    this.spinnerOn = false;
     this.scrollTo('bottom');
-    this.promptForm.controls['prompt'].setValue('');
+    this.promptForm.reset();
   }
 
   onSubmit() {
@@ -143,7 +143,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
         this.chatService.sendNewChatAddedSignal();
       },
       (error: any) => {
-        this.spinnerOn = false;
         this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
         this.postSubmit();
       }
