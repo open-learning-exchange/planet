@@ -6,7 +6,6 @@ import { takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
-import { CouchService } from '../../shared/couchdb.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 
@@ -33,7 +32,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private couchService: CouchService,
     private formBuilder: FormBuilder,
     private userService: UserService
   ) {}

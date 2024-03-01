@@ -30,7 +30,7 @@
     </div>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation)">
+        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation, i)">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
               <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
@@ -47,7 +47,7 @@
           </ng-container>
           <ng-template #notEditing>
             <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
-            <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="sidebar-icon" (click)="toggleEditTitle()">
+            <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="sidebar-icon" (click)="toggleEditTitle()" style="font-size:larger;">
               edit
             </mat-icon>
           </ng-template>
