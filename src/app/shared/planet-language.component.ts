@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
 
@@ -10,6 +10,7 @@ export class PlanetLanguageComponent implements OnInit {
 
   languages = languages;
   currentLanguage: any = { name: 'English', shortCode: 'eng' };
+  @Input() iconOnly: boolean;
 
   constructor(private router: Router) {}
 
