@@ -6,7 +6,6 @@ import { takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
-import { CouchService } from '../../shared/couchdb.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 
@@ -33,7 +32,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private couchService: CouchService,
     private formBuilder: FormBuilder,
     private userService: UserService
   ) {}
@@ -115,9 +113,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   postSubmit() {
     this.changeDetectorRef.detectChanges();
-    this.spinnerOn = true;
+    this.spinnerOn = false;
     this.scrollTo('bottom');
-    this.promptForm.controls['prompt'].setValue('');
+    this.promptForm.reset();
   }
 
   onSubmit() {
@@ -145,7 +143,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
         this.chatService.sendNewChatAddedSignal();
       },
       (error: any) => {
-        this.spinnerOn = false;
         this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
         this.postSubmit();
       }

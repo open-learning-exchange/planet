@@ -1,16 +1,31 @@
 <mat-toolbar>
-  <button mat-icon-button [routerLink]="[ '..' ]" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>{ mode, select,
-    team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
-    enterprise {Enterprises}
-  }</span>
+  <mat-toolbar-row>
+    <button mat-icon-button [routerLink]="[ '..' ]" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>{ mode, select,
+      team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
+      enterprise {Enterprises}
+    }</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!isMobile">
+      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    </ng-container>
+    <button mat-icon-button *ngIf="isMobile" (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="showFiltersRow">
+    <ng-container *ngIf="isMobile">
+      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    </ng-container>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<ng-template #searchView>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter" i18n-placeholder placeholder="Type name to search...">
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
-</mat-toolbar>
+</ng-template>
 
 <div [ngClass]="{'space-container':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">

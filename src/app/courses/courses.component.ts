@@ -456,8 +456,4 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }
   }
 
-  toggleFilters() {
-    this.showFiltersRow = !this.showFiltersRow;
-  }
-
 }
