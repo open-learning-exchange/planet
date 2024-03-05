@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { Validators } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -12,6 +11,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
+import { CsvService } from '../shared/csv.service';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -36,13 +36,14 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   curCode = this.stateService.configuration.currency || {};
 
   constructor(
-    private teamsService: TeamsService,
+    private csvService: CsvService,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService,
+    private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog,
-    private stateService: StateService
+    private planetMessageService: PlanetMessageService,
+    private stateService: StateService,
+    private teamsService: TeamsService
   ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
@@ -184,6 +185,24 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.endDate = undefined;
     this.table.filter = '';
     this.emptyTable = this.table.data.length <= 1;
+  }
+
+  exportTableData() {
+    let updatedData = [ ...this.table.filteredData ];
+    updatedData.shift();
+
+    updatedData = updatedData.map(row => ({
+      date: row.date,
+      description: row.description,
+      credit: row.credit,
+      debit: row.debit,
+      balance: row.balance
+    }));
+
+    this.csvService.exportCSV({
+      data: updatedData,
+      title: $localize`Finances Transactions for ${this.team.name} Enterprise`
+    });
   }
 
 }

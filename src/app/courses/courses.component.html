@@ -19,7 +19,7 @@
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
       <span class="toolbar-fill"></span>
-      <button mat-icon-button *ngIf="deviceType !== deviceTypes.DESKTOP" (click)="toggleFilters()" ><mat-icon>filter_list</mat-icon></button>
+      <button mat-icon-button *ngIf="deviceType !== deviceTypes.DESKTOP" (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
     <ng-container *ngIf="showFiltersRow">
       <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
