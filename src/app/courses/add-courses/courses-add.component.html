@@ -40,7 +40,7 @@
         </mat-form-field>
       </form>
     </div>
-    <div class="steps-container">
+    <div [ngClass]="{'steps-container': steps.length > 0 }">
       <planet-courses-step [(steps)]="steps" (addStepEvent)="addStep()"></planet-courses-step>
     </div>
     <div class="actions-container">
