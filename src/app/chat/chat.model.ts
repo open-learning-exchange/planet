@@ -19,3 +19,8 @@ export interface Message {
   query: string;
   response: string;
 }
+
+export interface AIServices {
+  openai: boolean;
+  perplexity: boolean;
+}

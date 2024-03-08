@@ -17,6 +17,7 @@ import { UserService } from '../../shared/user.service';
 export class ChatWindowComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
+  usePerplexity: boolean;
   conversations: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
@@ -40,6 +41,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
+    this.subscribeToAIService();
   }
 
   ngOnDestroy() {
@@ -67,6 +69,14 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       }, error => {
         console.error('Error subscribing to selectedConversationId$', error);
       });
+  }
+
+  subscribeToAIService() {
+    this.chatService.toggleAIService$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((aiService => {
+        this.usePerplexity = aiService === 'perplexity' ? true : false;
+      }));
   }
 
   createForm() {
@@ -132,7 +142,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.setSelectedConversation();
 
-    this.chatService.getPrompt(this.data, true).subscribe(
+    this.chatService.getPrompt(this.data, true, this.usePerplexity).subscribe(
       (completion: any) => {
         this.conversations.push({ query: content, response: completion?.chat });
         this.selectedConversationId = {
