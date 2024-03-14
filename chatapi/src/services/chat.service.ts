@@ -1,9 +1,10 @@
 import { DocumentInsertResponse } from 'nano';
 
 import db from '../config/nano.config';
-import { gptChat } from '../utils/gpt-chat.utils';
+import { aiChat } from '../utils/chat.utils';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { handleChatError } from '../utils/chat-error.utils';
+import { AIProvider } from '../models/aiProviders.model';
 import { ChatMessage } from '../models/chat-message.model';
 
 /**
@@ -11,7 +12,7 @@ import { ChatMessage } from '../models/chat-message.model';
  * @param data - Chat data including content and additional information
  * @returns Object with completion text and CouchDB save response
  */
-export async function chat(data: any, usePerplexity: boolean): Promise<{
+export async function chat(data: any, aiProvider: AIProvider): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
@@ -36,7 +37,7 @@ export async function chat(data: any, usePerplexity: boolean): Promise<{
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await gptChat(messages, usePerplexity);
+    const completionText = await aiChat(messages, aiProvider);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -54,13 +55,13 @@ export async function chat(data: any, usePerplexity: boolean): Promise<{
   }
 }
 
-export async function chatNoSave(content: any, usePerplexity: boolean): Promise< string | undefined> {
+export async function chatNoSave(content: any, aiProvider: AIProvider): Promise< string | undefined> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await gptChat(messages, usePerplexity);
+    const completionText = await aiChat(messages, aiProvider);
     messages.push({
       'role': 'assistant', 'content': completionText
     });

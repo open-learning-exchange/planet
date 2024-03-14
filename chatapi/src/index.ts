@@ -21,20 +21,20 @@ app.get('/', (req: any, res: any) => {
 
 app.post('/', async (req: any, res: any) => {
   try {
-    const { data, save, usePerplexity } = req.body;
+    const { data, save, aiProvider } = req.body;
 
     if (typeof data !== 'object' || Array.isArray(data) || Object.keys(data).length === 0) {
       res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
 
     if (!save) {
-      const response = await chatNoSave(data.content, usePerplexity);
+      const response = await chatNoSave(data.content, aiProvider);
       res.status(200).json({
         'status': 'Success',
         'chat': response
       });
     } else if (save) {
-      const response = await chat(data, usePerplexity);
+      const response = await chat(data, aiProvider);
       res.status(201).json({
         'status': 'Success',
         'chat': response?.completionText,
