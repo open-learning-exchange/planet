@@ -29,6 +29,7 @@ export async function chat(data: any, aiProvider: AIProvider): Promise<{
     dbData.title = content;
     dbData.conversations = [];
     dbData.createdDate = Date.now();
+    dbData.aiProvider = aiProvider.name;
   }
 
   dbData.conversations.push({ 'query': content, 'response': '' });
