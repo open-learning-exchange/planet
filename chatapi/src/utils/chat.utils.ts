@@ -1,8 +1,8 @@
 import openai from '../config/openai.config';
 import perplexity from '../config/perplexity.config';
 import gemini from '../config/gemini.config';
-import { AIProvider, ProviderName } from '../models/aiProviders.model';
-import { ChatMessage } from '../models/chat-message.model';
+import { AIProvider, ProviderName } from '../models/ai-providers.model';
+import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
 
 /**
  * Uses openai's createChatCompletion endpoint to generate chat completions
@@ -23,13 +23,27 @@ export async function aiChat(messages: ChatMessage[], aiProvider: AIProvider): P
   }
 
   const model = aiProvider.model || provider.defaultModel;
-  console.log(messages);
-
 
   if (provider.ai === gemini) {
     const geminiModel = gemini.getGenerativeModel({ model });
 
-    const result = await geminiModel.generateContent('Hello, who are you?');
+    const msg = messages[messages.length - 1].content;
+
+    messages.pop();
+
+    const geminiMessages: GeminiMessage[] = messages.map((message) => ({
+      'role': message.role === 'assistant' ? 'model' : message.role,
+      'parts': [{ 'text': message.content }],
+    }));
+
+    const chat = geminiModel.startChat({
+      'history': geminiMessages,
+      'generationConfig': {
+        'maxOutputTokens': 100,
+      },
+    });
+
+    const result = await chat.sendMessage(msg);
     const response = await result.response;
     const text = response.text();
 

@@ -4,7 +4,7 @@ import db from '../config/nano.config';
 import { aiChat } from '../utils/chat.utils';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { handleChatError } from '../utils/chat-error.utils';
-import { AIProvider } from '../models/aiProviders.model';
+import { AIProvider } from '../models/ai-providers.model';
 import { ChatMessage } from '../models/chat-message.model';
 
 /**
