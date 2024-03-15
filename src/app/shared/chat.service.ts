@@ -31,11 +31,11 @@ import { CouchService } from '../shared/couchdb.service';
     return this.httpClient.get(`${this.baseUrl}/checkproviders`);
   }
 
-  getPrompt(data: Object, save: boolean, usePerplexity: boolean): Observable<any> {
+  getPrompt(data: Object, save: boolean, aiProvider: Object): Observable<any> {
     return this.httpClient.post(this.baseUrl, {
       data,
       save,
-      usePerplexity
+      aiProvider
     });
   }
 
