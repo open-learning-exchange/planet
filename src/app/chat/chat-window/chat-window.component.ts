@@ -125,9 +125,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   postSubmit() {
     this.changeDetectorRef.detectChanges();
-    this.spinnerOn = false;
+    this.spinnerOn = true;
     this.scrollTo('bottom');
-    this.promptForm.reset();
+    this.promptForm.controls['prompt'].setValue('');
   }
 
   onSubmit() {
