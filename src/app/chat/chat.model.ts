@@ -30,5 +30,5 @@ export interface AIProvider {
 export interface AIServices {
   openai: boolean;
   perplexity: boolean;
-  gemini: boolean
+  gemini: boolean;
 }

@@ -29,7 +29,7 @@ export class ChatComponent implements OnInit {
         return of({ openai: false, perplexity: false, gemini: false });
       })
     ).subscribe((services: AIServices) => {
-      for (const [key, value] of Object.entries(services)) {
+      for (const [ key, value ] of Object.entries(services)) {
         if (value === true) {
             this.aiServices.push({
                name: key as ProviderName,
@@ -40,7 +40,7 @@ export class ChatComponent implements OnInit {
 
       this.activeService = this.aiServices[0].value;
       this.displayToggle = this.aiServices.length > 0;
-      this.chatService.toggleAIServiceSignal(this.activeService)
+      this.chatService.toggleAIServiceSignal(this.activeService);
     });
   }
 
