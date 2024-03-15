@@ -20,7 +20,15 @@ export interface Message {
   response: string;
 }
 
+export type ProviderName = 'openai' | 'perplexity' | 'gemini';
+
+export interface AIProvider {
+  name: string;
+  model?: string;
+}
+
 export interface AIServices {
   openai: boolean;
   perplexity: boolean;
+  gemini: boolean;
 }

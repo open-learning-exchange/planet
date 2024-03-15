@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CustomValidators } from '../../validators/custom-validators';
-import { ConversationForm } from '../chat.model';
+import { ConversationForm, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
@@ -17,7 +17,7 @@ import { UserService } from '../../shared/user.service';
 export class ChatWindowComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
-  usePerplexity: boolean;
+  provider: AIProvider;
   conversations: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
@@ -75,7 +75,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.chatService.toggleAIService$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((aiService => {
-        this.usePerplexity = aiService === 'perplexity' ? true : false;
+        this.provider = {
+          name: aiService
+        };
       }));
   }
 
@@ -123,9 +125,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   postSubmit() {
     this.changeDetectorRef.detectChanges();
-    this.spinnerOn = false;
+    this.spinnerOn = true;
     this.scrollTo('bottom');
-    this.promptForm.reset();
+    this.promptForm.controls['prompt'].setValue('');
   }
 
   onSubmit() {
@@ -142,7 +144,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.setSelectedConversation();
 
-    this.chatService.getPrompt(this.data, true, this.usePerplexity).subscribe(
+    this.chatService.getPrompt(this.data, true, this.provider).subscribe(
       (completion: any) => {
         this.conversations.push({ query: content, response: completion?.chat });
         this.selectedConversationId = {
