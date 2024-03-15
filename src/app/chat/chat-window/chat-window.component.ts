@@ -144,9 +144,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.setSelectedConversation();
 
-    console.log(this.provider);
-
-
     this.chatService.getPrompt(this.data, true, this.provider).subscribe(
       (completion: any) => {
         this.conversations.push({ query: content, response: completion?.chat });
