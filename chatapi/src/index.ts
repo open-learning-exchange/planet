@@ -51,7 +51,8 @@ app.post('/', async (req: any, res: any) => {
 app.get('/checkproviders', (req: any, res: any) => {
   res.status(200).json({
     'openai': process.env.OPENAI_API_KEY ? true : false,
-    'perplexity': process.env.PERPLEXITY_API_KEY ? true : false
+    'perplexity': process.env.PERPLEXITY_API_KEY ? true : false,
+    'gemini': process.env.GEMINI_API_KEY ? true : false
   });
 });
 
