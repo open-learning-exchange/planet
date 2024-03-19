@@ -13,7 +13,6 @@
       <mat-label i18n>Chat</mat-label>
       <div class="textarea-container">
         <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
-        <mat-error><planet-form-error-messages [control]="promptForm.controls.prompt"></planet-form-error-messages></mat-error>
         <button mat-icon-button [planetSubmit]="promptForm.valid && spinnerOn" [disabled]="!promptForm.valid" color="primary"><mat-icon>send</mat-icon></button>
       </div>
     </mat-form-field>
