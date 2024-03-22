@@ -18,8 +18,8 @@
     <div *ngIf="achievements !== undefined" class="achievements-container">
       <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
       <div>
-        <ng-container *ngIf="user.birthDate"><span i18n>Birthdate:</span>{{' ' + (user.birthDate | date: medium) + ' '}}</ng-container>
-        <span *ngIf="user.birthplace" i18n>Birthplace:</span>{{' ' + user.birthplace}}
+        <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
+        <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
       </div>
       <div *ngIf="achievements.purpose">
         <h3 i18n>My Purpose</h3>
