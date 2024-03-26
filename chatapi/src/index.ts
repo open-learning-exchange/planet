@@ -28,8 +28,6 @@ wss.on('connection', (ws) => {
   ws.on('message', async (data) => {
     try {
       data = JSON.parse(data.toString());
-      console.log(data);
-
 
       if (data && typeof data === 'object') {
         console.log(data);
