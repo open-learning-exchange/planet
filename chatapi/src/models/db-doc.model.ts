@@ -3,6 +3,7 @@ export interface DbDoc {
   _rev: string;
   user: any;
   title: string;
-  time: number;
+  createdDate: number;
+  aiProvider: string;
   conversations: [];
 }

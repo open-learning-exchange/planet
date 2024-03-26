@@ -18,6 +18,7 @@ import {
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
+import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -62,9 +63,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
+  languages: any = languages;
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
+    'doc.languageOfInstruction': '',
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
@@ -340,6 +343,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   resetSearch() {
     this.tagFilter.setValue([]);
+    this.filter['doc.languageOfInstruction'] = '';
     this.filter['doc.gradeLevel'] = '';
     this.filter['doc.subjectLevel'] = '';
     this.titleSearch = '';
@@ -450,10 +454,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
     }
-  }
-
-  toggleFilters() {
-    this.showFiltersRow = !this.showFiltersRow;
   }
 
 }

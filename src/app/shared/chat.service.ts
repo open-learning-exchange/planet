@@ -10,16 +10,20 @@ import { CouchService } from '../shared/couchdb.service';
   providedIn: 'root'
 }) export class ChatService {
   readonly dbName = 'chat_history';
+
   private baseUrl = environment.chatAddress;
   private socket: WebSocket;
+
   private chatStreamSubject: Subject<string> = new Subject<string>();
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
+  private toggleAIService = new Subject<string>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
+  toggleAIService$ = this.toggleAIService.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
 
 
@@ -39,11 +43,15 @@ import { CouchService } from '../shared/couchdb.service';
     });
   }
 
-  // Regular http request
-  getPrompt(data: Object, save: boolean): Observable<any> {
+  fetchAIProviders() {
+    return this.httpClient.get(`${this.baseUrl}/checkproviders`);
+  }
+
+  getPrompt(data: Object, save: boolean, aiProvider: Object): Observable<any> {
     return this.httpClient.post(this.baseUrl, {
       data,
-      save
+      save,
+      aiProvider
     });
   }
 
@@ -80,6 +88,10 @@ import { CouchService } from '../shared/couchdb.service';
 
   sendNewChatSelectedSignal() {
     this.newChatSelected.next();
+  }
+
+  toggleAIServiceSignal(aiService: string) {
+    this.toggleAIService.next(aiService);
   }
 
   setSelectedConversationId(conversationId: object) {

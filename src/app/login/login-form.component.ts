@@ -141,27 +141,50 @@ export class LoginFormComponent {
       { withCredentials: true, domain: this.stateService.configuration.parentDomain });
   }
 
-  login({ name, password }: { name: string, password: string }, isCreate: boolean) {
+  async checkArchiveStatus(name) {
+    try {
+      const userData = await this.couchService.get('_users/org.couchdb.user:' + name).toPromise();
+
+      if (userData?.isArchived) {
+        this.errorHandler($localize`Member ${name} is not registered.`)();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      this.errorHandler($localize`There was an error connecting to Planet`)();
+      return false;
+    }
+  }
+
+  async login({ name, password }: { name: string, password: string }, isCreate: boolean) {
     const configuration = this.stateService.configuration;
     const userId = `org.couchdb.user:${name}`;
-    this.pouchAuthService.login(name, password).pipe(
-      switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
-      switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
-      switchMap(this.createSession(name, password)),
-      switchMap((sessionData) => {
-        const adminName = configuration.adminName.split('@')[0];
-        return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-      }),
-      switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
-      map((surveys) => {
-        const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
-        if (uniqueSurveys.length > 0) {
-          this.openNotificationsDialog(uniqueSurveys);
-        }
-      }),
-      switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
-      catchError(error => error.status === 404 ? of({}) : throwError(error))
-    ).subscribe(() => {}, this.loginError.bind(this));
+
+    try {
+      if (await this.checkArchiveStatus(name)) {
+        return;
+      }
+      this.pouchAuthService.login(name, password).pipe(
+        switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
+        switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
+        switchMap(this.createSession(name, password)),
+        switchMap((sessionData) => {
+          const adminName = configuration.adminName.split('@')[0];
+          return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
+        }),
+        switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
+        map((surveys) => {
+          const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
+          if (uniqueSurveys.length > 0) {
+            this.openNotificationsDialog(uniqueSurveys);
+          }
+        }),
+        switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
+        catchError(error => error.status === 404 ? of({}) : throwError(error))
+      ).subscribe(() => {}, this.loginError.bind(this));
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   }
 
   loginError() {
