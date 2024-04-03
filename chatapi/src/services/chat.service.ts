@@ -10,14 +10,17 @@ import { ChatMessage } from '../models/chat-message.model';
 /**
  * Create a chat conversation & save in couchdb
  * @param data - Chat data including content and additional information
+ * @param stream - Boolean to set streaming on or off
+ * @param callback - Callback function used when streaming is enabled
  * @returns Object with completion text and CouchDB save response
  */
-export async function chat(data: any, aiProvider: AIProvider, stream?: boolean, callback?: (response: string) => void): Promise<{
+export async function chat(data: any, stream?: boolean, callback?: (response: string) => void): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
+  const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
@@ -56,7 +59,12 @@ export async function chat(data: any, aiProvider: AIProvider, stream?: boolean, 
   }
 }
 
-export async function chatNoSave(content: any, aiProvider: AIProvider,  stream?: boolean, callback?: (response: string) => void): Promise< string | undefined> {
+export async function chatNoSave(
+  content: any,
+  aiProvider: AIProvider,
+  stream?: boolean,
+  callback?: (response: string) => void
+): Promise<string | undefined> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });

@@ -72,6 +72,8 @@
 
 **Description**: Establishes a WebSocket connection for real-time chat.
 **Usage**: Connect via WebSocket and send JSON messages containing chat data. Responses will be provided through the WebSocket connection.
+aiProviders supported: openai, perplexity, and gemini.
+any provider model supported by the provider can be used.
 
 - Request json sample
   ```
@@ -81,6 +83,7 @@
       "content": "Hola",
       "aiProvider": {
           "name": "openai",
+          model
       }
   }
   ```
