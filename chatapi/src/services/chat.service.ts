@@ -26,6 +26,10 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
     throw new Error('"data.content" is a required non-empty string field');
   }
 
+  if(stream && aiProvider.name === 'gemini') {
+    throw new Error('Streaming not supported on Gemini');
+  }
+
   if (dbData._id) {
     await retrieveChatHistory(dbData, messages);
   } else {
