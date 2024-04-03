@@ -17,7 +17,7 @@ import { UserService } from '../../shared/user.service';
 export class ChatWindowComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
-  setStreamOn = true;
+  setStreamOn = false;
   disabled = false;
   provider: AIProvider;
   conversations: any[] = [];
@@ -27,7 +27,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     _id: '',
     _rev: '',
     user: this.userService.get().name,
-    content: ''
+    content: '',
+    aiProvider: { name: 'openai' },
   };
 
   @ViewChild('chat') chatContainer: ElementRef;
@@ -180,7 +181,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   submitPrompt() {
     const content = this.promptForm.get('prompt').value;
-    this.data = { ...this.data, content };
+    this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.setSelectedConversation();
 
@@ -188,7 +189,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       this.conversations.push({ role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {
-      this.chatService.getPrompt(this.data, true, this.provider).subscribe(
+      this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
           this.conversations.push({ query: content, response: completion?.chat });
           this.selectedConversationId = {
