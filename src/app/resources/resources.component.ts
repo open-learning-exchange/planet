@@ -76,7 +76,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedAdded = 0;
   selectedSync = [];
   isAuthorized = false;
-  showFilters = 'off';
+  showFilters = false;
   searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions(
     [
@@ -381,16 +381,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedSync = selected.filter(id => this.hasAttachment(id));
   }
 
-  toggleFilters() {
-    this.showFilters = this.showFilters === 'off' ? 'on' : 'off';
-  }
-
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
-  }
-
-  toggleFiltersRow() {
-    this.showFiltersRow = !this.showFiltersRow;
   }
 
 }

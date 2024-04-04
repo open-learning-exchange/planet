@@ -11,14 +11,14 @@
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
       <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="toggleFiltersRow()" ><mat-icon>filter_list</mat-icon></button>
+      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="filterRow"></ng-container>
     </mat-toolbar-row>
   </ng-template>
 
-  <mat-toolbar-row class="search-bar" *ngIf="showFilters==='on'">
+  <mat-toolbar-row class="search-bar" *ngIf="showFilters">
     <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
   </mat-toolbar-row>
 </mat-toolbar>
@@ -33,7 +33,7 @@
 
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="toggleFilters()" *ngIf="myView !== 'myPersonals'">Filter</button>
+  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
   <mat-form-field class="font-size-1 margin-lr-4">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
@@ -103,7 +103,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters==='on'}" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
