@@ -13,8 +13,8 @@ import { UserService } from '../shared/user.service';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
-  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -31,6 +31,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
 import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { CoursesSearchComponent } from './search-courses/courses-search.component';
 
 @Component({
   selector: 'planet-courses',
@@ -49,6 +50,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
   @Input() isDialog = false;
   @Input() isForm = false;
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
@@ -89,8 +91,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   emptyData = false;
   isAuthorized = false;
   tagFilter = new FormControl([]);
+  tagFilterValue = [];
+  searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions([
-    filterDropdowns(this.filter),
+    filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
     filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
     filterShelf(this.myCoursesFilter, 'admission'),
@@ -99,6 +103,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   trackById = trackById;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  showFilters = false;
   showFiltersRow = false;
 
   @ViewChild(PlanetTagInputComponent)
@@ -161,6 +166,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.tagFilter.valueChanges.subscribe((tags) => {
+      this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
@@ -331,29 +337,40 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
   }
 
+  onSearchChange({ items, category }) {
+    this.searchSelection[category] = items;
+    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+      ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
+    );
+    this.titleSearch = this.titleSearch;
+    this.removeFilteredFromSelection();
+  }
+
+  resetFilter() {
+    this.tagFilter.setValue([]);
+    this.tagFilterValue = [];
+    Object.keys(this.searchSelection).forEach(key => this.searchSelection[key] = []);
+    if (this.searchComponent) {
+      this.searchComponent.reset();
+    }
+    this.titleSearch = '';
+  }
+
   recordSearch(complete = false) {
     if (this.courses.filter !== '') {
       this.searchService.recordSearch({
         text: this._titleSearch,
         type: this.dbName,
-        filter: { ...this.filter, tags: this.tagFilter.value }
+        filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);
     }
-  }
-
-  resetSearch() {
-    this.tagFilter.setValue([]);
-    this.filter['doc.languageOfInstruction'] = '';
-    this.filter['doc.gradeLevel'] = '';
-    this.filter['doc.subjectLevel'] = '';
-    this.titleSearch = '';
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
-      Object.entries(this.filter).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
+      Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
       this.myCoursesFilter.value === 'on' ||
       this.includeIds.length > 0 ?
       ' ' : '';
