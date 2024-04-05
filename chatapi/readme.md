@@ -22,7 +22,6 @@
   {
     "data": {
       "user": "admin",
-      "time": {},
       "content": "Hello",
       "aiProvider": {
         "name": "openai",
@@ -34,9 +33,16 @@
     "save": true
   }
   ```
-  
-  The model field is optional
-  The _id and the_rev are provided only when wanting to update a saved chat. Take note that the rev changes every time the db document is updated.
+  Additional info on data:
+  - **user**: string(required) -> Provide the planet/myPlanet username
+  - **content**: string(required) -> The latest prompt for the AI to answer
+  - **aiProvider**: Object(required)
+    - **name**: string(required) -> Name of the API provider to choose from i.e openai, perplexity or gemini.
+    - **model**: string(optional) -> Name of the specific provider model to use. Defaults to gpt-3.5-turbo for _openai_, pplx-7b-online for _peplexity_ and gemini-pro for _google gemini_
+  - **_id**: couchdb document id
+  - **_rev**: couchdb revision id
+  The couchdb id and rev are optional fields(only optional when starting a new chat), however to update an existing chat the id and rev (required) be provided.
+  Take note that the rev changes each time the db document is updated.
 
 **Response**: Varies depending on the outcome. Success response example:
   - Status Code: 201 Created
