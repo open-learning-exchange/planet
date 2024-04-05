@@ -35,6 +35,7 @@
   }
   ```
   
+  The model field is optional
   The _id and the_rev are provided only when wanting to update a saved chat. Take note that the rev changes every time the db document is updated.
 
 **Response**: Varies depending on the outcome. Success response example:
@@ -82,8 +83,7 @@ any provider model supported by the provider can be used.
       "time": {},
       "content": "Hola",
       "aiProvider": {
-          "name": "openai",
-          model
+          "name": "openai"
       }
   }
   ```
