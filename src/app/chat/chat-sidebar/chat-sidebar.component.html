@@ -18,7 +18,7 @@
           <mat-icon>help_outline</mat-icon>
         </button>
         <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
-          <span class="overlay-text" i18n>search through the entire conversation, not just the title</span>
+          <span class="overlay-text" i18n>Search through the entire conversation, not just the title</span>
         </ng-template>
         <div>
           <mat-button-toggle-group *ngIf="fullTextSearch" [(ngModel)]="searchType" (change)="filterConversations()">
