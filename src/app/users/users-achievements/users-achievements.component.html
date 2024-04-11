@@ -9,6 +9,9 @@
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
+    <a mat-raised-button color="accent" style="margin-right: 1rem;" (click)="generateResume()" *ngIf="ownAchievements">
+      <span i18n>Create Resumé</span>
+    </a>
     <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
       <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
       <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
