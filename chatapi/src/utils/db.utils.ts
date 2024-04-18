@@ -14,6 +14,7 @@ async function getChatDocument(id: string) {
       'conversations': res.conversations,
       'title': res.title,
       'createdDate': res.createdDate,
+      'aiProvider': res.aiProvider
     };
     // Should return user, team data as well particularly for the "/conversations" endpoint
   } catch (error) {
@@ -25,10 +26,11 @@ async function getChatDocument(id: string) {
 }
 
 export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) {
-  const { conversations, title, createdDate } = await getChatDocument(dbData._id);
+  const { conversations, title, createdDate, aiProvider } = await getChatDocument(dbData._id);
   dbData.conversations = conversations;
   dbData.title = title;
   dbData.createdDate = createdDate;
+  dbData.aiProvider = aiProvider;
 
   for (const { query, response } of conversations) {
     messages.push({ 'role': 'user', 'content': query });

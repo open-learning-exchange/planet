@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { Conversation } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
@@ -25,9 +26,10 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.recordSearch();
     this.filterConversations();
   }
-  conversations: any;
-  filteredConversations: any;
-  selectedConversation: any;
+  conversations: Conversation[];
+  filteredConversations: Conversation[];
+  selectedConversation: Conversation;
+  lastRenderedConversation: number;
   isEditing: boolean;
   fullTextSearch = false;
   searchType: 'questions' | 'responses';
@@ -82,7 +84,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.overlayOpen = !this.overlayOpen;
   }
 
-  updateConversation(conversation, title) {
+  updateConversation(conversation: Conversation, title) {
     this.couchService.updateDocument(
       this.dbName, { ...conversation, title: title, updatedDate: this.couchService.datePlaceholder }
     ).subscribe((data) => {
@@ -91,7 +93,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  submitTitle(conversation) {
+  submitTitle(conversation: Conversation) {
     if (this.titleForm[conversation._id].valid) {
       const title = this.titleForm[conversation._id].get('title').value;
       this.updateConversation(conversation, title);
@@ -102,7 +104,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   initializeFormGroups() {
-    this.conversations.forEach((conversation) => {
+    this.conversations.forEach((conversation: Conversation) => {
       this.titleForm[conversation._id] = this.formBuilder.group({
         title: [ conversation?.title, Validators.required ]
       });
@@ -125,16 +127,24 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     );
   }
 
-  selectConversation(conversation) {
+  selectConversation(conversation, index: number) {
     this.selectedConversation = conversation;
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev
     });
+    this.onConversationRender(index);
   }
 
-  onSearchChange() {
-    this.titleSearch = this.titleSearch;
+  onConversationRender(index: number) {
+    if (index !== this.lastRenderedConversation) {
+      this.isEditing = false;
+    }
+    this.lastRenderedConversation = index;
+  }
+
+  onSearchChange(searchValue: string) {
+    this.titleSearch = searchValue;
   }
 
   resetFilter() {
@@ -154,28 +164,37 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.filterConversations();
   }
 
+  matchesSearchTerm(value: string, searchTerm: string): boolean {
+    return value?.toLowerCase().includes(searchTerm.toLowerCase());
+  }
+
+  filterByTitle(conversation: Conversation): boolean {
+    return this.matchesSearchTerm(conversation.title, this.titleSearch);
+  }
+
+  filterByFullText(conversation: Conversation): boolean {
+    return conversation.conversations.some(chat => {
+      const queryMatch = this.matchesSearchTerm(chat.query, this.titleSearch);
+      const responseMatch = this.matchesSearchTerm(chat.response, this.titleSearch);
+      if (this.searchType === 'questions') {
+        return queryMatch;
+      } else if (this.searchType === 'responses') {
+        return responseMatch;
+      } else {
+        return queryMatch || responseMatch;
+      }
+    });
+  }
+
   filterConversations() {
     if (this.titleSearch.trim() === '' ) {
       this.getChatHistory();
     }
-
     this.filteredConversations = this.conversations?.filter(conversation => {
       if (this.fullTextSearch) {
-        const conversationMatches = conversation.conversations.some(chat => {
-          const queryMatch = chat.query?.toLowerCase().includes(this.titleSearch.toLowerCase());
-          const responseMatch = chat.response?.toLowerCase().includes(this.titleSearch.toLowerCase());
-          if (this.searchType === 'questions') {
-            return queryMatch;
-          } else if (this.searchType === 'responses') {
-            return responseMatch;
-          } else {
-            return queryMatch || responseMatch;
-          }
-        });
-        return conversationMatches;
+        return this.filterByFullText(conversation);
       }
-
-      return conversation.title?.toLowerCase().includes(this.titleSearch.toLowerCase());
+      return this.filterByTitle(conversation);
     });
   }
 }

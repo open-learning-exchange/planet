@@ -62,6 +62,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   deviceType: DeviceType;
   isMobile: boolean;
   userNotInShelf = false;
+  showFiltersRow = false;
 
   constructor(
     private userService: UserService,

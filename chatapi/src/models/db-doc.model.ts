@@ -4,5 +4,6 @@ export interface DbDoc {
   user: any;
   title: string;
   createdDate: number;
+  aiProvider: string;
   conversations: [];
 }
