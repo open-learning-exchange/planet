@@ -3,6 +3,7 @@ export interface ConversationForm {
   _rev: string;
   user: string;
   content: string;
+  aiProvider: AIProvider;
 }
 
 export interface Conversation {
