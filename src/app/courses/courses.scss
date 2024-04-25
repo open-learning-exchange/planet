@@ -1,5 +1,8 @@
 @import '../variables';
 
+$toolbar-height: 25vh;
+$label-height: 1rem;
+
 /* Column Widths */
 .mat-column-select {
   max-width: 44px;
@@ -46,6 +49,10 @@
 
 .margin-tp {
   margin-top: 0.75rem;
+}
+
+.search-bar {
+  height: $toolbar-height;
 }
 
 @media(max-width: $screen-md) {

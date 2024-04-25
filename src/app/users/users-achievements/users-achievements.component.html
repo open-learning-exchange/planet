@@ -57,11 +57,7 @@
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
             <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
-            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i">
-              <ng-container *ngFor="let resource of achievement.resources">
-                <planet-resources-menu [resources]="[ resource ]" color="primary" (click)="$event.stopPropagation()">{{resource.title}}</planet-resources-menu>
-              </ng-container>
-            </span>
+            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
           </mat-list-item>
         </mat-list>
       </div>
