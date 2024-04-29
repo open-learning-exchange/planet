@@ -199,7 +199,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.setSelectedConversation();
-    console.log(this.streaming);
 
     if (this.streaming) {
       this.conversations.push({ role: 'user', query: content, response: '' });

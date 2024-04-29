@@ -47,8 +47,7 @@ wss.on('connection', (ws) => {
         }));
       }
     } catch (error: any) {
-      console.log(error);
-      ws.send(`Error: ${error.message}: Cannot connect to the streaming endpoint`);
+      ws.send(`${error.message}: Cannot connect to the streaming endpoint`);
     }
   });
 
