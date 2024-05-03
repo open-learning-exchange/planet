@@ -30,18 +30,20 @@ import { CouchService } from '../shared/couchdb.service';
   constructor(
     private httpClient: HttpClient,
     private couchService: CouchService
-  ) {
-    this.socket = new WebSocket('ws' + this.baseUrl.slice(4));
+  ) { }
 
-    this.socket.onerror = (error) => {
-      this.errorSubject.next('WebSocket error');
-    };
-
-    // Listen for messages
-    this.socket.addEventListener('message', (event) => {
-      this.chatStreamSubject.next(event.data);
-    });
+  initializeWebSocket() {
+    if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
+      this.socket = new WebSocket('ws' + this.baseUrl.slice(4));
+      this.socket.onerror = (error) => {
+        this.errorSubject.next('WebSocket error');
+      };
+      this.socket.addEventListener('message', (event) => {
+        this.chatStreamSubject.next(event.data);
+      });
+    }
   }
+
 
   fetchAIProviders() {
     return this.httpClient.get(`${this.baseUrl}/checkproviders`);

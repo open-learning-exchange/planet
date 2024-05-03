@@ -46,10 +46,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
-    this.initializeChatStream();
-    this.initializeErrorStream();
     this.subscribeToAIService();
-    this.isStreamingEnabled();
+    this.checkStreamingStatusAndInitialize();
   }
 
   ngOnDestroy() {
@@ -88,11 +86,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
           name: aiService
         };
       }));
-  }
-
-  isStreamingEnabled() {
-    const configuration = this.stateService.configuration;
-    this.streaming = configuration.streaming;
   }
 
   createForm() {
@@ -135,6 +128,20 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       delete this.data._id;
       delete this.data._rev;
     }
+  }
+
+  checkStreamingStatusAndInitialize() {
+    this.isStreamingEnabled();
+    if (this.streaming) {
+      this.chatService.initializeWebSocket();
+      this.initializeChatStream();
+      this.initializeErrorStream();
+    }
+  }
+
+  isStreamingEnabled() {
+    const configuration = this.stateService.configuration;
+    this.streaming = configuration.streaming;
   }
 
   initializeErrorStream() {
