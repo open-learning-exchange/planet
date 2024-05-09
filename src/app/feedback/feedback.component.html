@@ -1,13 +1,11 @@
 <!-- Feedback Template -->
 <mat-toolbar>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileorTabletView">
-    <mat-toolbar-row>
-      <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-      <span i18n>Feedback List</span>
-      <span class="toolbar-fill"></span>
-      <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-      <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-    </mat-toolbar-row>
+    <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>Feedback List</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
+    <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
   </ng-container>
 
   <ng-template #mobileorTabletView>
