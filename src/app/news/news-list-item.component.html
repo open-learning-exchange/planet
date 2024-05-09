@@ -41,7 +41,7 @@
     <mat-menu #labelMenu="matMenu">
       <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
     </mat-menu>
-    <button mat-button i18n *ngIf="showShare" (click)="shareStory(item.doc)" i8n>Share with {
+    <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
       shareTarget, select, community {Community} nation {Nation} center {Earth}
     }</button>
   </mat-card-actions>
