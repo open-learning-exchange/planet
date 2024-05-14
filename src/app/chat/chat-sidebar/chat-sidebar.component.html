@@ -50,7 +50,9 @@
             <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog()"><mat-icon>share</mat-icon></button>
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)">
+              <mat-icon>share</mat-icon>
+            </button>
           </ng-template>
           <ng-template #conversationTitle>
             {{ conversation?.title?.slice(0, 25) || conversation.conversations[0].query.slice(0, 25) }}
