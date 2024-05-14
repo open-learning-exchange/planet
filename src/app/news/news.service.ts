@@ -55,9 +55,9 @@ export class NewsService {
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your news`, isMessageEdit = true) {
-    const configuration = this.stateService.configuration;
-    const message = typeof post.message === 'string' ? post.message : post.message.text;
-    const images = this.createImagesArray(post, message);
+    const { configuration } = this.stateService;
+    const message = post.chat ? '</br>' : (typeof post.message === 'string' ? post.message : post.message.text);
+    const images = post.chat ? [] : this.createImagesArray(post, message);
     const newPost = {
       docType: 'message',
       time: this.couchService.datePlaceholder,

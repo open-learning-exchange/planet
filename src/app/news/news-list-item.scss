@@ -18,3 +18,31 @@ mat-card {
 mat-card-content {
   margin-bottom: 0;
 }
+
+.chat-chip {
+  color: white;
+  background-color: #2c3e50;
+}
+
+.chat-container {
+  border: dashed 1px #2c3e50;
+  border-radius: 5px;
+  padding: 40px;
+}
+
+.conversation-query {
+  text-align: left;
+  padding: 8px;
+  border-radius: 5px;
+  background-color: #{$primary};
+  color: white;
+}
+
+.conversation-response {
+  margin: 8px 16px;
+}
+
+.conversation-error {
+  color: #ff0000;
+  font-style: italic;
+}
