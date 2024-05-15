@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../forms/planet-forms.module';
 
 import { MeetupsModule } from '../../meetups/meetups.module';
+import { TeamsModule } from '../../teams/teams.module';
 import { DialogsChatShareComponent } from './dialogs-chat-share.component';
 
 
@@ -16,6 +17,7 @@ import { DialogsChatShareComponent } from './dialogs-chat-share.component';
     MaterialModule,
     MeetupsModule,
     PlanetFormsModule,
+    TeamsModule,
     ReactiveFormsModule
   ],
   exports: [
