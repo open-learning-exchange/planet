@@ -204,7 +204,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   openShareDialog(conversation) {
     this.dialog.open(DialogsChatShareComponent, {
-      width: '30vw',
+      width: '50vw',
       data: {
         news: conversation,
       }
