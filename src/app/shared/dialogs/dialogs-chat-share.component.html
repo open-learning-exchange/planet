@@ -1,49 +1,59 @@
 <mat-dialog-content>
-  <h3 i18n>- Share with Community:</h3>
-  <div class="share-box">
-    <i i18n style="margin-right: 1rem;">add note</i>
-    <mat-checkbox [checked]="showForm" (change)="showForm = !showForm"></mat-checkbox>
-    <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
-      <mat-form-field *ngIf="showForm" class="full-width">
-        <textarea
-          matInput
-          placeholder="Optional message"
-          formControlName="message"
-          i18n-placeholder
-        ></textarea>
-      </mat-form-field>
-      <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
-        Share
-      </button>
-    </form>
-  </div>
-  <hr>
-  <h3 i18n>- Share with Team/Enterprise:</h3>
-  <div class="share-box">
-    <mat-form-field class="full-width">
-      <mat-label i18n>Team or Entreprise</mat-label>
-      <mat-select [(ngModel)]="selectedLink">
-        <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()" *ngIf="selectedLink?.db === 'teams'">
-      <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
-        <mat-step i18n-label completed="false" label="Select">
-          <planet-teams [mode]="selectedLink?.selector?.type" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
-        </mat-step>
-        <mat-step i18n-label label="Message" [stepControl]="teamForm">
-          <mat-form-field class="full-width">
-            <textarea matInput i18n-placeholder placeholder="Message" formControlName="message" required></textarea>
-            <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
+  <mat-accordion [multi]="false">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Share with Community </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <i i18n style="margin-right: 1rem;">add note</i>
+        <mat-checkbox [checked]="showForm" (change)="showForm = !showForm"></mat-checkbox><br>
+        <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
+          <mat-form-field *ngIf="showForm" class="full-width">
+            <textarea
+              matInput
+              placeholder="Optional message"
+              formControlName="message"
+              i18n-placeholder
+            ></textarea>
           </mat-form-field>
           <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
             Share
           </button>
-        </mat-step>
-      </mat-horizontal-stepper>
-    </form>
-  </div>
+        </form>
+      </ng-template>
+    </mat-expansion-panel>
+    <br>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Share with Team/Enterprise</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <mat-form-field class="full-width">
+          <mat-label i18n>Team or Entreprise</mat-label>
+          <mat-select [(ngModel)]="selectedLink">
+            <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()" *ngIf="selectedLink?.db === 'teams'">
+          <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
+            <mat-step i18n-label completed="false" label="Select">
+              <planet-teams [mode]="selectedLink?.selector?.type" [isDialog]="true" (rowClick)="teamSelect($event)"></planet-teams>
+            </mat-step>
+            <mat-step i18n-label label="Message" [stepControl]="teamForm">
+              <mat-form-field class="full-width">
+                <textarea matInput i18n-placeholder placeholder="Optional Message" formControlName="message"></textarea>
+                <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
+              </mat-form-field>
+              <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
+                Share
+              </button>
+            </mat-step>
+          </mat-horizontal-stepper>
+        </form>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button color="primary" mat-raised-button mat-dialog-close i18n>OK</button>
+  <button mat-raised-button mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>

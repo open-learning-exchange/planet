@@ -11,8 +11,8 @@ import { TeamsService } from '../../teams/teams.service';
 @Component({
   templateUrl: './dialogs-chat-share.component.html',
   styles: [ `
-    .share-box {
-      margin-left: 1.5rem;
+    .mat-expansion-panel {
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
     }
   ` ]
 })
