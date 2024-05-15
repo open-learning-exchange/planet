@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -14,9 +14,9 @@ import { TeamsService } from '../../teams/teams.service';
     .share-box {
       margin-left: 1.5rem;
     }
-  `]
+  ` ]
 })
-export class DialogsChatShareComponent {
+export class DialogsChatShareComponent implements OnInit {
   conversation: any;
   showForm: boolean;
   teamForm: FormGroup;
@@ -42,7 +42,7 @@ export class DialogsChatShareComponent {
 
   ngOnInit() {
     this.communityForm = this.formBuilder.group({
-      message: ['']
+      message: [ '' ]
     });
     this.teamForm = this.formBuilder.group({
       message: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],

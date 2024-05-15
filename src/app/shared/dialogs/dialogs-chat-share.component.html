@@ -1,13 +1,8 @@
-<!-- <h1 mat-dialog-title i18n>Share this conversation</h1> -->
 <mat-dialog-content>
   <h3 i18n>- Share with Community:</h3>
   <div class="share-box">
-    <button mat-icon-button (click)="showForm = !showForm">
-      <mat-icon>{{
-        showForm ? "keyboard_arrow_up" : "keyboard_arrow_down"
-      }}</mat-icon>
-    </button>
-    <i i18n>add note</i>
+    <i i18n style="margin-right: 1rem;">add note</i>
+    <mat-checkbox [checked]="showForm" (change)="showForm = !showForm"></mat-checkbox>
     <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
       <mat-form-field *ngIf="showForm" class="full-width">
         <textarea
