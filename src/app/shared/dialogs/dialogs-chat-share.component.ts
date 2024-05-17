@@ -1,14 +1,17 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { switchMap, tap } from 'rxjs/operators';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { forkJoin } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
+
 
 import { CustomValidators } from '../../validators/custom-validators';
-import { ValidatorService } from '../../validators/validator.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { NewsService } from '../../news/news.service';
 import { TeamsService } from '../../teams/teams.service';
+import { UserService } from '../../shared/user.service';
+import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './dialogs-chat-share.component.html',
@@ -19,9 +22,11 @@ import { TeamsService } from '../../teams/teams.service';
   ` ]
 })
 export class DialogsChatShareComponent implements OnInit {
+  user = this.userService.get();
   conversation: any;
   teamInfo: any;
   membersInfo: any;
+  excludeIds: any[] = [];
   showForm: boolean;
   teamForm: FormGroup;
   communityForm: FormGroup;
@@ -36,20 +41,19 @@ export class DialogsChatShareComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DialogsChatShareComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder,
     private couchService: CouchService,
+    private formBuilder: FormBuilder,
     private newsService: NewsService,
     private teamsService: TeamsService,
+    private userService: UserService,
     private validatorService: ValidatorService
   ) {
     this.conversation = data || this.conversation;
-    console.log(this.links);
-
   }
 
   ngOnInit() {
     this.communityForm = this.formBuilder.group({
-      message: [ '' ]
+      message: [ '', Validators.required ]
     });
     this.teamForm = this.formBuilder.group({
       message: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
@@ -57,6 +61,7 @@ export class DialogsChatShareComponent implements OnInit {
       linkId: '',
       teamType: ''
     });
+    this.getTeams();
   }
 
   teamSelect({ mode, teamId, teamType }) {
@@ -73,25 +78,42 @@ export class DialogsChatShareComponent implements OnInit {
     }
   }
 
-  // sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
-  //   return this.teamsService.sendNotifications(type, members || this.members, {
-  //     newMembersLength, url: this.router.url, team: { ...this.teamInfo }
-  //   });
-  // }
-
   getTeam(linkId: string) {
     return this.couchService.get(`teams/${linkId}`);
   }
 
   getTeamMembers(team: any) {
-    return this.teamsService.getTeamMembers(team, true);
+    return this.teamsService.getTeamMembers(team, true).pipe(
+      map(memberships => memberships.filter(membership => membership.docType === 'membership'))
+    );
+  }
+
+  getTeams() {
+    const allTeams$ = this.couchService.findAll('teams', { 'selector': { 'status': 'active' } });
+    const userTeams$ = this.couchService.findAll('teams', {
+      'selector': { 'userId': this.user._id, 'userPlanetCode': this.user.planetCode }
+    });
+
+    forkJoin([ allTeams$, userTeams$ ]).pipe(
+      map(([ allTeams, userTeams ]) => this.compareTeams(allTeams, userTeams))
+    ).subscribe();
+  }
+
+  compareTeams(allTeams, userTeams) {
+    const difference = allTeams.filter(team => !userTeams.some(userTeam => userTeam.teamId === team._id));
+    this.excludeIds = [ ...this.excludeIds, ...difference.map(team => team._id) ];
+  }
+
+  sendNotifications(type, members) {
+    return this.teamsService.sendNotifications(type, members, {
+      url: 'teams/view/' + this.teamInfo._id, team: { ...this.teamInfo }
+    });
   }
 
   shareWithTeam() {
     let linkId, teamType;
     if (this.teamForm.valid) {
       const team = this.teamForm.value;
-
       this.conversation.message = team.message ? team.message : '</br>';
       ({ linkId, teamType } = team);
     }
@@ -102,15 +124,18 @@ export class DialogsChatShareComponent implements OnInit {
         return this.getTeamMembers(teamData);
       })
     ).subscribe((membersData) => {
-      this.membersInfo = membersData;
-      this.showForm = true;
+      this.conversation.chat = true;
+
+      console.log(membersData);
 
       this.newsService.postNews({
-        viewIn: [ { '_id': linkId, section: 'teams' } ],
+        viewIn: [ { '_id': linkId, section: 'teams', public: false } ],
         messageType: teamType,
         messagePlanetCode: this.teamInfo.planetCode,
         ...this.conversation
-      }, $localize`Chat has been shared to ${this.teamInfo.type} ${this.teamInfo.title}`).subscribe();
+      }, $localize`Chat has been shared to ${this.teamInfo.type} ${this.teamInfo.name}`).pipe(
+        switchMap(() => this.sendNotifications('message', membersData)),
+      ).subscribe();
     });
   }
 
