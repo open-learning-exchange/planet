@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
@@ -53,7 +53,7 @@ export class DialogsChatShareComponent implements OnInit {
 
   ngOnInit() {
     this.communityForm = this.formBuilder.group({
-      message: [ '', Validators.required ]
+      message: [ '' ]
     });
     this.teamForm = this.formBuilder.group({
       message: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
@@ -104,9 +104,9 @@ export class DialogsChatShareComponent implements OnInit {
     this.excludeIds = [ ...this.excludeIds, ...difference.map(team => team._id) ];
   }
 
-  sendNotifications(type, members) {
+  sendNotifications(type, members, teamType) {
     return this.teamsService.sendNotifications(type, members, {
-      url: 'teams/view/' + this.teamInfo._id, team: { ...this.teamInfo }
+      url: `${teamType}/view/${this.teamInfo._id}`, team: { ...this.teamInfo }
     });
   }
 
@@ -126,15 +126,13 @@ export class DialogsChatShareComponent implements OnInit {
     ).subscribe((membersData) => {
       this.conversation.chat = true;
 
-      console.log(membersData);
-
       this.newsService.postNews({
         viewIn: [ { '_id': linkId, section: 'teams', public: false } ],
         messageType: teamType,
         messagePlanetCode: this.teamInfo.planetCode,
         ...this.conversation
       }, $localize`Chat has been shared to ${this.teamInfo.type} ${this.teamInfo.name}`).pipe(
-        switchMap(() => this.sendNotifications('message', membersData)),
+        switchMap(() => this.sendNotifications('message', membersData, teamType)),
       ).subscribe();
     });
   }
