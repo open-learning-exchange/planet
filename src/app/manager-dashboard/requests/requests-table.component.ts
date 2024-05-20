@@ -8,7 +8,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
-import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { StateService } from '../../shared/state.service';

@@ -6,9 +6,8 @@ import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { NotificationsService } from './notifications.service';
 
 @Component({
@@ -27,7 +26,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService,
     private notificationsService: NotificationsService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
