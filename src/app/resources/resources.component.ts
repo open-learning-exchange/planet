@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { takeUntil, map, switchMap, startWith, skip, take } from 'rxjs/operators';
 import { Subject, of, combineLatest } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -290,8 +290,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   shareResource(type, resources) {
     const msg = (type === 'pull' ? 'fetch' : 'send'),
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
-    this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
-    .subscribe((response: any) => {
+      this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type)).pipe(
+        take(1)
+      ).subscribe((response: any) => {
       this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
   }
