@@ -53,6 +53,7 @@ export class SyncService {
     return this.dialogsFormService
     .confirm(title, passwordFormFields, formGroup, true)
     .pipe(
+      take(1),
       switchMap((response: any): Observable<{ name, password, cancelled? }> => {
         if (response !== undefined) {
           return this.verifyPassword(response.password);
@@ -83,6 +84,7 @@ export class SyncService {
 
   confirmPasswordAndRunReplicators(replicators) {
     return this.openPasswordConfirmation().pipe(
+      take(1),
       switchMap((credentials) => {
       return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
     }));
