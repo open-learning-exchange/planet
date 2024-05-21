@@ -290,9 +290,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   shareResource(type, resources) {
     const msg = (type === 'pull' ? 'fetch' : 'send'),
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
-      this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type)).pipe(
-        take(1)
-      ).subscribe((response: any) => {
+    this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type)).pipe(take(1))
+      .subscribe((response: any) => {
       this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
     }, () => error => this.planetMessageService.showMessage(error));
   }
