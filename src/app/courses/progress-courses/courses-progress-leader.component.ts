@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CsvService } from '../../shared/csv.service';
-import { dedupeShelfReduce, dedupeObjectArray } from '../../shared/utils';
+import { dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
