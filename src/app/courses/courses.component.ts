@@ -11,7 +11,7 @@ import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
 import { Subject, of } from 'rxjs';
-import { switchMap, takeUntil, take } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
   commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch
@@ -413,9 +413,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const courses = courseIds.map(courseId => ({ item: findByIdInArray(this.courses.data, courseId), db: this.dbName }));
     const msg = (type === 'pull' ? 'fetch' : 'send');
     const parentType = type === 'pull' ? 'parent' : 'local';
-    this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(
-      take(1),
-      switchMap(replicators =>
+    this.syncService.replicatorsArrayWithTags(courses, type, parentType).pipe(switchMap(replicators =>
       this.syncService.confirmPasswordAndRunReplicators(replicators)
     )).subscribe(() => {
       this.planetMessageService.showMessage($localize`${courses.length} ${this.dbName} queued to ${msg}`);
