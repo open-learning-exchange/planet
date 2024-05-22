@@ -1,11 +1,9 @@
-import { OnDestroy } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { dedupeShelfReduce } from '../shared/utils';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
