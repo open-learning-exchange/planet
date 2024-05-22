@@ -136,7 +136,7 @@ export class SyncService {
     };
   }
 
-  // We take the first observable from the array on initialization since we get 2 as opposed to 1
+  // hack: we take the first observable from the array on initialization since we get 2 as opposed to 1
   replicatorsArrayWithTags(items, type: 'pull' | 'push', planetField: 'local' | 'parent') {
     return this.stateService.getCouchState('tags', planetField).pipe(
       take(1),
