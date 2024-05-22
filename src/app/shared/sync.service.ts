@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { forkJoin, Observable, throwError, of } from 'rxjs';
-import { switchMap, map, takeWhile, catchError, take, shareReplay } from 'rxjs/operators';
+import { switchMap, map, takeWhile, catchError, take } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
 import { TagsService } from './forms/tags.service';
@@ -139,9 +139,7 @@ export class SyncService {
   replicatorsArrayWithTags(items, type: 'pull' | 'push', planetField: 'local' | 'parent') {
     return this.stateService.getCouchState('tags', planetField).pipe(
       take(1),
-      map(tags => this.createReplicatorsArray(items, type, tags).pipe(
-        shareReplay(1)
-      )));
+      map(tags => this.createReplicatorsArray(items, type, tags)));
   }
 
   createReplicatorsArray(items, type: 'pull' | 'push', allTags: any[] = [], replicators = []) {
