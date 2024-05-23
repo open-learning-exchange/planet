@@ -424,7 +424,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
     .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
-      const data = { okClick: this.sendCourse('courses').bind(this),
+      const data = { okClick: this.sendCourse().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
         ...planet };
@@ -434,7 +434,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
-  sendCourse(db: string) {
+  sendCourse() {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
       this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {
