@@ -18,10 +18,6 @@ const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const pdfMake = require('pdfmake/build/pdfmake');
-const pdfFonts = require('pdfmake/build/vfs_fonts');
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 @Component({
   templateUrl: './users-achievements.component.html',
   styleUrls: [ './users-achievements.scss' ],
@@ -190,7 +186,6 @@ export class UsersAchievementsComponent implements OnInit {
       })
       .download(`${this.user.name} resumé.pdf`);
     });
-
   }
 
   generatePDF() {
