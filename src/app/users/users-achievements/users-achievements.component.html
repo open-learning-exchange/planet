@@ -12,7 +12,7 @@
     <a mat-raised-button color="accent" style="margin-right: 1rem;" (click)="openGenerateResumeDialog()" *ngIf="ownAchievements">
       <span i18n>Create Resumé</span>
     </a>
-    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
+    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon></a>
     <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements" (click)="generatePDF()">
       <span i18n>Print Achievements</span>
     </a> <br>
