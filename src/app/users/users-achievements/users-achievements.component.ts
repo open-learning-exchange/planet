@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -10,6 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { ChatService } from '../../shared/chat.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -31,6 +33,8 @@ export class UsersAchievementsComponent implements OnInit {
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
+    private dialogsFormService: DialogsFormService,
+    private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute,
@@ -114,7 +118,26 @@ export class UsersAchievementsComponent implements OnInit {
     });
   }
 
-  generateResume() {
+  openGenerateResumeDialog() {
+    this.dialogsFormService.openDialogsForm(
+      $localize`Generate Resume`,
+      [
+        { 'type': 'markdown', 'name': 'education', 'placeholder': $localize`Education`, 'required': false },
+        { 'type': 'markdown', 'name': 'experience', 'placeholder': $localize`Experience`, 'required': false },
+        { 'type': 'markdown', 'name': 'skills', 'placeholder': $localize`Skills`, 'required': false },
+        { 'type': 'markdown', 'name': 'additional', 'placeholder': $localize`Additional Info`, 'required': false }
+      ],
+      this.fb.group({
+        education: [ '' ],
+        experience: [ '' ],
+        skills: [ '' ],
+        additional: [ '' ]
+      }),
+      { onSubmit: this.generateResume.bind(this), closeOnSubmit: true }
+    );
+  }
+
+  generateResume(formData) {
     const { email, firstName, middleName, lastName, language, phoneNumber } = this.user;
     const { achievements, achievementsHeader, goals, purpose, references } = this.achievements;
 
@@ -136,6 +159,7 @@ export class UsersAchievementsComponent implements OnInit {
       achievements: ${achievementsHeader} - ${achievements}
       goals: ${goals}
       purpose: ${purpose}
+      ${formData ? `User-filled form data ${formData}` : ''}
 
       references: ${formatReferences(references)}
 
