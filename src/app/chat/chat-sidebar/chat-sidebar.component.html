@@ -18,7 +18,7 @@
           <mat-icon>help_outline</mat-icon>
         </button>
         <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
-          <span class="overlay-text" i18n>search through the entire conversation, not just the title</span>
+          <span class="overlay-text" i18n>Search through the entire conversation, not just the title</span>
         </ng-template>
         <div>
           <mat-button-toggle-group *ngIf="fullTextSearch" [(ngModel)]="searchType" (change)="filterConversations()">
@@ -30,11 +30,11 @@
     </div>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation, i)">
+        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation, i)" style="width: 230px;">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
               <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
-                <mat-form-field class="mat-form-field-type-no-underline">
+                <mat-form-field class="mat-form-field" style="width: 50%;">
                   <input matInput [formControl]="titleForm[conversation?._id].controls.title" required>
                   <mat-error>
                     <planet-form-error-messages [formControl]="titleForm[conversation?._id].controls.title"></planet-form-error-messages>
@@ -47,9 +47,12 @@
           </ng-container>
           <ng-template #notEditing>
             <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
-            <mat-icon *ngIf="selectedConversation?._id === conversation?._id" class="sidebar-icon" (click)="toggleEditTitle()" style="font-size:larger;">
-              edit
-            </mat-icon>
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)">
+              <mat-icon>share</mat-icon>
+            </button>
           </ng-template>
           <ng-template #conversationTitle>
             {{ conversation?.title?.slice(0, 25) || conversation.conversations[0].query.slice(0, 25) }}

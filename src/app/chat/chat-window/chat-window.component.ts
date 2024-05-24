@@ -8,6 +8,7 @@ import { ConversationForm, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   selector: 'planet-chat-window',
@@ -17,7 +18,7 @@ import { UserService } from '../../shared/user.service';
 export class ChatWindowComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
-  setStreamOn = false;
+  streaming: boolean;
   disabled = false;
   provider: AIProvider;
   conversations: any[] = [];
@@ -37,6 +38,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
     private formBuilder: FormBuilder,
+    private stateService: StateService,
     private userService: UserService
   ) {}
 
@@ -44,9 +46,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
-    this.initializeChatStream();
-    this.initializeErrorStream();
     this.subscribeToAIService();
+    this.checkStreamingStatusAndInitialize();
   }
 
   ngOnDestroy() {
@@ -129,6 +130,20 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     }
   }
 
+  checkStreamingStatusAndInitialize() {
+    this.isStreamingEnabled();
+    if (this.streaming) {
+      this.chatService.initializeWebSocket();
+      this.initializeChatStream();
+      this.initializeErrorStream();
+    }
+  }
+
+  isStreamingEnabled() {
+    const configuration = this.stateService.configuration;
+    this.streaming = configuration.streaming;
+  }
+
   initializeErrorStream() {
     // Subscribe to WebSocket error messages
     this.chatService.getErrorStream().subscribe((errorMessage) => {
@@ -185,7 +200,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.setSelectedConversation();
 
-    if (this.setStreamOn) {
+    if (this.streaming) {
       this.conversations.push({ role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {

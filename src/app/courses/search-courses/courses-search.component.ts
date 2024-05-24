@@ -18,9 +18,9 @@ import { MatSelectionList } from '@angular/material/list';
 @Component({
   template: `
     <span class="mat-caption" i18n>{category, select,
-      subject {Subject}
-      grade {Grade}
-      language {Language}
+      languageOfInstruction {Language}
+      gradeLevel {Grade Level}
+      subjectLevel {Subject Level}
     }
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
@@ -84,9 +84,9 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   @ViewChildren(CoursesSearchListComponent) searchListComponents: QueryList<CoursesSearchListComponent>;
 
   categories = [
-    { 'label': 'language', 'options': languages },
-    { 'label': 'subject', 'options': constants.subjectLevels },
-    { 'label': 'grade', 'options': constants.gradeLevels },
+    { 'label': 'languageOfInstruction', 'options': languages },
+    { 'label': 'gradeLevel', 'options': constants.gradeLevels },
+    { 'label': 'subjectLevel', 'options': constants.subjectLevels },
   ];
 
   searchLists = [];
@@ -114,6 +114,7 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
     return ({
       category: category.label,
       items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
+        .filter(item => typeof item === 'string' && item.trim() !== '')
         .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
     });
   }

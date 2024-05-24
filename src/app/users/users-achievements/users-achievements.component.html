@@ -13,6 +13,10 @@
       <span i18n>Create Resumé</span>
     </a>
     <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
+    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements" (click)="generatePDF()">
+      <span i18n>Print Achievements</span>
+    </a> <br>
+    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
       <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
       <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
     </a>
@@ -57,11 +61,7 @@
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
             <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
-            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i">
-              <ng-container *ngFor="let resource of achievement.resources">
-                <planet-resources-menu [resources]="[ resource ]" color="primary" (click)="$event.stopPropagation()">{{resource.title}}</planet-resources-menu>
-              </ng-container>
-            </span>
+            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
           </mat-list-item>
         </mat-list>
       </div>

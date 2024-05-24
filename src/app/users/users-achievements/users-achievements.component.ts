@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
@@ -12,6 +13,10 @@ import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { ChatService } from '../../shared/chat.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+
+const pdfMake = require('pdfmake/build/pdfmake');
+const pdfFonts = require('pdfmake/build/vfs_fonts');
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -105,8 +110,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   isClickable(achievement) {
-    return (achievement.resources.length > 0
-            || achievement.description.length > 0);
+    return achievement.description.length > 0;
   }
 
   setCertifications(courses = [], progress = [], certifications = []) {
@@ -187,6 +191,84 @@ export class UsersAchievementsComponent implements OnInit {
       .download(`${this.user.name} resumé.pdf`);
     });
 
+  }
+
+  generatePDF() {
+    const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y, h:mm:ss a');
+    let contentArray = [
+      {
+        text: `${`${this.user.firstName}'s achievements`}`,
+        style: 'header',
+        alignment: 'center',
+      },
+      {
+        text: `
+          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${this.user.birthDate ? `Birthdate: ${this.user.birthDate}` : ''}
+          ${formattedBirthDate ? `Birthplace: ${formattedBirthDate}` : ''}
+          `,
+        alignment: 'center',
+      },
+    ];
+
+    const optionals = [];
+    if (this.achievements.purpose) {
+      optionals.push(
+        { text: 'My Purpose', style: 'subHeader', alignment: 'center' },
+        { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] }
+      );
+    }
+
+    if (this.achievements.goals) {
+      optionals.push(
+        { text: 'My Goals', style: 'subHeader', alignment: 'center' },
+        { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] }
+      );
+    }
+
+    if (this.achievements.achievements && this.achievements.achievements.length > 0) {
+      optionals.push(
+        { text: 'My Achievements', style: 'subHeader', alignment: 'center' },
+        ...this.achievements.achievements.map((achievement) => {
+          return [
+            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+            { text: achievement.description, marginLeft: 40 },
+          ];
+        })
+      );
+    }
+
+    if (this.certifications && this.certifications.length > 0) {
+      optionals.push(
+        { text: 'My Certifications', style: 'subHeader', alignment: 'center' },
+        ...this.certifications.map((certification) => {
+          return [
+            { text: certification.title, bold: true, margin: [ 20, 5 ] },
+            { text: certification.description, marginLeft: 40 },
+          ];
+        })
+      );
+    }
+
+    contentArray = contentArray.concat(optionals);
+
+    const documentDefinition = {
+      content: contentArray,
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+        },
+        subHeader: {
+          fontSize: 16,
+          bold: true
+        }
+      },
+    };
+
+    pdfMake
+      .createPdf(documentDefinition)
+      .download(`${this.user.name} achievements.pdf`);
   }
 
 }

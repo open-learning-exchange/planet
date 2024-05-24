@@ -9,9 +9,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
-import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { filterSpecificFields } from '../shared/table-helpers';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
@@ -76,7 +73,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private dialogsListService: DialogsListService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
