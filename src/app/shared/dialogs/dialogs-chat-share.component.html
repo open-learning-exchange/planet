@@ -41,7 +41,7 @@
             </mat-step>
             <mat-step i18n-label label="Message" [stepControl]="teamForm">
               <mat-form-field class="full-width">
-                <textarea matInput i18n-placeholder placeholder="Message" formControlName="message" required></textarea>
+                <textarea matInput i18n-placeholder placeholder="Message" formControlName="message"></textarea>
                 <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
               </mat-form-field>
               <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
