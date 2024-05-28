@@ -50,12 +50,12 @@ export class DialogsChatShareComponent implements OnInit {
 
   ngOnInit() {
     this.communityForm = this.formBuilder.group({
-      message: [ '' ]
+      message: ''
     });
     this.teamForm = this.formBuilder.group({
-      message: [ '' ],
-      linkId: [ '' ],
-      teamType: [ '' ]
+      message: '',
+      linkId: '',
+      teamType: ''
     });
     this.getTeams();
   }
