@@ -6,12 +6,10 @@ import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 
-import { CustomValidators } from '../../validators/custom-validators';
 import { CouchService } from '../../shared/couchdb.service';
 import { NewsService } from '../../news/news.service';
 import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
-import { ValidatorService } from '../../validators/validator.service';
 
 @Component({
   templateUrl: './dialogs-chat-share.component.html',
@@ -46,7 +44,6 @@ export class DialogsChatShareComponent implements OnInit {
     private newsService: NewsService,
     private teamsService: TeamsService,
     private userService: UserService,
-    private validatorService: ValidatorService
   ) {
     this.conversation = data || this.conversation;
   }
@@ -56,16 +53,14 @@ export class DialogsChatShareComponent implements OnInit {
       message: [ '' ]
     });
     this.teamForm = this.formBuilder.group({
-      message: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
-      route: [ '', CustomValidators.required ],
-      linkId: '',
-      teamType: ''
+      message: [ '' ],
+      linkId: [ '' ],
+      teamType: [ '' ]
     });
     this.getTeams();
   }
 
-  teamSelect({ mode, teamId, teamType }) {
-    this.teamForm.controls.route.setValue(this.teamsService.teamLinkRoute(mode, teamId));
+  teamSelect({ teamId, teamType }) {
     this.teamForm.controls.linkId.setValue(teamId);
     this.teamForm.controls.teamType.setValue(teamType);
     this.linkStepper.selected.completed = true;
