@@ -42,6 +42,15 @@
           </mat-list>
         </div>
       </ng-container>
+      <div *ngIf="achievements.links.length > 0">
+        <h3 i18n>My Links</h3>
+        <mat-list>
+          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let link of achievements.links">
+            <h4 mat-line>{{link.title}}:</h4>
+            <a href="{{link.url}}" target="_blank" class="styled-link"> {{link.url}} </a>
+          </mat-list-item>
+        </mat-list>
+      </div>
       <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
