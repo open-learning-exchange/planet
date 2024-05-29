@@ -9,7 +9,7 @@
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements" (click)="generatePDF()">
+    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
       <span i18n>Print Achievements</span>
     </a> <br>
     <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
