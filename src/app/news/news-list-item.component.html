@@ -47,7 +47,7 @@
     </button>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="item.doc.user.name === currentUser.name">
-      <button mat-icon-button type="button" (click)="editNews(item.doc)" *ngIf="!item.doc.chat"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
     </ng-container>
     <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
