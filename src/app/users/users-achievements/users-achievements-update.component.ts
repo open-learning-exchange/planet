@@ -40,6 +40,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   get references(): FormArray {
     return <FormArray>this.editForm.controls.references;
   }
+  get links(): FormArray {
+    return <FormArray>this.editForm.controls.links;
+  }
   minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
@@ -67,6 +70,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
       this.editForm.controls.references = this.fb.array(achievements.references || []);
+      this.editForm.controls.links = this.fb.array(achievements.links || []);
       // Keeping older otherInfo property so we don't lose this info on database
       this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
       if (this.docInfo._id === achievements._id) {
@@ -92,6 +96,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       achievementsHeader: '',
       achievements: this.fb.array([]),
       references: this.fb.array([]),
+      links: this.fb.array([]),
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
       sendToNation: false,
@@ -158,6 +163,22 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         email: [ reference.email, Validators.email ],
       }),
       { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
+    );
+  }
+
+  addLink(index = -1, link: any = { title: '', url: '' }) {
+    this.dialogsFormService.openDialogsForm(
+      link.title !== '' ? $localize`Edit Link` : $localize`Add Link`,
+      [
+        { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Link Title`, required: true },
+        { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, 'required': true }
+      ],
+      this.fb.group({
+        ...link,
+        title: [ link.title, CustomValidators.required ],
+        url: [ link.url, CustomValidators.required ],
+      }),
+      { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
     );
   }
 
