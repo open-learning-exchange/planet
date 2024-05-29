@@ -113,21 +113,23 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  addAchievement(index = -1, achievement = { title: '', description: '', date: '' }) {
+  addAchievement(index = -1, achievement = { title: '', description: '', link: '', date: '' }) {
     if (typeof achievement === 'string') {
-      achievement = { title: '', description: achievement, date: '' };
+      achievement = { title: '', description: achievement, link: '', date: '' };
     }
     this.dialogsFormService.openDialogsForm(
       achievement.title !== '' ? $localize`Edit Achievement` : $localize`Add Achievement`,
       [
         { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Title`, required: true },
         { 'type': 'date', 'name': 'date', 'placeholder': $localize`Date`, 'required': false },
+        { 'type': 'textbox', 'name': 'link', 'placeholder': $localize`Link`, required: false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
       ],
       this.fb.group({
         ...achievement,
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
+        link: [ achievement.link ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
