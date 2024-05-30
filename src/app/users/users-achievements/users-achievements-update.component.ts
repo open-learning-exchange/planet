@@ -187,9 +187,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       if (formValue === undefined) {
         return;
       }
-      if (formValue.resources) {
-        formValue.resources.sort((a, b) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1);
-      }
       this.updateFormArray(formArray, formGroup, index);
     };
   }
@@ -258,10 +255,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
-  }
-
-  removeResource(achievement: FormControl, resource) {
-    achievement.setValue({ ...achievement.value, resources: achievement.value.resources.filter(({ _id }) => _id !== resource._id) });
   }
 
 }
