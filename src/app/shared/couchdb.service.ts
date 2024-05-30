@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable, of, empty, throwError } from 'rxjs';
-import { catchError, map, expand, takeWhile, toArray, flatMap, switchMap } from 'rxjs/operators';
+import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
-import { findDocuments, inSelector } from './mangoQueries';
+import { findDocuments } from './mangoQueries';
 
 class DatePlaceholder {}
 

@@ -86,6 +86,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         this.planetName = this.stateService.configuration.name;
       }
     });
+    this.subscribeToLogoutClick();
   }
 
   ngDoCheck() {
@@ -145,6 +146,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     } else {
       this.userImgSrc = '';
     }
+  }
+
+  subscribeToLogoutClick() {
+    this.userService.userLogout$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => this.logoutClick());
   }
 
   logoutClick() {

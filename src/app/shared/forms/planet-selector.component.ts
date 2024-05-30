@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { StateService } from '../state.service';
-import { getDomainParams, attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-selector',

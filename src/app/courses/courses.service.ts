@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, forkJoin, of, combineLatest, zip } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
-import { switchMap, map, startWith, skip, debounceTime, filter, take } from 'rxjs/operators';
+import { switchMap, map, filter, take } from 'rxjs/operators';
 import { RatingService } from '../shared/forms/rating.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';

@@ -1,4 +1,6 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -12,6 +14,7 @@ import {
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -26,21 +29,7 @@ export class TableState {
 @Component({
   selector: 'planet-users-table',
   templateUrl: './users-table.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-profile {
-      max-width: 100px;
-    }
-    .mat-column-birthDate, .mat-column-lastVisit, mat-progress-bar {
-      max-width: 225px;
-    }
-    mat-cell p {
-      margin: 0;
-    }
-  ` ]
+  styleUrls: [ './users-table.scss' ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
@@ -93,6 +82,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -101,8 +92,12 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService
-  ) {}
+    private planetMessageService: PlanetMessageService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -144,6 +139,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   onPaginateChange(e: PageEvent) {

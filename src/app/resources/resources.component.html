@@ -10,13 +10,15 @@
   <ng-template #mobileView>
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
+      <span class="toolbar-fill"></span>
+      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
-    <mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="filterRow"></ng-container>
     </mat-toolbar-row>
   </ng-template>
 
-  <mat-toolbar-row class="search-bar" *ngIf="showFilters==='on'">
+  <mat-toolbar-row class="search-bar" *ngIf="showFilters">
     <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
   </mat-toolbar-row>
 </mat-toolbar>
@@ -31,7 +33,7 @@
 
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="toggleFilters()" *ngIf="myView !== 'myPersonals'">Filter</button>
+  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
   <mat-form-field class="font-size-1 margin-lr-4">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
@@ -54,7 +56,7 @@
           </button>
         </span>
         <span *ngIf="!parent && isTablet">
-          <button *ngIf="!parent && !isDialog && isTablet" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+          <button *ngIf="!isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
@@ -101,7 +103,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters==='on'}" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -118,14 +120,23 @@
       </ng-container>
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu">
+        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
           <h3 class="header">
-            <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{element.doc.title}}</a>
-            <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{element.doc.title}}</a></ng-template>
-            <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
-              <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
+                [checked]="selection.isSelected(element._id)">
+              </mat-checkbox>
+              <span class="margin-lr-5"></span>
             </ng-container>
+            <ng-container *ngTemplateOutlet="headerText"></ng-container>
+            <ng-template #headerText>
+              <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
+              <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
+              <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
+                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
+                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+              </ng-container>
+            </ng-template>
           </h3>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">

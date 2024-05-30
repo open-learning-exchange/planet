@@ -187,11 +187,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
   }
 
-  openCourseDialog(course: any) {
+  openCourseView(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId: course._id },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }

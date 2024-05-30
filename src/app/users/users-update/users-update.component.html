@@ -92,8 +92,8 @@
                 i18n>Female</span>
             </div>
           </mat-radio-button>
-          <mat-error>
-            <planet-form-error-messages [control]="editForm.controls.gender"></planet-form-error-messages>
+          <mat-error i18n *ngIf="editForm.controls.gender.invalid && editForm.controls.gender.touched">
+            This field is required
           </mat-error>
           <mat-slide-toggle *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
             formControlName="betaEnabled" i18n i18n-matTooltip
@@ -108,7 +108,10 @@
       </form>
     </div>
     <div *ngIf="!submissionMode" class="profile-image-section">
-      <img class="profile-image-update" [src]="previewSrc">
+      <div style="text-align: center;">
+        <img class="profile-image-update" [src]="previewSrc"><br>
+        <button *ngIf="(uploadImage && currentImgKey) && !file" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
+      </div>
       <div class="profile-image-upload">
         <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig"
           [text]="ngxImgText" [errorTexts]="ngxImgErrText"></ngx-img>

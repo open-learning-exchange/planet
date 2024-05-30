@@ -26,6 +26,27 @@ import { StateService } from '../shared/state.service';
     .view-container > *:last-child {
       margin-bottom: 0;
     }
+    .send-view {
+      padding-bottom: 0;
+    }
+    .list-view {
+      padding-top: 0;
+    }
+    .mat-raised-button {
+      margin: 0.25rem;
+    }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .version-card {
+      flex: 1;
+      max-width: calc(50% - 20px);
+      margin: 1rem;
+    }
+    .pinClass {
+      font-size: 1.5rem;
+    }
   ` ]
 })
 
@@ -48,6 +69,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   fetchItemCount = 0;
   pendingPushCount = 0;
   isHub = false;
+  streaming: boolean;
+  overlayOpen = false;
 
   constructor(
     private userService: UserService,
@@ -63,6 +86,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.streaming = this.planetConfiguration.streaming;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
       this.checkRequestStatus();
@@ -277,6 +301,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.versionLocalApk = localVersion.replace(/v/gi, '').trim();
       this.versionLatestApk = (latestVersion.latestapk || 'N/A').replace(/v/gi, '').trim();
     });
+  }
+
+  toggleOverlay(): void {
+    this.overlayOpen = !this.overlayOpen;
+  }
+
+  toggleStreaming(): void {
+    const configuration = this.planetConfiguration;
+    this.configurationService.updateConfiguration({ ...configuration, streaming: this.streaming }).subscribe(null,
+      error => this.planetMessageService.showAlert($localize`An error occurred please try again.`),
+      () => {
+        this.planetMessageService.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
+      }
+    );
   }
 
 }

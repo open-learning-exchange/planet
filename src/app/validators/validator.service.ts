@@ -3,7 +3,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 // Make sure not to import the entire rxjs library!!!
 import { Observable, timer, of } from 'rxjs';
 
-import { findOneDocument, findDocuments } from '../shared/mangoQueries';
+import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';

@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { forkJoin, Subject } from 'rxjs';
-import { findDocuments } from '../../shared/mangoQueries';
+import { forkJoin } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { ReportsService } from './reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets } from './reports.utils';
 
@@ -25,7 +23,6 @@ export class ReportsPendingComponent implements OnInit {
     private couchService: CouchService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private reportsService: ReportsService,
     private managerService: ManagerService
   ) {}
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 @Component({
   templateUrl: './manager-sync.component.html'

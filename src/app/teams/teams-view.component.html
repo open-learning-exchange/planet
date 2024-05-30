@@ -20,7 +20,7 @@
         <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
           { mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }
         </button>
-        <button *ngIf="mode==='team'" mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
           Add Courses
         </button>
         <ng-container *ngIf="!isUserLeader && mode !== 'services'">
@@ -148,7 +148,7 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Courses" *ngIf="mode==='team'">
+        <mat-tab label="Courses">
           <ng-template mat-tab-label>
             <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
           </ng-template>

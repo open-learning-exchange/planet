@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { combineLatest, Subject, of } from 'rxjs';
-import { map, takeUntil, take } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';
@@ -382,7 +382,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'logins':
         this.csvService.exportCSV({
           data: filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-            .map(activity => ({ ...activity, androidId: activity.androidId || '' })),
+          .map(activity => ({
+            ...activity,
+            androidId: activity.androidId || '',
+            deviceName: activity.deviceName || '',
+            customDeviceName: activity.customDeviceName || ''
+          })),
           title: $localize`Member Visits`
         });
         break;
@@ -415,6 +420,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data: { courseId: courseId },
       minWidth: '600px',
       maxWidth: '90vw',
+      maxHeight: '90vh',
       autoFocus: false
     });
   }

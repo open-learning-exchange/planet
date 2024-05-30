@@ -76,7 +76,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedAdded = 0;
   selectedSync = [];
   isAuthorized = false;
-  showFilters = 'off';
+  showFilters = false;
   searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions(
     [
@@ -91,6 +91,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   isTablet: boolean;
+  showFiltersRow = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -378,10 +379,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
     this.selectedSync = selected.filter(id => this.hasAttachment(id));
-  }
-
-  toggleFilters() {
-    this.showFilters = this.showFilters === 'off' ? 'on' : 'off';
   }
 
   hasAttachment(id: string) {

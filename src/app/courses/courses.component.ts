@@ -10,15 +10,15 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { UserService } from '../shared/user.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { switchMap, takeUntil, map } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import {
-  filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString,
-  dropdownsFill, createDeleteArray, filterSpecificFieldsByWord, filterTags, commonSortingDataAccessor,
-  selectedOutOfFilter, filterShelf, trackById, filterIds
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
+import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -31,6 +31,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
 import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { CoursesSearchComponent } from './search-courses/courses-search.component';
 
 @Component({
   selector: 'planet-courses',
@@ -49,6 +50,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
   @Input() isDialog = false;
   @Input() isForm = false;
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
@@ -63,9 +65,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
   getOpts = this.parent ? { domain: this.planetConfiguration.parentDomain } : {};
+  languages: any = languages;
   gradeOptions: any = constants.gradeLevels;
   subjectOptions: any = constants.subjectLevels;
   filter = {
+    'doc.languageOfInstruction': '',
     'doc.gradeLevel': '',
     'doc.subjectLevel': ''
   };
@@ -87,8 +91,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   emptyData = false;
   isAuthorized = false;
   tagFilter = new FormControl([]);
+  tagFilterValue = [];
+  searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions([
-    filterDropdowns(this.filter),
+    filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
     filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
     filterShelf(this.myCoursesFilter, 'admission'),
@@ -97,6 +103,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   trackById = trackById;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  showFilters = false;
+  showFiltersRow = false;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -158,6 +166,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.tagFilter.valueChanges.subscribe((tags) => {
+      this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
@@ -304,15 +313,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const { inShelf, notInShelf } = this.userService.countInShelf(selected.filter(id => this.hasSteps(id)), 'courseIds');
     this.selectedEnrolled = inShelf;
     this.selectedNotEnrolled = notInShelf;
-    this.selectedLocal = selected.filter(id => this.isLocal(id)).length;
+    this.selectedLocal = selected.filter(id => this.isLocalOrNation(id)).length;
   }
 
   hasSteps(id: string) {
     return this.courses.data.find((course: any) => course._id === id && course.doc.steps.length > 0);
   }
 
-  isLocal(id: string) {
-    return this.courses.data.find((course: any) => course._id === id && course.doc.sourcePlanet === this.planetConfiguration.code);
+  isLocalOrNation(id: string) {
+    return this.courses.data.find((course: any) =>
+      course._id === id && (course.doc.sourcePlanet === this.planetConfiguration.code || this.planetConfiguration.parentCode === 'earth')
+    );
   }
 
   onFilterChange(filterValue: string, field: string) {
@@ -326,28 +337,40 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
   }
 
+  onSearchChange({ items, category }) {
+    this.searchSelection[category] = items;
+    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+      ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
+    );
+    this.titleSearch = this.titleSearch;
+    this.removeFilteredFromSelection();
+  }
+
+  resetFilter() {
+    this.tagFilter.setValue([]);
+    this.tagFilterValue = [];
+    Object.keys(this.searchSelection).forEach(key => this.searchSelection[key] = []);
+    if (this.searchComponent) {
+      this.searchComponent.reset();
+    }
+    this.titleSearch = '';
+  }
+
   recordSearch(complete = false) {
     if (this.courses.filter !== '') {
       this.searchService.recordSearch({
         text: this._titleSearch,
         type: this.dbName,
-        filter: { ...this.filter, tags: this.tagFilter.value }
+        filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);
     }
-  }
-
-  resetSearch() {
-    this.tagFilter.setValue([]);
-    this.filter['doc.gradeLevel'] = '';
-    this.filter['doc.subjectLevel'] = '';
-    this.titleSearch = '';
   }
 
   // Returns a space to fill the MatTable filter field so filtering runs for dropdowns when
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
     return this.tagFilter.value.length > 0 ||
-      Object.entries(this.filter).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
+      Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
       this.myCoursesFilter.value === 'on' ||
       this.includeIds.length > 0 ?
       ' ' : '';
@@ -382,7 +405,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   shareLocal(selectedIds) {
-    const localSelections = selectedIds.filter(id => this.isLocal(id) !== undefined);
+    const localSelections = selectedIds.filter(id => this.isLocalOrNation(id) !== undefined);
     this.shareCourse('push', localSelections);
   }
 
@@ -401,7 +424,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
     .pipe(takeUntil(this.onDestroy$))
     .subscribe((planet) => {
-      const data = { okClick: this.sendCourse('courses').bind(this),
+      const data = { okClick: this.sendCourse().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
         ...planet };
@@ -411,7 +434,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
-  sendCourse(db: string) {
+  sendCourse() {
     return (selected: any) => {
       const coursesToSend = this.selection.selected.map(id => findByIdInArray(this.courses.data, id));
       this.syncService.createChildPullDoc(coursesToSend, 'courses', selected).subscribe(() => {

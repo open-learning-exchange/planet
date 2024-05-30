@@ -113,9 +113,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  addAchievement(index = -1, achievement = { title: '', description: '', resources: [], date: '' }) {
+  addAchievement(index = -1, achievement = { title: '', description: '', date: '' }) {
     if (typeof achievement === 'string') {
-      achievement = { title: '', description: achievement, resources: [], date: '' };
+      achievement = { title: '', description: achievement, date: '' };
     }
     this.dialogsFormService.openDialogsForm(
       achievement.title !== '' ? $localize`Edit Achievement` : $localize`Add Achievement`,
@@ -123,11 +123,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Title`, required: true },
         { 'type': 'date', 'name': 'date', 'placeholder': $localize`Date`, 'required': false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
-        { 'type': 'dialog', 'name': 'resources', 'db': 'resources', 'text': $localize`Add Resources` }
       ],
       this.fb.group({
         ...achievement,
-        resources: [ achievement.resources ],
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
@@ -165,9 +163,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     return (formValue, formGroup) => {
       if (formValue === undefined) {
         return;
-      }
-      if (formValue.resources) {
-        formValue.resources.sort((a, b) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1);
       }
       this.updateFormArray(formArray, formGroup, index);
     };
@@ -237,10 +232,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
-  }
-
-  removeResource(achievement: FormControl, resource) {
-    achievement.setValue({ ...achievement.value, resources: achievement.value.resources.filter(({ _id }) => _id !== resource._id) });
   }
 
 }

@@ -8,7 +8,6 @@ import { ExamsAddComponent } from '../exams/exams-add.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
 import { ExamsViewComponent } from '../exams/exams-view.component';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
-import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
 
 const routes: Routes = [

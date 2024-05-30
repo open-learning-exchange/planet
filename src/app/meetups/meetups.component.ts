@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -13,7 +11,6 @@ import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
-import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray } from '../shared/utils';
@@ -54,7 +51,6 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private couchService: CouchService,
-    private dialog: MatDialog,
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,

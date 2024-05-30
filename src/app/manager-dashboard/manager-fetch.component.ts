@@ -81,6 +81,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   }
 
   getPushedItem() {
+    console.log('Getting pushed list');
+
     const itemsToPull = this.selection.selected.map(id => findByIdInArray(this.pushedItems.data, id));
     const deleteItems = itemsToPull.map(sentItem => ({ _id: sentItem._id, _rev: sentItem._rev, _deleted: true }));
     this.syncService.replicatorsArrayWithTags(itemsToPull, 'pull', 'parent').pipe(switchMap((replicators) =>

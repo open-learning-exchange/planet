@@ -4,8 +4,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
-import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
-import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { NewsListComponent } from './news-list.component';
 import { NewsListItemComponent } from './news-list-item.component';

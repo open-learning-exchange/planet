@@ -14,6 +14,7 @@ import { Component, Input } from '@angular/core';
       help {Help Wanted}
       offer {Offer}
       advice {Request for Advice}
+      shared chat {Shared Chat}
       Cancer {Cancer}
       Cardiovascular disorders {Cardiovascular disorders}
       Cirrhosis of the liver {Cirrhosis of the liver}

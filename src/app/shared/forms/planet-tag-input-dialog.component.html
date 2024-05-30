@@ -6,7 +6,7 @@
   <mat-form-field class="full-width">
     <input matInput i18n-placeholder placeholder="Filter by Collection Name" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
-  <mat-expansion-panel *planetAuthorizedRoles>
+  <mat-expansion-panel *planetAuthorizedRoles="'manager'">
     <mat-expansion-panel-header>
       <mat-panel-title i18n>Create New Collection</mat-panel-title>
     </mat-expansion-panel-header>

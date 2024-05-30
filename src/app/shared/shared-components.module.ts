@@ -1,6 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { RouterModule } from '@angular/router';
 import { CovalentMarkdownModule } from '@covalent/markdown';
+
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
@@ -15,12 +18,12 @@ import { TasksComponent, FilterAssigneePipe, AssigneeNamePipe } from '../tasks/t
 import { PlanetRoleComponent } from './planet-role.component';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { CommunityListComponent } from '../community/community-list.component';
-import { RouterModule } from '@angular/router';
 import { LabelComponent } from './label.component';
 import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
+import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
 
 @NgModule({
@@ -47,7 +50,9 @@ import { ChatOutputDirective } from './chat-output.directive';
     LanguageLabelComponent,
     MyPlanetTableComponent,
     AvatarComponent,
-    ChatOutputDirective
+    RestrictDiacriticsDirective,
+    ChatOutputDirective,
+    OverlayModule,
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -70,6 +75,7 @@ import { ChatOutputDirective } from './chat-output.directive';
     MyPlanetTableComponent,
     TimePipe,
     AvatarComponent,
+    RestrictDiacriticsDirective,
     ChatOutputDirective
   ]
 })

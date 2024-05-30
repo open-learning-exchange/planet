@@ -14,8 +14,6 @@ import { DialogsLoadingComponent } from './dialogs-loading.component';
 import { ChangePasswordDirective } from './change-password.directive';
 import { SharedComponentsModule } from '../shared-components.module';
 import { SyncDirective } from '../../manager-dashboard/sync.directive';
-import { MeetupsModule } from '../../meetups/meetups.module';
-import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 import { DialogsImagesComponent } from './dialogs-images.component';
 import { DialogsVideoComponent } from './dialogs-video.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';

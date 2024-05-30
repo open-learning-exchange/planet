@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
-
+import { Component, OnInit, OnDestroy, ViewChild, Input, HostListener } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
@@ -11,6 +10,7 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-users',
@@ -50,6 +50,9 @@ export class UsersComponent implements OnInit, OnDestroy {
   private searchChange = new Subject<string>();
   configuration = this.stateService.configuration;
   tableState = new TableState();
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  showFiltersRow = false;
 
   constructor(
     private userService: UserService,
@@ -60,8 +63,14 @@ export class UsersComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private usersService: UsersService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {

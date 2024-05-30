@@ -6,7 +6,7 @@ export const environment = {
   chatAddress: window.location.origin + '/ml/',
   couchAddress: window.location.origin + '/db',
   centerAddress: 'planet-center-address',
-  uplanetAddress: 'https://uplanet.gt',
+  uplanetAddress: 'https://planet.gt',
   centerProtocol: 'https',
   parentProtocol: 'planet-parent-protocol',
   uPlanetCode: 'guatemala',

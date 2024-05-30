@@ -57,11 +57,13 @@ export class MeetupsAddComponent implements OnInit {
     private stateService: StateService
   ) {
     this.createForm();
-  }
+   }
 
   ngOnInit() {
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
+    } else {
+      this.createForm();
     }
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
@@ -86,8 +88,8 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
-      startDate: '',
-      endDate: [ '', CustomValidators.endDateValidator() ],
+      startDate: this.meetup?.startDate ? this.meetup.startDate : '',
+      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
       startTime: [ '', CustomValidators.timeValidator() ],

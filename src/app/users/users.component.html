@@ -1,40 +1,66 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>Members</span>
-  <span class="toolbar-fill"></span>
-  <ng-container *ngIf="planetType !== 'community' && !hideChildren">
-    <mat-button-toggle-group
-      class="margin-lr-5 font-size-1"
-      (change)="changePlanetFilter(filterGroup.value)"
-      #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="local" [checked]="tableState.filterType==='local'" i18n>
-        Local
-      </mat-button-toggle>
-      <mat-button-toggle value="associated" [checked]="tableState.filterType==='associated'" i18n>
-        Associated
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-    <mat-form-field class="font-size-1">
-      <mat-select i18n-placeholder placeholder="Children" [value]="tableState.selectedChild" (selectionChange)="changePlanetFilter('child', $event.value)">
-        <mat-option *ngFor="let child of children" [value]="child.doc">
-          {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileTabletView">
+    <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>Members</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
+    <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
   </ng-container>
 
-  <mat-form-field class="font-size-1 margin-lr-5">
-    <mat-select placeholder="Filter by role" [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let role of allRolesList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
-    </mat-select>
-  </mat-form-field>
+  <ng-template #mobileTabletView>
+    <mat-toolbar-row>
+      <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+      <span i18n>Members</span>
+      <span class="toolbar-fill"></span>
+      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+    </mat-toolbar-row>
+    <ng-container *ngIf="this.showFiltersRow">
+      <mat-toolbar-row *ngIf="planetType !== 'community' && !hideChildren">
+        <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
+      </mat-toolbar-row>
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
+      </mat-toolbar-row>
+    </ng-container>
+  </ng-template>
 
-  <mat-icon class="input-icon">search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search name...">
-  </mat-form-field>
-  <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
+  <ng-template #tableAssociation>
+    <ng-container *ngIf="planetType !== 'community' && !hideChildren">
+      <mat-button-toggle-group
+        class="margin-lr-5 font-size-1"
+        (change)="changePlanetFilter(filterGroup.value)"
+        #filterGroup="matButtonToggleGroup">
+        <mat-button-toggle value="local" [checked]="tableState.filterType==='local'" i18n>
+          Local
+        </mat-button-toggle>
+        <mat-button-toggle value="associated" [checked]="tableState.filterType==='associated'" i18n>
+          Associated
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <mat-form-field class="font-size-1">
+        <mat-select i18n-placeholder placeholder="Children" [value]="tableState.selectedChild" (selectionChange)="changePlanetFilter('child', $event.value)">
+          <mat-option *ngFor="let child of children" [value]="child.doc">
+            {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #filterGroup>
+    <mat-form-field class="font-size-1 margin-lr-5">
+      <mat-select placeholder="Filter by role" [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
+        <mat-option i18n value="All">All</mat-option>
+        <mat-option *ngFor="let role of allRolesList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-icon class="input-icon">search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search name...">
+    </mat-form-field>
+    <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
+  </ng-template>
 </mat-toolbar>
 
 <div class="space-container">

@@ -8,7 +8,7 @@
         <mat-error><planet-form-error-messages [control]="cloneForm.controls.url"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase>
+        <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase planetRestrictDiacritics>
         <mat-error><planet-form-error-messages [control]="cloneForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>

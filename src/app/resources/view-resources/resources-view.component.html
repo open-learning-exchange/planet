@@ -6,28 +6,56 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span class="margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
+    <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </ng-container>
+    <ng-container *ngIf=" deviceType === deviceTypes.TABLET">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+      <span class="toolbar-fill"></span>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+  </mat-toolbar>
+
+  <ng-template #editDetails>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
-        {fullView, select, on {Show} off {Hide}} details
+      {fullView, select, on {Show} off {Hide}} details
     </button>
     <button mat-stroked-button *ngIf="canManage" (click)="updateResource()">
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
-    <div>
-      <ng-container *ngIf="!parent">
-        <a mat-raised-button *ngIf="resource.doc?._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
-        <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
-          Add to myLibrary
-        </button>
-        <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
-          Remove from myLibrary
-        </button>
-      </ng-container>
-      <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
-        <mat-icon>file_download</mat-icon>
-      </a>
-    </div>
-  </mat-toolbar>
+  </ng-template>
+
+  <ng-template #actionButtons>
+    <ng-container *ngIf="!parent">
+      <a mat-raised-button *ngIf="resource.doc?._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
+      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
+        Add to myLibrary
+      </button>
+      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
+        Remove from myLibrary
+      </button>
+    </ng-container>
+    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
+      <mat-icon>file_download</mat-icon>
+    </a>
+  </ng-template>
+
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-rating [rating]="resource?.rating" [item]="resource.doc" [parent]="parent" [ratingType]="'resource'"></planet-rating>

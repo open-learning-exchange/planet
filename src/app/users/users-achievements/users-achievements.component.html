@@ -9,7 +9,10 @@
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements"><mat-icon>mode_edit</mat-icon>
+    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
+      <span i18n>Print Achievements</span>
+    </a> <br>
+    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
       <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
       <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
     </a>
@@ -18,8 +21,8 @@
     <div *ngIf="achievements !== undefined" class="achievements-container">
       <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
       <div>
-        <ng-container *ngIf="user.birthDate"><span i18n>Birthdate:</span>{{' ' + (user.birthDate | date: medium) + ' '}}</ng-container>
-        <span *ngIf="user.birthplace" i18n>Birthplace:</span>{{' ' + user.birthplace}}
+        <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
+        <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
       </div>
       <div *ngIf="achievements.purpose">
         <h3 i18n>My Purpose</h3>
@@ -54,11 +57,7 @@
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
             <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
-            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i">
-              <ng-container *ngFor="let resource of achievement.resources">
-                <planet-resources-menu [resources]="[ resource ]" color="primary" (click)="$event.stopPropagation()">{{resource.title}}</planet-resources-menu>
-              </ng-container>
-            </span>
+            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
           </mat-list-item>
         </mat-list>
       </div>

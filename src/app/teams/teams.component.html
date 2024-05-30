@@ -1,16 +1,31 @@
 <mat-toolbar>
-  <button mat-icon-button [routerLink]="[ '..' ]" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>{ mode, select,
-    team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
-    enterprise {Enterprises}
-  }</span>
+  <mat-toolbar-row>
+    <button mat-icon-button [routerLink]="[ '..' ]" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+    <span i18n>{ mode, select,
+      team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
+      enterprise {Enterprises}
+    }</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!isMobile">
+      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    </ng-container>
+    <button mat-icon-button *ngIf="isMobile" (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="showFiltersRow">
+    <ng-container *ngIf="isMobile">
+      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    </ng-container>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<ng-template #searchView>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter" i18n-placeholder placeholder="Type name to search...">
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
-</mat-toolbar>
+</ng-template>
 
 <div [ngClass]="{'space-container':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
@@ -65,7 +80,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element" class>
-          <div [ngClass]="{'horizontal-align': isMobile, 'button-container': isMobile}">
+          <div [ngClass]="{'horizontal-align button-container': isMobile}">
             <button *planetAuthorizedRoles="''" mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               <label *ngIf="!isMobile" i18n> Delete </label>
@@ -102,6 +117,9 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
+    <div *ngIf="userNotInShelf" i18n style="text-align: center;">
+      Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
+    </div>
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">

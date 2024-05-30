@@ -1,85 +1,55 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
-import { showFormErrors } from '../shared/table-helpers';
 import { ChatService } from '../shared/chat.service';
+import { AIServices, ProviderName } from './chat.model';
 
 @Component({
   selector: 'planet-chat',
   templateUrl: './chat.component.html',
-  styleUrls: [ './chat.component.scss' ],
+  styleUrls: [ './chat.scss' ]
 })
 export class ChatComponent implements OnInit {
-  spinnerOn = true;
-  promptForm: FormGroup;
-  conversations: any[] = [];
-
-  @ViewChild('chat') chatContainer: ElementRef;
+  activeService: string;
+  aiServices: { name: ProviderName, value: ProviderName }[] = [];
+  displayToggle: boolean;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private chatService: ChatService,
     private route: ActivatedRoute,
     private router: Router,
-    private changeDetectorRef: ChangeDetectorRef,
-    private chatService: ChatService
   ) {}
 
   ngOnInit() {
-    this.createForm();
-  }
+    this.chatService.fetchAIProviders().pipe(
+      catchError(err => {
+        console.error(err);
+        return of({ openai: false, perplexity: false, gemini: false });
+      })
+    ).subscribe((services: AIServices) => {
+      for (const [ key, value ] of Object.entries(services)) {
+        if (value === true) {
+            this.aiServices.push({
+               name: key as ProviderName,
+               value: key as ProviderName
+            });
+        }
+      }
 
-  scrollToBottom(): void {
-    this.chatContainer.nativeElement.scrollTo({
-      top: this.chatContainer.nativeElement.scrollHeight,
-      behavior: 'smooth',
+      this.activeService = this.aiServices[0].value;
+      this.displayToggle = this.aiServices.length > 0;
+      this.chatService.toggleAIServiceSignal(this.activeService);
     });
   }
 
-  createForm() {
-    this.promptForm = this.formBuilder.group({
-      prompt: [ '', Validators.required ],
-    });
-  }
-
-  goBack() {
+  goBack(): void {
     this.router.navigate([ '/' ], { relativeTo: this.route });
   }
 
-  onSubmit() {
-    if (this.promptForm.valid) {
-      this.submitPrompt();
-      this.promptForm.controls['prompt'].setValue(' ');
-    } else {
-      showFormErrors(this.promptForm.controls);
-    }
+  toggleAIService(): void {
+    this.chatService.toggleAIServiceSignal(this.activeService);
   }
 
-  submitPrompt() {
-    const content = this.promptForm.get('prompt').value;
-
-    this.chatService.getPrompt(content).subscribe(
-      (completion: any) => {
-        this.conversations.push({
-          query: content,
-          response: completion?.chat,
-        });
-        this.spinnerOn = false;
-        this.changeDetectorRef.detectChanges();
-        this.scrollToBottom();
-        this.spinnerOn = true;
-      },
-      (error: any) => {
-        this.spinnerOn = false;
-        this.conversations.push({
-          query: content,
-          response: 'Error: ' + error.message,
-          error: true,
-        });
-        this.changeDetectorRef.detectChanges();
-        this.scrollToBottom();
-        this.spinnerOn = true;
-      }
-    );
-  }
 }
