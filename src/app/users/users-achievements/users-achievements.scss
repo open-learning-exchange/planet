@@ -44,4 +44,15 @@
     }
 
   }
+
+  .styled-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .styled-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
 }

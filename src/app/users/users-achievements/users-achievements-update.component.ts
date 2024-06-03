@@ -40,6 +40,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   get references(): FormArray {
     return <FormArray>this.editForm.controls.references;
   }
+  get links(): FormArray {
+    return <FormArray>this.editForm.controls.links;
+  }
   minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
@@ -67,6 +70,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
       this.editForm.controls.references = this.fb.array(achievements.references || []);
+      this.editForm.controls.links = this.fb.array(achievements.links || []);
       // Keeping older otherInfo property so we don't lose this info on database
       this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
       if (this.docInfo._id === achievements._id) {
@@ -92,6 +96,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       achievementsHeader: '',
       achievements: this.fb.array([]),
       references: this.fb.array([]),
+      links: this.fb.array([]),
       // Keeping older otherInfo property so we don't lose this info on database
       otherInfo: this.fb.array([]),
       sendToNation: false,
@@ -113,21 +118,23 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  addAchievement(index = -1, achievement = { title: '', description: '', date: '' }) {
+  addAchievement(index = -1, achievement = { title: '', description: '', link: '', date: '' }) {
     if (typeof achievement === 'string') {
-      achievement = { title: '', description: achievement, date: '' };
+      achievement = { title: '', description: achievement, link: '', date: '' };
     }
     this.dialogsFormService.openDialogsForm(
       achievement.title !== '' ? $localize`Edit Achievement` : $localize`Add Achievement`,
       [
         { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Title`, required: true },
         { 'type': 'date', 'name': 'date', 'placeholder': $localize`Date`, 'required': false },
+        { 'type': 'textbox', 'name': 'link', 'placeholder': $localize`Link`, required: false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
       ],
       this.fb.group({
         ...achievement,
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
+        link: [ achievement.link ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
@@ -159,13 +166,26 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     );
   }
 
+  addLink(index = -1, link: any = { title: '', url: '' }) {
+    this.dialogsFormService.openDialogsForm(
+      link.title !== '' ? $localize`Edit Link` : $localize`Add Link`,
+      [
+        { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Link Title`, required: true },
+        { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, 'required': true }
+      ],
+      this.fb.group({
+        ...link,
+        title: [ link.title, CustomValidators.required ],
+        url: [ link.url, CustomValidators.required ],
+      }),
+      { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
+    );
+  }
+
   onDialogSubmit(formArray, index) {
     return (formValue, formGroup) => {
       if (formValue === undefined) {
         return;
-      }
-      if (formValue.resources) {
-        formValue.resources.sort((a, b) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1);
       }
       this.updateFormArray(formArray, formGroup, index);
     };
@@ -235,10 +255,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
-  }
-
-  removeResource(achievement: FormControl, resource) {
-    achievement.setValue({ ...achievement.value, resources: achievement.value.resources.filter(({ _id }) => _id !== resource._id) });
   }
 
 }
