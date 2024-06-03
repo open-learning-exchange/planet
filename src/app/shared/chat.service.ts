@@ -74,7 +74,7 @@ import { CouchService } from '../shared/couchdb.service';
 
   // Function to close ws connection
   closeWebSocket(): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.close();
     }
   }
