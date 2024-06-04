@@ -230,4 +230,10 @@ export class CustomValidators {
     return null;
   }
 
+  static validLink(ac: AbstractControl): ValidationErrors | null {
+    const urlPattern = '^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$';
+    const isValid = new RegExp(urlPattern).test(ac.value);
+    return isValid ? null : { 'invalidLink': true };
+  }
+
 }

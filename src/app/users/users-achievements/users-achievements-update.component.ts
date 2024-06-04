@@ -1,11 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormArray,
-  FormControl,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
@@ -134,7 +128,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         ...achievement,
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
-        link: [ achievement.link ],
+        link: [ achievement.link, CustomValidators.validLink ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
@@ -176,7 +170,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.fb.group({
         ...link,
         title: [ link.title, CustomValidators.required ],
-        url: [ link.url, CustomValidators.required ],
+        url: [ link.url, CustomValidators.required, CustomValidators.validLink ],
       }),
       { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
     );
