@@ -231,9 +231,12 @@ export class CustomValidators {
   }
 
   static validLink(ac: AbstractControl): ValidationErrors | null {
-    const urlPattern = '^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$';
-    const isValid = new RegExp(urlPattern).test(ac.value);
-    return isValid ? null : { 'invalidLink': true };
+    try {
+      const url = new URL(ac.value);
+      return null;
+    } catch (_) {
+      return { 'invalidLink': true };
+    }
   }
 
 }

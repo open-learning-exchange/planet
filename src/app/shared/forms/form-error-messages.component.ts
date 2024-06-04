@@ -43,7 +43,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       whitespace {Cannot include space in password}
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
-      invalidLink {Invalid link. Must be a valid URL}
+      invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}
     }</span>{{number === undefined ? '' : ' ' + number}}
     <ng-container *ngIf="error === 'matDatepickerMin' || error === 'matDatepickerMax'">
       {{date === undefined ? '' : ' ' + (date | date)}}

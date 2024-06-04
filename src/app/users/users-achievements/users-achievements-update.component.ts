@@ -170,7 +170,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.fb.group({
         ...link,
         title: [ link.title, CustomValidators.required ],
-        url: [ link.url, CustomValidators.required, CustomValidators.validLink ],
+        url: [ link.url, CustomValidators.validLink, CustomValidators.required ],
       }),
       { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
     );
