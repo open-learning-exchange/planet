@@ -159,22 +159,22 @@ export class UsersAchievementsComponent implements OnInit {
       achievements: ${achievementsHeader} - ${achievements}
       goals: ${goals}
       purpose: ${purpose}
-      ${formData ? `User-filled form data ${formData}` : ''}
 
       references: ${formatReferences(references)}
 
       Generate a resume following the format below as close as possible
       1. Personal Information
       2. Objective/Summary
-      3. Education
-      4. Experience
-      5. Skills
+      3. Education ${formData.education ? formData.education : ''}
+      4. Experience ${formData.experience ? formData.experience : ''}
+      5. Skills ${formData.skills ? formData.skills : ''}
       6. Certifications
       7. Awards and Honors(optional)
       8. References(optional)
+      9. Additional Information ${formData.additional ? formData.additional : ''}
 
       The resume is in PDF format, so vary the text style(Using paragraphs, bullet points) to make it look like a resume
-      Only output the resume, no additional context
+      Only output the resume(in the language of the input), no additional context
     `,
       aiProvider: { name: 'openai' },
     };
