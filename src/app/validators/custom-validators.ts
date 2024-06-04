@@ -230,4 +230,13 @@ export class CustomValidators {
     return null;
   }
 
+  static validLink(ac: AbstractControl): ValidationErrors | null {
+    try {
+      const url = new URL(ac.value);
+      return null;
+    } catch (_) {
+      return { 'invalidLink': true };
+    }
+  }
+
 }
