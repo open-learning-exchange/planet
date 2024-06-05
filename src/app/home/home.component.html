@@ -233,9 +233,5 @@
   </mat-sidenav>
   <mat-sidenav-content [ngClass]="{'gradient-background': backgroundRoute()}">
     <router-outlet></router-outlet>
-    <div *ngIf="isAndroid" class="banner">
-      <p>Check out our Android app on the Play Store!</p>
-      <a href="https://play.google.com/store/apps/details?id=your.app.id">Download Now</a>
-    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
