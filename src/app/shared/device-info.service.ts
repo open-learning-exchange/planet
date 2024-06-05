@@ -30,4 +30,8 @@ export class DeviceInfoService {
       return DeviceType.DESKTOP;
     }
   }
+
+  public isAndroid(): boolean {
+    return /Android/i.test(navigator.userAgent);
+  }
 }

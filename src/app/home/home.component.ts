@@ -10,7 +10,7 @@ import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
+import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
@@ -40,6 +40,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   @ViewChild('content') private mainContent;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   planetName;
+  isAndroid: boolean;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -63,7 +64,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
-    private planetMessageService: PlanetMessageService,
+    private deviceInfoService: DeviceInfoService,
     private notificationsService: NotificationsService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
@@ -72,6 +73,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
+    this.isAndroid = this.deviceInfoService.isAndroid();
   }
 
   ngOnInit() {
