@@ -41,6 +41,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   planetName;
   isAndroid: boolean;
+  showBanner = true;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
