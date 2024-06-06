@@ -32,7 +32,13 @@ export class DeviceInfoService {
   }
 
   isAndroid(): boolean {
-    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-    return /Android/i.test(userAgent) || (/CrOS/i.test(userAgent) && /android/i.test(navigator.appVersion));
+    const userAgent =
+      navigator.userAgent || navigator.vendor || (window as any).opera;
+    return (
+      /Android/i.test(userAgent) ||
+      (/CrOS/i.test(userAgent) && /android/i.test(navigator.appVersion)) ||
+      (/CrOS/i.test(userAgent) &&
+        (/Mobile/i.test(userAgent) || /Tablet/i.test(userAgent)))
+    );
   }
 }
