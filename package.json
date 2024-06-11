@@ -4,7 +4,7 @@
   "version": "0.14.43",
   "myplanet": {
     "latest": "v0.15.80",
-    "min": "v0.14.80"
+    "min": "v0.15.78"
   },
   "scripts": {
     "ng": "ng",
