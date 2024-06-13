@@ -10,7 +10,9 @@
       <mat-form-field class="font-size-1 margin-lr-3">
         <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
       </mat-form-field>
-      <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType"><mat-icon>delete</mat-icon></button><br>
+      <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
+        <mat-icon>delete</mat-icon>
+      </button><br>
       <div>
         <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
         <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
@@ -40,18 +42,25 @@
                     <planet-form-error-messages [formControl]="titleForm[conversation?._id].controls.title"></planet-form-error-messages>
                   </mat-error>
                 </mat-form-field>
-                <button mat-icon-button class="sidebar-icon"><mat-icon>check</mat-icon></button>
-                <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()"><mat-icon>close</mat-icon></button>
+                <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" matTooltip="Close" i18n-matTooltip>
+                  <mat-icon>close</mat-icon>
+                </button>
               </form>
             </ng-container>
           </ng-container>
           <ng-template #notEditing>
             <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()">
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()" matTooltip="Edit title">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)">
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)" matTooltip="Share conversation">
               <mat-icon>share</mat-icon>
+            </button>
+            <button mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
+              <mat-icon *ngIf="conversation.shared">done_all</mat-icon>
             </button>
           </ng-template>
           <ng-template #conversationTitle>
