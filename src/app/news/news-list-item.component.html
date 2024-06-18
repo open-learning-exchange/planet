@@ -27,18 +27,18 @@
   <mat-card-content>
     <div [ngClass]="{'show-less': showLess}" #content>
       <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
-    </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
-    <ng-container *ngIf="item.doc.chat">
-      <div class="chat-container">
-        <div *ngFor="let conversation of item.doc.news.conversations">
-          <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-          <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+      <ng-container *ngIf="item.doc.chat">
+        <div class="chat-container">
+          <div *ngFor="let conversation of item.doc.news.conversations">
+            <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
+            <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+          </div>
         </div>
-      </div>
-    </ng-container>
-    <ng-template #mdRender>
-    </ng-template>
+      </ng-container>
+    </div>
+    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>
+      {{ showLess ? 'Show More' : 'Show Less' }}
+    </span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
