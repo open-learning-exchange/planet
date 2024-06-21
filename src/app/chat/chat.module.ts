@@ -26,6 +26,6 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
     ChatSidebarComponent,
     ChatWindowComponent
   ],
-  exports: [ ChatComponent ]
+  exports: [ ChatWindowComponent, ChatComponent ]
 })
 export class ChatModule {}

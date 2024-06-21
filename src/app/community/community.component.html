@@ -48,6 +48,9 @@
         <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
         </mat-tab>
+        <mat-tab i18n-label label="Community Window">
+          <planet-chat-window></planet-chat-window>
+        </mat-tab>
         <mat-tab i18n-label label="Finances">
           <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
