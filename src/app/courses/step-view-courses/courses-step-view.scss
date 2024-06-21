@@ -1,3 +1,5 @@
+@import '../../variables';
+
 :host {
 
   .view-container {
@@ -14,6 +16,23 @@
 
   planet-resources-viewer * {
     max-width: 100%;
+  }
+
+  .course-detail {
+    padding: 2rem;
+  }
+
+  .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ai-banner {
+    padding: 0.2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-bottom: 1rem;
   }
 
   .full-view-container.view-container {
