@@ -1,5 +1,5 @@
 import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, FormControl } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 const isStringEdgeCase = (string: string) => {
@@ -230,13 +230,15 @@ export class CustomValidators {
     return null;
   }
 
-  static validLink(ac: AbstractControl): ValidationErrors | null {
-    try {
-      const url = new URL(ac.value);
-      return null;
-    } catch (_) {
-      return { 'invalidLink': true };
-    }
+  static validLink(ac: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
+    return new Promise((resolve, reject) => {
+      try {
+        const url = new URL(ac.value);
+        resolve(null);
+      } catch (_) {
+        resolve({ 'invalidLink': true });
+      }
+    });
   }
 
 }
