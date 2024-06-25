@@ -128,7 +128,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         ...achievement,
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
-        link: [ achievement.link, CustomValidators.validLink ],
+        link: [ achievement.link, [], CustomValidators.validLink ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
@@ -170,7 +170,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       this.fb.group({
         ...link,
         title: [ link.title, CustomValidators.required ],
-        url: [ link.url, CustomValidators.validLink, CustomValidators.required ],
+        url: [ link.url, CustomValidators.required, CustomValidators.validLink ],
       }),
       { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
     );
