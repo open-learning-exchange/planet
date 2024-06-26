@@ -58,6 +58,7 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
     }
 
     .date, .badges {
+      margin: 0.2rem 0;
       justify-self: end;
     }
 
@@ -68,8 +69,6 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
     .badges {
       grid-area: badge;
       width: 100%;
-      display: flex;
-      justify-content: flex-end;
 
       & > div {
         margin-right: 0.5rem;
