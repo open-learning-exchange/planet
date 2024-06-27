@@ -9,7 +9,7 @@
     <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
     <ng-template #elseBlock>{{ user.name }}</ng-template>
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements" (click)="generatePDF()">
+    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
       <span i18n>Print Achievements</span>
     </a> <br>
     <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
@@ -42,6 +42,15 @@
           </mat-list>
         </div>
       </ng-container>
+      <div *ngIf="achievements?.links?.length > 0">
+        <h3 i18n>My Links</h3>
+        <mat-list>
+          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let link of achievements.links">
+            <h4 mat-line>{{link.title}}:</h4>
+            <a href="{{link.url}}" target="_blank" class="styled-link"> {{link.url}} </a>
+          </mat-list-item>
+        </mat-list>
+      </div>
       <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
@@ -56,7 +65,10 @@
               </span>
               <span class="achievement-date">{{achievement.date | date: medium}}</span>
             </p>
-            <p mat-line *ngIf="openAchievementIndex === i">{{achievement.description}}</p>
+            <p mat-line *ngIf="openAchievementIndex === i">
+              {{achievement.description}}
+            <br><a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
+            </p>
             <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
           </mat-list-item>
         </mat-list>

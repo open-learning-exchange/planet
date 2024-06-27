@@ -60,8 +60,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   ngAfterViewChecked() {
-    const offsetHeight = this.content && this.content.nativeElement.children[0].children[0].children[0].offsetHeight;
-    const showExpand = offsetHeight && (offsetHeight > this.content.nativeElement.clientHeight);
+    const contentHeight = this.content && this.content.nativeElement.scrollHeight;
+    const containerHeight = this.content && this.content.nativeElement.offsetHeight;
+    const showExpand = contentHeight > containerHeight;
     if (showExpand !== this.showExpand) {
       this.showExpand = showExpand;
       this.cdRef.detectChanges();
