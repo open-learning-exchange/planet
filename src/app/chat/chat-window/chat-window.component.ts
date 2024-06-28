@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -31,7 +31,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     content: '',
     aiProvider: { name: 'openai' },
   };
-
+  @Input() context: any;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(

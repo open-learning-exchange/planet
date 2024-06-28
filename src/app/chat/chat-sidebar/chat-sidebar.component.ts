@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -40,6 +40,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: { [key: string]: FormGroup } = {};
+  @Input() context: any;
 
   constructor(
     private chatService: ChatService,
