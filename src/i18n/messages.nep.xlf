@@ -2,13 +2,13 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="ne-NP">
     <body>
-      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
+      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
         <source>ltr</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/app.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="final">ltr</target>
+        <target state="needs-translation">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html">
         <source>Sorry, page not found</source>
@@ -10632,7 +10632,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.ts</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="translated">Planet</target>
+        <target state="needs-translation">Planet</target>
       </trans-unit>
       <trans-unit id="3047897875233101157" datatype="html">
         <source>Select Planet</source>
@@ -11270,7 +11270,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="translated">HTML</target>
+        <target state="needs-translation">HTML</target>
       </trans-unit>
       <trans-unit id="5794539423374616988" datatype="html">
         <source>PDF.js</source>
@@ -11278,7 +11278,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <target state="translated">PDF.js</target>
+        <target state="needs-translation">PDF.js</target>
       </trans-unit>
       <trans-unit id="117089467365527130" datatype="html">
         <source>Bell-Reader</source>
@@ -11294,7 +11294,7 @@
           <context context-type="sourcefile">src/app/resources/resources-constants.ts</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="translated">MP3</target>
+        <target state="needs-translation">MP3</target>
       </trans-unit>
       <trans-unit id="3067037062048660869" datatype="html">
         <source>Flow Video Player</source>
@@ -11652,7 +11652,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
+        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="1567cf7bdefe1d40e39cdaf3505317ddb1d0f2fa" datatype="html">
         <source>Certification Name</source>
