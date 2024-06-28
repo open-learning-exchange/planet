@@ -43,6 +43,10 @@ export class ChatComponent implements OnInit {
       this.displayToggle = this.aiServices.length > 0;
       this.chatService.toggleAIServiceSignal(this.activeService);
     });
+
+    if (this.context) {
+      this.chatService.setContext(this.context);
+    }
   }
 
   goBack(): void {
