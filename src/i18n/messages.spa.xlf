@@ -455,13 +455,13 @@
         </context-group>
         <target state="final">Peor valoración</target>
       </trans-unit>
-      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html">
+      <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
         <source>ltr</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/app.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
       <trans-unit id="2f0d25f594b2bf71a1cebaadcdef8b63770744e5" datatype="html" approved="yes">
         <source>Sorry, page not found</source>
@@ -485,7 +485,7 @@
           <context context-type="sourcefile">app/shared/forms/form-error-messages.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list} invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/} }</target>
+        <target state="translated">{VAR_SELECT, select, required {Este campo es obligatorio} min {El número no puede estar debajo} max {El número no puede exceder} matDatepickerMin {La fecha no puede ser anterior} matDatepickerMax {La fecha no puede ser posterior} matDatepickerParse {Fecha invalida} duplicate {El valor ya existe} duplicateUser {El usuario ya existe} email {Por favor introduzca una dirección de correo electrónico válida} matchPassword {Las contraseñas deben coincidir} unmatchPassword {Las contraseñas no deben coincidir} invalidInt {Por favor, introduzca un número} invalidPositive {El número no puede ser negativo.} invalidHex {El hexadecimal no es válido} invalidTime {El tiempo no es válido} invalidDateFormat {La fecha tiene un formato incorrecto} invalidTimeFormat {La hora tiene un formato incorrecto} invalidDate {La fecha no es válida} invalidEndDate {La fecha de finalización no puede ser anterior a la fecha de inicio} invalidEndTime {La hora de finalización no puede ser anterior a la hora de inicio} dateInPast {No puede ser anterior a la fecha actual} invalidPassword {La contraseña no es válida} pattern {Entrada inválida. Pase el cursor para obtener más información} invalidFirstCharacter {Debe comenzar con letra o número} invalidFutureDate {No puede ser posterior a la fecha actual} dateRequired {Este campo requiere una fecha válida} noUnderscore {No se puede incluir un guión bajo} whitespace {No se puede incluir espacio en la contraseña} bp {La presión arterial debe ser sistólica/diastólica} notFileMatch {Archivo no encontrado en la lista} invalidLink {Enlace no válido. Debe ser una URL válida, ejemplo https://ole.org/} }</target>
       </trans-unit>
       <trans-unit id="00d5eb6141a80092d2258e8ebc59531fff788b57" datatype="html">
         <source>
@@ -1207,7 +1207,7 @@
           <context context-type="sourcefile">app/shared/label.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, temperature {Temperature (°C)} pulse {Pulse (bpm)} bp {Blood Pressure} height {Height (cm)} weight {Weight (kg)} vision {Vision} hearing {Hearing} help {Help Wanted} offer {Offer} advice {Request for Advice} shared chat {Shared Chat} Cancer {Cancer} Cardiovascular disorders {Cardiovascular disorders} Cirrhosis of the liver {Cirrhosis of the liver} COVID-19 {COVID-19} Diabetes {Diabetes} Diarrhoea diseases {Diarrhoea diseases} Ebola {Ebola} Epilepsy {Epilepsy} FGM {FGM} Influenza {Influenza} Ischaemic heat disease {Ischaemic heat disease} Malaria {Malaria} Malnutrition {Malnutrition} Measles {Measles} Meningitis {Meningitis} Neonatal sepsis and infections {Neonatal sepsis and infections} HIV/AIDS {HIV/AIDS} Pneumonia {Pneumonia} Stroke {Stroke} Trauma {Trauma} Tuberculosis {Tuberculosis} }</target>
+        <target state="translated">{VAR_SELECT, select, temperature {Temperatura (°C)} pulse {Pulso (lpm)} bp {Presión arterial} height {Altura (cm)} weight {Peso (kg)} vision {Visión} hearing {Escuchando} help {Se busca ayudante} offer {Oferta} advice {Solicitud de asesoramiento} shared chat {Chat compartido} Cancer {Cáncer} Cardiovascular disorders {Desordenes cardiovasculares} Cirrhosis of the liver {Cirrosis del higado} COVID-19 {COVID-19} Diabetes {Diabetes} Diarrhoea diseases {enfermedades diarreicas} Ebola {Ébola} Epilepsy {Epilepsia} FGM {MGF} Influenza {Influenza} Ischaemic heat disease {Enfermedad isquémica por calor} Malaria {Malaria} Malnutrition {Desnutrición} Measles {Sarampión} Meningitis {Meningitis} Neonatal sepsis and infections {Sepsis e infecciones neonatales} HIV/AIDS {VIH/SIDA} Pneumonia {Neumonía} Stroke {Carrera} Trauma {Trauma} Tuberculosis {Tuberculosis}}</target>
       </trans-unit>
       <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html" approved="yes">
         <source>ID</source>
@@ -2466,7 +2466,7 @@
         </context-group>
         <target state="final">No en misCursos</target>
       </trans-unit>
-      <trans-unit id="5a6b6383fe94e0656e1871b34b5b55237cb4e374" datatype="html">
+      <trans-unit id="5a6b6383fe94e0656e1871b34b5b55237cb4e374" datatype="html" approved="yes">
         <source>myProgress:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/courses.component.html</context>
@@ -2476,7 +2476,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">myProgress:</target>
+        <target state="final">myProgress:</target>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html" approved="yes">
         <source>Join</source>
@@ -2744,26 +2744,26 @@
               <x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label&gt;"/> Eliminar <x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/>
             </target>
       </trans-unit>
-      <trans-unit id="fe0d52ee03d7e2cd68ce8fc41412c854060792af" datatype="html">
+      <trans-unit id="fe0d52ee03d7e2cd68ce8fc41412c854060792af" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_top<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label&gt;"/> Promote <x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/>
             </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-table.component.html</context>
           <context context-type="linenumber">120</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">
+        <target state="final">
               <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_top<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>
               <x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label&gt;"/> Promociona <x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/>
             </target>
       </trans-unit>
-      <trans-unit id="ba1b06e46b5c26020c13fd7d28bd9a93fcd99a0c" datatype="html">
+      <trans-unit id="ba1b06e46b5c26020c13fd7d28bd9a93fcd99a0c" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_bottom<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label&gt;"/> Demote <x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/>
             </source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/users/users-table.component.html</context>
           <context context-type="linenumber">125</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">
+        <target state="final">
               <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_bottom<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>
               <x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label&gt;"/> Deducir <x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/>
             </target>
@@ -2804,7 +2804,7 @@
         </context-group>
         <target state="final">Miembros</target>
       </trans-unit>
-      <trans-unit id="8ca454fb36bbfbd6127fcf5800d4069e32ddabb9" datatype="html">
+      <trans-unit id="8ca454fb36bbfbd6127fcf5800d4069e32ddabb9" datatype="html" approved="yes">
         <source>
           Local
         </source>
@@ -2812,7 +2812,7 @@
           <context context-type="sourcefile">app/users/users.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">
+        <target state="final">
           local
         </target>
       </trans-unit>
@@ -4076,21 +4076,21 @@
         </context-group>
         <target state="final">Visitas</target>
       </trans-unit>
-      <trans-unit id="ae6b013e14ee9328d95f12f1fd62661351dc817a" datatype="html">
+      <trans-unit id="ae6b013e14ee9328d95f12f1fd62661351dc817a" datatype="html" approved="yes">
         <source>myChat</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">myChat</target>
+        <target state="final">myChat</target>
       </trans-unit>
-      <trans-unit id="3ae50e035af250afe049c252da5b7310ff5e1681" datatype="html">
+      <trans-unit id="3ae50e035af250afe049c252da5b7310ff5e1681" datatype="html" approved="yes">
         <source>myProgress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">myProgreso</target>
+        <target state="final">myProgreso</target>
       </trans-unit>
       <trans-unit id="e3ad9c3989ac3c407cbc477eb26732155a2adabe" datatype="html" approved="yes">
         <source>
@@ -4188,13 +4188,13 @@
         </context-group>
         <target state="final">Verificar</target>
       </trans-unit>
-      <trans-unit id="4cbd98a0063e75a63b8977954b06e338ad3f4ea7" datatype="html">
+      <trans-unit id="4cbd98a0063e75a63b8977954b06e338ad3f4ea7" datatype="html" approved="yes">
         <source>Error :(</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/upgrade/upgrade.component.html</context>
           <context context-type="linenumber">38</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Error :(</target>
+        <target state="final">Error :(</target>
       </trans-unit>
       <trans-unit id="b6d36f80e564bf800a998cee94569cadcfb5b4ce" datatype="html" approved="yes">
         <source>Please let us know</source>
@@ -4230,13 +4230,13 @@
         </context-group>
         <target state="final">Registros</target>
       </trans-unit>
-      <trans-unit id="d410b5622382d4ff02dace3b5b92005fdbff528f" datatype="html">
+      <trans-unit id="d410b5622382d4ff02dace3b5b92005fdbff528f" datatype="html" approved="yes">
         <source>myPlanet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/logs-myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">myPlanet</target>
+        <target state="final">myPlanet</target>
       </trans-unit>
       <trans-unit id="7089c868ffec47d3b921f87f3921c1bfa6513d25" datatype="html" approved="yes">
         <source>No record was found</source>
@@ -4373,13 +4373,13 @@
         </context-group>
         <target state="final">Salud</target>
       </trans-unit>
-      <trans-unit id="409c72114d35a7a81516b15487d5d89f9b023131" datatype="html">
+      <trans-unit id="409c72114d35a7a81516b15487d5d89f9b023131" datatype="html" approved="yes">
         <source>Courses: myProgress</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-learner.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Cursos: myProgress</target>
+        <target state="final">Cursos: myProgress</target>
       </trans-unit>
       <trans-unit id="812234027d039ff707dd67391f893846b8c2bfde" datatype="html" approved="yes">
         <source>No Progress record available</source>
@@ -4867,13 +4867,13 @@
         </context-group>
         <target state="final">Administrar sincronización</target>
       </trans-unit>
-      <trans-unit id="94a5e8128a4612c30facaa02f2189d2c4c770426" datatype="html">
+      <trans-unit id="94a5e8128a4612c30facaa02f2189d2c4c770426" datatype="html" approved="yes">
         <source>Upgrade myPlanet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Mejorar myPlanet</target>
+        <target state="final">Mejorar myPlanet</target>
       </trans-unit>
       <trans-unit id="1aaeca36b811ba1cd0162560827b1b1cd72abe6d" datatype="html" approved="yes">
         <source>Certifications</source>
@@ -7083,7 +7083,7 @@
         </context-group>
         <target state="final">Abrir en nueva pestaña</target>
       </trans-unit>
-      <trans-unit id="b64a22144e403affffc049eb55993c20d1de6ce0" datatype="html">
+      <trans-unit id="b64a22144e403affffc049eb55993c20d1de6ce0" datatype="html" approved="yes">
         <source>
         Add to myLibrary
       </source>
@@ -7091,11 +7091,11 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">
+        <target state="final">
         Añadir a myLibrary
       </target>
       </trans-unit>
-      <trans-unit id="2aa6486b4568333332ae6422735ed1a32e5e5214" datatype="html">
+      <trans-unit id="2aa6486b4568333332ae6422735ed1a32e5e5214" datatype="html" approved="yes">
         <source>
         Remove from myLibrary
       </source>
@@ -7103,7 +7103,7 @@
           <context context-type="sourcefile">app/resources/view-resources/resources-view.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">
+        <target state="final">
         Eliminar de myLibrary
       </target>
       </trans-unit>
@@ -7760,13 +7760,13 @@
         </context-group>
         <target state="final">Sí</target>
       </trans-unit>
-      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html">
+      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html" approved="yes">
         <source>No</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/feedback/feedback.component.html</context>
           <context context-type="linenumber">87</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Nu</target>
+        <target state="final">Nu</target>
       </trans-unit>
       <trans-unit id="0ee5132a8da30e0b7f9f5c70dbc91928d17dd909" datatype="html" approved="yes">
         <source>Owner</source>
@@ -7920,13 +7920,13 @@
         </context-group>
         <target state="final">Personal</target>
       </trans-unit>
-      <trans-unit id="956d763d6949bdad283999b418f6acd40e00fb17" datatype="html">
+      <trans-unit id="956d763d6949bdad283999b418f6acd40e00fb17" datatype="html" approved="yes">
         <source>Non-Personnel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/teams/teams-reports-detail.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Non-Personnel</target>
+        <target state="final">Non-Personnel</target>
       </trans-unit>
       <trans-unit id="01ed3f347210b3ec314f5cfd0becee5d7755bb91" datatype="html" approved="yes">
         <source>Total Expenses</source>
@@ -8508,13 +8508,13 @@
             Comparte
           </target>
       </trans-unit>
-      <trans-unit id="b945bae573f3f456e620bfd93f7adf64283a01e2" datatype="html">
+      <trans-unit id="b945bae573f3f456e620bfd93f7adf64283a01e2" datatype="html" approved="yes">
         <source>Team or Entreprise</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/shared/dialogs/dialogs-chat-share.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Equipo o Entreprise</target>
+        <target state="final">Equipo o Entreprise</target>
       </trans-unit>
       <trans-unit id="ccac601bf473fa28c9ac46794f1cd40542f74347" datatype="html">
         <source>Message</source>
@@ -8540,7 +8540,7 @@
                 Comparte
               </target>
       </trans-unit>
-      <trans-unit id="d04226beaa88b2dda5a513734c9888205c357402" datatype="html">
+      <trans-unit id="d04226beaa88b2dda5a513734c9888205c357402" datatype="html" approved="yes">
         <source><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button&gt;"/><x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>add<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/> Start New Chat
         <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/>
         <x id="START_TAG_BUTTON_1" ctype="x-button" equiv-text="&lt;button&gt;"/><x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/>chevron_left<x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/>
@@ -8549,7 +8549,7 @@
           <context context-type="sourcefile">app/chat/chat-sidebar/chat-sidebar.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">
+        <target state="final">
         <x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button&gt;"/>
           <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/>añadir<x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/> Iniciar Nuevo Chat
         <x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/>
@@ -8572,13 +8572,13 @@
         </context-group>
         <target state="needs-review-translation" state-qualifier="leveraged-mt">Búsqueda completa de conversaciones </target>
       </trans-unit>
-      <trans-unit id="3c2891daa6ca8e2dc4dc9ab7eb6ab45216f6d435" datatype="html">
+      <trans-unit id="3c2891daa6ca8e2dc4dc9ab7eb6ab45216f6d435" datatype="html" approved="yes">
         <source>Search through the entire conversation, not just the title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/chat/chat-sidebar/chat-sidebar.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">Buscar a través de toda la conversación, no sólo en el título</target>
+        <target state="final">Buscar a través de toda la conversación, no sólo en el título</target>
       </trans-unit>
       <trans-unit id="c8706cd57d97eb04a61f99e848a9d47d1ccb7d53" datatype="html">
         <source>Questions</source>
