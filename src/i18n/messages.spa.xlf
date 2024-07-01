@@ -269,7 +269,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {...} nation {...}}"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4ee4249867eb6377fc99ae4ffc60942d5785eac1" datatype="html">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -1721,7 +1721,7 @@
           <context context-type="sourcefile">app/resources/search-resources/resources-search.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{category, select, subject {...} language {...} medium {...} level {...}}"/>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{category, select, subject {...} language {...} medium {...} level {...}}"/>
     </target>
       </trans-unit>
       <trans-unit id="afb26e64662ed510e46b1a6c9e3e409e7446e6cd" datatype="html">
@@ -1738,7 +1738,7 @@
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library} }</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library} }</target>
       </trans-unit>
       <trans-unit id="43f004e4b7a4b16f647c7ffbd817e2335852ff98" datatype="html" approved="yes">
         <source>Search by:</source>
@@ -2276,7 +2276,7 @@
           <context context-type="sourcefile">app/shared/dialogs/dialogs-add-resources.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
       <x id="ICU" equiv-text="{view, select, resources {...} resourcesAdd {...}}"/>
     </target>
       </trans-unit>
@@ -2384,7 +2384,7 @@
           <context context-type="sourcefile">app/courses/search-courses/courses-search.component.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{category, select, languageOfInstruction {...} gradeLevel {...} subjectLevel {...}}"/>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{category, select, languageOfInstruction {...} gradeLevel {...} subjectLevel {...}}"/>
     </target>
       </trans-unit>
       <trans-unit id="ea3edef1d55b4659a74c577834daf800a94b9ebb" datatype="html">
@@ -2485,7 +2485,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <target state="needs-translation">myProgress:</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">myProgress:</target>
       </trans-unit>
       <trans-unit id="db5cc0c8d9d80c653f1b78ce2bfb1b41bc84ceeb" datatype="html" approved="yes">
         <source>Join</source>
@@ -2953,7 +2953,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
           <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...} services {...}}"/>
         </target>
       </trans-unit>
@@ -3033,7 +3033,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
           <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...} services {...}}"/>
         </target>
       </trans-unit>
@@ -3101,7 +3101,7 @@
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
             <x id="ICU" equiv-text="{ mode, select, team {...} enterprise {...} services {...}}"/>
           </target>
       </trans-unit>
@@ -3457,7 +3457,7 @@
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">70</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
                 <x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>
               </target>
       </trans-unit>
@@ -3707,7 +3707,7 @@
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">{VAR_SELECT, select, Add {Add Title} Change {Change Title} }</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT, select, Add {Add Title} Change {Change Title} }</target>
       </trans-unit>
       <trans-unit id="bf6dd19b542b56633db84ff59788d210d2acf79f" datatype="html">
         <source>{VAR_SELECT, select, true {Change Role} false {Add Role} }</source>
@@ -4095,7 +4095,7 @@
           <context context-type="sourcefile">app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">myChat</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">myChat</target>
       </trans-unit>
       <trans-unit id="3ae50e035af250afe049c252da5b7310ff5e1681" datatype="html">
         <source>myProgress</source>
@@ -4930,7 +4930,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">{VAR_PLURAL, plural, =0 {are} =1 {is} other {are} }</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_PLURAL, plural, =0 {are} =1 {is} other {are} }</target>
       </trans-unit>
       <trans-unit id="a457b8eb8a24e2313a7209891f25708b8d37d81a" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select, nation {...} center {...}}"/> with pending courses and/or resources for download.</source>
@@ -4998,7 +4998,7 @@
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">53</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{planetType, select, community {...} nation {...}}"/>:</target>
       </trans-unit>
       <trans-unit id="381b5c52485ebfd2c52aa62129911d02a8962d75" datatype="html">
         <source>{VAR_SELECT, select, community {Nation} nation {Center} }</source>
@@ -5356,7 +5356,7 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{ shownStatus, select, pending {...} accepted {...}}"/>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{ shownStatus, select, pending {...} accepted {...}}"/>
       </target>
       </trans-unit>
       <trans-unit id="b2101f568fc522bc8de1ff1397815c2f6b48b565" datatype="html">
@@ -5375,7 +5375,7 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
         <x id="ICU" equiv-text="{ planetType, select, nation {...} center {...}}"/>
       </target>
       </trans-unit>
@@ -5450,7 +5450,7 @@
           <context context-type="sourcefile">app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">26</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
           <x id="ICU" equiv-text="{ hub, select, sandbox {...} other {...}}"/>
         </target>
       </trans-unit>
@@ -5636,7 +5636,7 @@
           <context context-type="sourcefile">app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
       myPlanet
     </target>
       </trans-unit>
@@ -6403,7 +6403,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
               <x id="ICU" equiv-text="{examType, select, survey {...} exam {...}}"/>
             </target>
       </trans-unit>
@@ -6495,7 +6495,7 @@
           <context context-type="sourcefile">app/exams/exams-view.component.html</context>
           <context context-type="linenumber">85</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
         <x id="ICU" equiv-text="{examType, select, survey {...} exam {...}}"/>
       </target>
       </trans-unit>
@@ -6686,7 +6686,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
                 <x id="INTERPOLATION" equiv-text="{{step.stepTitle || 'Step ' + (stepNum + 1)}}"/>
               </target>
       </trans-unit>
@@ -6724,7 +6724,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {...} other {...}}"/>.</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {...} other {...}}"/>.</target>
       </trans-unit>
       <trans-unit id="81603f902fa514ddff8034bb556891db9a7dea24" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {resource} other {resources} }</source>
@@ -6748,7 +6748,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{step.exam.questions.length, plural, =1 {...} other {...}}"/>.</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{step.exam.questions.length, plural, =1 {...} other {...}}"/>.</target>
       </trans-unit>
       <trans-unit id="414c50a50741b813f5ca18f02b351cced6bb6d9b" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {question} other {questions} }</source>
@@ -6772,7 +6772,7 @@
           <context context-type="sourcefile">app/courses/view-courses/courses-view.component.html</context>
           <context context-type="linenumber">101</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{step.survey.questions.length, plural, =1 {...} other {...}}"/>.</target>
+        <target state="needs-review-translation" state-qualifier="leveraged-mt"><x id="ICU" equiv-text="{step.survey.questions.length, plural, =1 {...} other {...}}"/>.</target>
       </trans-unit>
       <trans-unit id="8dda5c51f7c74a154e2f8334f15d960f81ee0de3" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {question} other {questions} }</source>
@@ -6944,7 +6944,7 @@
           <context context-type="sourcefile">app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
         <x id="ICU" equiv-text="{examText, select, take {...} continue {...} retake {...}}"/>
       </target>
       </trans-unit>
@@ -7056,7 +7056,7 @@
           <context context-type="sourcefile">app/courses/progress-courses/courses-progress-leader.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
           <x id="INTERPOLATION" equiv-text="{{ step.stepTitle || 'Step ' + (step.index + 1) }}"/>
         </target>
       </trans-unit>
@@ -8573,7 +8573,7 @@
           <context context-type="sourcefile">app/landing/landing-home/landing-event/landing-eventdetail/landing-eventdetail.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">
+        <target state="needs-review-translation" state-qualifier="leveraged-mt">
     Ir al evento
   </target>
       </trans-unit>
