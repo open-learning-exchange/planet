@@ -1744,7 +1744,7 @@ Permite que tus logros sean compartidos con la nación        </target>
           <context context-type="sourcefile">app/resources/resources.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library} }</target>
+        <target state="final">{VAR_SELECT, select, myPersonals {misPersonales} myLibrary {miBiblioteca} other {Biblioteca}}</target>
       </trans-unit>
       <trans-unit id="43f004e4b7a4b16f647c7ffbd817e2335852ff98" datatype="html" approved="yes">
         <source>Search by:</source>
@@ -2411,7 +2411,7 @@ Permite que tus logros sean compartidos con la nación        </target>
           <context context-type="sourcefile">app/courses/courses.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT, select, on {myCourses} off {Cursos} }</target>
+        <target state="translated">{VAR_SELECT, select, on {misCursos} off {Cursos}}</target>
       </trans-unit>
       <trans-unit id="1907c8d64231feef5a240e23eb61d723b9a428cf" datatype="html">
         <source>Get Course</source>
@@ -3049,7 +3049,7 @@ Permite que tus logros sean compartidos con la nación        </target>
           <context context-type="sourcefile">app/teams/teams-view.component.html</context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT, select, team {Plan} enterprise {Misión &amp; Servicios} services {Servicios} }</target>
+        <target state="translated">{VAR_SELECT, select, team {Plan} enterprise {Misión &amp; Servicios} services {¡Servicios}}</target>
       </trans-unit>
       <trans-unit id="ba4d832d2f3833e5ecfc92ffd81ed2436850f12d" datatype="html">
         <source>What is your enterprise&apos;s Mission?</source>
@@ -3397,7 +3397,7 @@ Permite que tus logros sean compartidos con la nación        </target>
           <context context-type="sourcefile">app/teams/teams.component.html</context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT_1, select, team {{VAR_SELECT, select, on {myTeams} off {¡Equipos} }} enterprise {¡Empresas} }</target>
+        <target state="translated">{VAR_SELECT_1, select, team {{VAR_SELECT, select, on {miEquipos} off {Equipos}}} enterprise {Empresas}}</target>
       </trans-unit>
       <trans-unit id="efbe036c4d78f9ebb7b4ba1229e6f794dac6c588" datatype="html">
         <source>Type name to search...</source>
@@ -3713,7 +3713,7 @@ Permite que tus logros sean compartidos con la nación        </target>
           <context context-type="sourcefile">app/teams/teams-member.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT, select, Add {Add Title} Change {Change Title} }</target>
+        <target state="translated">{VAR_SELECT, select, Add {¡Añade el título} Change {¡Cambia el título}}</target>
       </trans-unit>
       <trans-unit id="bf6dd19b542b56633db84ff59788d210d2acf79f" datatype="html">
         <source>{VAR_SELECT, select, true {Change Role} false {Add Role} }</source>
@@ -3861,7 +3861,7 @@ Permite que tus logros sean compartidos con la nación        </target>
           <context context-type="sourcefile">app/home/home.component.html</context>
           <context context-type="linenumber">133</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">myDashboard</target>
+        <target state="translated">miDashboard</target>
       </trans-unit>
       <trans-unit id="0b319c4dd6d4ddd74cd138b72ab8109ffcc28f36" datatype="html">
         <source>Library</source>
@@ -4942,7 +4942,7 @@ Ha habido un error al intentar actualizar el sistema        </target>
           <context context-type="sourcefile">app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_PLURAL, plural, =0 {are} =1 {is} other {are} }</target>
+        <target state="translated">{VAR_PLURAL, plural, =0 {son} =1 {es} other {son}}</target>
       </trans-unit>
       <trans-unit id="a457b8eb8a24e2313a7209891f25708b8d37d81a" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select, nation {...} center {...}}"/> with pending courses and/or resources for download.</source>
@@ -7334,7 +7334,7 @@ Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type
           <context context-type="sourcefile">app/submissions/submissions.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">{VAR_SELECT, select, survey {mySurveys} grade {¡Envíos} }</target>
+        <target state="translated">{VAR_SELECT, select, survey {miEncuestas} grade {¡Envíos}}</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html">
         <source>Status</source>
@@ -8327,7 +8327,7 @@ Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type
         </context-group>
         <target state="needs-review-translation" state-qualifier="leveraged-mt">Referencias: </target>
       </trans-unit>
-      <trans-unit id="d06b629de380097d079d86bf4dd188b3fae78d81" datatype="html">
+      <trans-unit id="d06b629de380097d079d86bf4dd188b3fae78d81" datatype="html" approved="yes">
         <source>myHealth</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/health/health.component.html</context>
@@ -8341,7 +8341,7 @@ Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type
           <context context-type="sourcefile">app/health/health-event.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="needs-review-translation" state-qualifier="leveraged-mt">miSalud</target>
+        <target state="final">miSalud</target>
       </trans-unit>
       <trans-unit id="83e0458959f65cb1dce0f84d5d276a7bce3b7c3a" datatype="html">
         <source>Update Details</source>
