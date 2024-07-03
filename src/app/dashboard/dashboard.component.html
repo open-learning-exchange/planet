@@ -22,7 +22,7 @@
   </div>
 </mat-card>
 <planet-dashboard-tile
-  i18n-cardTitle [cardTitle]="myLibrary"
+  [cardTitle]="cardTitles.myLibrary"
   [cardType]="'myLibrary'"
   class="planet-library-theme"
   [itemData]="data.resources"
@@ -31,7 +31,7 @@
   [shelfName]="'resourceIds'">
 </planet-dashboard-tile>
 <planet-dashboard-tile
-  i18n-cardTitle [cardTitle]="myCourses"
+  [cardTitle]="cardTitles.myCourses"
   [cardType]="'myCourses'"
   class="planet-courses-theme"
   [itemData]="data.courses"
@@ -40,7 +40,7 @@
   [shelfName]="'courseIds'">
 </planet-dashboard-tile>
 <planet-dashboard-tile
-  i18n-cardTitle [cardTitle]="cardTitles.myTeams"
+  [cardTitle]="cardTitles.myTeams"
   [cardType]="'myTeams'"
   class="planet-teams-theme"
   [itemData]="data.myTeams"
@@ -50,7 +50,7 @@
   (teamRemoved)="teamRemoved($event)">
 </planet-dashboard-tile>
 <planet-dashboard-tile
-  i18n-cardTitle [cardTitle]="cardTitles.myLife"
+  [cardTitle]="cardTitles.myLife"
   [cardType]="'myLife'"
   [itemData]="myLifeItems"
   class="planet-meetups-theme">
