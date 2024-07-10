@@ -8,9 +8,9 @@ const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
 
 const providers: { [key in ProviderName]: { ai: any; defaultModel: string } } =
   {
-    'openai': { 'ai': openai, 'defaultModel': modelsConfig.openai },
-    'perplexity': { 'ai': perplexity, 'defaultModel': modelsConfig.perplexity },
-    'gemini': { 'ai': gemini, 'defaultModel': modelsConfig.gemini },
+    'openai': { 'ai': openai, 'defaultModel': modelsConfig.openai || 'gpt-3.5-turbo' },
+    'perplexity': { 'ai': perplexity, 'defaultModel': modelsConfig.perplexity || 'llama-3-sonar-small-32k-online' },
+    'gemini': { 'ai': gemini, 'defaultModel': modelsConfig.gemini || 'gemini-pro' },
   };
 
 /**
