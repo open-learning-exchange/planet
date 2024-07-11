@@ -33,13 +33,10 @@ export async function addToThread(threadId: any, message: string) {
 }
 
 
-export async function createRun(threadID: any, assistantID: any, instructions?: any) {
+export async function createRun(threadID: any, assistantID: any) {
   return await openai.beta.threads.runs.create(
     threadID,
-    {
-      'assistant_id': assistantID,
-      // instructions
-    }
+    { 'assistant_id': assistantID }
   );
 }
 
