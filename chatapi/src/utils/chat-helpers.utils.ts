@@ -12,13 +12,14 @@ import {
   retrieveResponse,
 } from './chat-assistant.utils';
 
+const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
+
 const providers: { [key in ProviderName]: { ai: any; defaultModel: string } } =
   {
-    'openai': { 'ai': openai, 'defaultModel': 'gpt-3.5-turbo' },
-    'perplexity': { 'ai': perplexity, 'defaultModel': 'llama-3-sonar-small-32k-online' },
-    'gemini': { 'ai': gemini, 'defaultModel': 'gemini-pro' },
+    'openai': { 'ai': openai, 'defaultModel': modelsConfig.openai || 'gpt-3.5-turbo' },
+    'perplexity': { 'ai': perplexity, 'defaultModel': modelsConfig.perplexity || 'llama-3-sonar-small-32k-online' },
+    'gemini': { 'ai': gemini, 'defaultModel': modelsConfig.gemini || 'gemini-pro' },
   };
-
 
 /**
  * Uses geminis's multimodal endpoint to generate chat completions
@@ -97,7 +98,6 @@ export async function aiChatStream(
     return completionText;
   }
 }
-
 
 
 /**

@@ -1,5 +1,7 @@
 @import '../../variables';
 
+
+
 .header {
   padding: 10px;
 
@@ -54,8 +56,15 @@ li:hover {
   height: 100%;
 }
 
-.sidebar-icon {
+.sidebar-icon mat-icon {
   align-self: flex-end;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.conversation-list {
+  width: 200px;
+  min-height: 40px;
 }
 
 .overlay-text {

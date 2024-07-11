@@ -113,7 +113,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   generatePDF() {
-    const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y, h:mm:ss a');
+    const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y');
     let contentArray = [
       {
         text: `${`${this.user.firstName}'s achievements`}`,
@@ -123,25 +123,41 @@ export class UsersAchievementsComponent implements OnInit {
       {
         text: `
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
-          ${this.user.birthDate ? `Birthdate: ${this.user.birthDate}` : ''}
           ${formattedBirthDate ? `Birthplace: ${formattedBirthDate}` : ''}
+          ${this.user.Birthplace ? `Birthdate: ${this.user.Birthplace}` : ''}
           `,
         alignment: 'center',
       },
     ];
 
     const optionals = [];
+    const sectionSpacer = { text: '', margin: [ 0, 10 ] };
+
     if (this.achievements.purpose) {
       optionals.push(
         { text: 'My Purpose', style: 'subHeader', alignment: 'center' },
-        { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] }
+        { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
+        sectionSpacer
       );
     }
 
     if (this.achievements.goals) {
       optionals.push(
         { text: 'My Goals', style: 'subHeader', alignment: 'center' },
-        { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] }
+        { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
+        sectionSpacer
+      );
+    }
+
+    if (this.certifications && this.certifications.length > 0) {
+      optionals.push(
+        { text: 'My Certifications', style: 'subHeader', alignment: 'center' },
+        ...this.certifications.map((certification) => {
+          return [
+            { text: certification.name, bold: true, margin: [ 20, 5 ] },
+          ];
+        }),
+        sectionSpacer
       );
     }
 
@@ -151,21 +167,40 @@ export class UsersAchievementsComponent implements OnInit {
         ...this.achievements.achievements.map((achievement) => {
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+            { text: format(new Date(achievement.date), 'MMM d, y'), marginLeft: 40 },
+            { text: achievement.link, marginLeft: 40 },
             { text: achievement.description, marginLeft: 40 },
           ];
-        })
+        }),
+        sectionSpacer
       );
     }
 
-    if (this.certifications && this.certifications.length > 0) {
+    if (this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
-        { text: 'My Certifications', style: 'subHeader', alignment: 'center' },
-        ...this.certifications.map((certification) => {
+        { text: 'My Links', style: 'subHeader', alignment: 'center' },
+        ...this.achievements.links.map((achievement) => {
           return [
-            { text: certification.title, bold: true, margin: [ 20, 5 ] },
-            { text: certification.description, marginLeft: 40 },
+            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+            { text: achievement.url, marginLeft: 40 },
           ];
-        })
+        }),
+        sectionSpacer
+      );
+    }
+
+    if (this.achievements.references && this.achievements.references.length > 0) {
+      optionals.push(
+        { text: 'My References', style: 'subHeader', alignment: 'center' },
+        ...this.achievements.references.map((achievement) => {
+          return [
+            { text: achievement.name, bold: true, margin: [ 20, 5 ] },
+            { text: achievement.relationship, marginLeft: 40 },
+            { text: achievement.phone, marginLeft: 40 },
+            { text: achievement.email, marginLeft: 40 },
+          ];
+        }),
+        sectionSpacer
       );
     }
 

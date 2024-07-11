@@ -16,7 +16,7 @@
       <mat-chip-list>
         <mat-chip color="primary" selected class="planet-chip-label chip-no-style" *ngFor="let label of item.doc.labels">
           <planet-label i18n-label [label]="label"></planet-label>
-          <mat-icon *ngIf="item.doc.user.name === currentUser.name && editable && !item.doc.chat" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
+          <mat-icon *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable && !item.doc.chat" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
         </mat-chip>
         <mat-chip class="planet-chip-label chip-no-style chat-chip" *ngIf="item.doc.chat">
           <planet-label i18n-label [label]="'shared chat'"></planet-label>
@@ -27,18 +27,18 @@
   <mat-card-content>
     <div [ngClass]="{'show-less': showLess}" #content>
       <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
-    </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>{{ showLess ? 'Show More' : 'Show Less' }}</span>
-    <ng-container *ngIf="item.doc.chat">
-      <div class="chat-container">
-        <div *ngFor="let conversation of item.doc.news.conversations">
-          <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-          <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+      <ng-container *ngIf="item.doc.chat">
+        <div class="chat-container">
+          <div *ngFor="let conversation of item.doc.news.conversations">
+            <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
+            <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+          </div>
         </div>
-      </div>
-    </ng-container>
-    <ng-template #mdRender>
-    </ng-template>
+      </ng-container>
+    </div>
+    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>
+      {{ showLess ? 'Show More' : 'Show Less' }}
+    </span>
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
@@ -46,16 +46,16 @@
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
     </button>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="item.doc.user.name === currentUser.name">
+    <ng-container *ngIf="item.doc.user.name === currentUser.name || currentUser.isUserAdmin">
       <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
+      <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
+      <mat-menu #labelMenu="matMenu">
+        <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
+      </mat-menu>
+      <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
+        shareTarget, select, community {Community} nation {Nation} center {Earth}
+      }</button>
     </ng-container>
-    <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
-    <mat-menu #labelMenu="matMenu">
-      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
-    </mat-menu>
-    <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
-      shareTarget, select, community {Community} nation {Nation} center {Earth}
-    }</button>
   </mat-card-actions>
 </mat-card>

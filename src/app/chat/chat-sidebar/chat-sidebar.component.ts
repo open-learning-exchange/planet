@@ -88,9 +88,14 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.overlayOpen = !this.overlayOpen;
   }
 
-  updateConversation(conversation: Conversation, title) {
+  updateConversation(conversation: Conversation, title?: string, shared?: boolean) {
     this.couchService.updateDocument(
-      this.dbName, { ...conversation, title: title, updatedDate: this.couchService.datePlaceholder }
+      this.dbName, {
+        ...conversation,
+        title: title !== undefined && title !== null ? title : conversation.title,
+        shared: shared,
+        updatedDate: this.couchService.datePlaceholder
+     }
     ).subscribe((data) => {
       this.getChatHistory();
       return data;
@@ -210,6 +215,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
         news: conversation,
       }
     });
+    this.updateConversation(conversation, null, true);
   }
 
 }
