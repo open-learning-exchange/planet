@@ -13,26 +13,25 @@
       <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
         <mat-icon>delete</mat-icon>
       </button><br>
+      <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
+      <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
+      <button style="text-align: end;" mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+      <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
+        <span class="overlay-text" i18n>Search through the entire conversation, not just the title</span>
+      </ng-template>
       <div>
-        <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
-        <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
-        <button style="text-align: end;" mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
-          <mat-icon>help_outline</mat-icon>
-        </button>
-        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
-          <span class="overlay-text" i18n>Search through the entire conversation, not just the title</span>
-        </ng-template>
-        <div>
-          <mat-button-toggle-group *ngIf="fullTextSearch" [(ngModel)]="searchType" (change)="filterConversations()">
-            <mat-button-toggle value="questions" i18n>Questions</mat-button-toggle>
-            <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
-          </mat-button-toggle-group>
-        </div>
+        <mat-button-toggle-group *ngIf="fullTextSearch" [(ngModel)]="searchType" (change)="filterConversations()">
+          <mat-button-toggle value="questions" i18n>Questions</mat-button-toggle>
+          <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
+        </mat-button-toggle-group>
       </div>
+      <hr>
     </div>
     <ng-container *ngIf="filteredConversations?.length; else noChats">
       <ul>
-        <li *ngFor="let conversation of filteredConversations; let i = index" (click)="selectConversation(conversation, i)" style="width: 230px;">
+        <li *ngFor="let conversation of filteredConversations; let i = index" class="conversation-list" (click)="selectConversation(conversation, i)">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
               <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
@@ -53,18 +52,18 @@
           </ng-container>
           <ng-template #notEditing>
             <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
+            <button *ngIf="conversation.shared" mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
+              <mat-icon>done_all</mat-icon>
+            </button>
             <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()" matTooltip="Edit title">
               <mat-icon>edit</mat-icon>
             </button>
             <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)" matTooltip="Share conversation">
               <mat-icon>share</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
-              <mat-icon *ngIf="conversation.shared">done_all</mat-icon>
-            </button>
           </ng-template>
           <ng-template #conversationTitle>
-            {{ conversation?.title?.slice(0, 25) || conversation.conversations[0].query.slice(0, 25) }}
+            {{ (conversation?.title?.length > 19 ? conversation?.title?.slice(0, 19) + '...' : conversation?.title) }}
           </ng-template>
         </li>
       </ul>
