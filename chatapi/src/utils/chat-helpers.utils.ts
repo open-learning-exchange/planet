@@ -10,6 +10,7 @@ import {
   createRun,
   waitForRunCompletion,
   retrieveResponse,
+  createAndHandleRunWithStreaming,
 } from './chat-assistant.utils';
 
 const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
@@ -75,6 +76,22 @@ export async function aiChatStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
+  if (assistant) {
+    try {
+      const asst = await createAssistant(model);
+      const thread = await createThread();
+      for (const message of messages) {
+        await addToThread(thread.id, message.content);
+      }
+
+      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, callback);
+
+      return completionText;
+    } catch (error) {
+      throw new Error('Error processing request');
+    }
+  }
+
   if (aiProvider.name === 'gemini') {
     return handleGemini(messages, model);
   } else {
@@ -121,13 +138,10 @@ export async function aiChatNonStream(
     try {
       const asst = await createAssistant(model);
       const thread = await createThread();
-
       for (const message of messages) {
         await addToThread(thread.id, message.content);
       }
-
       const run = await createRun(thread.id, asst.id);
-
       await waitForRunCompletion(thread.id, run.id);
 
       return await retrieveResponse(thread.id);
