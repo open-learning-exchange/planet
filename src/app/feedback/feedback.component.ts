@@ -36,8 +36,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
-  typeOptions: any = [ 'Question', 'Bug', 'Suggestion' ];
-  statusOptions: any = [ { text: 'Open', value: [ 'Open', 'Reopened' ] }, { text: 'Closed', value: 'Closed' } ];
+  typeOptions: any = [ $localize`Question`, $localize`Bug`, $localize`Suggestion` ];
+  statusOptions: any = [ { text: $localize`Open`, value: [ 'Open', 'Reopened' ] }, { text: $localize`Closed`, value: 'Closed' } ];
   filter = {
     'type': '',
     'status': ''

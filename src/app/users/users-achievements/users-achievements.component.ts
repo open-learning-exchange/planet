@@ -116,15 +116,15 @@ export class UsersAchievementsComponent implements OnInit {
     const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y');
     let contentArray = [
       {
-        text: `${`${this.user.firstName}'s achievements`}`,
+        text: $localize`${`${this.user.firstName}'s achievements`}`,
         style: 'header',
         alignment: 'center',
       },
       {
         text: `
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
-          ${formattedBirthDate ? `Birthplace: ${formattedBirthDate}` : ''}
-          ${this.user.Birthplace ? `Birthdate: ${this.user.Birthplace}` : ''}
+          ${formattedBirthDate ? $localize`Birthplace: ${formattedBirthDate}` : ''}
+          ${this.user.Birthplace ? $localize`Birthdate: ${this.user.Birthplace}` : ''}
           `,
         alignment: 'center',
       },
@@ -135,7 +135,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     if (this.achievements.purpose) {
       optionals.push(
-        { text: 'My Purpose', style: 'subHeader', alignment: 'center' },
+        { text: $localize`My Purpose`, style: 'subHeader', alignment: 'center' },
         { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
         sectionSpacer
       );
@@ -143,7 +143,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     if (this.achievements.goals) {
       optionals.push(
-        { text: 'My Goals', style: 'subHeader', alignment: 'center' },
+        { text: $localize`My Goals`, style: 'subHeader', alignment: 'center' },
         { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
         sectionSpacer
       );
@@ -151,7 +151,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     if (this.certifications && this.certifications.length > 0) {
       optionals.push(
-        { text: 'My Certifications', style: 'subHeader', alignment: 'center' },
+        { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
         ...this.certifications.map((certification) => {
           return [
             { text: certification.name, bold: true, margin: [ 20, 5 ] },
@@ -163,7 +163,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     if (this.achievements.achievements && this.achievements.achievements.length > 0) {
       optionals.push(
-        { text: 'My Achievements', style: 'subHeader', alignment: 'center' },
+        { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
@@ -178,7 +178,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     if (this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
-        { text: 'My Links', style: 'subHeader', alignment: 'center' },
+        { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.links.map((achievement) => {
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
@@ -191,7 +191,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     if (this.achievements.references && this.achievements.references.length > 0) {
       optionals.push(
-        { text: 'My References', style: 'subHeader', alignment: 'center' },
+        { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.references.map((achievement) => {
           return [
             { text: achievement.name, bold: true, margin: [ 20, 5 ] },
@@ -222,6 +222,6 @@ export class UsersAchievementsComponent implements OnInit {
 
     pdfMake
       .createPdf(documentDefinition)
-      .download(`${this.user.name} achievements.pdf`);
+      .download($localize`${this.user.name} achievements.pdf`);
   }
 }
