@@ -16,31 +16,22 @@ export class ChatOutputDirective implements AfterViewInit {
   }
 
   private formatOutput(text: string): string {
-    // Escape HTML tags to prevent rendering as HTML
     let escapedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     // Basic Markdown formatting
-    // Bold: **text**
     escapedText = escapedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    // Italic: *text*
     escapedText = escapedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-    // Plain URLs: https://www.example.com
-    escapedText = escapedText.replace(/(https?:\/\/[^\s]+)/g, (match) => {
-      // Avoid breaking already processed markdown links
-      if (escapedText.includes(`href="${match}"`)) {
-        return match;
-      }
-      console.log('Plain URL detected:', match); // Debugging
-      return `<a href="${match}" target="_blank">${match}</a>`;
-    });
-
-    // Markdown Links: [text](url)
+    // Markdown links
     escapedText = escapedText.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, (match, p1, p2) => {
       return `<a href="${p2}" target="_blank">${p1}</a>`;
     });
 
-    // Headers: # Header1 through ###### Header6
+    // Plain URLs
+    escapedText = escapedText.replace(/(?<!=")(https?:\/\/[^\s\[\]]+)/g, (match) => {
+      return `<a href="${match}" target="_blank">${match}</a>`;
+    });
+
     escapedText = escapedText.replace(/^###### (.*)$/gm, '<h6>$1</h6>')
       .replace(/^##### (.*)$/gm, '<h5>$1</h5>')
       .replace(/^#### (.*)$/gm, '<h4>$1</h4>')
@@ -48,7 +39,6 @@ export class ChatOutputDirective implements AfterViewInit {
       .replace(/^## (.*)$/gm, '<h2>$1</h2>')
       .replace(/^# (.*)$/gm, '<h1>$1</h1>');
 
-    // Code blocks: ```code```
     escapedText = escapedText.replace(/```([\s\S]*?)```/g, (match, p1) => {
       const codeBlockId = 'code-' + Math.random().toString(36).substr(2, 9);
       return `<pre class="code-block" id="${codeBlockId}"><code>${p1}</code><button class="copy-btn" onclick="copyToClipboard('${codeBlockId}', this)">Copy</button></pre>`;
