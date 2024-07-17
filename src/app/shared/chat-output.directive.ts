@@ -12,7 +12,6 @@ export class ChatOutputDirective implements AfterViewInit {
     const formattedText = this.formatOutput(this.text);
     this.renderer.setProperty(this.el.nativeElement, 'innerHTML', formattedText);
     this.addCopyButtons();
-    this.addStyles();
   }
 
   private formatOutput(text: string): string {
@@ -24,12 +23,12 @@ export class ChatOutputDirective implements AfterViewInit {
 
     // Markdown links
     escapedText = escapedText.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, (match, p1, p2) => {
-      return `<a href="${p2}" target="_blank">${p1}</a>`;
+      return `<a class="chat-link" href="${p2}" target="_blank">${p1}</a>`;
     });
 
     // Plain URLs
     escapedText = escapedText.replace(/(?<!=")(https?:\/\/[^\s\[\]]+)/g, (match) => {
-      return `<a href="${match}" target="_blank">${match}</a>`;
+      return `<a class="chat-link" href="${match}" target="_blank">${match}</a>`;
     });
 
     escapedText = escapedText.replace(/^###### (.*)$/gm, '<h6>$1</h6>')
@@ -71,46 +70,5 @@ export class ChatOutputDirective implements AfterViewInit {
       }
     `;
     document.body.appendChild(script);
-  }
-
-  private addStyles() {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .code-block {
-        position: relative;
-        background-color: #2d2d2d;
-        color: #f8f8f2;
-        padding: 10px;
-        border-radius: 5px;
-        overflow-x: auto;
-        font-family: 'Courier New', Courier, monospace;
-      }
-
-      .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: transparent;
-        border: none;
-        padding: 5px;
-        cursor: pointer;
-        color: #f8f8f2;
-        transition: color 0.3s;
-      }
-
-      .copy-btn.copied {
-        color: #2196f3;
-      }
-
-      a {
-        color: #1e88e5 !important;
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-    `;
-    document.head.appendChild(style);
   }
 }
