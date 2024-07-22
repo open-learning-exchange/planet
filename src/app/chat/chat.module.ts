@@ -6,6 +6,7 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DialogsChatShareModule } from '../shared/dialogs/dialogs-chat-share.module';
+import { ChatRouterModule } from './chat-routing.module';
 
 import { ChatComponent } from './chat.component';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
@@ -20,6 +21,7 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
     ReactiveFormsModule,
     SharedComponentsModule,
     DialogsChatShareModule,
+    ChatRouterModule,
   ],
   declarations: [
     ChatComponent,

@@ -34,6 +34,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
+  fullView = 'on';
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -186,5 +187,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
+  }
+
+  toggleFullView() {
+    this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 }

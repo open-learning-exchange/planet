@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -15,7 +15,6 @@ export class ChatComponent implements OnInit {
   activeService: string;
   aiServices: { name: ProviderName, value: ProviderName }[] = [];
   displayToggle: boolean;
-  @Input() context: any;
 
   constructor(
     private chatService: ChatService,
@@ -43,10 +42,6 @@ export class ChatComponent implements OnInit {
       this.displayToggle = this.aiServices.length > 0;
       this.chatService.toggleAIServiceSignal(this.activeService);
     });
-
-    if (this.context) {
-      this.chatService.setContext(this.context);
-    }
   }
 
   goBack(): void {

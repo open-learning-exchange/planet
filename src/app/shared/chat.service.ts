@@ -48,10 +48,6 @@ import { CouchService } from '../shared/couchdb.service';
     return this.httpClient.get(`${this.baseUrl}/checkproviders`);
   }
 
-  setContext(context: any) {
-    this.getPrompt(context, true).subscribe();
-  }
-
   getPrompt(data: Object, save: boolean): Observable<any> {
     return this.httpClient.post(this.baseUrl, {
       data,

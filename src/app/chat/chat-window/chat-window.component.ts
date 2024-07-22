@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -30,8 +30,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
+    hasContext: false,
   };
 
+  @Input() context: any;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -48,6 +50,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.subscribeToSelectedConversation();
     this.subscribeToAIService();
     this.checkStreamingStatusAndInitialize();
+    if (this.context) {
+      this.handleContext();
+    }
   }
 
   ngOnDestroy() {
@@ -178,6 +183,27 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     }
   }
 
+  handleContext() {
+    console.log(this.context);
+
+    const data = {
+      user: this.userService.get().name,
+      content: $localize`Take in the following information about this Open Learning Exchange(OLE)community ${this.context}`,
+      aiProvider: { name: 'openai' },
+      hasContext: false,
+    }
+
+    this.chatService.getPrompt(data, true).subscribe(
+      (completion: any) => {
+        this.data._id = completion.couchDBResponse?.id;
+        this.data._rev = completion.couchDBResponse?.rev;
+      },
+      (error) => {
+        console.error('Error in subscription:', error);
+      }
+    );
+  }
+
   postSubmit() {
     this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
@@ -199,6 +225,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.setSelectedConversation();
+
+    console.log(this.context);
 
     if (this.streaming) {
       this.conversations.push({ role: 'user', query: content, response: '' });
