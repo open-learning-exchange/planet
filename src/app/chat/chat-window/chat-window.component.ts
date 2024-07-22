@@ -191,7 +191,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       content: $localize`Take in the following information about this Open Learning Exchange(OLE)community ${this.context}`,
       aiProvider: { name: 'openai' },
       hasContext: false,
-    }
+    };
 
     this.chatService.getPrompt(data, true).subscribe(
       (completion: any) => {
