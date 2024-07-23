@@ -5,8 +5,8 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
-    <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
-      {fullView, select, on {Show} off {Hide}} Course Chat
+    <button *ngIf="stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+      {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
     <span class="toolbar-fill"></span>
     <div>
@@ -74,14 +74,14 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-chat-window></planet-chat-window>
-    <!-- <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
+    <planet-chat-window *ngIf="stepDetail?.description" [context]="stepDetail?.description" *ngIf="showChat"></planet-chat-window>
+    <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
       [fetchRating]="false"
       [resourceId]="resource._id"
       (resourceUrl)="setResourceUrl($event)">
-    </planet-resources-viewer> -->
+    </planet-resources-viewer>
   </div>
   <ng-template #emptyRecord>
     <div class="view-container view-full-height" i18n>No description provided.</div>

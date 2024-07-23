@@ -4,7 +4,8 @@ export interface ConversationForm {
   user: string;
   content: string;
   aiProvider: AIProvider;
-  hasContext: boolean;
+  assistant: boolean;
+  context: string;
 }
 
 export interface Conversation {

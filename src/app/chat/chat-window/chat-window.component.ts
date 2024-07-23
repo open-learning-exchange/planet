@@ -30,7 +30,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
-    hasContext: false,
+    assistant: false,
+    context: '',
   };
 
   @Input() context: any;
@@ -50,9 +51,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.subscribeToSelectedConversation();
     this.subscribeToAIService();
     this.checkStreamingStatusAndInitialize();
-    if (this.context) {
-      this.handleContext();
-    }
   }
 
   ngOnDestroy() {
@@ -183,27 +181,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleContext() {
-    console.log(this.context);
-
-    const data = {
-      user: this.userService.get().name,
-      content: $localize`Take in the following information about this Open Learning Exchange(OLE)community ${this.context}`,
-      aiProvider: { name: 'openai' },
-      hasContext: false,
-    };
-
-    this.chatService.getPrompt(data, true).subscribe(
-      (completion: any) => {
-        this.data._id = completion.couchDBResponse?.id;
-        this.data._rev = completion.couchDBResponse?.rev;
-      },
-      (error) => {
-        console.error('Error in subscription:', error);
-      }
-    );
-  }
-
   postSubmit() {
     this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
@@ -226,7 +203,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.setSelectedConversation();
 
-    console.log(this.context);
+    if (this.context) {
+      this.data.assistant = true;
+      this.data.context = this.context;
+    }
 
     if (this.streaming) {
       this.conversations.push({ role: 'user', query: content, response: '' });

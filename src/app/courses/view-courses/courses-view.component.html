@@ -32,13 +32,13 @@
 
    <ng-template #editDetails>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView('details')" i18n>
-      {fullView, select, on {Show} off {Hide}} details
+      {fullView, select, on {Show details}}
     </button>
     <button mat-stroked-button *ngIf="canManage" (click)="updateCourse()">
       <mat-icon>edit</mat-icon>
     </button>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView('chat')" i18n>
-      {fullView, select, on {Show} off {Hide}} Course Chat
+      {fullView, select, on {Show Course Chat}  off {Hide}}
     </button>
     <span class="toolbar-fill"></span>
    </ng-template>
@@ -63,7 +63,7 @@
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
         <planet-courses-detail *ngIf="currentView==='details'" [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
-        <planet-chat-window *ngIf="currentView==='chat'"></planet-chat-window>
+        <planet-chat-window *ngIf="currentView==='chat'" [context]="courseDetail"></planet-chat-window>
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
