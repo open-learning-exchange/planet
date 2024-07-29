@@ -6,7 +6,7 @@ RUN bash ./crosscompile_db-init.sh armv8 install
 
 #####
 
-FROM treehouses/node-tags:arm64
+FROM treehouses/node-tags:arm64-3.16
 
 RUN apk update ;\
     apk add --no-cache bash curl git jq ca-certificates;\

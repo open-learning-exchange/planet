@@ -12,6 +12,6 @@ RUN ./compile_planet.sh
 
 ####
 
-FROM treehouses/node
+FROM treehouses/node:3.16
 
 COPY --from=builder /ng-app/dist /ng-app/dist
