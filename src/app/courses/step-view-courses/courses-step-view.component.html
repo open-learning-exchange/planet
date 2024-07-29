@@ -74,7 +74,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-chat-window *ngIf="stepDetail?.description" [context]="stepDetail?.description" *ngIf="showChat"></planet-chat-window>
+    <planet-chat-window *ngIf="stepDetail?.description && showChat" [context]="{type: 'coursestep', data: localizedStepInfo}"></planet-chat-window>
     <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"

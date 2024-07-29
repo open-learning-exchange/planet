@@ -21,6 +21,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
   const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
+  console.log(dbData);
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
@@ -45,7 +46,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, dbData.assistant, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, dbData.assistant, dbData.context, stream, callback);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -67,6 +68,7 @@ export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
   assistant: boolean,
+  context?: any,
   stream?: boolean,
   callback?: (response: string) => void
 ): Promise<string | undefined> {
@@ -75,7 +77,7 @@ export async function chatNoSave(
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, assistant, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, assistant, context, stream, callback);
     messages.push({
       'role': 'assistant', 'content': completionText
     });

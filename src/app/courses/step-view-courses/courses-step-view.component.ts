@@ -188,4 +188,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
   }
+
+  get localizedStepInfo(): string {
+    return $localize`The following information is a course step from the ${this.stepDetail?.stepTitle} course - ${this.stepDetail?.description} be sure to assist the learner in the best way you can`;
+  }
+
 }

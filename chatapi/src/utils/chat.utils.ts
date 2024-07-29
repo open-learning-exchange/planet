@@ -7,12 +7,13 @@ export async function aiChat(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   assistant: boolean,
+  context?: any,
   stream?: boolean,
   callback?: (response: string) => void
 ): Promise<string> {
   if (stream) {
-    return await aiChatStream(messages, aiProvider, assistant, callback);
+    return await aiChatStream(messages, aiProvider, assistant, context, callback);
   } else {
-    return await aiChatNonStream(messages, aiProvider, assistant);
+    return await aiChatNonStream(messages, aiProvider, assistant, context);
   }
 }

@@ -68,6 +68,7 @@ export async function aiChatStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   assistant: boolean,
+  context: any,
   callback?: (response: string) => void
 ): Promise<string> {
   const provider = providers[aiProvider.name];
@@ -78,7 +79,7 @@ export async function aiChatStream(
 
   if (assistant) {
     try {
-      const asst = await createAssistant(model);
+      const asst = await createAssistant(model, context);
       const thread = await createThread();
       for (const message of messages) {
         await addToThread(thread.id, message.content);
@@ -126,7 +127,8 @@ export async function aiChatStream(
 export async function aiChatNonStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
-  assistant: boolean
+  assistant: boolean,
+  context: any,
 ): Promise<string> {
   const provider = providers[aiProvider.name];
   if (!provider) {
@@ -136,7 +138,7 @@ export async function aiChatNonStream(
 
   if(assistant) {
     try {
-      const asst = await createAssistant(model);
+      const asst = await createAssistant(model, context);
       const thread = await createThread();
       for (const message of messages) {
         await addToThread(thread.id, message.content);
