@@ -10,6 +10,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
+import { ChatService } from '../../shared/chat.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -34,17 +35,22 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
+  showTopicInfo = false;
+  topicLoader = false;
+  topicalInfo: string;
+
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
+    private chatService: ChatService,
+    private coursesService: CoursesService,
+    private dialog: MatDialog,
+    private resourcesService: ResourcesService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog,
-    private coursesService: CoursesService,
-    private userService: UserService,
+    private stateService: StateService,
     private submissionsService: SubmissionsService,
-    private resourcesService: ResourcesService,
-    private stateService: StateService
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -187,4 +193,24 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
   }
+
+  generateTopicInfo() {
+    this.topicLoader = true;
+    this.showTopicInfo = !this.showTopicInfo;
+
+    this.chatService.getPrompt({
+      content: `Give general info about this topic ${this.stepDetail.stepTitle}`,
+      aiProvider: { name: 'openai' }
+    }, false).subscribe({
+      next: (res) => {
+        this.topicalInfo = res?.chat;
+        this.topicLoader = false;
+      },
+      error: (err) => {
+        this.topicLoader = err;
+        this.topicLoader = false;
+      }
+    });
+  }
+
 }

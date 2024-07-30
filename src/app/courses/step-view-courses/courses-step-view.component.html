@@ -5,6 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
+    <button mat-stroked-button i18n class="margin-lr-3" (click)="generateTopicInfo()">{{showTopicInfo ? 'Hide ' : 'Get Additional topic info'}}</button>
     <span class="toolbar-fill"></span>
     <div>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
@@ -70,7 +71,14 @@
       <button mat-raised-button *ngIf="stepNum === maxStep && maxStep !== 1" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()">Finish</button>
     </div>
   </mat-toolbar>
-  <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+  <div [ngClass]="{'full-view-container':!showTopicInfo}" class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+    <div class="course-detail bg-light-grey" [ngClass]="{'invisible':!showTopicInfo}">
+      <div class="ai-banner" i18n>This content is AI generated<mat-icon>error_outline</mat-icon></div>
+      <div class="spinner-container" *ngIf="topicLoader">
+        <mat-spinner></mat-spinner>
+      </div>
+      {{topicalInfo}}
+    </div>
     <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"
