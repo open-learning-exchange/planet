@@ -133,7 +133,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         .subscribe(
           blob => {
             // Convert Blob to File
-            const file = new File([blob], attachmentName, { type: blob.type });
+            const file = new File([ blob ], attachmentName, { type: blob.type });
             console.log(file);
 
 
