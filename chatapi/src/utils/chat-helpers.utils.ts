@@ -79,7 +79,7 @@ export async function aiChatStream(
 
   if (assistant) {
     try {
-      const asst = await createAssistant(model, context);
+      const asst = await createAssistant(model);
       const thread = await createThread();
       for (const message of messages) {
         await addToThread(thread.id, message.content);
@@ -138,12 +138,12 @@ export async function aiChatNonStream(
 
   if(assistant) {
     try {
-      const asst = await createAssistant(model, context);
+      const asst = await createAssistant(model);
       const thread = await createThread();
       for (const message of messages) {
         await addToThread(thread.id, message.content);
       }
-      const run = await createRun(thread.id, asst.id);
+      const run = await createRun(thread.id, asst.id, context.data);
       await waitForRunCompletion(thread.id, run.id);
 
       return await retrieveResponse(thread.id);

@@ -8,15 +8,14 @@ dotenv.config();
  * @param model - Model to use for assistant
  * @returns Assistant object
  */
-export async function createAssistant(model: string, additionalContext?: any) {
-  console.log(additionalContext);
+export async function createAssistant(model: string) {
+// export async function createAssistant(model: string, additionalContext?: any) {
 
-  const instructions = process.env.ASSISTANT_INSTRUCTIONS + (additionalContext ? additionalContext?.data : '');
-  console.log(instructions);
+  // const instructions = process.env.ASSISTANT_INSTRUCTIONS + (additionalContext ? additionalContext?.data : '');
 
   return await openai.beta.assistants.create({
     'name': process.env.ASSISTANT_NAME,
-    instructions,
+    'instructions': process.env.ASSISTANT_INSTRUCTIONS,
     'tools': [{ 'type': 'code_interpreter' }],
     model,
   });
@@ -36,10 +35,13 @@ export async function addToThread(threadId: any, message: string) {
   );
 }
 
-export async function createRun(threadID: any, assistantID: any) {
+export async function createRun(threadID: any, assistantID: any, instructions?: string) {
   return await openai.beta.threads.runs.create(
     threadID,
-    { 'assistant_id': assistantID }
+    {
+      'assistant_id': assistantID,
+      instructions
+    }
   );
 }
 

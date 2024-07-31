@@ -21,7 +21,6 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
   const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
-  console.log(dbData);
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
