@@ -23,6 +23,7 @@
     "data": {
       "user": "admin",
       "content": "Hello",
+      "assistant": true,
       "aiProvider": {
         "name": "openai",
         "model"?: "gpt-3.5-turbo",
@@ -36,6 +37,7 @@
   Additional info on data:
   - **user**: string(required) -> Provide the planet/myPlanet username
   - **content**: string(required) -> The latest prompt for the AI to answer
+  - **assistant**: boolean(required) -> Set to true if you want to use the assistants endpoint
   - **aiProvider**: Object(required)
     - **name**: string(required) -> Name of the API provider to choose from i.e openai, perplexity or gemini.
     - **model**: string(optional) -> Name of the specific provider model to use. Defaults to gpt-3.5-turbo for _openai_, llama-3-sonar-small-32k-online	for _peplexity_ and gemini-pro for _google gemini_
