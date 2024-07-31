@@ -7,6 +7,9 @@
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
     <span class="toolbar-fill"></span>
     <div>
+      <button mat-icon-button (click)="this.isGridView = !this.isGridView">
+        <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
+      </button>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
       <a
         mat-raised-button
@@ -47,9 +50,6 @@
           Preview Survey
         </a>
       </mat-menu>
-      <button mat-icon-button (click)="this.isGridView = !this.isGridView">
-        <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
-      </button>
       <a
         mat-raised-button
         color="accent"
@@ -73,7 +73,6 @@
       <button mat-raised-button *ngIf="stepNum === maxStep && maxStep !== 1" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()">Finish</button>
     </div>
   </mat-toolbar>
-  <!-- <div [ngClass]="{'view-container': isGridView, 'flex-view': !isGridView}" class="view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord"> -->
   <div class="view-container view-full-height" [ngClass]="{'flex-view': !isGridView}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
     <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
