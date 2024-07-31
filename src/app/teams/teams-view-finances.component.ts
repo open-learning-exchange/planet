@@ -201,7 +201,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 
     this.csvService.exportCSV({
       data: updatedData,
-      title: $localize`Finances Transactions for ${this.team.name} Enterprise`
+      title: $localize`Financial Transactions for ${this.team.name} Enterprise`
     });
   }
 
