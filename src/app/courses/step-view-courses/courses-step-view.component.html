@@ -47,6 +47,9 @@
           Preview Survey
         </a>
       </mat-menu>
+      <button mat-icon-button (click)="this.isGridView = !this.isGridView">
+        <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
+      </button>
       <a
         mat-raised-button
         color="accent"
@@ -70,9 +73,11 @@
       <button mat-raised-button *ngIf="stepNum === maxStep && maxStep !== 1" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()">Finish</button>
     </div>
   </mat-toolbar>
-  <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+  <!-- <div [ngClass]="{'view-container': isGridView, 'flex-view': !isGridView}" class="view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord"> -->
+  <div class="view-container view-full-height" [ngClass]="{'flex-view': !isGridView}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
     <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
+      [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
       *ngIf="resource?._attachments"
       [fetchRating]="false"
       [resourceId]="resource._id"
