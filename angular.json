@@ -197,7 +197,11 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "planet-app:build"
+            "browserTarget": "planet-app:build",
+            "outputPath": "src/i18n",
+            "format": "xlf",
+            "i18nFormat": "xlf",
+            "ivy": true
           },
           "ivy":true
         },

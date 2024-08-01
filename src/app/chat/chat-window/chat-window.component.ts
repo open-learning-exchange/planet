@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -30,8 +30,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
+    assistant: false,
+    context: '',
   };
 
+  @Input() context: any;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -199,6 +202,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.setSelectedConversation();
+
+    if (this.context) {
+      this.data.assistant = true;
+      this.data.context = this.context;
+    }
 
     if (this.streaming) {
       this.conversations.push({ role: 'user', query: content, response: '' });

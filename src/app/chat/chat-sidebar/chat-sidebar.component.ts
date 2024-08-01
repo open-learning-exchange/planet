@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-
 import { Conversation } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
