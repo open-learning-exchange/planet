@@ -5,6 +5,9 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
+    <button *ngIf="stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+      {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
+    </button>
     <span class="toolbar-fill"></span>
     <div>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
@@ -71,6 +74,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+    <planet-chat-window *ngIf="stepDetail?.description && showChat" [context]="{type: 'coursestep', data: localizedStepInfo}"></planet-chat-window>
     <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
       *ngIf="resource?._attachments"

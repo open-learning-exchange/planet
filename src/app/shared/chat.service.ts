@@ -44,7 +44,6 @@ import { CouchService } from '../shared/couchdb.service';
     }
   }
 
-
   fetchAIProviders() {
     return this.httpClient.get(`${this.baseUrl}/checkproviders`);
   }
