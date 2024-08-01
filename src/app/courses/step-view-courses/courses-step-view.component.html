@@ -10,7 +10,7 @@
     </button>
     <span class="toolbar-fill"></span>
     <div>
-      <button mat-icon-button (click)="this.isGridView = !this.isGridView">
+      <button mat-icon-button *ngIf="resource?._attachments" (click)="this.isGridView = !this.isGridView">
         <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
       </button>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
