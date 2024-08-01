@@ -36,6 +36,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   parent = false;
   canManage = false;
   countActivity = true;
+  isGridView = true;
+  showChat = false;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -218,4 +220,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
   }
+
+  get localizedStepInfo(): string {
+    return $localize`The following information is a course step from the ${this.stepDetail?.stepTitle} course - ${this.stepDetail?.description} be sure to assist the learner in the best way you can`;
+  }
+
 }

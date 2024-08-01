@@ -21,6 +21,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   isUserEnrolled = false;
   progress = [ { stepNum: 1 } ];
   fullView = 'on';
+  currentView: string;
   courseId: string;
   canManage: boolean;
   currentUser = this.userService.get();
@@ -171,7 +172,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     }, (error) => ((error)));
   }
 
-  toggleFullView() {
+  toggleFullView(type) {
+    this.currentView = type;
     this.fullView = this.fullView === 'on' ? 'off' : 'on';
   }
 

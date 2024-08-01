@@ -45,7 +45,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, dbData.assistant, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, dbData.assistant, dbData.context, stream, callback);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -67,6 +67,7 @@ export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
   assistant: boolean,
+  context?: any,
   stream?: boolean,
   callback?: (response: string) => void
 ): Promise<string | undefined> {
@@ -75,7 +76,7 @@ export async function chatNoSave(
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, assistant, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, assistant, context, stream, callback);
     messages.push({
       'role': 'assistant', 'content': completionText
     });

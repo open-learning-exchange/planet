@@ -5,8 +5,14 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
+    <button *ngIf="stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+      {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
+    </button>
     <span class="toolbar-fill"></span>
     <div>
+      <button mat-icon-button (click)="this.isGridView = !this.isGridView">
+        <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
+      </button>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
       <a
         mat-raised-button
@@ -67,12 +73,14 @@
       <span>{{stepNum}}/{{maxStep}}</span>
       <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
       <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length > 0 && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
-      <button mat-raised-button *ngIf="stepNum === maxStep && maxStep !== 1" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()">Finish</button>
+      <button mat-raised-button *ngIf="stepNum === maxStep && maxStep !== 1" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()" i18n>Finish</button>
     </div>
   </mat-toolbar>
-  <div class="view-container view-full-height" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+  <div class="view-container view-full-height" [ngClass]="{'flex-view': !isGridView}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
+    <planet-chat-window *ngIf="stepDetail?.description && showChat" [context]="{type: 'coursestep', data: localizedStepInfo}"></planet-chat-window>
     <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
     <planet-resources-viewer
+      [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
       *ngIf="resource?._attachments"
       [fetchRating]="false"
       [resourceId]="resource._id"
