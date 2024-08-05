@@ -77,7 +77,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-chat-window *ngIf="stepDetail?.description && showChat" [context]="{type: 'coursestep', data: localizedStepInfo}"></planet-chat-window>
+    <planet-chat-window *ngIf="stepDetail?.description && showChat" [context]="{type: 'coursestep', data: localizedStepInfo + extractedText}"></planet-chat-window>
     <ng-container *ngIf="showChat; else stepViewContent">
       <div class="flex-view">
         <ng-container *ngTemplateOutlet="stepViewContent"></ng-container>

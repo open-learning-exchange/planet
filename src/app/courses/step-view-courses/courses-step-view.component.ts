@@ -38,6 +38,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
+  extractedText: string;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -128,7 +129,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
-    console.log(this.resource);
     if (this.resource && this.resource._attachments && Object.keys(this.resource._attachments).length > 0) {
       const attachmentName = Object.keys(this.resource._attachments)[0];
       this.couchService.getAttachmentAsBlob(this.resource._id, attachmentName)
@@ -136,12 +136,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           blob => {
             // Convert Blob to File
             const file = new File([ blob ], attachmentName, { type: blob.type });
-            console.log(file);
-
-
             this.pdfExtractionService.extractTextFromPdf(file)
               .then(text => {
-                console.log(text);
+                this.extractedText = $localize`The following text is extracted from a pdf attachment to the course:${text}`;
               })
               .catch(error => {
                 console.error('Error extracting text from PDF:', error);
@@ -154,7 +151,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     } else {
       console.error('No attachments found in the resource object.');
     }
-
   }
 
   // direction = -1 for previous, 1 for next
@@ -219,6 +215,33 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
+  }
+
+  extractPDFText(): string {
+    let extractedText;
+    if (this.resource && this.resource._attachments && Object.keys(this.resource._attachments).length > 0) {
+      const attachmentName = Object.keys(this.resource._attachments)[0];
+      this.couchService.getAttachmentAsBlob(this.resource._id, attachmentName)
+        .subscribe(
+          blob => {
+            // Convert Blob to File
+            const file = new File([ blob ], attachmentName, { type: blob.type });
+            this.pdfExtractionService.extractTextFromPdf(file)
+              .then(text => {
+                extractedText = $localize`The following text is extracted from a pdf attachment to the course:${text}`;
+              })
+              .catch(error => {
+                console.error('Error extracting text from PDF:', error);
+              });
+          },
+          error => {
+            console.error('Error fetching attachment from CouchDB:', error);
+          }
+        );
+    } else {
+      console.error('No attachments found in the resource object.');
+    }
+    return extractedText;
   }
 
   get localizedStepInfo(): string {
