@@ -6,8 +6,15 @@
   <audio controls [src]="resourceSrc" *ngSwitchCase="'audio'" i18n>
     Browser not supported
   </audio>
-  <iframe [src]="pdfSrc" *ngSwitchCase="'pdf'" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
-    oallowfullscreen msallowfullscreen ></iframe>
+  <div *ngSwitchCase="'pdf'" style="position: relative;">
+    <div class="pdf-toolbar">
+      <button mat-icon-button style="color: white" (click)="openFullscreen()">
+        <mat-icon>fullscreen</mat-icon>
+      </button>
+    </div>
+    <iframe #pdfViewer [src]="pdfSrc" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
+      oallowfullscreen msallowfullscreen></iframe>
+  </div>
   <div *ngSwitchCase="'other'"><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
   <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
 </div>
