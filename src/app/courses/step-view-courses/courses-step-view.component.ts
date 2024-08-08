@@ -10,6 +10,8 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
+import { CouchService } from '../../shared/couchdb.service';
+import { PdfExtractionService } from '../../shared/pdf-extract.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -36,6 +38,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
+  extractedText: string;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -46,7 +49,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private submissionsService: SubmissionsService,
     private resourcesService: ResourcesService,
-    private stateService: StateService
+    private stateService: StateService,
+    private couchService: CouchService,
+    private pdfExtractionService: PdfExtractionService
   ) {}
 
   ngOnInit() {
@@ -124,6 +129,29 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
+    // Extracting pdf text
+    if (this.resource && this.resource._attachments && Object.keys(this.resource._attachments).length > 0) {
+      const attachmentName = Object.keys(this.resource._attachments)[0];
+      this.couchService.getAttachmentAsBlob(this.resource._id, attachmentName)
+        .subscribe(
+          blob => {
+            // Convert Blob to File
+            const file = new File([ blob ], attachmentName, { type: blob.type });
+            this.pdfExtractionService.extractTextFromPdf(file)
+              .then(text => {
+                this.extractedText = $localize`The following text is extracted from a pdf attachment to the course:${text}`;
+              })
+              .catch(error => {
+                console.error('Error extracting text from PDF:', error);
+              });
+          },
+          error => {
+            console.error('Error fetching attachment from CouchDB:', error);
+          }
+        );
+    } else {
+      console.error('No attachments found in the resource object.');
+    }
   }
 
   // direction = -1 for previous, 1 for next

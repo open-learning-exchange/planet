@@ -68,6 +68,11 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
+  getAttachmentAsBlob(docId: string, attachmentName: string): Observable<Blob> {
+    const url = `${this.baseUrl}/resources/${docId}/${attachmentName}`;
+    return this.http.get(url, { responseType: 'blob', withCredentials: true });
+  }
+
   putAttachment(db: string, file: FormData, opts?: any) {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
   }

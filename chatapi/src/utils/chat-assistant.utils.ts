@@ -9,10 +9,6 @@ dotenv.config();
  * @returns Assistant object
  */
 export async function createAssistant(model: string) {
-// export async function createAssistant(model: string, additionalContext?: any) {
-
-  // const instructions = process.env.ASSISTANT_INSTRUCTIONS + (additionalContext ? additionalContext?.data : '');
-
   return await openai.beta.assistants.create({
     'name': process.env.ASSISTANT_NAME,
     'instructions': process.env.ASSISTANT_INSTRUCTIONS,
