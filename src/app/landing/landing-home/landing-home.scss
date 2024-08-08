@@ -63,6 +63,9 @@
     background-color: rgb(244, 244, 244, 0.5);
     min-height: 330px;
   }
+  & .fc .fc-toolbar {
+    flex-direction: row;
+  }
   & .fc .fc-toolbar-title {
     @media (max-width: 400px) {
       font-size: 0.7rem;
