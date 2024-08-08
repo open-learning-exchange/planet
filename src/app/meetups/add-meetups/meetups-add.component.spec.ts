@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { CouchService } from '../../shared/couchdb.service';
 import { MeetupsAddComponent } from './meetups-add.component';
 import { HttpClientModule } from '@angular/common/http';
