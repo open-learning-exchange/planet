@@ -1,3 +1,4 @@
+import fs from 'fs';
 import openai from '../config/openai.config';
 import dotenv from 'dotenv';
 
@@ -9,14 +10,13 @@ dotenv.config();
  * @returns Assistant object
  */
 export async function createAssistant(model: string) {
-// export async function createAssistant(model: string, additionalContext?: any) {
-
-  // const instructions = process.env.ASSISTANT_INSTRUCTIONS + (additionalContext ? additionalContext?.data : '');
-
   return await openai.beta.assistants.create({
     'name': process.env.ASSISTANT_NAME,
     'instructions': process.env.ASSISTANT_INSTRUCTIONS,
-    'tools': [{ 'type': 'code_interpreter' }],
+    'tools': [
+      { 'type': 'code_interpreter' },
+      { 'type': 'file_search' }
+    ],
     model,
   });
 }
@@ -25,12 +25,22 @@ export async function createThread() {
   return await openai.beta.threads.create();
 }
 
-export async function addToThread(threadId: any, message: string) {
+export async function addToThread(threadId: any, message: string, attachment?: any) {
+  let attachmentBlob;
+
+  if (attachment.valid) {
+    attachmentBlob = await openai.files.create({
+      'file': fs.createReadStream(attachment.doc),
+      'purpose': 'assistants',
+    });
+  }
+
   return await openai.beta.threads.messages.create(
     threadId,
     {
       'role': 'user',
-      'content': message
+      'content': message,
+      'attachments': attachment.valid ? [{ 'file_id': attachmentBlob?.id, 'tools': [{ 'type': 'file_search' }] }] : []
     }
   );
 }
