@@ -69,7 +69,7 @@
     "material-icons": "^0.3.1",
     "mime": "^2.4.3",
     "ngx-img": "^10.15.0",
-    "pdfjs-dist": "^2.5.207",
+    "pdfjs-dist": "~2.5.207",
     "pdfmake": "^0.1.63",
     "pouchdb": "^7.1.1",
     "pouchdb-authentication": "^1.1.3",
