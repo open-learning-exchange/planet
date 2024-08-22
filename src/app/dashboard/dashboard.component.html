@@ -5,19 +5,19 @@
       <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
     </ng-container></span></h1>
     <h1 class="mat-title">{{visits | number}} <ng-container i18n>Visits</ng-container></h1>
-  </div>
-  <div class="date">
-    <p>{{dateNow | date:'longDate'}}</p>
-  </div>
-  <div class="badges">
-    <div *ngFor="let badgeGroup of badgeGroups">
-      <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
-        <mat-icon
-          [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
-          fontSet="fa"
-          [fontIcon]="badgeIcons[badgeGroup]">
-        </mat-icon>
-      </span>
+    <div class="date">
+      <p>{{dateNow | date:'longDate'}}</p>
+    </div>
+    <div class="badges">
+      <div *ngFor="let badgeGroup of badgeGroups">
+        <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
+          <mat-icon
+            [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
+            fontSet="fa"
+            [fontIcon]="badgeIcons[badgeGroup]">
+          </mat-icon>
+        </span>
+      </div>
     </div>
   </div>
 </mat-card>
