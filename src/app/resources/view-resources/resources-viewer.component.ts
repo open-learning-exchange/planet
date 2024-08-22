@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
@@ -29,6 +29,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
   private onDestroy$ = new Subject<void>();
+  @ViewChild('pdfViewer') pdfViewer: ElementRef;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -101,6 +102,19 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     }
     // Emit resource src so parent component can use for links
     this.resourceUrl.emit(this.resourceSrc);
+  }
+
+  openFullscreen() {
+    const elem = this.pdfViewer.nativeElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { /* Firefox */
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+      elem.msRequestFullscreen();
+    }
   }
 
 }
