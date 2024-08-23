@@ -68,7 +68,6 @@ export async function aiChatStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   assistant: boolean,
-  context: any,
   callback?: (response: string) => void
 ): Promise<string> {
   const provider = providers[aiProvider.name];
@@ -135,6 +134,10 @@ export async function aiChatNonStream(
     throw new Error('Unsupported AI provider');
   }
   const model = aiProvider.model ?? provider.defaultModel;
+
+  if(context.resources) {
+
+  }
 
   if(assistant) {
     try {

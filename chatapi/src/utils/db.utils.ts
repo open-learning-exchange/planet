@@ -1,4 +1,4 @@
-import db from '../config/nano.config';
+import { chatDB, resourceDB } from '../config/nano.config';
 import { DbDoc } from '../models/db-doc.model';
 import { ChatMessage } from '../models/chat-message.model';
 
@@ -9,7 +9,7 @@ import { ChatMessage } from '../models/chat-message.model';
  */
 async function getChatDocument(id: string) {
   try {
-    const res = await db.get(id) as DbDoc;
+    const res = await chatDB.get(id) as DbDoc;
     return {
       'conversations': res.conversations,
       'title': res.title,
@@ -35,5 +35,15 @@ export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) 
   for (const { query, response } of conversations) {
     messages.push({ 'role': 'user', 'content': query });
     messages.push({ 'role': 'assistant', 'content': response });
+  }
+}
+
+export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
+  try {
+    return await resourceDB.attachment.get(docId, attachmentName);
+  } catch (error) {
+    return {
+      'error': 'Unable to retrieve file from CouchDB'
+    };
   }
 }
