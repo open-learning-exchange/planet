@@ -100,7 +100,7 @@
     "karma-coverage-istanbul-reporter": "^2.1.1",
     "karma-jasmine": "~3.0.0",
     "karma-jasmine-html-reporter": "^1.5.1",
-    "pdfjs-dist": "^2.5.207",
+    "pdfjs-dist": "~2.5.207",
     "protractor": "~5.4.2",
     "request-promise": "^4.2.5",
     "sass-lint": "^1.13.1",
