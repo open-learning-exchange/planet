@@ -3,6 +3,8 @@ import perplexity from '../config/perplexity.config';
 import gemini from '../config/gemini.config';
 import { AIProvider, ProviderName } from '../models/ai-providers.model';
 import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
+import { Attachment } from '../models/db-doc.model';
+import { fetchFileFromCouchDB } from './db.utils';
 import {
   createAssistant,
   createThread,
@@ -12,6 +14,7 @@ import {
   retrieveResponse,
   createAndHandleRunWithStreaming,
 } from './chat-assistant.utils';
+import { extractTextFromDocument } from './text-extraction.utils';
 
 const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
 
@@ -135,8 +138,15 @@ export async function aiChatNonStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if(context.resources) {
+  if(context.resource) {
+    for (const [attachmentName, attachment] of Object.entries(context.resource.attachments)) {
+      const typedAttachment = attachment as Attachment;
+      const contentType = typedAttachment.content_type;
 
+      const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
+      const text = await extractTextFromDocument(file as Buffer, contentType);
+      context.data += text;
+    }
   }
 
   if(assistant) {
