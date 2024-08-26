@@ -12,6 +12,7 @@ import {
   retrieveResponse,
   createAndHandleRunWithStreaming,
 } from './chat-assistant.utils';
+import { fetchFileFromCouchDB } from './db.utils';
 
 const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
 
@@ -134,20 +135,26 @@ export async function aiChatNonStream(
     throw new Error('Unsupported AI provider');
   }
   const model = aiProvider.model ?? provider.defaultModel;
+  let attachment: any = { 'valid': false };
+
+  if (context?.attachment) {
+    const attachmentFile = await fetchFileFromCouchDB(context.attachment?.id, context.attachment?.filename);
+    attachment = { 'valid': true, 'doc': attachmentFile };
+  }
 
   if(assistant) {
     try {
       const asst = await createAssistant(model);
       const thread = await createThread();
       for (const message of messages) {
-        await addToThread(thread.id, message.content, context?.attachment);
+        await addToThread(thread.id, message.content, attachment);
       }
       const run = await createRun(thread.id, asst.id, context.data);
       await waitForRunCompletion(thread.id, run.id);
 
       return await retrieveResponse(thread.id);
     } catch (error) {
-      return 'Error processing request';
+      return `Error processing request ${error}`;
     }
   }
 

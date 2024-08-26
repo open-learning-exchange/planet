@@ -30,7 +30,7 @@ export async function addToThread(threadId: any, message: string, attachment?: a
 
   if (attachment.valid) {
     attachmentBlob = await openai.files.create({
-      'file': fs.createReadStream(attachment.doc),
+      'file': attachment.doc,
       'purpose': 'assistants',
     });
   }
