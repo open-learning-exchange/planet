@@ -1,10 +1,12 @@
 <mat-card class="horizontal">
   <img [src]="profileImg">
   <div class="dashboard-name">
-    <h1 class="mat-title">{{displayName}}<span class="mat-subheading-2"> - <ng-container *ngFor="let role of roles; last as last">
-      <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
-    </ng-container></span></h1>
-    <h1 class="mat-title">{{visits | number}} <ng-container i18n>Visits</ng-container></h1>
+    <h1 class="mat-title">{{displayName}}  ({{visits | number}})</h1>
+    <h1 class="mat-title">
+      <span class="mat-subheading-2"><ng-container *ngFor="let role of roles; last as last">
+        <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
+      </ng-container></span>
+    </h1>
   </div>
   <div class="date">
     <p>{{dateNow | date:'longDate'}}</p>
