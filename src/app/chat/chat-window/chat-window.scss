@@ -1,9 +1,15 @@
 @import '../../variables.scss';
 
+.full-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .chat-container {
   overflow-y: auto;
-  height: calc(#{$view-container-height} - 140px);
   padding: 2rem;
+  height: 100%;
 }
 
 .form-container {
