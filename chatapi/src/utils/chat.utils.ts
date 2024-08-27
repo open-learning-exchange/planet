@@ -12,7 +12,7 @@ export async function aiChat(
   callback?: (response: string) => void
 ): Promise<string> {
   if (stream) {
-    return await aiChatStream(messages, aiProvider, assistant, context, callback);
+    return await aiChatStream(messages, aiProvider, assistant, callback);
   } else {
     return await aiChatNonStream(messages, aiProvider, assistant, context);
   }
