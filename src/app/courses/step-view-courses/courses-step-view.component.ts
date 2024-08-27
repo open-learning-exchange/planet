@@ -191,7 +191,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   get localizedStepInfo(): string {
-    return $localize`The following information is a course step from the ${this.stepDetail?.stepTitle} course - ${this.stepDetail?.description} be sure to assist the learner in the best way you can`;
+    return $localize`The following information is a course step from the "${this.stepDetail?.stepTitle}" course with a description "${this.stepDetail?.description}". Be sure to assist the learner in the best way you can. `;
   }
 
 }

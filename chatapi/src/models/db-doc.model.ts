@@ -7,3 +7,11 @@ export interface DbDoc {
   aiProvider: string;
   conversations: [];
 }
+
+export interface Attachment {
+  content_type: string;
+  revpos: number;
+  digest: string;
+  length: number;
+  stub: boolean;
+}
