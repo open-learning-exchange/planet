@@ -63,7 +63,6 @@
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
         <planet-courses-detail *ngIf="currentView==='details'" [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
-        <!-- <planet-chat-window *ngIf="currentView==='chat'" [context]="{ type: 'courseview',  data: courseDetail}"></planet-chat-window> -->
       </div>
       <div class="course-view">
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
