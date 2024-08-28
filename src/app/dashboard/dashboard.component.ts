@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const user = this.userService.get();
-    this.displayName = user.firstName !== undefined ? user.firstName + ' ' + user.middleName + ' ' + user.lastName : user.name;
+    this.displayName = user.firstName !== undefined ? user.firstName + ' ' + user.lastName : user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
