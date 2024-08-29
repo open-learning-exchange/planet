@@ -3,8 +3,8 @@ FROM treehouses/node:3.16
 RUN apk update
 
 # Install dependencies
-COPY ./chatapi/package.json ./chatapi/package-lock.json ./
-RUN npm install --production
+COPY ./chatapi/package.json ./
+RUN npm install --only=production
 
 # Copy the application code
 COPY ./chatapi/src ./src/
