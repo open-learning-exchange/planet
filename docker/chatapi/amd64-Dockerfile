@@ -4,13 +4,11 @@ RUN apk update
 
 # Install dependencies
 COPY ./chatapi/package.json ./
-RUN npm install --only=production
+RUN npm install --production
 
 # Copy the application code
 COPY ./chatapi/src ./src/
 COPY ./chatapi/tsconfig.json ./tsconfig.json
-
-RUN npm run build
 
 EXPOSE 5000
 
