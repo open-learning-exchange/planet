@@ -22,6 +22,21 @@
       <mat-icon>person</mat-icon>
       <span i18n>Make Leader</span>
     </button>
+    <button *ngIf="actionMenu.indexOf('leader') > -1"
+      (click)="openDialog({ member: member, change: 'manager' })" mat-menu-item>
+      <mat-icon>person_outline</mat-icon>
+      <span i18n>Make Manager</span>
+    </button>
+    <button *ngIf="actionMenu.indexOf('leader') > -1"
+      (click)="openDialog({ member: member, change: 'financial' })" mat-menu-item>
+      <mat-icon>person_outline</mat-icon>
+      <span i18n>Make Financial Officer</span>
+    </button>
+    <button *ngIf="actionMenu.indexOf('leader') > -1"
+      (click)="openDialog({ member: member, change: 'secretary' })" mat-menu-item>
+      <mat-icon>person_outline</mat-icon>
+      <span i18n>Make Secretary</span>
+    </button>
     <button *ngIf="actionMenu.indexOf('title') > -1"
       (click)="openDialog({ member: member, change: 'title' })" mat-menu-item>
       <mat-icon>edit</mat-icon>

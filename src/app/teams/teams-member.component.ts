@@ -46,7 +46,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.titleChangeText = this.leadershipTitle === undefined || this.leadershipTitle === '' ? 'Add' : 'Change';
   }
 
-  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
+  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' | 'manager' | 'financial' | 'secertary' }) {
     this.actionClick.emit(actionParams);
   }
 
