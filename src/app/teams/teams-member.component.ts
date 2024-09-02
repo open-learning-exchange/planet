@@ -12,6 +12,9 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-list-item-disabled {
       background-color: white;
     }
+    .leadership-role {
+      font-size: 1rem; font-weight: 500;"
+    }
   ` ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
@@ -46,7 +49,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.titleChangeText = this.leadershipTitle === undefined || this.leadershipTitle === '' ? 'Add' : 'Change';
   }
 
-  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' | 'manager' | 'financial' | 'secertary' }) {
+  openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' | 'financial' | 'secretary' }) {
     this.actionClick.emit(actionParams);
   }
 

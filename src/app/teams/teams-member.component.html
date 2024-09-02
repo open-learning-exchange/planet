@@ -4,9 +4,11 @@
   <mat-card-subtitle>
     <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
     <span i18n *ngIf="member?.userId === user._id && member?.userPlanetCode === planetCode">(You)</span>{{' '}}
-    <span i18n *ngIf="member?.userId === teamLeader?.userId && member?.userPlanetCode === teamLeader?.userPlanetCode">(Team Leader)</span>{{' '}}<span *ngIf="visits">({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
+    <span *ngIf="visits">({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
     <p *ngIf="visits && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits?.recentTime | date }}</p>
     <p class="primary-text-color" *ngIf="member?.doc?.leadershipTitle">{{member?.doc?.leadershipTitle}}</p>
+    <p i18n *ngIf="member?.userId === teamLeader?.userId && member?.userPlanetCode === teamLeader?.userPlanetCode" class="leadership-role">Team Leader</p>
+    <p *ngIf="member?.leadershipRole" class="leadership-role">{{member?.leadershipRole}}</p>
     <p class="primary-text-color" *ngIf="member?.role">{{member?.role}}</p>
   </mat-card-subtitle>
   <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
@@ -21,11 +23,6 @@
       (click)="openDialog({ member: member, change: 'leader' })" mat-menu-item>
       <mat-icon>person</mat-icon>
       <span i18n>Make Leader</span>
-    </button>
-    <button *ngIf="actionMenu.indexOf('leader') > -1"
-      (click)="openDialog({ member: member, change: 'manager' })" mat-menu-item>
-      <mat-icon>person_outline</mat-icon>
-      <span i18n>Make Manager</span>
     </button>
     <button *ngIf="actionMenu.indexOf('leader') > -1"
       (click)="openDialog({ member: member, change: 'financial' })" mat-menu-item>
