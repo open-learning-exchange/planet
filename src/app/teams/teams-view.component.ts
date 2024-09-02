@@ -274,8 +274,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
       leader: { request: this.makeLeader(item), successMsg: $localize`given leadership to`, errorMsg: $localize`giving leadership to` },
-      financial: { request: this.updateRole(item, true)({ leadershipRole: 'Financial Officer' }), successMsg: $localize`given financial officer to`, errorMsg: $localize`assigned financial officer to` },
-      secretary: { request: this.updateRole(item, true)({ leadershipRole: 'Secretary' }), successMsg: $localize`given secretary to`, errorMsg: $localize`assigned secretary to` },
+      financial: {
+        request: this.updateRole(item, true)({ leadershipRole: 'Financial Officer' }),
+        successMsg: $localize`assigned financial officer to`, errorMsg: $localize`assigned financial officer to`
+      },
+      secretary: {
+        request: this.updateRole(item, true)({ leadershipRole: 'Secretary' }),
+        successMsg: $localize`assigned secretary to`, errorMsg: $localize`assigned secretary to` },
     }[change];
   }
 
