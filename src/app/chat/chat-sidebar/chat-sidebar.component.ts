@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -7,6 +8,7 @@ import { Conversation } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-share.component';
 import { SearchService } from '../../shared/forms/search.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
@@ -42,6 +44,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog,
     private formBuilder: FormBuilder,
     private searchService: SearchService,
     private userService: UserService
@@ -84,9 +87,14 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.overlayOpen = !this.overlayOpen;
   }
 
-  updateConversation(conversation: Conversation, title) {
+  updateConversation(conversation: Conversation, title?: string, shared?: boolean) {
     this.couchService.updateDocument(
-      this.dbName, { ...conversation, title: title, updatedDate: this.couchService.datePlaceholder }
+      this.dbName, {
+        ...conversation,
+        title: title !== undefined && title !== null ? title : conversation.title,
+        shared: shared,
+        updatedDate: this.couchService.datePlaceholder
+     }
     ).subscribe((data) => {
       this.getChatHistory();
       return data;
@@ -197,4 +205,16 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       return this.filterByTitle(conversation);
     });
   }
+
+  openShareDialog(conversation) {
+    this.dialog.open(DialogsChatShareComponent, {
+      width: '50vw',
+      maxHeight: '90vh',
+      data: {
+        news: conversation,
+      }
+    });
+    this.updateConversation(conversation, null, true);
+  }
+
 }

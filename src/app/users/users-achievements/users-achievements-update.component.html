@@ -59,17 +59,7 @@
           </a>
           <planet-step-list [steps]="achievements" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-              <span>{{achievement.value.title || achievement.value}}
-                <div *ngIf="achievement.value.resources?.length > 0" class="mat-caption" i18n>
-                  Attached resources:
-                </div>
-                <mat-chip-list mat-line>
-                  <mat-chip *ngFor="let resource of (achievement.value.resources || [])">
-                    <a target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
-                    <mat-icon matChipRemove (click)="removeResource(achievement, resource)">clear</mat-icon>
-                  </mat-chip>
-                </mat-chip-list>
-              </span>
+              <span>{{achievement.value.title || achievement.value}}</span>
               <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
             </planet-step-list-item>
           </planet-step-list>
@@ -84,6 +74,16 @@
             </planet-step-list-item>
           </planet-step-list>
           <button type="button" (click)="addReference()" mat-stroked-button color="primary" i18n>Enter a Reference</button>
+        </div>
+        <div>
+          <p class="mat-hint mat-caption" i18n>Add any links below</p>
+          <planet-step-list [steps]="links" [ignoreClick]="true">
+            <planet-step-list-item *ngFor="let link of links.controls; index as i">
+              <span>{{link.value.title}}</span>
+              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addLink(i, link.value)" i18n>Edit</button>
+            </planet-step-list-item>
+          </planet-step-list>
+          <button type="button" (click)="addLink()" mat-stroked-button color="primary" i18n>Enter a Link</button>
         </div>
         <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
           Allow your achievements to be shared with the nation

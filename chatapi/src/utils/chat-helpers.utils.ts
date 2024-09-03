@@ -3,14 +3,27 @@ import perplexity from '../config/perplexity.config';
 import gemini from '../config/gemini.config';
 import { AIProvider, ProviderName } from '../models/ai-providers.model';
 import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
+import { Attachment } from '../models/db-doc.model';
+import { fetchFileFromCouchDB } from './db.utils';
+import {
+  createAssistant,
+  createThread,
+  addToThread,
+  createRun,
+  waitForRunCompletion,
+  retrieveResponse,
+  createAndHandleRunWithStreaming,
+} from './chat-assistant.utils';
+import { extractTextFromDocument } from './text-extraction.utils';
+
+const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
 
 const providers: { [key in ProviderName]: { ai: any; defaultModel: string } } =
   {
-    'openai': { 'ai': openai, 'defaultModel': 'gpt-3.5-turbo' },
-    'perplexity': { 'ai': perplexity, 'defaultModel': 'pplx-7b-online' },
-    'gemini': { 'ai': gemini, 'defaultModel': 'gemini-pro' },
+    'openai': { 'ai': openai, 'defaultModel': modelsConfig.openai || 'gpt-3.5-turbo' },
+    'perplexity': { 'ai': perplexity, 'defaultModel': modelsConfig.perplexity || 'llama-3-sonar-small-32k-online' },
+    'gemini': { 'ai': gemini, 'defaultModel': modelsConfig.gemini || 'gemini-pro' },
   };
-
 
 /**
  * Uses geminis's multimodal endpoint to generate chat completions
@@ -48,7 +61,6 @@ async function handleGemini(
 }
 
 
-
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming enabled
  * @param messages - Array of chat messages
@@ -58,6 +70,7 @@ async function handleGemini(
 export async function aiChatStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
+  assistant: boolean,
   callback?: (response: string) => void
 ): Promise<string> {
   const provider = providers[aiProvider.name];
@@ -65,6 +78,22 @@ export async function aiChatStream(
     throw new Error('Unsupported AI provider');
   }
   const model = aiProvider.model ?? provider.defaultModel;
+
+  if (assistant) {
+    try {
+      const asst = await createAssistant(model);
+      const thread = await createThread();
+      for (const message of messages) {
+        await addToThread(thread.id, message.content);
+      }
+
+      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, callback);
+
+      return completionText;
+    } catch (error) {
+      throw new Error('Error processing request');
+    }
+  }
 
   if (aiProvider.name === 'gemini') {
     return handleGemini(messages, model);
@@ -91,7 +120,6 @@ export async function aiChatStream(
 }
 
 
-
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming disabled
  * @param messages - Array of chat messages
@@ -100,13 +128,42 @@ export async function aiChatStream(
  */
 export async function aiChatNonStream(
   messages: ChatMessage[],
-  aiProvider: AIProvider
+  aiProvider: AIProvider,
+  assistant: boolean,
+  context: any,
 ): Promise<string> {
   const provider = providers[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
   }
   const model = aiProvider.model ?? provider.defaultModel;
+
+  if(context.resource) {
+    for (const [attachmentName, attachment] of Object.entries(context.resource.attachments)) {
+      const typedAttachment = attachment as Attachment;
+      const contentType = typedAttachment.content_type;
+
+      const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
+      const text = await extractTextFromDocument(file as Buffer, contentType);
+      context.data += text;
+    }
+  }
+
+  if(assistant) {
+    try {
+      const asst = await createAssistant(model);
+      const thread = await createThread();
+      for (const message of messages) {
+        await addToThread(thread.id, message.content);
+      }
+      const run = await createRun(thread.id, asst.id, context.data);
+      await waitForRunCompletion(thread.id, run.id);
+
+      return await retrieveResponse(thread.id);
+    } catch (error) {
+      return 'Error processing request';
+    }
+  }
 
   if (aiProvider.name === 'gemini') {
     return handleGemini(messages, model);

@@ -1,20 +1,20 @@
-<div class="chat-container" #chat>
-  <div *ngFor="let conversation of conversations">
-    <div class="conversation">
+<div class="full-container">
+  <div class="chat-container" #chat>
+    <div *ngFor="let conversation of conversations">
       <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
       <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" class="conversation-err" [planetChatOutput]="conversation.response"></p>
     </div>
   </div>
-</div>
 
-<div class="form-container">
-  <form [formGroup]="promptForm" class="form-space" (ngSubmit)="onSubmit()">
-    <mat-form-field class="full-width mat-form-field-type-no-underline">
-      <mat-label i18n>Chat</mat-label>
-      <div class="textarea-container">
-        <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
-        <button mat-icon-button [planetSubmit]="promptForm.valid && spinnerOn" [disabled]="!promptForm.valid" color="primary"><mat-icon>send</mat-icon></button>
-      </div>
-    </mat-form-field>
-  </form>
+  <div class="form-container">
+    <form [formGroup]="promptForm" class="form-space" (ngSubmit)="onSubmit()">
+      <mat-form-field class="full-width mat-form-field-type-no-underline">
+        <mat-label i18n>Chat</mat-label>
+        <div class="textarea-container">
+          <textarea matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
+          <button mat-icon-button [planetSubmit]="promptForm.valid && spinnerOn" [disabled]="!promptForm.valid" color="primary"><mat-icon>send</mat-icon></button>
+        </div>
+      </mat-form-field>
+    </form>
+  </div>
 </div>

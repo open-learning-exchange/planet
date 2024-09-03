@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
+import { DialogsChatShareModule } from '../shared/dialogs/dialogs-chat-share.module';
+import { ChatRouterModule } from './chat-routing.module';
 
 import { ChatComponent } from './chat.component';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
@@ -17,13 +19,15 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
     MaterialModule,
     PlanetFormsModule,
     ReactiveFormsModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    DialogsChatShareModule,
+    ChatRouterModule,
   ],
   declarations: [
     ChatComponent,
     ChatSidebarComponent,
     ChatWindowComponent
   ],
-  exports: [ ChatComponent ]
+  exports: [ ChatWindowComponent, ChatComponent ]
 })
 export class ChatModule {}

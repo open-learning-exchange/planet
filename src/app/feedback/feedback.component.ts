@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { combineLatest } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 
 @Component({
@@ -35,8 +36,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
-  typeOptions: any = [ 'Question', 'Bug', 'Suggestion' ];
-  statusOptions: any = [ { text: 'Open', value: [ 'Open', 'Reopened' ] }, { text: 'Closed', value: 'Closed' } ];
+  typeOptions: any = [ $localize`Question`, $localize`Bug`, $localize`Suggestion` ];
+  statusOptions: any = [ { text: $localize`Open`, value: [ 'Open', 'Reopened' ] }, { text: $localize`Closed`, value: 'Closed' } ];
   filter = {
     'type': '',
     'status': ''
@@ -54,6 +55,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   emptyData = false;
   users = [];
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  showFiltersRow = false;
 
   constructor(
     private couchService: CouchService,
@@ -64,8 +68,15 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
-    private usersService: UsersService
-  ) {}
+    private usersService: UsersService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     if (this.stateService.configuration.planetType === 'community') {

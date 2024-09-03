@@ -87,6 +87,16 @@
     </mat-menu>
   </span>
 </mat-toolbar>
+
+<div *ngIf="isAndroid && showBanner" class="banner">
+  <p i18n>Check out our Android app</p>
+  <a href="https://play.google.com/store/apps/details?id=org.ole.planet.myplanet" target="_blank">
+    <img src="assets/get_on_playstore.svg" alt="myPlanet on playstore" class="playstore-logo">
+  </a>
+  <div class="spacer"></div>
+  <button class="close-btn" (click)="showBanner = false">✕</button>
+</div>
+
 <mat-sidenav-container class="main-content" #content>
   <mat-sidenav #sidenav mode="side" class="primary-color nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()" *ngIf="layout === 'modern' || forceModern">
     <div class="main-sidenav">

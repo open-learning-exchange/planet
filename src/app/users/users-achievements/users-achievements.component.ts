@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
@@ -101,8 +102,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   isClickable(achievement) {
-    return (achievement.resources.length > 0
-            || achievement.description.length > 0);
+    return achievement.description.length > 0;
   }
 
   setCertifications(courses = [], progress = [], certifications = []) {
@@ -169,4 +169,116 @@ export class UsersAchievementsComponent implements OnInit {
     }, error => console.error('Error fetching image:', error));
 }
 
+  generatePDF() {
+    const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y');
+    let contentArray = [
+      {
+        text: $localize`${`${this.user.firstName}'s achievements`}`,
+        style: 'header',
+        alignment: 'center',
+      },
+      {
+        text: `
+          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${formattedBirthDate ? $localize`Birthplace: ${formattedBirthDate}` : ''}
+          ${this.user.Birthplace ? $localize`Birthdate: ${this.user.Birthplace}` : ''}
+          `,
+        alignment: 'center',
+      },
+    ];
+
+    const optionals = [];
+    const sectionSpacer = { text: '', margin: [ 0, 10 ] };
+
+    if (this.achievements.purpose) {
+      optionals.push(
+        { text: $localize`My Purpose`, style: 'subHeader', alignment: 'center' },
+        { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
+        sectionSpacer
+      );
+    }
+
+    if (this.achievements.goals) {
+      optionals.push(
+        { text: $localize`My Goals`, style: 'subHeader', alignment: 'center' },
+        { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
+        sectionSpacer
+      );
+    }
+
+    if (this.certifications && this.certifications.length > 0) {
+      optionals.push(
+        { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
+        ...this.certifications.map((certification) => {
+          return [
+            { text: certification.name, bold: true, margin: [ 20, 5 ] },
+          ];
+        }),
+        sectionSpacer
+      );
+    }
+
+    if (this.achievements.achievements && this.achievements.achievements.length > 0) {
+      optionals.push(
+        { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
+        ...this.achievements.achievements.map((achievement) => {
+          return [
+            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+            { text: format(new Date(achievement.date), 'MMM d, y'), marginLeft: 40 },
+            { text: achievement.link, marginLeft: 40 },
+            { text: achievement.description, marginLeft: 40 },
+          ];
+        }),
+        sectionSpacer
+      );
+    }
+
+    if (this.achievements.links && this.achievements.links.length > 0) {
+      optionals.push(
+        { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
+        ...this.achievements.links.map((achievement) => {
+          return [
+            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+            { text: achievement.url, marginLeft: 40 },
+          ];
+        }),
+        sectionSpacer
+      );
+    }
+
+    if (this.achievements.references && this.achievements.references.length > 0) {
+      optionals.push(
+        { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
+        ...this.achievements.references.map((achievement) => {
+          return [
+            { text: achievement.name, bold: true, margin: [ 20, 5 ] },
+            { text: achievement.relationship, marginLeft: 40 },
+            { text: achievement.phone, marginLeft: 40 },
+            { text: achievement.email, marginLeft: 40 },
+          ];
+        }),
+        sectionSpacer
+      );
+    }
+
+    contentArray = contentArray.concat(optionals);
+
+    const documentDefinition = {
+      content: contentArray,
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+        },
+        subHeader: {
+          fontSize: 16,
+          bold: true
+        }
+      },
+    };
+
+    pdfMake
+      .createPdf(documentDefinition)
+      .download($localize`${this.user.name} achievements.pdf`);
+  }
 }

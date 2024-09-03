@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, combineLatest } from 'rxjs';
-import { switchMap, takeUntil, debounceTime, auditTime } from 'rxjs/operators';
+import { switchMap, takeUntil, auditTime } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
 import { TableState } from '../../users/users-table.component';
 import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';
-import { dedupeShelfReduce } from '../../shared/utils';
 
 @Component({
   templateUrl: './certifications-view.component.html'

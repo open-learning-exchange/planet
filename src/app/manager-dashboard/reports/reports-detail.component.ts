@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { combineLatest, Subject, of } from 'rxjs';
-import { map, takeUntil, take } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { Chart } from 'chart.js';

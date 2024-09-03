@@ -24,6 +24,8 @@ import { UsersModule } from '../users/users.module';
 import { CoursesIconComponent } from './courses-icon.component';
 import { DialogsSubmissionsModule } from '../shared/dialogs/dialogs-submissions.module';
 import { CoursesViewDetailModule } from './view-courses/courses-view-detail.module';
+import { CoursesSearchComponent, CoursesSearchListComponent } from './search-courses/courses-search.component';
+import { ChatModule } from '../chat/chat.module';
 
 @NgModule({
   imports: [
@@ -40,7 +42,8 @@ import { CoursesViewDetailModule } from './view-courses/courses-view-detail.modu
     DialogsAddResourcesModule,
     DialogsSubmissionsModule,
     UsersModule,
-    CoursesViewDetailModule
+    CoursesViewDetailModule,
+    ChatModule
   ],
   declarations: [
     CoursesComponent,
@@ -48,6 +51,8 @@ import { CoursesViewDetailModule } from './view-courses/courses-view-detail.modu
     CoursesViewComponent,
     CoursesStepComponent,
     CoursesStepViewComponent,
+    CoursesSearchComponent,
+    CoursesSearchListComponent,
     CoursesProgressLeaderComponent,
     CoursesProgressLearnerComponent,
     CoursesProgressBarComponent,

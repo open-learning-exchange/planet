@@ -23,59 +23,63 @@ app.get('/', (req: any, res: any) => {
   });
 });
 
+const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
+
 // WebSocket connection handling
 wss.on('connection', (ws) => {
   ws.on('message', async (data) => {
     try {
       data = JSON.parse(data.toString());
+      if (!isValidData(data)) {
+        ws.send(JSON.stringify({ 'error': 'Invalid data format.' }));
+        return;
+      }
 
-      if (data && typeof data === 'object') {
-        const chatResponse = await chat(data, true, (response) => {
-          ws.send(JSON.stringify({ 'type': 'partial', response }));
-        });
+      const chatResponse = await chat(data, true, (response) => {
+        ws.send(JSON.stringify({ 'type': 'partial', response }));
+      });
 
-        if (chatResponse) {
-          ws.send(JSON.stringify({
-            'type': 'final',
-            'completionText': chatResponse.completionText,
-            'couchDBResponse': chatResponse.couchSaveResponse
-          }));
-        }
-      } else {
-        ws.send('Error processing input data!');
+      if (chatResponse) {
+        ws.send(JSON.stringify({
+          'type': 'final',
+          'completionText': chatResponse.completionText,
+          'couchDBResponse': chatResponse.couchSaveResponse
+        }));
       }
     } catch (error: any) {
-      ws.send(`Error: ${error.message}`);
+      ws.send(`${error.message}: Cannot connect to the streaming endpoint`);
     }
+  });
+
+  ws.on('close', () => {
+    console.log('WebSocket connection closed'); // eslint-disable-line no-console
   });
 });
 
 app.post('/', async (req: any, res: any) => {
+  const { data, save } = req.body;
+
+  if (!isValidData(data)) {
+    return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
+  }
+
   try {
-    const { data, save } = req.body;
-
-    if (typeof data !== 'object' || Array.isArray(data) || Object.keys(data).length === 0) {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
-    }
-
     if (!save) {
-      const response = await chatNoSave(data.content, data.aiProvider, false);
-      res.status(200).json({
+      const response = await chatNoSave(data.content, data.aiProvider, data.context, data.assistant, false);
+      return res.status(200).json({
         'status': 'Success',
         'chat': response
       });
-    } else if (save && data && typeof data === 'object') {
+    } else {
       const response = await chat(data, false);
-      res.status(201).json({
+      return res.status(201).json({
         'status': 'Success',
         'chat': response?.completionText,
         'couchDBResponse': response?.couchSaveResponse
       });
-    } else {
-      res.status(400).json({ 'error': 'Bad Request', 'message': 'Error processing "data" object' });
     }
   } catch (error: any) {
-    res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
+    return res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
   }
 });
 

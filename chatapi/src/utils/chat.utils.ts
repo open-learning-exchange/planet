@@ -6,12 +6,14 @@ import { ChatMessage } from '../models/chat-message.model';
 export async function aiChat(
   messages: ChatMessage[],
   aiProvider: AIProvider,
+  assistant: boolean,
+  context?: any,
   stream?: boolean,
   callback?: (response: string) => void
 ): Promise<string> {
   if (stream) {
-    return await aiChatStream(messages, aiProvider, callback);
+    return await aiChatStream(messages, aiProvider, assistant, callback);
   } else {
-    return await aiChatNonStream(messages, aiProvider);
+    return await aiChatNonStream(messages, aiProvider, assistant, context);
   }
 }

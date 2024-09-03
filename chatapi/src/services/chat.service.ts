@@ -1,6 +1,6 @@
 import { DocumentInsertResponse } from 'nano';
 
-import db from '../config/nano.config';
+import { chatDB } from '../config/nano.config';
 import { aiChat } from '../utils/chat.utils';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { handleChatError } from '../utils/chat-error.utils';
@@ -40,19 +40,19 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   }
 
   dbData.conversations.push({ 'query': content, 'response': '' });
-  const res = await db.insert(dbData);
+  const res = await chatDB.insert(dbData);
 
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, dbData.assistant, dbData.context, stream, callback);
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
     dbData.updatedDate = Date.now();
     dbData._id = res?.id;
     dbData._rev = res?.rev;
-    const couchSaveResponse = await db.insert(dbData);
+    const couchSaveResponse = await chatDB.insert(dbData);
 
     return {
       completionText,
@@ -66,6 +66,8 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
 export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
+  assistant: boolean,
+  context?: any,
   stream?: boolean,
   callback?: (response: string) => void
 ): Promise<string | undefined> {
@@ -74,7 +76,7 @@ export async function chatNoSave(
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, stream, callback);
+    const completionText = await aiChat(messages, aiProvider, assistant, context, stream, callback);
     messages.push({
       'role': 'assistant', 'content': completionText
     });

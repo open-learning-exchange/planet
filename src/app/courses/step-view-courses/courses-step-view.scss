@@ -5,11 +5,35 @@
     grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
     grid-template-rows: 1fr;
     grid-column-gap: 1rem;
+  }
 
-    > * {
-      overflow-y: auto;
+  .view-container > * {
+    overflow-y: auto;
+  }
+
+  .view-container.flex-view > * {
+    overflow-y: visible;
+  }
+
+  .flex-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    > *:nth-child(2) {
+      order: -1;
     }
+  }
 
+  .grid-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 1rem;
+  }
+
+  .center-resource {
+    align-self: center;
   }
 
   planet-resources-viewer * {

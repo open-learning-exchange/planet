@@ -184,3 +184,36 @@
   }
 
 }
+
+.banner {
+  background-color: #2196f3;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.banner .playstore-logo {
+  margin: 8px;
+  height: 30px;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+

@@ -1,5 +1,5 @@
 <mat-toolbar *ngIf="!isForm">
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileOrTabletView">
+  <ng-container *ngIf="deviceType !== deviceTypes.MOBILE; else mobileView">
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
@@ -11,7 +11,7 @@
     </mat-toolbar-row>
   </ng-container>
 
-  <ng-template #mobileOrTabletView>
+  <ng-template #mobileView>
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
@@ -19,68 +19,25 @@
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
       <span class="toolbar-fill"></span>
-      <button mat-icon-button *ngIf="deviceType !== deviceTypes.DESKTOP" (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
-    <ng-container *ngIf="showFiltersRow">
-      <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
-        <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
-          <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
-        </mat-toolbar-row>
-        <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
-        </mat-toolbar-row>
-      </ng-container>
-      <ng-container *ngIf="deviceType === deviceTypes.TABLET">
-        <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-        </mat-toolbar-row>
-      </ng-container>
-    </ng-container>
+    <mat-toolbar-row *ngIf="showFiltersRow">
+      <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
+    </mat-toolbar-row>
   </ng-template>
+
+  <mat-toolbar-row class="search-bar" *ngIf="showFilters">
+    <planet-courses-search [filteredData]="courses.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-courses-search>
+  </mat-toolbar-row>
 </mat-toolbar>
 
 <ng-template #filterOptions>
-  <ng-container *ngTemplateOutlet="languageSelect"></ng-container>
-  <ng-container *ngTemplateOutlet="gradeLevelSelect"></ng-container>
-  <ng-container *ngTemplateOutlet="subjectLevelSelect"></ng-container>
-  <ng-container *ngTemplateOutlet="titleClearButtonLevelSelect"></ng-container>
-</ng-template>
-
-<ng-template #languageSelect>
-  <mat-form-field class="font-size-1 margin-tp margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Language" [value]="filter['doc.languageOfInstruction'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.languageOfInstruction')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of languages" value={{option.value}}>{{option.label}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-
-<ng-template #gradeLevelSelect>
-  <mat-form-field class="font-size-1 margin-tp margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Grade Level" [value]="filter['doc.gradeLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.gradeLevel')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of gradeOptions" value={{option.value}}>{{option.label}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-
-<ng-template #subjectLevelSelect>
-  <mat-form-field class="font-size-1 margin-tp margin-lr-3">
-    <mat-select i18n-placeholder placeholder="Subject Level" [value]="filter['doc.subjectLevel'] || 'All'" (selectionChange)="onFilterChange($event.value, 'doc.subjectLevel')">
-      <mat-option i18n value="All">All</mat-option>
-      <mat-option *ngFor="let option of subjectOptions" value={{option.value}}>{{option.label}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-
-<ng-template #titleClearButtonLevelSelect>
-  <mat-form-field class="font-size-1 margin-tp margin-lr-3">
+  <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
+  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters">Filter</button>
+  <mat-form-field class="font-size-1 margin-lr-4">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="courses.filter === ''">
-    <span i18n>Clear</span>
-  </button>
+  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
 </ng-template>
 
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
@@ -255,6 +212,7 @@
           <div>
             <p><ng-container i18n>Grade Level:</ng-container>{{ " " }}<planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></p>
             <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
+            <p><ng-container i18n>Language:</ng-container>{{ " " }}<planet-language-label [options]="languages" [label]="element.doc.languages"></planet-language-label></p>
           </div>
         </mat-cell>
       </ng-container>

@@ -34,8 +34,8 @@ const dialogFieldOptions = [
     'type': 'radio',
     'name': 'priority',
     'options': [
-      'Yes',
-      'No',
+      $localize`Yes`,
+      $localize`No`,
     ],
     'required': true
   },
@@ -44,9 +44,9 @@ const dialogFieldOptions = [
     'type': 'radio',
     'name': 'type',
     'options': [
-      'Question',
-      'Bug',
-      'Suggestion',
+      $localize`Question`,
+      $localize`Bug`,
+      $localize`Suggestion`,
     ],
     'required': true
   },
