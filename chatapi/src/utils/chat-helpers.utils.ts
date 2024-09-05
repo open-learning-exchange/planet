@@ -1,5 +1,5 @@
-import gemini from '../config/gemini.config';
-import { initializeProviders } from '../config/nano.config';
+import { gemini } from '../config/ai-providers.config';
+import { initializeProviders } from '../config/ai-providers.config';
 import { AIProvider } from '../models/ai-providers.model';
 import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
 import { Attachment } from '../models/db-doc.model';

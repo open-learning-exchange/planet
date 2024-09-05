@@ -5,7 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { chat, chatNoSave } from './services/chat.service';
-import { getModelsConfig } from './config/nano.config';
+import { getModelsConfig } from './config/ai-providers.config';
 import { ModelConfigDocument } from './models/ai-providers.model';
 
 dotenv.config();
