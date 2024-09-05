@@ -5,6 +5,8 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { chat, chatNoSave } from './services/chat.service';
+import { getModelsConfig } from './config/nano.config';
+import { ModelConfigDocument } from './models/ai-providers.model';
 
 dotenv.config();
 
@@ -83,11 +85,12 @@ app.post('/', async (req: any, res: any) => {
   }
 });
 
-app.get('/checkproviders', (req: any, res: any) => {
+app.get('/checkproviders', async (req: any, res: any) => {
+  const doc = await getModelsConfig() as ModelConfigDocument | undefined;
   res.status(200).json({
-    'openai': process.env.OPENAI_API_KEY ? true : false,
-    'perplexity': process.env.PERPLEXITY_API_KEY ? true : false,
-    'gemini': process.env.GEMINI_API_KEY ? true : false
+    'openai': doc?.modelsConfig.openai ? true : false,
+    'perplexity': doc?.modelsConfig.perplexity ? true : false,
+    'gemini': doc?.modelsConfig.gemini ? true : false
   });
 });
 
