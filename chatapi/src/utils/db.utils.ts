@@ -40,8 +40,12 @@ export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) 
 
 export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
   try {
-    return await resourceDB.attachment.get(docId, attachmentName);
+    const rs = await resourceDB.attachment.get(docId, attachmentName);
+    console.log(rs);
+
+    return rs;
   } catch (error) {
+    console.log(error);
     return {
       'error': 'Unable to retrieve file from CouchDB'
     };

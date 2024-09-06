@@ -7,6 +7,8 @@ export async function extractTextFromDocument(data: Buffer, mimetype: string): P
         console.log(error);
         reject(error);
       } else {
+        console.log(text);
+
         resolve(text);
       }
     });
