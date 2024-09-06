@@ -42,11 +42,6 @@ export async function fetchFileFromCouchDB(docId: string, attachmentName: string
   try {
     return await resourceDB.attachment.get(docId, attachmentName);
   } catch (error) {
-    if(error.statusCode === 401) {
-      console.error('Unauthorized access to resource');
-      console.error(error);
-      throw new Error('Unauthorized access to resource');
-    }
     return {
       'error': 'Unable to retrieve file from CouchDB'
     };
