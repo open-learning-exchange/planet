@@ -40,12 +40,13 @@ export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) 
 
 export async function fetchFileFromCouchDB(docId: string, attachmentName: string) {
   try {
-    const rs = await resourceDB.attachment.get(docId, attachmentName);
-    console.log(rs);
-
-    return rs;
+    return await resourceDB.attachment.get(docId, attachmentName);
   } catch (error) {
-    console.log(error);
+    if(error.statusCode === 401) {
+      throw new Error('Unauthorized access to resource');
+      console.error('Unauthorized access to resource');
+      console.error(error)
+    }
     return {
       'error': 'Unable to retrieve file from CouchDB'
     };
