@@ -4,6 +4,7 @@ export async function extractTextFromDocument(data: Buffer, mimetype: string): P
   return new Promise((resolve, reject) => {
     textract.fromBufferWithMime(mimetype, data, (error, text) => {
       if (error) {
+        console.log(error);
         reject(error);
       } else {
         resolve(text);
