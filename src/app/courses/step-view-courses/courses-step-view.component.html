@@ -80,7 +80,7 @@
       <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
       <div>
         <mat-button-toggle-group class="full-width-toggle-group" *ngIf="stepDetail.resources.length > 1" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
-          <mat-button-toggle *ngFor="let resource of stepDetail.resources; index as i" [value]="resource" class="full-width-toggle" i18n>{{resource.title}}</mat-button-toggle>
+          <mat-button-toggle *ngFor="let resource of stepDetail.resources; index as i" [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
         </mat-button-toggle-group>
         <planet-resources-viewer
           [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
