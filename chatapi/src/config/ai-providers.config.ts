@@ -40,7 +40,7 @@ const initializeProviders = async () => {
     }
     return {
       'openai': { 'ai': openai, 'defaultModel': doc.modelsConfig.openai || 'gpt-3.5-turbo' },
-      'perplexity': { 'ai': perplexity, 'defaultModel': doc.modelsConfig.perplexity || 'llama-3-sonar-small-32k-online' },
+      'perplexity': { 'ai': perplexity, 'defaultModel': doc.modelsConfig.perplexity || 'llama-3.1-sonar-huge-128k-online	' },
       'gemini': { 'ai': gemini, 'defaultModel': doc.modelsConfig.gemini || 'gemini-pro' },
     };
   } catch (error: any) {
