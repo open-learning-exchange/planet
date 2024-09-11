@@ -1,7 +1,6 @@
-import openai from '../config/openai.config';
-import perplexity from '../config/perplexity.config';
-import gemini from '../config/gemini.config';
-import { AIProvider, ProviderName } from '../models/ai-providers.model';
+import { gemini } from '../config/ai-providers.config';
+import { initializeProviders } from '../config/ai-providers.config';
+import { AIProvider } from '../models/ai-providers.model';
 import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
 import { Attachment } from '../models/db-doc.model';
 import { fetchFileFromCouchDB } from './db.utils';
@@ -16,14 +15,7 @@ import {
 } from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
-const modelsConfig = JSON.parse(process.env.MODELS_CONFIG || '{}');
-
-const providers: { [key in ProviderName]: { ai: any; defaultModel: string } } =
-  {
-    'openai': { 'ai': openai, 'defaultModel': modelsConfig.openai || 'gpt-3.5-turbo' },
-    'perplexity': { 'ai': perplexity, 'defaultModel': modelsConfig.perplexity || 'llama-3-sonar-small-32k-online' },
-    'gemini': { 'ai': gemini, 'defaultModel': modelsConfig.gemini || 'gemini-pro' },
-  };
+const getProviders = async () => await initializeProviders();
 
 /**
  * Uses geminis's multimodal endpoint to generate chat completions
@@ -73,6 +65,7 @@ export async function aiChatStream(
   assistant: boolean,
   callback?: (response: string) => void
 ): Promise<string> {
+  const providers = await getProviders();
   const provider = providers[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
@@ -97,7 +90,7 @@ export async function aiChatStream(
 
   if (aiProvider.name === 'gemini') {
     return handleGemini(messages, model);
-  } else {
+  } else if ('chat' in provider.ai) {
     const completion = await provider.ai.chat.completions.create({
       model,
       messages,
@@ -116,6 +109,8 @@ export async function aiChatStream(
     }
 
     return completionText;
+  } else {
+    throw new Error('Provider does not support chat completions');
   }
 }
 
@@ -132,6 +127,7 @@ export async function aiChatNonStream(
   assistant: boolean,
   context: any,
 ): Promise<string> {
+  const providers = await getProviders();
   const provider = providers[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
@@ -167,7 +163,7 @@ export async function aiChatNonStream(
 
   if (aiProvider.name === 'gemini') {
     return handleGemini(messages, model);
-  } else {
+  } else if ('chat' in provider.ai) {
     const completion = await provider.ai.chat.completions.create({
       model,
       messages,
@@ -179,5 +175,7 @@ export async function aiChatNonStream(
     }
 
     return completionText;
+  } else {
+    throw new Error('Provider does not support chat completions');
   }
 }

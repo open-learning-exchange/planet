@@ -15,5 +15,6 @@ const couchHost = couchUser && couchPass
 const db = nano(couchHost || 'http://couchdb:5984');
 const chatDB = db.use('chat_history');
 const resourceDB = db.use('resources');
+const configurationDB = db.use('configurations');
 
-export { chatDB, resourceDB };
+export { chatDB, resourceDB, configurationDB };

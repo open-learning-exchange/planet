@@ -1,4 +1,4 @@
-import openai from '../config/openai.config';
+import { openai } from '../config/ai-providers.config';
 import dotenv from 'dotenv';
 
 dotenv.config();
