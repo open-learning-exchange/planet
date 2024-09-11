@@ -8,7 +8,9 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-    <span i18n>Summary of Connected Planets</span>
+      <span i18n>Summary of Connected Planets</span>
+      <span class="toolbar-fill"></span>
+      <a mat-raised-button color="accent" class="margin-lr-10" [routerLink]="['detail']" i18n>Report Detail</a>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
