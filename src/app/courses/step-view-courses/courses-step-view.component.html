@@ -63,13 +63,6 @@
         i18n>
         View Resource Details
       </a>
-      <mat-form-field *ngIf="stepDetail.resources.length > 1">
-        <mat-select i18n-placeholder placeholder="List of Resources" [value]="resource" (selectionChange)="onResourceChange($event.value)">
-          <mat-option class="margin-lr-10" *ngFor="let resource of stepDetail.resources; index as i" [value]="resource">
-            {{ resource.title }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
       <span>{{stepNum}}/{{maxStep}}</span>
       <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
       <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length > 0 && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
@@ -85,13 +78,18 @@
     </ng-container>
     <ng-template #stepViewContent>
       <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
-      <planet-resources-viewer
-        [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
-        *ngIf="resource?._attachments"
-        [fetchRating]="false"
-        [resourceId]="resource._id"
-        (resourceUrl)="setResourceUrl($event)">
-      </planet-resources-viewer>
+      <div>
+        <mat-button-toggle-group class="full-width-toggle-group" *ngIf="stepDetail.resources.length > 1" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
+          <mat-button-toggle *ngFor="let resource of stepDetail.resources; index as i" [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
+        </mat-button-toggle-group>
+        <planet-resources-viewer
+          [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
+          *ngIf="resource?._attachments"
+          [fetchRating]="false"
+          [resourceId]="resource._id"
+          (resourceUrl)="setResourceUrl($event)">
+        </planet-resources-viewer>
+      </div>
     </ng-template>
   </div>
   <ng-template #emptyRecord>

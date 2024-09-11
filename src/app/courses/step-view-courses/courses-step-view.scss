@@ -40,4 +40,20 @@
     max-width: 100%;
   }
 
+  .full-width-toggle-group {
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .full-width-toggle {
+    flex: 1;
+    text-align: center;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
 }
