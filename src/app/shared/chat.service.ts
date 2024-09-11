@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
+import { AIServices } from '../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +22,8 @@ import { CouchService } from '../shared/couchdb.service';
   private newChatSelected: Subject<void> = new Subject<void>();
   private toggleAIService = new Subject<string>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
+  private aiProvidersSubject = new BehaviorSubject<AIServices | null>(null);
+  aiProviders$ = this.aiProvidersSubject.asObservable();
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
@@ -30,7 +34,9 @@ import { CouchService } from '../shared/couchdb.service';
   constructor(
     private httpClient: HttpClient,
     private couchService: CouchService
-  ) { }
+  ) {
+    this.fetchAIProviders();
+   }
 
   initializeWebSocket() {
     if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
@@ -44,8 +50,19 @@ import { CouchService } from '../shared/couchdb.service';
     }
   }
 
-  fetchAIProviders() {
-    return this.httpClient.get(`${this.baseUrl}/checkproviders`);
+  private fetchAIProviders() {
+    this.httpClient.get<AIServices>(`${this.baseUrl}/checkproviders`).pipe(
+      catchError(err => {
+        console.error(err);
+        return of({ openai: false, perplexity: false, gemini: false });
+      })
+    ).subscribe((services: AIServices) => {
+      this.aiProvidersSubject.next(services);
+    });
+  }
+
+  listAIProviders() {
+    return this.aiProviders$;
   }
 
   getPrompt(data: Object, save: boolean): Observable<any> {
