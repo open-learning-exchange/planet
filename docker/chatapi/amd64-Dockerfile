@@ -1,6 +1,7 @@
 FROM treehouses/node:3.16
 
-RUN apk update
+# Update and install poppler (for PDF extraction)
+RUN apk update && apk add --no-cache poppler
 
 # Install dependencies
 COPY ./chatapi/package.json ./

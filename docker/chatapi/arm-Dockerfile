@@ -8,7 +8,8 @@ RUN bash ./crosscompile_chatapi.sh armv7 install
 
 FROM treehouses/node-tags:arm-3.16
 
-RUN apk update
+# Update and install poppler (for PDF extraction)
+RUN apk update && apk add --no-cache poppler
 
 COPY ./chatapi/package.json ./
 RUN npm install --production
