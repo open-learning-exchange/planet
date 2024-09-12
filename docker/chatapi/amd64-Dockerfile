@@ -1,7 +1,7 @@
 FROM treehouses/node:3.16
 
-# Update and install poppler (for PDF extraction)
-RUN apk update && apk add --no-cache poppler
+# Update and install poppler (for textract)
+RUN apk update && apk add --no-cache poppler-utils
 
 # Install dependencies
 COPY ./chatapi/package.json ./
