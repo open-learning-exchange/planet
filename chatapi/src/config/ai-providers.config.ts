@@ -52,7 +52,7 @@ const getModels = async () => {
     }
     models = {
       'openai': { 'ai': openai, 'defaultModel': doc.models.openai || 'gpt-3.5-turbo' },
-      'perplexity': { 'ai': perplexity, 'defaultModel': doc.models.perplexity || 'llama-3.1-sonar-huge-128k-online	' },
+      'perplexity': { 'ai': perplexity, 'defaultModel': doc.models.perplexity || 'llama-3-sonar-small-32k-online' },
       'gemini': { 'ai': gemini, 'defaultModel': doc.models.gemini || 'gemini-pro' },
     };
   } catch (error: any) {
