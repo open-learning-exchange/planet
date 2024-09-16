@@ -1,28 +1,21 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
-import dotenv from 'dotenv';
 
 import { configurationDB } from './nano.config';
-import { ModelConfigDocument } from '../models/ai-providers.model';
+import { ModelsDocument } from '../models/ai-providers.model';
 
-dotenv.config();
+let gemini: GoogleGenerativeAI;
+let openai: OpenAI;
+let perplexity: OpenAI;
 
-const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+let models: Record<string, any> = {};
+let assistant: Record<string, any> = {};
 
-const openai = new OpenAI({
-  'apiKey': process.env.OPENAI_API_KEY || '',
-});
-
-const perplexity = new OpenAI({
-  'apiKey': process.env.PERPLEXITY_API_KEY || '',
-  'baseURL': 'https://api.perplexity.ai',
-});
-
-async function getModelsConfig() {
+async function getConfig(): Promise<ModelsDocument | undefined> {
   try {
     const allDocs = await configurationDB.list({ 'include_docs': true });
     if (allDocs.rows.length > 0) {
-      const doc = allDocs.rows[0].doc;
+      const doc = allDocs.rows[0].doc as unknown as ModelsDocument;
       return doc;
     } else {
       throw new Error('No documents found in configurationDB');
@@ -34,18 +27,58 @@ async function getModelsConfig() {
 
 const initializeProviders = async () => {
   try {
-    const doc = await getModelsConfig() as ModelConfigDocument | undefined;
-    if (!doc || !doc.modelsConfig) {
-      throw new Error('Models configuration not found');
+    const doc = await getConfig();
+    if (!doc || !doc.keys) {
+      throw new Error('API Keys configuration not found');
     }
-    return {
-      'openai': { 'ai': openai, 'defaultModel': doc.modelsConfig.openai || 'gpt-3.5-turbo' },
-      'perplexity': { 'ai': perplexity, 'defaultModel': doc.modelsConfig.perplexity || 'llama-3.1-sonar-huge-128k-online	' },
-      'gemini': { 'ai': gemini, 'defaultModel': doc.modelsConfig.gemini || 'gemini-pro' },
-    };
+    openai = new OpenAI({
+      'apiKey':  doc.keys.openai || '',
+    });
+    perplexity = new OpenAI({
+      'apiKey': doc.keys.openai || '',
+      'baseURL': 'https://api.perplexity.ai',
+    });
+    gemini = new GoogleGenerativeAI(doc.keys.gemini || '');
   } catch (error: any) {
     throw new Error(`Error initializing providers: ${error.message}`);
   }
 };
 
-export { openai, perplexity, gemini, getModelsConfig, initializeProviders };
+const getModels = async () => {
+  try {
+    const doc = await getConfig();
+    if (!doc || !doc.models) {
+      throw new Error('Models configuration not found');
+    }
+    models = {
+      'openai': { 'ai': openai, 'defaultModel': doc.models.openai || 'gpt-3.5-turbo' },
+      'perplexity': { 'ai': perplexity, 'defaultModel': doc.models.perplexity || 'llama-3.1-sonar-huge-128k-online	' },
+      'gemini': { 'ai': gemini, 'defaultModel': doc.models.gemini || 'gemini-pro' },
+    };
+  } catch (error: any) {
+    throw new Error(`Error getting provider models: ${error.message}`);
+  }
+};
+
+const getAssistant = async () => {
+  try {
+    const doc = await getConfig();
+    if (!doc || !doc.assistant) {
+      throw new Error('Assistant configuration not found');
+    }
+    assistant = {
+      'name': doc.assistant.name,
+      'instructions': doc.assistant.instructions,
+    };
+  } catch (error: any) {
+    throw new Error(`Error getting assistant configs: ${error.message}`);
+  }
+};
+
+(async () => {
+  await initializeProviders();
+  await getModels();
+  await getAssistant();
+})();
+
+export { openai, perplexity, gemini, models, assistant };
