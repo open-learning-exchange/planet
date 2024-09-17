@@ -5,8 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { chat, chatNoSave } from './services/chat.service';
-import { getModelsConfig } from './config/ai-providers.config';
-import { ModelConfigDocument } from './models/ai-providers.model';
+import { models } from './config/ai-providers.config';
 
 dotenv.config();
 
@@ -86,11 +85,10 @@ app.post('/', async (req: any, res: any) => {
 });
 
 app.get('/checkproviders', async (req: any, res: any) => {
-  const doc = await getModelsConfig() as ModelConfigDocument | undefined;
   res.status(200).json({
-    'openai': doc?.modelsConfig.openai ? true : false,
-    'perplexity': doc?.modelsConfig.perplexity ? true : false,
-    'gemini': doc?.modelsConfig.gemini ? true : false
+    'openai': models.openai ? true : false,
+    'perplexity': models.perplexity ? true : false,
+    'gemini': models.gemini ? true : false
   });
 });
 
