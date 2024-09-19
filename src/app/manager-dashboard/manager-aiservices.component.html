@@ -1,0 +1,56 @@
+<mat-toolbar>
+  <button mat-icon-button routerLink="/manager">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>AI API Configurations</span>
+</mat-toolbar>
+
+<div class="container">
+  <mat-card class="card">
+    <mat-card-title>API Keys</mat-card-title>
+    <mat-card-content *ngIf="configuration.keys">
+      <mat-list>
+        <mat-list-item *ngFor="let key of objectKeys(configuration.keys)">
+          <div class="list-item-content">
+            <span>{{ key | titlecase }}</span>
+            <span>{{ configuration.keys[key] }}</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card">
+    <mat-card-title>Models</mat-card-title>
+    <mat-card-content *ngIf="configuration.models">
+      <mat-list>
+        <mat-list-item *ngFor="let model of objectKeys(configuration.models)">
+          <div class="list-item-content">
+            <span>{{ model | titlecase }}</span>
+            <span>{{ configuration.models[model] }}</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card">
+    <mat-card-title>Assistant Configuration</mat-card-title>
+    <mat-card-content *ngIf="configuration.assistant">
+      <mat-list>
+        <mat-list-item>
+          <div class="list-item-content">
+            <span>Name:</span>
+            <span>{{ configuration.assistant.name }}</span>
+          </div>
+        </mat-list-item>
+      </mat-list>
+
+      <div class="list-item-content instructions">
+        <span>Instructions:</span>
+        <span>{{ configuration.assistant.instructions }}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>
