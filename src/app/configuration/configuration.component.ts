@@ -231,6 +231,11 @@ export class ConfigurationComponent implements OnInit {
       {
         registrationRequest: 'pending',
         adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value,
+        keys: {
+          openai: '',
+          perplexity: '',
+          gemini: '',
+        },
         models: {
           openai: 'gpt-3.5-turbo',
           perplexity: 'llama-3-sonar-small-32k-online',
