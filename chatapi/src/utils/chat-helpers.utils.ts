@@ -150,7 +150,7 @@ export async function aiChatNonStream(
       for (const message of messages) {
         await addToThread(thread.id, message.content);
       }
-      const run = await createRun(thread.id, asst.id, context.data);
+      const run = await createRun(thread.id, asst.id, context.data || '');
       await waitForRunCompletion(thread.id, run.id);
 
       return await retrieveResponse(thread.id);
