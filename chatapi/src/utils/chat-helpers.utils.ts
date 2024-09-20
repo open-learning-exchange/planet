@@ -124,7 +124,7 @@ export async function aiChatNonStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   assistant: boolean,
-  context: any,
+  context: any = '',
 ): Promise<string> {
   const provider = models[aiProvider.name];
   if (!provider) {
