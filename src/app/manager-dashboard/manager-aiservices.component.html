@@ -5,7 +5,7 @@
   <span>AI API Configurations</span>
 </mat-toolbar>
 
-<div class="container">
+<div class="container" [formGroup]="configForm">
   <mat-card class="card">
     <mat-card-title>API Keys</mat-card-title>
     <mat-card-content *ngIf="configuration.keys">
@@ -13,7 +13,9 @@
         <mat-list-item *ngFor="let key of objectKeys(configuration.keys)">
           <div class="list-item-content">
             <span>{{ key | titlecase }}</span>
-            <span>{{ configuration.keys[key] }}</span>
+            <mat-form-field>
+              <input matInput [formControlName]="'keys_' + key" placeholder="Enter API key" type="password" />
+            </mat-form-field>
           </div>
         </mat-list-item>
       </mat-list>
@@ -27,7 +29,9 @@
         <mat-list-item *ngFor="let model of objectKeys(configuration.models)">
           <div class="list-item-content">
             <span>{{ model | titlecase }}</span>
-            <span>{{ configuration.models[model] }}</span>
+            <mat-form-field>
+              <input matInput [formControlName]="'models_' + model" placeholder="Enter model" />
+            </mat-form-field>
           </div>
         </mat-list-item>
       </mat-list>
@@ -41,16 +45,21 @@
         <mat-list-item>
           <div class="list-item-content">
             <span>Name:</span>
-            <span>{{ configuration.assistant.name }}</span>
+            <mat-form-field>
+              <input matInput formControlName="assistantName" placeholder="Assistant name" />
+            </mat-form-field>
           </div>
         </mat-list-item>
       </mat-list>
 
       <div class="list-item-content instructions">
         <span>Instructions:</span>
-        <span>{{ configuration.assistant.instructions }}</span>
+        <mat-form-field>
+          <textarea matInput formControlName="assistantInstructions" placeholder="Assistant instructions"></textarea>
+        </mat-form-field>
       </div>
     </mat-card-content>
   </mat-card>
 
+  <button mat-raised-button color="primary" (click)="saveConfig()">Save Configuration</button>
 </div>
