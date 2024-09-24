@@ -1,5 +1,5 @@
 import { gemini } from '../config/ai-providers.config';
-import { initializeProviders } from '../config/ai-providers.config';
+import { models } from '../config/ai-providers.config';
 import { AIProvider } from '../models/ai-providers.model';
 import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
 import { Attachment } from '../models/db-doc.model';
@@ -15,7 +15,7 @@ import {
 } from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
-const getProviders = async () => await initializeProviders();
+// const getProviders = async () => await initializeProviderModels();
 
 /**
  * Uses geminis's multimodal endpoint to generate chat completions
@@ -65,8 +65,7 @@ export async function aiChatStream(
   assistant: boolean,
   callback?: (response: string) => void
 ): Promise<string> {
-  const providers = await getProviders();
-  const provider = providers[aiProvider.name];
+  const provider = models[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
   }
@@ -125,10 +124,9 @@ export async function aiChatNonStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   assistant: boolean,
-  context: any,
+  context: any = '',
 ): Promise<string> {
-  const providers = await getProviders();
-  const provider = providers[aiProvider.name];
+  const provider = models[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
   }

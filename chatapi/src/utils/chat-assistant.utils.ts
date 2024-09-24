@@ -1,7 +1,5 @@
 import { openai } from '../config/ai-providers.config';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { assistant } from '../config/ai-providers.config';
 
 /**
  * Creates an assistant with the specified model
@@ -10,8 +8,8 @@ dotenv.config();
  */
 export async function createAssistant(model: string) {
   return await openai.beta.assistants.create({
-    'name': process.env.ASSISTANT_NAME,
-    'instructions': process.env.ASSISTANT_INSTRUCTIONS,
+    'name': assistant?.name,
+    'instructions': assistant?.instructions,
     'tools': [{ 'type': 'code_interpreter' }],
     model,
   });

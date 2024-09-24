@@ -5,12 +5,19 @@ export interface AIProvider {
   model?: string;
 }
 
-interface ModelsConfig {
+interface Assistant {
+  name: string;
+  instructions: string;
+}
+
+interface Providers {
   openai?: string;
   perplexity?: string;
   gemini?: string;
 }
 
-export interface ModelConfigDocument {
-  modelsConfig: ModelsConfig;
+export interface ModelsDocument {
+  models: Providers;
+  keys: Providers;
+  assistant?: Assistant;
 }
