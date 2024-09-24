@@ -11,7 +11,7 @@ import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-aiservices.component.html',
-  styleUrls: ['./manager-aiservices.component.scss'],
+  styleUrls: [ './manager-aiservices.component.scss' ],
 })
 export class ManagerAIServicesComponent implements OnInit {
   configuration: any = {};
@@ -46,8 +46,8 @@ export class ManagerAIServicesComponent implements OnInit {
     this.configForm = this.fb.group({
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
-      assistantName: [this.configuration.assistant?.name || ''],
-      assistantInstructions: [this.configuration.assistant?.instructions || '']
+      assistantName: [ this.configuration.assistant?.name || '' ],
+      assistantInstructions: [ this.configuration.assistant?.instructions || '' ]
     });
 
     if (this.configuration.keys) {
@@ -62,7 +62,7 @@ export class ManagerAIServicesComponent implements OnInit {
     const formGroupObj = {};
     if (configObject) {
       for (const key of Object.keys(configObject)) {
-        formGroupObj[prefix + key] = [configObject[key] || ''];
+        formGroupObj[prefix + key] = [ configObject[key] || '' ];
       }
     }
     return formGroupObj;
@@ -74,7 +74,7 @@ export class ManagerAIServicesComponent implements OnInit {
 
   saveConfig() {
     const spinnerOff = () => this.spinnerOn = false;
-    if (!this.configForm.valid){
+    if (!this.configForm.valid) {
       spinnerOff();
       return;
     }
