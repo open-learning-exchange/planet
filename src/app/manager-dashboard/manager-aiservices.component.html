@@ -14,13 +14,25 @@
           <div class="list-item-content">
             <span>{{ key | titlecase }}</span>
             <mat-form-field>
-              <input matInput [formControlName]="'keys_' + key" placeholder="Enter API key" type="password" />
+              <input
+                matInput
+                [type]="hideKey[key] ? 'password' : 'text'"
+                [formControlName]="'keys_' + key"
+                placeholder="Enter API key"
+              />
+              <button mat-icon-button matSuffix (click)="toggleHideKey(key)">
+                <mat-icon>{{ hideKey[key] ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix (click)="copyKey(key)">
+                <mat-icon>content_copy</mat-icon>
+              </button>
             </mat-form-field>
           </div>
         </mat-list-item>
       </mat-list>
     </mat-card-content>
   </mat-card>
+
 
   <mat-card class="card">
     <mat-card-title>Models</mat-card-title>
@@ -61,5 +73,5 @@
     </mat-card-content>
   </mat-card>
 
-  <button mat-raised-button color="primary" (click)="saveConfig()">Save Configuration</button>
+  <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()">Update Configuration</button>
 </div>
