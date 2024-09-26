@@ -5,7 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { chat, chatNoSave } from './services/chat.service';
-import { models } from './config/ai-providers.config';
+import { keys } from './config/ai-providers.config';
 
 dotenv.config();
 
@@ -86,9 +86,9 @@ app.post('/', async (req: any, res: any) => {
 
 app.get('/checkproviders', async (req: any, res: any) => {
   res.status(200).json({
-    'openai': models.openai ? true : false,
-    'perplexity': models.perplexity ? true : false,
-    'gemini': models.gemini ? true : false
+    'openai': keys.openai.apiKey ? true : false,
+    'perplexity': keys.perplexity.apiKey ? true : false,
+    'gemini': keys.gemini.apiKey ? true : false
   });
 });
 
