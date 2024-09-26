@@ -4,10 +4,7 @@ import OpenAI from 'openai';
 import { configurationDB } from './nano.config';
 import { ModelsDocument } from '../models/ai-providers.model';
 
-let gemini: GoogleGenerativeAI;
-let openai: OpenAI;
-let perplexity: OpenAI;
-
+let keys: Record<string, any> = {};
 let models: Record<string, any> = {};
 let assistant: Record<string, any> = {};
 
@@ -31,14 +28,16 @@ const initializeProviders = async () => {
     if (!doc || !doc.keys) {
       throw new Error('API Keys configuration not found');
     }
-    openai = new OpenAI({
-      'apiKey':  doc.keys.openai || '',
-    });
-    perplexity = new OpenAI({
-      'apiKey': doc.keys.openai || '',
-      'baseURL': 'https://api.perplexity.ai',
-    });
-    gemini = new GoogleGenerativeAI(doc.keys.gemini || '');
+    keys = {
+      'openai': new OpenAI({
+        'apiKey': doc.keys.openai || '',
+      }),
+      'perplexity': new OpenAI({
+        'apiKey': doc.keys.perplexity || '',
+        'baseURL': 'https://api.perplexity.ai',
+      }),
+      'gemini': new GoogleGenerativeAI(doc.keys.gemini || '')
+    };
   } catch (error: any) {
     throw new Error(`Error initializing providers: ${error.message}`);
   }
@@ -51,9 +50,9 @@ const getModels = async () => {
       throw new Error('Models configuration not found');
     }
     models = {
-      'openai': { 'ai': openai, 'defaultModel': doc.models.openai || 'gpt-3.5-turbo' },
-      'perplexity': { 'ai': perplexity, 'defaultModel': doc.models.perplexity || 'llama-3-sonar-small-32k-online' },
-      'gemini': { 'ai': gemini, 'defaultModel': doc.models.gemini || 'gemini-pro' },
+      'openai': { 'ai': keys.openai, 'defaultModel': doc.models.openai || 'gpt-3.5-turbo' },
+      'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc.models.perplexity || 'llama-3-sonar-small-32k-online' },
+      'gemini': { 'ai': keys.gemini, 'defaultModel': doc.models.gemini || 'gemini-pro' },
     };
   } catch (error: any) {
     throw new Error(`Error getting provider models: ${error.message}`);
@@ -81,4 +80,4 @@ const getAssistant = async () => {
   await getAssistant();
 })();
 
-export { openai, perplexity, gemini, models, assistant };
+export { keys, models, assistant };
