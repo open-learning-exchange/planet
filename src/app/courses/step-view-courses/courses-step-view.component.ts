@@ -10,6 +10,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
+import { ChatService } from '../../shared/chat.service';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -36,17 +37,19 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
+  isOpenai = false;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
+    private chatService: ChatService,
+    private coursesService: CoursesService,
+    private dialog: MatDialog,
+    private resourcesService: ResourcesService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog,
-    private coursesService: CoursesService,
-    private userService: UserService,
+    private stateService: StateService,
     private submissionsService: SubmissionsService,
-    private resourcesService: ResourcesService,
-    private stateService: StateService
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
@@ -74,6 +77,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
+    this.chatService.listAIProviders().subscribe((providers) => {
+      this.isOpenai = providers.some(provider => provider.value === 'openai');
+    });
   }
 
   getSubmission() {
