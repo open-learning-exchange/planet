@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
@@ -22,12 +22,12 @@ import { AIServices } from '../chat/chat.model';
   private newChatSelected: Subject<void> = new Subject<void>();
   private toggleAIService = new Subject<string>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
-  private aiProvidersSubject = new BehaviorSubject<AIServices | null>(null);
-  aiProviders$ = this.aiProvidersSubject.asObservable();
+  private aiProvidersSubject = new BehaviorSubject<Array<{ name: string; value: string }>>([]);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
   toggleAIService$ = this.toggleAIService.asObservable();
+  aiProviders$ = this.aiProvidersSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
 
 
@@ -51,17 +51,29 @@ import { AIServices } from '../chat/chat.model';
   }
 
   private fetchAIProviders() {
-    this.httpClient.get<AIServices>(`${this.baseUrl}/checkproviders`).pipe(
-      catchError(err => {
-        console.error(err);
-        return of({ openai: false, perplexity: false, gemini: false });
-      })
-    ).subscribe((services: AIServices) => {
-      this.aiProvidersSubject.next(services);
-    });
+    this.httpClient
+      .get<AIServices>(`${this.baseUrl}/checkproviders`)
+      .pipe(
+        catchError((err) => {
+          console.error(err);
+          return of({ openai: false, perplexity: false, gemini: false });
+        }),
+        map((services: AIServices) => {
+          if (services) {
+            return Object.entries(services)
+              .filter(([_, value]) => value === true)
+              .map(([key]) => ({ name: key, value: key }));
+          } else {
+            return [];
+          }
+        })
+      )
+      .subscribe((providers) => {
+        this.aiProvidersSubject.next(providers);
+      });
   }
 
-  listAIProviders() {
+  listAIProviders(): Observable<Array<{ name: string; value: string }>> {
     return this.aiProviders$;
   }
 
