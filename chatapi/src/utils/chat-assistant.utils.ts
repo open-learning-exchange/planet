@@ -1,4 +1,4 @@
-import { openai } from '../config/ai-providers.config';
+import { keys } from '../config/ai-providers.config';
 import { assistant } from '../config/ai-providers.config';
 
 /**
@@ -7,7 +7,7 @@ import { assistant } from '../config/ai-providers.config';
  * @returns Assistant object
  */
 export async function createAssistant(model: string) {
-  return await openai.beta.assistants.create({
+  return await keys.openai.beta.assistants.create({
     'name': assistant?.name,
     'instructions': assistant?.instructions,
     'tools': [{ 'type': 'code_interpreter' }],
@@ -16,11 +16,11 @@ export async function createAssistant(model: string) {
 }
 
 export async function createThread() {
-  return await openai.beta.threads.create();
+  return await keys.openai.beta.threads.create();
 }
 
 export async function addToThread(threadId: any, message: string) {
-  return await openai.beta.threads.messages.create(
+  return await keys.openai.beta.threads.messages.create(
     threadId,
     {
       'role': 'user',
@@ -30,7 +30,7 @@ export async function addToThread(threadId: any, message: string) {
 }
 
 export async function createRun(threadID: any, assistantID: any, instructions?: string) {
-  return await openai.beta.threads.runs.create(
+  return await keys.openai.beta.threads.runs.create(
     threadID,
     {
       'assistant_id': assistantID,
@@ -40,16 +40,16 @@ export async function createRun(threadID: any, assistantID: any, instructions?: 
 }
 
 export async function waitForRunCompletion(threadId: any, runId: any) {
-  let runStatus = await openai.beta.threads.runs.retrieve(threadId, runId);
+  let runStatus = await keys.openai.beta.threads.runs.retrieve(threadId, runId);
   while (runStatus.status !== 'completed') {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    runStatus = await openai.beta.threads.runs.retrieve(threadId, runId);
+    runStatus = await keys.openai.beta.threads.runs.retrieve(threadId, runId);
   }
   return runStatus;
 }
 
 export async function retrieveResponse(threadId: any): Promise<string> {
-  const messages = await openai.beta.threads.messages.list(threadId);
+  const messages = await keys.openai.beta.threads.messages.list(threadId);
   for (const msg of messages.data) {
     if ('text' in msg.content[0] && msg.role === 'assistant') {
       return msg.content[0].text.value;
@@ -65,10 +65,10 @@ export async function createAndHandleRunWithStreaming(
   let completionText = '';
 
   return new Promise((resolve, reject) => {
-    openai.beta.threads.runs.stream(threadID, {
+    keys.openai.beta.threads.runs.stream(threadID, {
       'assistant_id': assistantID
     })
-      .on('textDelta', (textDelta) => {
+      .on('textDelta', (textDelta: { value: string }) => {
         if (textDelta && textDelta.value) {
           completionText += textDelta.value;
           if (callback) {
@@ -76,7 +76,7 @@ export async function createAndHandleRunWithStreaming(
           }
         }
       })
-      .on('toolCallDelta', (toolCallDelta) => {
+      .on('toolCallDelta', (toolCallDelta: { type: string; code_interpreter: { input: string; outputs: any[] } } ) => {
         if (toolCallDelta.type === 'code_interpreter') {
           if (toolCallDelta && toolCallDelta.code_interpreter && toolCallDelta.code_interpreter.input) {
             completionText += toolCallDelta.code_interpreter.input;

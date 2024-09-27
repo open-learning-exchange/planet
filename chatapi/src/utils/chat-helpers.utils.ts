@@ -1,4 +1,4 @@
-import { gemini } from '../config/ai-providers.config';
+import { keys } from '../config/ai-providers.config';
 import { models } from '../config/ai-providers.config';
 import { AIProvider } from '../models/ai-providers.model';
 import { ChatMessage, GeminiMessage } from '../models/chat-message.model';
@@ -27,7 +27,7 @@ async function handleGemini(
   messages: ChatMessage[],
   model: string
 ): Promise<string> {
-  const geminiModel = gemini.getGenerativeModel({ model });
+  const geminiModel = keys.gemini.getGenerativeModel({ model });
 
   const msg = messages[messages.length - 1].content;
 
@@ -83,7 +83,7 @@ export async function aiChatStream(
 
       return completionText;
     } catch (error) {
-      throw new Error('Error processing request');
+      throw new Error(`Error processing request ${error}`);
     }
   }
 
@@ -155,7 +155,7 @@ export async function aiChatNonStream(
 
       return await retrieveResponse(thread.id);
     } catch (error) {
-      return 'Error processing request';
+      return `Error processing request ${error}`;
     }
   }
 
