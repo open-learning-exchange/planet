@@ -61,8 +61,8 @@ import { AIServices } from '../chat/chat.model';
         map((services: AIServices) => {
           if (services) {
             return Object.entries(services)
-              .filter(([_, value]) => value === true)
-              .map(([key]) => ({ name: key, value: key }));
+              .filter(([ _, value ]) => value === true)
+              .map(([ key ]) => ({ name: key, value: key }));
           } else {
             return [];
           }
