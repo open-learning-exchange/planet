@@ -137,9 +137,11 @@ export async function aiChatNonStream(
       const typedAttachment = attachment as Attachment;
       const contentType = typedAttachment.content_type;
 
-      const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
-      const text = await extractTextFromDocument(file as Buffer, contentType);
-      context.data += text;
+      if (contentType === 'application/pdf') {
+        const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
+        const text = await extractTextFromDocument(file as Buffer, contentType);
+        context.data += text;
+      }
     }
   }
 
