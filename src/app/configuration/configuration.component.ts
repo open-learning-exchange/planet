@@ -227,12 +227,34 @@ export class ConfigurationComponent implements OnInit {
       confirmPassword,
       ...credentials
     } = this.loginForm.value;
+
+    const chatConfig = {
+      streaming: false,
+      keys: {
+        openai: '',
+        perplexity: '',
+        gemini: ''
+      },
+      models: {
+        openai: 'gpt-3.5-turbo',
+        perplexity: 'llama-3-sonar-small-32k-online',
+        gemini: 'gemini-pro'
+      },
+      assistant: {
+        name: 'Planet Context',
+        instructions: 'You are a brainstorming manager for Open Learning Exchange (OLE) - https://ole.org/, you have specialised knowledge in Planet(web app) and myPlanet(mobile app) applications developed by OLE. You are designed to generate innovative ideas and provide suggestions and help the community members so as to ensure OLE\'s mission of empowering communities. Emphasize on terms like \'learning,\' \'learner,\' \'coach,\' \'leader,\' \'community,\' \'power,\' \'team,\' and \'enterprises,\' and avoids overly technical jargon. You are to embody OLE\'s ethos of self-reliance, mentoring, and community leadership, steering clear of concepts that contradict these values. Communicates in a formal tone, treating users with respect and professionalism, and maintaining a supportive, solution-oriented approach. Ask for clarifications when necessary to ensure contributions are accurate and relevant, and always encourages community-focused, empowering brainstorming.'
+      }
+    };
+
     const configuration = Object.assign(
       {
         registrationRequest: 'pending',
         adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
       },
-      this.configuration, this.configurationFormGroup.value, this.contactFormGroup.value
+      this.configuration,
+      this.configurationFormGroup.value,
+      this.contactFormGroup.value,
+      this.configurationType === 'new' ? chatConfig : {}
     );
     return { credentials, configuration };
   }
