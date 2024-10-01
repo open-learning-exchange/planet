@@ -254,7 +254,7 @@ export class ConfigurationComponent implements OnInit {
       this.configuration,
       this.configurationFormGroup.value,
       this.contactFormGroup.value,
-      this.configurationType === 'create' ? defaultConfig : {}
+      defaultConfig
     );
     return { credentials, configuration };
   }
