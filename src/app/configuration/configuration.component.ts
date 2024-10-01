@@ -228,7 +228,7 @@ export class ConfigurationComponent implements OnInit {
       ...credentials
     } = this.loginForm.value;
 
-    const defaultConfig = {
+    const chatConfig = {
       streaming: false,
       keys: {
         openai: '',
@@ -254,7 +254,7 @@ export class ConfigurationComponent implements OnInit {
       this.configuration,
       this.configurationFormGroup.value,
       this.contactFormGroup.value,
-      defaultConfig
+      this.configurationType === 'new' ? chatConfig : {}
     );
     return { credentials, configuration };
   }
