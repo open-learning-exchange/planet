@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
-import { AIServices } from '../chat/chat.model';
+import { AIServices, AIProvider } from '../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ import { AIServices } from '../chat/chat.model';
   private newChatSelected: Subject<void> = new Subject<void>();
   private toggleAIService = new Subject<string>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
-  private aiProvidersSubject = new BehaviorSubject<Array<{ name: string; value: string }>>([]);
+  private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
@@ -61,8 +61,8 @@ import { AIServices } from '../chat/chat.model';
         map((services: AIServices) => {
           if (services) {
             return Object.entries(services)
-              .filter(([ _, value ]) => value === true)
-              .map(([ key ]) => ({ name: key, value: key }));
+              .filter(([ _, model ]) => model === true)
+              .map(([ key ]) => ({ name: key, model: key }));
           } else {
             return [];
           }
@@ -73,7 +73,7 @@ import { AIServices } from '../chat/chat.model';
       });
   }
 
-  listAIProviders(): Observable<Array<{ name: string; value: string }>> {
+  listAIProviders(): Observable<Array<AIProvider>> {
     return this.aiProviders$;
   }
 

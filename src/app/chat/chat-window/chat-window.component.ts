@@ -33,6 +33,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     assistant: false,
     context: '',
   };
+  providers: AIProvider[] = [];
 
   @Input() context: any;
   @ViewChild('chat') chatContainer: ElementRef;
@@ -51,6 +52,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.subscribeToSelectedConversation();
     this.subscribeToAIService();
     this.checkStreamingStatusAndInitialize();
+    this.chatService.listAIProviders().subscribe((providers) => {
+      this.providers = providers;
+    });
   }
 
   ngOnDestroy() {
