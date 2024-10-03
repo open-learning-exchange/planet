@@ -3,7 +3,7 @@
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
   <mat-button-toggle-group *ngIf="displayToggle; else textDisplay" [(ngModel)]="activeService" (change)="toggleAIService()">
-    <mat-button-toggle *ngFor="let service of aiServices" [value]="service.value" i18n>{{service.name}}</mat-button-toggle>
+    <mat-button-toggle *ngFor="let service of aiServices" [value]="service.model" i18n>{{service.name}}</mat-button-toggle>
   </mat-button-toggle-group>
   <ng-template #textDisplay>
     <span i18n>{{activeService}}</span>
