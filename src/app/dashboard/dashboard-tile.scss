@@ -74,4 +74,14 @@
     }
   }
 
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $grey;
+    border-radius: 0;
+    border: 0;
+  }
+
 }
