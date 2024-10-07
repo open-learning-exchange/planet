@@ -22,7 +22,7 @@ export class DialogsAnnouncementComponent {
     - Create an issue on our github repository using link below
 
     [open new Planet issue](https://github.com/open-learning-exchange/planet/issues/new)
-  `
+  `;
 
 
   constructor(
