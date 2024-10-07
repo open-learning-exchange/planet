@@ -17,6 +17,7 @@ full-calendar {
   }
   .fc-button-primary {
     position: relative;
+    margin-bottom: 15px;
 
     &:not(:disabled):hover {
       background-color: $primary;
