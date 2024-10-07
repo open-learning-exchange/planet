@@ -8,6 +8,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -83,6 +84,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    if (this.configuration.name === 'learning') {
+      this.openAnnouncementDialog();
+    }
   }
 
   @HostListener('window:resize') onResize() {
@@ -137,6 +141,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     } else {
       this.usersService.requestUsers();
     }
+  }
+
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent);
   }
 
   openAddMessageDialog(message = '') {
