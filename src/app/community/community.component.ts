@@ -49,7 +49,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  challengeTemplate: string = `
+  challengeTemplate = `
   # Challenge Template
 
   Please add your screenshot below:
