@@ -84,7 +84,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    if (this.configuration.name === 'learning') {
+    if (this.configuration.name === 'learning' && new Date().getMonth() === 9) {
       this.openAnnouncementDialog();
     }
   }
