@@ -49,6 +49,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  challengeActive: boolean;
   challengeTemplate = `
   # Challenge Template
 
@@ -95,7 +96,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    if (this.configuration.name === 'learning' && new Date().getMonth() === 9) {
+    this.challengeActive = this.configuration.code === 'learning' && new Date().getMonth() === 9;
+    if (this.challengeActive) {
       this.openAnnouncementDialog();
     }
   }
@@ -158,7 +160,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsAnnouncementComponent);
   }
 
-  openAddMessageDialog(message = this.configuration.name === 'learning' ? this.challengeTemplate : '') {
+  openAddMessageDialog(message = this.challengeActive ? this.challengeTemplate : '') {
     this.dialogsFormService.openDialogsForm(
       $localize`Add Voice`,
       [ { name: 'message', placeholder: $localize`Your Voice`, type: 'markdown', required: true, imageGroup: 'community' } ],
