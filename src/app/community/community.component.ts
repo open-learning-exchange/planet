@@ -49,6 +49,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  challengeTemplate: string = `
+  # Challenge Template
+
+  Please add your screenshot below:
+
+  ![Screenshot](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUcXBM7Z8y61oNm2yWy_4NPsGPBvCcKJiPhw&s)
+
+  Please add your short message below:
+
+  > Your message here...
+  `;
 
   constructor(
     private dialog: MatDialog,
@@ -147,7 +158,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsAnnouncementComponent);
   }
 
-  openAddMessageDialog(message = '') {
+  openAddMessageDialog(message = this.configuration.name === 'learning' ? this.challengeTemplate : '') {
     this.dialogsFormService.openDialogsForm(
       $localize`Add Voice`,
       [ { name: 'message', placeholder: $localize`Your Voice`, type: 'markdown', required: true, imageGroup: 'community' } ],
