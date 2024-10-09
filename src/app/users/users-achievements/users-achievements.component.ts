@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -10,6 +11,8 @@ import { throwError, combineLatest } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { ChatService } from '../../shared/chat.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 
 const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -29,7 +32,10 @@ export class UsersAchievementsComponent implements OnInit {
   certifications: any[] = [];
 
   constructor(
+    private chatService: ChatService,
     private couchService: CouchService,
+    private dialogsFormService: DialogsFormService,
+    private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute,
@@ -109,6 +115,76 @@ export class UsersAchievementsComponent implements OnInit {
         .filter(course => certification.courseIds.indexOf(course._id) > -1)
         .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
       return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
+    });
+  }
+
+  openGenerateResumeDialog() {
+    this.dialogsFormService.openDialogsForm(
+      $localize`Generate Resume`,
+      [
+        { 'type': 'markdown', 'name': 'education', 'placeholder': $localize`Education`, 'required': false },
+        { 'type': 'markdown', 'name': 'experience', 'placeholder': $localize`Experience`, 'required': false },
+        { 'type': 'markdown', 'name': 'skills', 'placeholder': $localize`Skills`, 'required': false },
+        { 'type': 'markdown', 'name': 'additional', 'placeholder': $localize`Additional Info`, 'required': false }
+      ],
+      this.fb.group({
+        education: [ '' ],
+        experience: [ '' ],
+        skills: [ '' ],
+        additional: [ '' ]
+      }),
+      { onSubmit: this.generateResume.bind(this), closeOnSubmit: true }
+    );
+  }
+
+  generateResume(formData) {
+    const { email, firstName, middleName, lastName, language, phoneNumber } = this.user;
+    const { achievements, achievementsHeader, goals, purpose, references } = this.achievements;
+
+    const formatReferences = (refs) => {
+      return refs.map(ref => {
+        return `Name: ${ref.name}, Relationship: ${ref.relationship}, Email: ${ref.email}, Phone: ${ref.phone}`;
+      }).join('\n');
+    };
+
+    const data = {
+      content: `
+      This is the learner info that I have
+
+      name: ${firstName} ${middleName} ${lastName}
+      email: ${email}
+      phone: ${phoneNumber}
+      language: ${language}
+
+      achievements: ${achievementsHeader} - ${achievements}
+      goals: ${goals}
+      purpose: ${purpose}
+
+      references: ${formatReferences(references)}
+
+      Generate a resume following the format below as close as possible
+      1. Personal Information
+      2. Objective/Summary
+      3. Education ${formData.education ? formData.education : ''}
+      4. Experience ${formData.experience ? formData.experience : ''}
+      5. Skills ${formData.skills ? formData.skills : ''}
+      6. Certifications
+      7. Awards and Honors(optional)
+      8. References(optional)
+      9. Additional Information ${formData.additional ? formData.additional : ''}
+
+      The resume is in PDF format, so vary the text style(Using paragraphs, bullet points) to make it look like a resume
+      Only output the resume(in the language of the input), no additional context
+    `,
+      aiProvider: { name: 'openai' },
+    };
+
+    this.chatService.getPrompt(data, false).subscribe((response) => {
+      pdfMake
+      .createPdf({
+        content: response['chat']
+      })
+      .download(`${this.user.name} resumé.pdf`);
     });
   }
 
@@ -224,4 +300,5 @@ export class UsersAchievementsComponent implements OnInit {
       .createPdf(documentDefinition)
       .download($localize`${this.user.name} achievements.pdf`);
   }
+
 }
