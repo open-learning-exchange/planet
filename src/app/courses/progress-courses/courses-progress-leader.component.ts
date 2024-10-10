@@ -227,6 +227,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   exportChartData() {
+    console.log('----------------------');
+    console.log(this.chartData);
+    console.log('----------------------');
     this.csvService.exportCSV({
       data:  this.structureChartData(this.chartData),
       title: $localize`Course Progress Data`

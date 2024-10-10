@@ -19,7 +19,7 @@ async function getConfig(): Promise<ModelsDocument | undefined> {
       console.error('No documents found in configurationDB');
     }
   } catch (error: any) {
-    console.error(`Error fetching models config: ${error.message}`);
+    console.error(`Error fetching models config: ${error}`);
   }
 }
 
@@ -52,7 +52,7 @@ const initialize = async () => {
       'instructions': doc?.assistant?.instructions || '',
     };
   } catch (error) {
-    console.error(`Error initializing configs: ${error.message}`);
+    console.error(`Error initializing configs: ${error}`);
   }
 };
 
