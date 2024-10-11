@@ -5,6 +5,7 @@ import { TeamsViewComponent } from './teams-view.component';
 
 const routes: Routes = [
   { path: '', component: TeamsComponent },
+  { path: ':code', component: TeamsComponent },
   { path: 'view/:teamId', component: TeamsViewComponent },
   { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
 ];
