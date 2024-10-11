@@ -26,6 +26,7 @@
           <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
             View Report
           </a>
+          <a mat-raised-button color="primary" [routerLink]="'teams/' + planet.doc.code" i18n>View Teams</a>
         </ng-container>
       </div>
     </mat-list-item>
