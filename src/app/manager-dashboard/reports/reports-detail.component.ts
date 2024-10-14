@@ -218,7 +218,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
-      this.progress.steps.data = steps.map(step => ({ ...step, user: step.userId.replace('org.couchdb.user:', '') }));
+      this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
       this.setStepCompletion();
       this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
