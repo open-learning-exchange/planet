@@ -236,9 +236,9 @@ export class ConfigurationComponent implements OnInit {
         gemini: ''
       },
       models: {
-        openai: 'gpt-3.5-turbo',
-        perplexity: 'llama-3-sonar-small-32k-online',
-        gemini: 'gemini-pro'
+        openai: '',
+        perplexity: '',
+        gemini: ''
       },
       assistant: {
         name: 'Planet Context',
