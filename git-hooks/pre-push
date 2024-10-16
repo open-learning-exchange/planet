@@ -55,7 +55,7 @@ vagrant_status=$(vagrant status dev --machine-readable | grep state,running)
 
 echo "Running Linters:"
 if [ "$vagrant_status" = "" ]; then
-  tslint=$(npm run lint) && cd chatapi && $(npm run lint) && cd ..
+  tslint=$(npm run lint) && cd chatapi && npm run lint && cd ..
 else
   tslint=$(vagrant ssh dev -- -t 'cd /vagrant;npm run lint')
 fi
