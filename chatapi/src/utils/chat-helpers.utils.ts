@@ -15,8 +15,6 @@ import {
 } from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
-// const getProviders = async () => await initializeProviderModels();
-
 /**
  * Uses geminis's multimodal endpoint to generate chat completions
  * @param messages - Array of chat messages
@@ -33,7 +31,7 @@ async function handleGemini(
 
   const geminiMessages: GeminiMessage[] = messages.map((message) => ({
     'role': message.role === 'assistant' ? 'model' : message.role,
-    'parts': [{ 'text': message.content }],
+    'parts': [ { 'text': message.content }],
   }));
 
   geminiMessages.pop();
