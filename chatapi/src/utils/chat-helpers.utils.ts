@@ -31,7 +31,7 @@ async function handleGemini(
 
   const geminiMessages: GeminiMessage[] = messages.map((message) => ({
     'role': message.role === 'assistant' ? 'model' : message.role,
-    'parts': [ { 'text': message.content }],
+    'parts': [ { 'text': message.content } ],
   }));
 
   geminiMessages.pop();
@@ -130,8 +130,8 @@ export async function aiChatNonStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if(context.resource) {
-    for (const [attachmentName, attachment] of Object.entries(context.resource.attachments)) {
+  if (context.resource) {
+    for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
       const typedAttachment = attachment as Attachment;
       const contentType = typedAttachment.content_type;
 
@@ -143,7 +143,7 @@ export async function aiChatNonStream(
     }
   }
 
-  if(assistant) {
+  if (assistant) {
     try {
       const asst = await createAssistant(model);
       const thread = await createThread();
