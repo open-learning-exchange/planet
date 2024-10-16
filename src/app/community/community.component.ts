@@ -8,6 +8,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -48,6 +49,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  challengeActive: boolean;
+  challengeTemplate = `
+  # Challenge Template
+
+  Please add your screenshot below:
+
+  ![Screenshot](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUcXBM7Z8y61oNm2yWy_4NPsGPBvCcKJiPhw&s)
+
+  Please add your short message below:
+
+  > Your message here...
+  `;
 
   constructor(
     private dialog: MatDialog,
@@ -83,6 +96,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    this.challengeActive = this.configuration.code === 'learning' && new Date().getMonth() === 9;
+    if (this.challengeActive) {
+      this.openAnnouncementDialog();
+    }
   }
 
   @HostListener('window:resize') onResize() {
@@ -139,7 +156,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
   }
 
-  openAddMessageDialog(message = '') {
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent);
+  }
+
+  openAddMessageDialog(message = this.challengeActive ? this.challengeTemplate : '') {
     this.dialogsFormService.openDialogsForm(
       $localize`Add Voice`,
       [ { name: 'message', placeholder: $localize`Your Voice`, type: 'markdown', required: true, imageGroup: 'community' } ],
