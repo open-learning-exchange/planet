@@ -78,6 +78,7 @@
     "@typescript-eslint/semi": ["error", "always"],
     "@typescript-eslint/triple-slash-reference": "error",
     "@typescript-eslint/type-annotation-spacing": "error",
+    "array-bracket-spacing": ["error", "always"],
     "arrow-body-style": "error",
     "arrow-parens": ["error", "always"],
     "camelcase": "off",
@@ -90,6 +91,7 @@
     "guard-for-in": "error",
     "id-blacklist": ["error", "any", "number", "string", "boolean", "undefined"],
     "id-match": "error",
+    "keyword-spacing": ["error", { "before": true, "after": true }],
     "max-len": ["error", { "code": 140 }],
     "new-parens": "error",
     "no-array-constructor": "error",
@@ -135,5 +137,6 @@
     "spaced-comment": "error",
     "use-isnan": "error",
     "valid-typeof": "error"
+
   }
 }
