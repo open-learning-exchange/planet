@@ -22,7 +22,7 @@ export class DeviceInfoService {
   }
 
   public getDeviceType(): DeviceType {
-    if (this.screenWidth <= 780) {
+    if(this.screenWidth <= 780) {
       return DeviceType.MOBILE;
     } else if (this.screenWidth <= 1000) {
       return DeviceType.TABLET;
