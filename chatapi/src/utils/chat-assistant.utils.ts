@@ -10,7 +10,7 @@ export async function createAssistant(model: string) {
   return await keys.openai.beta.assistants.create({
     'name': assistant?.name,
     'instructions': assistant?.instructions,
-    'tools': [{ 'type': 'code_interpreter' }],
+    'tools': [ { 'type': 'code_interpreter' } ],
     model,
   });
 }
