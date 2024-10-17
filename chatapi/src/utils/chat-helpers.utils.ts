@@ -157,7 +157,7 @@ export async function aiChatNonStream(
 
       return await retrieveResponse(thread.id);
     } catch (error) {
-      return `Error processing request ${error}`;
+      throw new Error(`Error processing request ${error}`);
     }
   }
 
