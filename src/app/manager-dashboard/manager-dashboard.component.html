@@ -71,7 +71,7 @@
         </ng-container>
         <p *ngSwitchCase="'loading'" i18n><b>Checking request status...</b></p>
         <p *ngSwitchCase="'deleted'" i18n><b>Your request has been rejected by { planetType, select, community {nation} nation {center}}. You can retry or contact { planetType, select, community {nation} nation {center}} planet.</b></p>
-        <p *ngSwitchDefault i18n><b>Your request has not been accepted by { planetType, select, community {nation} nation {center}}</b></p>
+        <p *ngSwitchDefault i18n><b>Your request has not yet been accepted by { planetType, select, community {nation} nation {center}}</b></p>
       </ng-container>
     </div>
     <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
