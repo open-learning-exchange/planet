@@ -8,7 +8,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize, catchError } from 'rxjs/operators';
-import { forkJoin, throwError } from 'rxjs';
+import { forkJoin, throwError, of} from 'rxjs';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
 } from '../shared/table-helpers';
@@ -18,7 +18,7 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { toProperCase } from '../shared/utils';
-import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName, planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -27,6 +27,9 @@ import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/rep
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
+  configuration: any = {};
+  teamId = planetAndParentId(this.stateService.configuration);
+  team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   teams = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -98,19 +101,58 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
-  getTeams() {
+  teamObject(planetCode?: string) {
+    const code = planetCode || this.stateService.configuration.code;
+    const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
+    const teamId = `${code}@${parentCode}`;
+    return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
+  }
+
+  requestTeamsData(planetCode?: string) {
     const thirtyDaysAgo = time => {
       const date = new Date(time);
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
     };
-    this.dialogsLoadingService.start();
-    this.couchService.currentTime().pipe(switchMap(time =>
+    const selectors = planetCode === this.stateService.configuration.code ? { 'selector': { 'status': 'active' } } : {
+      selectors: {
+        '$or': [
+          { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
+          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+        ]
+      },
+      viewId: this.teamId
+    }
+    return this.couchService.currentTime().pipe(switchMap(time =>
       forkJoin([
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
+        this.couchService.findAll(this.dbName, selectors),
         this.getMembershipStatus(),
         this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } }),
         this.couchService.findAll('communityregistrationrequests')
       ])
+    ));
+  }
+
+  getTeams() {
+    this.route.paramMap.pipe(
+      switchMap(params => {
+        this.planetCode = params.get('code');
+        return this.planetCode ?
+        this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } }) :
+        of([ this.stateService.configuration ]);
+    }),
+    switchMap(configurations => {
+      this.dialogsLoadingService.start();
+      this.configuration = configurations[0];
+      this.team = this.teamObject(this.planetCode);
+      this.teamId = this.team._id;
+      const teamsData = this.requestTeamsData(this.planetCode);
+      console.log('----------------------------');
+      console.log('Teams Data');
+      console.log(teamsData);
+      console.log('----------------------------');
+      return teamsData;
+
+      }
     )).subscribe(([ teams, requests, activities, planets ]: any[]) => {
       this.childPlanets = attachNamesToPlanets(planets);
       this.teamActivities = activities;
