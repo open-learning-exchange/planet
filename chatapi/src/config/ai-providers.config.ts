@@ -42,9 +42,9 @@ const initialize = async () => {
     };
 
     models = {
-      'openai': { 'ai': keys.openai, 'defaultModel': doc?.models.openai || 'gpt-3.5-turbo' },
-      'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc?.models.perplexity || 'llama-3-sonar-small-32k-online' },
-      'gemini': { 'ai': keys.gemini, 'defaultModel': doc?.models.gemini || 'gemini-pro' },
+      'openai': { 'ai': keys.openai, 'defaultModel': doc?.models.openai || '' },
+      'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc?.models.perplexity || '' },
+      'gemini': { 'ai': keys.gemini, 'defaultModel': doc?.models.gemini || '' },
     };
 
     assistant = {
