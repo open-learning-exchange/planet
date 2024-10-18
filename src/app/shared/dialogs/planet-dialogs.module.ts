@@ -16,6 +16,7 @@ import { SharedComponentsModule } from '../shared-components.module';
 import { SyncDirective } from '../../manager-dashboard/sync.directive';
 import { DialogsImagesComponent } from './dialogs-images.component';
 import { DialogsVideoComponent } from './dialogs-video.component';
+import { DialogsAnnouncementComponent } from './dialogs-announcement.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
 
 
@@ -40,7 +41,8 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,
-    SyncDirective
+    SyncDirective,
+    DialogsAnnouncementComponent,
   ],
   declarations: [
     DialogsFormComponent,
@@ -54,7 +56,8 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,
-    SyncDirective
+    SyncDirective,
+    DialogsAnnouncementComponent
   ],
   providers: [
     DialogsFormService,
