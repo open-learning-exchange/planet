@@ -106,7 +106,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       switchMap(configurations => {
         this.configuration = configurations[0];
+        console.log('-------------------------------');
+        console.log('configuration');
+        console.log(this.configuration);
+        console.log('-------------------------------');
         this.team = this.teamObject(this.planetCode);
+        console.log('-------------------------------');
+        console.log('team');
+        console.log(this.team);
+        console.log('-------------------------------');
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
         return this.getLinks(this.planetCode);
