@@ -13,8 +13,9 @@
 
 .list-item-content {
   display: grid;
-  grid-template-columns: 1.5fr 4fr;
+  grid-template-columns: 1.5fr 4fr; 
   width: 100%;
+  gap: 20px;  
 }
 
 .instructions {
@@ -24,3 +25,78 @@
   line-height: 1.5;
 }
 
+/* tablet*/
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;  
+  }
+
+  .card {
+    width: 100%;  
+    margin: 0;   
+  }
+
+  /* container */
+  .list-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;  
+  }
+
+  .list-item-content > span {
+    flex-basis: 30%;   
+    text-align: left;
+    white-space: nowrap;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5; 
+  }
+
+  /* form field */
+  mat-form-field {
+    flex-basis: 70%; 
+  }
+
+  input {
+    width: 100%;
+  }
+  
+}
+
+/* Mobile*/
+@media (max-width: 576px) {
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    width: 100%;
+    margin: 0;
+  }
+
+  /* container*/
+  .list-item-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;  
+    align-items: center;
+    gap: 10px; 
+    max-width: 70%; 
+    overflow-x: hidden;  
+  }
+
+  /* Subtitle */
+  .list-item-content > span {
+    flex-basis: 35%;  
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /*form field*/
+  mat-form-field {
+    flex-basis: 80%;  
+    min-width: 0;  
+  }
+}
