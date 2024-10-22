@@ -41,7 +41,7 @@
       </ng-container>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Survey</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span>{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="taken">
         <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
@@ -69,12 +69,14 @@
             </button>
           </ng-container>
           <div i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
-            <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu"  i18n><mat-icon>move_to_inbox</mat-icon> Export Survey</button>
+            <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu" i18n>
+              <mat-icon>move_to_inbox</mat-icon> Export Survey
+            </button>
             <mat-menu #exportMenu="matMenu">
               <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>
               <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
             </mat-menu>
-          </div>
+          </div>          
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
