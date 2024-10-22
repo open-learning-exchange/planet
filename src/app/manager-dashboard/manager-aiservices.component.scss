@@ -1,3 +1,5 @@
+@import "../variables.scss";
+
 .container {
   padding: 20px;
   display: flex;
@@ -39,7 +41,7 @@
 }
 
 /* Targetting tablet screens*/
-@media (max-width: 768px) {
+@media (max-width: $screen-md) {
   .container {
     padding: 15px;  
   }
@@ -75,7 +77,7 @@
 }
 
 /* Targetting mobile screens*/
-@media (max-width: 576px) {
+@media (max-width: $screen-sm) {
   .container {
     padding: 10px;
   }
