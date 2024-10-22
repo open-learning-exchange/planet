@@ -1,0 +1,7 @@
+@import '../../variables';
+
+@media (max-width: $screen-sm) {
+    .search-bar {
+        overflow: hidden;
+    }    
+}

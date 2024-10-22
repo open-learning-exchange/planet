@@ -12,7 +12,8 @@ import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 
 @Component({
-  templateUrl: './reports-myplanet.component.html'
+  templateUrl: './reports-myplanet.component.html',
+  styleUrls: ['./reports-myplanet.component.scss'],
 })
 export class ReportsMyPlanetComponent implements OnInit {
 

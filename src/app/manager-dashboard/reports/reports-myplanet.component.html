@@ -1,12 +1,12 @@
 <!-- Request template -->
-<mat-toolbar>
+<mat-toolbar class="responsive-toolbar">
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span i18n>myPlanet Report</span>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
+  <mat-form-field class="font-size-1 search-bar">
     <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
   </mat-form-field>
 </mat-toolbar>
