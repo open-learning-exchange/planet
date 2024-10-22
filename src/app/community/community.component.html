@@ -30,7 +30,7 @@
               { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
             </button>
           </ng-container>
-          <ng-container *ngIf="links.length > 0">
+          <ng-container *ngIf="links?.length > 0; else noLinks">
             <mat-nav-list>
               <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                 <span matLine>{{link.title}}</span>
@@ -38,7 +38,9 @@
               </mat-list-item>
             </mat-nav-list>
           </ng-container>
-          <p *ngIf="links.length === 0" i18n>No links available.</p>
+          <ng-template #noLinks>
+            <p i18n>No links available.</p>
+          </ng-template>
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles="''" class="action-buttons">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
