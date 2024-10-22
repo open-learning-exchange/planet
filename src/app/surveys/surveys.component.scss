@@ -1,0 +1,123 @@
+@import "../variables.scss";
+
+
+.mat-column-select {
+  max-width: 44px;
+}
+
+.mat-column-taken {
+  max-width: 150px;
+}
+
+.mat-column-createdDate {
+  max-width: 150px;
+}
+
+.course-title {
+  max-width: 200px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 15px;
+  position: relative;
+}
+
+.mat-cell button, .mat-cell div button[mat-raised-button] {
+  width: 150px; 
+  text-align: center;
+  padding: 8px 12px;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+
+.mat-column-name span {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* Targeting tablet screens */
+@media (max-width: $screen-md) {
+  .container {
+    padding: 15px;
+  }
+
+  .card {
+    width: 100%;
+    margin: 0;
+  }
+
+  .mat-header-cell, .mat-cell {
+    max-width: 125px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mat-column-name {
+    max-width: 125px;
+  }
+
+  .list-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .mat-cell button, .mat-cell div button[mat-raised-button] {
+    width: 100px;
+  }
+
+  .mat-cell div button[mat-raised-button][matMenuTriggerFor] {
+    width: 100px;
+  }
+}
+
+/* Targeting mobile screens */
+@media (max-width: $screen-sm) {
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    width: 100%;
+    margin: 0;
+  }
+
+  .mat-header-cell, .mat-cell {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mat-column-name {
+    max-width: 100px;
+  }
+
+  .mat-column-taken {
+    max-width: 50px; 
+    text-align: center; 
+  }
+
+  .mat-cell button, .mat-cell div button[mat-raised-button] {
+    width: 100%; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mat-cell div button[mat-raised-button][matMenuTriggerFor] {
+    width: 100%; 
+  }
+
+  .update-button-container {
+    justify-content: flex-start;
+  }
+}
