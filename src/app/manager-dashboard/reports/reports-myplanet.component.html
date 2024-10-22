@@ -1,14 +1,18 @@
 <!-- Request template -->
 <mat-toolbar class="responsive-toolbar">
-  <button class="btnBack" mat-icon-button routerLink="/manager">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span i18n>myPlanet Report</span>
+  <div>
+    <button class="btnBack left-offset" mat-icon-button routerLink="/manager">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="left-offset" i18n>myPlanet Report</span>
+  </div>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1 search-bar">
-    <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
-  </mat-form-field>
+  <div>
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
+    </mat-form-field>
+  </div>
 </mat-toolbar>
 
 <div class="space-container">

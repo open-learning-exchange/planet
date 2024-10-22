@@ -1,7 +1,25 @@
 @import '../../variables';
 
+.responsive-toolbar div {
+    display: flex;
+    align-items: center;
+}
+
 @media (max-width: $screen-sm) {
-    .search-bar {
-        overflow: hidden;
-    }    
+    .responsive-toolbar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        height: auto;
+    }
+    
+    .left-offset {
+        left: -10px
+    }
+
+    .left-offset {
+        position: relative;
+    }
 }
