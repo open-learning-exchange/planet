@@ -8,7 +8,7 @@
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
-          <ng-container *ngIf="news.length > 0; else noVoices">
+          <ng-container *ngIf="news?.length > 0; else noVoices">
             <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
           </ng-container>
           <ng-template #noVoices>
