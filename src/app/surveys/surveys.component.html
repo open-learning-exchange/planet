@@ -41,7 +41,7 @@
       </ng-container>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Survey</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span>{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="taken">
         <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
