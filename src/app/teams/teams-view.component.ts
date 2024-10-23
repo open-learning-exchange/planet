@@ -273,13 +273,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         request: this.changeMembershipRequest('removed', item), name: (item.userDoc || {}).fullName || item.name,
         successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
-      leader: { request: this.makeLeader(item), successMsg: $localize`given leadership to`, errorMsg: $localize`giving leadership to` }
+      leader: { request: this.makeLeader(item), successMsg: $localize`given leadership to`, errorMsg: $localize`giving leadership to` },
+      financial: {
+        request: this.updateRole(item, true)({ leadershipRole: 'Financial Officer' }),
+        successMsg: $localize`assigned financial officer to`, errorMsg: $localize`assigned financial officer to`
+      },
+      secretary: {
+        request: this.updateRole(item, true)({ leadershipRole: 'Secretary' }),
+        successMsg: $localize`assigned secretary to`, errorMsg: $localize`assigned secretary to` },
     }[change];
   }
 
   openDialogPrompt(
     { tasks, ...item },
-    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader' | 'title',
+    change: 'leave' | 'archive' | 'resource' | 'remove' | 'course' | 'leader' | 'title' | 'financial' | 'secretary',
     dialogParams: { changeType, type }
   ) {
     const config = this.dialogPromptConfig(item, change);
@@ -304,9 +311,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  updateRole(member) {
-    return ({ teamRole }) => {
-      this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
+  updateRole(member, isLeadershipRole = false) {
+    return ({ teamRole, leadershipRole }: { teamRole?: string; leadershipRole?: string }) => {
+      const roleLabel = isLeadershipRole ? 'leadershipRole' : 'role';
+      const role = isLeadershipRole ? leadershipRole : teamRole;
+
+      this.teamsService.updateMembershipDoc(this.team, false, { ...member, [roleLabel]: role }).pipe(
         finalize(() => this.dialogsLoadingService.stop()),
         switchMap(() => this.getMembers())
       ).subscribe(() => {
@@ -316,7 +326,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     };
   }
 
-  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' }) {
+  memberActionClick({ member, change }: { member, change: 'remove' | 'leader' | 'title' | 'financial' | 'secretary'}) {
     if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
         member.role ? $localize`Change Role` : $localize`Add Role`,
