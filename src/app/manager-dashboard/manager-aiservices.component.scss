@@ -15,10 +15,10 @@
 
 .list-item-content {
   display: grid;
-  grid-template-columns: 1.5fr 4fr; 
+  grid-template-columns: 1.5fr 4fr;
   width: 100%;
   align-items: baseline;
-  gap: 20px;  
+  gap: 20px;
 }
 
 .instructions {
@@ -30,45 +30,45 @@
 
 .update-button-container {
   display: flex;
-  justify-content: center; 
-  width: 100%; 
+  justify-content: center;
+  width: 100%;
   margin-top: 20px;
 }
 
 .update-button-container button {
-  width: auto; 
-  margin-left: 0; 
+  width: auto;
+  margin-left: 0;
 }
 
 /* Targeting tablet screens*/
 @media (max-width: $screen-md) {
   .container {
-    padding: 15px;  
+    padding: 15px;
   }
 
   .card {
-    width: 100%;  
-    margin: 0;   
+    width: 100%;
+    margin: 0;
   }
 
   .list-item-content {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 10px;  
+    gap: 10px;
   }
 
   .list-item-content > span {
-    flex-basis: 30%;   
+    flex-basis: 30%;
     text-align: left;
-    white-space: nowrap;  
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.5; 
+    line-height: 1.5;
   }
 
   mat-form-field {
-    flex-basis: 70%; 
+    flex-basis: 70%;
   }
 
   input {
@@ -90,23 +90,23 @@
   .list-item-content {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;  
+    justify-content: flex-start;
     align-items: center;
-    gap: 10px; 
-    max-width: 70%; 
-    overflow-x: hidden;  
+    gap: 10px;
+    max-width: 70%;
+    overflow-x: hidden;
   }
 
   .list-item-content > span {
-    flex-basis: 35%;  
+    flex-basis: 35%;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   }
 
   mat-form-field {
-    flex-basis: 80%;  
-    min-width: 0;  
+    flex-basis: 80%;
+    min-width: 0;
   }
 
   .update-button-container {
@@ -114,6 +114,6 @@
   }
 
   .update-button-container button {
-    width: auto; 
+    width: auto;
   }
 }
