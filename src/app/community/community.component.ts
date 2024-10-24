@@ -109,7 +109,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    this.challengeActive = this.configuration.code === 'mutugi' && new Date().getMonth() === 9;
+    this.challengeActive = this.configuration.code === 'learning' && new Date().getMonth() === 9;
     if (this.challengeActive) {
       this.openAnnouncementDialog();
     }

@@ -42,12 +42,13 @@ export class DialogsAnnouncementComponent implements OnInit{
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
     .subscribe(news => {
       news.map(post => ({
-      ...post, public: ((post.doc.viewIn || []).find(view => view._id === 'mutugi@vi') || {}).public
+      ...post, public: ((post.doc.viewIn || []).find(view => view._id === 'learning@earth') || {}).public
       }));
 
+      // Add courseID
       this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
       .subscribe((submissions: any[]) => {
-        const filteredSubmissions = submissions.filter(submission => submission.parentId.includes('d820952d159562a8a6602252390114a4'));
+        const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(''));
         const submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
 
         const filteredNews = news.filter((post) => {
