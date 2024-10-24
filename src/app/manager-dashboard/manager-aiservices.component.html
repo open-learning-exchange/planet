@@ -73,5 +73,7 @@
     </mat-card-content>
   </mat-card>
 
-  <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()">Update Configuration</button>
+  <div class="update-button-container">
+    <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()">Update Configuration</button>
+  </div>
 </div>

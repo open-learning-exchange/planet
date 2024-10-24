@@ -1,0 +1,59 @@
+@import "../variables.scss";
+
+.mat-column-select {
+  max-width: 44px;
+}
+
+.mat-column-taken, .mat-column-createdDate {
+  max-width: 150px;
+}
+
+.course-title, .mat-column-name span {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.mat-cell button, .mat-cell div button[mat-raised-button] {
+  width: 150px;
+  text-align: center;
+  padding: 8px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Targeting tablet screens */
+@media (max-width: $screen-md) {
+
+  .mat-column-name {
+    max-width: 125px;
+  }
+
+  .mat-cell button, .mat-cell div button[mat-raised-button] {
+    width: 100px;
+    text-align: center;
+    padding: 8px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Targeting mobile screens */
+@media (max-width: $screen-sm) {
+
+  .mat-column-name {
+    max-width: 80px;
+  }
+
+  .mat-column-action {
+    max-width: 125px;
+  }
+
+  .mat-cell button, .mat-cell div button[mat-raised-button] {
+    width: 50px;
+  }
+}

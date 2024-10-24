@@ -1,0 +1,15 @@
+@import '../../variables';
+
+@media (max-width: $screen-sm) {
+  .toolbar-responsive {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    height: auto;
+  }
+
+	.margin-lr-10 {
+		margin: 10px 0
+	}
+}
