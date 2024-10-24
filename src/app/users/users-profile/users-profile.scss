@@ -9,6 +9,14 @@
     grid-column-gap: 2rem;
   }
 
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;
@@ -32,6 +40,14 @@
 
     .profile-image-large {
       width: 50%;
+    }
+    
+    .mobile-only {
+      display: block;
+    }
+  
+    .desktop-only {
+      display: none;
     }
   }
 
