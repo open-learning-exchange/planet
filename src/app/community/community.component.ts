@@ -96,10 +96,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.challengeActive = this.configuration.code === 'learning' && new Date().getMonth() === 9;
-    if (this.challengeActive) {
-      this.openAnnouncementDialog();
-    }
+    this.communityChallenge();
   }
 
   @HostListener('window:resize') onResize() {
@@ -109,6 +106,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  communityChallenge() {
+    this.challengeActive = this.configuration.code === 'mutugi' && new Date().getMonth() === 9;
+    if (this.challengeActive) {
+      this.openAnnouncementDialog();
+    }
   }
 
   getCommunityData() {
