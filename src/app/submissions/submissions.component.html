@@ -33,7 +33,7 @@
 </mat-toolbar>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-table responsive-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
