@@ -13,8 +13,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
-  templateUrl: './reports-myplanet.component.html',
-  styleUrls: ['./reports-myplanet.component.scss'],
+  templateUrl: './reports-myplanet.component.html'
 })
 export class ReportsMyPlanetComponent implements OnInit {
 

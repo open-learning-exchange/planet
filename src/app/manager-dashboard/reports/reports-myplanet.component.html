@@ -1,10 +1,9 @@
-<!-- Request template -->
-<mat-toolbar class="responsive-toolbar">
+<mat-toolbar>
   <mat-toolbar-row>
-    <button class="btnBack left-offset" mat-icon-button routerLink="/manager">
+    <button class="btnBack" mat-icon-button routerLink="/manager">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <span class="left-offset" i18n>myPlanet Report</span>
+    <span i18n>myPlanet Report</span>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="!isMobile">
       <ng-container *ngTemplateOutlet="searchView"></ng-container>
