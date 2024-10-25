@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { forkJoin, interval, Subscription, BehaviorSubject, pipe } from 'rxjs';
+import { forkJoin, interval, Subscription, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
