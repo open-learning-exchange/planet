@@ -86,20 +86,19 @@ export class MeetupsAddComponent implements OnInit {
 
   createForm() {
     this.meetupForm = this.fb.group({
-      title: [ '', CustomValidators.required ],
-      description: [ '', CustomValidators.required ],
-      startDate: this.meetup?.startDate ? this.meetup.startDate : '',
-      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
-      recurring: 'none',
+      title: ['', CustomValidators.required],
+      description: ['', CustomValidators.required],
+      startDate: ['', [CustomValidators.required, this.dateNotInPastValidator()]],
+      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],      recurring: 'none',
       day: this.fb.array([]),
-      startTime: [ '', CustomValidators.timeValidator() ],
-      endTime: [ '', CustomValidators.timeValidator() ],
+      startTime: ['', CustomValidators.timeValidator()],
+      endTime: ['', CustomValidators.timeValidator()],
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
       sourcePlanet: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
+      recurringNumber: [10, [Validators.min(2), CustomValidators.integerValidator]]
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
@@ -217,4 +216,19 @@ export class MeetupsAddComponent implements OnInit {
     })) };
   }
 
+  dateNotInPastValidator() {
+    return (control: FormControl) => {
+      const today = new Date();
+       // Reset time to midnight for accurate comparison
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(control.value);
+  
+      if (selectedDate < today) {
+         // Custom error if date is in the past
+        return { pastDate: true };
+      }
+       // No error
+      return null;
+    };
+  }
 }
