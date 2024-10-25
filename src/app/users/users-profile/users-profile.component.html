@@ -5,20 +5,6 @@
   <button mat-icon-button [matMenuTriggerFor]="menu" class="mobile-only">
     <mat-icon>more_vert</mat-icon>
   </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin)" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
-      <mat-icon>visibility</mat-icon>
-      <span i18n>View Achievements</span>
-    </button>
-    <button mat-menu-item *ngIf="editable" [routerLink]="['../../update/', urlName]">
-      <mat-icon>mode_edit</mat-icon>
-      <span i18n>Edit Profile</span>
-    </button>
-    <button mat-menu-item *ngIf="editable" i18n [planetChangePassword]="userDetail">
-      <mat-icon>lock</mat-icon>
-      <span>Change Password</span>
-    </button>
-  </mat-menu>
   <button mat-stroked-button class="margin-lr-3 desktop-only" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
     <mat-icon class="margin-lr-3">visibility</mat-icon>
     <span i18n>View Achievements</span>
@@ -29,18 +15,7 @@
   </button>
   <a mat-raised-button color="accent" class="margin-lr-3 desktop-only" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">Change Password</a>
 </mat-toolbar>
-
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span>{{userDetail.name}}</span>
-    <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
-    <span class="toolbar-fill"></span>
-    <button mat-stroked-button class="margin-lr-3 desktop-only" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
-      <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
-    </button>
-    <button mat-raised-button color="accent" class="margin-lr-3 desktop-only" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]"><mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span></button>
-    <a mat-raised-button color="accent" class="margin-lr-3 desktop-only" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">Change Password</a>
-  </mat-toolbar>
   <div class="view-container">
     <div class="profile-container">
       <div class="profile-image-section">
