@@ -1,5 +1,7 @@
 <mat-toolbar *ngIf="!isDialog">
-  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
   <span i18n>Member Profile</span>
   <span class="toolbar-fill"></span>
   <button mat-icon-button [matMenuTriggerFor]="menu" class="mobile-only">
@@ -15,6 +17,20 @@
   </button>
   <a mat-raised-button color="accent" class="margin-lr-3 desktop-only" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">Change Password</a>
 </mat-toolbar>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
+    <mat-icon>visibility</mat-icon>
+    <span i18n>View Achievements</span>
+  </button>
+  <button mat-menu-item *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]">
+    <mat-icon>mode_edit</mat-icon>
+    <span i18n>Edit Profile</span>
+  </button>
+  <button mat-menu-item *ngIf="editable && !isDialog" [planetChangePassword]="userDetail">
+    <mat-icon>lock</mat-icon>
+    <span i18n>Change Password</span>
+  </button>
+</mat-menu>
 <div class="space-container">
   <div class="view-container">
     <div class="profile-container">
