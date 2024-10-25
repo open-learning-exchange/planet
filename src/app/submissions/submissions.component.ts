@@ -38,6 +38,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   initTable = true;
+  isSearchVisible = true;
   statusOptions: any = [
     { text: $localize`Pending`, value: 'pending' },
     { text: $localize`Not Graded`, value: 'requires grading' },
@@ -96,7 +97,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
   }
-
+  
+  toggleSearch() {
+    this.isSearchVisible = !this.isSearchVisible;
+  }
+  
   ngAfterViewChecked() {
     if (this.initTable === true) {
       this.submissions.paginator = this.paginator;
