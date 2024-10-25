@@ -59,17 +59,15 @@ export class MeetupsAddComponent implements OnInit {
     this.createForm();
    }
 
-  ngOnInit() {
+   ngOnInit() {
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
+    } else if (this.meetup.startDate && this.meetup.endDate) {
+      // Use default dates if provided in the input
+      this.createForm(this.meetup.startDate, this.meetup.endDate);
     } else {
+      // Create form without defaults if not provided
       this.createForm();
-    }
-    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
-      this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
-        data => this.setMeetupData(data),
-        error => console.log(error)
-      );
     }
   }
 
@@ -84,12 +82,13 @@ export class MeetupsAddComponent implements OnInit {
     meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
   }
 
-  createForm() {
+  createForm(startDate: Date = null, endDate: Date = null) {
     this.meetupForm = this.fb.group({
       title: ['', CustomValidators.required],
       description: ['', CustomValidators.required],
-      startDate: ['', [CustomValidators.required, CustomValidators.startDateValidator()]],
-      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],      recurring: 'none',
+      startDate: [startDate, [CustomValidators.required, CustomValidators.startDateValidator()]], // Set startDate
+      endDate: [endDate, CustomValidators.endDateValidator()], // Set endDate
+      recurring: 'none',
       day: this.fb.array([]),
       startTime: ['', CustomValidators.timeValidator()],
       endTime: ['', CustomValidators.timeValidator()],
