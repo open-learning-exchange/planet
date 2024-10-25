@@ -1,4 +1,3 @@
-
 <mat-toolbar *ngIf="!isDialog">
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
@@ -14,24 +13,19 @@
         </ng-container>
       </mat-select>
     </mat-form-field>
-    <mat-button-toggle-group
-      class="margin-lr-5 font-size-1"
-      (change)="onFilterChange($event.value, 'type')"
-      #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
-        Tests
-      </mat-button-toggle>
-      <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
-        Surveys
-      </mat-button-toggle>
-    </mat-button-toggle-group>
   </ng-container>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
+  <mat-button-toggle-group class="margin-lr-5 font-size-1" (change)="onFilterChange($event.value, 'type')" #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>Tests</mat-button-toggle>
+    <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>Surveys</mat-button-toggle>
+  </mat-button-toggle-group>
+  <input type="checkbox" id="toggle-search" class="toggle-search-checkbox">
+  <label for="toggle-search" class="search-icon">
+    <mat-icon i18n>search</mat-icon>
+  </label>
+  <mat-form-field class="font-size-1 search-bar">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type name to search...">
   </mat-form-field>
 </mat-toolbar>
-
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
   <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }" *ngIf="!emptyData; else notFoundMessage">
     <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
