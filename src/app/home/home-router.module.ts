@@ -23,6 +23,9 @@ const routes: Routes = [
     children: [
       { path: '', component: CommunityComponent },
       { path: 'community/:code', component: CommunityComponent },
+      { path: 'community/teams/:code',
+        loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule)
+      },
       { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
       { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
