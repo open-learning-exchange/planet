@@ -88,7 +88,7 @@ export class MeetupsAddComponent implements OnInit {
     this.meetupForm = this.fb.group({
       title: ['', CustomValidators.required],
       description: ['', CustomValidators.required],
-      startDate: ['', [CustomValidators.required, this.dateNotInPastValidator()]],
+      startDate: ['', [CustomValidators.required, CustomValidators.dateNotInPastValidator()]],
       endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],      recurring: 'none',
       day: this.fb.array([]),
       startTime: ['', CustomValidators.timeValidator()],
@@ -214,21 +214,5 @@ export class MeetupsAddComponent implements OnInit {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     })) };
-  }
-
-  dateNotInPastValidator() {
-    return (control: FormControl) => {
-      const today = new Date();
-       // Reset time to midnight for accurate comparison
-      today.setHours(0, 0, 0, 0);
-      const selectedDate = new Date(control.value);
-  
-      if (selectedDate < today) {
-         // Custom error if date is in the past
-        return { pastDate: true };
-      }
-       // No error
-      return null;
-    };
   }
 }
