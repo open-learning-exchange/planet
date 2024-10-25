@@ -1,10 +1,36 @@
 @import '../variables';
 
 .mat-column-name {
-    max-width: 25vw;
-  }
-  .mat-column-stepNum {
-    max-width: 90px;
+    max-width: 20em;
+}
+
+.mat-column-stepNum {
+    max-width: 5em; 
+}
+
+.search-icon {
+    cursor: pointer;
+    margin-right: 1em; 
+}
+
+.toggle-search-checkbox {
+    display: none;
+}
+
+.search-bar {
+    display: inline-block;
+}
+
+@media (max-width: $screen-sm) {
+  .search-bar {
+      display: none;
   }
 
-  
+  .toggle-search-checkbox:checked ~ .search-bar {
+      display: inline-block;
+  }
+
+  mat-form-field.font-size-1 {
+      max-width: 4em;
+  }
+}
