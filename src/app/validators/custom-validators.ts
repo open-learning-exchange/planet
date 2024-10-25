@@ -175,7 +175,7 @@ export class CustomValidators {
     };
   }
 
-  static dateNotInPastValidator(): ValidatorFn {
+  static startDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const today = new Date();
        // Reset to start of day for accurate comparison
@@ -255,5 +255,4 @@ export class CustomValidators {
       }
     });
   }
-
 }
