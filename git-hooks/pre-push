@@ -53,16 +53,28 @@ git stash -k
 # Check if vagrant is running
 vagrant_status=$(vagrant status dev --machine-readable | grep state,running)
 
-echo "Running Linters:"
-if [ "$vagrant_status" = "" ]; then
-  tslint=$(npm run lint)
-else
-  tslint=$(vagrant ssh dev -- -t 'cd /vagrant;npm run lint')
-fi
+run_lint() {
+  local dir=$1
+
+  if [ "$vagrant_status" = "" ]; then
+    cd $dir
+    tslint=$(npm run lint)
+  else
+    tslint=$(vagrant ssh dev -- -t `cd /vagrant/$dir;npm run lint`)
+  fi
+}
+
+echo "Running ng linters"
+run_lint .
 
 ret_code_tslint=$?
 output_result $ret_code_tslint "tslint" $tslint
 
+echo "Running chatapi linters"
+run_lint chatapi
+
+ret_code_tslint=$?
+output_result $ret_code_tslint "tslint" $tslint
 
 # If we stashed changes earlier, pop them back off the stack
 if [ $TOTAL_CHANGES -ne "0" ]
