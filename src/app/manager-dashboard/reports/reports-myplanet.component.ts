@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { forkJoin, of } from 'rxjs';
 import { StateService } from '../../shared/state.service';
@@ -10,6 +10,7 @@ import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
@@ -20,6 +21,9 @@ export class ReportsMyPlanetComponent implements OnInit {
   searchValue = '';
   planets: any[] = [];
   isEmpty = false;
+  isMobile: boolean;
+  deviceType: DeviceType;
+  showFiltersRow = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
   get childType() {
@@ -34,11 +38,21 @@ export class ReportsMyPlanetComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private reportsService: ReportsService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private deviceInfoService: DeviceInfoService,
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.getMyPlanetList(this.route.snapshot.params.hubId);
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.showFiltersRow = false
   }
 
   filterData(filterValue: string) {
