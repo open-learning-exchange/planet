@@ -1,22 +1,21 @@
-@import '../variables';
+@import "../variables";
 
-/* Column Widths */
 .mat-column-name {
-    max-width: 25vw;
+  max-width: 25vw;
 }
 .mat-column-stepNum {
-    max-width: 90px;
+  max-width: 90px;
 }
 
 @media (max-width: $screen-sm) {
-    // Horizontal Scroll Screen Option
-    .responsive-table {
-			display: block;
-			width: 100%;
-			overflow-x: auto;
-    }
-		
-    mat-header-cell, mat-cell {
-			min-width: 130px;
-    }
+  .responsive-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  mat-header-cell,
+  mat-cell {
+    min-width: 130px;
+  }
 }
