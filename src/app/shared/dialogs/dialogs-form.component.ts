@@ -41,7 +41,7 @@ export class DialogsFormComponent {
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService
   ) {
-    if (this.data && this.data.formGroup) {
+    if (this.data && this.data.formGroup) {``
       this.modalForm = this.data.formGroup instanceof FormGroup ?
         this.data.formGroup :
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
