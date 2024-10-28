@@ -1,36 +1,59 @@
 @import '../variables';
 
 .mat-column-name {
-    max-width: 20em;
+  max-width: 20em;
 }
 
 .mat-column-stepNum {
-    max-width: 5em; 
+  max-width: 5em;
 }
 
-.search-icon {
-    cursor: pointer;
-    margin-right: 1em; 
+.search-icon, .filter-icon {
+  cursor: pointer;
+  margin-right: 1em;
 }
 
-.toggle-search-checkbox {
-    display: none;
+.toggle-search-checkbox, .toggle-filters-checkbox {
+  display: none;
 }
 
 .search-bar {
-    display: inline-block;
+  display: inline-block;
+}
+
+.filter-items {
+  display: flex;           // Visible inline on desktop and mobile
+  gap: 1em;
 }
 
 @media (max-width: $screen-sm) {
   .search-bar {
-      display: none;
+    display: none;
   }
 
   .toggle-search-checkbox:checked ~ .search-bar {
-      display: inline-block;
+    display: inline-block;
   }
 
-  mat-form-field.font-size-1 {
-      max-width: 4em;
+  .filter-icon {
+    display: inline-block;  // Show filter icon on mobile
+  }
+
+  .filter-items {
+    display: none;          // Hide filter items by default on mobile
+  }
+
+  .toggle-filters-checkbox:checked ~ .filter-items {
+    display: flex;          // Show filter items in a row when toggle is checked
+  }
+
+  .filter-item {
+    margin-right: 0;        // Adjust spacing as needed for mobile
+  }
+}
+
+@media (min-width: $screen-sm) {
+  .filter-icon {
+    display: none;          // Hide filter icon on desktop
   }
 }
