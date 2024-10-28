@@ -7,11 +7,7 @@ import { DialogsListComponent } from './dialogs-list.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
-  styles: [ `
-    .checkbox-wrapper:last-child {
-      margin: 0 0 20px 0;
-    }
-  ` ]
+  styleUrls: [ 'dialogs-form.component.scss' ],
 })
 export class DialogsFormComponent {
 
@@ -26,6 +22,7 @@ export class DialogsFormComponent {
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
+      console.log(control, "is touched")
       control.markAsTouched();
       if (control.controls) {
         this.markFormAsTouched(control);
