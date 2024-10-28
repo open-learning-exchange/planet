@@ -52,7 +52,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
-    this.showFiltersRow = false
+    this.showFiltersRow = false;
   }
 
   filterData(filterValue: string) {
