@@ -28,13 +28,8 @@
         <input matInput [matDatepicker]="datepickerStart" i18n-placeholder required="true" placeholder="Start Date" formControlName="startDate">
         <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
         <mat-datepicker #datepickerStart></mat-datepicker>
-        <mat-error *ngIf="meetupForm.controls.startDate.hasError('required')">
-          Start date is required.
-        </mat-error>
-        <mat-error *ngIf="meetupForm.controls.startDate.hasError('pastDate')">
-          Start date cannot be in the past.
-        </mat-error>
-      </mat-form-field>      
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
       <mat-form-field>
         <input matInput [matDatepicker]="datepickerEnd" i18n-placeholder placeholder="End Date" formControlName="endDate">
         <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>

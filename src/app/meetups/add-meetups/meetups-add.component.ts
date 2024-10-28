@@ -62,12 +62,14 @@ export class MeetupsAddComponent implements OnInit {
    ngOnInit() {
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
-    } else if (this.meetup.startDate && this.meetup.endDate) {
-      // Use default dates if provided in the input
-      this.createForm(this.meetup.startDate, this.meetup.endDate);
     } else {
-      // Create form without defaults if not provided
       this.createForm();
+    }
+    if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
+      this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
+        data => this.setMeetupData(data),
+        error => console.log(error)
+      );
     }
   }
 
@@ -82,22 +84,22 @@ export class MeetupsAddComponent implements OnInit {
     meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
   }
 
-  createForm(startDate: Date = null, endDate: Date = null) {
+  createForm() {
     this.meetupForm = this.fb.group({
-      title: ['', CustomValidators.required],
-      description: ['', CustomValidators.required],
-      startDate: [startDate, [CustomValidators.required, CustomValidators.startDateValidator()]], // Set startDate
-      endDate: [endDate, CustomValidators.endDateValidator()], // Set endDate
+      title: [ '', CustomValidators.required ],
+      description: [ '', CustomValidators.required ],
+      startDate: [ this.meetup?.startDate ? this.meetup.startDate : '', CustomValidators.startDateValidator() ],
+      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
-      startTime: ['', CustomValidators.timeValidator()],
-      endTime: ['', CustomValidators.timeValidator()],
+      startTime: [ '', CustomValidators.timeValidator() ],
+      endTime: [ '', CustomValidators.timeValidator() ],
       category: '',
       meetupLocation: '',
       createdBy: this.userService.get().name,
       sourcePlanet: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [10, [Validators.min(2), CustomValidators.integerValidator]]
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
@@ -214,4 +216,5 @@ export class MeetupsAddComponent implements OnInit {
       'time': this.couchService.datePlaceholder
     })) };
   }
+
 }

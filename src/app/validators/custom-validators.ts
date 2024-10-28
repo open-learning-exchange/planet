@@ -181,9 +181,9 @@ export class CustomValidators {
        // Reset to start of day for accurate comparison
       today.setHours(0, 0, 0, 0);
       const selectedDate = new Date(control.value);
-  
+
       if (control.value && selectedDate < today) {
-        return { pastDate: true };
+        return { dateInPast : true };
       }
       return null;
     };
@@ -255,4 +255,5 @@ export class CustomValidators {
       }
     });
   }
+
 }
