@@ -1,0 +1,21 @@
+@import "../variables";
+
+.mat-column-name {
+  max-width: 25vw;
+}
+.mat-column-stepNum {
+  max-width: 90px;
+}
+
+@media (max-width: $screen-sm) {
+  .responsive-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  mat-header-cell,
+  mat-cell {
+    min-width: 130px;
+  }
+}

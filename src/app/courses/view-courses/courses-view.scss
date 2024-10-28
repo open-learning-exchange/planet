@@ -30,8 +30,8 @@
     .course-container {
       grid-template-columns: 1fr;
       grid-template-areas: 
-      'view'
-      'detail';
+      'detail'
+      'view';
       grid-row-gap: 1rem;
     }
 
