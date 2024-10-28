@@ -5,7 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { chat, chatNoSave } from './services/chat.service';
-import {keys} from './config/ai-providers.config';
+import { keys } from './config/ai-providers.config';
 
 dotenv.config();
 
