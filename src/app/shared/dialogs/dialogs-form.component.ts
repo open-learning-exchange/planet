@@ -22,7 +22,6 @@ export class DialogsFormComponent {
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
-      console.log(control, "is touched")
       control.markAsTouched();
       if (control.controls) {
         this.markFormAsTouched(control);

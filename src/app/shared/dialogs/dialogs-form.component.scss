@@ -3,15 +3,9 @@
 }
 
 .mat-radio-group.ng-touched.ng-invalid label {
-    border: 1px solid red;
-    background-color: #ffdddd; /* Optional: Light red background */
-}
-
-.mat-form-field.ng-touched.ng-invalid {
-    border: 1px solid red;
-    background-color: #ffdddd;
+    border-bottom: 2px solid red;
 }
 
 .ng-touched.ng-valid {
-    border: none
+    border: none;
 }
