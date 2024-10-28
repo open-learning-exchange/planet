@@ -1,6 +1,8 @@
 <div class="action-buttons" *ngIf="editable">
   <button mat-raised-button color="primary" i18n (click)="openAddReportDialog()">Add Report</button>
-  <button mat-raised-button color="primary" i18n (click)="exportReports()">Export as CSV</button>
+  <button mat-raised-button color="accent" i18n *ngIf="reports && reports.length > 0" (click)="exportAsCSV()">
+    Export as CSV
+  </button>
 </div>
 <div *ngIf="!reports || reports?.length == 0">
   <p i18n>No reports available at the moment.</p>
@@ -10,15 +12,18 @@
     <mat-card>
       <mat-card-header>
         <mat-card-title i18n>Financial Report</mat-card-title>
-        <mat-card-subtitle>{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date :
+          'mediumDate' : '+0000' }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
       </mat-card-content>
       <mat-card-footer class="action-buttons margin-lr-10">
         <ng-container *ngIf="editable">
-          <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
-          <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(report)"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button
+            (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button
+            (click)="$event.stopPropagation(); openAddReportDialog(report)"><mat-icon>edit</mat-icon></button>
         </ng-container>
         <button mat-button i18n>View Report</button>
       </mat-card-footer>
