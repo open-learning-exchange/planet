@@ -26,7 +26,7 @@ import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.co
 
 @Component({
   templateUrl: './surveys.component.html',
-  styleUrls: [ './surveys.component.scss' ]
+  styleUrls: ['./surveys.component.scss']
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
