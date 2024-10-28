@@ -1,15 +1,28 @@
-<!-- Request template -->
 <mat-toolbar>
-  <button class="btnBack" mat-icon-button routerLink="/manager">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span i18n>myPlanet Report</span>
-  <span class="toolbar-fill"></span>
+  <mat-toolbar-row>
+    <button class="btnBack" mat-icon-button routerLink="/manager">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>myPlanet Report</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!isMobile">
+      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    </ng-container>
+    <button mat-icon-button *ngIf="isMobile" (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="showFiltersRow">
+    <ng-container *ngIf="isMobile">
+      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    </ng-container>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<ng-template #searchView>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
+    <input matInput (keyup)="filterData($event.target.value)" [(ngModel)]="searchValue" i18n-placeholder placeholder="Search">
   </mat-form-field>
-</mat-toolbar>
+</ng-template>
 
 <div class="space-container">
   <mat-toolbar>
