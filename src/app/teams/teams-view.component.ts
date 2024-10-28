@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -25,10 +25,12 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   templateUrl: './teams-view.component.html',
-  styleUrls: [ './teams-view.scss' ],
+  styleUrls: ['./teams-view.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -40,7 +42,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   members = [];
   requests = [];
   disableAddingMembers = false;
-  displayedColumns = [ 'name' ];
+  displayedColumns = ['name'];
   userStatus = 'unrelated';
   isUserLeader = false;
   onDestroy$ = new Subject<void>();
@@ -64,6 +66,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   initTab;
   taskCount = 0;
   configuration = this.stateService.configuration;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
     private couchService: CouchService,
@@ -78,8 +83,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private newsService: NewsService,
     private reportsService: ReportsService,
     private stateService: StateService,
-    private tasksService: TasksService
-  ) {}
+    private tasksService: TasksService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
@@ -108,8 +120,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getActiveTab(initTab: string) {
     const activeTabs = {
-      'taskTab' : this.taskTab,
-      'applicantTab' : this.applicantTab
+      'taskTab': this.taskTab,
+      'applicantTab': this.applicantTab
     };
     return activeTabs[initTab];
   }
@@ -146,7 +158,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : of([])),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
     ).subscribe((activities) => {
-      this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
+      this.reportsService.groupBy(activities, ['user'], { maxField: 'time' }).forEach((visit) => {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.leader, this.userService.get());
@@ -172,11 +184,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.newsService.requestNews({
       selectors: {
         '$or': [
-          ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
+          ...(showAll ? [{ viewableBy: 'teams', viewableId: teamId }] : []),
           {
-            viewIn: { '$elemMatch': {
-              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
-            } }
+            viewIn: {
+              '$elemMatch': {
+                '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+              }
+            }
           }
         ],
       },
@@ -263,8 +277,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogPromptConfig(item, change) {
     return {
       leave: { request: this.toggleMembership(item, true), successMsg: $localize`left`, errorMsg: $localize`leaving` },
-      archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
-        successMsg: $localize`deleted`, errorMsg: $localize`deleting` },
+      archive: {
+        request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
+        successMsg: $localize`deleted`, errorMsg: $localize`deleting`
+      },
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
@@ -320,7 +336,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
         member.role ? $localize`Change Role` : $localize`Add Role`,
-        [ { name: 'teamRole', placeholder: $localize`Role`, type: 'textbox' } ],
+        [{ name: 'teamRole', placeholder: $localize`Role`, type: 'textbox' }],
         { teamRole: member.role || '' },
         { autoFocus: true, onSubmit: this.updateRole(member).bind(this) }
       );
@@ -336,7 +352,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
+        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [memberDoc] })),
         map(() => changeObject.message),
         finalize(() => this.dialogsLoadingService.stop())
       );
@@ -403,7 +419,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     );
     const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
       .map(request => ({ ...request, _deleted: true }));
-    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
+    this.couchService.bulkDocs(this.dbName, [...newMembershipDocs, ...requestsToDelete]).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
@@ -420,7 +436,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
+  sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength?} = {}) {
     return this.teamsService.sendNotifications(type, members || this.members, {
       newMembersLength, url: this.router.url, team: { ...this.team }
     });
@@ -435,7 +451,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           const newCourses = courses.map(course => course.doc);
           this.teamsService.updateTeam({
             ...this.team,
-            courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
+            courses: [...(this.team.courses || []), ...newCourses].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
           }).subscribe((updatedTeam) => {
             this.team = updatedTeam;
             dialogRef.close();
@@ -451,15 +467,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
       $localize`Add message`,
-      [ { name: 'message', placeholder: $localize`Message`, type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
-      { message: [ message, CustomValidators.requiredMarkdown ] },
+      [{ name: 'message', placeholder: $localize`Message`, type: 'markdown', required: true, imageGroup: { teams: this.teamId } }],
+      { message: [message, CustomValidators.requiredMarkdown] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
+      viewIn: [{ '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' }],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
@@ -475,10 +491,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       data: {
         okClick: (resources: any[]) => {
           this.teamsService.linkResourcesToTeam(resources, this.team)
-          .pipe(switchMap(() => this.getMembers())).subscribe(() => {
-            dialogRef.close();
-            this.dialogsLoadingService.stop();
-          });
+            .pipe(switchMap(() => this.getMembers())).subscribe(() => {
+              dialogRef.close();
+              this.dialogsLoadingService.stop();
+            });
         },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: this.dbName, linkId: this.teamId, resource
@@ -487,7 +503,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   removeResource(resource) {
-    const obs = [ this.couchService.post(this.dbName, { ...resource.linkDoc, _deleted: true }) ];
+    const obs = [this.couchService.post(this.dbName, { ...resource.linkDoc, _deleted: true })];
     if (resource.resource && resource.resource.private === true) {
       const { _id: resId, _rev: resRev } = resource.resource;
       obs.push(this.couchService.delete(`resources/${resId}?rev=${resRev}`));
@@ -512,9 +528,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.planetMessageService.showAlert($localize`This team was not found`);
     }
     if (this.mode === 'services') {
-      this.router.navigate([ '../' ], { relativeTo: this.route });
+      this.router.navigate(['../'], { relativeTo: this.route });
     } else {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
+      this.router.navigate(['../../'], { relativeTo: this.route });
     }
   }
 

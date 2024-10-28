@@ -7,14 +7,45 @@
     <h3 *ngIf="team !== undefined" class="margin-lr-3 ellipsis-title">
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
     </h3>
-    <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
+    <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services
+        Directory</ng-container></h3>
+    <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </ng-container>
+    <ng-container *ngIf=" deviceType === deviceTypes.TABLET">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+      <span class="toolbar-fill"></span>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+  </mat-toolbar>
+
+  <ng-template #editDetails>
     <button mat-stroked-button *ngIf="isUserLeader" (click)="updateTeam()">
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
+  </ng-template>
+
+  <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
-        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3"
+          (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
           Add Members
         </button>
         <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
@@ -24,30 +55,39 @@
           Add Courses
         </button>
         <ng-container *ngIf="!isUserLeader && mode !== 'services'">
-          <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
+          <button mat-raised-button color="accent" class="margin-lr-3"
+            (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
         </ng-container>
       </ng-container>
-      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
+      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3"
+        (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
-      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
+      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request
+          pending</mat-chip></mat-chip-list>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
-      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3"
+        (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
-  </mat-toolbar>
+  </ng-template>
+
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id"
+          [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)"
+          editSuccessMessage="Message has been updated successfully"
+          [editable]="userStatus === 'member'"></planet-news-list>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label i18n>
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
         <ng-container *ngIf="(team?.description || team?.services || team?.rules); else emptyText">
-          <div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
+          <div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's
+            Mission?</div>
           <td-markdown [content]="team.description"></td-markdown>
           <div class="mat-title" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</div>
           <td-markdown [content]="team.services"></td-markdown>
@@ -55,32 +95,34 @@
           <td-markdown [content]="team.rules"></td-markdown>
         </ng-container>
         <ng-template #emptyText>
-          <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
-          <button mat-raised-button color="accent" *ngIf="isUserLeader || mode === 'services'" (click)="updateTeam()" i18n>
+          <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode,
+            select, team {plan} enterprise {mission & services} services {services} }.</p>
+          <button mat-raised-button color="accent" *ngIf="isUserLeader || mode === 'services'" (click)="updateTeam()"
+            i18n>
             { mode, select, team {Add Plan} enterprise {Add Mission & Services} services {Add Services} }
           </button>
         </ng-template>
-        <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
-        <button mat-raised-button color="accent" *ngIf="team?.description && mode === 'services'" (click)="updateTeam()" i18n>Edit Services</button>
+        <p *ngIf="mode!=='services'"><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}
+        </p>
+        <button mat-raised-button color="accent" *ngIf="team?.description && mode === 'services'" (click)="updateTeam()"
+          i18n>Edit Services</button>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
+          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container>
+          ({{members.length}})
         </ng-template>
-        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
+        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team}
+          enterprise {enterprise} }.</p>
         <ng-template #memberList>
           <div class="card-grid member-cards">
             <mat-card *ngFor="let member of members">
-              <planet-teams-member
-                [member]="member"
-                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
+              <planet-teams-member [member]="member" [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
                 [actionMenu]="[]
                   .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
                   .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
                   .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
-                [visits]="visits[member?.name]"
-                [userStatus]="userStatus"
-                [teamLeader]="leader"
+                [visits]="visits[member?.name]" [userStatus]="userStatus" [teamLeader]="leader"
                 (actionClick)="memberActionClick($event)">
               </planet-teams-member>
             </mat-card>
@@ -90,56 +132,74 @@
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab #taskTab>
           <ng-template mat-tab-label>
-            <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
+            <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false"
+                i18n>Tasks</span></ng-container>
           </ng-template>
-          <planet-tasks [mode]="mode" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members" [editable]="userStatus === 'member'"></planet-tasks>
+          <planet-tasks [mode]="mode" [link]="{ teams: teamId }"
+            [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [assignees]="members"
+            [editable]="userStatus === 'member'"></planet-tasks>
         </mat-tab>
         <mat-tab #calendarTab>
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }"
+            [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }"
+            [editable]="userStatus === 'member'"></planet-calendar>
         </mat-tab>
         <mat-tab *ngIf="mode!=='team'">
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container>
           </ng-template>
-          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers"
+            (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
         </mat-tab>
       </ng-container>
       <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
-        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
+        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team"
+          (reportsChanged)="resetData()"></planet-teams-reports>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab i18n-label label="Resources">
           <ng-template mat-tab-label>
-            <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} services {Documents} }</ng-container> ({{resources?.length || 0}})
+            <ng-container i18n>{ mode, select, team {Resources} enterprise {Documents} services {Documents}
+              }</ng-container> ({{resources?.length || 0}})
           </ng-template>
-          <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no { mode, select, team {resources} enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
+          <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no { mode, select, team {resources}
+            enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #resourceList>
             <div class="card-grid">
-              <mat-card *ngFor="let resource of resources" (click)="resource.resource._attachments ? openResource(resource.resource._id) : false" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments" [ngClass]="{'cursor-pointer': resource.resource._attachments}">
+              <mat-card *ngFor="let resource of resources"
+                (click)="resource.resource._attachments ? openResource(resource.resource._id) : false" i18n-matTooltip
+                matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments"
+                [ngClass]="{'cursor-pointer': resource.resource._attachments}">
                 <div class="mat-subheading-2">
                   <span *ngIf="resource.resource!==undefined">
-                    <b>{{resource.resource.title?.length > 75 ? resource.resource.title.slice(0,75) + '...' : resource.resource.title}}</b>
+                    <b>{{resource.resource.title?.length > 75 ? resource.resource.title.slice(0,75) + '...' :
+                      resource.resource.title}}</b>
                   </span>
                   <span *ngIf="resource.resource===undefined" i18n-matTooltip
                     matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
-                    {{resource.linkDoc.title?.length > 75 ? resource.linkDoc.title.slice(0,75) + '...' : resource.linkDoc.title}}
+                    {{resource.linkDoc.title?.length > 75 ? resource.linkDoc.title.slice(0,75) + '...' :
+                    resource.linkDoc.title}}
                   </span>
                 </div>
                 <mat-card-content>
-                  <planet-markdown [content]="(resource.resource.description | slice:0:120) + (resource.resource.description.length > 120 ? '...' : '')"></planet-markdown>
+                  <planet-markdown
+                    [content]="(resource.resource.description | slice:0:120) + (resource.resource.description.length > 120 ? '...' : '')"></planet-markdown>
                 </mat-card-content>
-                <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
+                <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button
+                  [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'resource' })">
+                  <button mat-menu-item
+                    (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'resource' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
-                  <button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true" mat-menu-item>
+                  <button (click)="openResourcesDialog(resource.resource)" *ngIf="resource.resource?.private===true"
+                    mat-menu-item>
                     <mat-icon>edit</mat-icon>
                     <span i18n>Edit</span>
                   </button>
@@ -155,18 +215,23 @@
           <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
           <ng-template #courseList>
             <div class="card-grid">
-              <mat-card *ngFor="let course of team?.courses" (click)="openCourseView(course._id)" class="cursor-pointer">
+              <mat-card *ngFor="let course of team?.courses" (click)="openCourseView(course._id)"
+                class="cursor-pointer">
                 <div class="mat-subheading-2">
-                  <b>{{course.courseTitle?.length > 75 ? course.courseTitle.slice(0,75) + '...' : course.courseTitle }}</b>
+                  <b>{{course.courseTitle?.length > 75 ? course.courseTitle.slice(0,75) + '...' : course.courseTitle
+                    }}</b>
                 </div>
                 <mat-card-content>
-                  <planet-markdown [content]="(course.description | slice:0:120) + (course.description.length > 120 ? '...' : '')"></planet-markdown>
+                  <planet-markdown
+                    [content]="(course.description | slice:0:120) + (course.description.length > 120 ? '...' : '')"></planet-markdown>
                 </mat-card-content>
-                <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
+                <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button
+                  [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #courseMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })">
+                  <button mat-menu-item
+                    (click)="openDialogPrompt(course, 'course', { changeType: 'remove', type: 'course' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
@@ -177,22 +242,30 @@
         </mat-tab>
         <mat-tab *ngIf="mode!=='services'" #applicantTab>
           <ng-template mat-tab-label>
-            <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} }</ng-container> ({{requests.length}})
+            <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} }</ng-container>
+            ({{requests.length}})
           </ng-template>
-          <p *ngIf="requests.length === 0; else requestedList" i18n>There are no { mode, select, team {requests} enterprise {applications} } to join this { mode, select, team {team} enterprise {enterprise} }.</p>
+          <p *ngIf="requests.length === 0; else requestedList" i18n>There are no { mode, select, team {requests}
+            enterprise {applications} } to join this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #requestedList>
             <div class="card-grid">
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
-                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name}}</a>
+                  <img mat-card-avatar [src]="request.avatar" class="cursor-pointer"
+                    (click)="openMemberDialog(request)">
+                  <a mat-card-title class="cursor-pointer"
+                    (click)="openMemberDialog(request)">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName
+                    || request.name}}</a>
                   <mat-card-subtitle>
-                    <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
+                    <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container
+                        i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
                   </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-actions *ngIf="userStatus === 'member'">
-                  <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
+                  <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)"
+                    [disabled]="disableAddingMembers">Accept</button>
+                  <button mat-raised-button color="warn" i18n
+                    (click)="changeMembership('rejected', request)">Reject</button>
                 </mat-card-actions>
               </mat-card>
             </div>
