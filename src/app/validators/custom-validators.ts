@@ -189,7 +189,6 @@ export class CustomValidators {
     };
   }
 
-
   // Set this on both password and confirmation fields so it runs when either changes
   // confirm should be true for the confirmation field validator
   // match is true by default, for unmatching passwords, match should be false

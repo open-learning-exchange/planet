@@ -59,7 +59,7 @@ export class MeetupsAddComponent implements OnInit {
     this.createForm();
    }
 
-   ngOnInit() {
+  ngOnInit() {
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
     } else {
