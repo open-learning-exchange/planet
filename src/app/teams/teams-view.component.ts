@@ -186,11 +186,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         '$or': [
           ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
           {
-            viewIn: {
-              '$elemMatch': {
-                '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
-              }
-            }
+            viewIn: { '$elemMatch': {
+              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            } }
           }
         ],
       },
@@ -277,10 +275,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogPromptConfig(item, change) {
     return {
       leave: { request: this.toggleMembership(item, true), successMsg: $localize`left`, errorMsg: $localize`leaving` },
-      archive: {
-        request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
-        successMsg: $localize`deleted`, errorMsg: $localize`deleting`
-      },
+      archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
+        successMsg: $localize`deleted`, errorMsg: $localize`deleting` },
       resource: {
         request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
@@ -436,7 +432,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength?} = {}) {
+  sendNotifications(type, { members, newMembersLength = 0 }: { members?, newMembersLength? } = {}) {
     return this.teamsService.sendNotifications(type, members || this.members, {
       newMembersLength, url: this.router.url, team: { ...this.team }
     });
@@ -491,10 +487,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       data: {
         okClick: (resources: any[]) => {
           this.teamsService.linkResourcesToTeam(resources, this.team)
-            .pipe(switchMap(() => this.getMembers())).subscribe(() => {
-              dialogRef.close();
-              this.dialogsLoadingService.stop();
-            });
+          .pipe(switchMap(() => this.getMembers())).subscribe(() => {
+            dialogRef.close();
+            this.dialogsLoadingService.stop();
+          });
         },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: this.dbName, linkId: this.teamId, resource
