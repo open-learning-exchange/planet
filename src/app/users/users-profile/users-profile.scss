@@ -1,21 +1,12 @@
 @import '../../variables';
 
 :host {
-
   .profile-container {
     max-width: 900px;
     display: grid;
     grid-template-columns: 1fr .75fr .75fr;
     grid-column-gap: 2rem;
   }
-
-.mobile-only {
-  display: none;
-}
-
-.desktop-only {
-  display: block;
-}
 
   @media (max-width: $screen-sm) {
     .profile-image-section {
@@ -41,14 +32,11 @@
     .profile-image-large {
       width: 50%;
     }
-    
-    .mobile-only {
-      display: block;
-    }
-  
-    .desktop-only {
-      display: none;
+
+    .mat-list-item p{
+      overflow-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
     }
   }
-
 }
