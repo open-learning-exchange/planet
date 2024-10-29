@@ -26,7 +26,6 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -68,7 +67,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
     private couchService: CouchService,
