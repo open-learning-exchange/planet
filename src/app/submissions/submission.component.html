@@ -1,21 +1,157 @@
-@import "../variables";
+<mat-toolbar *ngIf="!isDialog">
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!isMobile">
+      <div class="filter-container">
+        <mat-form-field class="font-size-1 margin-lr-3">
+          <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+            <mat-option i18n value="All">All</mat-option>
+            <ng-container *ngFor="let option of statusOptions">
+              <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-button-toggle-group
+          class="margin-lr-5 font-size-1"
+          (change)="onFilterChange($event.value, 'type')"
+          #filterGroup="matButtonToggleGroup">
+          <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
+            Tests
+          </mat-button-toggle>
+          <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
+            Surveys
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+        <mat-icon>search</mat-icon>
+        <mat-form-field class="font-size-1">
+          <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type name to search...">
+        </mat-form-field>
+      </div>
+    </ng-container>
+    <button mat-icon-button *ngIf="isMobile" (click)="this.showFiltersRow = !this.showFiltersRow">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+    <ng-container *ngTemplateOutlet="filterView"></ng-container>
+  </mat-toolbar-row>
+</mat-toolbar>
 
-.mat-column-name {
-  max-width: 25vw;
-}
-.mat-column-stepNum {
-  max-width: 90px;
-}
+<ng-template #filterView>
+  <div class="filter-container">
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+        <mat-option i18n value="All">All</mat-option>
+        <ng-container *ngFor="let option of statusOptions">
+          <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+    <mat-button-toggle-group
+      class="margin-lr-5 font-size-1"
+      (change)="onFilterChange($event.value, 'type')"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
+        Tests
+      </mat-button-toggle>
+      <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
+        Surveys
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type name to search...">
+    </mat-form-field>
+  </div>
+</ng-template>
 
-@media (max-width: $screen-sm) {
-  .responsive-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
+<ng-template #filterView>
+  <mat-form-field class="font-size-1 margin-lr-3">
+    <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+      <mat-option i18n value="All">All</mat-option>
+      <ng-container *ngFor="let option of statusOptions">
+        <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
+      </ng-container>
+    </mat-select>
+  </mat-form-field>
+  <mat-button-toggle-group
+    class="margin-lr-5 font-size-1"
+    (change)="onFilterChange($event.value, 'type')"
+    #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
+      Tests
+    </mat-button-toggle>
+    <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
+      Surveys
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <mat-icon>search</mat-icon>
+  <mat-form-field class="font-size-1">
+    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type name to search...">
+  </mat-form-field>
+</ng-template>
 
-  mat-header-cell,
-  mat-cell {
-    min-width: 130px;
-  }
-}
+<div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
+  <div class="view-container view-table responsive-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }" *ngIf="!emptyData; else notFoundMessage">
+    <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.parent.name}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="courseTitle">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.courseTitle}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="stepNum">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.stepNum || ''}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
+        <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
+          <mat-chip-list *ngSwitchCase="'pending'"><mat-chip  class="chip-no-style" i18n>pending</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip class="chip-no-style" selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchDefault><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="grade">
+        <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.status === 'complete'">{{element?.grade}}/{{element.answers.length}}</ng-container>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="user">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>Submitted by</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="cursor-pointer" *ngIf="element?.user?.name; else noLink" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
+          <ng-template #noLink><span i18n>{{element?.submittedBy || 'Unknown'}}</span></ng-template>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="lastUpdateTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="lastUpdateTime" i18n>Updated On</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{((isNumber(element.lastUpdateTime) ? element.lastUpdateTime : null) | date: 'medium') || '--'}}</span>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="gradeTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="gradeTime" i18n>Graded On</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{((isNumber(element.gradeTime) ? element.gradeTime : null) | date: 'medium') || '--'}}</span>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'cursor-pointer': row.status!=='pending' || mode === 'survey'}"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="50"
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+    </mat-paginator>
+  </div>
+  <ng-template #notFoundMessage>
+    <div class="view-container" i18n>No Record Found</div>
+  </ng-template>
+</div>
