@@ -44,9 +44,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
   selectedLocal = 0;
+  isMobile: boolean = false;
+  isTablet: boolean = false;
+  titleLength = 25;
   get tableData() {
     return this.courses;
   }
+
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -141,6 +145,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   ngOnInit() {
     this.titleSearch = '';
     this.getCourses();
+    this.updateDeviceType();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
@@ -170,6 +175,36 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.updateDeviceType();
+  }
+
+  updateDeviceType() {
+    const width = window.innerWidth;
+
+    if (width < 768) {
+      this.isMobile = true;
+      this.isTablet = false;
+      this.titleLength = 25; // Limit for mobile devices
+    } else if (width >= 768 && width < 1024) {
+      this.isMobile = false;
+      this.isTablet = true;
+      this.titleLength = 40; // Limit for tablets
+    } else {
+      this.isMobile = false;
+      this.isTablet = false;
+      this.titleLength = 100; // Limit for desktop
+    }
+  }
+
+  truncateTitle(title: string): string {
+    if(title.length > this.titleLength){
+      return title.slice(0, this.titleLength) + '...';
+    }
+    return title;
   }
 
   ngOnChanges() {
