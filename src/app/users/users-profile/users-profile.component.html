@@ -1,9 +1,11 @@
 <mat-toolbar *ngIf="!isDialog">
-  <button mat-icon-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span i18n>Member Profile</span>
-  <span class="toolbar-fill"></span>
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>Member Profile</span>
+    <span class="toolbar-fill"></span>
+  </mat-toolbar-row>
 </mat-toolbar>
 
 <div class="space-container">
@@ -11,16 +13,16 @@
     <span>{{userDetail.name}}</span>
     <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
     <span class="toolbar-fill"></span>
-    <button mat-icon-button [matMenuTriggerFor]="menu" class="mobile-only">
+    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isMobile">
       <mat-icon>more_vert</mat-icon>
     </button>
-    <button mat-stroked-button class="margin-lr-3 desktop-only" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
+    <button mat-stroked-button class="margin-lr-3" *ngIf="!isMobile && hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
       <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
     </button>
-    <button mat-raised-button color="accent" class="margin-lr-3 desktop-only" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]">
+    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="!isMobile && editable && !isDialog" [routerLink]="['../../update/', urlName]">
       <mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span>
     </button>
-    <a mat-raised-button color="accent" class="margin-lr-3 desktop-only" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">
+    <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="!isMobile && editable && !isDialog" i18n [planetChangePassword]="userDetail">
       Change Password
     </a>
   </mat-toolbar>
