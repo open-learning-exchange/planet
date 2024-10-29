@@ -7,8 +7,7 @@
     <h3 *ngIf="team !== undefined" class="margin-lr-3 ellipsis-title">
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
     </h3>
-    <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services
-        Directory</ng-container></h3>
+    <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
     <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
@@ -78,7 +77,7 @@
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
         <ng-container *ngIf="(team?.description || team?.services || team?.rules); else emptyText">
-          <d<div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
+          <div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
           <td-markdown [content]="team.description"></td-markdown>
           <div class="mat-title" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</div>
           <td-markdown [content]="team.services"></td-markdown>
@@ -87,8 +86,7 @@
         </ng-container>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
-          <button mat-raised-button color="accent" *ngIf="isUserLeader || mode === 'services'" (click)="updateTeam()"
-            i18n>
+          <button mat-raised-button color="accent" *ngIf="isUserLeader || mode === 'services'" (click)="updateTeam()" i18n>
             { mode, select, team {Add Plan} enterprise {Add Mission & Services} services {Add Services} }
           </button>
         </ng-template>
