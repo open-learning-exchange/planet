@@ -30,7 +30,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   templateUrl: './teams-view.component.html',
-  styleUrls: ['./teams-view.scss'],
+  styleUrls: [ './teams-view.scss' ],
   encapsulation: ViewEncapsulation.None
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -42,7 +42,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   members = [];
   requests = [];
   disableAddingMembers = false;
-  displayedColumns = ['name'];
+  displayedColumns = [ 'name' ];
   userStatus = 'unrelated';
   isUserLeader = false;
   onDestroy$ = new Subject<void>();
@@ -158,7 +158,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : of([])),
       switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
     ).subscribe((activities) => {
-      this.reportsService.groupBy(activities, ['user'], { maxField: 'time' }).forEach((visit) => {
+      this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.leader, this.userService.get());
@@ -184,7 +184,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.newsService.requestNews({
       selectors: {
         '$or': [
-          ...(showAll ? [{ viewableBy: 'teams', viewableId: teamId }] : []),
+          ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
           {
             viewIn: {
               '$elemMatch': {
@@ -336,7 +336,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (change === 'title') {
       this.dialogsFormService.openDialogsForm(
         member.role ? $localize`Change Role` : $localize`Add Role`,
-        [{ name: 'teamRole', placeholder: $localize`Role`, type: 'textbox' }],
+        [ { name: 'teamRole', placeholder: $localize`Role`, type: 'textbox' } ],
         { teamRole: member.role || '' },
         { autoFocus: true, onSubmit: this.updateRole(member).bind(this) }
       );
@@ -352,7 +352,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
-        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [memberDoc] })),
+        switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
         finalize(() => this.dialogsLoadingService.stop())
       );
@@ -419,7 +419,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     );
     const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
       .map(request => ({ ...request, _deleted: true }));
-    this.couchService.bulkDocs(this.dbName, [...newMembershipDocs, ...requestsToDelete]).pipe(
+    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
@@ -451,7 +451,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           const newCourses = courses.map(course => course.doc);
           this.teamsService.updateTeam({
             ...this.team,
-            courses: [...(this.team.courses || []), ...newCourses].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
+            courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
           }).subscribe((updatedTeam) => {
             this.team = updatedTeam;
             dialogRef.close();
@@ -467,15 +467,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
       $localize`Add message`,
-      [{ name: 'message', placeholder: $localize`Message`, type: 'markdown', required: true, imageGroup: { teams: this.teamId } }],
-      { message: [message, CustomValidators.requiredMarkdown] },
+      [ { name: 'message', placeholder: $localize`Message`, type: 'markdown', required: true, imageGroup: { teams: this.teamId } } ],
+      { message: [ message, CustomValidators.requiredMarkdown ] },
       { autoFocus: true, onSubmit: this.postMessage.bind(this) }
     );
   }
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [{ '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' }],
+      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
@@ -503,7 +503,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   removeResource(resource) {
-    const obs = [this.couchService.post(this.dbName, { ...resource.linkDoc, _deleted: true })];
+    const obs = [ this.couchService.post(this.dbName, { ...resource.linkDoc, _deleted: true }) ];
     if (resource.resource && resource.resource.private === true) {
       const { _id: resId, _rev: resRev } = resource.resource;
       obs.push(this.couchService.delete(`resources/${resId}?rev=${resRev}`));
@@ -528,9 +528,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.planetMessageService.showAlert($localize`This team was not found`);
     }
     if (this.mode === 'services') {
-      this.router.navigate(['../'], { relativeTo: this.route });
+      this.router.navigate([ '../' ], { relativeTo: this.route });
     } else {
-      this.router.navigate(['../../'], { relativeTo: this.route });
+      this.router.navigate([ '../../' ], { relativeTo: this.route });
     }
   }
 
