@@ -8,10 +8,39 @@
       {{team.name}} <ng-container *ngIf="mode==='enterprise'" i18n>Office</ng-container>
     </h3>
     <h3 *ngIf="mode==='services'" class="margin-lr-3 ellipsis-title">{{configuration?.name}} <ng-container i18n>Services Directory</ng-container></h3>
+    <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </ng-container>
+    <ng-container *ngIf=" deviceType === deviceTypes.TABLET">
+      <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+      <span class="toolbar-fill"></span>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    </ng-container>
+  </mat-toolbar>
+
+  <ng-template #editDetails>
     <button mat-stroked-button *ngIf="isUserLeader" (click)="updateTeam()">
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
+  </ng-template>
+
+  <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
         <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
@@ -35,7 +64,8 @@
     <ng-container *ngIf="mode!=='services'">
       <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
-  </mat-toolbar>
+  </ng-template>
+
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
       <mat-tab i18n-label label="Chat">
