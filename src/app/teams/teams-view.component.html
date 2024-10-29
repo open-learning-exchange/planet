@@ -33,7 +33,7 @@
       <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
-      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+      <button *planetAuthorizedRoles="''" mat-raised-button color="warn" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
   </mat-toolbar>
   <div class="view-container view-full-height">
