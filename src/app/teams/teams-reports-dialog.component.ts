@@ -10,6 +10,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     .mat-subheading-1 {
       margin-top: 0;
     }
+    .close-button {
+      color:white;
+      box-shadown:none;
+    }
   ` ]
 })
 export class TeamsReportsDialogComponent {
