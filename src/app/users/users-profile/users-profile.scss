@@ -33,6 +33,12 @@
     .profile-image-large {
       width: 50%;
     }
+
+    .mat-list-item p{
+      overflow-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
+    }
   }
 
 }

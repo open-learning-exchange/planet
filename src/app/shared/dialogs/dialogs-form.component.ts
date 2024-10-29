@@ -7,11 +7,19 @@ import { DialogsListComponent } from './dialogs-list.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
-  styles: [ `
+  styles: [`
     .checkbox-wrapper:last-child {
       margin: 0 0 20px 0;
     }
-  ` ]
+
+    .mat-radio-group.ng-touched.ng-invalid label {
+      border-bottom: 2px solid red;
+    }
+
+    .ng-touched.ng-valid {
+      border: none;
+    }
+  `]
 })
 export class DialogsFormComponent {
 
