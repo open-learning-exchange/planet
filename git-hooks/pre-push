@@ -67,6 +67,9 @@ run_lint() {
 echo "Running ng linters"
 run_lint .
 
+ret_code_tslint=$?
+output_result $ret_code_tslint "tslint" $tslint
+
 echo "Running chatapi linters"
 run_lint chatapi
 
