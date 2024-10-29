@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,7 +11,7 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
-
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 const columnsByFilterAndMode = {
   exam: {
     grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
@@ -25,7 +25,7 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styleUrls: ['./submissions.component.scss'] 
+  styleUrls: ['./submission.component.scss'],
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -38,8 +38,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   initTable = true;
-  isSearchVisible = true;
-  showFilterOptions = false;
+  isMobile: boolean;
+  deviceType: DeviceType;
+  showFiltersRow = false;
   statusOptions: any = [
     { text: $localize`Pending`, value: 'pending' },
     { text: $localize`Not Graded`, value: 'requires grading' },
@@ -54,13 +55,15 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private coursesService: CoursesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private route: ActivatedRoute,
+    private deviceInfoService: DeviceInfoService,
   ) {
-    this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnInit() {
@@ -98,13 +101,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
   }
-  
-  toggleSearch() {
-    this.isSearchVisible = !this.isSearchVisible;
-  }
-  
-  toggleFilter() {
-    this.showFilterOptions  = !this.showFilterOptions;
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.showFiltersRow = false
   }
 
   ngAfterViewChecked() {
