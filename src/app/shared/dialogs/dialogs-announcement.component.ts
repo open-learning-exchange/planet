@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NewsService } from '../../news/news.service';
+
 import { findDocuments } from '../../shared/mangoQueries';
-import { SubmissionsService } from '../../submissions/submissions.service';
+import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
+import { SubmissionsService } from '../../submissions/submissions.service';
 
 @Component({
   template: `
@@ -18,14 +19,11 @@ export class DialogsAnnouncementComponent implements OnInit{
   excludedCodes = ['earth', 'somalia', 'learning'];
   configuration = this.stateService.configuration;
   announcement = `
-  ## November Community challenge
+  <img src="https://res.cloudinary.com/mutugiii/image/upload/v1730309598/challenge_horizontal_xppnfl.jpg" alt="issues challenge">
 
-  <img src="https://res.cloudinary.com/mutugiii/image/upload/v1730234589/challenge_lrlujq.png" alt="issues challenge">
-
-  ## Steps to participate:
-  - Question: What are you interested in researching
-  - Research: Use the AI chat feature to research your question
-  - Report & share - Write a message on what you learned and share it in the Community Voices.
+  - Unete al curso Reto noviembre.
+  - Comparte tu opinión en Nuestras Voces.
+  - Recuerda sincronizar la aplicacion movil.
   `;
 
 
@@ -55,13 +53,11 @@ export class DialogsAnnouncementComponent implements OnInit{
 
           const filteredNews = news.filter((post) => {
             const userName = post.doc.user.name.toLowerCase();
-            console.log(userName);
-
             const isMatch = submissionsSet.has(userName);
             return isMatch;
           });
 
-          this.announcement += `\n\n Successful Challenge Submissions: ${filteredNews.length}`;
+          // this.announcement += `\n\n Successful Challenge Submissions: ${filteredNews.length}`;
         });
       });
     };

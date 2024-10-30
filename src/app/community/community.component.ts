@@ -153,7 +153,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   openAnnouncementDialog() {
     this.dialog.open(DialogsAnnouncementComponent, {
       width: '50vw',
-      maxHeight: '90vh'
+      maxHeight: '100vh'
     });
   }
 
