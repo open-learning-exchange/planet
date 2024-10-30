@@ -38,8 +38,8 @@ export class CoursesViewDetailComponent implements OnChanges {
       <h3>{{courseDetail.courseTitle}}</h3>
       <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
       <mat-dialog-actions>
-        <button mat-dialog-close mat-raised-button i18n>Close</button>
         <button mat-dialog-close mat-raised-button color="primary" (click)="routeToCourses(courseDetail._id)" i18n>View Course</button>
+        <button mat-dialog-close mat-raised-button i18n>Close</button>
       </mat-dialog-actions>
     </ng-container>
   `
