@@ -57,6 +57,16 @@
     color: #0056b3;
     text-decoration: underline;
   }
+
+  td-markdown {
+    max-height: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-wrap: break-word;
+    max-height: 150px;
+    white-space: normal;
+    display: block;
+  }
 }
 
 .margin-r-1 {
