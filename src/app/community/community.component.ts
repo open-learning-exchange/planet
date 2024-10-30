@@ -50,17 +50,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   challengeActive: boolean;
-  challengeTemplate = `
-  # Challenge Template
-
-  Please add your screenshot below:
-
-  ![Screenshot](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUcXBM7Z8y61oNm2yWy_4NPsGPBvCcKJiPhw&s)
-
-  Please add your short message below:
-
-  > Your message here...
-  `;
 
   constructor(
     private dialog: MatDialog,
@@ -109,7 +98,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    this.challengeActive = this.configuration.code === 'learning' && new Date().getMonth() === 9;
+    const excludedCodes = ['earth', 'somalia', 'learning'];
+    this.challengeActive = !excludedCodes.includes(this.configuration.code) && new Date().getMonth() === 9;
     if (this.challengeActive) {
       this.openAnnouncementDialog();
     }
@@ -161,10 +151,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openAnnouncementDialog() {
-    this.dialog.open(DialogsAnnouncementComponent);
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '90vh'
+    });
   }
 
-  openAddMessageDialog(message = this.challengeActive ? this.challengeTemplate : '') {
+  openAddMessageDialog(message = '') {
     this.dialogsFormService.openDialogsForm(
       $localize`Add Voice`,
       [ { name: 'message', placeholder: $localize`Your Voice`, type: 'markdown', required: true, imageGroup: 'community' } ],
