@@ -25,7 +25,7 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styleUrls: ['./submissions.component.scss'],
+  styleUrls: ['./submission.component.scss'],
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
