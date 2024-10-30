@@ -24,7 +24,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   currentView: string;
   courseId: string;
   canManage: boolean;
-  isLoading: boolean
+  isLoading: boolean;
   currentUser = this.userService.get();
   planetConfiguration = this.stateService.configuration;
   examText: 'retake' | 'take' = 'take';
