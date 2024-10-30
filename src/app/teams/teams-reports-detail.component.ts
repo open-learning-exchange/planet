@@ -5,10 +5,15 @@ import { StateService } from '../shared/state.service';
   selector: 'planet-teams-reports-detail',
   templateUrl: './teams-reports-detail.component.html',
   styles: [ `
+    .report-grid-container {
+      overflow-x: auto;
+      overflow-y: auto;
+    }
     .report-grid {
       display: grid;
-      grid-template-columns: 250px auto;
+      grid-template-columns: 250px 1fr;
       grid-row-gap: 0.25rem;
+      overflow-wrap: break-word;
     }
     .report-grid .full-width {
       grid-column: 1 / -1;
