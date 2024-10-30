@@ -44,8 +44,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
   selectedLocal = 0;
-  isMobile: boolean = false;
-  isTablet: boolean = false;
   titleLength = 25;
   get tableData() {
     return this.courses;
@@ -185,19 +183,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   updateDeviceType() {
     const width = window.innerWidth;
 
-    if (width < 768) {
-      this.isMobile = true;
-      this.isTablet = false;
-      this.titleLength = 25; // Limit for mobile devices
-    } else if (width >= 768 && width < 1024) {
-      this.isMobile = false;
-      this.isTablet = true;
-      this.titleLength = 40; // Limit for tablets
-    } else {
-      this.isMobile = false;
-      this.isTablet = false;
-      this.titleLength = 100; // Limit for desktop
-    }
+    const maxTitleLength = 100;  
+    const minTitleLength = 25;  
+    const stepWidth = 45;        
+    const stepDecrease = 5;      
+
+    const steps = Math.floor((1600 - width) / stepWidth);
+
+    this.titleLength = Math.max(minTitleLength, maxTitleLength - steps * stepDecrease);
   }
 
   truncateTitle(title: string): string {
