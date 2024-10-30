@@ -11,8 +11,16 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       margin-top: 0;
     }
     .close-button {
-      color:white;
-      box-shadown:none;
+      color: white;
+      box-shadown:none !important;
+      filter: none !important;
+      outline: none !important;
+    }
+    .close-button:hover,
+    .close-button:focus,
+    .close-button:active {
+      box-shadow: none !important;
+      filter: none !important;
     }
   ` ]
 })
