@@ -50,7 +50,7 @@
           <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
         </ng-container>
       </mat-select>
-    </mat-form-field>    
+    </mat-form-field>
     <mat-button-toggle-group
       class="margin-lr-5 font-size-1"
       (change)="onFilterChange($event.value, 'type')"
