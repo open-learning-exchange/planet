@@ -49,11 +49,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true
+    this.isLoading = true;
     this.coursesService.courseUpdated$.pipe(
       switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
         this.courseDetail = course;
-        this.isLoading = false
+        this.isLoading = false;
         this.coursesService.courseActivity('visit', course);
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
           ...step,
