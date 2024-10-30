@@ -25,15 +25,7 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-name {
-      max-width: 25vw;
-    }
-    .mat-column-stepNum {
-      max-width: 90px;
-    }
-  ` ]
+  styleUrls: [ './submission.component.scss' ],
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
