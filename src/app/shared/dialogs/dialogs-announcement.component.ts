@@ -16,14 +16,12 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 export class DialogsAnnouncementComponent implements OnInit{
 
   private onDestroy$ = new Subject<void>();
-  excludedCodes = ['earth', 'somalia', 'learning'];
   configuration = this.stateService.configuration;
   announcement = `
   <img src="https://res.cloudinary.com/mutugiii/image/upload/v1730309598/challenge_horizontal_xppnfl.jpg" alt="issues challenge">
 
   - Unete al curso Reto noviembre.
   - Comparte tu opinión en Nuestras Voces.
-  - Recuerda sincronizar la aplicacion movil.
   `;
 
 
@@ -36,10 +34,10 @@ export class DialogsAnnouncementComponent implements OnInit{
 
   ngOnInit() {
     // Manually set the planets and courseId
-    const excludedCodes = ['earth', 'somalia', 'learning'];
+    const includedCodes = ['guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur'];
     const courseId = '';
 
-    if (!excludedCodes.includes(this.configuration.code)) {
+    if (includedCodes.includes(this.configuration.code)) {
       this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
         news.map(post => ({
