@@ -128,7 +128,7 @@ export class HealthEventComponent implements OnInit {
     const limits = {
       'temperature': { min: 30, max: 40 },
       'pulse': { min: 40, max: 120 },
-      'height': { min: 1, max: 250 },
+      'height': { min: 40, max: 250 },
       'weight': { min: 1, max: 150 },
       'bp': 'n/a'
     };
