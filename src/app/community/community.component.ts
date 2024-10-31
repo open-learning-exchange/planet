@@ -71,23 +71,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.isLoading = true;
     this.getCommunityData();
-
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
       this.isLoading = false;
     });
-
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
         this.setCouncillors(users);
       }
     });
-
     this.stateService.couchStateListener('child_users').pipe(takeUntil(this.onDestroy$)).subscribe(childUsers => {
       if (this.planetCode && childUsers) {
-        const users = childUsers.newData
-          .filter(user => user.planetCode === this.planetCode)
-          .map(user => ({ ...user, doc: user }));
+        const users = childUsers.newData.filter(user => user.planetCode === this.planetCode).map(user => ({ ...user, doc: user }));
         this.setCouncillors(users);
       }
     });
