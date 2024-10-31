@@ -168,6 +168,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   removeFilteredFromSelection() {
     this.selection.deselect(...selectedOutOfFilter(this.resources.filteredData, this.selection, this.paginator));
+    this.emptyData = this.resources.filteredData.length === 0;
   }
 
 
