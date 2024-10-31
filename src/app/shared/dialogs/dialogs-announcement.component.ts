@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
     <planet-markdown [content]="announcement"></planet-markdown>
   `
 })
-export class DialogsAnnouncementComponent implements OnInit{
+export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject<void>();
   configuration = this.stateService.configuration;
@@ -34,14 +34,21 @@ export class DialogsAnnouncementComponent implements OnInit{
 
   ngOnInit() {
     // Manually set the planets and courseId
-    const includedCodes = ['guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur'];
+    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
     const courseId = '';
 
     if (includedCodes.includes(this.configuration.code)) {
       this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
         news.map(post => ({
-        ...post, public: ((post.doc.viewIn || []).find(view => view._id === `${this.configuration.code}@${this.configuration.parentCode}`) || {}).public
+        ...post,
+        public: (
+          (post.doc.viewIn || []).find(
+            (view) =>
+              view._id ===
+              `${this.configuration.code}@${this.configuration.parentCode}`
+          ) || {}
+        ).public,
         }));
 
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
@@ -58,7 +65,7 @@ export class DialogsAnnouncementComponent implements OnInit{
           // this.announcement += `\n\n Successful Challenge Submissions: ${filteredNews.length}`;
         });
       });
-    };
+    }
   }
 
   ngOnDestroy() {
