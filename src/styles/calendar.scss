@@ -14,6 +14,12 @@ full-calendar {
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media only screen and (max-width: #{$screen-sm}) {
+      .fc-toolbar-chunk {
+        margin: 0.5rem 0;
+      }
+    }
   }
   .fc-button-primary {
     position: relative;
