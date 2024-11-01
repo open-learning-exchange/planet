@@ -132,4 +132,5 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.router.navigate([ '/' ]);
     }
   }
+
 }
