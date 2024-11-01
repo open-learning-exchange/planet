@@ -14,6 +14,10 @@ full-calendar {
     display: flex;
     flex-direction: column;
     align-items: center;
+  
+  .fc-button-primary {
+    margin-bottom: 10px;
+  }
 
     @media only screen and (max-width: #{$screen-sm}) {
       .fc-toolbar-chunk {
@@ -23,7 +27,6 @@ full-calendar {
   }
   .fc-button-primary {
     position: relative;
-    margin-bottom: 10;
 
     &:not(:disabled):hover {
       background-color: $primary;
