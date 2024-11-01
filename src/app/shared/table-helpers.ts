@@ -33,20 +33,31 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
+    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Diacritic insensitive filter
     for (let i = 0; i < filterFields.length; i++) {
-      if (getProperty(data, filterFields[i]).toLowerCase().indexOf(filter.trim().toLowerCase()) > -1) {
+      const fieldValue = getProperty(data, filterFields[i]);
+      if (typeof fieldValue === 'string' && 
+          fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(normalizedFilter) > -1) {
         return true;
       }
     }
+    return false;
   };
 };
 
 export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
-    const words = filter.split(' ').map(value => value.toLowerCase());
-    return words.filter(word => word).find(word => !filterSpecificFields(filterFields)(data, word)) === undefined;
+    const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')); // Normalize each word
+    return words.every(word => {
+      return filterFields.some(field => {
+        const fieldValue = getProperty(data, field);
+        return typeof fieldValue === 'string' &&
+               fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
+      });
+    });
   };
 };
+
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
