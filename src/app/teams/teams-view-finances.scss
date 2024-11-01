@@ -4,7 +4,9 @@
 
 .mat-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 mat-row:first-of-type {
@@ -14,4 +16,10 @@ mat-row:first-of-type {
 .negative-balance {
   font-weight: bold;
   max-width: 100px;
+}
+
+.button-group, .date-fields{
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
 }
