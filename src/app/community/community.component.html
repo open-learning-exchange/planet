@@ -8,9 +8,17 @@
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
-          <span *ngIf="isLoading" i18n>Loading voices...</span>
-          <span *ngIf="!isLoading && news?.length === 0" i18n>No Voices available.</span>
-          <planet-news-list *ngIf="!isLoading && news?.length > 0" [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+          <ng-container *ngIf="isLoading; else loaded">
+            <span i18n>Loading voices...</span>
+          </ng-container>
+          <ng-template #loaded>
+            <ng-container *ngIf="news?.length > 0; else noVoices">
+              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+            </ng-container>
+          </ng-template>
+          <ng-template #noVoices>
+            <p i18n>No Voices available.</p>
+          </ng-template>
         </mat-tab>
         <mat-tab i18n-label label="Community Leaders">
           <div class="card-grid">
