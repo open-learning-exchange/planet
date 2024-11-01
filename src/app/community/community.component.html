@@ -8,9 +8,14 @@
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
-          <ng-container *ngIf="news?.length > 0; else noVoices">
-            <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+          <ng-container *ngIf="isLoading; else loaded">
+            <span i18n>Loading voices...</span>
           </ng-container>
+          <ng-template #loaded>
+            <ng-container *ngIf="news?.length > 0; else noVoices">
+              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+            </ng-container>
+          </ng-template>
           <ng-template #noVoices>
             <p i18n>No Voices available.</p>
           </ng-template>
@@ -44,7 +49,8 @@
               </button>
             </div>
           </ng-container>
-          <ng-container *ngIf="links?.length > 0; else noLinks">
+          <ng-container>
+            <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
             <mat-nav-list>
               <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                 <span matLine>{{link.title}}</span>
