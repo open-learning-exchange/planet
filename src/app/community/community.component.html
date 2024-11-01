@@ -33,8 +33,8 @@
               { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
             </button>
           </ng-container>
-          <planet-markdown *ngIf="team.description" [content]="team.description || ''"></planet-markdown>
-          <p *ngIf="!team.description" i18n>No description available.</p>
+          <planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown>
+          <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles="''" class="action-buttons sticky-button">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
