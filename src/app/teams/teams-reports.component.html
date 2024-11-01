@@ -1,8 +1,10 @@
 <div class="action-buttons" *ngIf="editable">
   <button mat-raised-button color="primary" i18n (click)="openAddReportDialog()">Add Report</button>
-  <button mat-raised-button color="primary" i18n (click)="exportReports()">Export as CSV</button>
+  <button mat-raised-button color="accent" i18n *ngIf="reports && reports.length > 0" (click)="exportReports()">
+    Export as CSV
+  </button>
 </div>
-<div *ngIf="reports?.length == 0">
+<div *ngIf="!reports || reports?.length == 0">
   <p i18n>No reports available at the moment.</p>
 </div>
 <mat-grid-list [cols]="columns" gutterSize="0.5rem" rowHeight="22rem" id="report-grid">

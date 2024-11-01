@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .achievements-container {
   max-width: 800px;
   margin: 0 auto;
@@ -54,5 +56,53 @@
   .styled-link:hover {
     color: #0056b3;
     text-decoration: underline;
+  }
+
+  td-markdown {
+    max-height: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-wrap: break-word;
+    max-height: 150px;
+    white-space: normal;
+    display: block;
+  }
+}
+
+.margin-r-1 {
+  margin-right: 1rem
+}
+
+@media (max-width: $screen-sm) {
+  .responsive-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    height: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .auto-adjust-buttons {
+    display: flex;
+    gap: 0.2rem;
+    width: 100%;
+  }
+  
+  .auto-adjust-buttons a {
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .auto-adjust-buttons span {
+    font-size: 0.875em;
+  }
+
+  .margin-r-1 {
+    margin-right: 0.2rem;
+  }
+
+  .center-text div {
+    margin: 0 auto;
   }
 }
