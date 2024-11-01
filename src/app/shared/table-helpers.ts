@@ -33,7 +33,7 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Diacritic insensitive filter
+    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     for (let i = 0; i < filterFields.length; i++) {
       const fieldValue = getProperty(data, filterFields[i]);
       if (typeof fieldValue === 'string' && 
@@ -57,7 +57,6 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
     });
   };
 };
-
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
