@@ -4,7 +4,7 @@ import { StateService } from './state.service';
 
 @Component({
   selector: 'planet-markdown',
-  template: '<td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>',
+  template: '<td-flavored-markdown [content]="content" [hostedUrl]="couchAddress"></td-flavored-markdown>',
   styleUrls: [ './planet-markdown.scss' ],
   encapsulation: ViewEncapsulation.None
 })

@@ -16,7 +16,7 @@
     <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
-    <td-markdown [content]="question?.body"></td-markdown>
+    <td-flavored-markdown [content]="question?.body"></td-flavored-markdown>
     <div [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
         <ng-container [ngSwitch]="question?.type">
@@ -43,7 +43,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'grade'">
         <p><b i18n>Submitted answer:</b></p>
-        <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+        <td-flavored-markdown [content]="answer?.value?.text || answer?.value"></td-flavored-markdown>
         <mat-radio-group [(ngModel)]="grade" [disabled]="question?.type === 'select' || question?.type === 'selectMultiple'">
           <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
           <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
@@ -54,7 +54,7 @@
       </ng-container>
       <ng-container *ngSwitchCase="'view'">
         <p><b i18n>Response:</b></p>
-        <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+        <td-flavored-markdown [content]="answer?.value?.text || answer?.value"></td-flavored-markdown>
         <ng-container *ngIf="grade>=0">
           <p><b i18n>Grade:</b></p>
           <p *ngIf="grade===1" i18n>Correct</p>
@@ -62,7 +62,7 @@
         </ng-container>
         <ng-container *ngIf="comment">
           <p><b i18n>Feedback:</b></p>
-          <td-markdown [content]="comment"></td-markdown>
+          <td-flavored-markdown [content]="comment"></td-flavored-markdown>
         </ng-container>
       </ng-container>
     </div>

@@ -149,11 +149,11 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <td-markdown
+            <td-flavored-markdown
               i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
                 '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
                 element.doc.description">
-            </td-markdown>
+            </td-flavored-markdown>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
