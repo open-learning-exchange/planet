@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
+import { CouchService } from '../couchdb.service';
 import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
@@ -18,14 +19,19 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
+  challengers: any;
+  enrolledMembers: any;
+  // courseId = '9517e3b45a5bb63e69bb8f269216974d'
+  courseId = 'd820952d159562a8a6602252390114a4'
   userStatus = {
-    courseComplete: false,
+    joinedCourse: false,
     surveyComplete: false,
     hasPost: false
   };
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
+    private couchService: CouchService,
     private newsService: NewsService,
     private stateService: StateService,
     private submissionsService: SubmissionsService,
@@ -36,7 +42,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi'];
 
     if (includedCodes.includes(this.configuration.code)) {
-      this.fetchCourseAndNews()
+      this.fetchCourseAndNews();
+      this.fetchEnrolled();
     }
   }
 
@@ -53,10 +60,15 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     console.log('Joined Course');
   }
 
+  fetchEnrolled() {
+    this.couchService.findAll("shelf", {
+      selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
+    }).subscribe((members) => {
+      this.enrolledMembers = members;
+    });
+  }
 
   fetchCourseAndNews() {
-    const courseId = '9517e3b45a5bb63e69bb8f269216974d';
-
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
         news.map(post => ({
@@ -72,27 +84,58 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
-          const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(courseId));
+          const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
           const submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
 
           // Global Summary
           const filteredNews = news.filter((post) => {
             const userName = post.doc.user.name.toLowerCase();
-            const isMatch = submissionsSet.has(userName) && (post.doc.time > new Date(2024, 9, 31));
+            const isMatch = submissionsSet.has(userName) && (
+              (post.doc.time > new Date(2024, 9, 31)) &&
+              (post.doc.time < new Date(2024, 11, 1))
+            );
             return isMatch;
           });
 
-          // Individual Stats
+          // Survey Completion Check
           this.userStatus.surveyComplete = submissionsSet.has(this.currentUserName);
-          this.userStatus.hasPost = submissionsSet.has(this.currentUserName) &&
-                          news.some(post => new Date(post.doc.time) > new Date(2024, 9, 31));
+          // Voices Check
+          this.userStatus.hasPost =
+              submissionsSet.has(this.currentUserName) &&
+              news.some((post) => {
+                return post.doc.time > new Date(2024, 9, 31) && post.doc.time < new Date(2024, 11, 1);
+              });
 
-          // this.announcement += `
-          // \n - [] Unete al curso Reto noviembre.
-          // \n ${this.userStatus.surveyComplete ? '- [x]' : '- []'} ¡Encuesta finalizada!
-          // \n ${this.userStatus.hasPost ? '- [x]' : '- []'} Comparte tu opinión en Nuestras Voces.
-          // `;
-          // \n Successful Challenge Submissions: ${filteredNews.length}
+          console.log('-----------------------------');
+          console.log('-----------------------------');
+          console.log(submissionsSet.has(this.currentUserName));
+          console.log(news.some(post =>
+            post.doc.time > new Date(2024, 9, 31) && post.doc.time < new Date(2024, 11, 1)
+          ));
+
+          console.log(submissionsSet.has(this.currentUserName) &&
+          news.some((post) => {
+            return post.doc.time > new Date(2024, 9, 31) && post.doc.time < new Date(2024, 11, 1);
+          }));
+          console.log('-----------------------------');
+          console.log('-----------------------------');
+
+          // Course Completion Check
+          this.enrolledMembers.some((member) => {
+            const [, extractedMemberName] = member._id.split(':');
+            if (extractedMemberName === this.currentUserName && submissionsSet.has(extractedMemberName)) {
+              member.courseIds.some((courseId) => {
+                this.userStatus.joinedCourse = courseId === this.courseId ? true : false;
+              });
+            }
+          });
+
+          // console.log('-----------------------------');
+          // console.log(submissionsSet);
+          // console.log(this.challengers);
+          // console.log(this.userStatus);
+          // console.log('-----------------------------');
+
         });
       });
   }

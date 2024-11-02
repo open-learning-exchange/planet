@@ -8,11 +8,11 @@
   <div class="steps-container">
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.courseComplete ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Únete al curso Reto noviembre.</span>
       <button
-        *ngIf="!userStatus.courseComplete"
+        *ngIf="!userStatus.joinedCourse"
         mat-button
         color="primary"
         (click)="joinCourse()"
@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <div class="actions">
-    <button mat-button (click)="onClose()">Cerrar</button>
-  </div>
+  <!-- <div>
+    Obtenido: {{ challengers.length }}
+  </div> -->
 </div>

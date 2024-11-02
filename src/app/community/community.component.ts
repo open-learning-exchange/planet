@@ -8,6 +8,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -48,6 +49,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  challengeActive: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -83,6 +85,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    this.communityChallenge();
   }
 
   @HostListener('window:resize') onResize() {
@@ -92,6 +95,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  communityChallenge() {
+    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
+    this.challengeActive = includedCodes.includes(this.configuration.code) && ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
+    if (this.challengeActive) {
+      this.openAnnouncementDialog();
+    }
   }
 
   getCommunityData() {
@@ -137,6 +148,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
     } else {
       this.usersService.requestUsers();
     }
+  }
+
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '100vh'
+    });
   }
 
   openAddMessageDialog(message = '') {
