@@ -19,10 +19,13 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
-  challengers: any;
+  submissionsSet = new Set();
+  groupSummary = [];
   enrolledMembers: any;
   // courseId = '9517e3b45a5bb63e69bb8f269216974d'
   courseId = 'd820952d159562a8a6602252390114a4'
+  startDate = new Date(2024, 9, 31);
+  endDate = new Date(2024, 11, 1);
   userStatus = {
     joinedCourse: false,
     surveyComplete: false,
@@ -64,8 +67,31 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.couchService.findAll("shelf", {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
     }).subscribe((members) => {
-      this.enrolledMembers = members;
+      this.enrolledMembers = members.map((member: any) => {
+        const [, memberName] = member?._id.split(':');
+        return {
+          ...member,
+          name: memberName,
+        };
+      });
     });
+  }
+
+  hasCompletedSurvey(userName: string) {
+    return this.submissionsSet.has(userName)
+  }
+
+  hasSubmittedVoice(news: any[], userName: string) {
+    return news.some(post => {
+      return (
+      post.doc.user.name === userName &&
+      post.doc.time > this.startDate &&
+      post.doc.time < this.endDate
+    )});
+  }
+
+  hasEnrolledCourse(member) {
+    return member.courseIds.includes(this.courseId);
   }
 
   fetchCourseAndNews() {
@@ -85,57 +111,27 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
-          const submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
+          this.submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
 
-          // Global Summary
-          const filteredNews = news.filter((post) => {
-            const userName = post.doc.user.name.toLowerCase();
-            const isMatch = submissionsSet.has(userName) && (
-              (post.doc.time > new Date(2024, 9, 31)) &&
-              (post.doc.time < new Date(2024, 11, 1))
-            );
-            return isMatch;
-          });
+          // Group Summary
+          this.enrolledMembers.forEach((member) => {
+            const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
+            const hasPosted = this.hasSubmittedVoice(news, member.name);
+            const hasJoinedCourse = this.hasEnrolledCourse(member);
 
-          // Survey Completion Check
-          this.userStatus.surveyComplete = submissionsSet.has(this.currentUserName);
-          // Voices Check
-          this.userStatus.hasPost =
-              submissionsSet.has(this.currentUserName) &&
-              news.some((post) => {
-                return post.doc.time > new Date(2024, 9, 31) && post.doc.time < new Date(2024, 11, 1);
-              });
-
-          console.log('-----------------------------');
-          console.log('-----------------------------');
-          console.log(submissionsSet.has(this.currentUserName));
-          console.log(news.some(post =>
-            post.doc.time > new Date(2024, 9, 31) && post.doc.time < new Date(2024, 11, 1)
-          ));
-
-          console.log(submissionsSet.has(this.currentUserName) &&
-          news.some((post) => {
-            return post.doc.time > new Date(2024, 9, 31) && post.doc.time < new Date(2024, 11, 1);
-          }));
-          console.log('-----------------------------');
-          console.log('-----------------------------');
-
-          // Course Completion Check
-          this.enrolledMembers.some((member) => {
-            const [, extractedMemberName] = member._id.split(':');
-            if (extractedMemberName === this.currentUserName && submissionsSet.has(extractedMemberName)) {
-              member.courseIds.some((courseId) => {
-                this.userStatus.joinedCourse = courseId === this.courseId ? true : false;
-              });
+            if (hasCompletedSurvey && hasPosted && hasJoinedCourse) {
+              this.groupSummary.push(member)
             }
           });
 
-          // console.log('-----------------------------');
-          // console.log(submissionsSet);
-          // console.log(this.challengers);
-          // console.log(this.userStatus);
-          // console.log('-----------------------------');
-
+          // Individual stats
+          this.userStatus.surveyComplete = this.hasCompletedSurvey(this.currentUserName);
+          this.userStatus.hasPost = this.hasSubmittedVoice(news, this.currentUserName);
+          this.enrolledMembers.some(member => {
+            if (member.name === this.currentUserName) {
+              this.userStatus.joinedCourse = this.hasEnrolledCourse(member);
+            }
+          });
         });
       });
   }
