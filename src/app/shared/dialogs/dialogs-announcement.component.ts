@@ -10,9 +10,8 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
 
 @Component({
-  template: `
-    <planet-markdown [content]="announcement"></planet-markdown>
-  `
+  templateUrl: './dialogs-announcement.component.html',
+  styleUrls: [ './dialogs-announcement.component.scss' ]
 })
 export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
@@ -24,8 +23,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     surveyComplete: false,
     hasPost: false
   };
-  announcement = `<img src="https://res.cloudinary.com/mutugiii/image/upload/v1730395098/challenge_horizontal_new_tnco4v.jpg" alt="issues challenge">`;
-
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -51,6 +48,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   onClose(): void {
     this.dialogRef.close();
   }
+
+  joinCourse() {
+    console.log('Joined Course');
+  }
+
 
   fetchCourseAndNews() {
     const courseId = '9517e3b45a5bb63e69bb8f269216974d';
@@ -85,11 +87,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           this.userStatus.hasPost = submissionsSet.has(this.currentUserName) &&
                           news.some(post => new Date(post.doc.time) > new Date(2024, 9, 31));
 
-          this.announcement += `
-          \n - [] Unete al curso Reto noviembre.
-          \n ${this.userStatus.surveyComplete ? '- [x]' : '- []'} ¡Encuesta finalizada!
-          \n ${this.userStatus.hasPost ? '- [x]' : '- []'} Comparte tu opinión en Nuestras Voces.
-          `;
+          // this.announcement += `
+          // \n - [] Unete al curso Reto noviembre.
+          // \n ${this.userStatus.surveyComplete ? '- [x]' : '- []'} ¡Encuesta finalizada!
+          // \n ${this.userStatus.hasPost ? '- [x]' : '- []'} Comparte tu opinión en Nuestras Voces.
+          // `;
           // \n Successful Challenge Submissions: ${filteredNews.length}
         });
       });

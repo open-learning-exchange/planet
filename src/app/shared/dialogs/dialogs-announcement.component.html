@@ -1,0 +1,42 @@
+<div class="announcement-container">
+  <img
+    src="https://res.cloudinary.com/mutugiii/image/upload/v1730395098/challenge_horizontal_new_tnco4v.jpg"
+    alt="Issues Challenge"
+    class="announcement-banner"
+  />
+
+  <div class="steps-container">
+    <div class="step">
+      <mat-icon color="primary">
+        {{ userStatus.courseComplete ? 'check_circle' : 'radio_button_unchecked' }}
+      </mat-icon>
+      <span>Únete al curso Reto noviembre.</span>
+      <button
+        *ngIf="!userStatus.courseComplete"
+        mat-button
+        color="primary"
+        (click)="joinCourse()"
+      >
+        Unirse
+      </button>
+    </div>
+
+    <div class="step">
+      <mat-icon color="primary">
+        {{ userStatus.surveyComplete ? 'check_circle' : 'radio_button_unchecked' }}
+      </mat-icon>
+      <span>¡Encuesta finalizada!</span>
+    </div>
+
+    <div class="step">
+      <mat-icon color="primary">
+        {{ userStatus.hasPost ? 'check_circle' : 'radio_button_unchecked' }}
+      </mat-icon>
+      <span>Comparte tu opinión en Nuestras Voces.</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button mat-button (click)="onClose()">Cerrar</button>
+  </div>
+</div>
