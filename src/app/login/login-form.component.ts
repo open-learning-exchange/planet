@@ -20,6 +20,7 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
 import { SubmissionsService } from '../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { dedupeObjectArray } from '../shared/utils';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 
 const registerForm = {
   name: [],
@@ -48,6 +49,7 @@ export class LoginFormComponent {
   showPassword = false;
   showRepeatPassword = false;
   notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
+  challengeActive: boolean;
 
   constructor(
     private couchService: CouchService,
@@ -90,7 +92,23 @@ export class LoginFormComponent {
       this.createUser(this.userForm.value);
     } else {
       this.login(this.userForm.value, false);
+      this.communityChallenge();
     }
+  }
+
+  communityChallenge() {
+    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
+    this.challengeActive = includedCodes.includes(this.stateService.configuration.code) && (new Date() < new Date(2024, 11, 1));
+    if (this.challengeActive) {
+      this.openAnnouncementDialog();
+    }
+  }
+
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '100vh'
+    });
   }
 
   welcomeNotification(userId) {
