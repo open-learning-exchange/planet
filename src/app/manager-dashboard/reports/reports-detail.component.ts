@@ -146,6 +146,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   filterData() {
+    console.log("Filter be like: ",this.filter)
     this.loginActivities.filter(this.filter);
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
@@ -157,6 +158,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
+    this.setStepCompletion()
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -331,6 +333,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       updateChart.update();
       return;
     }
+    console.log(`This is the data for ${chartName}:`, data)
     this.charts.push(new Chart(chartName, {
       type: 'bar',
       data,
