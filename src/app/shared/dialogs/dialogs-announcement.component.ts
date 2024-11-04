@@ -27,7 +27,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   courseId = '9517e3b45a5bb63e69bb8f269216974d';
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
-  goal: number = 0
+  goal: number = 0;
   userStatus = {
     joinedCourse: false,
     surveyComplete: false,
