@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
 import { CouchService } from '../couchdb.service';
+import { CoursesService } from '../../courses/courses.service';
 import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
@@ -34,7 +36,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
+    private router: Router,
     private couchService: CouchService,
+    private coursesService: CoursesService,
     private newsService: NewsService,
     private stateService: StateService,
     private submissionsService: SubmissionsService,
@@ -45,6 +49,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi'];
 
     if (includedCodes.includes(this.configuration.code)) {
+      this.coursesService.requestCourses();
       this.fetchCourseAndNews();
       this.fetchEnrolled();
     }
@@ -60,7 +65,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   joinCourse() {
-    console.log('Joined Course');
+    const courseTitle = this.coursesService.getCourseNameFromId(this.courseId);
+    this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
+      this.router.navigate(['/courses/view', this.courseId]);
+    }, (error) => ((error)));
+    this.dialogRef.close();
   }
 
   fetchEnrolled() {
