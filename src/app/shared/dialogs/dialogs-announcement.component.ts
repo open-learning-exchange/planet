@@ -49,7 +49,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.coursesService.requestCourses();
     this.fetchCourseAndNews();
     this.fetchEnrolled();
-    this.setGoalCourse(500)
+    this.setGoalCourse(500);
   }
 
   ngOnDestroy() {
