@@ -24,8 +24,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   submissionsSet = new Set();
   groupSummary = [];
   enrolledMembers: any;
-  // courseId = '9517e3b45a5bb63e69bb8f269216974d'
-  courseId = 'd820952d159562a8a6602252390114a4'
+  courseId = '9517e3b45a5bb63e69bb8f269216974d';
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
   userStatus = {
@@ -46,7 +45,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi'];
+    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
 
     if (includedCodes.includes(this.configuration.code)) {
       this.coursesService.requestCourses();
@@ -67,17 +66,17 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   joinCourse() {
     const courseTitle = this.coursesService.getCourseNameFromId(this.courseId);
     this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
-      this.router.navigate(['/courses/view', this.courseId]);
+      this.router.navigate([ '/courses/view', this.courseId ]);
     }, (error) => ((error)));
     this.dialogRef.close();
   }
 
   fetchEnrolled() {
-    this.couchService.findAll("shelf", {
+    this.couchService.findAll('shelf', {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
     }).subscribe((members) => {
       this.enrolledMembers = members.map((member: any) => {
-        const [, memberName] = member?._id.split(':');
+        const [ , memberName ] = member?._id.split(':');
         return {
           ...member,
           name: memberName,
@@ -87,7 +86,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasCompletedSurvey(userName: string) {
-    return this.submissionsSet.has(userName)
+    return this.submissionsSet.has(userName);
   }
 
   hasSubmittedVoice(news: any[], userName: string) {
@@ -96,7 +95,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       post.doc.user.name === userName &&
       post.doc.time > this.startDate &&
       post.doc.time < this.endDate
-    )});
+      );
+    });
   }
 
   hasEnrolledCourse(member) {
@@ -129,7 +129,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
             const hasJoinedCourse = this.hasEnrolledCourse(member);
 
             if (hasCompletedSurvey && hasPosted && hasJoinedCourse) {
-              this.groupSummary.push(member)
+              this.groupSummary.push(member);
             }
           });
 
