@@ -27,6 +27,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   courseId = '9517e3b45a5bb63e69bb8f269216974d';
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
+  goal: number = 0
   userStatus = {
     joinedCourse: false,
     surveyComplete: false,
@@ -48,6 +49,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.coursesService.requestCourses();
     this.fetchCourseAndNews();
     this.fetchEnrolled();
+    this.setGoalCourse(500)
   }
 
   ngOnDestroy() {
@@ -141,8 +143,15 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       });
   }
 
+  setGoalCourse(num: number) {
+    this.goal = num;
+  }
+
+  getGoalCourse(): number {
+    return this.goal;
+  }
+
   getGoalPercentage(): number {
-    const goal = 500;
-    return (this.groupSummary?.length / goal) * 100;
+    return (this.groupSummary?.length / this.getGoalCourse()) * 100;
   }
 }
