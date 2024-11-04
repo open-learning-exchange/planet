@@ -45,7 +45,10 @@ export class PouchAuthService {
 
   logout() {
     return from(this.authDB.logOut()).pipe(
-      switchMap(() => forkJoin(this.pouchService.deconfigureDBs())),
+      switchMap(() => {
+        localStorage.removeItem('announcementPopupShown'); // Clear the popup flag on logout
+        return forkJoin(this.pouchService.deconfigureDBs());
+      }),
       catchError(this.handleError)
     );
   }
