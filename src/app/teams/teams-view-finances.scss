@@ -3,10 +3,7 @@
 }
 
 .mat-card {
-  display: flex;
-  align-items: flex-start;
   flex-direction: column;
-  gap: 1rem;
 }
 
 mat-row:first-of-type {
@@ -20,6 +17,6 @@ mat-row:first-of-type {
 
 .button-group, .date-fields{
   display: flex;
-  gap: 1rem;
+  margin-right: 10px;
   justify-content: flex-start;
 }
