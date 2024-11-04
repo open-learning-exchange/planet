@@ -146,7 +146,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   filterData() {
-    console.log("Filter be like: ",this.filter)
+    console.log("Filter be like: ",this.filter);
     this.loginActivities.filter(this.filter);
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
@@ -333,7 +333,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       updateChart.update();
       return;
     }
-    console.log(`This is the data for ${chartName}:`, data)
+    console.log(`This is the data for ${chartName}:`, data);
     this.charts.push(new Chart(chartName, {
       type: 'bar',
       data,
