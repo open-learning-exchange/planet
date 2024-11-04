@@ -8,9 +8,14 @@
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
-          <ng-container *ngIf="news?.length > 0; else noVoices">
-            <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+          <ng-container *ngIf="isLoading; else loaded">
+            <span i18n>Loading voices...</span>
           </ng-container>
+          <ng-template #loaded>
+            <ng-container *ngIf="news?.length > 0; else noVoices">
+              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+            </ng-container>
+          </ng-template>
           <ng-template #noVoices>
             <p i18n>No Voices available.</p>
           </ng-template>
@@ -29,23 +34,19 @@
         </mat-tab>
         <mat-tab i18n-label label="Services">
           <planet-markdown *ngIf="team.description" [content]="team.description || ''"></planet-markdown>
-          <p *ngIf="!team.description" i18n>No description available.</p>
+          <span *ngIf="!team.description" i18n><p>No description available.</p></span>
           <ng-container *ngIf="!planetCode">
             <button *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
               { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
             </button>
           </ng-container>
-          <ng-container *ngIf="links?.length > 0; else noLinks">
+            <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
             <mat-nav-list>
               <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                 <span matLine>{{link.title}}</span>
                 <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
               </mat-list-item>
             </mat-nav-list>
-          </ng-container>
-          <ng-template #noLinks>
-            <p i18n>No links available.</p>
-          </ng-template>
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles="''" class="action-buttons">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
