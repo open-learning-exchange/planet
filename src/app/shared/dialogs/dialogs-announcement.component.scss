@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .announcement-container {
   display: flex;
   flex-direction: column;
@@ -6,9 +8,7 @@
 }
 
 .announcement-banner {
-  width: 100%;
   max-width: 600px;
-  height: auto;
   margin-bottom: 20px;
 }
 
@@ -30,4 +30,45 @@
 
 .step span {
   flex-grow: 1;
+}
+
+.thermometer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.thermometer {
+  width: 100%;
+  height: 30px;
+  background-color: #e0e0e0;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.thermometer-bar {
+  height: 100%;
+  background-color: $primary;
+  transition: width 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.thermometer-label {
+  color: white;
+  font-size: 12px;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.thermometer-goal {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 14px;
 }

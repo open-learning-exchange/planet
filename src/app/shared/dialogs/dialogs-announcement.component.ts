@@ -135,4 +135,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         });
       });
   }
+
+  getGoalPercentage(): number {
+    const goal = 500;
+    return (this.groupSummary?.length / goal) * 100;
+  }
 }

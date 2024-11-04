@@ -11,14 +11,9 @@
         {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Únete al curso Reto noviembre.</span>
-      <button
-        *ngIf="!userStatus.joinedCourse"
-        mat-button
-        color="primary"
-        (click)="joinCourse()"
-      >
+      <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
         Unirse
-      </button>
+      </a>
     </div>
 
     <div class="step">
@@ -36,7 +31,16 @@
     </div>
   </div>
 
-  <div *ngIf="groupSummary?.length">
-    Obtenido: {{ groupSummary?.length }}
+  <div class="thermometer-container">
+  <div class="thermometer">
+    <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
+      <div class="thermometer-label">
+        {{ getGoalPercentage() | number:'1.0-2' }}% ({{ groupSummary?.length }})
+      </div>
+    </div>
+  </div>
+  <div class="thermometer-goal">
+    <span>$0</span>
+    <span>$500</span>
   </div>
 </div>
