@@ -10,9 +10,9 @@
       <mat-icon color="primary">
         {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
-      <span>Únete al curso Reto noviembre.</span>
+      <span>Únete al curso <a [href]="[ '/courses/view/', this.courseId ]">Reto noviembre</a>.</span>
       <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
-        Unirse
+        Únete
       </a>
     </div>
 
@@ -21,6 +21,9 @@
         {{ userStatus.surveyComplete ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>¡Encuesta finalizada!</span>
+      <a *ngIf="userStatus.joinedCourse && !userStatus.surveyComplete" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
+        Encuesta
+      </a>
     </div>
 
     <div class="step">
@@ -29,13 +32,16 @@
       </mat-icon>
       <span>Comparte tu opinión en Nuestras Voces.</span>
     </div>
+    <a *ngIf="userStatus.joinedCourse && userStatus.surveyComplete && !userStatus.hasPost" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
+      Voces
+    </a>
   </div>
 
   <div class="thermometer-container">
   <div class="thermometer">
     <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
       <div class="thermometer-label">
-        {{ getGoalPercentage() | number:'1.0-2' }}% ({{ groupSummary?.length }})
+        {{ getGoalPercentage() | number:'1.0-2' }}% ({{ '$'+ groupSummary?.length }})
       </div>
     </div>
   </div>

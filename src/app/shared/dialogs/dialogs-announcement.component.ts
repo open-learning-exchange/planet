@@ -30,7 +30,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   userStatus = {
     joinedCourse: false,
     surveyComplete: false,
-    hasPost: false
+    hasPost: false,
   };
 
   constructor(
@@ -68,6 +68,16 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
       this.router.navigate([ '/courses/view', this.courseId ]);
     }, (error) => ((error)));
+    this.dialogRef.close();
+  }
+
+  doSurvey() {
+    this.router.navigate([ `/courses/view/${this.courseId}/step/3` ]);
+    this.dialogRef.close();
+  }
+
+  postVoice() {
+    this.router.navigate([ '/' ]);
     this.dialogRef.close();
   }
 
