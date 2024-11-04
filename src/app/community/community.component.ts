@@ -48,6 +48,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  isLoading: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -68,9 +69,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
+    this.isLoading = true;
     this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
