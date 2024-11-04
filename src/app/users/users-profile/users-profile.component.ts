@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { UsersAchievementsService } from '../users-achievements/users-achievemen
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../user-constants';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   selector: 'planet-users-profile',
@@ -27,6 +28,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   totalLogins = 0;
   lastLogin = 0;
   educationLevel = educationLevel;
+  deviceType: DeviceType;
+  isMobile: boolean;
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
@@ -38,8 +41,12 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private router: Router,
     private usersAchievementsService: UsersAchievementsService,
-    private stateService: StateService
-  ) { }
+    private stateService: StateService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.user = this.userService.get();
@@ -54,6 +61,12 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
         this.userDetail = user;
       }
     });
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnDestroy() {
