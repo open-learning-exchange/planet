@@ -31,6 +31,10 @@
     </div>
   </div>
 
+  <div *ngIf="checkAllStepsCompleted" class="steps-complete-message">
+    <span>Congratulations! You have completed all the steps!</span>
+  </div>
+
   <div class="thermometer-container">
   <div class="thermometer">
     <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
