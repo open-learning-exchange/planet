@@ -3,7 +3,7 @@
   <div class="transaction-buttons">
     <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()" *ngIf="editable">Add Transaction</button>
     <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
-    <button class="margin-lr-10" color="accent" mat-raised-button i18n (click)="exportTableData()">
+    <button color="accent" mat-raised-button i18n (click)="exportTableData()">
       Export Transactions
     </button>
   </div>

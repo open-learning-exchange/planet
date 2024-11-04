@@ -2,8 +2,27 @@
   max-width: 100px;
 }
 
-.mat-card {
+.action-buttons {
+  display: flex;
   flex-direction: column;
+}
+
+.transaction-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.transaction-date-fields {
+  display: flex;
+  gap: 10px;
+}
+
+.transaction-buttons button {
+  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 mat-row:first-of-type {
@@ -13,10 +32,4 @@ mat-row:first-of-type {
 .negative-balance {
   font-weight: bold;
   max-width: 100px;
-}
-
-.button-group, .date-fields{
-  display: flex;
-  margin-right: 10px;
-  justify-content: flex-start;
 }
