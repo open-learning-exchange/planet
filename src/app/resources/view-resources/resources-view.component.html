@@ -71,19 +71,26 @@
       <p><b i18n>Level:</b>{{' '}}<planet-language-label *ngFor="let level of resource?.doc?.level; last as isLast" [options]="constantsOptions.levelList" [label]="level"><span *ngIf ="!isLast">,</span></planet-language-label></p>
       <p *ngIf="resource?.doc?.medium"><b i18n>Media:</b>{{' '}}<planet-language-label [options]="constantsOptions.media" [label]="resource?.doc?.medium"></planet-language-label></p>
       <p *ngIf="resource?.doc?.language"><b i18n>Language:</b>{{' ' }}<planet-language-label [options]="languageOptions" [label]="resource?.doc?.language"></planet-language-label></p>
-      <p><b i18n>Subject/s:</b>{{' '}}<planet-language-label *ngFor="let sub of resource?.doc?.subject; last as isLast" [options]="constantsOptions.subjectList" [label]="sub"><span *ngIf ="!isLast">,</span></planet-language-label></p>
+      <p><b i18n>Subject(s):</b>{{' '}}<planet-language-label *ngFor="let sub of resource?.doc?.subject; last as isLast" [options]="constantsOptions.subjectList" [label]="sub"><span *ngIf ="!isLast">,</span></planet-language-label></p>
       <p *ngIf="resource?.doc?.linkToLicense"><b i18n>to License:</b><a href={{resource?.doc?.linkToLicense}} target="_blank">{{' ' + resource?.doc?.linkToLicense}}</a></p>
       <p *ngIf="resource?.doc?.resourceFor"><b i18n>Resource:</b>{{' '}}<planet-language-label *ngFor="let role of resource?.doc?.resourceFor; last as isLast" [options]="constantsOptions.resourceFor" [label]="role"><span *ngIf ="!isLast">,</span></planet-language-label></p>
       <p *ngIf="resource?.doc?.resourceType"><b i18n>Type:</b>{{' '}}<planet-language-label [options]="constantsOptions.resourceType" [label]="resource?.doc?.resourceType"></planet-language-label></p>
       <p *ngIf="resource?.doc?.sourcePlanet !== planetConfiguration.code && resource?.doc?.sourcePlanet"><b i18n>Source:</b>{{' ' + resource?.doc?.sourcePlanet}}</p>
     </div>
     <div>
-      <planet-resources-viewer
-        *ngIf="resource?.doc?._attachments; else noAttachment"
-        [resourceId]="resourceId"
-        (resourceUrl)="setResourceUrl($event)">
-      </planet-resources-viewer>
-      <ng-template #noAttachment><span i18n>There is no content for this resource</span></ng-template>
+      <ng-container *ngIf="isLoading; else resourceContent">
+        <span i18n>Loading content...</span>
+      </ng-container>
+      <ng-template #resourceContent>
+        <planet-resources-viewer
+          *ngIf="resource?.doc?._attachments; else noAttachment"
+          [resourceId]="resourceId"
+          (resourceUrl)="setResourceUrl($event)">
+        </planet-resources-viewer>
+      </ng-template>
+      <ng-template #noAttachment>
+        <span i18n>There is no content for this resource</span>
+      </ng-template>
     </div>
   </div>
 </div>

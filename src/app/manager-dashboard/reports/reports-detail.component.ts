@@ -14,7 +14,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels, filterByMember
+  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap
 } from './reports.utils';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
@@ -157,7 +157,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
-    this.setStepCompletion();
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -219,7 +218,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
-      this.progress.steps.data = steps.map(step => ({ ...step, user: step.userId.replace('org.couchdb.user:', '') }));
+      this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
+      this.setStepCompletion();
       this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
         const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
         return { ...course, ...courseActivity };
@@ -362,55 +362,107 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
     ];
     const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
-    const fields = [ ...commonFields, ...(reportType === 'health' ? [] : [ teamField ]) ];
+    const sortingOptions = sortingOptionsMap[reportType];
+    const fields = [
+      ...commonFields,
+      ...(reportType === 'health' ? [] : [ teamField ]),
+      ...(sortingOptions && sortingOptions.length > 0
+        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
+        : [])
+    ];
     const formGroup = {
       startDate: this.dateFilterForm.controls.startDate.value,
       endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ],
-      team: reportType === 'health' ? 'All' : this.selectedTeam
+      team: reportType === 'health' ? 'All' : this.selectedTeam,
+      sortBy: sortingOptions && sortingOptions.length > 0 ? sortingOptions[0].value : null
     };
     this.dialogsFormService.openDialogsForm($localize`Select Date Range for Data Export`, fields, formGroup, {
       onSubmit: (formValue: any) => {
         this.getTeamMembers(formValue.team).subscribe(members => {
-          this.exportCSV(reportType, { startDate: formValue.startDate, endDate: formValue.endDate }, members);
+          this.exportCSV(reportType, { startDate: formValue.startDate, endDate: formValue.endDate }, members, formValue.sortBy);
         });
       }
     });
   }
 
-  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[]) {
+  sortData(data: any[], sortBy: string): any[] {
+    const order = sortBy.endsWith('Asc') ? 1 : -1;
+    let field = sortBy.replace(/Asc|Desc/, '');
+    if (field === 'username') { field = 'user'; }
+    return data.sort((a, b) => {
+      let comparison = 0;
+      if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
+        const dateA = new Date(a[field]).getTime();
+        const dateB = new Date(b[field]).getTime();
+        comparison = dateA - dateB;
+      } else {
+        comparison = a[field].localeCompare(b[field]);
+      }
+      return comparison * order;
+    });
+  }
+
+  exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
     switch (reportType) {
       case 'logins':
-        this.csvService.exportCSV({
-          data: filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
+        let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
           .map(activity => ({
             ...activity,
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || '',
             customDeviceName: activity.customDeviceName || ''
-          })),
+          }));
+        if (sortBy) {
+          data = this.sortData(data, sortBy);
+        }
+        this.csvService.exportCSV({
+          data: data,
           title: $localize`Member Visits`
         });
         break;
       case 'resourceViews':
       case 'courseViews':
       case 'stepCompletions':
-      case 'health':
-        this.exportDocView(reportType, dateRange, members);
+        this.exportDocView(reportType, dateRange, members, sortBy);
         break;
       case 'summary':
-        this.exportSummary(dateRange, members);
+        this.exportSummary(dateRange, members, sortBy);
+        break;
+      case 'health':
+        this.exportDocView(reportType, dateRange, members, null);
         break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
 
-  exportSummary(dateRange, members) {
+  exportSummary(dateRange: any, members: any[], sortBy: string) {
+    const loginData = filterByMember(filterByDate(this.loginActivities?.data, 'loginTime', dateRange), members);
+    const resourceData = filterByMember(filterByDate(this.resourceActivities?.total?.data, 'time', dateRange), members);
+    const courseData = filterByMember(filterByDate(this.courseActivities?.total?.data, 'time', dateRange), members);
+    const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
+
+    if (sortBy) {
+      const order = sortBy.endsWith('Asc') ? 1 : -1;
+      const sortFunction = (a, b) => {
+        const aDate = new Date(a.time || a.loginTime);
+        const bDate = new Date(b.time || b.loginTime);
+        const comparison =
+          (aDate.getFullYear() - bDate.getFullYear()) ||
+          (aDate.getMonth() - bDate.getMonth());
+        return comparison * order;
+      };
+      loginData.sort(sortFunction);
+      resourceData.sort(sortFunction);
+      courseData.sort(sortFunction);
+      progressData.sort(sortFunction);
+    }
+
     this.csvService.exportSummaryCSV(
-      filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members),
-      filterByMember(filterByDate(this.resourceActivities.total.data, 'time', dateRange), members),
-      filterByMember(filterByDate(this.courseActivities.total.data, 'time', dateRange), members),
-      filterByMember(filterByDate(this.progress.steps.data, 'time', dateRange), members),
+      loginData,
+      resourceData,
+      courseData,
+      progressData,
       this.planetName
     );
   }
@@ -425,8 +477,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportDocView(reportType, dateRange, members) {
-    const data = {
+  exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
+    let data = {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
       'stepCompletions': this.progress.steps.data,
@@ -437,6 +489,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'courseViews': $localize`Course Views`,
       'health': $localize`Community Health`,
       'stepCompletions': $localize`Courses Progress` }[reportType];
+    if (sortBy) {
+      data = this.sortData(data, sortBy);
+    }
     this.csvService.exportCSV({
       data: this.activityService.appendAge(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)

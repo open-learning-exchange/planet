@@ -25,31 +25,8 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 
 @Component({
-  'templateUrl': './surveys.component.html',
-  styles: [ `
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-    .mat-column-taken {
-      max-width: 150px;
-    }
-    .mat-column-createdDate {
-      max-width: 150px;
-    }
-    .btn:disabled{
-      pointer-events: none;
-    }
-    .course-title {
-      max-width: 200px;
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 15px;
-      position: relative;
-    }
-  ` ]
+  templateUrl: './surveys.component.html',
+  styleUrls: [ './surveys.component.scss' ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);

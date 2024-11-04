@@ -102,3 +102,42 @@ export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }
 export const scaleLabel = (labelString: string) => ({
   display: true, labelString, fontSize: 12, fontStyle: 'bold'
 });
+
+export const sortingOptionsMap = {
+  'logins': [
+    { name: $localize`Login Time Ascending`, value: 'loginTimeAsc' },
+    { name: $localize`Login Time Descending`, value: 'loginTimeDesc' },
+    { name: $localize`Logout Time Ascending`, value: 'logoutTimeAsc' },
+    { name: $localize`Logout Time Descending`, value: 'logoutTimeDesc' },
+    { name: $localize`User Ascending`, value: 'userAsc' },
+    { name: $localize`User Descending`, value: 'userDesc' },
+  ],
+  'resourceViews': [
+    { name: $localize`Username Ascending`, value: 'userAsc' },
+    { name: $localize`Username Descending`, value: 'userDesc' },
+    { name: $localize`Time Ascending`, value: 'timeAsc' },
+    { name: $localize`Time Descending`, value: 'timeDesc' },
+    { name: $localize`Title Ascending`, value: 'titleAsc' },
+    { name: $localize`Title Descending`, value: 'titleDesc' },
+  ],
+  'courseViews': [
+    { name: $localize`Username Ascending`, value: 'userAsc' },
+    { name: $localize`Username Descending`, value: 'userDesc' },
+    { name: $localize`Time Ascending`, value: 'timeAsc' },
+    { name: $localize`Time Descending`, value: 'timeDesc' },
+    { name: $localize`Title Ascending`, value: 'titleAsc' },
+    { name: $localize`Title Descending`, value: 'titleDesc' },
+  ],
+  'stepCompletions': [
+    { name: $localize`Username Ascending`, value: 'userAsc' },
+    { name: $localize`Username Descending`, value: 'userDesc' },
+    { name: $localize`Time Ascending`, value: 'timeAsc' },
+    { name: $localize`Time Descending`, value: 'timeDesc' },
+    { name: $localize`Title Ascending`, value: 'titleAsc' },
+    { name: $localize`Title Descending`, value: 'titleDesc' },
+  ],
+  'summary': [
+    { name: $localize`Month/Year Ascending`, value: 'monthYearAsc' },
+    { name: $localize`Month/Year Descending`, value: 'monthYearDesc' },
+  ],
+};

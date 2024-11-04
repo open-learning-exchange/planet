@@ -78,3 +78,14 @@
   grid-area: image-rt;
 }
 
+@media (max-width: $screen-sm) {
+
+  .profile-image-section{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .profile-image-upload{
+    margin-top: 1rem;
+  }
+}

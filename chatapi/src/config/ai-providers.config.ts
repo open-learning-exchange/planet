@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 
@@ -15,69 +16,48 @@ async function getConfig(): Promise<ModelsDocument | undefined> {
       const doc = allDocs.rows[0].doc as unknown as ModelsDocument;
       return doc;
     } else {
-      throw new Error('No documents found in configurationDB');
+      console.error('No documents found in configurationDB');
     }
   } catch (error: any) {
-    throw new Error(`Error fetching models config: ${error.message}`);
+    console.error(`Error fetching models config: ${error}`);
   }
 }
 
-const initializeProviders = async () => {
+const initialize = async () => {
   try {
     const doc = await getConfig();
-    if (!doc || !doc.keys) {
-      throw new Error('API Keys configuration not found');
+    if (!doc) {
+      console.error('Configuration not found');
     }
+
     keys = {
       'openai': new OpenAI({
-        'apiKey': doc.keys.openai || '',
+        'apiKey': doc?.keys.openai || '',
       }),
       'perplexity': new OpenAI({
-        'apiKey': doc.keys.perplexity || '',
+        'apiKey': doc?.keys.perplexity || '',
         'baseURL': 'https://api.perplexity.ai',
       }),
-      'gemini': new GoogleGenerativeAI(doc.keys.gemini || '')
+      'gemini': new GoogleGenerativeAI(doc?.keys.gemini || '')
     };
-  } catch (error: any) {
-    throw new Error(`Error initializing providers: ${error.message}`);
-  }
-};
 
-const getModels = async () => {
-  try {
-    const doc = await getConfig();
-    if (!doc || !doc.models) {
-      throw new Error('Models configuration not found');
-    }
     models = {
-      'openai': { 'ai': keys.openai, 'defaultModel': doc.models.openai || 'gpt-3.5-turbo' },
-      'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc.models.perplexity || 'llama-3-sonar-small-32k-online' },
-      'gemini': { 'ai': keys.gemini, 'defaultModel': doc.models.gemini || 'gemini-pro' },
+      'openai': { 'ai': keys.openai, 'defaultModel': doc?.models.openai || '' },
+      'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc?.models.perplexity || '' },
+      'gemini': { 'ai': keys.gemini, 'defaultModel': doc?.models.gemini || '' },
     };
-  } catch (error: any) {
-    throw new Error(`Error getting provider models: ${error.message}`);
-  }
-};
 
-const getAssistant = async () => {
-  try {
-    const doc = await getConfig();
-    if (!doc || !doc.assistant) {
-      throw new Error('Assistant configuration not found');
-    }
     assistant = {
-      'name': doc.assistant.name,
-      'instructions': doc.assistant.instructions,
+      'name': doc?.assistant?.name || '',
+      'instructions': doc?.assistant?.instructions || '',
     };
-  } catch (error: any) {
-    throw new Error(`Error getting assistant configs: ${error.message}`);
+  } catch (error) {
+    console.error(`Error initializing configs: ${error}`);
   }
 };
 
 (async () => {
-  await initializeProviders();
-  await getModels();
-  await getAssistant();
+  await initialize();
 })();
 
 export { keys, models, assistant };
