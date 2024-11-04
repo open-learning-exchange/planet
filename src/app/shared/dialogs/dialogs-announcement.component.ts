@@ -45,13 +45,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
-
-    if (includedCodes.includes(this.configuration.code)) {
-      this.coursesService.requestCourses();
-      this.fetchCourseAndNews();
-      this.fetchEnrolled();
-    }
+    this.coursesService.requestCourses();
+    this.fetchCourseAndNews();
+    this.fetchEnrolled();
   }
 
   ngOnDestroy() {

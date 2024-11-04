@@ -101,9 +101,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
-    this.challengeActive = includedCodes.includes(this.configuration.code) &&
-    ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
+    this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
     if (this.challengeActive) {
       this.openAnnouncementDialog();
     }
