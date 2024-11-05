@@ -109,6 +109,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
   }
 
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '100vh'
+    });
+  }
+
   getCommunityData() {
     const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
     this.route.paramMap.pipe(
@@ -152,13 +159,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     } else {
       this.usersService.requestUsers();
     }
-  }
-
-  openAnnouncementDialog() {
-    this.dialog.open(DialogsAnnouncementComponent, {
-      width: '50vw',
-      maxHeight: '100vh'
-    });
   }
 
   openAddMessageDialog(message = '') {

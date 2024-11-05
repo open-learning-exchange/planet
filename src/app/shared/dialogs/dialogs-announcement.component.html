@@ -10,7 +10,7 @@
       <mat-icon color="primary">
         {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
-      <span>Únete al curso <a [href]="[ '/courses/view/', this.courseId ]">Reto noviembre</a>.</span>
+      <span>Únete al curso <a [href]="[ '/courses/view/', this.courseId ]">Reto de noviembre</a>.</span>
       <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
         Únete
       </a>
