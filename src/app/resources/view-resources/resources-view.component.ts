@@ -44,6 +44,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   pdfSrc: any;
   contentType = '';
   isUserEnrolled = false;
+  isLoading: boolean;
   // If parent route, url will use parent domain.  If not uses this domain.
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -67,6 +68,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.route.paramMap
       .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
@@ -85,6 +87,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           this.router.navigate([ '/resources' ]);
         }
         this.dialogsLoadingService.stop();
+        this.isLoading = false;
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
