@@ -101,11 +101,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
+    // Set the challengeActive status
     this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
-    if (this.challengeActive) {
-      this.openAnnouncementDialog();
+
+    // Check if the popup was shown for this login session
+    const popupShown = localStorage.getItem('announcementPopupShown');
+
+    if (this.challengeActive && !popupShown) {
+        this.openAnnouncementDialog();
+        // Mark popup as shown only after successfully opening the dialog
+        localStorage.setItem('announcementPopupShown', 'true');
     }
-  }
+}
 
   getCommunityData() {
     const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
