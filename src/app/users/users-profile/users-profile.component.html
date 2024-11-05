@@ -1,7 +1,11 @@
 <mat-toolbar *ngIf="!isDialog">
-  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>Member Profile</span>
-  <span class="toolbar-fill"></span>
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>Member Profile</span>
+    <span class="toolbar-fill"></span>
+  </mat-toolbar-row>
 </mat-toolbar>
 
 <div class="space-container">
@@ -9,12 +13,24 @@
     <span>{{userDetail.name}}</span>
     <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
     <span class="toolbar-fill"></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isMobile; else actionButtons">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" class="actions-menu">
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </mat-menu>
+  </mat-toolbar>
+  <ng-template #actionButtons>
     <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
       <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
     </button>
-    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]"><mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span></button>
-    <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">Change Password</a>
-  </mat-toolbar>
+    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]">
+      <mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span>
+    </button>
+    <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">
+      Change Password
+    </a>
+  </ng-template>
   <div class="view-container">
     <div class="profile-container">
       <div class="profile-image-section">
@@ -66,6 +82,11 @@
         <mat-list-item>
           <h4 class="primary-text-color" matLine i18n>Last Login</h4>
           <p matLine><b>{{(lastLogin || '') | date: 'mediumDate'}} {{(lastLogin || '') | date: 'shortTime'}}</b></p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>Member Since</h4>
+          <p matLine><b>{{(userDetail.joinDate | date: 'mediumDate') || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
