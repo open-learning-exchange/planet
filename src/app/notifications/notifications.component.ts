@@ -100,6 +100,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
         width: '50vw',
         maxHeight: '100vh'
       });
-    } 
+    }
   }
 }

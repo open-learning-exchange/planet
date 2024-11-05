@@ -234,13 +234,13 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   openAnnouncementDialog(notification) {
-    this.readNotification(notification)
+    this.readNotification(notification);
     this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
     if (this.challengeActive) {
       this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
         maxHeight: '100vh'
       });
-    } 
+    }
   }
 }
