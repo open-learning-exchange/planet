@@ -10,7 +10,7 @@
       <mat-icon color="primary">
         {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
-      <span>Únete al curso <a [href]="[ '/courses/view/', this.courseId ]">Reto de noviembre</a>.</span>
+      <span>Únete al curso <a href="/courses/view/{{ courseId }}">Reto de noviembre</a>.</span>
       <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
         Únete
       </a>
@@ -31,10 +31,10 @@
         {{ userStatus.hasPost ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Comparte tu opinión en Nuestras Voces.</span>
+      <a *ngIf="userStatus.joinedCourse && userStatus.surveyComplete && !userStatus.hasPost" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
+        Voces
+      </a>
     </div>
-    <a *ngIf="userStatus.joinedCourse && userStatus.surveyComplete && !userStatus.hasPost" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
-      Voces
-    </a>
   </div>
 
   <div class="thermometer-container">

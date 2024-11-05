@@ -11,6 +11,7 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
+import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
@@ -21,6 +22,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
+  teamId = planetAndParentId(this.stateService.configuration);
   submissionsSet = new Set();
   groupSummary = [];
   enrolledMembers: any;
@@ -48,9 +50,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
 
     if (includedCodes.includes(this.configuration.code)) {
-      this.coursesService.requestCourses();
-      this.fetchCourseAndNews();
-      this.fetchEnrolled();
+      this.configuration = this.stateService.configuration;
+      this.initializeData();
     }
   }
 
@@ -61,6 +62,21 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   onClose(): void {
     this.dialogRef.close();
+  }
+
+  initializeData() {
+    this.coursesService.requestCourses();
+    this.newsService.requestNews({
+      selectors: {
+        '$or': [
+          { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
+          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+        ]
+      },
+      viewId: this.teamId
+    });
+    this.fetchCourseAndNews();
+    this.fetchEnrolled();
   }
 
   joinCourse() {
@@ -114,8 +130,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   fetchCourseAndNews() {
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => {
+    this.newsService.newsUpdated$.pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(news => {
         news.map(post => ({
         ...post,
         public: (
