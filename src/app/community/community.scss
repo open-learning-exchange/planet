@@ -50,3 +50,11 @@ planet-calendar {
 mat-tab-group, mat-tab {
   height: 100%;
 }
+
+.sticky-button {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  padding-bottom: 0.5rem;
+}
