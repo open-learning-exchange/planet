@@ -17,7 +17,8 @@
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
           <p [ngClass]="{'primary-text-color':element.status==='unread'}">
             <ng-container *ngIf="element.link; else noLink">
-              <a [routerLink]="element.link === '/' ? '/' : [ element.link, element.linkParams || {} ]">
+              <a [routerLink]="element.link === '/' ? '/' : [ element.link, element.linkParams || {} ]"
+                (click)="notification.type === 'challenges' && openAnnouncementDialog()">
                 <span [innerHTML]="element.message"></span>
                 <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
               </a>

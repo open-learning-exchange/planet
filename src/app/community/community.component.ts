@@ -216,7 +216,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const data = {
       'user': user._id,
       'message': $localize`You still have a challenge to complete.`,
-      'link': '/',
       'type': 'challenges',
       'priority': 1,
       'status': 'unread',

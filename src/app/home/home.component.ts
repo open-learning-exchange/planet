@@ -12,6 +12,8 @@ import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './home.component.html',
@@ -42,6 +44,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   planetName;
   isAndroid: boolean;
   showBanner = true;
+  challengeActive: boolean;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -60,6 +63,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   private onDestroy$ = new Subject<void>();
 
   constructor(
+    private dialog: MatDialog,
     private couchService: CouchService,
     private router: Router,
     private userService: UserService,
@@ -229,4 +233,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
+  openAnnouncementDialog(notification) {
+    this.readNotification(notification)
+    this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
+    if (this.challengeActive) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    } 
+  }
 }
