@@ -104,6 +104,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
     if (this.challengeActive) {
       this.openAnnouncementDialog();
+      this.sendChallengeNotification(this.user).subscribe(
+        (response) => {
+          console.log("Challenge notification sent successfully:", response);
+        },
+        (error) => {
+          console.error("Error sending challenge notification:", error);
+        }
+      );
     }
   }
 
@@ -202,6 +210,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
       'time': this.couchService.datePlaceholder,
       planetCode: user.userPlanetCode
     };
+  }
+
+  sendChallengeNotification(user) {
+    const data = {
+      'user': user._id,
+      'message': $localize`You still have a challenge to complete.`,
+      'link': '/',
+      'type': 'challenges',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    console.log("Preparing to send challenge notification:", data);
+    return this.couchService.updateDocument('notifications', data);
   }
 
   teamObject(planetCode?: string) {
