@@ -106,10 +106,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.openAnnouncementDialog();
       this.sendChallengeNotification(this.user).subscribe(
         (response) => {
-          console.log("Challenge notification sent successfully:", response);
+          console.log('Challenge notification sent successfully:', response);
         },
         (error) => {
-          console.error("Error sending challenge notification:", error);
+          console.error('Error sending challenge notification:', error);
         }
       );
     }
@@ -222,7 +222,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     };
-    console.log("Preparing to send challenge notification:", data);
+    console.log('Preparing to send challenge notification:', data);
     return this.couchService.updateDocument('notifications', data);
   }
 
