@@ -129,7 +129,7 @@ export class HealthEventComponent implements OnInit {
       'temperature': { min: 30, max: 40 },
       'pulse': { min: 40, max: 120 },
       'height': { min: 1, max: 250 },
-      'weight': { min: 1, max: 150 },
+      'weight': { min: 10, max: 150 },
       'bp': 'n/a'
     };
     if (value === null || value === '' || !limits[field]) {
