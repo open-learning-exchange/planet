@@ -28,7 +28,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
-  pageType = 'Add new';
+  pageType: string | null = null;
   tags = this.fb.control([]);
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
@@ -107,7 +107,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
-        this.pageType = 'Update';
+        this.pageType = 'Edit';
+      } else {
+        this.pageType = 'Add'; 
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
