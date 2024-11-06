@@ -215,7 +215,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           ...mem,
           name: mem.userId && mem.userId.split(':')[1],
           avatar: src(mem)
-        }));  
+        }));
         this.leader = docsWithName.find(mem => mem.isLeader) || {
           userId: this.team.createdBy,
           userPlanetCode: this.team.teamPlanetCode
