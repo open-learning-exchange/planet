@@ -228,7 +228,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       map(resources => this.resources = resources)
     );
   }
-  
+
 
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
