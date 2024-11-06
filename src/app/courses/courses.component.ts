@@ -134,16 +134,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       });
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.updateDeviceType();
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.updateDeviceType();
   }
 
   ngOnInit() {
     this.titleSearch = '';
     this.getCourses();
-    this.updateDeviceType();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
@@ -175,18 +176,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.updateDeviceType();
-  }
-
   updateDeviceType() {
     const width = window.innerWidth;
 
-    const maxTitleLength = 100;  
-    const minTitleLength = 25;  
-    const stepWidth = 45;        
-    const stepDecrease = 5;      
+    const maxTitleLength = 100;
+    const minTitleLength = 25;
+    const stepWidth = 45;
+    const stepDecrease = 5;
 
     const steps = Math.floor((1600 - width) / stepWidth);
 
