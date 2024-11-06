@@ -190,7 +190,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   truncateTitle(title: string): string {
-    if(title.length > this.titleLength){
+    if (title.length > this.titleLength) {
       return title.slice(0, this.titleLength) + '...';
     }
     return title;
