@@ -40,11 +40,14 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() parent;
   @Input() ratingType = '';
   @Input() disabled = false;
+  @Input() isEnrolled: (id: any) => boolean;
+  @Input() type: string;
 
   rateForm: FormGroup;
   popupForm: FormGroup;
   isPopupOpen = false;
   stackedBarData = [];
+  enrolled: boolean;
   get rateFormField() {
     return { rate: this.rating.userRating.rate || 0 };
   }
@@ -84,6 +87,15 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   onStarClick(form = this.rateForm) {
+    if (this.isEnrolled) {
+      if (!this.isEnrolled(this.item._id)) {
+        console.log(`${this.type} id:`, this.item._id)
+        this.planetMessage.showMessage($localize`Please join the ${this.type} before rating!`);
+        this.enrolled = false;
+        return;
+      }
+    }
+    this.enrolled = true;
     if (this.disabled || form.controls.rate.value === 0) {
       return;
     }

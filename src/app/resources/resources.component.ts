@@ -382,6 +382,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedSync = selected.filter(id => this.hasAttachment(id));
   }
 
+  isEnrolled(resourceId: any): boolean {
+    const { inShelf } = this.userService.countInShelf([resourceId], 'resourceIds');
+    return inShelf
+  }
+
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
   }

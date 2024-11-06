@@ -51,6 +51,9 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
     this.onChange(rating);
     this.stateChanges.next();
   }
+  @Input() isEnrolled: boolean;
+  @Input() courseId: (id: any) => void;
+  @Input() type: string;
   private _value = 0;
 
   onChange(_: any) {}
@@ -101,6 +104,11 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   }
 
   onStarClick(rating: number): void {
+    if(!this.isEnrolled) {
+      console.log(`You can't rate this ${this.type}`)
+      return;
+    }
+    console.log("Id is this:", this.courseId)
     this.writeValue(rating);
   }
 
