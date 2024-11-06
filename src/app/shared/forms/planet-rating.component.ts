@@ -46,7 +46,7 @@ export class PlanetRatingComponent implements OnChanges {
   popupForm: FormGroup;
   isPopupOpen = false;
   stackedBarData = [];
-  enrolled: boolean;
+  enrolled = true;
   get rateFormField() {
     return { rate: this.rating.userRating.rate || 0 };
   }

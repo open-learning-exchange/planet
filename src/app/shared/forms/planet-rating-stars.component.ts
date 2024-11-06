@@ -4,6 +4,8 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
+import { UserService } from '../user.service';
+
 @Component({
   selector: 'planet-rating-stars',
   templateUrl: './planet-rating-stars.component.html',
@@ -51,14 +53,14 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
     this.onChange(rating);
     this.stateChanges.next();
   }
-  @Input() isEnrolled: boolean;
+  @Input() isEnrolled: (id: any) => boolean;
   @Input() courseId: (id: any) => void;
   @Input() type: string;
   private _value = 0;
 
   onChange(_: any) {}
 
-  constructor(@Optional() @Self() public ngControl: NgControl) {
+  constructor(@Optional() @Self() public ngControl: NgControl, private userService: UserService) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
@@ -104,7 +106,7 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   }
 
   onStarClick(rating: number): void {
-    if (!this.isEnrolled) {
+    if (!this.isEnrolled(this.courseId)) {
       console.log(`You can't rate this ${this.type}`);
       return;
     }
