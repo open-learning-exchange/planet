@@ -229,7 +229,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     );
   }
 
-
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
