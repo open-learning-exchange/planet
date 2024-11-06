@@ -128,4 +128,26 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.isWaitingForEvents = false;
   }
 
+  isFieldValueExpected(field: string, value: any): boolean {
+    const limits = {
+      'Temperature': { min: 30, max: 40 },
+      'Pulse': { min: 40, max: 120 },
+      'height': { min: 1, max: 250 },
+      'weight': { min: 1, max: 150 },
+      'bp': 'n/a' 
+    };
+  
+    if (value === null || value === '' || !limits[field]) {
+      return true;
+    }
+  
+    
+    if (field === 'bp') {
+      const bpRegex = /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/;
+      return bpRegex.test(value);
+    }
+  
+    return value >= limits[field].min && value <= limits[field].max;
+  }
+  
 }
