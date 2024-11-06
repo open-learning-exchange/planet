@@ -7,15 +7,10 @@
   flex-direction: column;
 }
 
-.transaction-buttons {
+.transaction-buttons, .transaction-date-fields {
   display: flex;
   gap: 10px;
   margin-top: 10px;
-}
-
-.transaction-date-fields {
-  display: flex;
-  gap: 10px;
 }
 
 .transaction-buttons button {
