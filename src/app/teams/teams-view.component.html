@@ -95,7 +95,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
+          <ng-container i18n>{ mode, select, team {Members} enterprise {Members} services {Members} }</ng-container> ({{members.length}})
         </ng-template>
         <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
         <ng-template #memberList>
