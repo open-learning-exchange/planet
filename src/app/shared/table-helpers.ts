@@ -36,7 +36,7 @@ export const filterSpecificFields = (filterFields: string[]): any => {
     const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     for (let i = 0; i < filterFields.length; i++) {
       const fieldValue = getProperty(data, filterFields[i]);
-      if (typeof fieldValue === 'string' && 
+      if (typeof fieldValue === 'string' &&
           fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(normalizedFilter) > -1) {
         return true;
       }

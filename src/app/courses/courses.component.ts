@@ -317,8 +317,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   isEnrolled(courseId: any): boolean {
-    const { inShelf } = this.userService.countInShelf([courseId], 'courseIds');
-    return inShelf
+    const { inShelf } = this.userService.countInShelf([ courseId ], 'courseIds');
+    return inShelf;
 }
 
   hasSteps(id: string) {

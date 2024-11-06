@@ -383,8 +383,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isEnrolled(resourceId: any): boolean {
-    const { inShelf } = this.userService.countInShelf([resourceId], 'resourceIds');
-    return inShelf
+    const { inShelf } = this.userService.countInShelf([ resourceId ], 'resourceIds');
+    return inShelf;
   }
 
   hasAttachment(id: string) {
