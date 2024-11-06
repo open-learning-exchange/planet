@@ -145,7 +145,7 @@
           <ng-container i18n>Reports</ng-container> ({{ reportsCount }})
         </ng-template>
         <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
-      </mat-tab>      
+      </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab i18n-label label="Resources">
           <ng-template mat-tab-label>
