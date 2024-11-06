@@ -65,6 +65,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   initTab;
   taskCount = 0;
   reportsCount = 0;
+  financesCount = 0;
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
@@ -211,35 +212,23 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           }
           return 'assets/image.png';
         };
-        const docsWithName = docs.map(mem => ({
-          ...mem,
-          name: mem.userId && mem.userId.split(':')[1],
-          avatar: src(mem)
-        }));
-        this.leader = docsWithName.find(mem => mem.isLeader) || {
-          userId: this.team.createdBy,
-          userPlanetCode: this.team.teamPlanetCode
-        };
-        this.members = docsWithName
-          .filter(mem => mem.docType === 'membership')
-          .sort((a, b) => memberSort(a, b, this.leader));
+        const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
+        this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
+        this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
         this.requests = docsWithName.filter(mem => mem.docType === 'request');
         this.disableAddingMembers = this.members.length >= this.team.limit;
         this.finances = docs.filter(doc => doc.docType === 'transaction');
-        this.reports = docs
-          .filter(doc => doc.docType === 'report')
-          .sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+        this.financesCount = this.finances.length;
+        this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
         this.reportsCount = this.reports.length;
         this.setStatus(this.team, this.leader, this.userService.get());
         this.setTasks(this.tasks);
         return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
       }),
-      map(resources => {
-        this.resources = resources;
-        return resources;
-      })
+      map(resources => this.resources = resources)
     );
   }
+  
 
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
