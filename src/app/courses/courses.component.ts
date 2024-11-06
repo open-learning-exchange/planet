@@ -359,6 +359,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   removeFilteredFromSelection() {
     this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
+    this.emptyData = this.courses.filteredData.length === 0;
   }
 
   onSearchChange({ items, category }) {
