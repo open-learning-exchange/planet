@@ -11,6 +11,7 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
+import { UserStatusService } from '../user-status.service';
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
@@ -41,13 +42,16 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private newsService: NewsService,
     private stateService: StateService,
     private submissionsService: SubmissionsService,
-    private userService: UserService
+    private userService: UserService,
+    private userStatusService: UserStatusService
   ) {}
 
   ngOnInit() {
     this.coursesService.requestCourses();
     this.fetchCourseAndNews();
     this.fetchEnrolled();
+
+    console.log("From Dialog (Service) Status:", this.userStatusService.printStatus());
   }
 
   ngOnDestroy() {
@@ -130,11 +134,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           });
 
           // Individual stats
-          this.userStatus.surveyComplete = this.hasCompletedSurvey(this.currentUserName);
-          this.userStatus.hasPost = this.hasSubmittedVoice(news, this.currentUserName);
+          this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
+          this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
-              this.userStatus.joinedCourse = this.hasEnrolledCourse(member);
+              this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
             }
           });
         });
@@ -144,5 +148,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   getGoalPercentage(): number {
     const goal = 500;
     return (this.groupSummary?.length / goal) * 100;
+  }
+
+  get joinedCourseIcon(): string {
+    return this.userStatusService.getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked';
   }
 }

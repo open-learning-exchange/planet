@@ -20,6 +20,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { UserStatusService } from '../shared/user-status.service';
 
 @Component({
   selector: 'planet-community',
@@ -64,7 +65,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private userStatusService: UserStatusService,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -104,14 +106,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
     if (this.challengeActive) {
       this.openAnnouncementDialog();
-      this.sendChallengeNotification(this.user).subscribe(
-        (response) => {
-          console.log('Challenge notification sent successfully:', response);
-        },
-        (error) => {
-          console.error('Error sending challenge notification:', error);
-        }
-      );
     }
   }
 
@@ -165,6 +159,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
       width: '50vw',
       maxHeight: '100vh'
     });
+
+    console.log("User Status", { ...this.userStatusService.printStatus() });
+    console.log("User Completion", this.userStatusService.getCompleteChallenge());
+
+    if (!this.userStatusService.getCompleteChallenge()) {
+      this.sendChallengeNotification(this.user).subscribe(
+        (response) => {
+          console.log('Challenge notification sent successfully:', response);
+        },
+        (error) => {
+          console.error('Error sending challenge notification:', error);
+        }
+      );
+    }
   }
 
   openAddMessageDialog(message = '') {
@@ -221,7 +229,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     };
-    console.log('Preparing to send challenge notification:', data);
     return this.couchService.updateDocument('notifications', data);
   }
 
