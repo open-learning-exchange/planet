@@ -319,7 +319,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   isEnrolled(courseId: any): boolean {
     const { inShelf } = this.userService.countInShelf([ courseId ], 'courseIds');
     return inShelf;
-}
+  }
 
   hasSteps(id: string) {
     return this.courses.data.find((course: any) => course._id === id && course.doc.steps.length > 0);

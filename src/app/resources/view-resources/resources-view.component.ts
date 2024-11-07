@@ -121,6 +121,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '/resources/update/' + this.resourceId ]);
   }
 
+  isEnrolled(resourceId: any): boolean {
+    const { inShelf } = this.userService.countInShelf([ resourceId ], 'resourceIds');
+    return inShelf;
+  }
+
   /**
    * Returns routing to previous parent page
    */
