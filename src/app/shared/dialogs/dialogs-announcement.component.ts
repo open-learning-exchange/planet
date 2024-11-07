@@ -50,8 +50,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.coursesService.requestCourses();
     this.fetchCourseAndNews();
     this.fetchEnrolled();
-
-    console.log("From Dialog (Service) Status:", this.userStatusService.printStatus());
   }
 
   ngOnDestroy() {
@@ -116,12 +114,10 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           ) || {}
         ).public,
         }));
-
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
           this.submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
-
           // Group Summary
           this.enrolledMembers.forEach((member) => {
             const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
@@ -150,7 +146,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     return (this.groupSummary?.length / goal) * 100;
   }
 
-  get joinedCourseIcon(): string {
-    return this.userStatusService.getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked';
+  getStatus(key: string) {
+    return this.userStatusService.getStatus(key);
   }
 }

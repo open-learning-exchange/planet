@@ -4,30 +4,30 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class UserStatusService {
-	userStatus = {
-			joinedCourse: false,
-			surveyComplete: false,
-			hasPost: false
-	};
+  userStatus = {
+    joinedCourse: false,
+    surveyComplete: false,
+    hasPost: false
+  };
 
-	updateStatus(key: string, value: boolean) {
-		this.userStatus[key] = value;
-		console.log(`Updated ${key} to ${value}. Current status:`, { ...this.userStatus });
-	}
-	
-	getCompleteChallenge(): boolean {
-		console.log("Checking completion with status:", { ...this.userStatus });
-		const complete = Object.values(this.userStatus).every(value => value === true);
-		console.log("Completion result:", complete);
-		return complete;
-	}
+  updateStatus(key: string, value: boolean) {
+    this.userStatus[key] = value;
+    console.log(`Updated ${key} to ${value}. Current status:`, { ...this.userStatus });
+  }
 
-	getStatus(key: string): boolean {
-		return this.userStatus[key];
-	}
+  getCompleteChallenge(): boolean {
+    console.log('Checking completion with status:', { ...this.userStatus });
+    const complete = Object.values(this.userStatus).every(value => value === true);
+    console.log('Completion result:', complete);
+    return complete;
+  }
 
-	printStatus(): any {
-		return this.userStatus;
-	}
+  getStatus(key: string): boolean {
+    return this.userStatus[key];
+  }
+
+  printStatus(): any {
+    return this.userStatus;
+  }
 }
 

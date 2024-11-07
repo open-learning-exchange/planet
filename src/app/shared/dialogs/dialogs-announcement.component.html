@@ -8,7 +8,7 @@
   <div class="steps-container">
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Únete al curso Reto noviembre.</span>
       <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
@@ -18,14 +18,14 @@
 
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.surveyComplete ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>¡Encuesta finalizada!</span>
     </div>
 
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.hasPost ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Comparte tu opinión en Nuestras Voces.</span>
     </div>

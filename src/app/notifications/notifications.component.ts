@@ -11,6 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
 import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
+import { UserStatusService } from '../shared/user-status.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -31,7 +32,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private couchService: CouchService,
     private userService: UserService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private userStatusService: UserStatusService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();

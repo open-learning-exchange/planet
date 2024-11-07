@@ -13,6 +13,7 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
+import { UserStatusService } from '../shared/user-status.service';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -70,7 +71,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private userStatusService: UserStatusService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {

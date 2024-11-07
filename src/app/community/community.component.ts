@@ -158,21 +158,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsAnnouncementComponent, {
       width: '50vw',
       maxHeight: '100vh'
+    }).afterClosed().subscribe(() => {
+      if (!this.userStatusService.getCompleteChallenge()) {
+        this.sendChallengeNotification(this.user).subscribe(
+          (response) => {
+            console.log('Challenge notification sent successfully:', response);
+          },
+          (error) => {
+            console.error('Error sending challenge notification:', error);
+          }
+        );
+      }
     });
-
-    console.log("User Status", { ...this.userStatusService.printStatus() });
-    console.log("User Completion", this.userStatusService.getCompleteChallenge());
-
-    if (!this.userStatusService.getCompleteChallenge()) {
-      this.sendChallengeNotification(this.user).subscribe(
-        (response) => {
-          console.log('Challenge notification sent successfully:', response);
-        },
-        (error) => {
-          console.error('Error sending challenge notification:', error);
-        }
-      );
-    }
   }
 
   openAddMessageDialog(message = '') {
