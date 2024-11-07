@@ -106,6 +106,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
     const popupShown = localStorage.getItem('announcementPopupShown');
 
+    this.openAnnouncementDialog()
+
     if (this.challengeActive && !popupShown) {
       this.openAnnouncementDialog();
       localStorage.setItem('announcementPopupShown', 'true');

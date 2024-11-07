@@ -60,7 +60,7 @@
 }
 
 .thermometer-label {
-  color: white;
+  color: black;
   font-size: 12px;
   padding: 2px;
   border-radius: 3px;
@@ -69,11 +69,4 @@
 .thermometer-label.outside {
   position: absolute;
   left: 0.5rem;
-}
-
-.thermometer-goal {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-size: 14px;
 }
