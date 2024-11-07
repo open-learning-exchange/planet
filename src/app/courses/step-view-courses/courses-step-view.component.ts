@@ -11,7 +11,7 @@ import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
-import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod  } from '../../shared/dialogs/dialogs-announcement.component';
+import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -147,7 +147,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
         maxHeight: '100vh'
-      })
+      });
     }
   }
 

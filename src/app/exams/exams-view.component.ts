@@ -10,7 +10,7 @@ import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod  } from '../shared/dialogs/dialogs-announcement.component';
+import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -141,11 +141,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       } else {
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion, previousStatus);
         // Challenge option only
-        if (isFinish && includedCodes.includes(this.stateService.configuration.code) && challengePeriod && this.courseId === challengeCourseId) {
+        if (
+          isFinish &&
+          includedCodes.includes(this.stateService.configuration.code) &&
+          challengePeriod &&
+          this.courseId === challengeCourseId
+          ) {
           this.dialog.open(DialogsAnnouncementComponent, {
             width: '50vw',
             maxHeight: '100vh'
-          })
+          });
         }
       }
     });
