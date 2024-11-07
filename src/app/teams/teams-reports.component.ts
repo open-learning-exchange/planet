@@ -53,7 +53,7 @@ export class TeamsReportsComponent implements DoCheck {
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
       const lastMonthEnd = currentDate.setDate(0);
       this.dialogsFormService.openDialogsForm(
-        $localize`Add Report`,
+        $localize`Edit Report`,
         [
           { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
           { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
