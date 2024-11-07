@@ -113,7 +113,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       localStorage.setItem('announcementPopupShown', 'true');
     }
   }
-  
+
   getCommunityData() {
     const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
     this.route.paramMap.pipe(
