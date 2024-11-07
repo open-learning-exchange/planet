@@ -15,7 +15,7 @@
 .steps-container {
   width: 100%;
   max-width: 600px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .step {
@@ -30,6 +30,12 @@
 
 .step span {
   flex-grow: 1;
+}
+
+.thermometer-message{
+  display: flex; 
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .thermometer-container {
