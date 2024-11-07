@@ -126,10 +126,10 @@ export class HealthEventComponent implements OnInit {
   isFieldValueExpected(field) {
     const value = this.healthForm.controls[field].value;
     const limits = {
-      'temperature': { min: 30, max: 40 },
-      'pulse': { min: 40, max: 120 },
-      'height': { min: 1, max: 250 },
-      'weight': { min: 1, max: 150 },
+      'temperature': { min: 30, max: 45 },
+      'pulse': { min: 30, max: 300 },
+      'height': { min: 30, max: 275 },
+      'weight': { min: 0, max: 500 },
       'bp': 'n/a'
     };
     if (value === null || value === '' || !limits[field]) {

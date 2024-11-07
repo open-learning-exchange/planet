@@ -12,6 +12,7 @@ import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
 import { UserStatusService } from '../user-status.service';
+import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
@@ -22,17 +23,13 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
+  teamId = planetAndParentId(this.stateService.configuration);
   submissionsSet = new Set();
   groupSummary = [];
   enrolledMembers: any;
   courseId = '9517e3b45a5bb63e69bb8f269216974d';
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
-  userStatus = {
-    joinedCourse: false,
-    surveyComplete: false,
-    hasPost: false
-  };
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -47,9 +44,12 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.coursesService.requestCourses();
-    this.fetchCourseAndNews();
-    this.fetchEnrolled();
+    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
+
+    if (includedCodes.includes(this.configuration.code)) {
+      this.configuration = this.stateService.configuration;
+      this.initializeData();
+    }
   }
 
   ngOnDestroy() {
@@ -61,11 +61,36 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
+  initializeData() {
+    this.coursesService.requestCourses();
+    this.newsService.requestNews({
+      selectors: {
+        '$or': [
+          { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
+          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+        ]
+      },
+      viewId: this.teamId
+    });
+    this.fetchCourseAndNews();
+    this.fetchEnrolled();
+  }
+
   joinCourse() {
     const courseTitle = this.coursesService.getCourseNameFromId(this.courseId);
     this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
       this.router.navigate([ '/courses/view', this.courseId ]);
     }, (error) => ((error)));
+    this.dialogRef.close();
+  }
+
+  doSurvey() {
+    this.router.navigate([ `/courses/view/${this.courseId}/step/3` ]);
+    this.dialogRef.close();
+  }
+
+  postVoice() {
+    this.router.navigate([ '/' ]);
     this.dialogRef.close();
   }
 
@@ -102,8 +127,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   fetchCourseAndNews() {
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => {
+    this.newsService.newsUpdated$.pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(news => {
         news.map(post => ({
         ...post,
         public: (
@@ -114,10 +140,12 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           ) || {}
         ).public,
         }));
+
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
           this.submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
+
           // Group Summary
           this.enrolledMembers.forEach((member) => {
             const hasCompletedSurvey = this.hasCompletedSurvey(member.name);

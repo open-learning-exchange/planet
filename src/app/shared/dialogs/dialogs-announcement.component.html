@@ -13,6 +13,7 @@
       <span>Únete al curso Reto noviembre.</span>
       <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
         Unirse
+
       </a>
     </div>
 
@@ -21,6 +22,9 @@
         {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>¡Encuesta finalizada!</span>
+      <a *ngIf="userStatus.joinedCourse && !userStatus.surveyComplete" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
+        Encuesta
+      </a>
     </div>
 
     <div class="step">
@@ -28,14 +32,18 @@
         {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Comparte tu opinión en Nuestras Voces.</span>
+      <span>Comparte tu opinión en Nuestras Voces.</span>
+      <a *ngIf="userStatus.joinedCourse && userStatus.surveyComplete && !userStatus.hasPost" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
+        Voces
+      </a>
     </div>
   </div>
 
   <div class="thermometer-container">
   <div class="thermometer">
     <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
-      <div class="thermometer-label">
-        {{ getGoalPercentage() | number:'1.0-2' }}% ({{ groupSummary?.length }})
+      <div class="thermometer-label" [ngClass]="{'outside': getGoalPercentage() < 8}">
+        {{ getGoalPercentage() | number:'1.0-2' }}% ({{ '$'+ groupSummary?.length }})
       </div>
     </div>
   </div>
