@@ -31,6 +31,10 @@
     </div>
   </div>
 
+  <div *ngIf="checkAllStepsCompleted" class="steps-complete-message">
+    <span i18n>¡Felicidades, has completado todos los pasos!</span>
+  </div>
+
   <div class="thermometer-messages">
     <span *ngIf="getGoalPercentage() == 0">¡Empecemos!</span>
     <span *ngIf="getGoalPercentage() > 0 && getGoalPercentage() < 25">¡Buen comienzo!</span>

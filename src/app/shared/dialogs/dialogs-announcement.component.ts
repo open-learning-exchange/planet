@@ -101,6 +101,14 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     return member.courseIds.includes(this.courseId);
   }
 
+  checkAllStepsCompleted(): boolean {
+    return (
+      this.userStatus.hasPost &&
+      this.userStatus.surveyComplete &&
+      this.userStatus.joinedCourse
+    );
+  }
+  
   fetchCourseAndNews() {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {

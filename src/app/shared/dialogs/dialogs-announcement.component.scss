@@ -32,6 +32,12 @@
   flex-grow: 1;
 }
 
+
+.steps-complete-message{
+  color: green;
+  font-weight: bold;
+}
+
 .thermometer-message{
   display: flex; 
   margin-bottom: 10px;
