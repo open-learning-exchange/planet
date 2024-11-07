@@ -96,9 +96,7 @@
               <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
                 <ng-container *ngIf="column === 'label'; else dataCell">
                   <planet-label [label]="row[column]">
-                    <span [ngClass]="{'red-label': !isFieldValueExpected(column, row[column])}">
-                      {{ row[column] }}
-                    </span>
+                    <span [ngClass]="{'red-label': !isFieldValueExpected(column, row[column])}">{{ row[column] }}</span>
                   </planet-label>
                 </ng-container>
                 <ng-template #dataCell>
