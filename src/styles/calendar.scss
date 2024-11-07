@@ -21,7 +21,8 @@ full-calendar {
 
     @media only screen and (max-width: #{$screen-sm}) {
       .fc-toolbar-chunk {
-        margin: 1rem 0;
+        margin: 1rem auto;
+        place-items: center;
       }
     }
   }
