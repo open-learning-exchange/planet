@@ -15,7 +15,7 @@
 .steps-container {
   width: 100%;
   max-width: 600px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .step {
@@ -32,9 +32,16 @@
   flex-grow: 1;
 }
 
+
 .steps-complete-message{
   color: green;
   font-weight: bold;
+}
+
+.thermometer-message{
+  display: flex; 
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .thermometer-container {
@@ -69,6 +76,11 @@
   font-size: 12px;
   padding: 2px;
   border-radius: 3px;
+}
+
+.thermometer-label.outside {
+  position: absolute;
+  left: 0.5rem;
 }
 
 .thermometer-goal {
