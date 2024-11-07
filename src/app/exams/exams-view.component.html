@@ -68,7 +68,7 @@
     </div>
     <div class="v-align-center action-buttons">
       <button
-        *ngIf="mode !== 'view'"
+        *ngIf="mode !== 'view' && questionNum < maxQuestions"
         mat-raised-button
         color="primary"
         (click)="nextQuestion()"
@@ -77,7 +77,7 @@
         <ng-container i18n>Submit Answer</ng-container>
       </button>
       <button
-        *ngIf="mode === 'take'"
+        *ngIf="mode === 'take' && questionNum === maxQuestions"
         mat-raised-button
         color="accent"
         (click)="nextQuestion({ isFinish: true })"
