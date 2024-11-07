@@ -200,33 +200,30 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.team === undefined) {
       return of([]);
     }
-    return this.teamsService.getTeamMembers(this.team, true).pipe(
-      switchMap((docs: any[]) => {
-        const src = (member) => {
-          const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
-          if (member.attachmentDoc) {
-            return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
-          }
-          if (member.userDoc && member.userDoc.doc._attachments) {
-            return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
-          }
-          return 'assets/image.png';
-        };
-        const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
-        this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
-        this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
-        this.requests = docsWithName.filter(mem => mem.docType === 'request');
-        this.disableAddingMembers = this.members.length >= this.team.limit;
-        this.finances = docs.filter(doc => doc.docType === 'transaction');
-        this.financesCount = this.finances.length;
-        this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
-        this.reportsCount = this.reports.length;
-        this.setStatus(this.team, this.leader, this.userService.get());
-        this.setTasks(this.tasks);
-        return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-      }),
-      map(resources => this.resources = resources)
-    );
+    return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
+      const src = (member) => {
+        const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
+        if (member.attachmentDoc) {
+          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
+        }
+        if (member.userDoc && member.userDoc.doc._attachments) {
+          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
+        }
+        return 'assets/image.png';
+      };
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
+      this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
+      this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
+      this.requests = docsWithName.filter(mem => mem.docType === 'request');
+      this.disableAddingMembers = this.members.length >= this.team.limit;
+      this.finances = docs.filter(doc => doc.docType === 'transaction');
+      this.financesCount = this.finances.length;
+      this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.reportsCount = this.reports.length;
+      this.setStatus(this.team, this.leader, this.userService.get());
+      this.setTasks(this.tasks);
+      return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
+    }), map(resources => this.resources = resources));
   }
 
   setTasks(tasks = []) {
