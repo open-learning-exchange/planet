@@ -13,6 +13,9 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
+export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur', 'mutugi' ];
+export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d'
+export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1));
 @Component({
   templateUrl: './dialogs-announcement.component.html',
   styleUrls: [ './dialogs-announcement.component.scss' ]
@@ -26,7 +29,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   submissionsSet = new Set();
   groupSummary = [];
   enrolledMembers: any;
-  courseId = '9517e3b45a5bb63e69bb8f269216974d';
+  courseId = challengeCourseId;
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
   userStatus = {
@@ -47,8 +50,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
-
     if (includedCodes.includes(this.configuration.code)) {
       this.configuration = this.stateService.configuration;
       this.initializeData();

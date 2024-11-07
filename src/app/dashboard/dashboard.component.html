@@ -21,7 +21,7 @@
         </mat-icon>
       </span>
     </div>
-    <div class="cursor-pointer" (click)="openChallengeView()" matTooltip="challenge">
+    <div class="cursor-pointer" *ngIf="challengeActive" (click)="openChallengeView()" matTooltip="challenge">
       <mat-icon>stars</mat-icon>
     </div>
   </div>

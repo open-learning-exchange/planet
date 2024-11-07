@@ -8,7 +8,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
-import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -20,6 +19,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   selector: 'planet-community',
@@ -49,7 +49,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  challengeActive: boolean;
   isLoading: boolean;
 
   constructor(
@@ -101,22 +100,16 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
-    this.challengeActive = includedCodes.includes(this.configuration.code) &&
-    ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
+    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
     const popupShown = localStorage.getItem('announcementPopupShown');
 
-    if (this.challengeActive && !popupShown) {
-      this.openAnnouncementDialog();
+    if (challengeActive && !popupShown) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
       localStorage.setItem('announcementPopupShown', 'true');
     }
-  }
-
-  openAnnouncementDialog() {
-    this.dialog.open(DialogsAnnouncementComponent, {
-      width: '50vw',
-      maxHeight: '100vh'
-    });
   }
 
   getCommunityData() {

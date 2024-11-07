@@ -15,7 +15,7 @@ import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
-import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
+import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   displayName: string;
   roles: string[];
   planetName: string;
+  challengeActive = challengePeriod && includedCodes.includes(this.stateService.configuration.code);
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
