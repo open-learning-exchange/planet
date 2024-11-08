@@ -20,7 +20,7 @@ import { showFormErrors } from '../../shared/table-helpers';
   encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
-
+  title: string = $localize`Edit Achievements`; 
   user = this.userService.get();
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
@@ -57,10 +57,18 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.title = $localize`Add Achievements`;
+
     this.profileForm.patchValue(this.user);
     this.usersAchievementsService.getAchievements(this.docInfo._id)
     .pipe(catchError(() => this.usersAchievementsService.getAchievements(this.user._id)))
     .subscribe((achievements) => {
+
+      if (achievements && achievements.achievements && achievements.achievements.length) {
+        this.title = $localize`Add Achievements`; 
+      } else {
+        this.title = $localize`Edit Achievements`;  
+      }
       this.editForm.patchValue(achievements);
       this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
       this.editForm.controls.references = this.fb.array(achievements.references || []);
