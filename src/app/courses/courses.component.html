@@ -104,141 +104,147 @@
     </ng-container>
   </ng-template>
 
-  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
-      <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row" class="table-selection-top">
-          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
-            [checked]="selection.isSelected(row._id)">
-          </mat-checkbox>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="courseTitle">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
-          <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
-              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
-                [checked]="selection.isSelected(element._id)">
-              </mat-checkbox>
-              <span class="margin-lr-5"></span>
-            </ng-container>
-            <ng-container *ngTemplateOutlet="headerText"></ng-container>
-            <ng-template #headerText>
-              <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
-              <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a></ng-template>
-              <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
-                <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
-                <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
-              </span>
-            </ng-template>
-          </h3>
-          <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog && !isForm">
-            <span i18n>myProgress:</span>
-            <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
-          </div>
-          <mat-chip-list #tagsList class="tags-list">
-            <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
-                {{tag.name}}
-              </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
-              </mat-chip>
-            </ng-container>
-          </mat-chip-list>
-          <div class="content">
-            <planet-markdown
-              class="img-wrap"
-              [imageSource]="parent ? 'parent' : 'local'"
-              i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-              element.doc.description">
-            </planet-markdown>
-          </div>
-          <planet-local-status [status]="element.localStatus"></planet-local-status>
-          <button *ngIf="!parent && !isDialog && !isForm" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #resourceMenu="matMenu">
-            <a mat-menu-item *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">
-              <mat-icon>school</mat-icon>
-              <span i18n>Join</span>
-            </a>
-            <a mat-menu-item *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">
-              <mat-icon>clear</mat-icon>
-              <span i18n>Leave</span>
-            </a>
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
-              <mat-icon>feedback</mat-icon>
-              <span i18n>Feedback</span>
-            </a>
-            <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
-            </a>
-            <a mat-menu-item [routerLink]="['/courses/view', element._id]">
-              <mat-icon>visibility</mat-icon>
-              <span i18n>View Course</span>
-            </a>
-            <a *ngIf="user.isUserAdmin" mat-menu-item [routerLink]="['/courses/progress', element._id]">
-              <mat-icon>equalizer</mat-icon>
-              <span i18n>Progress</span>
-            </a>
-            <a mat-menu-item *ngIf="element.canManage" [routerLink]="['/courses/enrolled', element._id]">
-              <mat-icon>person</mat-icon>
-              <span i18n>Enroll List</span>
-            </a>
-            <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element.doc)">
-              <mat-icon>delete_forever</mat-icon>
-              <span i18n>Delete</span>
+  <ng-container *ngIf="!isLoading; else loadingMessage">
+    <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }" *ngIf="!emptyData; else notFoundMessage">
+      <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" class="table-selection-top">
+            <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+              [checked]="selection.isSelected(row._id)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="courseTitle">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
+          <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
+            <h3 class="header">
+              <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+                <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
+                  [checked]="selection.isSelected(element._id)">
+                </mat-checkbox>
+                <span class="margin-lr-5"></span>
+              </ng-container>
+              <ng-container *ngTemplateOutlet="headerText"></ng-container>
+              <ng-template #headerText>
+                <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
+                <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a></ng-template>
+                <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
+                  <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
+                  <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
+                </span>
+              </ng-template>
+            </h3>
+            <div class="course-progress" *ngIf="element.admission && element.doc.steps.length && !parent && !isDialog && !isForm">
+              <span i18n>myProgress:</span>
+              <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
+            </div>
+            <mat-chip-list #tagsList class="tags-list">
+              <ng-container *ngFor="let tag of element.tags">
+                <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
+                  {{tag.name}}
+                </mat-chip>
+                <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
+                  {{subTag.name}}
+                </mat-chip>
+              </ng-container>
+            </mat-chip-list>
+            <div class="content">
+              <planet-markdown
+                class="img-wrap"
+                [imageSource]="parent ? 'parent' : 'local'"
+                i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
+                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                element.doc.description">
+              </planet-markdown>
+            </div>
+            <planet-local-status [status]="element.localStatus"></planet-local-status>
+            <button *ngIf="!parent && !isDialog && !isForm" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+              <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
-              <mat-icon>star</mat-icon>
-              <span i18n>View Ratings</span>
-            </button>
-          </mat-menu>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="info">
-        <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <div>
-            <p><ng-container i18n>Grade Level:</ng-container>{{ " " }}<planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></p>
-            <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
-            <p><ng-container i18n>Language:</ng-container>{{ " " }}<planet-language-label [options]="languages" [label]="element.doc.languages"></planet-language-label></p>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span class="created-label" i18n>Created: </span>
-          {{element.doc.createdDate | date}}
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef class="rating-header"  mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="rating-cell">
-          <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
-    </mat-table>
+            <mat-menu #resourceMenu="matMenu">
+              <a mat-menu-item *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">
+                <mat-icon>school</mat-icon>
+                <span i18n>Join</span>
+              </a>
+              <a mat-menu-item *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">
+                <mat-icon>clear</mat-icon>
+                <span i18n>Leave</span>
+              </a>
+              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+                <mat-icon>feedback</mat-icon>
+                <span i18n>Feedback</span>
+              </a>
+              <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
+                <mat-icon>folder</mat-icon>
+                <span i18n>Manage</span>
+              </a>
+              <a mat-menu-item [routerLink]="['/courses/view', element._id]">
+                <mat-icon>visibility</mat-icon>
+                <span i18n>View Course</span>
+              </a>
+              <a *ngIf="user.isUserAdmin" mat-menu-item [routerLink]="['/courses/progress', element._id]">
+                <mat-icon>equalizer</mat-icon>
+                <span i18n>Progress</span>
+              </a>
+              <a mat-menu-item *ngIf="element.canManage" [routerLink]="['/courses/enrolled', element._id]">
+                <mat-icon>person</mat-icon>
+                <span i18n>Enroll List</span>
+              </a>
+              <button mat-menu-item *ngIf="element.canManage" (click)="deleteClick(element.doc)">
+                <mat-icon>delete_forever</mat-icon>
+                <span i18n>Delete</span>
+              </button>
+              <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
+                <mat-icon>star</mat-icon>
+                <span i18n>View Ratings</span>
+              </button>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="info">
+          <mat-header-cell *matHeaderCellDef i18n> Information </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <div>
+              <p><ng-container i18n>Grade Level:</ng-container>{{ " " }}<planet-language-label [options]="gradeOptions" [label]="element.doc.gradeLevel"></planet-language-label></p>
+              <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
+              <p><ng-container i18n>Language:</ng-container>{{ " " }}<planet-language-label [options]="languages" [label]="element.doc.languages"></planet-language-label></p>
+            </div>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <span class="created-label" i18n>Created: </span>
+            {{element.doc.createdDate | date}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="rating">
+          <mat-header-cell *matHeaderCellDef class="rating-header"  mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="rating-cell">
+            <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      </mat-table>
 
-    <mat-paginator #paginator
-      [pageSize]="50"
-      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
-    </mat-paginator>
-  </div>
+      <mat-paginator #paginator
+        [pageSize]="50"
+        [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
+        (page)="onPaginateChange($event)">
+      </mat-paginator>
+    </div>
+  </ng-container> 
+
+  <ng-template #loadingMessage>
+    <div class="view-container" i18n>Loading Courses</div>
+  </ng-template>
   <ng-template #notFoundMessage>
     <div class="view-container" i18n>No Course Found</div>
   </ng-template>

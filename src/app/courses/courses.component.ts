@@ -43,6 +43,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
+  isLoading: boolean;
   selectedLocal = 0;
   get tableData() {
     return this.courses;
@@ -139,6 +140,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
@@ -160,6 +162,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
       this.emptyData = !this.courses.data.length;
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
