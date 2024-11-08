@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation, OnChanges, ElementRef } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges, ElementRef, AfterViewInit } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
 import mediumZoom from 'medium-zoom';
@@ -9,7 +9,7 @@ import mediumZoom from 'medium-zoom';
   styleUrls: [ './planet-markdown.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class PlanetMarkdownComponent implements OnChanges {
+export class PlanetMarkdownComponent implements OnChanges, AfterViewInit {
 
   @Input() content: string;
   @Input() imageSource: 'parent' | 'local' = 'local';
