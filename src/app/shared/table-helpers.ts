@@ -47,7 +47,7 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 
 export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
-    // Normalize each word
+     // Normalize each word
     const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
     return words.every(word => {
       return filterFields.some(field => {
