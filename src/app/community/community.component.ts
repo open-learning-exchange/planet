@@ -8,6 +8,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -48,6 +49,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  challengeActive: boolean;
+  isLoading: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -68,9 +71,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
+    this.isLoading = true;
     this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -83,6 +88,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    this.communityChallenge();
   }
 
   @HostListener('window:resize') onResize() {
@@ -92,6 +98,25 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  communityChallenge() {
+    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
+    this.challengeActive = includedCodes.includes(this.configuration.code) &&
+    ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
+    const popupShown = localStorage.getItem('announcementPopupShown');
+
+    if (this.challengeActive && !popupShown) {
+      this.openAnnouncementDialog();
+      localStorage.setItem('announcementPopupShown', 'true');
+    }
+  }
+
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '100vh'
+    });
   }
 
   getCommunityData() {
