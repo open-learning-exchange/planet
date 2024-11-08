@@ -19,7 +19,11 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import {
+  DialogsAnnouncementComponent,
+  includedCodes,
+  challengePeriod
+} from '../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   selector: 'planet-community',

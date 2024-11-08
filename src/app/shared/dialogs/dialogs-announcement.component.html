@@ -41,12 +41,8 @@
   <div class="thermometer">
     <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
       <div class="thermometer-label" [ngClass]="{'outside': getGoalPercentage() < 8}">
-        {{ getGoalPercentage() | number:'1.0-2' }}% ({{ '$'+ groupSummary?.length }})
+        ({{ '$'+ groupSummary?.length }})
       </div>
     </div>
-  </div>
-  <div class="thermometer-goal">
-    <span>$0</span>
-    <span>$500</span>
   </div>
 </div>

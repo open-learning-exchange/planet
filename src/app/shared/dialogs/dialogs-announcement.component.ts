@@ -16,6 +16,28 @@ import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi' ];
 export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
 export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1));
+
+@Component({
+  template: `
+    <div class="announcement-container">
+      <img
+        src="https://res.cloudinary.com/mutugiii/image/upload/v1730395098/challenge_horizontal_new_tnco4v.jpg"
+        alt="Issues Challenge"
+        class="announcement-banner"
+      /> ¡Felicidades reto completado!
+    </div>
+  `,
+  styles: [ `
+  .announcement-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  ` ]
+})
+export class DialogsAnnouncementSuccessComponent { }
+
 @Component({
   templateUrl: './dialogs-announcement.component.html',
   styleUrls: [ './dialogs-announcement.component.scss' ]
@@ -89,7 +111,14 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   doSurvey() {
-    this.router.navigate([ `/courses/view/${this.courseId}/step/3` ]);
+    this.router.navigate([ `/courses/view/${this.courseId}/step/3/exam`, {
+      id: this.courseId,
+      stepNum: 3,
+      questionNum: 1,
+      type: 'survey',
+      preview: 'false',
+      examId: '83fe016d8a983de6f7112e761c014545'
+    } ]);
     this.dialogRef.close();
   }
 
@@ -152,9 +181,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
           // Group Summary
           this.enrolledMembers.forEach((member) => {
+            const hasJoinedCourse = this.hasEnrolledCourse(member);
             const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
             const hasPosted = this.hasSubmittedVoice(news, member.name);
-            const hasJoinedCourse = this.hasEnrolledCourse(member);
 
             if (hasCompletedSurvey && hasPosted && hasJoinedCourse) {
               this.groupSummary.push(member);
@@ -162,13 +191,13 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           });
 
           // Individual stats
-          this.userStatus.surveyComplete = this.hasCompletedSurvey(this.currentUserName);
-          this.userStatus.hasPost = this.hasSubmittedVoice(news, this.currentUserName);
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
               this.userStatus.joinedCourse = this.hasEnrolledCourse(member);
             }
           });
+          this.userStatus.surveyComplete = this.hasCompletedSurvey(this.currentUserName);
+          this.userStatus.hasPost = this.hasSubmittedVoice(news, this.currentUserName);
         });
       });
   }
