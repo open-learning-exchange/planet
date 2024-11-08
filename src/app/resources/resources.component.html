@@ -103,118 +103,125 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
-      <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row" class="table-selection-top">
-          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
-            [checked]="selection.isSelected(row._id)">
-          </mat-checkbox>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="title">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
-          <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
-              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
-                [checked]="selection.isSelected(element._id)">
-              </mat-checkbox>
-              <span class="margin-lr-5"></span>
-            </ng-container>
-            <ng-container *ngTemplateOutlet="headerText"></ng-container>
-            <ng-template #headerText>
-              <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
-              <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
-              <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
-                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
-                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+  <ng-container *ngIf="!isLoading; else loadingMessage">
+    <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}" *ngIf="!emptyData; else notFoundMessage">
+      <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" class="table-selection-top">
+            <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+              [checked]="selection.isSelected(row._id)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="title">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
+            <h3 class="header">
+              <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+                <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
+                  [checked]="selection.isSelected(element._id)">
+                </mat-checkbox>
+                <span class="margin-lr-5"></span>
               </ng-container>
-            </ng-template>
-          </h3>
-          <mat-chip-list #tagsList class="tags-list">
-            <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
-                {{tag.name}}
-              </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
-              </mat-chip>
-            </ng-container>
-          </mat-chip-list>
-          <div class="content">
-            <td-markdown
-              i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-                element.doc.description">
-            </td-markdown>
-          </div>
-          <planet-local-status [status]="element.localStatus"></planet-local-status>
-          <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #resourceMenu="matMenu">
-            <ng-container *ngIf="myView !== 'myPersonals'">
-              <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
-                <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
-              </a>
-              <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
-                <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
-              </a>
-              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
-                <mat-icon>feedback</mat-icon>
-                <span i18n>Feedback</span>
-              </a>
-            </ng-container>
-            <ng-container *ngIf="element.canManage && myView !== 'myPersonals'">
-              <a mat-menu-item (click)="updateResource(element)">
-                <mat-icon>folder</mat-icon>
-                <span i18n>Manage</span>
-              </a>
-              <button mat-menu-item (click)="deleteClick(element)">
-                <mat-icon>delete_forever</mat-icon>
-                <span i18n>Delete</span>
-              </button>
-            </ng-container>
-            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
-              <mat-icon>star</mat-icon>
-              <span i18n>View Ratings</span>
+              <ng-container *ngTemplateOutlet="headerText"></ng-container>
+              <ng-template #headerText>
+                <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
+                <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
+                <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
+                  <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
+                  <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+                </ng-container>
+              </ng-template>
+            </h3>
+            <mat-chip-list #tagsList class="tags-list">
+              <ng-container *ngFor="let tag of element.tags">
+                <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
+                  {{tag.name}}
+                </mat-chip>
+                <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
+                  {{subTag.name}}
+                </mat-chip>
+              </ng-container>
+            </mat-chip-list>
+            <div class="content">
+              <td-markdown
+                i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
+                  '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                  element.doc.description">
+              </td-markdown>
+            </div>
+            <planet-local-status [status]="element.localStatus"></planet-local-status>
+            <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+              <mat-icon>more_vert</mat-icon>
             </button>
-            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
-              <mat-icon>file_download</mat-icon>
-              <span i18n>Download file</span>
-            </a>
-          </mat-menu>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span class="created-label" i18n>Created: </span>
-          {{element.doc.createdDate | date}}
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef class="rating-header" mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="rating-cell">
-          <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
-    </mat-table>
-    <mat-paginator #paginator
-      [pageSize]="50"
-      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
-    </mat-paginator>
-  </div>
+            <mat-menu #resourceMenu="matMenu">
+              <ng-container *ngIf="myView !== 'myPersonals'">
+                <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
+                  <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
+                </a>
+                <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
+                  <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
+                </a>
+                <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
+                  <mat-icon>feedback</mat-icon>
+                  <span i18n>Feedback</span>
+                </a>
+              </ng-container>
+              <ng-container *ngIf="element.canManage && myView !== 'myPersonals'">
+                <a mat-menu-item (click)="updateResource(element)">
+                  <mat-icon>folder</mat-icon>
+                  <span i18n>Manage</span>
+                </a>
+                <button mat-menu-item (click)="deleteClick(element)">
+                  <mat-icon>delete_forever</mat-icon>
+                  <span i18n>Delete</span>
+                </button>
+              </ng-container>
+              <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
+                <mat-icon>star</mat-icon>
+                <span i18n>View Ratings</span>
+              </button>
+              <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
+                <mat-icon>file_download</mat-icon>
+                <span i18n>Download file</span>
+              </a>
+            </mat-menu>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="createdDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <span class="created-label" i18n>Created: </span>
+            {{element.doc.createdDate | date}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="rating">
+          <mat-header-cell *matHeaderCellDef class="rating-header" mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="rating-cell">
+            <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator
+        [pageSize]="50"
+        [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
+        (page)="onPaginateChange($event)">
+      </mat-paginator>
+    </div>
+  </ng-container>
+  
+  <ng-template #loadingMessage>
+    <div class="view-container" i18n>Loading Resources...</div>
+  </ng-template>
+
   <ng-template #notFoundMessage>
     <div class="view-container" i18n>No Resource Found</div>
   </ng-template>
