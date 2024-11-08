@@ -11,6 +11,7 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
+import { UserStatusService } from '../user-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi' ];
@@ -54,11 +55,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   courseId = challengeCourseId;
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
-  userStatus = {
-    joinedCourse: false,
-    surveyComplete: false,
-    hasPost: false,
-  };
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -68,7 +64,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private newsService: NewsService,
     private stateService: StateService,
     private submissionsService: SubmissionsService,
-    private userService: UserService
+    private userService: UserService,
+    private userStatusService: UserStatusService
   ) {}
 
   ngOnInit() {
@@ -192,13 +189,13 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           });
 
           // Individual stats
+          this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
+          this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
-              this.userStatus.joinedCourse = this.hasEnrolledCourse(member);
+              this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
             }
           });
-          this.userStatus.surveyComplete = this.hasCompletedSurvey(this.currentUserName);
-          this.userStatus.hasPost = this.hasSubmittedVoice(news, this.currentUserName);
         });
       });
   }
@@ -206,5 +203,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   getGoalPercentage(): number {
     const goal = 500;
     return (this.groupSummary?.length / goal) * 100;
+  }
+
+  getStatus(key: string) {
+    return this.userStatusService.getStatus(key);
   }
 }

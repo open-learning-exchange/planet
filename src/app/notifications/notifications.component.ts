@@ -8,7 +8,10 @@ import { Subject } from 'rxjs';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
+import { UserStatusService } from '../shared/user-status.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -23,11 +26,14 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   notificationStatus = [ 'All', 'Read', 'Unread' ];
   filter = { 'status': '' };
   anyUnread = true;
+  challengeActive: boolean;
 
   constructor(
+    private dialog: MatDialog,
     private couchService: CouchService,
     private userService: UserService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private userStatusService: UserStatusService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -87,5 +93,15 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   readAllNotification() {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
+  }
+
+  openAnnouncementDialog() {
+    this.challengeActive = ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
+    if (this.challengeActive) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    }
   }
 }

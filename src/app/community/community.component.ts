@@ -21,9 +21,11 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import {
   DialogsAnnouncementComponent,
+  DialogsAnnouncementSuccessComponent,
   includedCodes,
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
+import { UserStatusService } from '../shared/user-status.service';
 
 @Component({
   selector: 'planet-community',
@@ -67,7 +69,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private userStatusService: UserStatusService,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -108,12 +111,44 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const popupShown = localStorage.getItem('announcementPopupShown');
 
     if (challengeActive && !popupShown) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
+      this.openAnnouncementDialog();
       localStorage.setItem('announcementPopupShown', 'true');
     }
+  }
+
+  openAnnouncementDialog() {
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '100vh'
+    }).afterClosed().subscribe(() => {
+      if (!this.userStatusService.getCompleteChallenge()) {
+        this.sendChallengeNotification(this.user).subscribe(
+          (response) => {
+            console.log('Challenge notification sent successfully:', response);
+          },
+          (error) => {
+            console.error('Error sending challenge notification:', error);
+          }
+        );
+      } else {
+        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+          width: '50vw',
+          maxHeight: '100vh'
+        });
+      }
+    });
+  }
+
+  sendChallengeNotification(user) {
+    const data = {
+      'user': user._id,
+      'message': $localize`You still have a challenge to complete.`,
+      'type': 'challenges',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    return this.couchService.updateDocument('notifications', data);
   }
 
   getCommunityData() {

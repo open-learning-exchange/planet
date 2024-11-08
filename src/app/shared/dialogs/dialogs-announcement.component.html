@@ -8,30 +8,31 @@
   <div class="steps-container">
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.joinedCourse ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
-      <span>Únete al curso <a href="/courses/view/{{ courseId }}">Reto de noviembre</a>.</span>
-      <a *ngIf="!userStatus.joinedCourse" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
-        Únete
+      <span>Únete al curso Reto noviembre.</span>
+      <a *ngIf="!getStatus('joinedCourse')" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
+        Unirse
+
       </a>
     </div>
 
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.surveyComplete ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>¡Encuesta finalizada!</span>
-      <a *ngIf="userStatus.joinedCourse && !userStatus.surveyComplete" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
+      <a *ngIf="getStatus('joinedCourse') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
         Encuesta
       </a>
     </div>
 
     <div class="step">
       <mat-icon color="primary">
-        {{ userStatus.hasPost ? 'check_circle' : 'radio_button_unchecked' }}
+        {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
       </mat-icon>
       <span>Comparte tu opinión en Nuestras Voces.</span>
-      <a *ngIf="userStatus.joinedCourse && userStatus.surveyComplete && !userStatus.hasPost" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
+      <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost')" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
         Voces
       </a>
     </div>
