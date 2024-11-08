@@ -150,7 +150,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       return (
       post.doc.user.name === userName &&
       post.doc.time > this.startDate &&
-      post.doc.time < this.endDate
+      post.doc.time < this.endDate &&
+      !post.doc.replyTo
       );
     });
   }
