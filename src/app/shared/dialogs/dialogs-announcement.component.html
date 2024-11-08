@@ -5,6 +5,20 @@
     class="announcement-banner"
   />
 
+  <div class="thermometer-container">
+    <div class="thermometer">
+      <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
+        <div
+          class="thermometer-label"
+          [ngClass]="{ outside: getGoalPercentage() < 8 }"
+        >
+          ({{ "$" + groupSummary?.length }})
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+
   <div *ngIf="isLoading; else content">
     <mat-spinner></mat-spinner>
   </div>
@@ -43,13 +57,4 @@
       </div>
     </div>
   </ng-template>
-
-  <div class="thermometer-container">
-  <div class="thermometer">
-    <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
-      <div class="thermometer-label" [ngClass]="{'outside': getGoalPercentage() < 8}">
-        ({{ '$'+ groupSummary?.length }})
-      </div>
-    </div>
-  </div>
 </div>

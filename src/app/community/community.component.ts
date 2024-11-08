@@ -110,15 +110,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
     const popupShown = localStorage.getItem('announcementPopupShown');
 
-    if (challengeActive && !this.userStatusService.getCompleteChallenge()) {
-      this.sendChallengeNotification(this.user).subscribe();
-    }
-
     if (challengeActive && !popupShown) {
       this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
         maxHeight: '100vh'
       })
+      if (!this.userStatusService.getCompleteChallenge()) {
+        this.sendChallengeNotification(this.user).subscribe();
+      }
       localStorage.setItem('announcementPopupShown', 'true');
     }
   }

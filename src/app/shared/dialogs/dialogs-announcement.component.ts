@@ -13,7 +13,6 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
 import { UserStatusService } from '../user-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
-import { error } from 'console';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi' ];
 export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
