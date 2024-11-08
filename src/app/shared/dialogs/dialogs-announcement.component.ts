@@ -13,6 +13,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
 import { UserStatusService } from '../user-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
+import { error } from 'console';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi' ];
 export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
@@ -55,6 +56,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   courseId = challengeCourseId;
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
+  isLoading = true;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -72,6 +74,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     if (includedCodes.includes(this.configuration.code)) {
       this.configuration = this.stateService.configuration;
       this.initializeData();
+    } else {
+      this.isLoading = false;
     }
   }
 
@@ -203,8 +207,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
               this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
             }
           });
-        });
-      });
+          this.isLoading = false;
+        }, () => this.isLoading = false);
+      }, () => this.isLoading = false);
   }
 
   getGoalPercentage(): number {
