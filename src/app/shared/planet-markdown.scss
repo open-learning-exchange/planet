@@ -20,3 +20,13 @@ planet-markdown.img-resize td-markdown.td-markdown {
     max-width: 50%;
   }
 }
+
+.medium-zoom-image {
+  z-index: 1000;
+  background: #000;
+}
+
+.medium-zoom-overlay {
+  z-index: 999 !important; /* Ensure the overlay is above all other elements */
+  background-color: rgba(0, 0, 0, 0.8); /* Customize the overlay color */
+}
