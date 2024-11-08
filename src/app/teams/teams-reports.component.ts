@@ -47,13 +47,16 @@ export class TeamsReportsComponent implements DoCheck {
     }
   }
 
-  openAddReportDialog(oldReport = {}) {
+  openAddReportDialog(oldReport = {}, isEdit:boolean) {
+    const actionType = isEdit ? 'Edit' : 'Add';
+    const dialogTitle = $localize`${actionType} Report`;
+
     this.couchService.currentTime().subscribe((time: number) => {
       const currentDate = new Date(time);
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
       const lastMonthEnd = currentDate.setDate(0);
       this.dialogsFormService.openDialogsForm(
-        $localize`Edit Report`,
+        dialogTitle,
         [
           { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
           { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
