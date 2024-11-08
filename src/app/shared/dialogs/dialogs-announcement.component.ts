@@ -49,7 +49,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
   teamId = planetAndParentId(this.stateService.configuration);
-  submissionsSet = new Set();
+  submissionsSet = new Set<{ name: string; status: string; time: Date }>();
   groupSummary = [];
   enrolledMembers: any;
   courseId = challengeCourseId;
@@ -124,6 +124,28 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
+  hasCompletedSurvey(userName: string) {
+    return Array.from(this.submissionsSet).some(submission => submission.name === userName && submission.status === 'complete');
+  }
+
+  hasSubmittedVoice(news: any[], userName: string) {
+    const userSubmission = Array.from(this.submissionsSet).find((user: { name: string }) => user.name === userName);
+    return news.some(post => {
+      return (
+      post.doc.user.name === userName &&
+      post.doc.time > this.startDate &&
+      post.doc.time < this.endDate &&
+      post.doc.time > userSubmission?.time &&
+      userSubmission?.status === 'complete' &&
+      !post.doc.replyTo
+      );
+    });
+  }
+
+  hasEnrolledCourse(member) {
+    return member.courseIds.includes(this.courseId);
+  }
+
   fetchEnrolled() {
     this.couchService.findAll('shelf', {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
@@ -136,25 +158,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         };
       });
     });
-  }
-
-  hasCompletedSurvey(userName: string) {
-    return this.submissionsSet.has(userName);
-  }
-
-  hasSubmittedVoice(news: any[], userName: string) {
-    return news.some(post => {
-      return (
-      post.doc.user.name === userName &&
-      post.doc.time > this.startDate &&
-      post.doc.time < this.endDate &&
-      !post.doc.replyTo
-      );
-    });
-  }
-
-  hasEnrolledCourse(member) {
-    return member.courseIds.includes(this.courseId);
   }
 
   fetchCourseAndNews() {
@@ -175,7 +178,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
-          this.submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
+          this.submissionsSet = new Set(filteredSubmissions.map(submission => ({
+            name: submission.user.name,
+            status: submission.status,
+            time: submission.lastUpdateTime
+          })));
 
           // Group Summary
           this.enrolledMembers.forEach((member) => {

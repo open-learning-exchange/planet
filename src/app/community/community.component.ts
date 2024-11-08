@@ -110,39 +110,23 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
     const popupShown = localStorage.getItem('announcementPopupShown');
 
+    if (challengeActive && !this.userStatusService.getCompleteChallenge()) {
+      this.sendChallengeNotification(this.user).subscribe();
+    }
+
     if (challengeActive && !popupShown) {
-      this.openAnnouncementDialog();
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      })
       localStorage.setItem('announcementPopupShown', 'true');
     }
-  }
-
-  openAnnouncementDialog() {
-    this.dialog.open(DialogsAnnouncementComponent, {
-      width: '50vw',
-      maxHeight: '100vh'
-    }).afterClosed().subscribe(() => {
-      if (!this.userStatusService.getCompleteChallenge()) {
-        this.sendChallengeNotification(this.user).subscribe(
-          (response) => {
-            console.log('Challenge notification sent successfully:', response);
-          },
-          (error) => {
-            console.error('Error sending challenge notification:', error);
-          }
-        );
-      } else {
-        this.dialog.open(DialogsAnnouncementSuccessComponent, {
-          width: '50vw',
-          maxHeight: '100vh'
-        });
-      }
-    });
   }
 
   sendChallengeNotification(user) {
     const data = {
       'user': user._id,
-      'message': $localize`You still have a challenge to complete.`,
+      'message': `El reto está en`,
       'type': 'challenges',
       'priority': 1,
       'status': 'unread',
