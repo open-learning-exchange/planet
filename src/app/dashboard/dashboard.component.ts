@@ -15,6 +15,7 @@ import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -209,6 +210,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         ...badgesCourses, [course.doc.foundation || 'none']: [ ...(badgesCourses[course.doc.foundation || 'none'] || []), course ]
       }), { none: [] });
     this.badgeGroups = [ ...foundations, 'none' ].filter(group => this.badgesCourses[group] && this.badgesCourses[group].length);
+  }
+
+  openChallengeView() {
+    this.dialog.open(DialogsAnnouncementComponent, {
+      width: '50vw',
+      maxHeight: '100vh'
+    });
   }
 
 }
