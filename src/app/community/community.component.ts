@@ -327,10 +327,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.teamsService.updateTeam({ ...this.team, description: description.text }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(newTeam => {
+        const previousDescription = Boolean(this.team.description);
         this.team = newTeam;
         this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+        const msg = newTeam.description
+      ? (previousDescription ? $localize`Description edited` : $localize`Description added`)
+      : $localize`Description deleted`;
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage(msg);
       });
-      this.dialogsFormService.closeDialogsForm();
     };
     this.dialogsFormService.openDialogsForm(
       this.team.description ? $localize`Edit Description` : $localize`Add Description`,

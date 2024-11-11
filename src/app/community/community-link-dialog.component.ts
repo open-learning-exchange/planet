@@ -6,6 +6,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
 import { ValidatorService } from '../validators/validator.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
@@ -25,6 +26,7 @@ export class CommunityLinkDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private teamsService: TeamsService,
+    private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
     this.linkForm = this.fb.group({
@@ -50,10 +52,17 @@ export class CommunityLinkDialogComponent {
   }
 
   linkSubmit() {
+    const linkTitle = this.linkForm.get('title')?.value;
     this.teamsService.createServicesLink(this.linkForm.value).pipe(
       switchMap(() => this.data.getLinks())
-    ).subscribe(() => {
-      this.dialogRef.close();
+    ).subscribe({
+      next: () => {
+        this.dialogRef.close();
+        this.planetMessageService.showMessage(`${linkTitle} added successfully`);
+      },
+      error: () => {
+        this.planetMessageService.showAlert(`Error adding link`);
+      }
     });
   }
 
