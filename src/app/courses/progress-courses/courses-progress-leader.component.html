@@ -19,7 +19,7 @@
       </mat-select>
     </mat-form-field>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
-    <button class="margin-lr-10" color="accent" mat-raised-button i18n (click)="exportChartData()">
+    <button *ngIf="chartData?.length" class="margin-lr-10" color="accent" mat-raised-button i18n (click)="exportChartData()">
       Export
     </button>
   </mat-toolbar>
