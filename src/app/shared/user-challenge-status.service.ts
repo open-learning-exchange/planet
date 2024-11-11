@@ -12,13 +12,10 @@ export class UserChallengeStatusService {
 
   updateStatus(key: string, value: boolean) {
     this.userStatus[key] = value;
-    console.log(`Updated ${key} to ${value}. Current status:`, { ...this.userStatus });
   }
 
   getCompleteChallenge(): boolean {
-    console.log('Checking completion with status:', { ...this.userStatus });
     const complete = Object.values(this.userStatus).every(value => value === true);
-    console.log('Completion result:', complete);
     return complete;
   }
 
@@ -29,5 +26,12 @@ export class UserChallengeStatusService {
   printStatus(): any {
     return this.userStatus;
   }
-}
 
+  resetStatus() {
+    this.userStatus = {
+      joinedCourse: false,
+      surveyComplete: false,
+      hasPost: false
+    };
+  }
+}

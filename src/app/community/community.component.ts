@@ -209,7 +209,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
-      this.dialogsFormService.closeDialogsForm()
+      this.dialogsFormService.closeDialogsForm();
       if (
         this.userStatusService.getStatus('joinedCourse') &&
         this.userStatusService.getStatus('surveyComplete') &&
