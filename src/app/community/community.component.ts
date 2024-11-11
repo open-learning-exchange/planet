@@ -108,9 +108,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   communityChallenge() {
     const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
-    const popupShown = localStorage.getItem('announcementPopupShown');
 
-    if (challengeActive && !popupShown) {
+    if (challengeActive) {
       this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
         maxHeight: '100vh'
@@ -118,7 +117,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
       if (!this.userStatusService.getCompleteChallenge()) {
         this.sendChallengeNotification(this.user).subscribe();
       }
-      localStorage.setItem('announcementPopupShown', 'true');
     }
   }
 
