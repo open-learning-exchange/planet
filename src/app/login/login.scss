@@ -180,4 +180,47 @@
       margin-top: 10px;
     }
   }
+  .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #bdb7b724;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+  }
+
+  .social-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .social-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: white;
+  }
+
+  .twitter-button {
+    background-color: #1DA1F2;
+  }
+  .youtube-button {
+    background-color: #c4302b ;
+  }
+  .facebook-button {
+    background-color: #4267B2;
+  }
+  .instagram-button {
+    background: #833ab4;
+    background: linear-gradient(
+        to right,
+        #833ab4,#fd1d1d,#fcb045
+    );
+  }
 }

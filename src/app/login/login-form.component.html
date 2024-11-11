@@ -32,3 +32,13 @@
     <ng-template #registerMember i18n>Become a member</ng-template>
   </a>
 </form>
+
+<footer class="footer">
+  <div class="social-buttons">
+    <ng-container *ngFor="let media of getSocialMediaUrls()">
+      <a [href]="media.url" target="_blank" rel="noopener noreferrer">
+        <button class="social-button {{media.platform | lowercase}}-button">{{ media.platform }}</button>
+      </a>
+    </ng-container>
+  </div>
+</footer>
