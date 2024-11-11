@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
     providedIn: 'root'
 })
-export class UserStatusService {
+export class UserChallengeStatusService {
   userStatus = {
     joinedCourse: false,
     surveyComplete: false,

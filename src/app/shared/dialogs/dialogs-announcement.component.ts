@@ -11,7 +11,7 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
-import { UserStatusService } from '../user-status.service';
+import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi' ];
@@ -25,17 +25,11 @@ export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date
         src="https://res.cloudinary.com/mutugiii/image/upload/v1730395098/challenge_horizontal_new_tnco4v.jpg"
         alt="Issues Challenge"
         class="announcement-banner"
-      /> ¡Felicidades reto completado!
+      />
+      <p class="success-msg">¡Felicidades reto completado!</p>
     </div>
   `,
-  styles: [ `
-  .announcement-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  ` ]
+  styleUrls: [ './dialogs-announcement.component.scss' ]
 })
 export class DialogsAnnouncementSuccessComponent { }
 
@@ -66,7 +60,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private userStatusService: UserStatusService
+    private userStatusService: UserChallengeStatusService
   ) {}
 
   ngOnInit() {
@@ -194,7 +188,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
             const hasPosted = this.hasSubmittedVoice(news, member.name);
 
             if (hasCompletedSurvey && hasPosted && hasJoinedCourse) {
-              this.groupSummary.push(member);
+              if (!this.groupSummary.some(m => m.name === member.name)) {
+                this.groupSummary.push(member);
+              }
             }
           });
 

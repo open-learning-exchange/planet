@@ -25,7 +25,7 @@ import {
   includedCodes,
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
-import { UserStatusService } from '../shared/user-status.service';
+import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 
 @Component({
   selector: 'planet-community',
@@ -69,7 +69,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private userStatusService: UserStatusService,
+    private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -114,7 +114,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
         maxHeight: '100vh'
-      })
+      });
       if (!this.userStatusService.getCompleteChallenge()) {
         this.sendChallengeNotification(this.user).subscribe();
       }
@@ -208,7 +208,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => this.dialogsFormService.closeDialogsForm());
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm()
+      if (
+        this.userStatusService.getStatus('joinedCourse') &&
+        this.userStatusService.getStatus('surveyComplete') &&
+        !this.userStatusService.getStatus('hasPost')
+      ) {
+        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+          width: '50vw',
+          maxHeight: '100vh'
+        });
+        this.userStatusService.updateStatus('hasPost', true);
+      }
+    });
   }
 
   sendNotifications(user, currentUser) {
