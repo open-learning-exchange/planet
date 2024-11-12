@@ -1,88 +1,69 @@
 @import '../../variables';
 
 :host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+}
 
-  $cell-size: 45px;
-  $column-gap: 4px;
-
-  grid-template-areas:
-    "total index user"
-    ". . usertotal";
-  grid-template-columns: fit-content($cell-size) $cell-size 1fr;
-  grid-template-rows: fit-content(calc(#{$view-container-height} - 2rem - (#{$cell-size} * 3))) calc(#{$cell-size} * 3);
-
-  &, .errors-container {
-    display: grid;
-    grid-auto-columns: $cell-size;
-    grid-auto-flow: column;
-  }
-
-  .errors {
-    display: grid;
-    grid-auto-rows: $cell-size;
-    div, planet-avatar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-
-  .errors-total, .errors-index, .errors-user-total {
-    overflow: hidden;
-  }
-
-  .anchor-label {
-    position: sticky;
-    top: 0;
-    background-color: $white;
-    z-index: 20;
-  }
-
-  .errors-total {
-    grid-area: total;
-  }
-
-  .errors-index {
-    grid-area: index;
-  }
+.progress-chart-container {
+  display: grid;
+  max-width: 1200px;
+  width: 100%;
+  grid-template-columns: 1fr 1fr; // Two main columns for "Total Errors" and "Steps"
+  grid-template-rows: auto auto; // Rows for the columns and user data row below
+  gap: 1rem;
+  background-color: $white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
   .errors-user {
-    grid-area: user;
-    margin-top: $cell-size;
-    overflow: scroll;
-  }
-
-  .errors-user::-webkit-scrollbar {
-    height: 0;
-    width: 0;
+    grid-column: 1 / -1; // Span across both columns
+    background-color: transparent; // Ensure no background color is applied
   }
 
   .errors-user-total {
-    grid-area: usertotal;
+    grid-column: 1 / -1; // Span across both columns
+    background-color: transparent; // Ensure no background color is applied
+  }
+}
+
+.errors-total, .errors-index, .errors-user, .errors-user-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent; // Ensure no background color
+}
+
+.anchor-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  background-color: transparent; // Ensure no background color
+}
+
+.errors, .errors div, .errors-user div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+  text-align: center;
+  background-color: transparent; // Ensure no background color
+}
+
+/* Responsive adjustments */
+@media (max-width: $screen-sm) {
+  .progress-chart-container {
+    grid-template-columns: 1fr; // Stack columns vertically on smaller screens
+    gap: 0.5rem;
   }
 
-  .border-bottom {
-    position: relative;
+  .errors-user, .errors-user-total {
+    width: 100%; // Ensure full width for the user data section
   }
-
-  .border-bottom:before {
-    content:"";
-    position: absolute;
-    top: 0px;
-    height: $cell-size;
-    width: calc(#{$cell-size} + #{$column-gap});
-    border-bottom: 3px solid $grey;
-    z-index: 10;
-  }
-
-  .wrap-content {
-    min-width: 0;
-  }
-
-  .wrap-content p {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
 }
