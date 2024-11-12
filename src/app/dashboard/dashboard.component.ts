@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
@@ -21,8 +21,9 @@ import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announce
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  user: any;
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   displayName: string;
@@ -38,6 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   examsCount = 0;
   leaderIds = [];
   onDestroy$ = new Subject<void>();
+  showBanner = false;
 
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
@@ -75,8 +77,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const user = this.userService.get();
-    this.displayName = user.firstName !== undefined ? user.firstName + ' ' + user.lastName : user.name;
+    this.user = this.userService.get();
+    this.displayName = this.user.firstName !== undefined ? this.user.firstName + ' ' + this.user.lastName : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
@@ -89,6 +91,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ).subscribe((res: any) => {
         this.visits = res.length;
       });
+  }
+
+  ngAfterViewInit() {
+    this.reminderBanner();
   }
 
   ngOnDestroy() {
@@ -219,4 +225,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  reminderBanner() {
+    if (!this.checkIfProfileIsCreated()) {
+      const bannerShown = localStorage.getItem('bannerShown');
+      this.showBanner = !bannerShown;
+
+      if (!bannerShown) {
+        localStorage.setItem('bannerShown', 'true');
+      }
+    }
+  }
+
+  closeBanner() {
+    this.showBanner = false;
+  }
+
+  checkIfProfileIsCreated(): boolean {
+    const user = this.user;
+    if (user.firstName && user.lastName && user.email && user.birthDate &&
+        user.gender && user.language && user.phoneNumber && user.level) {
+      return true;
+    }
+    return false;
+  }
 }

@@ -178,6 +178,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       this.userService.unset();
       this.router.navigate([ '/login' ], {});
     });
+    localStorage.removeItem('bannerShown');
   }
 
   getNotification() {

@@ -1,3 +1,7 @@
+<div *ngIf="showBanner" class="alert">
+  <span class="closebtn" (click)="closeBanner()">&times;</span>
+  Please complete your profile to enjoy full features!
+</div>
 <mat-card class="horizontal">
   <img [src]="profileImg">
   <div class="dashboard-name">
