@@ -35,6 +35,14 @@ $exam-table-col-width: 100px;
   overflow-x: auto;
 }
 
+.header-items{
+  margin-left: 1.5rem;
+}
+
+.header-items{
+  margin-left: 1.6rem;
+}
+
 mat-table {
   width: max-content;
 
@@ -49,7 +57,7 @@ mat-table {
   }
 
   mat-cell{
-    margin-left: 2rem;
+    margin-left: 3rem;
   }
 
 }
