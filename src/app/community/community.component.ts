@@ -110,13 +110,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
 
     if (challengeActive) {
-      this.dialog.open(DialogsAnnouncementComponent, {
+      const dialogRef = this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
         maxHeight: '100vh'
       });
-      if (!this.userStatusService.getCompleteChallenge()) {
-        this.sendChallengeNotification(this.user).subscribe();
-      }
+      dialogRef.afterClosed().subscribe(() => {
+        if (!this.userStatusService.getCompleteChallenge()) {
+          this.sendChallengeNotification(this.user).subscribe();
+        }
+      });
     }
   }
 
