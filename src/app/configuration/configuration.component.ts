@@ -106,7 +106,8 @@ export class ConfigurationComponent implements OnInit {
       createdDate: this.couchService.datePlaceholder,
       autoAccept: true,
       alwaysOnline: false,
-      betaEnabled: 'off'
+      betaEnabled: 'off',
+      devNation: false
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],
@@ -182,27 +183,15 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    const httpRequest = (protocol) => {
-      return this.couchService.post(
-        'communityregistrationrequests/_find',
-        findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0),
-        { domain: environment.centerAddress, protocol }
-      );
-    };
-
-    httpRequest(environment.centerProtocol).subscribe(
-      (data) => {
+    this.couchService.post('communityregistrationrequests/_find',
+      findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
+      {
+        domain: environment.centerAddress,
+        protocol: this.configurationFormGroup.get('devNation').value ? 'http' : environment.centerProtocol
+      })
+      .subscribe((data) => {
         this.nations = data.docs;
-      },
-      (error) => {
-        httpRequest('http').subscribe(
-          (data) => {
-            this.nations = data.docs;
-          },
-          (err) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`)
-        );
-      }
-    );
+      }, (error) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`));
   }
 
 
