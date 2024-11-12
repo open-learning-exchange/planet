@@ -107,9 +107,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
-        this.pageType = 'Edit';
+        this. = 'Edit';
       } else {
-        this.pageType = 'Add'; 
+        this. = 'Add'; 
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
@@ -199,7 +199,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ])
     )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = courseInfo.courseTitle + (this.pageType === 'Update' ? $localize` Updated Successfully` : $localize` Added`);
+      const message = courseInfo.courseTitle + (this.pageType === 'Edit' ? $localize` Updated Successfully` : $localize` Added`);
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -231,7 +231,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.setDocumentInfo(response.doc);
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
-    if (this.pageType === 'Add new') {
+    if (this.pageType === 'Add') {
       this.router.navigate([ '../update/', this.courseId ], { relativeTo: this.route, replaceUrl: true });
     }
   }
