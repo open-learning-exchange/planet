@@ -23,14 +23,14 @@
     </ng-container>
   </div>
 
-  <!-- User Data Row -->
-  <div class="errors-user">
-    <div class="errors" *ngFor="let set of sets">
-      <div *ngFor="let item of set?.items; index as i"
-           class="border-bottom"
-           [ngClass]="{'primary-color': item.fill, 'cursor-pointer': item.clickable}"
+  <!-- User Data Column -->
+  <div class="errors errors-user">
+    <div class="anchor-label">User Data</div>
+    <div *ngFor="let set of sets; let i = index">
+      <div *ngIf="set?.items[i]" class="border-bottom"
+           [ngClass]="{'primary-color': set.items[i].fill, 'cursor-pointer': set.items[i].clickable}"
            (click)="dataClick($event, set, i)">
-        {{ item.number }}
+        {{ set.items[i]?.number }}
       </div>
     </div>
   </div>

@@ -12,48 +12,45 @@
   display: grid;
   max-width: 1200px;
   width: 100%;
-  grid-template-columns: 1fr 1fr; // Two main columns for "Total Errors" and "Steps"
-  grid-template-rows: auto auto; // Rows for the columns and user data row below
+  grid-template-columns: 1fr 1fr 1fr; // Ensure there are three columns for Steps, Total Errors, and User Data
   gap: 1rem;
   background-color: $white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-
-  .errors-user {
-    grid-column: 1 / -1; // Span across both columns
-    background-color: transparent; // Ensure no background color is applied
-  }
-
-  .errors-user-total {
-    grid-column: 1 / -1; // Span across both columns
-    background-color: transparent; // Ensure no background color is applied
-  }
 }
 
-.errors-total, .errors-index, .errors-user, .errors-user-total {
+.errors-index, .errors-total, .errors-user {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: transparent; // Ensure no background color
+  background-color: transparent;
+  width: 100%; // Ensure full width alignment for columns
+}
+
+.errors-user-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  grid-column: 1 / span 3; // Span across all columns for totals
+  background-color: transparent;
 }
 
 .anchor-label {
   font-weight: bold;
   margin-bottom: 0.5rem;
   text-align: center;
-  background-color: transparent; // Ensure no background color
 }
 
-.errors, .errors div, .errors-user div {
-  display: flex;
+.errors div, .errors-user div {
+  display: flex; // Use flex to make row heights consistent
   justify-content: center;
   align-items: center;
   padding: 0.75rem;
   border-bottom: 1px solid #e0e0e0;
   width: 100%;
   text-align: center;
-  background-color: transparent; // Ensure no background color
+  height: 3rem; // Set a consistent height for each row
 }
 
 /* Responsive adjustments */
@@ -64,6 +61,6 @@
   }
 
   .errors-user, .errors-user-total {
-    width: 100%; // Ensure full width for the user data section
+    width: 100%; // Ensure full width for the user data section on small screens
   }
 }
