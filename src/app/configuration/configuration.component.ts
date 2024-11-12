@@ -182,13 +182,29 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
-    this.couchService.post('communityregistrationrequests/_find',
-      findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
-      { domain: environment.centerAddress, protocol: environment.centerProtocol })
-      .subscribe((data) => {
+    const httpRequest = (protocol) => {
+      return this.couchService.post(
+        'communityregistrationrequests/_find',
+        findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0),
+        { domain: environment.centerAddress, protocol }
+      );
+    };
+
+    httpRequest(environment.centerProtocol).subscribe(
+      (data) => {
         this.nations = data.docs;
-      }, (error) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`));
+      },
+      (error) => {
+        httpRequest('http').subscribe(
+          (data) => {
+            this.nations = data.docs;
+          },
+          (err) => this.planetMessageService.showAlert($localize`There is a problem getting the list of nations`)
+        );
+      }
+    );
   }
+
 
   onChange(selectedValue: string) {
     this.nationOrCommunity = selectedValue;
