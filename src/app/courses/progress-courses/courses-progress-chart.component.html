@@ -13,7 +13,7 @@
   <!-- Total Errors Column -->
   <div class="errors errors-total">
     <ng-container *ngIf="showTotals">
-      <div class="anchor-label">Total Errors</div>
+      <div class="anchor-label">Errors</div>
       <div *ngFor="let total of horizTotals; index as i"
            class="border-bottom accent-color"
            [ngClass]="{'cursor-pointer': total.clickable}"
@@ -23,28 +23,17 @@
     </ng-container>
   </div>
 
-  <!-- User Data Column -->
-  <div class="errors errors-user">
-    <div class="anchor-label">User Data</div>
-    <div *ngFor="let set of sets; let i = index">
-      <div *ngIf="set?.items[i]" class="border-bottom"
-           [ngClass]="{'primary-color': set.items[i].fill, 'cursor-pointer': set.items[i].clickable}"
-           (click)="dataClick($event, set, i)">
-        {{ set.items[i]?.number }}
-      </div>
-    </div>
-  </div>
-
   <!-- Totals and Labels Row -->
   <div class="errors-user-total">
     <div class="errors" *ngFor="let set of sets">
+      <div class="label-over-total">Total Errors</div> <!-- Label above total -->
       <div>{{ set.total }}</div>
       <planet-avatar *ngIf="showAvatar"
                      class="cursor-pointer"
                      (click)="labelClick(set)"
                      [username]="set.label"
                      [planetCode]="set.planetCode"
-                     imgClass="profile-image-large"></planet-avatar>
+                     imgClass="profile-image-update"></planet-avatar>
       <div class="wrap-content cursor-pointer"
            (click)="labelClick(set)">
         <p>{{ set.label }}</p>

@@ -12,45 +12,66 @@
   display: grid;
   max-width: 1200px;
   width: 100%;
-  grid-template-columns: 1fr 1fr 1fr; // Ensure there are three columns for Steps, Total Errors, and User Data
+  grid-template-columns: 1fr 1fr; // Two main columns for "Total Errors" and "Steps"
+  grid-template-rows: auto auto; // Rows for the columns and user data row below
   gap: 1rem;
   background-color: $white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+
+  .errors-user-total {
+    grid-column: 1 / -1; // Span across both columns
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent; // Ensure no background color is applied
+    text-align: center; // Center align all content
+
+    .label-over-total {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-align: center; // Center align the label
+      width: 100%; // Ensure it takes full width
+    }
+
+    div {
+      width: 100%; // Ensure the number takes full width
+      text-align: center; // Center the number within the full width
+    }
+
+    .total-number {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%; // Make sure it's the same width as other numbers
+      padding: 0.75rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+  }
 }
 
-.errors-index, .errors-total, .errors-user {
+.errors-total, .errors-index, .errors-user-total {
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: transparent;
-  width: 100%; // Ensure full width alignment for columns
 }
 
-.errors-user-total {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  grid-column: 1 / span 3; // Span across all columns for totals
-  background-color: transparent;
-}
-
-.anchor-label {
+.anchor-label, .label-over-total, .label-over-username {
   font-weight: bold;
   margin-bottom: 0.5rem;
   text-align: center;
 }
 
-.errors div, .errors-user div {
-  display: flex; // Use flex to make row heights consistent
+.errors div {
+  display: flex;
   justify-content: center;
   align-items: center;
   padding: 0.75rem;
   border-bottom: 1px solid #e0e0e0;
   width: 100%;
   text-align: center;
-  height: 3rem; // Set a consistent height for each row
 }
 
 /* Responsive adjustments */
@@ -60,7 +81,8 @@
     gap: 0.5rem;
   }
 
-  .errors-user, .errors-user-total {
+  .errors-user-total {
     width: 100%; // Ensure full width for the user data section on small screens
+
   }
 }
