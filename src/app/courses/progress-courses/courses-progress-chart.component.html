@@ -2,10 +2,10 @@
   <table class="progress-table">
     <thead>
       <tr>
-        <th>Steps</th>
-        <th *ngIf="showTotals">Errors</th>
+        <th *ngIf="showTotals">{ label, select, Steps {Steps} Quest. {Quest.} other {Steps} }</th>
+        <th>Errors</th>
       </tr>
-    </thead>
+    </thead>    
     <tbody>
       <tr *ngFor="let set of sets; index as i">
         <td data-label="Steps">
