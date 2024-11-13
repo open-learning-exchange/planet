@@ -188,6 +188,8 @@ export class ConfigurationComponent implements OnInit {
 
   getNationList() {
     console.log(this.configurationFormGroup.get('devNation').value);
+    console.log(this.configurationFormGroup.get('devNation').value === 'true' ? 'http' : environment.centerProtocol);
+
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
       {

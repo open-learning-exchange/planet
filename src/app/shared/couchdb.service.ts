@@ -20,6 +20,8 @@ export class CouchService {
   datePlaceholder = new DatePlaceholder();
 
   private setOpts(opts: any = {}) {
+    console.log(opts);
+
     const { domain, protocol, ...httpOpts } = opts;
     return [ domain, protocol, Object.assign({}, this.defaultOpts, httpOpts) || this.defaultOpts ];
   }
