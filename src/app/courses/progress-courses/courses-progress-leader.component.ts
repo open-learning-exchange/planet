@@ -34,8 +34,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedPlanetCode: string;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isMobile = false; 
-  showFiltersRow = false; 
+  isMobile = false;
+  showFiltersRow = false;
 
   constructor(
     private router: Router,
