@@ -43,7 +43,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
   teamId = planetAndParentId(this.stateService.configuration);
-  submissionsSet = new Set<{ name: string; status: string; time: Date }>();
+  submissions = [];
   groupSummary = [];
   enrolledMembers: any;
   courseId = challengeCourseId;
@@ -122,21 +122,27 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasCompletedSurvey(userName: string) {
-    return Array.from(this.submissionsSet).some(submission => submission.name === userName && submission.status === 'complete');
+    return this.submissions.some(submission => submission.name === userName && submission.status === 'complete');
   }
 
   hasSubmittedVoice(news: any[], userName: string) {
-    const userSubmission = Array.from(this.submissionsSet).find((user: { name: string }) => user.name === userName);
-    return news.some(post => {
-      return (
+    const userSubmission = this.submissions.find((user: { name: string }) => user.name === userName);
+    const uniqueDays = new Set<string>();
+
+    news.forEach(post => {
+      if (
       post.doc.user.name === userName &&
       post.doc.time > this.startDate &&
       post.doc.time < this.endDate &&
       post.doc.time > userSubmission?.time &&
       userSubmission?.status === 'complete' &&
       !post.doc.replyTo
-      );
+      ) {
+        uniqueDays.add(new Date(post.doc.time).toDateString());
+      }
     });
+    this.userStatusService.updateStatus('amountEarned', Math.min(uniqueDays.size, 5));
+    return Math.min(uniqueDays.size, 5);
   }
 
   hasEnrolledCourse(member) {
@@ -175,28 +181,34 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
-          this.submissionsSet = new Set(filteredSubmissions.map(submission => ({
+          this.submissions = filteredSubmissions.map(submission => ({
             name: submission.user.name,
             status: submission.status,
             time: submission.lastUpdateTime
-          })));
+          }));
+
 
           // Group Summary
           this.enrolledMembers.forEach((member) => {
             const hasJoinedCourse = this.hasEnrolledCourse(member);
             const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
             const hasPosted = this.hasSubmittedVoice(news, member.name);
+            const amountEarned = this.hasSubmittedVoice(news, member.name);
 
-            if (hasCompletedSurvey && hasPosted && hasJoinedCourse) {
+            if (hasCompletedSurvey && hasPosted && hasJoinedCourse && amountEarned > 0) {
               if (!this.groupSummary.some(m => m.name === member.name)) {
-                this.groupSummary.push(member);
+                this.groupSummary.push({
+                  ...member,
+                  amountEarned
+                });
               }
             }
           });
 
           // Individual stats
+          const amountEarned = this.hasSubmittedVoice(news, this.currentUserName);
           this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
-          this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName));
+          this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName) > 0);
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
               this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
@@ -207,9 +219,14 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       }, () => this.isLoading = false);
   }
 
+  getTotalMoneyEarned(): number {
+    return this.groupSummary.reduce((total, member) => total + member.amountEarned, 0);
+  }
+
   getGoalPercentage(): number {
     const goal = 500;
-    return (this.groupSummary?.length / goal) * 100;
+    const totalMoneyEarned = this.getTotalMoneyEarned();
+    return (totalMoneyEarned / goal) * 100;
   }
 
   getStatus(key: string) {

@@ -7,15 +7,18 @@ export class UserChallengeStatusService {
   userStatus = {
     joinedCourse: false,
     surveyComplete: false,
-    hasPost: false
+    hasPost: false,
+    amountEarned: 0
   };
 
-  updateStatus(key: string, value: boolean) {
+  updateStatus(key: string, value: boolean | number) {
     this.userStatus[key] = value;
   }
 
   getCompleteChallenge(): boolean {
-    const complete = Object.values(this.userStatus).every(value => value === true);
+    const complete = Object.values(this.userStatus).every(
+      (value, index) => index !== 3 && value === true
+    );
     return complete;
   }
 
@@ -31,7 +34,8 @@ export class UserChallengeStatusService {
     this.userStatus = {
       joinedCourse: false,
       surveyComplete: false,
-      hasPost: false
+      hasPost: false,
+      amountEarned: 0
     };
   }
 }

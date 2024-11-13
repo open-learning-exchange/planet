@@ -12,7 +12,7 @@
           class="thermometer-label"
           [ngClass]="{ outside: getGoalPercentage() < 8 }"
         >
-          ({{ "$" + groupSummary?.length }})
+          ({{ "$" + getTotalMoneyEarned() }})
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
         <mat-icon color="primary">
           {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
-        <span>Comparte tu opinión en Nuestras Voces.</span>
+        <span>Comparte tu opinión en Nuestras Voces. <span> - {{getStatus('amountEarned')}}</span> </span>
         <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost')" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
           Voces
         </a>
