@@ -143,7 +143,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
-    this.courses.sortingDataAccessor = commonSortingDataAccessor;
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
@@ -169,6 +168,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
+      this.setupSorting()
     });
   }
 
@@ -198,7 +198,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngAfterViewInit() {
-    this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
     if (this.tagInputComponent) {
       this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
@@ -207,6 +206,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
+  }
+
+  setupSorting() {
+    this.courses.sortingDataAccessor = commonSortingDataAccessor;
+    this.courses.sort = this.sort;
   }
 
   searchFilter(filterValue: string) {
