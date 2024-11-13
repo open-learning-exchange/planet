@@ -1,12 +1,22 @@
 <mat-toolbar>
-  <mat-toolbar-row *ngIf="!isMobile">
-    <a mat-icon-button (click)="navigateBack()">
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="navigateBack()">
       <mat-icon>arrow_back</mat-icon>
-    </a>
+    </button>
     <span>
-      {{ headingStart ? headingStart + ' ' : '' }}
       <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
       <ng-container *ngIf="selectedStep !== undefined" i18n>Test Progress</ng-container>
+    </span>
+    <span class="toolbar-fill"></span>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar-row *ngIf="!isMobile">
+    <span>
+      {{ headingStart ? headingStart + ' ' : '' }}
+      <ng-container *ngIf="selectedStep === undefined" i18n></ng-container>
+      <ng-container *ngIf="selectedStep !== undefined" i18n></ng-container>
     </span>
     <span class="toolbar-fill"></span>
     <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
@@ -24,40 +34,38 @@
       Export
     </button>
   </mat-toolbar-row>
+
   <ng-container *ngIf="isMobile">
     <mat-toolbar-row>
-      <a mat-icon-button (click)="navigateBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </a>
       <span>
         {{ headingStart ? headingStart + ' ' : '' }}
-        <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
-        <ng-container *ngIf="selectedStep !== undefined" i18n>Test Progress</ng-container>
+        <ng-container *ngIf="selectedStep === undefined" i18n></ng-container>
+        <ng-container *ngIf="selectedStep !== undefined" i18n></ng-container>
       </span>
       <span class="toolbar-fill"></span>
-    </mat-toolbar-row>
-    <mat-toolbar-row>
       <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
         <mat-icon>filter_list</mat-icon>
       </button>
-      <ng-container *ngIf="showFiltersRow">
-        <mat-form-field *ngIf="submittedExamSteps?.length > 1" class="margin-lr-3">
-          <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
-            <mat-option *ngFor="let step of submittedExamSteps" [value]="step" i18n>
-              {{ step.stepTitle || 'Step ' + (step.index + 1) }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button mat-raised-button color="accent" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" class="margin-lr-3" i18n>
-          Show full course
-        </button>
-        <button mat-raised-button color="accent" *ngIf="chartData?.length" (click)="exportChartData()" class="margin-lr-3" i18n>
-          Export
-        </button>
-      </ng-container>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
+      <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
+      <mat-form-field *ngIf="submittedExamSteps?.length > 1" class="margin-lr-3">
+        <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
+          <mat-option *ngFor="let step of submittedExamSteps" [value]="step" i18n>
+            {{ step.stepTitle || 'Step ' + (step.index + 1) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="accent" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" class="margin-lr-3" i18n>
+        Show full course
+      </button>
+      <button mat-raised-button color="accent" *ngIf="chartData?.length" (click)="exportChartData()" class="margin-lr-3" i18n>
+        Export
+      </button>
     </mat-toolbar-row>
   </ng-container>
 </mat-toolbar>
+
 <div class="view-container view-full-height">
   <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [label]="chartLabel" [inputs]="chartData" [height]="yAxisLength" [showAvatar]="true" (clickAction)="memberClick($event)" (changeData)="changeData($event)">
   </planet-courses-progress-chart>
