@@ -183,11 +183,12 @@ export class ConfigurationComponent implements OnInit {
   }
 
   getNationList() {
+    console.log(this.configurationFormGroup.get('devNation').value);
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
       {
         domain: environment.centerAddress,
-        protocol: this.configurationFormGroup.get('devNation').value ? 'http' : environment.centerProtocol
+        protocol: this.configurationFormGroup.get('devNation').value === 'true' ? 'http' : environment.centerProtocol
       })
       .subscribe((data) => {
         this.nations = data.docs;
