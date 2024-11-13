@@ -1,88 +1,60 @@
-@import '../../variables';
-
-:host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 1rem;
-}
-
 .progress-chart-container {
-  display: grid;
-  max-width: 1200px;
-  width: 100%;
-  grid-template-columns: 1fr 1fr; // Two main columns for "Total Errors" and "Steps"
-  grid-template-rows: auto auto; // Rows for the columns and user data row below
-  gap: 1rem;
-  background-color: $white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
 
-  .errors-user-total {
-    grid-column: 1 / -1; // Span across both columns
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: transparent; // Ensure no background color is applied
-    text-align: center; // Center align all content
+  .progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
 
-    .label-over-total {
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      text-align: center; // Center align the label
-      width: 100%; // Ensure it takes full width
-    }
-
-    div {
-      width: 100%; // Ensure the number takes full width
-      text-align: center; // Center the number within the full width
-    }
-
-    .total-number {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%; // Make sure it's the same width as other numbers
+    th, td {
+      border: 1px solid #e0e0e0;
       padding: 0.75rem;
-      border-bottom: 1px solid #e0e0e0;
+      text-align: center;
+    }
+
+    th {
+      font-weight: bold;
+      background-color: #f2f2f2;
     }
   }
-}
 
-.errors-total, .errors-index, .errors-user-total {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: transparent;
-}
-
-.anchor-label, .label-over-total, .label-over-username {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
-.errors div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.75rem;
-  border-bottom: 1px solid #e0e0e0;
-  width: 100%;
-  text-align: center;
-}
-
-/* Responsive adjustments */
-@media (max-width: $screen-sm) {
-  .progress-chart-container {
-    grid-template-columns: 1fr; // Stack columns vertically on smaller screens
-    gap: 0.5rem;
+  .total-errors-message {
+    margin-top: 1rem;
+    text-align: center;
   }
 
-  .errors-user-total {
-    width: 100%; // Ensure full width for the user data section on small screens
+  .accent-color { 
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
 
+  .avatar-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+
+    .avatar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0.5rem;
+      text-align: center;
+
+      planet-avatar {
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+
+      .wrap-content {
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+    }
   }
 }

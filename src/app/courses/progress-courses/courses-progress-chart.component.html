@@ -1,33 +1,39 @@
 <div class="progress-chart-container">
-  <!-- Steps Column -->
-  <div class="errors errors-index">
-    <div class="anchor-label">Steps</div>
-    <div *ngFor="let total of horizTotals.slice().reverse(); index as i"
-         class="border-bottom"
-         [ngClass]="{'cursor-pointer': total.clickable}"
-         (click)="dataClick($event, [], i)">
-      {{ i + 1 }}
-    </div>
-  </div>
-
-  <!-- Total Errors Column -->
-  <div class="errors errors-total">
-    <ng-container *ngIf="showTotals">
-      <div class="anchor-label">Errors</div>
-      <div *ngFor="let total of horizTotals; index as i"
-           class="border-bottom accent-color"
-           [ngClass]="{'cursor-pointer': total.clickable}"
-           (click)="dataClick($event, [], i)">
-        {{ total.count }}
-      </div>
+  <table class="progress-table">
+    <thead>
+      <tr>
+        <th>Steps</th>
+        <th *ngIf="showTotals">Errors</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let set of sets; index as i">
+        <td data-label="Steps">
+          <div *ngFor="let total of horizTotals.slice().reverse(); let j = index" 
+               class="border-bottom"
+               [ngClass]="{'cursor-pointer': total.clickable}"
+               (click)="dataClick($event, [], j)">
+            {{ j + 1 }}
+          </div>
+        </td>
+        <td *ngIf="showTotals" data-label="Errors">
+          <div *ngFor="let total of horizTotals; let j = index" 
+               class="border-bottom"
+               [ngClass]="{'cursor-pointer': total.clickable}"
+               (click)="dataClick($event, [], j)">
+            <span [ngClass]="{'accent-color': total.count > 0}" class="error-number">{{ total.count }}</span>
+          </div>
+        </td>        
+      </tr>
+    </tbody>
+  </table>
+  <div class="total-errors-message">
+    <ng-container *ngFor="let set of sets; index as i">
+      Total Errors: <b>{{ set.total }}</b>
     </ng-container>
   </div>
-
-  <!-- Totals and Labels Row -->
-  <div class="errors-user-total">
-    <div class="errors" *ngFor="let set of sets">
-      <div class="label-over-total">Total Errors</div> <!-- Label above total -->
-      <div>{{ set.total }}</div>
+  <div class="avatar-section">
+    <div *ngFor="let set of sets" class="avatar-container">
       <planet-avatar *ngIf="showAvatar"
                      class="cursor-pointer"
                      (click)="labelClick(set)"
