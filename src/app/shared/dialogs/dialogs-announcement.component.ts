@@ -141,7 +141,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         uniqueDays.add(new Date(post.doc.time).toDateString());
       }
     });
-    this.userStatusService.updateStatus('amountEarned', Math.min(uniqueDays.size, 5));
     return Math.min(uniqueDays.size, 5);
   }
 
@@ -192,23 +191,23 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           this.enrolledMembers.forEach((member) => {
             const hasJoinedCourse = this.hasEnrolledCourse(member);
             const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
-            const hasPosted = this.hasSubmittedVoice(news, member.name);
-            const amountEarned = this.hasSubmittedVoice(news, member.name);
+            const hasPosted = this.hasSubmittedVoice(news, member.name) > 0;
+            const userAmount = this.hasSubmittedVoice(news, member.name);
 
-            if (hasCompletedSurvey && hasPosted && hasJoinedCourse && amountEarned > 0) {
+            if (hasCompletedSurvey && hasPosted && hasJoinedCourse && userAmount > 0) {
               if (!this.groupSummary.some(m => m.name === member.name)) {
                 this.groupSummary.push({
                   ...member,
-                  amountEarned
+                  userAmount
                 });
               }
             }
           });
 
           // Individual stats
-          const amountEarned = this.hasSubmittedVoice(news, this.currentUserName);
           this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
           this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName) > 0);
+          this.userStatusService.updateStatus('amountEarned', this.hasSubmittedVoice(news, this.currentUserName.name));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
               this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
