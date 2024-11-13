@@ -1,0 +1,29 @@
+@import '../../variables';
+
+.mat-toolbar {
+  display: flex;
+  flex-direction: column;
+  height: auto; /* Accommodate multiple toolbar rows */
+}
+
+.mat-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.margin-lr-3 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.toolbar-fill {
+  flex: 1 1 auto;
+}
+
+@media (max-width: $screen-sm) {
+  .mat-toolbar {
+    flex-direction: column; /* Stack rows for mobile */
+  }
+}

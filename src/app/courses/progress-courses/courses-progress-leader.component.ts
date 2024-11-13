@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -10,15 +10,15 @@ import { dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
-  styleUrls: [ 'courses-progress.scss' ]
+  styleUrls: [ 'courses-progress-leader.scss' ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   course: any;
-  // Need to define this variable for template which is shared with CoursesProgressLearner
   headingStart = '';
   chartLabel = $localize`Steps`;
   selectedStep: any;
@@ -32,6 +32,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   submittedExamSteps: any[] = [];
   planetCodes: string[] = [];
   selectedPlanetCode: string;
+  deviceType: DeviceType;
+  deviceTypes = DeviceType;
+  isMobile: boolean = false; // Indicates if the device is mobile
+  showFiltersRow: boolean = false; // Controls the visibility of the filter row
 
   constructor(
     private router: Router,
@@ -40,9 +44,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE; // Initialize isMobile based on current device type
   }
 
   ngOnInit() {
@@ -64,6 +71,17 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.showFiltersRow = false; // Reset filter row visibility on resize
+  }
+
+  toggleFiltersRow() {
+    this.showFiltersRow = !this.showFiltersRow;
   }
 
   setProgress(course) {
