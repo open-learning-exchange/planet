@@ -34,8 +34,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedPlanetCode: string;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isMobile: boolean = false; // Indicates if the device is mobile
-  showFiltersRow: boolean = false; // Controls the visibility of the filter row
+  isMobile = false; 
+  showFiltersRow = false; 
 
   constructor(
     private router: Router,
@@ -49,7 +49,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE; // Initialize isMobile based on current device type
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnInit() {
@@ -77,7 +77,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
-    this.showFiltersRow = false; // Reset filter row visibility on resize
+    this.showFiltersRow = false;
   }
 
   toggleFiltersRow() {
