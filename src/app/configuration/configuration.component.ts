@@ -123,6 +123,10 @@ export class ConfigurationComponent implements OnInit {
       phoneNumber: [ '', CustomValidators.required ]
     });
     this.getNationList();
+    // Watch for changes to the devNation checkbox
+    this.configurationFormGroup.get('devNation').valueChanges.subscribe(() => {
+      this.getNationList();
+    });
   }
 
   initUpdate() {
