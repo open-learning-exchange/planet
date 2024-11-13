@@ -3,7 +3,7 @@
 .mat-toolbar {
   display: flex;
   flex-direction: column;
-  height: auto; /* Accommodate multiple toolbar rows */
+  height: auto;
 }
 
 .mat-toolbar-row {
@@ -24,6 +24,6 @@
 
 @media (max-width: $screen-sm) {
   .mat-toolbar {
-    flex-direction: column; /* Stack rows for mobile */
+    flex-direction: column;
   }
 }
