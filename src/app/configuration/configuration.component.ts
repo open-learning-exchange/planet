@@ -194,7 +194,7 @@ export class ConfigurationComponent implements OnInit {
       findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
       {
         domain: environment.centerAddress,
-        protocol: this.configurationFormGroup.get('devNation').value === 'true' ? 'http' : environment.centerProtocol
+        protocol: this.configurationFormGroup.get('devNation').value ? 'http' : environment.centerProtocol
       })
       .subscribe((data) => {
         this.nations = data.docs;
