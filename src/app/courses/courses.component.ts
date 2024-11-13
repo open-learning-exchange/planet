@@ -168,7 +168,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
-      this.setupSorting()
+      this.setupSorting();
     });
   }
 
