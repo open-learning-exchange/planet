@@ -46,7 +46,7 @@ export class CoursesProgressChartComponent implements OnChanges {
     });
 }
 
-  
+
 
   dataClick(event, set, index) {
     this.changeData.emit({ set, index });
@@ -75,21 +75,21 @@ export class CoursesProgressChartComponent implements OnChanges {
     if (!this.sets || this.sets.length === 0) {
       return null; // No data available
     }
-  
+
     // Check if any set has test data for the stepIndex
     const hasData = this.sets.some(set => set.items[stepIndex] && typeof set.items[stepIndex].number === 'number');
     if (!hasData) {
       return null; // No test data for this step
     }
-  
+
     // Count the number of columns that show 0 (indicating no errors)
     const successfulAttempts = this.sets.filter(set => set.items[stepIndex]?.number === 0).length;
-  
+
     // Calculate the percentage
     const percentage = (successfulAttempts / this.sets.length) * 100;
     return percentage;
   }
-  
+
 
   hasTestData(index: number): boolean {
     return this.sets.some(set => set.items[index] && set.items[index].number !== undefined);
