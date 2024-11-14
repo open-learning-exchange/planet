@@ -22,7 +22,7 @@ export class UserChallengeStatusService {
     return complete;
   }
 
-  getStatus(key: string): boolean {
+  getStatus(key: string): boolean| number {
     return this.userStatus[key];
   }
 

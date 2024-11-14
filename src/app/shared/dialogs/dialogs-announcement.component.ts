@@ -14,7 +14,7 @@ import { UserService } from '../user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
-export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi' ];
+export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'uriur', 'mutugi', 'vi' ];
 export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
 export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1));
 
@@ -198,7 +198,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
               if (!this.groupSummary.some(m => m.name === member.name)) {
                 this.groupSummary.push({
                   ...member,
-                  userAmount
+                  amountEarned: userAmount
                 });
               }
             }
@@ -207,7 +207,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           // Individual stats
           this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
           this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName) > 0);
-          this.userStatusService.updateStatus('amountEarned', this.hasSubmittedVoice(news, this.currentUserName.name));
+          this.userStatusService.updateStatus('amountEarned', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
               this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
@@ -219,7 +219,10 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   getTotalMoneyEarned(): number {
-    return this.groupSummary.reduce((total, member) => total + member.amountEarned, 0);
+    return this.groupSummary.reduce((total, member) => {
+      const amount = Number(member.amountEarned);
+      return total + (isNaN(amount) ? 0 : amount);
+    }, 0);
   }
 
   getGoalPercentage(): number {
