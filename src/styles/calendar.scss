@@ -14,15 +14,10 @@ full-calendar {
     display: flex;
     flex-direction: column;
     align-items: center;
-  
-  .fc-button-primary {
-    margin-bottom: 10px;
-  }
 
     @media only screen and (max-width: #{$screen-sm}) {
       .fc-toolbar-chunk {
-        margin: 1rem auto;
-        place-items: center;
+        display: flex;
       }
     }
   }
