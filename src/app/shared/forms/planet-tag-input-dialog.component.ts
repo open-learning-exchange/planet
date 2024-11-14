@@ -203,6 +203,7 @@ export class PlanetTagInputDialogComponent {
         this.data.initTags();
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`Tag deleted: ${tag.name}`);
+        this.resetValidationAndCheck(this.addTagForm);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this tag.`)
     };
@@ -228,6 +229,15 @@ export class PlanetTagInputDialogComponent {
       'tags', '_id', ac,
       { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
     );
+  }
+
+  resetValidationAndCheck(form: FormGroup) {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      control?.clearValidators();
+      control?.markAsUntouched();
+      control?.updateValueAndValidity();
+    });
   }
 
   toggleSubcollection(event, tagId) {
