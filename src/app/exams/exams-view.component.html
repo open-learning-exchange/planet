@@ -15,7 +15,7 @@
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
-  <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
+  <div *ngIf="!isLoading; else Loading" class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     <td-markdown [content]="question?.body"></td-markdown>
     <div [ngSwitch]="mode">
       <ng-container *ngSwitchCase="'take'">
@@ -66,9 +66,6 @@
         </ng-container>
       </ng-container>
     </div>
-    <div *ngIf="isLoading" i18n>
-      Loading content...
-    </div>
     <div class="v-align-center action-buttons">
       <button
         *ngIf="mode !== 'view'"
@@ -77,7 +74,7 @@
         (click)="nextQuestion()"
         [planetSubmit]="spinnerOn"
         [disabled]="!answer.valid || grade === undefined || grade === null">
-        <ng-container i18n>Submit Answer</ng-container>
+        <ng-container i18n>Submit Answer is this here</ng-container>
       </button>
       <button
         *ngIf="mode === 'take'"
@@ -105,5 +102,8 @@
         </div>
       </span>
     </div>
+  </div>
+  <div #Loading [ngClass]="{ 'view-full-height': !isDialog }" i18n>
+    Loading content...
   </div>
 </div>

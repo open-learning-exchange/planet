@@ -69,7 +69,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
             this.exam = this.exam || res;
             this.examType = params.get('type') || this.previewExamType;
             this.setExamPreview();
-            this.isLoading = false;
           },
           (err) => {
             this.planetMessageService.showAlert($localize`Preview is not available for this test`);
@@ -79,7 +78,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         return;
       }
       this.setExam(params);
-      this.isLoading = false;
     });
   }
 
@@ -108,6 +106,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
     }
+    this.isLoading = false;
   }
 
   setExamPreview() {
@@ -122,6 +121,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.updatedOn = this.submission.lastUpdateTime;
       this.setViewAnswerText(this.submission.answers[this.questionNum - 1]);
     }
+    this.isLoading = false;
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
