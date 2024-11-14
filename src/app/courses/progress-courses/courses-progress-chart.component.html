@@ -5,42 +5,47 @@
       class="accent-color border-bottom"
       i18n-matTooltip matTooltip="Click to see test detail"
       [matTooltipDisabled]="!total.clickable"
-      *ngFor="let total of horizTotals; index as i"
+      *ngFor="let total of horizTotals.slice().reverse(); index as i"
       [ngClass]="{'cursor-pointer':total.clickable}"
       (click)="dataClick($event, [], i)">
       {{total.count}}
     </div>
   </ng-container>
 </div>
+
 <div class="errors errors-index" #errorsIndex>
   <div class="anchor-label" i18n>{label, select, Steps {Steps} Quest. {Quest.} other {Steps}}</div>
   <div
     class="border-bottom"
     i18n-matTooltip matTooltip="Click to see test detail"
     [matTooltipDisabled]="!total.clickable"
-    *ngFor="let total of horizTotals; index as i"
+    *ngFor="let total of horizTotals.slice().reverse(); let i = index"
     [ngClass]="{'cursor-pointer':total.clickable}"
     (click)="dataClick($event, [], i)">
-    {{height - i}}
+    {{i + 1}}
   </div>
 </div>
+
+
 <div class="errors-container errors-user" #errorsUser (scroll)="onDataScroll($event)" (mousemove)="onDataMouseMove($event)">
-  <div class="errors" *ngFor="let set of sets">
+  <div class="errors" *ngFor="let set of sets.slice().reverse()">
     <div
       class="border-bottom"
       i18n-matTooltip matTooltip="Click to see test detail"
       [matTooltipDisabled]="!item.clickable"
       [ngClass]="{'primary-color':item.fill,'cursor-pointer':item.clickable}"
-      *ngFor="let item of set?.items; index as i"
-      (click)="dataClick($event, set, i)">
+      *ngFor="let item of set?.items.slice().reverse(); index as i">
       {{item.number}}
     </div>
   </div>
 </div>
+
 <div class="errors-container errors-user-total" #errorsUserTotal>
-  <div class="errors" *ngFor="let set of sets">
+  <div class="errors" *ngFor="let set of sets.slice().reverse()">
     <div>{{set.total}}</div>
     <planet-avatar *ngIf="showAvatar" class="cursor-pointer" (click)="labelClick(set)" [username]="set.label" [planetCode]="set.planetCode" imgClass="profile-image-large"></planet-avatar>
-    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label?.length > 3 ? set.label : null "><p>{{set.label}}</p></div>
+    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label?.length > 3 ? set.label : null ">
+      <p>{{set.label}}</p>
+    </div>
   </div>
 </div>
