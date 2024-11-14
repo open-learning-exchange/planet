@@ -210,6 +210,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       showFormErrors(this.courseForm.controls);
       return;
     }
+    if (this.steps.length <= 0){
+      this.planetMessageService.showAlert('Course must have at least one step.');
+      return;
+    }
     this.updateCourse(this.courseForm.value, shouldNavigate);
   }
 
