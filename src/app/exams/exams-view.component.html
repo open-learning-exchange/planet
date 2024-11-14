@@ -66,6 +66,9 @@
         </ng-container>
       </ng-container>
     </div>
+    <div *ngIf="isLoading" i18n>
+      Loading content...
+    </div>
     <div class="v-align-center action-buttons">
       <button
         *ngIf="mode !== 'view'"

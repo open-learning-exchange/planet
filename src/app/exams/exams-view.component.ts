@@ -45,6 +45,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   unansweredQuestions: number[];
   isComplete = false;
   comment: string;
+  isLoading = true;
 
   constructor(
     private router: Router,
@@ -68,6 +69,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
             this.exam = this.exam || res;
             this.examType = params.get('type') || this.previewExamType;
             this.setExamPreview();
+            this.isLoading = false;
           },
           (err) => {
             this.planetMessageService.showAlert($localize`Preview is not available for this test`);
@@ -77,6 +79,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         return;
       }
       this.setExam(params);
+      this.isLoading = false;
     });
   }
 
