@@ -44,9 +44,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
   selectedLocal = 0;
+  titleLength = 25;
   get tableData() {
     return this.courses;
   }
+
   courses = new MatTableDataSource();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -132,10 +134,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       });
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.updateDeviceType();
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.updateDeviceType();
   }
 
   ngOnInit() {
@@ -170,6 +174,26 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
+  }
+
+  updateDeviceType() {
+    const width = window.innerWidth;
+
+    const maxTitleLength = 100;
+    const minTitleLength = 25;
+    const stepWidth = 45;
+    const stepDecrease = 5;
+
+    const steps = Math.floor((1600 - width) / stepWidth);
+
+    this.titleLength = Math.max(minTitleLength, maxTitleLength - steps * stepDecrease);
+  }
+
+  truncateTitle(title: string): string {
+    if (title.length > this.titleLength) {
+      return title.slice(0, this.titleLength) + '...';
+    }
+    return title;
   }
 
   ngOnChanges() {
