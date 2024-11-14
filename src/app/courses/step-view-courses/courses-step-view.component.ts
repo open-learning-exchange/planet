@@ -125,7 +125,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         user: this.userService.get(),
         type: 'exam' });
     }
-    this.isLoading = false
+    this.isLoading = false;
   }
 
   initResources(resources) {
