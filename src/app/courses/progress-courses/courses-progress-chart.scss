@@ -1,88 +1,90 @@
-@import '../../variables';
+.simple-table {
+  width: 80%; /* Set table width to 80% of the screen */
+  margin: 0 auto; /* Center the table */
+  border-collapse: collapse;
+  table-layout: fixed;
 
-:host {
-
-  $cell-size: 45px;
-  $column-gap: 4px;
-
-  grid-template-areas:
-    "total index user"
-    ". . usertotal";
-  grid-template-columns: fit-content($cell-size) $cell-size 1fr;
-  grid-template-rows: fit-content(calc(#{$view-container-height} - 2rem - (#{$cell-size} * 3))) calc(#{$cell-size} * 3);
-
-  &, .errors-container {
-    display: grid;
-    grid-auto-columns: $cell-size;
-    grid-auto-flow: column;
+  th, td {
+    padding: 8px; /* Reduced padding for a smaller look */
+    border: 1px solid grey;
+    text-align: center;
+    vertical-align: middle;
   }
 
-  .errors {
-    display: grid;
-    grid-auto-rows: $cell-size;
-    div, planet-avatar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    position: sticky; /* Make the header follow as you scroll */
+    top: 0; /* Stick to the top */
+    z-index: 2; /* Ensure it stays on top of other content */
   }
 
-  .errors-total, .errors-index, .errors-user-total {
-    overflow: hidden;
+  tr:nth-child(even) {
+    background-color: #ECF0F1;
   }
 
-  .anchor-label {
-    position: sticky;
-    top: 0;
-    background-color: $white;
-    z-index: 20;
-  }
-
-  .errors-total {
-    grid-area: total;
-  }
-
-  .errors-index {
-    grid-area: index;
-  }
-
-  .errors-user {
-    grid-area: user;
-    margin-top: $cell-size;
-    overflow: scroll;
-  }
-
-  .errors-user::-webkit-scrollbar {
-    height: 0;
-    width: 0;
-  }
-
-  .errors-user-total {
-    grid-area: usertotal;
-  }
-
-  .border-bottom {
+  td {
+    background-color: #ffffff;
     position: relative;
   }
 
-  .border-bottom:before {
-    content:"";
-    position: absolute;
-    top: 0px;
-    height: $cell-size;
-    width: calc(#{$cell-size} + #{$column-gap});
-    border-bottom: 3px solid $grey;
-    z-index: 10;
+  .cursor-pointer {
+    cursor: pointer;
   }
 
+  .user-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .user-name {
+    margin-top: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Removed the primary-color background */
+  
   .wrap-content {
-    min-width: 0;
-  }
-
-  .wrap-content p {
+    max-width: 100px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
 
+  .user-summary {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      margin-right: 15px;
+
+      .user-total {
+        margin-right: 5px;
+      }
+    }
+
+    planet-avatar {
+      margin-right: 5px;
+    }
+  }
+
+  .success-high {
+    color: green;
+  }
+  
+  .success-medium {
+    color: orange;
+  }
+  
+  .success-low {
+    color: red;
+  }
 }

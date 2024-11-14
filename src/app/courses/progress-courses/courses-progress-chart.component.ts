@@ -28,16 +28,25 @@ export class CoursesProgressChartComponent implements OnChanges {
   horizTotals = [];
 
   ngOnChanges() {
-    const fillEmptyItems = (items) => [].concat(Array(this.height - items.length).fill(''), items);
+    // Fill items array for each input to ensure it matches the table height
+    const fillEmptyItems = (items) => {
+      return Array(this.height - items.length).fill('').concat(items);
+    };
+    // Populate 'sets' with ordered items and total error calculation
     this.sets = this.inputs.map(input => ({
       ...input,
-      items: fillEmptyItems(input.items),
+      items: fillEmptyItems(input.items).reverse(),
       total: input.items.reduce((total, item) => total + (item.number || 0), 0)
     }));
-    this.horizTotals = this.sets.reduce((totals, set) => {
-      return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
-    }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
-  }
+    // Calculate horizTotals in correct display order
+    this.horizTotals = Array.from({ length: this.height }, (_, index) => {
+      const count = this.sets.reduce((acc, set) => acc + (set.items[index]?.number || 0), 0);
+      const clickable = this.sets.some(set => set.items[index]?.clickable);
+      return { count, clickable };
+    });
+}
+
+  
 
   dataClick(event, set, index) {
     this.changeData.emit({ set, index });
@@ -60,6 +69,30 @@ export class CoursesProgressChartComponent implements OnChanges {
 
   labelClick(set) {
     this.clickAction.emit(set);
+  }
+
+  calculateSuccessPercentage(stepIndex: number): number | null {
+    if (!this.sets || this.sets.length === 0) {
+      return null; // No data available
+    }
+  
+    // Check if any set has test data for the stepIndex
+    const hasData = this.sets.some(set => set.items[stepIndex] && typeof set.items[stepIndex].number === 'number');
+    if (!hasData) {
+      return null; // No test data for this step
+    }
+  
+    // Count the number of columns that show 0 (indicating no errors)
+    const successfulAttempts = this.sets.filter(set => set.items[stepIndex]?.number === 0).length;
+  
+    // Calculate the percentage
+    const percentage = (successfulAttempts / this.sets.length) * 100;
+    return percentage;
+  }
+  
+
+  hasTestData(index: number): boolean {
+    return this.sets.some(set => set.items[index] && set.items[index].number !== undefined);
   }
 
 }
