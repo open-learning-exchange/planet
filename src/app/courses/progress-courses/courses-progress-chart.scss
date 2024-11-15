@@ -1,16 +1,17 @@
 @import '../../variables';
 
 .simple-table {
-  width: 80%;
+  width: auto;
   margin: 0 auto;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
 
   th, td {
     padding: 8px;
     border: 1px solid grey;
     text-align: center;
     vertical-align: middle;
+    white-space: nowrap;
   }
 
   th {
@@ -18,6 +19,10 @@
     font-weight: bold;
     position: sticky;
     top: 0;
+  }
+
+  th:nth-child(n+2), td:nth-child(n+2) {
+    width: auto;
   }
 
   .user-header-content {
@@ -29,40 +34,30 @@
     text-overflow: ellipsis;
   }
 
-  .highlight-green {
-    background-color: green;
+  .highlight-green,
+  .highlight-yellow,
+  .highlight-red,
+  .number-highlight {
     color: white;
     display: inline-block;
     padding: 2px 5px;
     border-radius: 4px;
+  }
+
+  .highlight-green {
+    background-color: green;
   }
 
   .highlight-yellow {
     background-color: orange;
-    color: white;
-    display: inline-block;
-    padding: 2px 5px;
-    border-radius: 4px;
   }
 
   .highlight-red {
     background-color: red;
-    color: white;
-    display: inline-block;
-    padding: 2px 5px;
-    border-radius: 4px;
-  }
-
-  .accent-highlight {
-    background-color: $accent;
-    color: $accent-text;
   }
 
   .number-highlight {
     background-color: $accent;
     color: $accent-text;
-    display: inline-block;
-    padding: 2px 5px;
-    border-radius: 4px;
   }
 }

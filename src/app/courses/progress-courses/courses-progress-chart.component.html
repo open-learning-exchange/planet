@@ -47,16 +47,16 @@
           -
         </ng-template>
       </td>
-      <td class="accent-highlight">
+      <td>
         <ng-container *ngIf="i.count > 0; else showTotalDash">
-          <div
+          <span
             i18n-matTooltip
             matTooltip="Click to see test detail"
             [matTooltipDisabled]="!i.clickable"
-            [ngClass]="{'cursor-pointer': i.clickable}"
+            [ngClass]="{'number-highlight': i.count > 0, 'cursor-pointer': i.clickable}"
             (click)="i.clickable ? dataClick($event, [], index) : null">
             {{ i.count }}
-          </div>
+          </span>
         </ng-container>
         <ng-template #showTotalDash>
           -
