@@ -162,7 +162,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   changeData({ set, index }) {
     const selectedStep = this.course.steps[index];
-  
+
     if (selectedStep?.exam) {
       this.selectedStep = selectedStep;
       this.onStepChange(this.selectedStep);
