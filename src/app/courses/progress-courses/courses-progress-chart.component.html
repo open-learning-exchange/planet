@@ -8,12 +8,14 @@
       <th i18n>Total Errors</th>
       <th *ngFor="let set of sets" class="user-header">
         <div class="user-header-content">
-          <planet-avatar 
-            *ngIf="showAvatar" 
-            [username]="set.label" 
-            [planetCode]="set.planetCode" 
-            imgClass="profile-image">
-          </planet-avatar>
+          <div class="cursor-pointer" (click)="labelClick(set)">
+            <planet-avatar 
+              *ngIf="showAvatar" 
+              [username]="set.label" 
+              [planetCode]="set.planetCode" 
+              imgClass="profile-image">
+            </planet-avatar>
+          </div>
           <div class="user-name cursor-pointer" (click)="labelClick(set)">
             {{ set.label }} ({{ set.total }})
           </div>
