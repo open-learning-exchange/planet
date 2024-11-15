@@ -97,7 +97,7 @@ export class ResourcesAddComponent implements OnInit {
           console.log(error);
         });
     } else {
-      this.pageType = 'Add'; 
+      this.pageType = 'Add';
     }
 
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges

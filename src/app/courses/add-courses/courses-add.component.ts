@@ -109,7 +109,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         this.setDocumentInfo(saved);
         this.pageType = 'Edit';
       } else {
-        this.pageType = 'Add'; 
+        this.pageType = 'Add';
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
