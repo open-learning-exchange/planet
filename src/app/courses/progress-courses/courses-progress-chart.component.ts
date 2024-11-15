@@ -43,8 +43,6 @@ export class CoursesProgressChartComponent implements OnChanges {
     });
 }
 
-
-
   dataClick(event, set, index) {
     this.changeData.emit({ set, index });
   }

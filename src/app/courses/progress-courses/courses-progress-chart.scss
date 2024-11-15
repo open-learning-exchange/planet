@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .simple-table {
   width: 80%;
   margin: 0 auto;
@@ -16,20 +18,6 @@
     font-weight: bold;
     position: sticky;
     top: 0;
-    z-index: 2;
-  }
-
-  tr:nth-child(even) {
-    background-color: #ECF0F1;
-  }
-
-  td {
-    background-color: #ffffff;
-    position: relative;
-  }
-
-  .cursor-pointer {
-    cursor: pointer;
   }
 
   .user-header-content {
@@ -37,52 +25,44 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-  }
-
-  .user-name {
-    margin-top: 5px;
-    font-size: 12px;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
-  .wrap-content {
-    max-width: 100px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+
+  .highlight-green {
+    background-color: green;
+    color: white;
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 4px;
   }
 
-  .user-summary {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 20px;
-
-    .user-row {
-      display: flex;
-      align-items: center;
-      margin-right: 15px;
-
-      .user-total {
-        margin-right: 5px;
-      }
-    }
-
-    planet-avatar {
-      margin-right: 5px;
-    }
+  .highlight-yellow {
+    background-color: orange;
+    color: white;
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 4px;
   }
 
-  .success-high {
-    color: green;
+  .highlight-red {
+    background-color: red;
+    color: white;
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 4px;
   }
-  
-  .success-medium {
-    color: orange;
+
+  .accent-highlight {
+    background-color: $accent;
+    color: $accent-text;
   }
-  
-  .success-low {
-    color: red;
+
+  .number-highlight {
+    background-color: $accent;
+    color: $accent-text;
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 4px;
   }
 }

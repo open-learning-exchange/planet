@@ -1,10 +1,11 @@
 <table class="simple-table">
   <thead>
     <tr>
-      <th *ngIf="showTotals">{ label, select, Steps {Steps} Questions {Questions} other {Steps} }</th>
+      <th *ngIf="showTotals">
+        {{ label | i18nSelect: { 'Steps': 'Steps', 'Questions': 'Questions', 'other': 'Steps' } }}
+      </th>
       <th i18n>Success (%)</th>
       <th i18n>Total Errors</th>
-      <!-- Dynamic User Headers -->
       <th *ngFor="let set of sets" class="user-header">
         <div class="user-header-content">
           <planet-avatar 
@@ -13,7 +14,7 @@
             [planetCode]="set.planetCode" 
             imgClass="profile-image">
           </planet-avatar>
-          <div class="user-name">
+          <div class="user-name cursor-pointer" (click)="labelClick(set)">
             {{ set.label }} ({{ set.total }})
           </div>
         </div>
@@ -21,7 +22,6 @@
     </tr>
   </thead>
   <tbody>
-    <!-- Data Rows -->
     <tr *ngFor="let i of horizTotals; let index = index">
       <td>
         {{ index + 1 }}
@@ -29,10 +29,15 @@
       <td>
         <ng-container *ngIf="calculateSuccessPercentage(index) !== null; else showDash">
           <span [ngClass]="{
-            'success-high': calculateSuccessPercentage(index) >= 90,
-            'success-medium': calculateSuccessPercentage(index) >= 70 && calculateSuccessPercentage(index) < 90,
-            'success-low': calculateSuccessPercentage(index) < 70
-          }">
+                  'highlight-green': calculateSuccessPercentage(index) >= 90,
+                  'highlight-yellow': calculateSuccessPercentage(index) >= 70 && calculateSuccessPercentage(index) < 90,
+                  'highlight-red': calculateSuccessPercentage(index) < 70,
+                  'cursor-pointer': i.clickable
+                }"
+                i18n-matTooltip
+                matTooltip="Click to see test detail"
+                [matTooltipDisabled]="!i.clickable"
+                (click)="i.clickable ? dataClick($event, [], index) : null">
             {{ calculateSuccessPercentage(index) | number:'1.0-0' }}%
           </span>
         </ng-container>
@@ -40,37 +45,43 @@
           -
         </ng-template>
       </td>
-      <td>
-        <div
-          i18n-matTooltip
-          matTooltip="Click to see test detail"
-          [matTooltipDisabled]="!i.clickable"
-          [ngClass]="{'cursor-pointer': i.clickable}"
-          (click)="i.clickable ? dataClick($event, [], index) : null">
-          {{ i.count }}
-        </div>
+      <td class="accent-highlight">
+        <ng-container *ngIf="i.count > 0; else showTotalDash">
+          <div
+            i18n-matTooltip
+            matTooltip="Click to see test detail"
+            [matTooltipDisabled]="!i.clickable"
+            [ngClass]="{'cursor-pointer': i.clickable}"
+            (click)="i.clickable ? dataClick($event, [], index) : null">
+            {{ i.count }}
+          </div>
+        </ng-container>
+        <ng-template #showTotalDash>
+          -
+        </ng-template>
       </td>
-      <!-- Dynamic User Data Cells -->
       <td *ngFor="let set of sets">
         <div *ngIf="set.items[index]" 
              i18n-matTooltip 
              matTooltip="Click to see test detail" 
              [matTooltipDisabled]="!set.items[index]?.clickable"
-             [ngClass]="{'cursor-pointer': set.items[index]?.clickable}" 
+             [ngClass]="{
+               'cursor-pointer': set.items[index]?.clickable
+             }" 
              (click)="dataClick($event, set, index)">
           <ng-container *ngIf="set.items[index].number === 0; else showNumber">
             0
           </ng-container>
           <ng-template #showNumber>
             <ng-container *ngIf="set.items[index].number > 0; else showDash">
-              {{ set.items[index].number }}
+              <span class="number-highlight">{{ set.items[index].number }}</span>
             </ng-container>
             <ng-template #showDash>
               -
             </ng-template>
           </ng-template>
         </div>
-      </td>      
+      </td>               
     </tr>
   </tbody>
 </table>
