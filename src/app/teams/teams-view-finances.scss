@@ -2,9 +2,22 @@
   max-width: 100px;
 }
 
-.mat-card {
+.action-buttons {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+}
+
+.transaction-buttons, .transaction-date-fields {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.transaction-buttons button {
+  white-space: nowrap;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 mat-row:first-of-type {

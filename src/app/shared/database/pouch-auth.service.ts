@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, Observable, forkJoin } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
 import { CouchService } from '../couchdb.service';
 
@@ -32,6 +32,10 @@ export class PouchAuthService {
   login(username, password) {
     this.pouchService.configureDBs();
     return from(this.authDB.logIn(username, password)).pipe(
+      tap(() => {
+        // Reset the popup flag on successful login
+        localStorage.removeItem('announcementPopupShown');
+      }),
       catchError(this.handleError)
     );
   }

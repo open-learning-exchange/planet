@@ -64,6 +64,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
+  reportsCount = 0;
+  financesCount = 0;
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
@@ -215,7 +217,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
+      this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.reportsCount = this.reports.length;
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
