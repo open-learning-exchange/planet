@@ -53,8 +53,9 @@
             i18n-matTooltip
             matTooltip="Click to see test detail"
             [matTooltipDisabled]="!i.clickable"
-            [ngClass]="{'number-highlight': i.count > 0, 'cursor-pointer': i.clickable}"
-            (click)="i.clickable ? dataClick($event, [], index) : null">
+            [ngClass]="{'cursor-pointer': i.clickable}"
+            (click)="i.clickable ? dataClick($event, [], index) : null"
+            style="font-weight: bold;">
             {{ i.count }}
           </span>
         </ng-container>
