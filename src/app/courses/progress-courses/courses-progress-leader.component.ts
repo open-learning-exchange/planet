@@ -80,7 +80,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onStepChange(value: any) {
     this.selectedStep = value;
     this.setSingleStep(this.submissions);
-    this.chartLabel = $localize`Quest.`;
+    this.chartLabel = $localize`Questions`;
   }
 
   setSubmissions() {
@@ -146,6 +146,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setSingleStep(submissions: any[]) {
     const step = this.selectedStep;
     this.headingStart = this.selectedStep.stepTitle;
+    this.chartLabel = $localize`Questions`;
     this.yAxisLength = this.selectedStep.exam.questions.length;
     this.allChartData = submissions.filter(submission => submission.parentId === (step.exam._id + '@' + this.course._id)).map(
       submission => {
@@ -166,7 +167,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     if (selectedStep?.exam) {
       this.selectedStep = selectedStep;
       this.onStepChange(this.selectedStep);
-      this.chartLabel = $localize`Question`;
+      this.chartLabel = $localize`Questions`;
     }
   }
 

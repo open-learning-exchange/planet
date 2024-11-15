@@ -1,11 +1,11 @@
 .simple-table {
-  width: 80%; /* Set table width to 80% of the screen */
-  margin: 0 auto; /* Center the table */
+  width: 80%;
+  margin: 0 auto;
   border-collapse: collapse;
   table-layout: fixed;
 
   th, td {
-    padding: 8px; /* Reduced padding for a smaller look */
+    padding: 8px;
     border: 1px solid grey;
     text-align: center;
     vertical-align: middle;
@@ -14,9 +14,9 @@
   th {
     background-color: #f2f2f2;
     font-weight: bold;
-    position: sticky; /* Make the header follow as you scroll */
-    top: 0; /* Stick to the top */
-    z-index: 2; /* Ensure it stays on top of other content */
+    position: sticky;
+    top: 0;
+    z-index: 2;
   }
 
   tr:nth-child(even) {
@@ -46,8 +46,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  /* Removed the primary-color background */
   
   .wrap-content {
     max-width: 100px;

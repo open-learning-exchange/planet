@@ -1,7 +1,7 @@
 <table class="simple-table">
   <thead>
     <tr>
-      <th i18n>Steps</th>
+      <th *ngIf="showTotals">{ label, select, Steps {Steps} Questions {Questions} other {Steps} }</th>
       <th i18n>Success (%)</th>
       <th i18n>Total Errors</th>
       <!-- Dynamic User Headers -->
