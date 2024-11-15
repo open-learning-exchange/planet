@@ -75,47 +75,58 @@ If port 3000 is in use, try ```ng serve --port 3001```
 ## Project Guidelines
 
 * Check out the project page for tasks.
-* Review the style guide.
-* Clone the repository to collaborate from a shared branch.
-* Run npm run install-hooks after cloning to add Git hooks.
-* Report issues, especially with specific frontend components.
-* Create a new branch with a descriptive name to work on issues.
-*W ait for two positive reviews before merging into master.
+* Before contributing also be sure to read our [style guide](Style-Guide.md).
+* Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
+* After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
+* If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
+* To work on an issue, create a new branch with a descriptive title.
+* Please wait for at least two positive reviews before merging a PR into the master branch
 
 ## Unit & End-to-End Tests
 
 You can run tests directly from the host or within the development container.
-Unit Tests:
+
+### Unit Tests:
 ```
 npm run test
 ```
-  End-to-End Tests:
+Open `localhost:9876` once this is done compiling
+
+### End-to-End Tests:
 ```
 npm run e2e
-````
+```
+Results will appear in the console
 
 ## Additional Commands
 
-```
-Run: ng serve
-Build: ng build
-Lint: ng lint
-Fix Lint: ng lint --fix
-```
+
+Run: `ng serve`
+
+Build: `ng build`
+
+Lint: `ng lint`
+
+This will fix any lint errors that TSLint can automatically fix:
+`Fix Lint: ng lint --fix`
+
+
 To serve the app in a different language, use the LNG variable:
-```
+`
 LNG=es npm start
-```
+`
 
 ## Troubleshooting
 
 ### I switched branches and now I'm missing a dependency...
 
 Run the following command to reinstall dependencies:
-```
+`
 npm install
-```
+`
+
 If issues persist, delete and reinstall dependencies:
+
 ```
 rm -rf node_modules/*
 npm install
@@ -127,7 +138,6 @@ Run the CouchDB setup script:
 ```
 ./v-couchdb-setup.sh -u <admin-username> -w <admin-password>
 ```
-
 ### Cannot GET /
 
 Reinstall packages:
@@ -137,9 +147,9 @@ rm package-lock.json
 npm install
 ```
 Restart the app:
-```
+`
 ng serve
-```
+`
 
 ### Mime.getType does not exist (Windows)
 Use Mime 3.0.0
