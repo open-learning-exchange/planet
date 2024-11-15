@@ -132,4 +132,12 @@ Restart the app:
 ```
 ng serve
 ```
+
+### Mime.getType does not exist (Windows)
+Use Mime 3.0.0
+```
+npm i mime@3.0.0
+npm i @types/mime@3.0.0
+```
+
 This project is tested with [BrowserStack](https://www.browserstack.com/).
