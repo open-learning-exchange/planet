@@ -57,7 +57,7 @@
              matTooltip="Click to see test detail" 
              [matTooltipDisabled]="!set.items[index]?.clickable"
              [ngClass]="{'cursor-pointer': set.items[index]?.clickable}" 
-             (click)="set.items[index]?.clickable ? dataClick($event, set, index) : null">
+             (click)="dataClick($event, set, index)">
           <ng-container *ngIf="set.items[index].number === 0; else showNumber">
             0
           </ng-container>
@@ -70,7 +70,7 @@
             </ng-template>
           </ng-template>
         </div>
-      </td>
+      </td>      
     </tr>
   </tbody>
 </table>

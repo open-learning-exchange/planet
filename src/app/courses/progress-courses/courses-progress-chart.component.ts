@@ -28,17 +28,14 @@ export class CoursesProgressChartComponent implements OnChanges {
   horizTotals = [];
 
   ngOnChanges() {
-    // Fill items array for each input to ensure it matches the table height
     const fillEmptyItems = (items) => {
       return Array(this.height - items.length).fill('').concat(items);
     };
-    // Populate 'sets' with ordered items and total error calculation
     this.sets = this.inputs.map(input => ({
       ...input,
       items: fillEmptyItems(input.items).reverse(),
       total: input.items.reduce((total, item) => total + (item.number || 0), 0)
     }));
-    // Calculate horizTotals in correct display order
     this.horizTotals = Array.from({ length: this.height }, (_, index) => {
       const count = this.sets.reduce((acc, set) => acc + (set.items[index]?.number || 0), 0);
       const clickable = this.sets.some(set => set.items[index]?.clickable);
@@ -73,23 +70,16 @@ export class CoursesProgressChartComponent implements OnChanges {
 
   calculateSuccessPercentage(stepIndex: number): number | null {
     if (!this.sets || this.sets.length === 0) {
-      return null; // No data available
+      return null;
     }
-
-    // Check if any set has test data for the stepIndex
     const hasData = this.sets.some(set => set.items[stepIndex] && typeof set.items[stepIndex].number === 'number');
     if (!hasData) {
-      return null; // No test data for this step
+      return null;
     }
-
-    // Count the number of columns that show 0 (indicating no errors)
     const successfulAttempts = this.sets.filter(set => set.items[stepIndex]?.number === 0).length;
-
-    // Calculate the percentage
     const percentage = (successfulAttempts / this.sets.length) * 100;
     return percentage;
   }
-
 
   hasTestData(index: number): boolean {
     return this.sets.some(set => set.items[index] && set.items[index].number !== undefined);

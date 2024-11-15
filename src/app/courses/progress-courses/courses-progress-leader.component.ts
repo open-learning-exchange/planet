@@ -160,13 +160,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.filterDataByPlanet();
   }
 
-  changeData({ index }) {
-    const courseIndex = this.course.steps.length - (index + 1);
-    if (this.selectedStep === undefined && this.course.steps[courseIndex].exam) {
-      this.selectedStep = this.course.steps[courseIndex];
-      this.setSingleStep(this.submissions);
+  changeData({ set, index }) {
+    const selectedStep = this.course.steps[index];
+  
+    if (selectedStep?.exam) {
+      this.selectedStep = selectedStep;
+      this.onStepChange(this.selectedStep);
+      this.chartLabel = $localize`Question`;
     }
-    this.chartLabel = $localize`Quest.`;
   }
 
   resetToFullCourse() {
