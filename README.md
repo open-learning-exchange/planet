@@ -12,7 +12,15 @@ Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://mat
 
 ## To work on this
 
-The only prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
+For development, the following additional tools are required:
+
+* Docker
+* Git
+* NPM v6
+* Node.js v14
+* Angular CLI v10
+
+The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
 Create a directory for planet development data:
 ```
