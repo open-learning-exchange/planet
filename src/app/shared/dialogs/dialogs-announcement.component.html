@@ -12,7 +12,7 @@
           class="thermometer-label"
           [ngClass]="{ outside: getGoalPercentage() < 8 }"
         >
-          ({{ "$" + getTotalMoneyEarned() }})
+          {{ "$" + getTotalMoneyEarned() }}
         </div>
       </div>
     </div>
@@ -32,7 +32,6 @@
         <span>Únete al curso Reto noviembre.</span>
         <a *ngIf="!getStatus('joinedCourse')" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
           Unirse
-
         </a>
       </div>
 
@@ -50,9 +49,9 @@
         <mat-icon color="primary">
           {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
-        <span>Comparte tu opinión en Nuestras Voces. <span> - {{getStatus('amountEarned')}}</span> </span>
-        <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost')" mat-button mat-raised-button color="primary" type="button" (click)="postVoice()">
-          Voces
+        <span>Comparte tu opinión en Nuestras Voces. <br><span>{{getStatus('amountEarned')}} de 5 voz diaria</span> </span>
+        <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost')" mat-button mat-raised-button color="primary" type="button" (click)="chatNShare()">
+          Chatea y comparte
         </a>
       </div>
     </div>

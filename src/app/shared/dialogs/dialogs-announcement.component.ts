@@ -99,7 +99,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   joinCourse() {
     const courseTitle = this.coursesService.getCourseNameFromId(this.courseId);
     this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
-      this.router.navigate([ '/courses/view', this.courseId ]);
+      this.router.navigate([ `/courses/view/${this.courseId}/step/1` ]);
     }, (error) => ((error)));
     this.dialogRef.close();
   }
@@ -116,8 +116,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  postVoice() {
-    this.router.navigate([ '/' ]);
+  chatNShare() {
+    this.router.navigate([ '/chat' ]);
     this.dialogRef.close();
   }
 
@@ -134,7 +134,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       post.doc.user.name === userName &&
       post.doc.time > this.startDate &&
       post.doc.time < this.endDate &&
-      post.doc.time > userSubmission?.time &&
+      // post.doc.time > userSubmission?.time &&
       userSubmission?.status === 'complete' &&
       !post.doc.replyTo
       ) {
