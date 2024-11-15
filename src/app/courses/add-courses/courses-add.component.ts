@@ -107,9 +107,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
-        this. = 'Edit';
+        this.pageType = 'Edit';
       } else {
-        this. = 'Add'; 
+        this.pageType = 'Add'; 
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);

@@ -4,7 +4,7 @@
 </mat-toolbar>
 
 <div [ngClass]="{'space-container':!isDialog}">
-  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Resource</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</mat-toolbar>
   <div class="view-container view-full-height">
     <div>
       <form class="form-spacing" [formGroup]="resourceForm" novalidate>
