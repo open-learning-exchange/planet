@@ -50,8 +50,11 @@
     <mat-form-field class="font-size-1">
       <input matInput i18n-placeholder placeholder="Type title to search..." [(ngModel)]="titleSearch">
     </mat-form-field>
-    <button mat-button (click)="resetSearch()"><span i18n>Reset</span></button>
-  </ng-template>
+    <button mat-button (click)="resetSearch()"
+    [disabled]="feedback.filter.trim() === '' && filter.type === '' && filter.status === '' && titleSearch.trim() === ''">
+<span i18n>Clear</span>
+</button>
+</ng-template>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar>
