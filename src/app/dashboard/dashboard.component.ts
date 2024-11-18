@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
   user: any;
-  
+
   dateNow: any;
   visits = 0;
   surveysCount = 0;
@@ -77,14 +77,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const user = this.userService.get();
-  
+
     if (user) {
       this.user = user;
       this.displayName = user.firstName ? `${user.firstName} ${user.lastName}` : user.name;
     } else {
       console.warn('User data is missing or not initialized properly.');
     }
-  
+
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ).subscribe((res: any) => {
         this.visits = res.length;
       });
-  }  
+  }
 
   ngOnDestroy() {
     this.onDestroy$.next();
