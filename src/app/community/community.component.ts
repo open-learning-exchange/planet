@@ -367,7 +367,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     };
     this.dialogsFormService.openDialogsForm(
       this.team.description ? $localize`Edit Description` : $localize`Add Description`,
-      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: true, imageGroup: 'community' } ],
+      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: false, imageGroup: 'community' } ],
       { description: this.team.description || '' },
       { autoFocus: true, onSubmit: submitDescription }
     );
