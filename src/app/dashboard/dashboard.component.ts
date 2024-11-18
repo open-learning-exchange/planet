@@ -31,7 +31,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
-
+  user: any;
+  
   dateNow: any;
   visits = 0;
   surveysCount = 0;
@@ -76,7 +77,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const user = this.userService.get();
-    this.displayName = user.firstName !== undefined ? user.firstName + ' ' + user.lastName : user.name;
+  
+    if (user) {
+      this.user = user;
+      this.displayName = user.firstName ? `${user.firstName} ${user.lastName}` : user.name;
+    } else {
+      console.warn('User data is missing or not initialized properly.');
+    }
+  
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
@@ -84,12 +92,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.couchService.findAll('login_activities', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
+          console.warn('Error fetching login activities');
           return of([]);
         })
       ).subscribe((res: any) => {
         this.visits = res.length;
       });
-  }
+  }  
 
   ngOnDestroy() {
     this.onDestroy$.next();
