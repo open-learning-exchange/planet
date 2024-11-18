@@ -235,6 +235,12 @@ export class PlanetTagInputDialogComponent {
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
       control?.clearValidators();
+
+      if (key === 'name') {
+        control?.setValidators(this.tagNameSyncValidator());
+        control?.setAsyncValidators(ac => this.tagNameAsyncValidator(ac));
+      }
+
       control?.markAsUntouched();
       control?.updateValueAndValidity();
     });
