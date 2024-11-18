@@ -217,7 +217,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const type = this.examType;
       const takingExam = exam ? exam : step[type];
       this.setTakingExam(takingExam, takingExam._id + '@' + course._id, type);
-      this.isLoading = false
+      this.isLoading = false;
     });
   }
 
