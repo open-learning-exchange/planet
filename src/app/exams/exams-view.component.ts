@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
 import { CoursesService } from '../courses/courses.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
@@ -45,7 +45,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   unansweredQuestions: number[];
   isComplete = false;
   comment: string;
-  isLoading = true;
+  isLoading: boolean;
 
   constructor(
     private router: Router,
@@ -58,6 +58,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.isLoading = true;
     this.setCourseListener();
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -69,15 +70,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
             this.exam = this.exam || res;
             this.examType = params.get('type') || this.previewExamType;
             this.setExamPreview();
+            this.isLoading = false;
           },
           (err) => {
             this.planetMessageService.showAlert($localize`Preview is not available for this test`);
             this.goBack();
+            this.isLoading = false;
           }
         );
         return;
       }
       this.setExam(params);
+      this.isLoading = false;
     });
   }
 
@@ -85,6 +89,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
+
+  // ngAfterViewInit() {
+  //   this.isLoading = false;
+  // }
 
   setExam(params) {
     this.stepNum = +params.get('stepNum');
@@ -106,7 +114,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
     }
-    this.isLoading = false;
   }
 
   setExamPreview() {
@@ -121,7 +128,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.updatedOn = this.submission.lastUpdateTime;
       this.setViewAnswerText(this.submission.answers[this.questionNum - 1]);
     }
-    this.isLoading = false;
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
