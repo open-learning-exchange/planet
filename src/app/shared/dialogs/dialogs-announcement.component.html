@@ -50,9 +50,18 @@
           {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
         <span>Comparte tu opinión en Nuestras Voces. <br><span>{{getStatus('amountEarned')}} de 5 Voces diarias</span> </span>
-        <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost')" mat-button mat-raised-button color="primary" type="button" (click)="chatNShare()">
+        <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="chatNShare()">
           Chatea y comparte
         </a>
+        <ng-template #dailyVoices>
+          <div class="daily-voces-dots">
+            <div
+              *ngFor="let dot of [0, 1, 2, 3, 4]; let i = index"
+              class="dot"
+              [ngClass]="{ completed: i < getStatus('amountEarned') }"
+            ></div>
+          </div>
+        </ng-template>
       </div>
     </div>
   </ng-template>

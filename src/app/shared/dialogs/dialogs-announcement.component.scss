@@ -76,3 +76,20 @@
   font-weight: bold;
   margin-top: 20px;
 }
+
+.daily-voces-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: lightgray;
+}
+
+.dot.completed {
+  background-color: $primary;
+}
