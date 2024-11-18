@@ -45,7 +45,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   unansweredQuestions: number[];
   isComplete = false;
   comment: string;
-  isLoading: boolean;
+  isLoading = true;
 
   constructor(
     private router: Router,
@@ -58,7 +58,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.isLoading = true;
     this.setCourseListener();
     this.setSubmissionListener();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
@@ -70,18 +69,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
             this.exam = this.exam || res;
             this.examType = params.get('type') || this.previewExamType;
             this.setExamPreview();
-            this.isLoading = false;
+
           },
           (err) => {
             this.planetMessageService.showAlert($localize`Preview is not available for this test`);
             this.goBack();
-            this.isLoading = false;
           }
         );
         return;
       }
       this.setExam(params);
-      this.isLoading = false;
     });
   }
 
@@ -89,10 +86,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
-
-  // ngAfterViewInit() {
-  //   this.isLoading = false;
-  // }
 
   setExam(params) {
     this.stepNum = +params.get('stepNum');
@@ -128,6 +121,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.updatedOn = this.submission.lastUpdateTime;
       this.setViewAnswerText(this.submission.answers[this.questionNum - 1]);
     }
+    this.isLoading = false;
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
@@ -186,6 +180,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
+    this.isLoading = false;
     this.router.navigate([ '../',
       this.mode === 'take' ? {} :
       { type: this.mode === 'grade' ? 'exam' : 'survey' }
@@ -222,6 +217,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const type = this.examType;
       const takingExam = exam ? exam : step[type];
       this.setTakingExam(takingExam, takingExam._id + '@' + course._id, type);
+      this.isLoading = false
     });
   }
 
