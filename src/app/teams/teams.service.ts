@@ -259,7 +259,7 @@ export class TeamsService {
     const user = this.userService.get();
     const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
     const teamType = team.type || 'team';
-    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${team.name}"</b> ${teamType}.`;
+    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>${team.name}</b> ${teamType}.`;
     switch (type) {
       case 'message':
         return $localize`<b>${fullName}</b> has posted a message on ${teamMessage}`;
