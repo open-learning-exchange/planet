@@ -1,14 +1,32 @@
 @import '../../variables';
 
 .achievements-container {
-  max-width: 800px;
+  max-width: 95%;
   margin: 0 auto;
-  text-align: center;
 
   & mat-list, & ul, & ol {
     text-align: left;
   }
 
+  mat-divider {
+    margin-top: 1rem;
+  }
+
+  .user-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .birth-info{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  
   .mat-list-base .mat-list-item {
     &.mat-list-item-word-wrap {
       height: initial;
@@ -44,7 +62,6 @@
         margin-right: 0;
       }
     }
-
   }
 
   .styled-link {
