@@ -240,6 +240,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`You have deleted a team.`);
         this.removeTeamFromTable(team);
+        this.emptyData = !this.teams.data.length;
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
     };
