@@ -10,6 +10,9 @@ import { FormControl, AbstractControl } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import { StateService } from '../shared/state.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'planet-exams-view',
@@ -46,6 +49,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isComplete = false;
   comment: string;
   isLoading = true;
+  courseId: string;
 
   constructor(
     private router: Router,
@@ -54,7 +58,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private couchService: CouchService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialog: MatDialog,
+    private stateService: StateService,
   ) { }
 
   ngOnInit() {
@@ -78,6 +84,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         return;
       }
       this.setExam(params);
+      this.courseId = params.get('id');
     });
   }
 
@@ -135,6 +142,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.spinnerOn = false;
       } else {
         this.routeToNext(nextClicked ? this.questionNum : nextQuestion, previousStatus);
+        // Challenge option only
+        if (
+          isFinish &&
+          includedCodes.includes(this.stateService.configuration.code) &&
+          challengePeriod &&
+          this.courseId === challengeCourseId
+          ) {
+          this.dialog.open(DialogsAnnouncementComponent, {
+            width: '50vw',
+            maxHeight: '100vh'
+          });
+        }
       }
     });
   }

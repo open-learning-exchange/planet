@@ -12,6 +12,8 @@ import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './home.component.html',
@@ -60,13 +62,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   private onDestroy$ = new Subject<void>();
 
   constructor(
+    private dialog: MatDialog,
     private couchService: CouchService,
     private router: Router,
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -229,4 +232,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
+  openAnnouncementDialog(notification) {
+    this.readNotification(notification);
+    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
+    if (challengeActive) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    }
+  }
 }
