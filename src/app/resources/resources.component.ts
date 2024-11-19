@@ -49,6 +49,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
+  isLoading: boolean;
   selection = new SelectionModel(true, []);
   onDestroy$ = new Subject<void>();
   parent = this.route.snapshot.data.parent;
@@ -122,6 +123,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
     }
@@ -141,6 +143,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
