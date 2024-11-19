@@ -77,6 +77,9 @@
               <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
             </mat-menu>
           </div>
+          <ng-container *ngIf="!element.parent === true && !element.course">
+            <button mat-raised-button color="primary" (click)="archiveSurvey(element)" i18n><mat-icon>archive</mat-icon> Archive</button>
+          </ng-container>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

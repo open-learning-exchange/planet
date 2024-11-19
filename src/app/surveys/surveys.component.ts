@@ -87,6 +87,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().subscribe(surveys => this.parentCount = surveys.filter(survey => survey.parent === true).length);
+    console.log("Survey info: ", this.surveys)
   }
 
   ngAfterViewInit() {
@@ -283,4 +284,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  archiveSurvey(survey) {
+    console.log("Archive this Survey")
+  }
 }
