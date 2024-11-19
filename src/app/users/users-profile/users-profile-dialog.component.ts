@@ -1,5 +1,6 @@
-import { Component, Inject, ViewChild, AfterContentChecked } from '@angular/core';
+import { Component, Inject, ViewChild, AfterContentChecked, HostListener } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guard';
 import { UsersProfileComponent } from './users-profile.component';
 
 @Component({
@@ -16,13 +17,14 @@ import { UsersProfileComponent } from './users-profile.component';
     </mat-dialog-actions>
   `
 })
-export class UserProfileDialogComponent implements AfterContentChecked {
+export class UserProfileDialogComponent implements AfterContentChecked, CanComponentDeactivate {
 
   @ViewChild(UsersProfileComponent) usersProfileComponent: UsersProfileComponent;
   name: string;
   planetCode: string;
   editable = false;
   dialogRef: any;
+  hasUnsavedChanges = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.name = data.member.name;
@@ -35,9 +37,33 @@ export class UserProfileDialogComponent implements AfterContentChecked {
   }
 
   closeDialog() {
+    if (this.hasUnsavedChanges) {
+      const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+      if (!confirmLeave) {
+        return; // Prevent dialog from closing
+      }
+    }
     if (this.dialogRef) {
       this.dialogRef.close();
     }
   }
 
+  // Custom logic for detecting unsaved changes
+  setUnsavedChanges(flag: boolean) {
+    this.hasUnsavedChanges = flag;
+  }
+
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+    }
+    return true;
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: any): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = true;
+    }
+  }
 }

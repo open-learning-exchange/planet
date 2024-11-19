@@ -11,13 +11,14 @@ import { MaterialModule } from './shared/material.module';
 import { NgxImgModule } from 'ngx-img';
 import { environment } from '../environments/environment';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
+import { UnsavedChangesGuard } from './shared/guards/unsaved-changes.guard'; // Import guard
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
-FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+FullCalendarModule.registerPlugins([
   dayGridPlugin,
   timeGridPlugin,
   interactionPlugin
@@ -37,6 +38,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
   ],
+  providers: [ UnsavedChangesGuard ],
   declarations: [
     AppComponent, PageNotFoundComponent
   ],
