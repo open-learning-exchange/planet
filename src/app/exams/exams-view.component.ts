@@ -124,7 +124,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
-    // Only navigate away from page until after successful post (ensures DB is updated for submission list)
+
     obs.subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
@@ -132,10 +132,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
         this.spinnerOn = false;
       } else {
-        this.routeToNext(nextClicked ? this.questionNum : nextQuestion, previousStatus);
+        this.routeToNext(nextQuestion, previousStatus);
       }
     });
   }
+
 
   routeToNext(nextQuestion, previousStatus) {
     this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
@@ -221,7 +222,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
       this.unansweredQuestions = submission.parent.questions.reduce((unanswered, q, index) => [
-        ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
+     ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
       ], []);
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
@@ -231,6 +232,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.setQuestion(submission.parent.questions);
         this.grade = (ans && ans.grade !== undefined) ? ans.grade : this.grade;
         this.comment = ans && ans.gradeComment;
+      }
+      if (this.mode === 'take' && this.unansweredQuestions.length > 0) {
+        const nextUnansweredQuestion = this.unansweredQuestions[0];
+        if (this.questionNum !== nextUnansweredQuestion) {
+          this.questionNum = nextUnansweredQuestion;
+          this.router.navigate([ {
+            ...this.route.snapshot.params,
+            questionNum: this.questionNum
+          } ], { relativeTo: this.route });
+        }
       }
       if (this.mode === 'take' && this.isNewQuestion) {
         this.setAnswerForRetake(ans);
