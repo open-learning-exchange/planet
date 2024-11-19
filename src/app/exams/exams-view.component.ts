@@ -138,7 +138,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-
   routeToNext(nextQuestion, previousStatus) {
     this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
