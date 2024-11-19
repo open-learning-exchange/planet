@@ -111,6 +111,11 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
   z-index: 1000;
 }
 
+.banner-text {
+  display: block;
+  margin: 0 2rem;
+}
+
 .closebtn {
   position: absolute;
   right: 15px;

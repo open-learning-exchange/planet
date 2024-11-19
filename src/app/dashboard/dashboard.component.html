@@ -1,6 +1,8 @@
 <div *ngIf="showBanner" class="alert" i18n>
+  <a [routerLink]="['/users/update', user.name]">
+    <span class="banner-text">Please complete your profile to enjoy full features!</span>
+  </a>
   <span class="closebtn" (click)="closeBanner()">&times;</span>
-  Please complete your profile to enjoy full features!
 </div>
 <mat-card class="horizontal">
   <img [src]="profileImg">
