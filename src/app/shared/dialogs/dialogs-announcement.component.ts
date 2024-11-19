@@ -126,7 +126,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasSubmittedVoice(news: any[], userName: string) {
-    const userSubmission = this.submissions.find((user: { name: string }) => user.name === userName);
     const uniqueDays = new Set<string>();
 
     news.forEach(post => {
@@ -134,8 +133,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       post.doc.user.name === userName &&
       post.doc.time > this.startDate &&
       post.doc.time < this.endDate &&
-      // post.doc.time > userSubmission?.time &&
-      userSubmission?.status === 'complete' &&
       !post.doc.replyTo
       ) {
         uniqueDays.add(new Date(post.doc.time).toDateString());
