@@ -11,7 +11,27 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
+import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
+
+export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'okuro', 'uriur', 'mutugi', 'vi' ];
+export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
+export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1));
+
+@Component({
+  template: `
+    <div class="announcement-container">
+      <img
+        src="https://res.cloudinary.com/mutugiii/image/upload/v1730395098/challenge_horizontal_new_tnco4v.jpg"
+        alt="Issues Challenge"
+        class="announcement-banner"
+      />
+      <p class="success-msg">¡Felicidades reto completado!</p>
+    </div>
+  `,
+  styleUrls: [ './dialogs-announcement.component.scss' ]
+})
+export class DialogsAnnouncementSuccessComponent { }
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
@@ -23,17 +43,13 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
   teamId = planetAndParentId(this.stateService.configuration);
-  submissionsSet = new Set();
+  submissions = [];
   groupSummary = [];
   enrolledMembers: any;
-  courseId = '9517e3b45a5bb63e69bb8f269216974d';
+  courseId = challengeCourseId;
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
-  userStatus = {
-    joinedCourse: false,
-    surveyComplete: false,
-    hasPost: false,
-  };
+  isLoading = true;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -43,15 +59,16 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private newsService: NewsService,
     private stateService: StateService,
     private submissionsService: SubmissionsService,
-    private userService: UserService
+    private userService: UserService,
+    private userStatusService: UserChallengeStatusService
   ) {}
 
   ngOnInit() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
-
     if (includedCodes.includes(this.configuration.code)) {
       this.configuration = this.stateService.configuration;
       this.initializeData();
+    } else {
+      this.isLoading = false;
     }
   }
 
@@ -82,19 +99,50 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   joinCourse() {
     const courseTitle = this.coursesService.getCourseNameFromId(this.courseId);
     this.coursesService.courseResignAdmission(this.courseId, 'admission', courseTitle).subscribe((res) => {
-      this.router.navigate([ '/courses/view', this.courseId ]);
+      this.router.navigate([ `/courses/view/${this.courseId}/step/1` ]);
     }, (error) => ((error)));
     this.dialogRef.close();
   }
 
   doSurvey() {
-    this.router.navigate([ `/courses/view/${this.courseId}/step/3` ]);
+    this.router.navigate([ `/courses/view/${this.courseId}/step/3/exam`, {
+      id: this.courseId,
+      stepNum: 3,
+      questionNum: 1,
+      type: 'survey',
+      preview: 'false',
+      examId: '83fe016d8a983de6f7112e761c014545'
+    } ]);
     this.dialogRef.close();
   }
 
-  postVoice() {
-    this.router.navigate([ '/' ]);
+  chatNShare() {
+    this.router.navigate([ '/chat' ]);
     this.dialogRef.close();
+  }
+
+  hasCompletedSurvey(userName: string) {
+    return this.submissions.some(submission => submission.name === userName && submission.status === 'complete');
+  }
+
+  hasSubmittedVoice(news: any[], userName: string) {
+    const uniqueDays = new Set<string>();
+
+    news.forEach(post => {
+      if (
+      post.doc.user.name === userName &&
+      post.doc.time > this.startDate &&
+      post.doc.time < this.endDate &&
+      !post.doc.replyTo
+      ) {
+        uniqueDays.add(new Date(post.doc.time).toDateString());
+      }
+    });
+    return Math.min(uniqueDays.size, 5);
+  }
+
+  hasEnrolledCourse(member) {
+    return member.courseIds.includes(this.courseId);
   }
 
   fetchEnrolled() {
@@ -109,24 +157,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         };
       });
     });
-  }
-
-  hasCompletedSurvey(userName: string) {
-    return this.submissionsSet.has(userName);
-  }
-
-  hasSubmittedVoice(news: any[], userName: string) {
-    return news.some(post => {
-      return (
-      post.doc.user.name === userName &&
-      post.doc.time > this.startDate &&
-      post.doc.time < this.endDate
-      );
-    });
-  }
-
-  hasEnrolledCourse(member) {
-    return member.courseIds.includes(this.courseId);
   }
 
   fetchCourseAndNews() {
@@ -147,33 +177,58 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
-          this.submissionsSet = new Set(filteredSubmissions.map(submission => submission.user.name));
+          this.submissions = filteredSubmissions.map(submission => ({
+            name: submission.user.name,
+            status: submission.status,
+            time: submission.lastUpdateTime
+          }));
+
 
           // Group Summary
           this.enrolledMembers.forEach((member) => {
-            const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
-            const hasPosted = this.hasSubmittedVoice(news, member.name);
             const hasJoinedCourse = this.hasEnrolledCourse(member);
+            const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
+            const hasPosted = this.hasSubmittedVoice(news, member.name) > 0;
+            const userAmount = this.hasSubmittedVoice(news, member.name);
 
-            if (hasCompletedSurvey && hasPosted && hasJoinedCourse) {
-              this.groupSummary.push(member);
+            if (hasCompletedSurvey && hasPosted && hasJoinedCourse && userAmount > 0) {
+              if (!this.groupSummary.some(m => m.name === member.name)) {
+                this.groupSummary.push({
+                  ...member,
+                  amountEarned: userAmount
+                });
+              }
             }
           });
 
           // Individual stats
-          this.userStatus.surveyComplete = this.hasCompletedSurvey(this.currentUserName);
-          this.userStatus.hasPost = this.hasSubmittedVoice(news, this.currentUserName);
+          this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
+          this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName) > 0);
+          this.userStatusService.updateStatus('amountEarned', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
-              this.userStatus.joinedCourse = this.hasEnrolledCourse(member);
+              this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
             }
           });
-        });
-      });
+          this.isLoading = false;
+        }, () => this.isLoading = false);
+      }, () => this.isLoading = false);
+  }
+
+  getTotalMoneyEarned(): number {
+    return this.groupSummary.reduce((total, member) => {
+      const amount = Number(member.amountEarned);
+      return total + (isNaN(amount) ? 0 : amount);
+    }, 0);
   }
 
   getGoalPercentage(): number {
     const goal = 500;
-    return (this.groupSummary?.length / goal) * 100;
+    const totalMoneyEarned = this.getTotalMoneyEarned();
+    return (totalMoneyEarned / goal) * 100;
+  }
+
+  getStatus(key: string) {
+    return this.userStatusService.getStatus(key);
   }
 }

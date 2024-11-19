@@ -12,102 +12,150 @@ Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://mat
 
 ## To work on this
 
-The only prerequisite is Vagrant. If you don't know about it, please do some research and try it. After cloning the repository, run `vagrant up dev` in the console. Once it's done installing the virtual machine it'll automatically start compiling the app.  After about 10 seconds, you can open the app at `localhost:3000`.
+For development, the following additional tools are required:
 
-## Project guidelines
+* Docker
+* Git
+* NPM v6
+* Node.js v14
+* Angular CLI v10
 
-* Please check out [the project page](https://waffle.io/ole-vi/planet) for available tasks to work on.
-* Before contributing also be sure to read our [style guide](Style-Guide.md)
+The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
+
+Create a directory for planet development data:
+```
+mkdir -p ~/srv/planetdev && cd ~/srv/planetdev
+```
+
+Download the Docker Compose file:
+For Linux:
+```
+wget https://raw.githubusercontent.com/ole-vi/planet-prod-configs/main/planet-dev.yml
+```
+
+For macOS/Windows:
+```
+curl https://gist.githubusercontent.com/xyb994/0d14dfe302df0df0d4e8d8df0d1d5feb/raw/planet-dev-mac.yml -o planet-dev.yml
+```
+
+Start the containers:
+```
+docker compose -f planet-dev.yml -p planet-dev up -d
+```
+
+Verify container status:
+Run ```docker ps -a``` after a minute. You should see two containers running: chatapi and couchdb. The db-init container should have exited.
+
+Configure CORS for CouchDB:
+```
+git clone https://github.com/pouchdb/add-cors-to-couchdb.git
+cd add-cors-to-couchdb
+npm install
+while ! curl -X GET http://127.0.0.1:2200/_all_dbs ; do sleep 1; done
+node bin.js http://localhost:2200
+```
+
+Clone and configure the Planet project:
+```
+git clone https://github.com/open-learning-exchange/planet.git
+cd planet
+chmod +x couchdb-setup.sh
+bash couchdb-setup.sh -p 2200 -i
+```
+
+Install dependencies and serve the app:
+```
+npm install
+ng serve
+```
+
+Visit localhost:3000 to access the Planet app.
+If port 3000 is in use, try ```ng serve --port 3001```
+
+## Project Guidelines
+
+* Check out the project page for tasks.
+* Before contributing also be sure to read our [style guide](Style-Guide.md).
 * Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
 * After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
 * To work on an issue, create a new branch with a descriptive title.
 * Please wait for at least two positive reviews before merging a PR into the master branch
 
+## Unit & End-to-End Tests
 
-## Unit & end-to-end tests
+You can run tests directly from the host or within the development container.
 
-There are two ways for running the tests.  The first listed works from the host machine, and the second works after `vagrant ssh dev` and `cd /vagrant`:
-
-`npm run v-test` (from host) or `ng test` (from vagrant) - Unit tests
+### Unit Tests:
+```
+npm run test
+```
 Open `localhost:9876` once this is done compiling
 
-`npm run v-e2e` (from host) or `ng e2e` (from vagrant) - End-to-end tests
+### End-to-End Tests:
+```
+npm run e2e
+```
 Results will appear in the console
 
-## Enabling the Hub
+## Additional Commands
 
-On the production Vagrant there is an optional second Planet instance that can be run to test out "Hub" features.
 
-To start the hub: `npm run hub-on`
-The hub will be available at `localhost:3200`
+Run: `ng serve`
 
-To stop the hub: `npm run hub-off`
+Build: `ng build`
 
-To set the hub to automatically start on `vagrant up`, run the following: `npm run hub-boot-on`
+Lint: `ng lint`
 
-To disable autostart run following: `npm run hub-boot-off`
+This will fix any lint errors that TSLint can automatically fix:
+`Fix Lint: ng lint --fix`
 
-### Additional commands
 
-Similarly, we have a few other npm commands that work from the host machine to run the `ng` commands from the [Angular CLI](https://cli.angular.io/)
-
-`npm run v-serve` = `ng serve`
-
-`npm run v-build` = `ng build`
-
-`npm run v-lint` = `ng lint`
-
-`npm run v-lint-fix` = `ng lint --fix` This will fix any lint errors that TSLint can automatically fix
-
-Also, the `npm start` command can include an additional `LNG` variable to serve from different language files.  This must be run from within the vagrant (so after `vagrant ssh dev` and `cd /vagrant`) and runs in the format:
-
-`LNG=es npm start`
-
-This would serve the app from the Spanish language files.
+To serve the app in a different language, use the LNG variable:
+`
+LNG=es npm start
+`
 
 ## Troubleshooting
 
 ### I switched branches and now I'm missing a dependency...
 
-The ideal solution would be to ssh into your vagrant and run npm install:
-
-```
-vagrant ssh dev
-cd /vagrant
+Run the following command to reinstall dependencies:
+`
 npm install
-```
+`
 
-This doesn't always work.  If you're having trouble or need to revert to the exact dependencies listed on the package.json, you need to remove all packages then install (after cd /vagrant above, run the commands):
-
-```
-sudo rm -rf node_modules/*
-sudo npm install --unsafe-perm
-```
-
-The trailing `/*` will remove all files & sub-directories of node_modules.  You won't be able to remove node_modules because of the link between the vagrant VM and your host.
-
-### Cannot create new members in development environment or database missing
-
-Sometimes our custom setup for the `_users` database is overwritten by the default or new databases were added in other commits that have not been created in your local environment.  If you are seeing errors with lack of authorization or missing databases, you can run the following command to run our database setup script again:
+If issues persist, delete and reinstall dependencies:
 
 ```
-./v-couchdb-setup.sh -u <your admin username> -w <your admin password>
-```
+rm -rf node_modules/*
+npm install
+````
 
+### Missing database or authentication issues
+
+Run the CouchDB setup script:
+```
+./v-couchdb-setup.sh -u <admin-username> -w <admin-password>
+```
 ### Cannot GET /
 
-There are two things you can try for this.  First is to reinstall the node packages with:
-
+Reinstall packages:
 ```
-vagrant ssh dev
-cd /vagrant
-sudo rm -rf node_modules/*
+rm -rf node_modules/*
 rm package-lock.json
-sudo npm install --unsafe-perm
+npm install
+```
+Restart the app:
+`
+ng serve
+`
+
+### Mime.getType does not exist (Windows)
+Use Mime 3.0.0
+```
+npm i mime@3.0.0
+npm i @types/mime@3.0.0
 ```
 
-The second is to rebuild the application.  First you need to cancel the app in the screen with `screen -x` then CTRL-C.  Then you can bring the app back up with one of the above commands or in another screen session with `screen -dmS build bash -c 'cd /vagrant; ng serve'`.
-
----
 This project is tested with [BrowserStack](https://www.browserstack.com/).
