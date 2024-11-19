@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { TeamsRouterModule } from './teams-router.module';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../shared/material.module';
-import { CovalentMarkdownModule } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { TeamsComponent } from './teams.component';
 import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
@@ -30,7 +30,7 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
     DialogsAddResourcesModule,
     DialogsAddTableModule,
     DialogsResourcesViewerModule,
-    CovalentMarkdownModule,
+    CovalentFlavoredMarkdownModule,
     SharedComponentsModule,
     PlanetCalendarModule,
     FormsModule,

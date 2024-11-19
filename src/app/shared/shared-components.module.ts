@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
-import { CovalentMarkdownModule } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
@@ -28,7 +28,7 @@ import { ChatOutputDirective } from './chat-output.directive';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule
+    CommonModule, MaterialModule, CovalentFlavoredMarkdownModule, RouterModule
   ],
   exports: [
     PlanetLocalStatusComponent,

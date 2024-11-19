@@ -54,7 +54,7 @@
             <mat-icon class="margin-lr-3" i18n-title title="Joined Meetup" [inline]="true" *ngIf="element.participate">check</mat-icon>
           </h3>
           <div class="content">
-            <td-markdown [content]="element.description"></td-markdown>
+            <td-flavored-markdown [content]="element.description"></td-flavored-markdown>
           </div>
           <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
             <mat-icon>more_vert</mat-icon>

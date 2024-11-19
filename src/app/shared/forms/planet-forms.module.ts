@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CovalentTextEditorModule } from '@covalent/text-editor';
-import { CovalentMarkdownModule } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { MaterialModule } from '../material.module';
 import { FormErrorMessagesComponent } from './form-error-messages.component';
 import { PlanetRatingComponent } from './planet-rating.component';
@@ -38,7 +38,7 @@ import { FileInputComponent } from './file-input.component';
     PlanetTagInputComponent,
     PlanetTagSelectedInputComponent,
     CovalentTextEditorModule,
-    CovalentMarkdownModule,
+    CovalentFlavoredMarkdownModule,
     PlanetSelectorComponent,
     PlanetStepListComponent,
     FileInputComponent,

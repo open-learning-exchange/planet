@@ -58,7 +58,7 @@
     text-decoration: underline;
   }
 
-  td-markdown {
+  td-flavored-markdown {
     max-height: none;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -88,7 +88,7 @@
     gap: 0.2rem;
     width: 100%;
   }
-  
+
   .auto-adjust-buttons a {
     flex-grow: 1;
     text-align: center;

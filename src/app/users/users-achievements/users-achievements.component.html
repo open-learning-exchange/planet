@@ -30,11 +30,11 @@
       </div>
       <div *ngIf="achievements.purpose">
         <h3 i18n>My Purpose</h3>
-        <td-markdown [content]="achievements.purpose"></td-markdown>
+        <td-flavored-markdown [content]="achievements.purpose"></td-flavored-markdown>
       </div>
       <div *ngIf="achievements.goals">
         <h3 i18n>My Goals</h3>
-        <td-markdown [content]="achievements.goals"></td-markdown>
+        <td-flavored-markdown [content]="achievements.goals"></td-flavored-markdown>
       </div>
       <ng-container *planetBeta>
         <div *ngIf="certifications.length > 0">
@@ -57,7 +57,7 @@
       </div>
       <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
         <h3 i18n>My Achievements</h3>
-        <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
+        <td-flavored-markdown [content]="achievements.achievementsHeader"></td-flavored-markdown>
         <mat-list>
           <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
             <p class="achievement-header" mat-line>

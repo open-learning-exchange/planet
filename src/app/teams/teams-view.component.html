@@ -78,11 +78,11 @@
         </ng-template>
         <ng-container *ngIf="(team?.description || team?.services || team?.rules); else emptyText">
           <div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
-          <td-markdown [content]="team.description"></td-markdown>
+          <td-flavored-markdown [content]="team.description"></td-flavored-markdown>
           <div class="mat-title" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</div>
-          <td-markdown [content]="team.services"></td-markdown>
+          <td-flavored-markdown [content]="team.services"></td-flavored-markdown>
           <div class="mat-title" *ngIf="team?.rules" i18n>What are the Rules of your enterprise?</div>
-          <td-markdown [content]="team.rules"></td-markdown>
+          <td-flavored-markdown [content]="team.rules"></td-flavored-markdown>
         </ng-container>
         <ng-template #emptyText>
           <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>

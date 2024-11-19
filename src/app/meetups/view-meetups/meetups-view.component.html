@@ -40,7 +40,7 @@
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
       <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
       <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
-      <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
+      <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-flavored-markdown [content]="meetupDetail?.description"></td-flavored-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
       <span><b i18n>Joined Members: ({{members.length}})</b></span>
