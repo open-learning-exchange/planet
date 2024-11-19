@@ -48,6 +48,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   unansweredQuestions: number[];
   isComplete = false;
   comment: string;
+  isLoading = true;
   courseId: string;
 
   constructor(
@@ -126,6 +127,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.updatedOn = this.submission.lastUpdateTime;
       this.setViewAnswerText(this.submission.answers[this.questionNum - 1]);
     }
+    this.isLoading = false;
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
@@ -196,6 +198,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
+    this.isLoading = false;
     this.router.navigate([ '../',
       this.mode === 'take' ? {} :
       { type: this.mode === 'grade' ? 'exam' : 'survey' }
@@ -232,6 +235,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       const type = this.examType;
       const takingExam = exam ? exam : step[type];
       this.setTakingExam(takingExam, takingExam._id + '@' + course._id, type);
+      this.isLoading = false;
     });
   }
 

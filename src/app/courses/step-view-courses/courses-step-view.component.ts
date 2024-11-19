@@ -39,6 +39,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   isGridView = true;
   showChat = false;
   isOpenai = false;
+  isLoading = true;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -125,6 +126,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         user: this.userService.get(),
         type: 'exam' });
     }
+    this.isLoading = false;
   }
 
   initResources(resources) {
