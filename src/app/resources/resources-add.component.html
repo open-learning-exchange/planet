@@ -91,7 +91,7 @@
           <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
         </div>
-        <p *ngIf="existingResource.doc?._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
+        <p class="full-width" *ngIf="existingResource.doc?._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
         <div class="inner-gaps full-width">
           <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
           <ng-container *ngIf="existingResource.doc?._attachments">
