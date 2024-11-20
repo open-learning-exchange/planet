@@ -94,9 +94,11 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   hasProviderChanged() {
+    console.log('log: ', this.chatService.getChatAIProvider());
+    console.log('log: ', this.provider);
     if (this.chatService.getChatAIProvider() === undefined) {
       return; // that means that it's a brand new chat
-    } else if (this.chatService.getChatAIProvider() === this.provider.name) {
+    } else if (this.chatService.getChatAIProvider().name === this.provider.name) {
       return; // that means that the it still the same model being used
     }
     this.newChat();
@@ -164,7 +166,10 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   selectConversation(conversation, index: number) {
     this.selectedConversation = conversation;
-    this.chatService.setChatAIProvider(this.selectedConversation['aiProvider']);
+    const aiProvider: AIProvider = {
+      name: this.selectedConversation['aiProvider'],
+    }
+    this.chatService.setChatAIProvider(aiProvider);
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev
