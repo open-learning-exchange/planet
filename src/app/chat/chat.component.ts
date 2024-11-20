@@ -34,7 +34,7 @@ export class ChatComponent implements OnInit {
   }
 
   toggleAIService(): void {
-    console.log("log: ", this.chatService.getAIProvider())
+    console.log('log: ', this.chatService.getAIProvider());
     this.chatService.toggleAIServiceSignal(this.activeService);
   }
 
