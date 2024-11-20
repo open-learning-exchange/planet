@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { Conversation } from '../chat.model';
+import { Conversation, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
@@ -33,6 +33,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   selectedConversation: Conversation;
   lastRenderedConversation: number;
   isEditing: boolean;
+  provider: AIProvider;
   fullTextSearch = false;
   searchType: 'questions' | 'responses';
   overlayOpen = false;
@@ -56,6 +57,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.titleSearch = '';
     this.getChatHistory();
     this.subscribeToNewChats();
+    this.subscribeToAIService();
   }
 
   ngOnDestroy() {
@@ -74,9 +76,30 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       .subscribe(() => this.getChatHistory());
   }
 
+  subscribeToAIService() {
+    this.chatService.toggleAIService$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((aiService => {
+        this.provider = {
+          name: aiService
+        };
+        this.hasProviderChanged();
+      }));
+  }
+
   newChat() {
     this.chatService.sendNewChatSelectedSignal();
+    this.chatService.setChatAIProvider(undefined);
     this.selectedConversation = null;
+  }
+
+  hasProviderChanged() {
+    if (this.chatService.getChatAIProvider() === undefined) {
+      return; // that means that it's a brand new chat
+    } else if (this.chatService.getChatAIProvider() === this.provider.name) {
+      return; // that means that the it still the same model being used
+    }
+    this.newChat();
   }
 
   toggleEditTitle() {
@@ -141,7 +164,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   selectConversation(conversation, index: number) {
     this.selectedConversation = conversation;
-    this.chatService.setAIProvider(this.selectedConversation['aiProvider']);
+    this.chatService.setChatAIProvider(this.selectedConversation['aiProvider']);
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev
