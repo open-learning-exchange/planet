@@ -24,6 +24,7 @@
   <div class="view-container">
     <div *ngIf="achievements !== undefined" class="achievements-container">
       <div class="user-info">
+        <img class="logo" src="../../../assets/OLE_Logo1.png" width="100" height="100">
         <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
         <div class="birth-info">
           <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
