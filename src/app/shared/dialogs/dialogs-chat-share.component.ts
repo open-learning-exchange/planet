@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
@@ -10,6 +10,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { NewsService } from '../../news/news.service';
 import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
+import { UserChallengeStatusService } from '../user-challenge-status.service';
+import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   templateUrl: './dialogs-chat-share.component.html',
@@ -44,6 +46,8 @@ export class DialogsChatShareComponent implements OnInit {
     private newsService: NewsService,
     private teamsService: TeamsService,
     private userService: UserService,
+    private dialog: MatDialog,
+    private userStatusService: UserChallengeStatusService,
   ) {
     this.conversation = data || this.conversation;
   }
@@ -139,6 +143,16 @@ export class DialogsChatShareComponent implements OnInit {
     }
     this.conversation.chat = true;
     this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
+    if (
+      this.userStatusService.getStatus('joinedCourse') &&
+      this.userStatusService.getStatus('surveyComplete') &&
+      !this.userStatusService.getStatus('hasPost')
+    ) {
+      this.dialog.open(DialogsAnnouncementSuccessComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    }
   }
 
 }
