@@ -137,8 +137,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   // direction = -1 for previous, 1 for next
   changeStep(direction) {
+    this.isLoading = true;
     this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
     this.resource = undefined;
+    this.stepDetail = { stepTitle: '', description: '', resources: [] };
     this.countActivity = true;
   }
 
