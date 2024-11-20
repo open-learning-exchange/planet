@@ -43,8 +43,6 @@ export class LoginComponent implements OnInit {
         })
       ).subscribe(data => { this.online = (data) ? 'on' : ''; });
     }
-    // remove local storage -- if user was automatically logged out for session expired
-    localStorage.removeItem('bannerShown');
   }
 
   checkAdminExistence() {
