@@ -168,7 +168,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.selectedConversation = conversation;
     const aiProvider: AIProvider = {
       name: this.selectedConversation['aiProvider'],
-    }
+    };
     this.chatService.setChatAIProvider(aiProvider);
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
