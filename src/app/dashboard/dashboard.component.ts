@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
@@ -21,11 +21,11 @@ import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announce
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
 })
-export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
-  user: any;
+  user = this.userService.get();
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
-  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
+  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/';
   displayName: string;
   roles: string[];
   planetName: string;
@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     private certificationsService: CertificationsService,
     private dialog: MatDialog
   ) {
-    const currRoles = this.userService.get().roles;
+    const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
     this.userService.shelfChange$.pipe()
       .subscribe(() => {
@@ -77,13 +77,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.user = this.userService.get();
     this.displayName = this.user.firstName !== undefined ? this.user.firstName + ' ' + this.user.lastName : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
     this.initDashboard();
-    this.couchService.findAll('login_activities', findDocuments({ 'user': this.userService.get().name }, [ 'user' ], [], 1000))
+    this.couchService.findAll('login_activities', findDocuments({ 'user': this.user.name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
           return of([]);
@@ -91,9 +90,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       ).subscribe((res: any) => {
         this.visits = res.length;
       });
-  }
-
-  ngAfterViewInit() {
     this.reminderBanner();
   }
 
@@ -139,7 +135,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   getTeamMembership() {
     const configuration = this.stateService.configuration;
     return this.couchService.findAll(
-      'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.userService.get()._id, docType: 'membership' })
+      'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.user._id, docType: 'membership' })
     ).pipe(
       switchMap((memberships) => forkJoin([
         of(memberships),
@@ -154,7 +150,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get profileImg() {
-    const attachments = this.userService.get()._attachments;
+    const attachments = this.user._attachments;
     if (attachments) {
       return this.urlPrefix + Object.keys(attachments)[0];
     }
@@ -177,7 +173,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getSurveys() {
-    this.getSubmissions('survey', 'pending', this.userService.get().name).subscribe((surveys) => {
+    this.getSubmissions('survey', 'pending', this.user.name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
       this.myLifeItems = this.myLifeItems.map(item => item.link === 'mySurveys' ? { ...item, badge: this.surveysCount } : item);
     });
@@ -226,26 +222,18 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reminderBanner() {
-    if (!this.checkIfProfileIsCreated()) {
-      const bannerShown = localStorage.getItem('bannerShown');
-      this.showBanner = !bannerShown;
-
-      if (!bannerShown) {
-        localStorage.setItem('bannerShown', 'true');
-      }
-    }
+    this.userService.isProfileComplete();
+    combineLatest([
+      this.userService.profileBanner,
+      this.userService.profileComplete$
+    ]).pipe(takeUntil(this.onDestroy$)).subscribe(([ profileBanner, profileComplete ]) => {
+      this.showBanner = profileBanner && !profileComplete;
+    });
   }
 
   closeBanner() {
+    this.userService.profileBanner.next(false);
     this.showBanner = false;
   }
 
-  checkIfProfileIsCreated(): boolean {
-    const user = this.user;
-    if (user.firstName && user.lastName && user.email && user.birthDate &&
-        user.gender && user.language && user.phoneNumber && user.level) {
-      return true;
-    }
-    return false;
-  }
 }

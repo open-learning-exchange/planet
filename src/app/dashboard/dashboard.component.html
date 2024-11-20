@@ -1,6 +1,6 @@
-<div *ngIf="showBanner" class="alert" i18n>
+<div *ngIf="showBanner" class="alert">
   <a [routerLink]="['/users/update', user.name]">
-    <span class="banner-text">Please complete your profile to enjoy full features!</span>
+    <span class="banner-text" i18n>Please complete your profile to enjoy full features!</span>
   </a>
   <span class="closebtn" (click)="closeBanner()">&times;</span>
 </div>
