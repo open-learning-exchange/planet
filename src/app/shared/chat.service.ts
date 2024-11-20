@@ -30,6 +30,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   aiProviders$ = this.aiProvidersSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
 
+  currentAIProvider: string;
 
   constructor(
     private httpClient: HttpClient,
@@ -121,6 +122,14 @@ import { AIServices, AIProvider } from '../chat/chat.model';
 
   toggleAIServiceSignal(aiService: string) {
     this.toggleAIService.next(aiService);
+  }
+
+  setAIProvider(aiProvider: string) {
+    this.currentAIProvider = aiProvider;
+  }
+
+  getAIProvider(): string {
+    return this.currentAIProvider;
   }
 
   setSelectedConversationId(conversationId: object) {
