@@ -13,8 +13,7 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
-  templateUrl: 'courses-progress-leader.component.html',
-  styleUrls: [ 'courses-progress-leader.scss' ]
+  templateUrl: 'courses-progress-leader.component.html'
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
