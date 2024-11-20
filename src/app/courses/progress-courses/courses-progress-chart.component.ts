@@ -19,6 +19,7 @@ export class CoursesProgressChartComponent implements OnChanges {
   @Input() height = 0;
   @Input() showTotals = true;
   @Input() showAvatar = false;
+  @Input() showSummaryColumns = true;
   @Output() changeData = new EventEmitter<{ set, index }>();
   @Output() clickAction = new EventEmitter<any>();
   @ViewChildren('errorsTotal, errorsIndex') yScrollElements;

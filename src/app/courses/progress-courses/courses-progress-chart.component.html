@@ -1,90 +1,92 @@
-<table class="simple-table">
-  <thead>
-    <tr>
-      <th *ngIf="showTotals">
-        {{ label | i18nSelect: { 'Steps': 'Steps', 'Questions': 'Questions', 'other': 'Steps' } }}
-      </th>
-      <th i18n>Success (%)</th>
-      <th i18n>Total Errors</th>
-      <th *ngFor="let set of sets" class="user-header">
-        <div class="user-header-content">
-          <div class="cursor-pointer" (click)="labelClick(set)">
-            <planet-avatar 
-              *ngIf="showAvatar" 
-              [username]="set.label" 
-              [planetCode]="set.planetCode" 
-              imgClass="profile-image">
-            </planet-avatar>
+<div>
+  <table class="simple-table">
+    <thead>
+      <tr>
+        <th>
+          {{ label | i18nSelect: { 'Steps': 'Steps', 'Questions': 'Questions', 'other': 'Steps' } }}
+        </th>
+        <th *ngIf="showSummaryColumns" i18n>Success (%)</th>
+        <th *ngIf="showSummaryColumns" i18n>Total Errors</th>
+        <th *ngFor="let set of sets" class="user-header">
+          <div class="user-header-content">
+            <div class="cursor-pointer" (click)="labelClick(set)">
+              <planet-avatar 
+                *ngIf="showAvatar" 
+                [username]="set.label" 
+                [planetCode]="set.planetCode" 
+                imgClass="profile-image">
+              </planet-avatar>
+            </div>
+            <div class="user-name cursor-pointer" (click)="labelClick(set)">
+              {{ set.label }} ({{ set.total }})
+            </div>
           </div>
-          <div class="user-name cursor-pointer" (click)="labelClick(set)">
-            {{ set.label }} ({{ set.total }})
-          </div>
-        </div>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let i of horizTotals; let index = index">
-      <td>
-        {{ index + 1 }}
-      </td>
-      <td>
-        <ng-container *ngIf="calculateSuccessPercentage(index) !== null; else showDash">
-          <span [ngClass]="{
-                  'highlight-green': calculateSuccessPercentage(index) >= 90,
-                  'highlight-yellow': calculateSuccessPercentage(index) >= 70 && calculateSuccessPercentage(index) < 90,
-                  'highlight-red': calculateSuccessPercentage(index) < 70,
-                  'cursor-pointer': i.clickable
-                }"
-                i18n-matTooltip
-                matTooltip="Click to see test detail"
-                [matTooltipDisabled]="!i.clickable"
-                (click)="i.clickable ? dataClick($event, [], index) : null">
-            {{ calculateSuccessPercentage(index) | number:'1.0-0' }}%
-          </span>
-        </ng-container>
-        <ng-template #showDash>
-          -
-        </ng-template>
-      </td>
-      <td>
-        <ng-container *ngIf="i.count > 0; else showTotalDash">
-          <span
-            i18n-matTooltip
-            matTooltip="Click to see test detail"
-            [matTooltipDisabled]="!i.clickable"
-            [ngClass]="{'cursor-pointer': i.clickable}"
-            (click)="i.clickable ? dataClick($event, [], index) : null"
-            style="font-weight: bold;">
-            {{ i.count }}
-          </span>
-        </ng-container>
-        <ng-template #showTotalDash>
-          -
-        </ng-template>
-      </td>
-      <td *ngFor="let set of sets">
-        <div *ngIf="set.items[index]" 
-             i18n-matTooltip 
-             matTooltip="Click to see test detail" 
-             [matTooltipDisabled]="!set.items[index]?.clickable"
-             [ngClass]="{
-               'cursor-pointer': set.items[index]?.clickable
-             }" 
-             (click)="set.items[index]?.clickable ? dataClick($event, set, index) : null">
-          <ng-container *ngIf="set.items[index].number === 0; else showNumber">
-            0
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of horizTotals; let index = index">
+        <td>
+          {{ index + 1 }}
+        </td>
+        <td *ngIf="showSummaryColumns">
+          <ng-container *ngIf="calculateSuccessPercentage(index) !== null; else showDash">
+            <span [ngClass]="{
+                    'highlight-green': calculateSuccessPercentage(index) >= 90,
+                    'highlight-yellow': calculateSuccessPercentage(index) >= 70 && calculateSuccessPercentage(index) < 90,
+                    'highlight-red': calculateSuccessPercentage(index) < 70,
+                    'cursor-pointer': i.clickable
+                  }"
+                  i18n-matTooltip
+                  matTooltip="Click to see test detail"
+                  [matTooltipDisabled]="!i.clickable"
+                  (click)="i.clickable ? dataClick($event, [], index) : null">
+              {{ calculateSuccessPercentage(index) | number:'1.0-0' }}%
+            </span>
           </ng-container>
-          <ng-template #showNumber>
-            <ng-container *ngIf="set.items[index].number > 0; else showDash">
-              <span class="number-highlight">{{ set.items[index].number }}</span>
-            </ng-container>
-            <ng-template #showDash>
-              -
-            </ng-template>
+          <ng-template #showDash>
+            -
           </ng-template>
-        </div>
-      </td>                     
-    </tr>
-  </tbody>
-</table>
+        </td>
+        <td *ngIf="showSummaryColumns">
+          <ng-container *ngIf="i.count > 0; else showTotalDash">
+            <span
+              i18n-matTooltip
+              matTooltip="Click to see test detail"
+              [matTooltipDisabled]="!i.clickable"
+              [ngClass]="{'cursor-pointer': i.clickable}"
+              (click)="i.clickable ? dataClick($event, [], index) : null"
+              style="font-weight: bold;">
+              {{ i.count }}
+            </span>
+          </ng-container>
+          <ng-template #showTotalDash>
+            -
+          </ng-template>
+        </td>
+        <td *ngFor="let set of sets">
+          <div *ngIf="set.items[index]"
+               i18n-matTooltip
+               matTooltip="Click to see test detail"
+               [matTooltipDisabled]="!set.items[index]?.clickable"
+               [ngClass]="{
+                 'cursor-pointer': set.items[index]?.clickable
+               }"
+               (click)="set.items[index]?.clickable ? dataClick($event, set, index) : null">
+            <ng-container *ngIf="set.items[index].number === 0; else showNumber">
+              0
+            </ng-container>
+            <ng-template #showNumber>
+              <ng-container *ngIf="set.items[index].number > 0; else showDash">
+                <span class="number-highlight">{{ set.items[index].number }}</span>
+              </ng-container>
+              <ng-template #showDash>
+                -
+              </ng-template>
+            </ng-template>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
