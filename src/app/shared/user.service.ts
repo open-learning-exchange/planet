@@ -300,16 +300,8 @@ export class UserService {
   }
 
   isProfileComplete() {
-    const isComplete = !!(
-      this.user.firstName &&
-      this.user.lastName &&
-      this.user.email &&
-      this.user.birthDate &&
-      this.user.gender &&
-      this.user.language &&
-      this.user.phoneNumber &&
-      this.user.level
-    );
+    const isComplete = !!(this.user.firstName && this.user.lastName && this.user.email && this.user.birthDate &&
+      this.user.gender && this.user.language && this.user.phoneNumber && this.user.level);
     this.profileComplete.next(isComplete);
   }
 
