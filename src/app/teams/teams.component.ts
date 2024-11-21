@@ -281,6 +281,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
+    this.emptyData = this.teams.filteredData.length === 0;
   }
 
 }
