@@ -94,11 +94,18 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   hasProviderChanged() {
-    if (this.chatService.getChatAIProvider() === undefined) {
-      return; // that means that it's a brand new chat
-    } else if (this.chatService.getChatAIProvider().name === this.provider.name) {
-      return; // that means that the it still the same model being used
+    const currentProvider = this.chatService.getChatAIProvider()
+    console.log('log: chat provider', currentProvider);
+    console.log('log: provider chat selected', this.provider);
+    if (!currentProvider) {
+      // That means it's a brand-new chat
+      return;
     }
+    if (currentProvider.name === this.provider.name) {
+      // That means the same model is still being used
+      return;
+    }
+    console.log('log: new chat is created');
     this.newChat();
   }
 
@@ -117,7 +124,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
         title: title !== undefined && title !== null ? title : conversation.title,
         shared: shared,
         updatedDate: this.couchService.datePlaceholder
-     }
+      }
     ).subscribe((data) => {
       this.getChatHistory();
       return data;
@@ -168,6 +175,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       name: this.selectedConversation['aiProvider'],
     };
     this.chatService.setChatAIProvider(aiProvider);
+    const currentProvider = this.chatService.getChatAIProvider();
+    console.log('log chat sidebar: ', currentProvider);
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev

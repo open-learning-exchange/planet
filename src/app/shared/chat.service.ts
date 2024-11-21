@@ -23,14 +23,16 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   private toggleAIService = new Subject<string>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
+  private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
   toggleAIService$ = this.toggleAIService.asObservable();
   aiProviders$ = this.aiProvidersSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
-
-  currentChatAIProvider: AIProvider;
+  currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
+  
+  //currentChatAIProvider: AIProvider;
 
   constructor(
     private httpClient: HttpClient,
@@ -125,11 +127,11 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   }
 
   setChatAIProvider(aiProvider: AIProvider) {
-    this.currentChatAIProvider = aiProvider;
+    this.currentChatAIProvider.next(aiProvider);
   }
 
   getChatAIProvider(): AIProvider {
-    return this.currentChatAIProvider;
+    return this.currentChatAIProvider.getValue()
   }
 
   setSelectedConversationId(conversationId: object) {
