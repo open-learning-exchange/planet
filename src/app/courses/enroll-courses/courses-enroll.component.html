@@ -8,6 +8,9 @@
   <mat-toolbar class="primary-color font-size-1">
     {{ course }}
     <span class="toolbar-fill"></span>
+    <button mat-raised-button color="accent" (click)="exportCSV()">
+      Export
+    </button>
   </mat-toolbar>
 
   <ng-container *ngIf="!emptyData; else notFoundMessage">
