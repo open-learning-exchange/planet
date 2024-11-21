@@ -94,8 +94,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   hasProviderChanged() {
-    console.log('log: ', this.chatService.getChatAIProvider());
-    console.log('log: ', this.provider);
     if (this.chatService.getChatAIProvider() === undefined) {
       return; // that means that it's a brand new chat
     } else if (this.chatService.getChatAIProvider().name === this.provider.name) {
