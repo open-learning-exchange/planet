@@ -129,7 +129,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   }
 
   getChatAIProvider(): AIProvider {
-    return this.currentChatAIProvider.getValue()
+    return this.currentChatAIProvider.getValue();
   }
 
   setSelectedConversationId(conversationId: object) {
