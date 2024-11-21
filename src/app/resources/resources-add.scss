@@ -23,9 +23,21 @@
       width: auto;
     }
 
-    .file-upload{
+    .file-upload {
+      position: relative;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      min-height: 80px; /* Adjust as needed */
     }
+    
+    planet-file-input {
+      position: static; /* Reset positioning */
+      order: 2; /* Adjust order if needed */
+    }
+    
+    .file-upload-label {
+      order: 1; /* Ensure label remains on top */
+    }
+
   }
 }
