@@ -31,8 +31,6 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   aiProviders$ = this.aiProvidersSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
-  
-  //currentChatAIProvider: AIProvider;
 
   constructor(
     private httpClient: HttpClient,

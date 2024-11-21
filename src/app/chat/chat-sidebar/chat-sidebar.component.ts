@@ -94,7 +94,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   hasProviderChanged() {
-    const currentProvider = this.chatService.getChatAIProvider()
+    const currentProvider = this.chatService.getChatAIProvider();
     console.log('log: chat provider', currentProvider);
     console.log('log: provider chat selected', this.provider);
     if (!currentProvider) {
