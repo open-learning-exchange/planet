@@ -50,6 +50,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
   isLoading = true;
+  submissionValue = 5;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -138,7 +139,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         uniqueDays.add(new Date(post.doc.time).toDateString());
       }
     });
-    return Math.min(uniqueDays.size, 5);
+    return Math.min(uniqueDays.size, 5) * this.submissionValue;
   }
 
   hasEnrolledCourse(member) {
@@ -216,10 +217,12 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   getTotalMoneyEarned(): number {
-    return this.groupSummary.reduce((total, member) => {
+    const totalEarned = this.groupSummary.reduce((total, member) => {
       const amount = Number(member.amountEarned);
       return total + (isNaN(amount) ? 0 : amount);
     }, 0);
+
+    return Math.min(totalEarned, 500);
   }
 
   getGoalPercentage(): number {
