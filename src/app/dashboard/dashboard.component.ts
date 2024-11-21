@@ -76,7 +76,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.displayName = this.user.firstName !== undefined ? this.user.firstName + ' ' + this.user.lastName : this.user.name;
+    this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();
@@ -84,6 +84,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.couchService.findAll('login_activities', findDocuments({ 'user': this.user.name }, [ 'user' ], [], 1000))
       .pipe(
         catchError(() => {
+          console.warn('Error fetching login activities');
           return of([]);
         })
       ).subscribe((res: any) => {
