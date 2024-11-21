@@ -95,8 +95,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   hasProviderChanged() {
     const currentProvider = this.chatService.getChatAIProvider();
-    console.log('log: chat provider', currentProvider);
-    console.log('log: provider chat selected', this.provider);
     if (!currentProvider) {
       // That means it's a brand-new chat
       return;
@@ -105,7 +103,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       // That means the same model is still being used
       return;
     }
-    console.log('log: new chat is created');
     this.newChat();
   }
 
@@ -176,7 +173,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     };
     this.chatService.setChatAIProvider(aiProvider);
     const currentProvider = this.chatService.getChatAIProvider();
-    console.log('log chat sidebar: ', currentProvider);
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev

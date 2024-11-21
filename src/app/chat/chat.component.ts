@@ -33,7 +33,6 @@ export class ChatComponent implements OnInit {
   subscribeToAIService() {
     this.chatService.currentChatAIProvider$
       .subscribe((aiService => {
-        console.log('log chat component: ', aiService);
         if (aiService) {
           this.activeService = aiService.name;
           this.toggleAIService();
