@@ -1,3 +1,9 @@
+<div *ngIf="showBanner" class="alert">
+  <a [routerLink]="['/users/update', user.name]">
+    <span class="banner-text" i18n>Please complete your profile to enjoy full features!</span>
+  </a>
+  <span class="closebtn" (click)="closeBanner()">&times;</span>
+</div>
 <mat-card class="horizontal" style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
   <div style="display: flex; align-items: flex-start;">
     <a [routerLink]="['/users/profile', user.name]" class="profile-link">
