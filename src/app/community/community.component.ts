@@ -47,6 +47,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   reports: any[] = [];
   showNewsButton = true;
   deleteMode = false;
+  descriptionDeleteMode = false;
   onDestroy$ = new Subject<void>();
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
   planetCode: string | null;
@@ -311,12 +312,43 @@ export class CommunityComponent implements OnInit, OnDestroy {
     });
   }
 
+  confirmDeleteDescription() {
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
+            switchMap((updatedTeam) => {
+              this.team = updatedTeam; // Update the team object with the latest revision
+              this.servicesDescriptionLabel = 'Add';
+              this.descriptionDeleteMode = false; // Deactivate description delete mode
+              return of(updatedTeam); // Return updated team for further processing if needed
+            })
+          ),
+          onNext: () => {
+            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
+            deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
+          }
+        },
+        changeType: 'delete',
+        type: 'description',
+        displayName: $localize`Community Description`
+      }
+    });
+  }
+
   toggleShowButton(data) {
     this.showNewsButton = data._id === 'root';
   }
 
   toggleDeleteMode() {
     this.deleteMode = !this.deleteMode;
+  }
+
+  toggleDescriptionDeleteMode() {
+    this.descriptionDeleteMode = !this.descriptionDeleteMode;
   }
 
   openChangeTitleDialog({ member: councillor }) {
