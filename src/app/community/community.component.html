@@ -32,41 +32,26 @@
             </mat-card>
           </div>
         </mat-tab>
-
-
-
-
-
-
         <mat-tab i18n-label label="Services">
           <h2 i18n>Community Description</h2>
           <ng-container *ngIf="!planetCode">
           </ng-container>
           <planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
-        
-          <!-- Existing button for adding/editing the description -->
           <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
             { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
           </button>
-          
-          <!-- Toggle button for description delete mode -->
           <button (click)="toggleDescriptionDeleteMode()" mat-stroked-button>
             <span *ngIf="!descriptionDeleteMode" i18n>Remove Description</span>
             <span *ngIf="descriptionDeleteMode" i18n>Cancel</span>
           </button>
-
-          <!-- Delete button, only visible when descriptionDeleteMode is active -->
           <button *ngIf="descriptionDeleteMode && team.description" mat-icon-button color="warn" (click)="confirmDeleteDescription()">
             <mat-icon>delete</mat-icon>
           </button>
-                
-        
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles="''" class="action-buttons sticky-button">
             </div>
           </ng-container>
-        
           <ng-container>
             <h2 i18n>Community Links</h2>
             <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
@@ -86,13 +71,6 @@
             <span *ngIf="deleteMode" i18n>Done Removing Links</span>
           </button>
         </mat-tab>
-        
-
-
-
-
-
-
         <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
         </mat-tab>
