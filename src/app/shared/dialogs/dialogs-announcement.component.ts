@@ -50,6 +50,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
   isLoading = true;
+  submissionValue = 5;
+  goal = 500;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -195,7 +197,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
               if (!this.groupSummary.some(m => m.name === member.name)) {
                 this.groupSummary.push({
                   ...member,
-                  amountEarned: userAmount
+                  userPosts: userAmount
                 });
               }
             }
@@ -204,7 +206,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           // Individual stats
           this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
           this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName) > 0);
-          this.userStatusService.updateStatus('amountEarned', this.hasSubmittedVoice(news, this.currentUserName));
+          this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
               this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
@@ -216,16 +218,17 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   getTotalMoneyEarned(): number {
-    return this.groupSummary.reduce((total, member) => {
-      const amount = Number(member.amountEarned);
+    const totalEarned = this.groupSummary.reduce((total, member) => {
+      const amount = Number(member.userPosts * this.submissionValue);
       return total + (isNaN(amount) ? 0 : amount);
     }, 0);
+
+    return Math.min(totalEarned, this.goal);
   }
 
   getGoalPercentage(): number {
-    const goal = 500;
     const totalMoneyEarned = this.getTotalMoneyEarned();
-    return (totalMoneyEarned / goal) * 100;
+    return (totalMoneyEarned / this.goal) * 100;
   }
 
   getStatus(key: string) {
