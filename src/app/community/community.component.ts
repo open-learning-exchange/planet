@@ -436,5 +436,4 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.resizeCalendar = false;
     }
   }
-
 }
