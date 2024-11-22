@@ -71,9 +71,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   subscribeToNewChats() {
     this.chatService.newChatAdded$
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.getChatHistory(true);
-    });
+      .subscribe(() => this.getChatHistory(true));
   }
 
   newChat() {
