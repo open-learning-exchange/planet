@@ -221,7 +221,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('log: update conversation!')
         this.updateConversation(conversation, null, true);
       }
     });
