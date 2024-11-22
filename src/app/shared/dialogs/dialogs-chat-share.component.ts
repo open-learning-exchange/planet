@@ -124,7 +124,6 @@ export class DialogsChatShareComponent implements OnInit {
       })
     ).subscribe((membersData) => {
       this.conversation.chat = true;
-
       this.newsService.postNews({
         viewIn: [ { '_id': linkId, section: 'teams', public: false } ],
         messageType: teamType,
@@ -134,6 +133,7 @@ export class DialogsChatShareComponent implements OnInit {
         switchMap(() => this.sendNotifications('message', membersData, teamType)),
       ).subscribe();
     });
+    this.interact();
   }
 
   shareWithCommunity() {
@@ -142,6 +142,7 @@ export class DialogsChatShareComponent implements OnInit {
       this.conversation.message = message ? { text: message, images: [] } : { text: '</br>', images: [] };
     }
     this.conversation.chat = true;
+    this.interact();
     this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
     if (
       this.userStatusService.getStatus('joinedCourse') &&
@@ -155,4 +156,8 @@ export class DialogsChatShareComponent implements OnInit {
     }
   }
 
+  interact() {
+    console.log('log: interacted!');
+    this.dialogRef.close({  interacted: true });
+  }
 }
