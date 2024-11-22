@@ -8,7 +8,7 @@ export class UserChallengeStatusService {
     joinedCourse: false,
     surveyComplete: false,
     hasPost: false,
-    amountEarned: 0
+    userPosts: 0
   };
 
   updateStatus(key: string, value: boolean | number) {
@@ -35,7 +35,7 @@ export class UserChallengeStatusService {
       joinedCourse: false,
       surveyComplete: false,
       hasPost: false,
-      amountEarned: 0
+      userPosts: 0
     };
   }
 }

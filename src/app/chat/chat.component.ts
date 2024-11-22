@@ -27,6 +27,17 @@ export class ChatComponent implements OnInit {
       this.displayToggle = this.aiServices.length > 0;
       this.chatService.toggleAIServiceSignal(this.activeService);
     });
+    this.subscribeToAIService();
+  }
+
+  subscribeToAIService() {
+    this.chatService.currentChatAIProvider$
+      .subscribe((aiService => {
+        if (aiService) {
+          this.activeService = aiService.name;
+          this.toggleAIService();
+        }
+      }));
   }
 
   goBack(): void {
