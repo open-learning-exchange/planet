@@ -157,7 +157,6 @@ export class DialogsChatShareComponent implements OnInit {
   }
 
   interact() {
-    console.log('log: interacted!');
     this.dialogRef.close({  interacted: true });
   }
 }
