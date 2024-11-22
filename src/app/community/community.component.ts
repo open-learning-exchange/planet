@@ -314,49 +314,31 @@ export class CommunityComponent implements OnInit, OnDestroy {
     });
   }
 
-  openDescriptionDialog() {
-    const formGroup = this.formBuilder.group({
-      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
-    });
-
-    this.dialogsFormService.openDialogsForm(
-      this.team.description ? $localize`Edit Description` : $localize`Add Description`,
-      [
-        {
-          name: 'description',
-          placeholder: $localize`Description`,
-          type: 'markdown',
-          required: true
-        }
-      ],
-      formGroup,
-      {
-        autoFocus: true,
-        onSubmit: ({ description }: { description: string }) => {
-          const trimmedDescription = description.trim();
-
-          if (!trimmedDescription) {
-            this.planetMessageService.showAlert($localize`Description cannot be empty.`);
-            return;
+  confirmDeleteDescription() {
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
+            switchMap((updatedTeam) => {
+              this.team = updatedTeam;
+              this.servicesDescriptionLabel = 'Add';
+              this.descriptionDeleteMode = false;
+              return of(updatedTeam);
+            })
+          ),
+          onNext: () => {
+            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
+            deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
           }
-
-          this.teamsService.updateTeam({ ...this.team, description: trimmedDescription }).pipe(
-            finalize(() => this.dialogsLoadingService.stop())
-          ).subscribe(newTeam => {
-            const previousDescription = !!this.team.description;
-            this.team = newTeam;
-            this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
-
-            const message = previousDescription
-              ? $localize`Description edited successfully.`
-              : $localize`Description added successfully.`;
-
-            this.dialogsFormService.closeDialogsForm();
-            this.planetMessageService.showMessage(message);
-          });
-        }
+        },
+        changeType: 'delete',
+        type: 'description',
+        displayName: $localize`Community Description`
       }
-    );
+    });
   }
 
   toggleShowButton(data) {
@@ -402,6 +384,51 @@ export class CommunityComponent implements OnInit, OnDestroy {
     };
   }
 
+  openDescriptionDialog() {
+    const formGroup = this.formBuilder.group({
+      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
+    });
+
+    this.dialogsFormService.openDialogsForm(
+      this.team.description ? $localize`Edit Description` : $localize`Add Description`,
+      [
+        {
+          name: 'description',
+          placeholder: $localize`Description`,
+          type: 'markdown',
+          required: true
+        }
+      ],
+      formGroup,
+      {
+        autoFocus: true,
+        onSubmit: ({ description }: { description: string }) => {
+          const trimmedDescription = description.trim();
+
+          if (!trimmedDescription) {
+            this.planetMessageService.showAlert($localize`Description cannot be empty.`);
+            return;
+          }
+
+          this.teamsService.updateTeam({ ...this.team, description: trimmedDescription }).pipe(
+            finalize(() => this.dialogsLoadingService.stop())
+          ).subscribe(newTeam => {
+            const previousDescription = !!this.team.description;
+            this.team = newTeam;
+            this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+
+            const message = previousDescription
+              ? $localize`Description edited successfully.`
+              : $localize`Description added successfully.`;
+
+            this.dialogsFormService.closeDialogsForm();
+            this.planetMessageService.showMessage(message);
+          });
+        }
+      }
+    );
+  }
+
   tabChanged({ index }) {
     if (index === 5) {
       this.resizeCalendar = true;
@@ -410,30 +437,4 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
   }
 
-  confirmDeleteDescription() {
-    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
-            switchMap((updatedTeam) => {
-              this.team = updatedTeam;
-              this.servicesDescriptionLabel = 'Add';
-              this.descriptionDeleteMode = false;
-              return of(updatedTeam);
-            })
-          ),
-          onNext: () => {
-            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
-            deleteDialog.close();
-          },
-          onError: () => {
-            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
-          }
-        },
-        changeType: 'delete',
-        type: 'description',
-        displayName: $localize`Community Description`
-      }
-    });
-  }
 }
