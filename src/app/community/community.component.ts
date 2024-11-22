@@ -409,7 +409,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.resizeCalendar = false;
     }
   }
- 
+
   confirmDeleteDescription() {
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
