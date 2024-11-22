@@ -359,33 +359,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  confirmDeleteDescription() {
-    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
-            switchMap((updatedTeam) => {
-              this.team = updatedTeam;
-              this.servicesDescriptionLabel = 'Add';
-              this.descriptionDeleteMode = false;
-              return of(updatedTeam);
-            })
-          ),
-          onNext: () => {
-            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
-            deleteDialog.close();
-          },
-          onError: () => {
-            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
-          }
-        },
-        changeType: 'delete',
-        type: 'description',
-        displayName: $localize`Community Description`
-      }
-    });
-  }
-
   toggleShowButton(data) {
     this.showNewsButton = data._id === 'root';
   }
@@ -435,5 +408,32 @@ export class CommunityComponent implements OnInit, OnDestroy {
     } else {
       this.resizeCalendar = false;
     }
+  }
+ 
+  confirmDeleteDescription() {
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
+            switchMap((updatedTeam) => {
+              this.team = updatedTeam;
+              this.servicesDescriptionLabel = 'Add';
+              this.descriptionDeleteMode = false;
+              return of(updatedTeam);
+            })
+          ),
+          onNext: () => {
+            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
+            deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
+          }
+        },
+        changeType: 'delete',
+        type: 'description',
+        displayName: $localize`Community Description`
+      }
+    });
   }
 }
