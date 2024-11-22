@@ -33,23 +33,21 @@
           </div>
         </mat-tab>
         <mat-tab i18n-label label="Services">
+          <h2 i18n>Community Description</h2>
           <ng-container *ngIf="!planetCode">
-            <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
-              { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
-            </button>
           </ng-container>
           <planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
+          <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
+            { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
+          </button>
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles="''" class="action-buttons sticky-button">
-              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-                <span *ngIf="!deleteMode" i18n>Remove Links</span>
-                <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-              </button>
             </div>
           </ng-container>
+
           <ng-container>
+            <h2 i18n>Community Links</h2>
             <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
             <mat-nav-list>
               <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
@@ -61,6 +59,11 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
+          <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+          <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+            <span *ngIf="!deleteMode" i18n>Remove Links</span>
+            <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+          </button>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
