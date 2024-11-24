@@ -1,11 +1,18 @@
-<!-- Request template -->
 <mat-toolbar>
+  <!-- Back Button -->
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
+
+  <!-- Title -->
   <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
+
+  <!-- Spacer -->
   <span class="toolbar-fill"></span>
+
+  <!-- Toggles for Desktop -->
   <mat-button-toggle-group
+    *ngIf="!isMobile"
     class="margin-lr-5 font-size-1"
     (change)="shownStatusChange($event.value)"
     #filterGroup="matButtonToggleGroup">
@@ -16,11 +23,51 @@
       Connected
     </mat-button-toggle>
   </mat-button-toggle-group>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="requestListFilter($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
+
+  <!-- Search Bar for Desktop -->
+  <mat-icon *ngIf="!isMobile">search</mat-icon>
+  <mat-form-field *ngIf="!isMobile" class="font-size-1">
+    <input
+      matInput
+      (keyup)="requestListFilter($event.target.value)"
+      [value]="searchValue"
+      i18n-placeholder
+      placeholder="Search">
   </mat-form-field>
+
+  <!-- Filter Icon for Mobile -->
+  <mat-icon *ngIf="isMobile" (click)="toggleMobileFilterList()">filter_list</mat-icon>
 </mat-toolbar>
+
+<!-- Secondary Toolbar for Filters and Search (Mobile View) -->
+<mat-toolbar *ngIf="isMobile && showMobileFilters" class="mobile-filter-toolbar">
+  <!-- Toggles and Search Bar -->
+  <div class="mobile-filter-row">
+    <mat-button-toggle-group
+      class="margin-lr-5 font-size-1"
+      (change)="shownStatusChange($event.value)"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'" i18n>
+        Pending
+      </mat-button-toggle>
+      <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'" i18n>
+        Connected
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input
+        matInput
+        (keyup)="requestListFilter($event.target.value)"
+        [value]="searchValue"
+        i18n-placeholder
+        placeholder="Search">
+    </mat-form-field>
+  </div>
+</mat-toolbar>
+
+
 
 <div class="space-container">
   <mat-toolbar>

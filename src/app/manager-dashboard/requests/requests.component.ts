@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
@@ -12,14 +12,11 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: './requests.component.html',
-  styles: [ `
-    mat-panel-title {
-      align-items: center;
-    }
-  ` ]
+  styleUrls: ['./requests.component.scss']
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 
@@ -31,6 +28,9 @@ export class RequestsComponent implements OnInit, OnDestroy {
   shownStatus = 'pending';
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
+  deviceType: DeviceType;
+  isMobile: boolean;
+  showMobileFilters = false;
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
   }
@@ -43,8 +43,12 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private reportsService: ReportsService,
-    private managerService: ManagerService
-  ) {}
+    private managerService: ManagerService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+  }
 
   ngOnInit() {
     this.route.paramMap.pipe(
@@ -54,6 +58,12 @@ export class RequestsComponent implements OnInit, OnDestroy {
       this.searchValue = searchValue || '';
       this.getCommunityList();
     });
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnDestroy() {
@@ -130,4 +140,8 @@ export class RequestsComponent implements OnInit, OnDestroy {
     this.reportsService.viewPlanetDetails(hubPlanet.doc);
   }
 
+  toggleMobileFilterList() {
+    this.showMobileFilters = !this.showMobileFilters;
+  }
+  
 }
