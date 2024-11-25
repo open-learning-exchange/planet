@@ -73,7 +73,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   subscribeToNewChats() {
     this.chatService.newChatAdded$
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => this.getChatHistory());
+      .subscribe(() => this.getChatHistory(true));
   }
 
   subscribeToAIService() {
@@ -146,7 +146,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  getChatHistory() {
+  getChatHistory(newChat: boolean = false) {
     this.chatService
       .findConversations([], [ this.userService.get().name ])
       .subscribe(
@@ -160,6 +160,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
               return dateB - dateA;
             });
           this.filteredConversations = [ ...this.conversations ];
+          if (newChat) {
+            this.selectConversation(this.filteredConversations[0], 0);
+          }
           this.initializeFormGroups();
         },
         (error) => console.log(error)
