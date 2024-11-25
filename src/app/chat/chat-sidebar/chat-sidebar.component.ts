@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { Conversation } from '../chat.model';
+import { Conversation, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
@@ -33,6 +33,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   selectedConversation: Conversation;
   lastRenderedConversation: number;
   isEditing: boolean;
+  provider: AIProvider;
   fullTextSearch = false;
   searchType: 'questions' | 'responses';
   overlayOpen = false;
@@ -56,6 +57,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.titleSearch = '';
     this.getChatHistory();
     this.subscribeToNewChats();
+    this.subscribeToAIService();
   }
 
   ngOnDestroy() {
@@ -74,9 +76,34 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       .subscribe(() => this.getChatHistory(true));
   }
 
+  subscribeToAIService() {
+    this.chatService.toggleAIService$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((aiService => {
+        this.provider = {
+          name: aiService
+        };
+        this.hasProviderChanged();
+      }));
+  }
+
   newChat() {
     this.chatService.sendNewChatSelectedSignal();
+    this.chatService.setChatAIProvider(undefined);
     this.selectedConversation = null;
+  }
+
+  hasProviderChanged() {
+    const currentProvider = this.chatService.getChatAIProvider();
+    if (!currentProvider) {
+      // That means it's a brand-new chat
+      return;
+    }
+    if (currentProvider.name === this.provider.name) {
+      // That means the same model is still being used
+      return;
+    }
+    this.newChat();
   }
 
   toggleEditTitle() {
@@ -94,7 +121,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
         title: title !== undefined && title !== null ? title : conversation.title,
         shared: shared,
         updatedDate: this.couchService.datePlaceholder
-     }
+      }
     ).subscribe((data) => {
       this.getChatHistory();
       return data;
@@ -144,6 +171,11 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   selectConversation(conversation, index: number) {
     this.selectedConversation = conversation;
+    const aiProvider: AIProvider = {
+      name: this.selectedConversation['aiProvider'],
+    };
+    this.chatService.setChatAIProvider(aiProvider);
+    const currentProvider = this.chatService.getChatAIProvider();
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
       '_rev': conversation?._rev
@@ -214,14 +246,18 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   openShareDialog(conversation) {
-    this.dialog.open(DialogsChatShareComponent, {
+    const dialogRef = this.dialog.open(DialogsChatShareComponent, {
       width: '50vw',
       maxHeight: '90vh',
       data: {
         news: conversation,
       }
     });
-    this.updateConversation(conversation, null, true);
-  }
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.updateConversation(conversation, null, true);
+      }
+    });
+  }
 }
