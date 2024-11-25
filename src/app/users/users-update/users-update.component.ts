@@ -15,6 +15,7 @@ import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
+import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guard';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -39,6 +40,7 @@ export class UsersUpdateComponent implements OnInit {
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
+  hasUnsavedChanges = false;
   ngxImgText = {
     default: $localize`Drag and drop`,
     _default: $localize`Drag and drop or click`,
@@ -95,6 +97,11 @@ export class UsersUpdateComponent implements OnInit {
       }, (error) => {
         console.log(error);
       });
+
+      this.editForm.valueChanges.subscribe(() => {
+        this.hasUnsavedChanges = true;
+      });
+
   }
 
   userData() {
@@ -137,6 +144,7 @@ export class UsersUpdateComponent implements OnInit {
       this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).pipe(
         switchMap(() => this.userService.addImageForReplication(true))
       ).subscribe(() => {
+        this.hasUnsavedChanges = false;
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -165,19 +173,23 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
-  }
+    if (this.canDeactivate()) {
+      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
+    }
+}
 
   onImageSelect(img) {
     this.file = img;
     this.previewSrc = img;
     this.uploadImage = true;
+    this.hasUnsavedChanges = true;
   }
 
   removeImageFile() {
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
+    this.hasUnsavedChanges = true;
   }
 
   deleteImageAttachment() {
@@ -201,6 +213,13 @@ export class UsersUpdateComponent implements OnInit {
     })).subscribe(() => {
       this.goBack();
     });
+  }
+
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+    }
+    return true;
   }
 
 }

@@ -18,17 +18,18 @@
         <div class="profile-names">
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName"
-              [required]="!submissionMode">
+              [required]="!submissionMode" (change)="hasUnsavedChanges = true">
             <mat-error>
               <planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages>
             </mat-error>
           </mat-form-field>
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+            <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName"
+              (change)="hasUnsavedChanges = true">
           </mat-form-field>
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName"
-              [required]="!submissionMode">
+              [required]="!submissionMode" (change)="hasUnsavedChanges = true">
             <mat-error>
               <planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages>
             </mat-error>
@@ -36,21 +37,22 @@
         </div>
         <div class="profile-contacts">
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode">
+            <input matInput i18n-placeholder placeholder="Email" formControlName="email" [required]="!submissionMode"
+              (change)="hasUnsavedChanges = true">
             <mat-error>
               <planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages>
             </mat-error>
           </mat-form-field>
           <mat-form-field>
             <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber"
-              [required]="!submissionMode">
+              [required]="!submissionMode" (change)="hasUnsavedChanges = true">
             <mat-error>
               <planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages>
             </mat-error>
           </mat-form-field>
           <mat-form-field>
             <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate"
-              [required]="!submissionMode" [min]="minBirthDate">
+              [required]="!submissionMode" [min]="minBirthDate" (dateChange)="hasUnsavedChanges = true">
             <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
             <mat-datepicker #dp></mat-datepicker>
             <mat-error>
@@ -60,7 +62,8 @@
         </div>
         <div class="profile-dropdowns">
           <mat-form-field>
-            <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode">
+            <mat-select i18n-placeholder placeholder="Language" formControlName="language" [required]="!submissionMode"
+              (selectionChange)="hasUnsavedChanges = true">
               <mat-option *ngFor="let language of languages" [value]="language.name">
                 {{language.name}}
               </mat-option>
@@ -70,7 +73,8 @@
             </mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
+            <mat-select i18n-placeholder placeholder="Level" formControlName="level" [required]="!submissionMode"
+              (selectionChange)="hasUnsavedChanges = true">
               <mat-option *ngFor="let level of educationLevel" [value]="level.value">{{level.label}}</mat-option>
             </mat-select>
             <mat-error>
@@ -78,7 +82,8 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <mat-radio-group class="radio-group" formControlName="gender" [required]="!submissionMode" class="full-width">
+        <mat-radio-group class="radio-group" formControlName="gender" [required]="!submissionMode" class="full-width"
+          (change)="hasUnsavedChanges = true">
           <label i18n>Gender</label>
           <mat-radio-button class="planet-radio-button" value="male">
             <div class="radio-icon-label">
@@ -97,7 +102,8 @@
           </mat-error>
           <mat-slide-toggle *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
             formControlName="betaEnabled" i18n i18n-matTooltip
-            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+            matTooltip="Beta features may not work as intended. It's recommended to leave this off"
+            (change)="hasUnsavedChanges = true">
             Enable Beta features
           </mat-slide-toggle>
         </mat-radio-group>
@@ -110,7 +116,8 @@
     <div *ngIf="!submissionMode" class="profile-image-section">
       <div style="text-align: center;">
         <img class="profile-image-update" [src]="previewSrc"><br>
-        <button *ngIf="(uploadImage && currentImgKey) && !file" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
+        <button *ngIf="(uploadImage && currentImgKey) && !file" mat-raised-button color="accent"
+          (click)="deleteImageAttachment()">Remove</button>
       </div>
       <div class="profile-image-upload">
         <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig"
