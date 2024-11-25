@@ -1,16 +1,9 @@
 <mat-toolbar>
-  <!-- Back Button -->
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
-
-  <!-- Title -->
   <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
-
-  <!-- Spacer -->
   <span class="toolbar-fill"></span>
-
-  <!-- Toggles for Desktop -->
   <mat-button-toggle-group
     *ngIf="!isMobile"
     class="margin-lr-5 font-size-1"
@@ -23,8 +16,6 @@
       Connected
     </mat-button-toggle>
   </mat-button-toggle-group>
-
-  <!-- Search Bar for Desktop -->
   <mat-icon *ngIf="!isMobile">search</mat-icon>
   <mat-form-field *ngIf="!isMobile" class="font-size-1">
     <input
@@ -34,14 +25,11 @@
       i18n-placeholder
       placeholder="Search">
   </mat-form-field>
-
-  <!-- Filter Icon for Mobile -->
-  <mat-icon *ngIf="isMobile" (click)="toggleMobileFilterList()">filter_list</mat-icon>
+  <button mat-icon-button *ngIf="isMobile" (click)="toggleMobileFilterList()">
+    <mat-icon>filter_list</mat-icon>
+  </button>
 </mat-toolbar>
-
-<!-- Secondary Toolbar for Filters and Search (Mobile View) -->
-<mat-toolbar *ngIf="isMobile && showMobileFilters" class="mobile-filter-toolbar">
-  <!-- Toggles and Search Bar -->
+<mat-toolbar *ngIf="isMobile && showFilterRow" class="mobile-filter-toolbar">
   <div class="mobile-filter-row">
     <mat-button-toggle-group
       class="margin-lr-5 font-size-1"
@@ -54,7 +42,6 @@
         Connected
       </mat-button-toggle>
     </mat-button-toggle-group>
-
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1">
       <input
@@ -66,9 +53,6 @@
     </mat-form-field>
   </div>
 </mat-toolbar>
-
-
-
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">

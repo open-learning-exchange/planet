@@ -16,7 +16,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 
 @Component({
   templateUrl: './requests.component.html',
-  styleUrls: ['./requests.component.scss']
+  styleUrls: [ './requests.component.scss' ]
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 
@@ -30,7 +30,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   planetType = this.stateService.configuration.planetType;
   deviceType: DeviceType;
   isMobile: boolean;
-  showMobileFilters = false;
+  showFilterRow = false;
   get childType() {
     return this.planetType === 'nation' ? $localize`Network` : $localize`Region`;
   }
@@ -141,7 +141,7 @@ export class RequestsComponent implements OnInit, OnDestroy {
   }
 
   toggleMobileFilterList() {
-    this.showMobileFilters = !this.showMobileFilters;
+    this.showFilterRow = !this.showFilterRow;
   }
-  
+
 }
