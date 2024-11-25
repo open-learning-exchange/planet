@@ -23,8 +23,8 @@ export const routes: Routes = [
   {
     path: 'users/update/:username',
     component: UsersUpdateComponent,
-    canDeactivate: [UnsavedChangesGuard],
-  },  
+    canDeactivate: [ UnsavedChangesGuard ],
+  },
   {
     path: 'login',
     loadChildren: () => import('./login/login.module').then(m => m.LoginModule),

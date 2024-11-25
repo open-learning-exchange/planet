@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -98,8 +98,8 @@ export class UsersUpdateComponent implements OnInit {
         console.log(error);
       });
 
-      this.editForm.valueChanges.subscribe(() => {
-        this.hasUnsavedChanges = true;
+    this.editForm.valueChanges.subscribe((value) => {
+        this.hasUnsavedChanges = !this.editForm.pristine;
       });
 
   }
@@ -174,6 +174,8 @@ export class UsersUpdateComponent implements OnInit {
 
   goBack() {
     if (this.canDeactivate()) {
+      this.editForm.reset(this.user);
+      this.hasUnsavedChanges = false;
       this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
     }
 }
@@ -220,6 +222,13 @@ export class UsersUpdateComponent implements OnInit {
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
     }
     return true;
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    }
   }
 
 }
