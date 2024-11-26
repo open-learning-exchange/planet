@@ -205,6 +205,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     const content = this.promptForm.get('prompt').value;
     this.data = { ...this.data, content, aiProvider: this.provider };
 
+    this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();
 
     if (this.context) {

@@ -72,12 +72,12 @@
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
         <a mat-menu-item (click)="readAllNotification()" i18n>Mark all as Read</a>
-        <a [routerLink]="!notification.link ? '/notifications' : notification.link !== '/' ? [ notification.link, notification.linkParams || {} ] : '/'"
+        <a [routerLink]="notification.type !== 'challenges' ? (!notification.link ? '/notifications' : notification.link !== '/' ? [notification.link, notification.linkParams || {}] : '/') : null"
           class="menu-item-notification"
           [ngClass]="{'primary-text-color':notification.status==='unread'}"
           mat-menu-item
           *ngFor="let notification of notifications"
-          (click)="readNotification(notification)">
+          (click)="notification.type === 'challenges' ? openAnnouncementDialog(notification) : readNotification(notification)">
           <p [innerHTML]="notification.message"><p>
           <p *ngIf="notification.time > 0" class="small">{{notification.time | date: 'mediumDate'}}</p>
           <mat-divider></mat-divider>

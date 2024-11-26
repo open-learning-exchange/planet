@@ -4,6 +4,18 @@
   max-width: 95%;
   margin: 0 auto;
 
+  .references-list {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .certs-list .mat-list-item{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
   & mat-list, & ul, & ol {
     text-align: left;
   }
