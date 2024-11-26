@@ -17,13 +17,12 @@ import { PlanetStepListService } from '../../shared/forms/planet-step-list.compo
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
-import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guard';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+export class CoursesAddComponent implements OnInit, OnDestroy {
 
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
@@ -36,7 +35,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private _steps = [];
-  private isFormDirty = false;
   get steps() {
     return this._steps;
   }
@@ -170,20 +168,20 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   onFormChanges() {
-    combineLatest([
-      this.courseForm.valueChanges,
-      this.stepsChange$,
-      this.tags.valueChanges
-    ])
-      .pipe(
-        debounce(() => race(interval(2000), this.onDestroy$)),
-        takeWhile(() => this.isDestroyed === false, true)
-      )
-      .subscribe(([ value, steps, tags ]) => {
-        this.isFormDirty = true; // Mark form as dirty whenever changes occur
-      });
+    combineLatest(this.courseForm.valueChanges, this.stepsChange$, this.tags.valueChanges).pipe(
+      debounce(() => race(interval(2000), this.onDestroy$)),
+      takeWhile(() => this.isDestroyed === false, true)
+    ).subscribe(([ value, steps, tags ]) => {
+      if (this.isSaved) {
+        return;
+      }
+      const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
+      this.coursesService.course = { form: course, steps: course.steps, tags };
+      this.pouchService.saveDocEditing(
+        { ...course, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
+      );
+    });
   }
-
 
   updateCourse(courseInfo, shouldNavigate) {
     if (courseInfo.createdDate.constructor === Object) {
@@ -215,17 +213,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
     this.updateCourse(this.courseForm.value, shouldNavigate);
-    this.isFormDirty = false; // Mark form as saved after submission
   }
-
-
-  canDeactivate(): boolean {
-    if (this.isFormDirty) {
-      return confirm('You have unsaved changes. Are you sure you want to leave?');
-    }
-    return true;
-  }
-
 
   courseChangeComplete(message, response: any, shouldNavigate) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);

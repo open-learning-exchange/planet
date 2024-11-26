@@ -21,7 +21,7 @@ import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guar
   templateUrl: './users-update.component.html',
   styleUrls: [ './users-update.scss' ]
 })
-export class UsersUpdateComponent implements OnInit {
+export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: any = {};
   educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
@@ -218,6 +218,7 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   canDeactivate(): boolean {
+    console.log("canDeactivate called", this.hasUnsavedChanges);
     if (this.hasUnsavedChanges) {
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
     }
@@ -226,6 +227,7 @@ export class UsersUpdateComponent implements OnInit {
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
+    console.log("canDeactivate called", this.hasUnsavedChanges);
     if (this.hasUnsavedChanges) {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
