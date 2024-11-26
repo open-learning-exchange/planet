@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -16,7 +16,7 @@ import { Conversation } from '../chat.model';
   templateUrl: './chat-window.component.html',
   styleUrls: [ './chat-window.scss' ],
 })
-export class ChatWindowComponent implements OnInit, OnDestroy {
+export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   streaming: boolean;
