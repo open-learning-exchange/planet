@@ -30,7 +30,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   educationLevel = educationLevel;
   deviceType: DeviceType;
   isMobile: boolean;
-  hasUnsavedChanges = false;
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
@@ -132,14 +131,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate([ '/' ]);
     }
-  }
-
-  markAsUnsavedChanges() {
-    this.hasUnsavedChanges = true;
-  }
-
-  saveChanges() {
-    this.hasUnsavedChanges = false;
   }
 
 }
