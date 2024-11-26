@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -69,6 +69,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.selectedConversationId = null;
         this.conversations = [];
+        this.promptForm.get('textArea')?.setValue('');
       }, error => {
         console.error('Error subscribing to newChatSelected$', error);
       });
@@ -80,6 +81,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
+        this.promptForm.get('textArea')?.setValue('');
       }, error => {
         console.error('Error subscribing to selectedConversationId$', error);
       });
@@ -97,6 +99,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
   createForm() {
     this.promptForm = this.formBuilder.group({
+      textArea: [ '' ],
       prompt: [ '', CustomValidators.required ],
     });
   }
