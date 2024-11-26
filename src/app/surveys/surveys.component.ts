@@ -298,7 +298,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.surveys.data = this.surveys.data.map((s) =>
           s._id === survey._id ? { ...s, isArchived: true } : s
         );
-    
+
         const submissionRequests = this.submissionDeleteReq([], survey).map((req) =>
           req.pipe(
             tap(() => console.log('Submission deleted successfully')),
@@ -308,7 +308,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             })
           )
         );
-    
+
         return forkJoin(submissionRequests);
       }),
       tap(() => {
@@ -322,6 +322,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       next: () => console.log('Survey archived and submissions deleted'),
       error: (err) => console.error('Error during archive and deletion:', err),
     });
-    
+
   }
 }
