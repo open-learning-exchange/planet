@@ -293,7 +293,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   
     return this.couchService.updateDocument(this.dbName, updatedSurvey).pipe(
       tap(() => {
-        console.log('log: survey archived')
+        console.log('log: survey archived');
         this.planetMessageService.showMessage($localize`Survey archived: ${survey.name}`);
         this.surveys.data = this.surveys.data.map((s) =>
           s._id === survey._id ? { ...s, isArchived: true } : s
