@@ -5,8 +5,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { forkJoin, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, Subject, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import {
   filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
@@ -82,6 +82,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ];
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
+      console.log('log:', this.surveys.data);
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
@@ -285,6 +286,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   archiveSurvey(survey) {
-    console.log('Archive this Survey');
+    const updatedSurvey = {
+      ...survey,
+      isArchived: true,
+    };
+
+    console.log('log before:', survey)
+    console.log('log after:', updatedSurvey)
+  
+    return this.couchService.updateDocument(this.dbName, updatedSurvey).pipe(
+      tap(() => {
+        console.log('log: survey archived')
+        this.planetMessageService.showMessage($localize`Survey archived: ${survey.name}`);
+        this.surveys.data = this.surveys.data.map((s) =>
+          s._id === survey._id ? { ...s, isArchived: true } : s
+        );
+      }),
+      catchError((error) => {
+        this.planetMessageService.showAlert($localize`There was a problem archiving this survey.`);
+        return throwError(error);
+      })
+    ).subscribe();
   }
 }

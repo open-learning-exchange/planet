@@ -78,7 +78,7 @@
             </mat-menu>
           </div>
           <ng-container *ngIf="!element.parent === true && !element.course">
-            <button mat-raised-button color="primary" (click)="archiveSurvey(element)" i18n><mat-icon>archive</mat-icon> Archive</button>
+            <button mat-raised-button color="primary" (click)="archiveSurvey(element)" [disabled]="element.isArchived" i18n><mat-icon>archive</mat-icon> Archive</button>
           </ng-container>
         </mat-cell>
       </ng-container>
