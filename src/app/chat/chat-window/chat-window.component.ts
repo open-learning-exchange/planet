@@ -9,6 +9,7 @@ import { ChatService } from '../../shared/chat.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
+import { Conversation } from '../chat.model';
 
 @Component({
   selector: 'planet-chat-window',
@@ -34,7 +35,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     context: '',
   };
   providers: AIProvider[] = [];
-
+  @Input() selectedConversation: Conversation;
   @Input() context: any;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
@@ -56,6 +57,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     this.chatService.listAIProviders().subscribe((providers) => {
       this.providers = providers;
     });
+  }
+
+  ngAfterViewInit() {
+    this.focusInput();
   }
 
   ngOnDestroy() {
@@ -82,6 +87,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
+        this.focusInput();
       }, error => {
         console.error('Error subscribing to selectedConversationId$', error);
       });
@@ -238,10 +244,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   }
 
   onNewChatSelected() {
-    this.focusInput(); // Focus the input when a new chat is selected
+    this.focusInput();
   }
 
   focusInput() {
-    this.chatInput?.nativeElement.focus(); // Focus the input element
+    this.chatInput?.nativeElement.focus();
   }
 }

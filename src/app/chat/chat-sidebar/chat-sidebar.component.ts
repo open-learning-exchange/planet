@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -19,6 +19,7 @@ import { UserService } from '../../shared/user.service';
   styleUrls: [ './chat-sidebar.scss' ],
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
+  @Output() conversationSelected = new EventEmitter<Conversation>();
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
   private _titleSearch = '';
@@ -171,6 +172,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   selectConversation(conversation, index: number) {
     this.selectedConversation = conversation;
+    this.conversationSelected.emit(conversation);
     const aiProvider: AIProvider = {
       name: this.selectedConversation['aiProvider'],
     };
