@@ -218,7 +218,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): boolean {
-    console.log("canDeactivate called", this.hasUnsavedChanges);
+    console.log('canDeactivate called', this.hasUnsavedChanges);
     if (this.hasUnsavedChanges) {
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
     }
@@ -227,7 +227,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
-    console.log("canDeactivate called", this.hasUnsavedChanges);
+    console.log('canDeactivate called', this.hasUnsavedChanges);
     if (this.hasUnsavedChanges) {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }

@@ -8,10 +8,11 @@ import { UsersUpdateComponent } from './users/users-update/users-update.componen
 
 
 export const routes: Routes = [
-  {path: '', loadChildren: () => import('./home/home.module').then(m => m.HomeModule), canActivateChild: [ AuthService ], canDeactivate: [ UnsavedChangesGuard ]},
-  { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthService ]},
-  { path: '**', component: PageNotFoundComponent},
-  { path: 'users/update/:username', component: UsersUpdateComponent, canDeactivate: [ UnsavedChangesGuard ]}
+  { path: '', loadChildren: () => import('./home/home.module').then(m => m.HomeModule), canActivateChild: [ AuthService ], 
+    canDeactivate: [ UnsavedChangesGuard ] },
+  { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthService ] },
+  { path: '**', component: PageNotFoundComponent },
+  { path: 'users/update/:username', component: UsersUpdateComponent, canDeactivate: [ UnsavedChangesGuard ] }
 ];
 
 @NgModule({

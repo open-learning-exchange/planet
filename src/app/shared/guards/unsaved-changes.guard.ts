@@ -13,7 +13,7 @@ export interface CanComponentDeactivate {
 export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
 
   canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
-    console.log("UnsavedChangesGuard triggered"); // Add this line
+    console.log('UnsavedChangesGuard triggered'); // Add this line
     return component.canDeactivate ? component.canDeactivate() : true;
   }
 }
