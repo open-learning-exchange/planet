@@ -10,7 +10,7 @@
 
   mat-divider {
     margin-top: 1rem;
-    background-color: #126DB6;
+    background-color: $primary;
   }
 
   .profile-image{
@@ -28,21 +28,21 @@
     text-align: center;
     margin-bottom: 2rem;
    }
-   
+
    .birth-info {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1rem;
    }
-   
+
    .logo {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 2rem;
    }
-   
+
   .mat-list-base .mat-list-item {
     &.mat-list-item-word-wrap {
       height: initial;
@@ -121,7 +121,7 @@
     gap: 0.2rem;
     width: 100%;
   }
-  
+
   .auto-adjust-buttons a {
     flex-grow: 1;
     text-align: center;
