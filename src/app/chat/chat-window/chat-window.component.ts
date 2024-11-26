@@ -36,6 +36,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   providers: AIProvider[] = [];
 
   @Input() context: any;
+  @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
 
   constructor(
@@ -69,6 +70,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.selectedConversationId = null;
         this.conversations = [];
+        this.focusInput();
       }, error => {
         console.error('Error subscribing to newChatSelected$', error);
       });
@@ -233,5 +235,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+
+  onNewChatSelected() {
+    this.focusInput(); // Focus the input when a new chat is selected
+  }
+
+  focusInput() {
+    this.chatInput?.nativeElement.focus(); // Focus the input element
   }
 }
