@@ -290,7 +290,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       ...survey,
       isArchived: true,
     };
-  
+
     return this.couchService.updateDocument(this.dbName, updatedSurvey).pipe(
       tap(() => {
         console.log('log: survey archived');
