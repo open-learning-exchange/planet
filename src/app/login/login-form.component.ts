@@ -172,8 +172,11 @@ export class LoginFormComponent {
           const adminName = configuration.adminName.split('@')[0];
           return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
         }),
-        switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
+        switchMap(() => this.submissionsService.getSubmissions(findDocuments({
+            type: 'survey', status: 'pending', isArchived: { $exists: false }, 'user.name': name
+        }))),
         map((surveys) => {
+          console.log('log: surveys', surveys);
           const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
           if (uniqueSurveys.length > 0) {
             this.openNotificationsDialog(uniqueSurveys);
