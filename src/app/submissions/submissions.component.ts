@@ -25,7 +25,7 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styleUrls: ['./submission.component.scss'],
+  styleUrls: [ './submission.component.scss' ],
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -55,13 +55,14 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService,
-    private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService,
   ) {
+    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
@@ -105,7 +106,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
-    this.showFiltersRow = false
+    // this.showFiltersRow = false
   }
 
   ngAfterViewChecked() {

@@ -16,7 +16,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
       align-items: center;
     }
   ` ],
-  styleUrls: ['./reports.components.scss']
+  styleUrls: [ './reports.components.scss' ]
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 
