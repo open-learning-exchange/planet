@@ -5,17 +5,21 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
-    <ng-template #elseBlock>{{ user.name }}</ng-template>
+  <mat-toolbar class="primary-color font-size-1 responsive-toolbar center-text">
+    <div>
+      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
+      <ng-template #elseBlock>{{ user.name }}</ng-template>
+    </div>
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="primary" style="margin-right: 1rem;" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
-      <span i18n>Print Achievements</span>
-    </a> <br>
-    <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
-      <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
-      <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
-    </a>
+    <div class="auto-adjust-buttons">
+      <a mat-raised-button color="primary" class="margin-r-1" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
+        <span i18n>Print Achievements</span>
+      </a>
+      <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
+        <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
+        <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
+      </a>
+    </div>
   </mat-toolbar>
   <div class="view-container">
     <div *ngIf="achievements !== undefined" class="achievements-container">
@@ -35,7 +39,7 @@
       <ng-container *planetBeta>
         <div *ngIf="certifications.length > 0">
           <h3 i18n>My Certifications</h3>
-          <mat-list>
+          <mat-list class="certs-list">
             <mat-list-item *ngFor="let certification of certifications">
               {{certification.name}}
             </mat-list-item>
@@ -75,7 +79,7 @@
       </div>
       <div *ngIf="achievements.references.length > 0">
         <h3 i18n>My References</h3>
-        <mat-list>
+        <mat-list class="references-list">
           <mat-list-item class="mat-list-item-word-wrap" *ngFor="let reference of achievements.references">
             <h4 mat-line>{{reference.name}}</h4>
             <p mat-line *ngIf="reference?.relationship"><ng-container i18n>Relationship:</ng-container> {{reference.relationship}}</p>

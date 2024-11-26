@@ -11,8 +11,8 @@ import { UsersProfileComponent } from './users-profile.component';
       <planet-users-profile [isDialog]="true" [userName]="name" [planetCode]="planetCode"></planet-users-profile>
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button color="primary" *ngIf="editable" (click)="closeDialog()" routerLink="/users/profile/{{usersProfileComponent.urlName}}" mat-raised-button mat-dialog-close i18n>View full profile</button>
       <button mat-raised-button mat-dialog-close i18n>Close</button>
+      <button color="primary" *ngIf="editable" (click)="closeDialog()" routerLink="/users/profile/{{usersProfileComponent.urlName}}" mat-raised-button mat-dialog-close i18n>View full profile</button>
     </mat-dialog-actions>
   `
 })

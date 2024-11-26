@@ -8,10 +8,14 @@ import { Subject } from 'rxjs';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
+import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './notifications.component.html',
+  styleUrls: [ './notifications.component.scss' ]
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -24,9 +28,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   anyUnread = true;
 
   constructor(
+    private dialog: MatDialog,
+    private stateService: StateService,
+    private notificationsService: NotificationsService,
     private couchService: CouchService,
     private userService: UserService,
-    private notificationsService: NotificationsService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -86,5 +92,15 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   readAllNotification() {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
+  }
+
+  openAnnouncementDialog() {
+    const challengeActive = includedCodes.includes(this.stateService.configuration.code) && challengePeriod;
+    if (challengeActive) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    }
   }
 }

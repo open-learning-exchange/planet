@@ -19,6 +19,13 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import {
+  DialogsAnnouncementComponent,
+  DialogsAnnouncementSuccessComponent,
+  includedCodes,
+  challengePeriod
+} from '../shared/dialogs/dialogs-announcement.component';
+import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 
 @Component({
   selector: 'planet-community',
@@ -48,6 +55,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  isLoading: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -61,16 +69,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private userStatusService: UserChallengeStatusService,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
+    this.isLoading = true;
     this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -83,6 +94,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    this.communityChallenge();
   }
 
   @HostListener('window:resize') onResize() {
@@ -92,6 +104,34 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  communityChallenge() {
+    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
+
+    if (challengeActive) {
+      const dialogRef = this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        if (!this.userStatusService.getCompleteChallenge()) {
+          this.sendChallengeNotification(this.user).subscribe();
+        }
+      });
+    }
+  }
+
+  sendChallengeNotification(user) {
+    const data = {
+      'user': user._id,
+      'message': `El reto está en`,
+      'type': 'challenges',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    return this.couchService.updateDocument('notifications', data);
   }
 
   getCommunityData() {
@@ -168,7 +208,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => this.dialogsFormService.closeDialogsForm());
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm();
+      if (
+        this.userStatusService.getStatus('joinedCourse') &&
+        this.userStatusService.getStatus('surveyComplete') &&
+        !this.userStatusService.getStatus('hasPost')
+      ) {
+        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+          width: '50vw',
+          maxHeight: '100vh'
+        });
+        this.userStatusService.updateStatus('hasPost', true);
+      }
+    });
   }
 
   sendNotifications(user, currentUser) {
@@ -302,14 +355,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.teamsService.updateTeam({ ...this.team, description: description.text }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(newTeam => {
+        const previousDescription = Boolean(this.team.description);
         this.team = newTeam;
         this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+        const msg = newTeam.description
+      ? (previousDescription ? $localize`Description edited` : $localize`Description added`)
+      : $localize`Description deleted`;
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage(msg);
       });
-      this.dialogsFormService.closeDialogsForm();
     };
     this.dialogsFormService.openDialogsForm(
       this.team.description ? $localize`Edit Description` : $localize`Add Description`,
-      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: true, imageGroup: 'community' } ],
+      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: false, imageGroup: 'community' } ],
       { description: this.team.description || '' },
       { autoFocus: true, onSubmit: submitDescription }
     );

@@ -1,7 +1,9 @@
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span i18n>Your Notifications</span>
-    <button mat-stroked-button [disabled]="!anyUnread" (click)="readAllNotification()" i18n class="margin-lr">Mark all as Read</button>
+  <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
+    <div>
+      <span i18n>Your Notifications</span>
+      <button mat-stroked-button [disabled]="!anyUnread" (click)="readAllNotification()" i18n class="margin-lr">Mark all as Read</button>
+    </div>
     <span class="toolbar-fill"></span>
     <mat-form-field class="font-size-1 margin-lr-3">
       <mat-select i18n-placeholder placeholder="Notification Status" value="all" (selectionChange)="onFilterChange($event.value)">
@@ -21,8 +23,10 @@
               </a>
             </ng-container>
             <ng-template #noLink>
-              <span [innerHTML]="element.message"></span>
-              <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
+              <a (click)="element.type === 'challenges' && openAnnouncementDialog()">
+                <span [innerHTML]="element.message"></span>
+                <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
+              </a>
             </ng-template>
           </p>
         </mat-cell>
