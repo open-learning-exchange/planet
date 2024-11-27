@@ -35,7 +35,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       invalidEndTime {End time cannot be before start time}
       dateInPast {Cannot be before current date}
       invalidPassword {Password is not valid}
-      weakPassword {Password is too weak}
+      weakPassword {Weak password. Hover for more info}
       pattern {Invalid input. Hover for more info}
       invalidFirstCharacter {Must start with letter or number}
       invalidFutureDate {Cannot be after current date}
@@ -95,6 +95,8 @@ export class FormErrorMessagesComponent implements OnInit {
     switch (this.error) {
       case 'pattern':
         return $localize`Letters, numbers and _ . - allowed.`;
+      case 'weakPassword':
+        return $localize`Password must use 8+ characters, include at least one number, and include at least one special character.`;
       default:
         return '';
     }
