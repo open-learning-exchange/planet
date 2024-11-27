@@ -43,9 +43,9 @@
         <ng-container *ngIf="selectedStep !== undefined" i18n></ng-container>
       </span>
       <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
-        <mat-icon>filter_list</mat-icon>
-      </button>
+      <button mat-icon-button (click)="showFiltersRow = !showFiltersRow" *ngIf="chartData?.length">
+        <mat-icon>more_vert</mat-icon>
+      </button>      
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
