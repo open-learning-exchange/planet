@@ -1,4 +1,4 @@
-<div [ngClass]="containerClass">
+<div [ngClass]="containerClass" *ngIf="!emptyData; else notFoundMessage">
   <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort [matSortActive]="matSortActive" matSortDirection="desc">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
@@ -143,3 +143,6 @@
     (page)="onPaginateChange($event)">
   </mat-paginator>
 </div>
+<ng-template #notFoundMessage>
+  <div class="view-container" i18n>No User Found</div>
+</ng-template>

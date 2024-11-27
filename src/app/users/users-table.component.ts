@@ -84,6 +84,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
+  emptyData = false;
 
   constructor(
     private dialog: MatDialog,
@@ -126,6 +127,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     if (this.isDialog) {
       this.displayedColumns = [ 'select', 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles' ];
     }
+    this.emptyData = !this.usersTable.filteredData.length;
   }
 
   ngOnDestroy() {
