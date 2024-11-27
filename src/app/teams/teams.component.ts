@@ -269,7 +269,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      this.planetMessageService.showMessage($localize`Request to join team sent`);
+      this.planetMessageService.showMessage($localize`Request to join ${team.name} sent`);
     });
   }
 
