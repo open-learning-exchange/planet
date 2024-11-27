@@ -50,7 +50,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
   isLoading = true;
-  submissionValue = 5;
+  submissionValue = 1;
+  stepValue = 2;
   goal = 500;
 
   constructor(
@@ -204,12 +205,21 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           });
 
           // Individual stats
-          this.userStatusService.updateStatus('surveyComplete', this.hasCompletedSurvey(this.currentUserName));
-          this.userStatusService.updateStatus('hasPost', this.hasSubmittedVoice(news, this.currentUserName) > 0);
+          this.userStatusService.updateStatus('surveyComplete', {
+            status: this.hasCompletedSurvey(this.currentUserName),
+            amount: this.stepValue
+          });
+          this.userStatusService.updateStatus('hasPost', {
+            status: this.hasSubmittedVoice(news, this.currentUserName) > 0,
+            amount: this.stepValue
+          });
           this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
-              this.userStatusService.updateStatus('joinedCourse', this.hasEnrolledCourse(member));
+              this.userStatusService.updateStatus('joinedCourse', {
+                status: this.hasEnrolledCourse(member),
+                amount: this.stepValue
+              });
             }
           });
           this.isLoading = false;
@@ -217,7 +227,21 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       }, () => this.isLoading = false);
   }
 
-  getTotalMoneyEarned(): number {
+  getIndividualMoneyEarned(): number {
+    const userStatus = this.userStatusService.printStatus();
+
+    const postsEarnings = Number(userStatus.userPosts) * this.submissionValue;
+    const additionalEarnings = Object.values(userStatus)
+    .filter(
+      (status: any): status is { status: boolean; amount: number } =>
+        typeof status === 'object' && status !== null && status.status
+    )
+    .reduce((total, status) => total + (status.amount || 0), 0);
+
+    return postsEarnings + additionalEarnings;
+  }
+
+  getGroupMoneyEarned(): number {
     const totalEarned = this.groupSummary.reduce((total, member) => {
       const amount = Number(member.userPosts * this.submissionValue);
       return total + (isNaN(amount) ? 0 : amount);
@@ -227,7 +251,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   getGoalPercentage(): number {
-    const totalMoneyEarned = this.getTotalMoneyEarned();
+    const totalMoneyEarned = this.getGroupMoneyEarned();
     return (totalMoneyEarned / this.goal) * 100;
   }
 
