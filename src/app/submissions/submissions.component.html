@@ -1,36 +1,57 @@
-
 <mat-toolbar *ngIf="!isDialog">
-  <button mat-icon-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
-  <span class="toolbar-fill"></span>
-  <ng-container *ngIf="this.mode !== 'survey'">
-    <mat-form-field class="font-size-1 margin-lr-3">
-      <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
-        <mat-option i18n value="All">All</mat-option>
-        <ng-container *ngFor="let option of statusOptions">
-          <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
-        </ng-container>
-      </mat-select>
-    </mat-form-field>
-    <mat-button-toggle-group
-      class="margin-lr-5 font-size-1"
-      (change)="onFilterChange($event.value, 'type')"
-      #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
-        Tests
-      </mat-button-toggle>
-      <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
-        Surveys
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-  </ng-container>
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+    <span class="toolbar-fill"></span>
+    <ng-container *ngIf="!isMobile">
+      <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
+      <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
+      <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+    </ng-container>
+    <button mat-icon-button *ngIf="isMobile" (click)="showFiltersRow = !showFiltersRow">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+    <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
+    <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
+  </mat-toolbar-row>
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+    <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<ng-template #filterDropdown>
+  <mat-form-field class="font-size-1 margin-lr-3 status-dropdown">
+    <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+      <mat-option i18n value="All">All</mat-option>
+      <ng-container *ngFor="let option of statusOptions">
+        <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
+      </ng-container>
+    </mat-select>
+  </mat-form-field>
+</ng-template>
+<ng-template #filterToggleGroup>
+  <mat-button-toggle-group
+    class="margin-lr-5 font-size-1"
+    (change)="onFilterChange($event.value, 'type')"
+    #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="exam" [checked]="this.filter.type === 'exam'" i18n>
+      Tests
+    </mat-button-toggle>
+    <mat-button-toggle value="survey" [checked]="this.filter.type === 'survey'" i18n>
+      Surveys
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</ng-template>
+<ng-template #filterSearch>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type name to search...">
   </mat-form-field>
-</mat-toolbar>
+</ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
   <div class="view-container view-table responsive-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }" *ngIf="!emptyData; else notFoundMessage">
