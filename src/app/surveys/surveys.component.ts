@@ -82,13 +82,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ];
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
-      console.log('log:', this.surveys.data);
       this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().subscribe(surveys => this.parentCount = surveys.filter(survey => survey.parent === true).length);
-    console.log('Survey info: ', this.surveys);
   }
 
   ngAfterViewInit() {
