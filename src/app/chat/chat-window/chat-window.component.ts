@@ -243,10 +243,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onNewChatSelected() {
-    this.focusInput();
-  }
-
   focusInput() {
     this.chatInput?.nativeElement.focus();
   }
