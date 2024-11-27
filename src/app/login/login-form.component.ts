@@ -176,7 +176,6 @@ export class LoginFormComponent {
             type: 'survey', status: 'pending', 'user.name': name
         }))),
         map((surveys) => {
-          console.log('log: surveys', surveys);
           const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
           if (uniqueSurveys.length > 0) {
             this.openNotificationsDialog(uniqueSurveys);
