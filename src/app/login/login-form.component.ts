@@ -173,7 +173,7 @@ export class LoginFormComponent {
           return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
         }),
         switchMap(() => this.submissionsService.getSubmissions(findDocuments({
-            type: 'survey', status: 'pending', isArchived: { $exists: false }, 'user.name': name
+            type: 'survey', status: 'pending', 'user.name': name
         }))),
         map((surveys) => {
           console.log('log: surveys', surveys);

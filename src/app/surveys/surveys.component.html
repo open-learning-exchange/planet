@@ -61,10 +61,28 @@
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="!element.parent === true">
-            <button mat-raised-button color="primary" [disabled]= "element.isArchived" (click)="routeToEditSurvey('update', element._id)" i18n><mat-icon>edit</mat-icon> Edit</button>
-            <button mat-raised-button color="primary" [disabled]="!element.questions.length || element.isArchived" (click)="openSendSurveyDialog(element)" i18n><mat-icon>send</mat-icon> Send</button>
-            <button mat-raised-button color="primary" [disabled]="!element.questions.length || element.isArchived" (click)="recordSurvey(element)"
-              i18n-matTooltip matTooltip="Record survey information from a person who is not a member of {{configuration.name}}" i18n>
+            <button 
+              mat-raised-button color="primary" 
+              [disabled]= "element.isArchived" 
+              (click)="routeToEditSurvey('update', element._id)" 
+              i18n-matTooltip matTooltip="Survey is archived and cannot be edit" 
+              i18n>
+              <mat-icon>edit</mat-icon> Edit
+            </button>
+            <button 
+              mat-raised-button color="primary" 
+              [disabled]="!element.questions.length || element.isArchived" 
+              (click)="openSendSurveyDialog(element)"
+              i18n-matTooltip matTooltip="element.isArchived ? 'Survey is archived and cannot be sent' : 'No questions inside survey'"
+              i18n>
+              <mat-icon>send</mat-icon> Send
+            </button>
+            <button 
+              mat-raised-button color="primary" 
+              [disabled]="!element.questions.length || element.isArchived" 
+              (click)="recordSurvey(element)"
+              i18n-matTooltip matTooltip="Record survey information from a person who is not a member of {{configuration.name}}" 
+              i18n>
               <mat-icon>fiber_manual_record</mat-icon> Record
             </button>
           </ng-container>

@@ -293,7 +293,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     return this.couchService.updateDocument(this.dbName, updatedSurvey).pipe(
       switchMap(() => {
-        console.log('log: survey archived');
         this.planetMessageService.showMessage($localize`Survey archived: ${survey.name}`);
         this.surveys.data = this.surveys.data.map((s) =>
           s._id === survey._id ? { ...s, isArchived: true } : s
@@ -301,26 +300,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const submissionRequests = this.submissionDeleteReq([], survey).map((req) =>
           req.pipe(
-            tap(() => console.log('Submission deleted successfully')),
-            catchError((err) => {
-              console.error('Error deleting submission:', err);
-              return throwError(err);
-            })
+            catchError((err) => throwError(err))
           )
         );
 
         return forkJoin(submissionRequests);
       }),
-      tap(() => {
-        console.log('All submissions deleted successfully');
-      }),
-      catchError((error) => {
+      catchError((err) => {
         this.planetMessageService.showAlert($localize`There was a problem archiving this survey or deleting submissions.`);
-        return throwError(error);
+        return throwError(err);
       })
     ).subscribe({
-      next: () => console.log('Survey archived and submissions deleted'),
-      error: (err) => console.error('Error during archive and deletion:', err),
+      next: () => {},
+      error: () => {},
     });
 
   }
