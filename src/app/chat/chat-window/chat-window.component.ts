@@ -9,7 +9,6 @@ import { ChatService } from '../../shared/chat.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
-import { Conversation } from '../chat.model';
 
 @Component({
   selector: 'planet-chat-window',
@@ -35,7 +34,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     context: '',
   };
   providers: AIProvider[] = [];
-  @Input() selectedConversation: Conversation;
   @Input() context: any;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
@@ -100,6 +98,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         this.provider = {
           name: aiService
         };
+        this.focusInput();
       }));
   }
 
