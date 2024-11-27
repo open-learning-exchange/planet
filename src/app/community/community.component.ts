@@ -48,7 +48,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   reports: any[] = [];
   showNewsButton = true;
   deleteMode = false;
-  descriptionDeleteMode = false;
   onDestroy$ = new Subject<void>();
   isCommunityLeader = this.user.isUserAdmin || this.user.roles.indexOf('leader') > -1;
   planetCode: string | null;
@@ -322,7 +321,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
             switchMap((updatedTeam) => {
               this.team = updatedTeam;
               this.servicesDescriptionLabel = 'Add';
-              this.descriptionDeleteMode = false;
               return of(updatedTeam);
             })
           ),
@@ -347,10 +345,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   toggleDeleteMode() {
     this.deleteMode = !this.deleteMode;
-  }
-
-  toggleDescriptionDeleteMode() {
-    this.descriptionDeleteMode = !this.descriptionDeleteMode;
   }
 
   openChangeTitleDialog({ member: councillor }) {
