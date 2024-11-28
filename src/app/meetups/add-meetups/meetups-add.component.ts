@@ -190,20 +190,44 @@ export class MeetupsAddComponent implements OnInit {
     }
   }
 
-  toggleDaily(val, showCheckbox) {
+  toggleDaily(val: string, showCheckbox: boolean) {
     // empty the array
-    this.meetupForm.setControl('day', this.fb.array([]));
+    const dayFormArray = this.fb.array([]);
     switch (val) {
       case 'daily':
-        // add all days to the array if the course is daily
-        this.meetupForm.setControl('day', this.fb.array(this.days));
+        this.days.forEach((day) => {
+          dayFormArray.push(new FormControl(day));
+        });
         break;
       case 'weekly':
-        this.meetupForm.setControl('day', this.fb.array(this.meetupFrequency));
+        if (this.meetupFrequency && this.meetupFrequency.length > 0) {
+          this.meetupFrequency.forEach((day) => {
+            dayFormArray.push(new FormControl(day));
+          });
+        } else {
+          const startDate = this.meetupForm.controls.startDate.value;
+  
+          if (startDate) {
+            const startDateObj = new Date(startDate);
+            const dayOfWeek = this.days[startDateObj.getDay()];
+  
+            if (dayOfWeek) {
+              dayFormArray.push(new FormControl(dayOfWeek));
+              console.log(`Auto-selected day: ${dayOfWeek}`);
+            } else {
+              console.log('Invalid startDate.');
+            }
+          } else {
+            console.log('No startDate set.');
+          }
+        }
         break;
     }
-  }
-
+    this.meetupForm.setControl('day', dayFormArray);
+    this.meetupForm.controls.day.updateValueAndValidity();
+  } 
+  
+  
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
       'user': user._id,
