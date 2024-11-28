@@ -206,11 +206,11 @@ export class MeetupsAddComponent implements OnInit {
           });
         } else {
           const startDate = this.meetupForm.controls.startDate.value;
-  
+
           if (startDate) {
             const startDateObj = new Date(startDate);
             const dayOfWeek = this.days[startDateObj.getDay()];
-  
+
             if (dayOfWeek) {
               dayFormArray.push(new FormControl(dayOfWeek));
               console.log(`Auto-selected day: ${dayOfWeek}`);
@@ -225,9 +225,9 @@ export class MeetupsAddComponent implements OnInit {
     }
     this.meetupForm.setControl('day', dayFormArray);
     this.meetupForm.controls.day.updateValueAndValidity();
-  } 
-  
-  
+  }
+
+
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
       'user': user._id,
