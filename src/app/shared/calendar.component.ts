@@ -134,17 +134,36 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText
     }
   ) {
-    const allDay = !meetup.isTask && meetup.startTime === undefined || meetup.startTime === '';
+    const allDay = !meetup.isTask && (meetup.startTime === undefined || meetup.startTime === '');
+    console.log('Event Data:', {
+      title: meetup.title,
+      start: addDateAndTime(startDate, meetup.startTime),
+      end: addDateAndTime(endDate, allDay && endDate > startDate ? '24:00' : meetup.endTime),
+      allDay,
+      editable: true,
+      recurring: meetup.recurring, // This needs to be passed to the event object
+      recurringNumber: meetup.recurringNumber, // This needs to be passed
+      day: meetup.day, // Recurring days if any
+      extendedProps: { meetup }, // Full meetup data
+      ...otherProps
+    });
     return {
       title: meetup.title,
       start: addDateAndTime(startDate, meetup.startTime),
       end: addDateAndTime(endDate, allDay && endDate > startDate ? '24:00' : meetup.endTime),
       allDay,
       editable: true,
+      recurring: meetup.recurring,
+      recurringNumber: meetup.recurringNumber,
+      day: meetup.day,
       extendedProps: { meetup },
       ...otherProps
     };
   }
+
+
+
+
 
   dailyEvents(meetup) {
     return [ ...Array(meetup.recurringNumber).keys() ].map(dayOffset => {
@@ -179,7 +198,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       };
     }
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
+      data: { meetup: event.extendedProps.meetup, link: this.link, sync: this.sync,
+        onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });
   }
 
@@ -192,16 +212,22 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   eventClick({ event }) {
+    console.log('Event click triggered');
+    console.log('Event data:', event.extendedProps);  // Log to verify extendedProps
+    console.log('Meetup data:', event.extendedProps.meetup);  // Verify meetup object
+
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: {
-        meetup: event.extendedProps.meetup,
-        view: 'view',
-        link: this.link,
-        sync: this.sync,
-        editable: this.editable,
-        onMeetupsChange: this.onMeetupsChange.bind(this)
-      }
-    });
+  data: {
+    meetup: event.extendedProps.meetup,  // Ensure this contains the data
+    view: 'view',
+    link: this.link,
+    sync: this.sync,
+    editable: this.editable,
+    onMeetupsChange: this.onMeetupsChange.bind(this)
   }
+});
+
+  }
+
 
 }

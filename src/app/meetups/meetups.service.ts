@@ -30,14 +30,16 @@ export class MeetupService {
       });
     }
 
-  updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
-    const meetupQuery = meetupIds.length > 0 ?
-      this.getMeetups(meetupIds, opts) : this.getAllMeetups(opts);
-    meetupQuery.subscribe((meetups: any) => {
-      this.meetups = meetups.docs ? meetups.docs : meetups;
-      this.meetupUpdated.next(this.meetupList(this.meetups, this.userShelf.meetupIds));
-    }, (err) => console.log(err));
-  }
+    updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
+      const meetupQuery = meetupIds.length > 0 ?
+        this.getMeetups(meetupIds, opts) : this.getAllMeetups(opts);
+      meetupQuery.subscribe((meetups: any) => {
+        this.meetups = meetups.docs ? meetups.docs : meetups;
+        console.log('Fetched meetups:', this.meetups);  // Log the result to verify recurringNumber is there
+        this.meetupUpdated.next(this.meetupList(this.meetups, this.userShelf.meetupIds));
+      }, (err) => console.log(err));
+    }
+
 
   getAllMeetups(opts: any) {
     return this.couchService.findAll('meetups', findDocuments({ '_id': { '$gt': null } }, 0 ), opts);
