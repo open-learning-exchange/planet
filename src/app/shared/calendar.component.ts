@@ -198,7 +198,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       meetup.startDate = clickedDate;
       meetup.endDate = event.end || clickedDate;
     }
-  
+
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: {
         meetup: meetup,
@@ -210,5 +210,5 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       },
     });
   }
-  
+
 }
