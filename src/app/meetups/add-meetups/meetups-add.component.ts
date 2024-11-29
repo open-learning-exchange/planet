@@ -86,20 +86,20 @@ export class MeetupsAddComponent implements OnInit {
 
   createForm() {
     this.meetupForm = this.fb.group({
-        title: ['', CustomValidators.required],
-        description: ['', CustomValidators.required],
-        startDate: [this.meetup?.startDate || '', CustomValidators.startDateValidator()],
-        endDate: [this.meetup?.endDate || '', CustomValidators.endDateValidator()],
+        title: [ '', CustomValidators.required ],
+        description: [ '', CustomValidators.required ],
+        startDate: [ this.meetup?.startDate || '', CustomValidators.startDateValidator() ],
+        endDate: [ this.meetup?.endDate || '', CustomValidators.endDateValidator() ],
         recurring: 'none',
         day: this.fb.array([]),
-        startTime: ['', CustomValidators.timeValidator()],
-        endTime: ['', CustomValidators.timeValidator()],
+        startTime: [ '', CustomValidators.timeValidator() ],
+        endTime: [ '', CustomValidators.timeValidator() ],
         category: '',
         meetupLocation: '',
         createdBy: this.userService.get().name,
         sourcePlanet: this.stateService.configuration.code,
         createdDate: this.couchService.datePlaceholder,
-        recurringNumber: [10, [Validators.min(2), CustomValidators.integerValidator]],
+        recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ],
     }, {
         validators: CustomValidators.meetupTimeValidator(),
     });

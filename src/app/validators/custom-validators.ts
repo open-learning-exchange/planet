@@ -257,7 +257,7 @@ export class CustomValidators {
 
   static atLeastOneDaySelected(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-        if (!control.parent) return null;
+        if (!control.parent) { return null; }
 
         const recurringControl = control.parent.get('recurring');
         // Skip validation if not weekly
@@ -270,6 +270,6 @@ export class CustomValidators {
     };
 }
 
- 
-  
+
+
 }
