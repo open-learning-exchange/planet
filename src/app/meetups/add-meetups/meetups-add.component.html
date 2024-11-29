@@ -53,19 +53,24 @@
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
       </div>
-      <div *ngIf="meetupForm.controls.recurring.value === 'weekly'" class="full-width">
-        <mat-checkbox
-          *ngFor="let day of days"
-          [checked]="meetupForm.controls.day.value.includes(day)"
-          (change)="onDayChange(day, $event.checked)"
-          class="margin-lr"
-        >
-          {{ day }}
-        </mat-checkbox>
-        <mat-error *ngIf="meetupForm.controls.day.errors?.noDaysSelected">
-          <span i18n>Please select at least one day.</span>
-        </mat-error>
-      </div>      
+
+
+<div *ngIf="meetupForm.controls.recurring.value === 'weekly'" class="full-width">
+    <mat-checkbox
+        *ngFor="let day of days"
+        [checked]="meetupForm.controls.day.value.includes(day)"
+        (change)="onDayChange(day, $event.checked)"
+        class="margin-lr"
+    >
+        {{ day }}
+    </mat-checkbox>
+    <mat-error *ngIf="meetupForm.controls.day.hasError('noDaysSelected')">
+        <span i18n>Please select at least one day.</span>
+    </mat-error>
+</div>
+   
+      
+      
       <ng-container *ngIf="meetupForm.controls.recurring.value==='weekly' || meetupForm.controls.recurring.value==='daily'">
         <mat-form-field>
           <input matInput type="number" min="2" i18n-placeholder placeholder="Number of Recurrences" formControlName="recurringNumber">
