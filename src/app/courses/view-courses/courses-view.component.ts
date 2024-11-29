@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -7,14 +7,47 @@ import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { RatingService } from '../../shared/forms/rating.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuTrigger } from '@angular/material/menu';
+
+const popupFormFields = [
+  {
+    'label': $localize`Rate`,
+    'type': 'rating',
+    'name': 'rate',
+    'placeholder': $localize`Your Rating`,
+    'required': false
+  },
+  {
+    'label': $localize`Comment`,
+    'type': 'textarea',
+    'name': 'comment',
+    'placeholder': $localize`Would you like to leave a comment?`,
+    'required': false
+  }
+];
+
 
 @Component({
   templateUrl: './courses-view.component.html',
   styleUrls: [ 'courses-view.scss' ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
+  @Input() rating: any = { userRating: {} };
+  rateForm: FormGroup;
+  popupForm: FormGroup;
+  isPopupOpen = false;
+  get rateFormField() {
+    return { rate: this.rating.userRating.rate || 0 };
+  }
+  get commentField() {
+    return { comment: this.rating.userRating.comment || '' };
+  }
 
+  private dbName = 'ratings';
   onDestroy$ = new Subject<void>();
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
@@ -33,14 +66,20 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
+    private fb: FormBuilder,
     private router: Router,
+    private snackBar: MatSnackBar,
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
+    private dialogsForm: DialogsFormService,
+    private ratingService: RatingService,
     private deviceInfoService: DeviceInfoService
   ) {
+    this.rateForm = this.fb.group(this.rateFormField);
+    this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -186,8 +225,37 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   /**
    * Returns routing to previous parent page on Courses
    */
+
+  checkCourseCompletion(){
+    return this.courseDetail.steps.every(step => step.progress !== undefined);
+  }
+
+  isCourseRated() {
+    //figure out a way to fetch the rating of the current course.
+  }
+
   goBack() {
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    if (this.checkCourseCompletion()) {
+      const popupForm = this.fb.group({
+        rate: [0],
+        comment: ['']
+      });
+  
+      const snackBarRef = this.snackBar.open('Thank you for taking this course!', 'Rate Course', {
+        duration: 5000
+      });
+  
+      snackBarRef.onAction().subscribe(() => {
+        this.dialogsForm
+          .confirm($localize`Rating`, popupFormFields, popupForm)
+          .subscribe((res) => {
+            if (res) {
+              console.log('Course rated:', popupForm.value);
+            }
+          });
+      });
+    }
+    this.router.navigate(['../../'], { relativeTo: this.route });
   }
 
   trackBySteps(index: number) {
