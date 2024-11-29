@@ -258,13 +258,10 @@ export class CustomValidators {
   static atLeastOneDaySelected(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
         if (!control.parent) { return null; }
-
         const recurringControl = control.parent.get('recurring');
-        // Skip validation if not weekly
         if (!recurringControl || recurringControl.value !== 'weekly') {
             return null;
         }
-
         const selectedDays = control.value;
         return selectedDays && selectedDays.length > 0 ? null : { noDaysSelected: true };
     };
