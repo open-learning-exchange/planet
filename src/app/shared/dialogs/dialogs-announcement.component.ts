@@ -231,9 +231,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   getIndividualMoneyEarned(): number {
     const userStatus = this.userStatusService.printStatus();
     const postsEarnings = Number(userStatus.userPosts) * this.postStepValue;
-    const stepEarnings = userStatus.joinedCourse.amount + userStatus.surveyComplete.amount;
-
-    return postsEarnings + stepEarnings;
+    const courseAmount = userStatus.joinedCourse.status ? userStatus.joinedCourse.amount : 0;
+    const surveyAmount = userStatus.surveyComplete.status ? userStatus.surveyComplete.amount : 0;
+    return postsEarnings + courseAmount + surveyAmount;
   }
 
   getGroupMoneyEarned(): number {
