@@ -29,7 +29,7 @@
         <mat-icon color="primary">
           {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
-        <span>Únete al curso Reto noviembre.</span>
+        <span>Únete al curso Reto noviembre. [${{courseStepValue}}]</span>
         <a *ngIf="!getStatus('joinedCourse')" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
           Unirse
         </a>
@@ -39,7 +39,7 @@
         <mat-icon color="primary">
           {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
-        <span>¡Encuesta finalizada!</span>
+        <span>¡Encuesta finalizada! [${{surveyStepValue}}]</span>
         <a *ngIf="getStatus('joinedCourse') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
           Encuesta
         </a>
@@ -49,7 +49,7 @@
         <mat-icon color="primary">
           {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
-        <span>Comparte tu opinión en Nuestras Voces. <br><span>{{getStatus('userPosts')}} de 5 Voces diarias</span> </span>
+        <span>Comparte tu opinión en Nuestras Voces. [${{postStepValue}}/voz]<br><span>{{getPosts()}} de 5 Voces diarias</span> </span>
         <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="chatNShare()">
           Chatea y comparte
         </a>
@@ -58,10 +58,14 @@
             <div
               *ngFor="let dot of [0, 1, 2, 3, 4]; let i = index"
               class="dot"
-              [ngClass]="{ completed: i < getStatus('userPosts') }"
+              [ngClass]="{ completed: i < getPosts() }"
             ></div>
           </div>
         </ng-template>
+      </div>
+
+      <div>
+        <span>Mis ganancias: <b>${{getIndividualMoneyEarned()}}</b></span>
       </div>
     </div>
   </ng-template>

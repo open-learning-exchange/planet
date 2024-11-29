@@ -14,8 +14,9 @@ import { UserService } from '../user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
-export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'ollonde', 'okuro', 'uriur', 'mutugi', 'vi' ];
+export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'okuro', 'uriur', 'mutugi', 'vi' ];
 export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
+export const examId = '83fe016d8a983de6f7112e761c014545';
 export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1));
 
 @Component({
@@ -50,8 +51,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   startDate = new Date(2024, 9, 31);
   endDate = new Date(2024, 11, 1);
   isLoading = true;
-  submissionValue = 1;
-  stepValue = 2;
+  postStepValue = 2;
+  courseStepValue = 0;
+  surveyStepValue = 1;
   goal = 500;
 
   constructor(
@@ -114,7 +116,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       questionNum: 1,
       type: 'survey',
       preview: 'false',
-      examId: '83fe016d8a983de6f7112e761c014545'
+      examId: examId
     } ]);
     this.dialogRef.close();
   }
@@ -191,34 +193,33 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           this.enrolledMembers.forEach((member) => {
             const hasJoinedCourse = this.hasEnrolledCourse(member);
             const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
-            const hasPosted = this.hasSubmittedVoice(news, member.name) > 0;
-            const userAmount = this.hasSubmittedVoice(news, member.name);
+            const userPosts = this.hasSubmittedVoice(news, member.name);
 
-            if (hasCompletedSurvey && hasPosted && hasJoinedCourse && userAmount > 0) {
-              if (!this.groupSummary.some(m => m.name === member.name)) {
-                this.groupSummary.push({
-                  ...member,
-                  userPosts: userAmount
-                });
-              }
+            if (!this.groupSummary.some(m => m.name === member.name)) {
+              this.groupSummary.push({
+                ...member,
+                userPosts: userPosts,
+                courseAmount: hasJoinedCourse ? this.courseStepValue : 0,
+                surveyAmount: hasCompletedSurvey ? this.surveyStepValue : 0
+              });
             }
           });
 
           // Individual stats
           this.userStatusService.updateStatus('surveyComplete', {
             status: this.hasCompletedSurvey(this.currentUserName),
-            amount: this.stepValue
+            amount: this.surveyStepValue
           });
           this.userStatusService.updateStatus('hasPost', {
             status: this.hasSubmittedVoice(news, this.currentUserName) > 0,
-            amount: this.stepValue
+            amount: this.postStepValue
           });
           this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
           this.enrolledMembers.some(member => {
             if (member.name === this.currentUserName) {
               this.userStatusService.updateStatus('joinedCourse', {
                 status: this.hasEnrolledCourse(member),
-                amount: this.stepValue
+                amount: this.courseStepValue
               });
             }
           });
@@ -229,24 +230,18 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   getIndividualMoneyEarned(): number {
     const userStatus = this.userStatusService.printStatus();
+    const postsEarnings = Number(userStatus.userPosts) * this.postStepValue;
+    const stepEarnings = userStatus.joinedCourse.amount + userStatus.surveyComplete.amount;
 
-    const postsEarnings = Number(userStatus.userPosts) * this.submissionValue;
-    const additionalEarnings = Object.values(userStatus)
-    .filter(
-      (status: any): status is { status: boolean; amount: number } =>
-        typeof status === 'object' && status !== null && status.status
-    )
-    .reduce((total, status) => total + (status.amount || 0), 0);
-
-    return postsEarnings + additionalEarnings;
+    return postsEarnings + stepEarnings;
   }
 
   getGroupMoneyEarned(): number {
     const totalEarned = this.groupSummary.reduce((total, member) => {
-      const amount = Number(member.userPosts * this.submissionValue);
-      return total + (isNaN(amount) ? 0 : amount);
+      const postAmount = Number(member.userPosts * this.postStepValue);
+      const stepAmounts = member.courseAmount + member.surveyAmount;
+      return total + (isNaN(postAmount) ? 0 : postAmount) + (isNaN(stepAmounts) ? 0 : stepAmounts);
     }, 0);
-
     return Math.min(totalEarned, this.goal);
   }
 
@@ -257,5 +252,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   getStatus(key: string) {
     return this.userStatusService.getStatus(key);
+  }
+
+  getPosts() {
+    return this.userStatusService.getPosts();
   }
 }

@@ -31,8 +31,12 @@ export class UserChallengeStatusService {
     return complete;
   }
 
-  getStatus(key: string): Object| number {
-    return this.userStatus[key];
+  getPosts(): number {
+    return this.userStatus.userPosts;
+  }
+
+  getStatus(key: string): boolean {
+    return this.userStatus[key].status;
   }
 
   printStatus(): any {
