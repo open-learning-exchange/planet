@@ -37,7 +37,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  initTable = true;
   isMobile: boolean;
   deviceType: DeviceType;
   showFiltersRow = false;
@@ -110,11 +109,14 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   ngAfterViewChecked() {
-    if (this.initTable === true) {
+    if (this.sort && this.paginator && !this.submissions.paginator && !this.submissions.sort) {
+      console.log('log: Setting up table...');
+      console.log('log: Sort:', this.sort);
+      console.log('log: Paginator:', this.paginator);  
+  
       this.submissions.paginator = this.paginator;
       this.submissions.sort = this.sort;
-      this.initTable = false;
-    }
+    } 
   }
 
   ngOnDestroy() {
@@ -166,7 +168,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
     this.emptyData = !this.submissions.filteredData.length;
-    this.initTable = !this.emptyData;
     this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
   }
 
