@@ -13,7 +13,7 @@
   <div planetStepListForm>
     <form [formGroup]="stepForm">
       <mat-form-field class="full-width">
-        <input matInput i18n-placeholder placeholder="Step title" formControlName="stepTitle">
+        <input matInput i18n-placeholder placeholder="Step title" maxlength="150" formControlName="stepTitle">
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" i18n-placeholder placeholder="Description" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
