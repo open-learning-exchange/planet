@@ -112,11 +112,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (this.sort && this.paginator && !this.submissions.paginator && !this.submissions.sort) {
       console.log('log: Setting up table...');
       console.log('log: Sort:', this.sort);
-      console.log('log: Paginator:', this.paginator);  
-  
+      console.log('log: Paginator:', this.paginator);
+
       this.submissions.paginator = this.paginator;
       this.submissions.sort = this.sort;
-    } 
+    }
   }
 
   ngOnDestroy() {
