@@ -56,6 +56,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   fullView = 'on';
   currentView: string;
   courseId: string;
+  hasRating = false;
   canManage: boolean;
   isLoading: boolean;
   currentUser = this.userService.get();
@@ -89,6 +90,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
+    this.rating = Object.assign({ rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} }, this.rating);
     this.coursesService.courseUpdated$.pipe(
       switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
         this.courseDetail = course;
@@ -230,12 +232,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return this.courseDetail.steps.every(step => step.progress !== undefined);
   }
 
-  isCourseRated() {
-    //figure out a way to fetch the rating of the current course.
+  hasCourseRating() {
+    const opts: any = {};
+    this.ratingService.getRatings(
+      { itemIds: [this.courseDetail._id], type: 'course' },
+      opts
+    ).subscribe(
+      ratings => {
+        const currRating = ratings[0]['rate'];
+        return currRating > 0;
+      }
+    );
   }
+  
 
   goBack() {
-    if (this.checkCourseCompletion()) {
+    if (this.checkCourseCompletion() && !this.hasCourseRating()) {
       const popupForm = this.fb.group({
         rate: [0],
         comment: ['']
