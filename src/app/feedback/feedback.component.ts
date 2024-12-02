@@ -117,7 +117,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
       this.feedback.data = feedbackData.map(feedback => ({...feedback,
         user: this.users.find(u => u.doc.name === feedback.owner),
         displayTitle: (!feedback.title || feedback.title.trim() === '' || feedback.title.endsWith(' regarding /'))
-        ? `${feedback.type} regarding ${this.isValidUrl(feedback.url) ? feedback.url.trim() : 'general feedback'}`          
+        ? `${feedback.type} regarding ${this.isValidUrl(feedback.url) ? feedback.url.trim() : 'general feedback'}`
         : feedback.title
       }));
       this.emptyData = !this.feedback.data.length;
