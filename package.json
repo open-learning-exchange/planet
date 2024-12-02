@@ -3,8 +3,8 @@
   "license": "AGPL-3.0",
   "version": "0.15.74",
   "myplanet": {
-    "latest": "v0.21.11",
-    "min": "v0.20.11"
+    "latest": "v0.21.20",
+    "min": "v0.20.20"
   },
   "scripts": {
     "ng": "ng",
