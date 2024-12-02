@@ -15,9 +15,9 @@ import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'okuro', 'uriur', 'mutugi', 'vi' ];
-export const challengeCourseId = '9517e3b45a5bb63e69bb8f269216974d';
-export const examId = '83fe016d8a983de6f7112e761c014545';
-export const challengePeriod = (new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1));
+export const challengeCourseId = '4e6b78800b6ad18b4e8b0e1e38a98cac';
+export const examId = '4e6b78800b6ad18b4e8b0e1e38b382ab';
+export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2024, 12, 1));
 
 @Component({
   template: `
@@ -48,8 +48,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   groupSummary = [];
   enrolledMembers: any;
   courseId = challengeCourseId;
-  startDate = new Date(2024, 9, 31);
-  endDate = new Date(2024, 11, 1);
+  startDate = new Date(2024, 10, 31);
+  endDate = new Date(2024, 12, 1);
   isLoading = true;
   postStepValue = 2;
   courseStepValue = 0;
@@ -110,9 +110,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   doSurvey() {
-    this.router.navigate([ `/courses/view/${this.courseId}/step/3/exam`, {
+    this.router.navigate([ `/courses/view/${this.courseId}/step/5/exam`, {
       id: this.courseId,
-      stepNum: 3,
+      stepNum: 5,
       questionNum: 1,
       type: 'survey',
       preview: 'false',
@@ -121,8 +121,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  chatNShare() {
-    this.router.navigate([ '/chat' ]);
+  shareVoice() {
+    this.router.navigate([ '/' ]);
     this.dialogRef.close();
   }
 
@@ -164,6 +164,43 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     });
   }
 
+  fetchGroupSummary(news) {
+    this.enrolledMembers.forEach((member) => {
+      const hasJoinedCourse = this.hasEnrolledCourse(member);
+      const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
+      const userPosts = this.hasSubmittedVoice(news, member.name);
+
+      if (!this.groupSummary.some(m => m.name === member.name)) {
+        this.groupSummary.push({
+          ...member,
+          userPosts,
+          courseAmount: hasJoinedCourse ? this.courseStepValue : 0,
+          surveyAmount: hasCompletedSurvey ? this.surveyStepValue : 0
+        });
+      }
+    });
+  }
+
+  fetchIndividualSummary(news) {
+    this.userStatusService.updateStatus('surveyComplete', {
+      status: this.hasCompletedSurvey(this.currentUserName),
+      amount: this.surveyStepValue
+    });
+    this.userStatusService.updateStatus('hasPost', {
+      status: this.hasSubmittedVoice(news, this.currentUserName) > 0,
+      amount: this.postStepValue
+    });
+    this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
+    this.enrolledMembers.some(member => {
+      if (member.name === this.currentUserName) {
+        this.userStatusService.updateStatus('joinedCourse', {
+          status: this.hasEnrolledCourse(member),
+          amount: this.courseStepValue
+        });
+      }
+    });
+  }
+
   fetchCourseAndNews() {
     this.newsService.newsUpdated$.pipe(
       takeUntil(this.onDestroy$)
@@ -178,7 +215,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           ) || {}
         ).public,
         }));
-
         this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
@@ -187,42 +223,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
             status: submission.status,
             time: submission.lastUpdateTime
           }));
-
-
-          // Group Summary
-          this.enrolledMembers.forEach((member) => {
-            const hasJoinedCourse = this.hasEnrolledCourse(member);
-            const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
-            const userPosts = this.hasSubmittedVoice(news, member.name);
-
-            if (!this.groupSummary.some(m => m.name === member.name)) {
-              this.groupSummary.push({
-                ...member,
-                userPosts: userPosts,
-                courseAmount: hasJoinedCourse ? this.courseStepValue : 0,
-                surveyAmount: hasCompletedSurvey ? this.surveyStepValue : 0
-              });
-            }
-          });
-
-          // Individual stats
-          this.userStatusService.updateStatus('surveyComplete', {
-            status: this.hasCompletedSurvey(this.currentUserName),
-            amount: this.surveyStepValue
-          });
-          this.userStatusService.updateStatus('hasPost', {
-            status: this.hasSubmittedVoice(news, this.currentUserName) > 0,
-            amount: this.postStepValue
-          });
-          this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
-          this.enrolledMembers.some(member => {
-            if (member.name === this.currentUserName) {
-              this.userStatusService.updateStatus('joinedCourse', {
-                status: this.hasEnrolledCourse(member),
-                amount: this.courseStepValue
-              });
-            }
-          });
+          this.fetchGroupSummary(news);
+          this.fetchIndividualSummary(news);
           this.isLoading = false;
         }, () => this.isLoading = false);
       }, () => this.isLoading = false);

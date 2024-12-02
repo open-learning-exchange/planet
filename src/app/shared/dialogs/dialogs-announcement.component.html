@@ -37,20 +37,10 @@
 
       <div class="step">
         <mat-icon color="primary">
-          {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
-        </mat-icon>
-        <span>¡Encuesta finalizada! [${{surveyStepValue}}]</span>
-        <a *ngIf="getStatus('joinedCourse') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
-          Encuesta
-        </a>
-      </div>
-
-      <div class="step">
-        <mat-icon color="primary">
           {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
         </mat-icon>
         <span>Comparte tu opinión en Nuestras Voces. [${{postStepValue}}/voz]<br><span>{{getPosts()}} de 5 Voces diarias</span> </span>
-        <a *ngIf="getStatus('joinedCourse') && getStatus('surveyComplete') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="chatNShare()">
+        <a *ngIf="getStatus('joinedCourse') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="shareVoice()">
           Chatea y comparte
         </a>
         <ng-template #dailyVoices>
@@ -62,6 +52,16 @@
             ></div>
           </div>
         </ng-template>
+      </div>
+
+      <div class="step">
+        <mat-icon color="primary">
+          {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
+        </mat-icon>
+        <span>¡Encuesta finalizada! [${{surveyStepValue}}]</span>
+        <a *ngIf="getStatus('joinedCourse') && getStatus('hasPost') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
+          Encuesta
+        </a>
       </div>
 
       <div>
