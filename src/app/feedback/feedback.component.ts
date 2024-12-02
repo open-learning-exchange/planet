@@ -113,13 +113,19 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
-    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
-      this.feedback.data = feedbackData.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
+    this.couchService.findAll(this.dbName, findDocuments(selector, 0, [{ 'openTime': 'desc' }])).subscribe((feedbackData: any[]) => {
+      this.feedback.data = feedbackData.map(feedback => ({
+        ...feedback,
+        user: this.users.find(u => u.doc.name === feedback.owner),
+        displayTitle: (!feedback.title || feedback.title.trim() === '' || feedback.title.endsWith(' regarding /'))
+          ? `${feedback.type} regarding ${feedback.url && feedback.url !== '/' && feedback.url.trim() ? feedback.url : 'general feedback'}`
+          : feedback.title
+      }));
       this.emptyData = !this.feedback.data.length;
       this.dialogsLoadingService.stop();
-    }, (error) => this.message = $localize`There is a problem of getting data.`);
+    }, (error) => this.message = $localize`There is a problem getting data.`);
   }
-
+  
   deleteClick(feedback) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
