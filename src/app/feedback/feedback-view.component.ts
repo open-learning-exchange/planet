@@ -71,7 +71,14 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
     this.showParamsButton = Object.keys(this.feedback.params).length > 0;
+    const isValidUrl = (url: string) => {
+      const trimmedUrl = (url || '').trim();
+      return trimmedUrl && trimmedUrl !== '/';
+    };
+    const displayUrl = isValidUrl(this.feedback.url) ? this.feedback.url.trim() : 'general feedback';
+    this.feedback.displayTitle = `${this.feedback.type} regarding ${displayUrl}`;
   }
+
 
   getFeedback(id) {
     return this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }));
