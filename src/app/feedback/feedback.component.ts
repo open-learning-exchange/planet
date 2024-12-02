@@ -143,7 +143,6 @@ deleteClick(feedback) {
   });
 }
 
-
   deleteFeedback(feedback) {
     const { _id: feedbackId, _rev: feedbackRev } = feedback;
     return {

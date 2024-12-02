@@ -75,7 +75,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.feedback.displayTitle = `${this.feedback.type} regarding ${displayUrl}`;
   }
 
-
   getFeedback(id) {
     return this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }));
   }
