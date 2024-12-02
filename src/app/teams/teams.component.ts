@@ -238,7 +238,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted a team.`);
+        if (this.mode == 'enterprise'){
+          this.planetMessageService.showMessage($localize`You have deleted an ${toProperCase(this.mode)}.`);
+        }
+        else{
+          this.planetMessageService.showMessage($localize`You have deleted a ${toProperCase(this.mode)}.`);
+        }
         this.removeTeamFromTable(team);
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
