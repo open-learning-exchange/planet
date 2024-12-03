@@ -44,5 +44,24 @@
       overflow: visible;
     }
   }
-
 }
+
+.step-title {
+  max-width: 200ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: $screen-md) {
+  .step-title {
+    max-width: 120ch;
+  }
+}
+
+@media (max-width: $screen-sm) {
+  .step-title {
+    max-width: 50ch;
+  }
+}
+
