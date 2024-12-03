@@ -11,6 +11,7 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
+import { UsersService } from '../../users/users.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
@@ -46,6 +47,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   teamId = planetAndParentId(this.stateService.configuration);
   submissions = [];
   groupSummary = [];
+  members: any;
   enrolledMembers: any;
   courseId = challengeCourseId;
   startDate = new Date(2024, 10, 31);
@@ -65,6 +67,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
+    private usersService: UsersService,
     private userStatusService: UserChallengeStatusService
   ) {}
 
@@ -97,8 +100,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       },
       viewId: this.teamId
     });
+    this.fetchMembers();
     this.fetchCourseAndNews();
-    this.fetchEnrolled();
+    this.fetchEnrolledMembers();
   }
 
   joinCourse() {
@@ -126,11 +130,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  hasCompletedSurvey(userName: string) {
+  hasCompletedSurvey(userName: string): boolean {
     return this.submissions.some(submission => submission.name === userName && submission.status === 'complete');
   }
 
-  hasSubmittedVoice(news: any[], userName: string) {
+  hasSubmittedVoice(news: any[], userName: string): number {
     const uniqueDays = new Set<string>();
 
     news.forEach(post => {
@@ -146,11 +150,27 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     return Math.min(uniqueDays.size, 5);
   }
 
-  hasEnrolledCourse(member) {
-    return member.courseIds.includes(this.courseId);
+  hasEnrolledCourse(member: any): boolean {
+    return this.enrolledMembers.some(
+      (enrolledMember) =>
+        enrolledMember._id === member._id &&
+        enrolledMember.courseIds?.includes(this.courseId)
+    );
   }
 
-  fetchEnrolled() {
+  fetchMembers() {
+    this.usersService.getAllUsers().subscribe((users: any) => {
+      this.members = users.map((member: any) => {
+        const [ , memberName ] = member?._id.split(':');
+        return {
+          ...member,
+          name: memberName,
+        };
+      });
+    });
+  }
+
+  fetchEnrolledMembers() {
     this.couchService.findAll('shelf', {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
     }).subscribe((members) => {
@@ -165,7 +185,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   fetchGroupSummary(news) {
-    this.enrolledMembers.forEach((member) => {
+    this.members.forEach((member) => {
       const hasJoinedCourse = this.hasEnrolledCourse(member);
       const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
       const userPosts = this.hasSubmittedVoice(news, member.name);
@@ -191,7 +211,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       amount: this.postStepValue
     });
     this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
-    this.enrolledMembers.some(member => {
+    this.members.some(member => {
       if (member.name === this.currentUserName) {
         this.userStatusService.updateStatus('joinedCourse', {
           status: this.hasEnrolledCourse(member),
