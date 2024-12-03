@@ -94,6 +94,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.coursesService.courseUpdated$.pipe(
       switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
         this.courseDetail = course;
+        this.hasCourseRating();
         this.isLoading = false;
         this.coursesService.courseActivity('visit', course);
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
@@ -237,17 +238,19 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.ratingService.getRatings(
       { itemIds: [this.courseDetail._id], type: 'course' },
       opts
-    ).subscribe(
-      ratings => {
-        const currRating = ratings[0]['rate'];
-        return currRating > 0;
+    ).subscribe({
+      next: (ratings) => {
+        this.hasRating = ratings && ratings[0]['rate'] > 0;
+      },
+      error: () => {
+        this.hasRating = false;
       }
-    );
+    });
   }
   
-
   goBack() {
-    if (this.checkCourseCompletion() && !this.hasCourseRating()) {
+    this.hasCourseRating();
+    if (this.checkCourseCompletion() && !this.hasRating) {
       const popupForm = this.fb.group({
         rate: [0],
         comment: ['']
@@ -262,16 +265,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
           .confirm($localize`Rating`, popupFormFields, popupForm)
           .subscribe((res) => {
             if (res) {
-              console.log('Course rated:', popupForm.value);
+              this.hasRating = true;
             }
           });
       });
     }
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
-
-  trackBySteps(index: number) {
-    return index;
-  }
-
 }
