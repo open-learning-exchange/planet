@@ -46,8 +46,19 @@
   }
 }
 
+mat-expansion-panel-header {
+  display: flex;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+mat-panel-title {
+  display: block;
+  max-width: 100%;
+}
+
 .step-title {
-  max-width: 200ch;
+  max-width: 150ch;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -55,13 +66,13 @@
 
 @media (max-width: $screen-md) {
   .step-title {
-    max-width: 120ch;
+    max-width: 90ch;
   }
 }
 
 @media (max-width: $screen-sm) {
   .step-title {
-    max-width: 50ch;
+    max-width: 45ch;
   }
 }
 
