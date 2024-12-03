@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -60,7 +60,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService,
-    private cdr: ChangeDetectorRef
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
