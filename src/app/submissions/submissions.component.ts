@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -60,6 +60,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService,
+    private cdr: ChangeDetectorRef
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -110,10 +111,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   ngAfterViewChecked() {
     if (this.sort && this.paginator && !this.submissions.paginator && !this.submissions.sort) {
-      console.log('log: Setting up table...');
-      console.log('log: Sort:', this.sort);
-      console.log('log: Paginator:', this.paginator);
-
       this.submissions.paginator = this.paginator;
       this.submissions.sort = this.sort;
     }
@@ -169,6 +166,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.submissions.filter = this.submissions.filter || ' ';
     this.emptyData = !this.submissions.filteredData.length;
     this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
+    this.submissions.paginator = undefined;
+    this.submissions.sort = undefined;
   }
 
   dropdownsFill() {
