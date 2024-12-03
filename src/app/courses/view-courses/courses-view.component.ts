@@ -10,6 +10,8 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { RatingService } from '../../shared/forms/rating.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { CouchService } from '../../shared/couchdb.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuTrigger } from '@angular/material/menu';
 
@@ -76,6 +78,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private stateService: StateService,
     private dialogsForm: DialogsFormService,
+    private couchService: CouchService,
+    private planetMessage: PlanetMessageService,
     private ratingService: RatingService,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -251,7 +255,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goBack() {
     this.hasCourseRating();
     if (this.checkCourseCompletion() && !this.hasRating) {
-      const popupForm = this.fb.group({
+      // Prepare the form with initial values matching the rating component
+      this.popupForm = this.fb.group({
         rate: [0],
         comment: ['']
       });
@@ -262,14 +267,62 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   
       snackBarRef.onAction().subscribe(() => {
         this.dialogsForm
-          .confirm($localize`Rating`, popupFormFields, popupForm)
+          .confirm($localize`Rating`, popupFormFields, this.popupForm)
           .subscribe((res) => {
             if (res) {
-              this.hasRating = true;
+              // If user confirms, update the rating
+              this.updateRatingFromPopup();
             }
           });
       });
     }
     this.router.navigate(['../../'], { relativeTo: this.route });
+  }
+  
+  updateRatingFromPopup() {
+    // Create a form group with the popup form values
+    const ratingForm = this.fb.group({
+      rate: [this.popupForm.get('rate').value],
+      comment: [this.popupForm.get('comment').value]
+    });
+  
+    // Prepare the rating object similar to PlanetRatingComponent
+    this.rating = Object.assign({ 
+      rateSum: 0, 
+      totalRating: 0, 
+      maleRating: 0, 
+      femaleRating: 0, 
+      userRating: {} 
+    }, this.rating);
+  
+    // Use the same updateRating method from PlanetRatingComponent
+    const configuration = this.stateService.configuration;
+    const newRating = {
+      type: 'course',
+      item: this.courseDetail._id,
+      title: this.courseDetail.courseTitle,
+      createdTime: this.couchService.datePlaceholder,
+      ...this.rating.userRating,
+      ...ratingForm.value,
+      time: this.couchService.datePlaceholder,
+      user: this.userService.get(),
+      createdOn: configuration.code,
+      parentCode: configuration.parentCode
+    };
+  
+    // Update the rating
+    this.couchService.updateDocument('ratings', newRating).subscribe({
+      next: (res: any) => {
+        newRating._rev = res.rev;
+        newRating._id = res.id;
+        this.rating.userRating = newRating;
+        this.hasRating = true;
+        this.ratingService.newRatings(false);
+        this.planetMessage.showMessage($localize`Thank you for your rating`);
+      },
+      error: () => {
+        this.planetMessage.showAlert($localize`There was an issue updating your rating`);
+      }
+    });
   }
 }
