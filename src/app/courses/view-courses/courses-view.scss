@@ -26,15 +26,15 @@
     grid-column-gap: 0;
   }
 
-.mat-expansion-panel-header-description {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
+  .mat-expansion-panel-header-description {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
 
-.mat-expansion-panel-header-description planet-course-icon {
-  margin-left: 8px;
-}
+  .mat-expansion-panel-header-description planet-course-icon {
+    margin-left: 8px;
+  }
 
   @media (max-width: $screen-sm) {
     .course-container {
