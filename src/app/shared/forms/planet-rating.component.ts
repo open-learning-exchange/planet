@@ -18,6 +18,12 @@ const popupFormFields = [
     'required': false
   },
   {
+    'label': $localize`Clear Rating`,
+    'type': 'clearButton',
+    'name': 'clearButton',
+    'text': $localize`Clear Rating`
+  },
+  {
     'label': $localize`Comment`,
     'type': 'textarea',
     'name': 'comment',
@@ -139,6 +145,10 @@ export class PlanetRatingComponent implements OnChanges {
           this.onStarClick(this.popupForm);
         }
       });
+  }
+
+  clearRating() {
+    console.log("button was clicked");
   }
 
   ratingError() {
