@@ -39,22 +39,17 @@
       grid-template-columns: 1fr;
       grid-template-rows: 0 1fr;
     } 
-
-    .course-detail, .course-view {
-      overflow: visible;
-    }
+    
   }
 }
 
 mat-expansion-panel-header {
   display: flex;
   justify-content: space-between;
-  max-width: 100%;
 }
 
 mat-panel-title {
   display: block;
-  max-width: 100%;
 }
 
 .step-title {
@@ -62,17 +57,14 @@ mat-panel-title {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
 
-@media (max-width: $screen-md) {
-  .step-title {
+  @media (max-width: $screen-md) {
     max-width: 90ch;
   }
-}
 
-@media (max-width: $screen-sm) {
-  .step-title {
+  @media (max-width: $screen-sm) {
     max-width: 45ch;
   }
 }
+
 
