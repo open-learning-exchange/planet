@@ -106,8 +106,9 @@ export class MeetupsAddComponent implements OnInit {
 }
 
 onSubmit() {
-  if (this.meetupForm.invalid) {
-      return;
+  if (!this.meetupForm.valid) {
+    showFormErrors(this.meetupForm.controls);
+    return;
   }
   const dayFormArray = this.meetupForm.get('day') as FormArray;
   dayFormArray.updateValueAndValidity();
@@ -183,7 +184,7 @@ onSubmit() {
     const dayFormArray = <FormArray>this.meetupForm.controls.day;
     if (isChecked) {
       // add to day array if checked
-        dayFormArray.push(new FormControl(day));
+      dayFormArray.push(new FormControl(day));
     } else {
         // remove from day array if unchecked
         const index = dayFormArray.controls.findIndex(x => x.value === day);
