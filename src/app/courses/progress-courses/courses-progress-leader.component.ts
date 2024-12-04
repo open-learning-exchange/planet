@@ -34,7 +34,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   isMobile = false;
-  showFiltersRow = false;
 
   constructor(
     private router: Router,
@@ -76,11 +75,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
-    this.showFiltersRow = false;
-  }
-
-  toggleFiltersRow() {
-    this.showFiltersRow = !this.showFiltersRow;
   }
 
   setProgress(course) {
