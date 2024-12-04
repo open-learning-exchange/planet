@@ -47,7 +47,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     { text: $localize`Completed`, value: 'complete' }
   ];
   mode = 'grade';
-  emptyData = false;
   filter = {
     type: 'exam',
     status: 'requires grading'
@@ -97,7 +96,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
-      this.emptyData = !this.submissions.filteredData.length;
     });
     this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
@@ -165,8 +163,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
-    this.emptyData = !this.submissions.filteredData.length;
-    this.initTable = !this.emptyData;
+    this.initTable = this.submissions.filteredData.length > 0;
     this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
   }
 
