@@ -244,6 +244,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           this.planetMessageService.showMessage($localize`You have deleted a ${toProperCase(this.mode)}.`);
         }
         this.removeTeamFromTable(team);
+        this.emptyData = !this.teams.data.length;
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
     };
@@ -284,6 +285,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
+    this.emptyData = this.teams.filteredData.length === 0;
   }
 
 }
