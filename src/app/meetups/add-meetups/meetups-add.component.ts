@@ -99,9 +99,9 @@ export class MeetupsAddComponent implements OnInit {
       createdBy: this.userService.get().name,
       sourcePlanet: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ],
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
     }, {
-        validators: CustomValidators.meetupTimeValidator(),
+      validators: CustomValidators.meetupTimeValidator()
     });
 }
 
@@ -116,7 +116,7 @@ onSubmit() {
   const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
   if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
-  } else {
+    } else {
       this.addMeetup(meetup);
   }
 }
@@ -182,8 +182,10 @@ onSubmit() {
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.meetupForm.controls.day;
     if (isChecked) {
+      // add to day array if checked
         dayFormArray.push(new FormControl(day));
     } else {
+        // remove from day array if unchecked
         const index = dayFormArray.controls.findIndex(x => x.value === day);
         if (index >= 0) {
             dayFormArray.removeAt(index);
@@ -198,6 +200,7 @@ toggleDaily(val: string, showCheckbox: boolean) {
   dayFormArray.clearValidators();
 
   switch (val) {
+      // add all days to the array if the course is daily
       case 'daily':
           this.days.forEach((day) => {
               dayFormArray.push(new FormControl(day));

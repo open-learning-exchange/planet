@@ -265,8 +265,5 @@ export class CustomValidators {
         const selectedDays = control.value;
         return selectedDays && selectedDays.length > 0 ? null : { noDaysSelected: true };
     };
-}
-
-
-
+  }
 }
