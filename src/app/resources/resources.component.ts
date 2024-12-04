@@ -144,11 +144,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
-    this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
+      this.setupSorting();
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
@@ -177,7 +177,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
     if (this.tagInputComponent) {
       this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
@@ -198,6 +197,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyResFilter(filterResValue: string) {
     this.resources.filter = filterResValue;
+  }
+
+  setupSorting() {
+    this.resources.sortingDataAccessor = commonSortingDataAccessor;
+    this.resources.sort = this.sort;
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
