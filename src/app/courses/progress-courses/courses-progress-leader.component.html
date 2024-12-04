@@ -7,12 +7,14 @@
 </mat-toolbar>
 
 <mat-toolbar class="primary-color font-size-1">
-  <h3 class="margin-lr-3 ellipsis-title">{{ headingStart }}</h3>
+  <span><h3 class="margin-lr-3 ellipsis-title">{{ headingStart }}</h3></span>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
+    <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   </ng-container>
   <ng-container *ngIf="deviceType === deviceTypes.TABLET">
+    <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
     <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #actionsMenu="matMenu" class="actions-menu">
