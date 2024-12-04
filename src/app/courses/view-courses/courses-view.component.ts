@@ -32,7 +32,6 @@ const popupFormFields = [
   }
 ];
 
-
 @Component({
   templateUrl: './courses-view.component.html',
   styleUrls: [ 'courses-view.scss' ]
@@ -49,7 +48,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return { comment: this.rating.userRating.comment || '' };
   }
 
-  private dbName = 'ratings';
   onDestroy$ = new Subject<void>();
   courseDetail: any = { steps: [] };
   parent = this.route.snapshot.data.parent;
@@ -251,34 +249,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
-  goBack() {
-    this.hasCourseRating();
-    if (this.checkCourseCompletion() && !this.hasRating) {
-      // Prepare the form with initial values matching the rating component
-      this.popupForm = this.fb.group({
-        rate: [0],
-        comment: ['']
-      });
-  
-      const snackBarRef = this.snackBar.open('Thank you for taking this course!', 'Rate Course', {
-        duration: 5000
-      });
-  
-      snackBarRef.onAction().subscribe(() => {
-        this.dialogsForm
-          .confirm($localize`Rating`, popupFormFields, this.popupForm)
-          .subscribe((res) => {
-            if (res) {
-              // If user confirms, update the rating
-              this.updateRatingFromPopup();
-            }
-          });
-      });
-    }
-    this.router.navigate(['../../'], { relativeTo: this.route });
-  }
-  
+
   updateRatingFromPopup() {
     // Create a form group with the popup form values
     const ratingForm = this.fb.group({
@@ -325,4 +296,35 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  handleCourseCompletionRating(){
+    if (this.checkCourseCompletion() && !this.hasRating) {
+      this.popupForm = this.fb.group({
+        rate: [0],
+        comment: ['']
+      });
+  
+      const snackBarRef = this.snackBar.open('Thank you for taking this course!', 'Rate Course', {
+        duration: 5000
+      });
+  
+      snackBarRef.onAction().subscribe(() => {
+        this.dialogsForm
+          .confirm($localize`Rating`, popupFormFields, this.popupForm)
+          .subscribe((res) => {
+            if (res) {
+              // If user confirms, update the rating
+              this.updateRatingFromPopup();
+            }
+          });
+      });
+    }
+  }
+  
+  goBack() {
+    this.hasCourseRating();
+    this.handleCourseCompletionRating();
+    this.router.navigate(['../../'], { relativeTo: this.route });
+  }
+  
 }
