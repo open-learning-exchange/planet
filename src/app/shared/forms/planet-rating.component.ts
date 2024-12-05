@@ -91,7 +91,6 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   onStarClick(form = this.rateForm) {
-    console.log('log: star click');
     if (!this.isEnrolled(this.item._id, this.ratingType)) {
       console.log(`log: ${this.ratingType} id:`, this.item._id);
       this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
