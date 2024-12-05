@@ -227,7 +227,7 @@
         <mat-header-cell *matHeaderCellDef class="rating-header"  mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element" class="rating-cell">
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" 
-          [ratingType]="'course'" [disabled]="isDialog || isForm" [isEnrolled]="isEnrolled"></planet-rating>
+          [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -27,10 +27,7 @@ export class CoursesViewDetailComponent implements OnChanges {
   constructor(
     private stateService: StateService,
     private userService: UserService,
-    private ratingService: RatingService
   ) {}
-
-  public isEnrolled = this.ratingService.isEnrolled;
 
   ngOnChanges() {
     this.imageSource = this.parent === true ? 'parent' : 'local';

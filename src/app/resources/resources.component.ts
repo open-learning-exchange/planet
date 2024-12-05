@@ -111,14 +111,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private ratingService: RatingService
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
   }
-
-  public isEnrolled = this.ratingService.isEnrolled;
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();

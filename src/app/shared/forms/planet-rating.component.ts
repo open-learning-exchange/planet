@@ -40,7 +40,6 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() parent;
   @Input() ratingType = '';
   @Input() disabled = false;
-  @Input() isEnrolled: (id: any) => boolean;
 
   rateForm: FormGroup;
   popupForm: FormGroup;
@@ -85,10 +84,17 @@ export class PlanetRatingComponent implements OnChanges {
     this.popupForm.setValue(Object.assign({}, this.rateFormField, this.commentField));
   }
 
+  isEnrolled(ids: any, type: any): boolean {
+    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
+    console.log('log: id type', idType);
+    const { inShelf } = this.userService.countInShelf([ ids ], idType);
+    return inShelf;
+  }
+
   onStarClick(form = this.rateForm) {
     if (this.isEnrolled) {
-      if (!this.isEnrolled(this.item._id)) {
-        console.log(`${this.ratingType} id:`, this.item._id);
+      if (!this.isEnrolled(this.item._id, this.ratingType)) {
+        console.log(`log: ${this.ratingType} id:`, this.item._id);
         this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
         this.enrolled = false;
         return;
@@ -160,4 +166,5 @@ export class PlanetRatingComponent implements OnChanges {
       this.rateForm.patchValue({ comment: this.rating.userRating.comment || '' });
     }
   }
+
 }

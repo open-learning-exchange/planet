@@ -125,7 +125,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private ratingService: RatingService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -135,8 +134,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
-
-  public isEnrolled = this.ratingService.isEnrolled;
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();

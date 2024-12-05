@@ -31,12 +31,10 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService,
-    private ratingService: RatingService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
-  public isEnrolled = this.ratingService.isEnrolled;
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any = {};

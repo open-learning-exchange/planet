@@ -85,9 +85,4 @@ export class RatingService {
     return ratingInfo;
   }
 
-  isEnrolled(courseId: any): boolean {
-    const { inShelf } = this.userService.countInShelf([ courseId ], 'courseIds');
-    return inShelf;
-  }
-
 }
