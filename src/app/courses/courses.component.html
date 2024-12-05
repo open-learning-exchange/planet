@@ -180,8 +180,8 @@
               <span i18n>Feedback</span>
             </a>
             <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
+              <mat-icon>edit</mat-icon>
+              <span i18n>Edit Course</span>
             </a>
             <a mat-menu-item [routerLink]="['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>

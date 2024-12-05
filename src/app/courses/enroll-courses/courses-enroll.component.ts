@@ -9,6 +9,7 @@ import { TableState } from '../../users/users-table.component';
 import { StateService } from '../../shared/state.service';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
+import { CsvService } from '../../shared/csv.service';
 
 
 @Component({
@@ -37,7 +38,8 @@ export class CoursesEnrollComponent {
     private usersService: UsersService,
     private coursesService: CoursesService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private csvService: CsvService
   ) {
     this.coursesService.requestCourses();
     this.usersService.requestUserData();
@@ -83,4 +85,22 @@ export class CoursesEnrollComponent {
     this.emptyData = this.members.length === 0;
   }
 
+  exportCSV() {
+    // Prepare CSV data
+    const csvData = this.members.map((user: any) => {
+      return {
+        username: user.doc.name,
+        dateStarted: user.activityDates.createdDate
+          ? new Date(user.activityDates.createdDate).toLocaleDateString()
+          : 'N/A',
+        mostRecentActivity: user.activityDates.updatedDate
+          ? new Date(user.activityDates.updatedDate).toLocaleDateString()
+          : 'N/A',
+      };
+    });
+    this.csvService.exportCSV({
+      data: csvData,
+      title: `Course Enrollment Data - ${this.course}`,
+    });
+  }
 }
