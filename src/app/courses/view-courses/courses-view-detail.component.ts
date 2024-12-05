@@ -8,7 +8,6 @@ import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { languages } from '../../shared/languages';
-import { RatingService } from '../../shared/forms/rating.service';
 
 @Component({
   selector: 'planet-courses-detail',
@@ -26,7 +25,7 @@ export class CoursesViewDetailComponent implements OnChanges {
 
   constructor(
     private stateService: StateService,
-    private userService: UserService,
+    private userService: UserService
   ) {}
 
   ngOnChanges() {
@@ -55,7 +54,7 @@ export class CoursesViewDetailDialogComponent implements OnInit {
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private coursesService: CoursesService,
-    private dialogsLoadingService: DialogsLoadingService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
