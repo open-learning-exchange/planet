@@ -27,9 +27,14 @@
   border-radius: 5px;
 }
 
+.textarea-container textarea {
+  resize: none;
+  height: 100px;
+}
+
 .textarea-container button {
   position: absolute;
-  top: 50%;
+  top: 70%;
   right: 8px;
   transform: translateY(-50%);
 }
