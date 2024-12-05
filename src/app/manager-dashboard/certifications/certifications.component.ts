@@ -60,6 +60,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.certifications.filter = filterValue;
+    this.emptyData = !this.certifications.filteredData.length;
   }
 
   resetSearch() {
