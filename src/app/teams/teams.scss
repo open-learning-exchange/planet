@@ -7,13 +7,13 @@
     padding-right: 0.5rem;
   }
 
-  .mat-column-visitLog-visitCount {
+  .mat-column-visitLog-visitCount, .mat-column-visitLog.lastVisit {
     max-width: 80px;
     padding-right: 0.5rem;
     text-align: center; // Center-align the text
   }
 
-  .visit-log-cell {
+  .visit-log-cell{
     display: flex;
     justify-content: center;
     margin-right: 1rem;
@@ -22,9 +22,14 @@
     width: 100%;
   }
 
+  .recent-visit-log{
+    margin-left: 2rem;
+  }
+
   mat-row {
     cursor: pointer;
   }
+
   .button-container {
     display: flex;
     flex-direction: row;
@@ -40,7 +45,7 @@
       padding: 0 3px;
     }
 
-    .visit-log-cell{
+    .visit-log-cell, .recent-visit-log{
       margin-left: 1rem;
     }
   }
