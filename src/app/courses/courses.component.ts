@@ -32,7 +32,6 @@ import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
-import { RatingService } from '../shared/forms/rating.service';
 
 @Component({
   selector: 'planet-courses',
@@ -124,7 +123,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
