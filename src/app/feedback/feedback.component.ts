@@ -114,34 +114,26 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
     this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
-      this.feedback.data = feedbackData.map(feedback => ({...feedback,
-        user: this.users.find(u => u.doc.name === feedback.owner),
-        displayTitle: (!feedback.title || feedback.title.trim() === '' || feedback.title.endsWith(' regarding /'))
-        ? `${feedback.type} regarding ${this.isValidUrl(feedback.url) ? feedback.url.trim() : 'general feedback'}`
-        : feedback.title
-      }));
+      this.feedback.data = feedbackData.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
       this.emptyData = !this.feedback.data.length;
       this.dialogsLoadingService.stop();
     }, (error) => this.message = $localize`There is a problem of getting data.`);
-}
+  }
 
-deleteClick(feedback) {
-  const displayTitle = (!feedback.title || feedback.title.trim() === '' || feedback.title.endsWith(' regarding /'))
-    ? `${feedback.type} regarding ${this.isValidUrl(feedback.url) ? feedback.url.trim() : 'general feedback'}`
-    : feedback.title;
-
-  this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-    data: {
-      okClick: this.deleteFeedback(feedback),
-      changeType: 'delete',
-      type: 'feedback',
-      displayName: displayTitle
-    }
-  });
-  this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-    this.message = '';
-  });
-}
+  deleteClick(feedback) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteFeedback(feedback),
+        changeType: 'delete',
+        type: 'feedback',
+        displayName: feedback.title
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+      this.message = '';
+    });
+  }
 
   deleteFeedback(feedback) {
     const { _id: feedbackId, _rev: feedbackRev } = feedback;
@@ -189,11 +181,6 @@ deleteClick(feedback) {
   // search text is deleted, but does not run when there are no active filters.
   dropdownsFill() {
     return dropdownsFill(this.filter);
-  }
-
-  private isValidUrl(url: string): boolean {
-    const trimmedUrl = (url || '').trim();
-    return trimmedUrl && trimmedUrl !== '/';
   }
 
 }

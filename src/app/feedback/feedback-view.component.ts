@@ -71,8 +71,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
     this.showParamsButton = Object.keys(this.feedback.params).length > 0;
-    const displayUrl = this.isValidUrl(this.feedback.url) ? this.feedback.url.trim() : 'general feedback';
-    this.feedback.displayTitle = `${this.feedback.type} regarding ${displayUrl}`;
   }
 
   getFeedback(id) {
@@ -184,11 +182,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   toggleParams() {
     this.showParams = this.showParams === 'off' ? 'on' : 'off';
-  }
-
-  private isValidUrl(url: string): boolean {
-    const trimmedUrl = (url || '').trim();
-    return trimmedUrl && trimmedUrl !== '/';
   }
 
 }

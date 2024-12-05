@@ -93,17 +93,24 @@ export class FeedbackDirective {
         parentCode: this.stateService.configuration.parentCode,
         ...this.feedbackOf
       };
-    const feedbackUrl = newFeedback.url.substring(0, newFeedback.url.indexOf(';')) || newFeedback.url;
+    const feedbackUrl = newFeedback.url && newFeedback.url !== '/' ? newFeedback.url.split(';')[0] : '';
+    const feedbackTitle = feedbackUrl
+      ? $localize`${newFeedback.type} regarding ${feedbackUrl}`
+      : $localize`General ${newFeedback.type}`;
     this.couchService.updateDocument('feedback', {
-      ...newFeedback, title: $localize`${newFeedback.type} regarding ${feedbackUrl}` })
-    .subscribe((data) => {
-      this.feedbackService.setFeedback();
-      this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
-    },
-    (error) => {
-      this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
-    });
-  }
+      ...newFeedback,
+      title: feedbackTitle
+    })
+    .subscribe(
+      () => {
+        this.feedbackService.setFeedback();
+        this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
+      },
+      () => {
+        this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
+      }
+    );
+}
 
   @HostListener('click')
   openFeedback() {
