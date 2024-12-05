@@ -13,6 +13,7 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
+import { RatingService } from '../../shared/forms/rating.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -29,11 +30,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private ratingService: RatingService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
+  public isEnrolled = this.ratingService.isEnrolled;
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
   resource: any = {};
@@ -119,11 +122,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
 
   updateResource() {
     this.router.navigate([ '/resources/update/' + this.resourceId ]);
-  }
-
-  isEnrolled(resourceId: any): boolean {
-    const { inShelf } = this.userService.countInShelf([ resourceId ], 'resourceIds');
-    return inShelf;
   }
 
   /**

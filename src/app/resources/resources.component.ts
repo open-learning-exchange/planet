@@ -29,6 +29,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { RatingService } from '../shared/forms/rating.service';
 
 @Component({
   selector: 'planet-resources',
@@ -109,12 +110,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private ratingService: RatingService
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
   }
+
+  public isEnrolled = this.ratingService.isEnrolled;
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -380,11 +384,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedAdded = inShelf;
     this.selectedNotAdded = notInShelf;
     this.selectedSync = selected.filter(id => this.hasAttachment(id));
-  }
-
-  isEnrolled(resourceId: any): boolean {
-    const { inShelf } = this.userService.countInShelf([ resourceId ], 'resourceIds');
-    return inShelf;
   }
 
   hasAttachment(id: string) {
