@@ -29,7 +29,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { RatingService } from '../shared/forms/rating.service';
 
 @Component({
   selector: 'planet-resources',
@@ -110,7 +109,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
