@@ -85,20 +85,20 @@ export class PlanetRatingComponent implements OnChanges {
   }
 
   isEnrolled(id: any, type: any): boolean {
-    const idType = type === "course" ? "courseIds" : "resourceIds"
+    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
     const { inShelf } = this.userService.countInShelf([ id ], idType);
     return inShelf;
   }
 
   onStarClick(form = this.rateForm) {
-    console.log('log: star click')
+    console.log('log: star click');
     if (!this.isEnrolled(this.item._id, this.ratingType)) {
       console.log(`log: ${this.ratingType} id:`, this.item._id);
       this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
       this.enrolled = false;
       return;
     }
-    
+
     this.enrolled = true;
     if (this.disabled || form.controls.rate.value === 0) {
       return;
