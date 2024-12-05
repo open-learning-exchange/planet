@@ -13,17 +13,9 @@
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   </ng-container>
-  <ng-container *ngIf="deviceType === deviceTypes.TABLET">
+  <ng-container *ngIf="deviceType !== deviceTypes.DESKTOP">
     <span class="toolbar-fill"></span>
-    <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
-    <mat-menu #actionsMenu="matMenu" class="actions-menu">
-      <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    </mat-menu>
-  </ng-container>
-  <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
-    <span class="toolbar-fill"></span>
-    <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
+    <button class="menu" *ngIf="chartData?.length" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
     <mat-menu #actionsMenu="matMenu" class="actions-menu">
       <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>

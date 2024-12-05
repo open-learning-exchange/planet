@@ -33,7 +33,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedPlanetCode: string;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isMobile = false;
 
   constructor(
     private router: Router,
@@ -47,7 +46,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnInit() {
@@ -74,7 +72,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   setProgress(course) {
