@@ -84,22 +84,21 @@ export class PlanetRatingComponent implements OnChanges {
     this.popupForm.setValue(Object.assign({}, this.rateFormField, this.commentField));
   }
 
-  isEnrolled(ids: any, type: any): boolean {
-    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
-    console.log('log: id type', idType);
-    const { inShelf } = this.userService.countInShelf([ ids ], idType);
+  isEnrolled(id: any, type: any): boolean {
+    const idType = type === "course" ? "courseIds" : "resourceIds"
+    const { inShelf } = this.userService.countInShelf([ id ], idType);
     return inShelf;
   }
 
   onStarClick(form = this.rateForm) {
-    if (this.isEnrolled) {
-      if (!this.isEnrolled(this.item._id, this.ratingType)) {
-        console.log(`log: ${this.ratingType} id:`, this.item._id);
-        this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
-        this.enrolled = false;
-        return;
-      }
+    console.log('log: star click')
+    if (!this.isEnrolled(this.item._id, this.ratingType)) {
+      console.log(`log: ${this.ratingType} id:`, this.item._id);
+      this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
+      this.enrolled = false;
+      return;
     }
+    
     this.enrolled = true;
     if (this.disabled || form.controls.rate.value === 0) {
       return;

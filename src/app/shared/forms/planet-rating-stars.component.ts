@@ -106,8 +106,10 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   }
 
   onStarClick(rating: number): void {
-    if (!this.isEnrolled(this.itemId, this.type)) {
-      return;
+    if (this.isEnrolled) {
+      if (!this.isEnrolled(this.itemId, this.type)) {
+        return;
+      }
     }
     this.writeValue(rating);
   }
