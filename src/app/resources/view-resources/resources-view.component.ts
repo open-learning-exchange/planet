@@ -13,7 +13,6 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
-import { RatingService } from '../../shared/forms/rating.service';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -30,7 +29,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
