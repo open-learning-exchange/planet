@@ -10,14 +10,16 @@
   .mat-column-visitLog-visitCount {
     max-width: 80px;
     padding-right: 0.5rem;
-  }
-  .mat-column-visitLog-lastVisit {
-    max-width: 180px;
-    padding-right: 0.5rem;
+    text-align: center; // Center-align the text
   }
 
-  .visit-log-cell{
-    margin-left: 3rem;
+  .visit-log-cell {
+    display: flex;
+    justify-content: center;
+    margin-right: 1rem;
+    align-items: center;
+    text-align: center;
+    width: 100%;
   }
 
   mat-row {
@@ -36,6 +38,10 @@
     mat-cell button {
       min-width: 0;
       padding: 0 3px;
+    }
+
+    .visit-log-cell{
+      margin-left: 1rem;
     }
   }
 }
