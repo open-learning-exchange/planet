@@ -274,6 +274,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       }
       this.isNewQuestion = false;
       this.isComplete = this.unansweredQuestions && this.unansweredQuestions.every(number => this.questionNum === number);
+      this.isLoading = false;
   });
 }
 
