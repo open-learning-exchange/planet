@@ -25,8 +25,8 @@ import { MatSelectionList } from '@angular/material/list';
     }
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
-      <mat-list-option *ngFor="let item of items" [value]="item?.value" [selected]="isSelected(item)" checkboxPosition="before">
-        {{ item?.label || 'N/A' }}
+      <mat-list-option *ngFor="let item of items" [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
+        {{item?.label || 'N/A'}}
       </mat-list-option>
     </mat-selection-list>
   `,
@@ -113,22 +113,13 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   createSearchList(category, data) {
-    const validItems = data
-      .map(entry => (entry.doc && entry.doc[category.label]) ? entry.doc[category.label] : [])
-      .flat()
-      .reduce(dedupeShelfReduce, [])
-      .filter(item => !!item && typeof item === 'string');
-
-    const mappedItems = validItems
-      .map(item => category.options.find(opt => opt.value === item))
-      .filter(item => !!item);
-
-    return {
+    return ({
       category: category.label,
-      items: mappedItems
-    };
+      items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
+        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
+        .filter(item => item)
+    });
   }
-
 
   selectChange({ items, category }) {
     this.selected[category] = items;
