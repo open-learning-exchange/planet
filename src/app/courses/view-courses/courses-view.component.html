@@ -65,7 +65,7 @@
         <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
-              <mat-panel-title i18n>
+              <mat-panel-title class="step-title" i18n>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
