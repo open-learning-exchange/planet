@@ -35,6 +35,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   showBalanceWarning = false;
   curCode = this.stateService.configuration.currency || {};
   configuration: any = {};
+  planetName;
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -199,9 +200,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       balance: row.balance
     }));
     const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const planetName = this.stateService.configuration.name || 'Unnamed';
     const teamName = this.team.name
-    ? `${this.team.name} ${entityLabel}`
-    : entityLabel;
+      ? `${this.team.name} ${entityLabel}`
+      : `${entityLabel} ${planetName}`;
 
   this.csvService.exportCSV({
     data: updatedData,
