@@ -33,7 +33,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   userMembership: any[] = [];
   teamActivities: any[] = [];
   dbName = 'teams';
-  emptyData = false;
   user = this.userService.get();
   isAuthorized = false;
   planetType = this.stateService.configuration.planetType;
@@ -123,7 +122,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       )) {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
-      this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
     }, (error) => {
       if (this.userNotInShelf) {
