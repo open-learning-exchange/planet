@@ -22,7 +22,6 @@ export class CoursesEnrollComponent {
   course: any;
   members: any[] = [];
   tableState = new TableState();
-  emptyData = false;
   userTableColumns = [
     'profile',
     'name',
@@ -82,7 +81,6 @@ export class CoursesEnrollComponent {
         ),
         planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
       })).filter(doc => doc.planet !== undefined && (doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id)));
-    this.emptyData = this.members.length === 0;
   }
 
   exportCSV() {

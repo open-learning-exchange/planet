@@ -39,7 +39,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
-  emptyData = false;
   isAuthorized = false;
   deleteDialog: any;
   message = '';
@@ -82,7 +81,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ];
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
-      this.emptyData = !this.surveys.data.length;
       this.dialogsLoadingService.stop();
     });
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
