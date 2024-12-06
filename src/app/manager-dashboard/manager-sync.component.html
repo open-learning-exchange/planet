@@ -9,7 +9,7 @@
     <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
   </mat-toolbar>
   <mat-list>
-    <mat-list-item *ngFor="let rep of replicators" [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
+    <mat-list-item *ngFor="let rep of replicators$ | async" [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
       <h3 matLine>
         <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
         <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
