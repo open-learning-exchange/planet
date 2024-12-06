@@ -93,7 +93,12 @@ export class PlanetRatingComponent implements OnChanges {
   onStarClick(form = this.rateForm) {
     if (!this.isEnrolled(this.item._id, this.ratingType)) {
       console.log(`log: ${this.ratingType} id:`, this.item._id);
-      this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
+      if (this.ratingType === 'course') {
+        this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
+      }
+      else {
+        this.planetMessage.showMessage($localize`Please add the ${this.ratingType} to your library before rating!`);
+      }
       this.enrolled = false;
       return;
     }
