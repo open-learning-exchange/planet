@@ -111,14 +111,22 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   }
 
   createSearchList(category, data) {
-    return ({
+    const validItems = data
+      .map(entry => (entry.doc && entry.doc[category.label]) ? entry.doc[category.label] : [])
+      .flat() // Use .flat() if your environment supports it, else .reduce to flatten
+      .reduce(dedupeShelfReduce, [])
+      .filter(item => !!item && typeof item === 'string');
+
+    const mappedItems = validItems
+      .map(item => category.options.find(opt => opt.value === item))
+      .filter(item => !!item);
+
+    return {
       category: category.label,
-      items: data.reduce((list, { doc }) => list.concat(doc[category.label] || []), []).reduce(dedupeShelfReduce, []).filter(item => item)
-        .filter(item => typeof item === 'string' && item.trim() !== '')
-        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
-        .filter(item => item)
-    });
+      items: mappedItems
+    };
   }
+
 
   selectChange({ items, category }) {
     this.selected[category] = items;
