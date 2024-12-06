@@ -165,17 +165,14 @@ export class TeamsReportsComponent implements DoCheck {
       'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
       'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
     }));
-  
-    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
     const planetName = this.stateService.configuration.name || 'Unnamed';
-    const teamName = this.team.name
-      ? `${this.team.name} ${entityLabel}`
-      : `${entityLabel} ${planetName}`;
-  
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const titleName = this.team.name || `${entityLabel} ${planetName}`;
     this.csvService.exportCSV({
       data: exportData,
-      title: $localize`Financial Summary for ${teamName}`
+      title: $localize`Financial Summary for ${titleName}`
     });
   }
+
 
 }

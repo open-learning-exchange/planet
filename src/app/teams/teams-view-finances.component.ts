@@ -191,7 +191,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   exportTableData() {
     let updatedData = [ ...this.table.filteredData ];
     updatedData.shift();
-  
+
     updatedData = updatedData.map(row => ({
       date: row.date,
       description: row.description,
@@ -199,16 +199,13 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       debit: row.debit,
       balance: row.balance
     }));
-    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
     const planetName = this.stateService.configuration.name || 'Unnamed';
-    const teamName = this.team.name
-      ? `${this.team.name} ${entityLabel}`
-      : `${entityLabel} ${planetName}`;
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const titleName = this.team.name || `${entityLabel} ${planetName}`;
+    this.csvService.exportCSV({
+      data: updatedData,
+      title: $localize`Financial Transactions for ${titleName}`
+    });
+  }
 
-  this.csvService.exportCSV({
-    data: updatedData,
-    title: $localize`Financial Transactions for ${teamName}`
-  });
-}
-  
 }
