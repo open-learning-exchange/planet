@@ -174,8 +174,8 @@
             </ng-container>
             <ng-container *ngIf="element.canManage && myView !== 'myPersonals'">
               <a mat-menu-item (click)="updateResource(element)">
-                <mat-icon>folder</mat-icon>
-                <span i18n>Manage</span>
+                <mat-icon>edit</mat-icon>
+                <span i18n>Edit Resource</span>
               </a>
               <button mat-menu-item (click)="deleteClick(element)">
                 <mat-icon>delete_forever</mat-icon>
