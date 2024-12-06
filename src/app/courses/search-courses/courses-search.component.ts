@@ -116,6 +116,7 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
       items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
         .filter(item => typeof item === 'string' && item.trim() !== '')
         .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
+        .filter(item => !!item)
     });
   }
 
