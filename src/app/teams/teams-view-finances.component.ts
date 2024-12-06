@@ -35,7 +35,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   showBalanceWarning = false;
   curCode = this.stateService.configuration.currency || {};
   configuration: any = {};
-  planetName;
+  planetName: any;
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,

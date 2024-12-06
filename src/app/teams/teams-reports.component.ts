@@ -27,7 +27,7 @@ export class TeamsReportsComponent implements DoCheck {
   columns = 4;
   minColumnWidth = 300;
   configuration: any = {};
-  planetName;
+  planetName: any;
 
   constructor(
     private couchService: CouchService,
@@ -173,6 +173,5 @@ export class TeamsReportsComponent implements DoCheck {
       title: $localize`Financial Summary for ${titleName}`
     });
   }
-
 
 }
