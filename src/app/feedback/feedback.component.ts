@@ -48,6 +48,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();
     this._titleSearch = value;
+    this.emptyData = !this.feedback.filteredData.length;
   }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -144,6 +145,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         this.feedback.data = this.feedback.data.filter((fback: any) => data.id !== fback._id);
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`You have deleted feedback.`);
+        this.emptyData = !this.feedback.data.length;
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There is a problem deleting this feedback.`)
     };

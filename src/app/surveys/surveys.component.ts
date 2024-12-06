@@ -126,6 +126,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   applyFilter(filterValue: string) {
     this.surveys.filter = filterValue;
     this.selection.deselect(...selectedOutOfFilter(this.surveys.filteredData, this.selection, this.paginator));
+    this.emptyData = !this.surveys.filteredData.length;
   }
 
   isAllSelected() {
@@ -168,6 +169,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.clear();
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} surveys`);
+        this.emptyData = !this.surveys.data.length;
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting survey.`)
     };
