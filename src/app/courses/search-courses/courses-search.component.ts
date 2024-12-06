@@ -24,7 +24,7 @@ import { MatSelectionList } from '@angular/material/list';
     }
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
-      <mat-list-option *ngFor="let item of items" [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
+      <mat-list-option *ngFor="let item of items;trackBy: trackByItemFn" [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
         {{item.label}}
       </mat-list-option>
     </mat-selection-list>
@@ -58,6 +58,10 @@ export class CoursesSearchListComponent {
 
   isSelected(item) {
     return this.selected.indexOf(item) > -1;
+  }
+
+  trackByItemFn(index: number, item: any): string {
+    return item?.value || index.toString();
   }
 
 }
