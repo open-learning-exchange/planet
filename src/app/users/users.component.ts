@@ -46,7 +46,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   filteredRole: string;
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
-  emptyData = false;
   private searchChange = new Subject<string>();
   configuration = this.stateService.configuration;
   tableState = new TableState();
