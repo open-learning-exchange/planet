@@ -82,13 +82,13 @@ export class FeedbackDirective {
     const user = this.userService.get().name;
     const feedbackUrl = this.router.url && this.router.url !== '/' ? this.router.url.split(';')[0] : '';
     let itemName = this.feedbackOf.name || '';
-    if (itemName.length > 25) {
-      itemName = `${itemName.slice(0, 30)}...`;
+    if (itemName.length > 40) {
+      itemName = `${itemName.slice(0, 40)}...`;
     }
     const feedbackTitle = itemName
-      ? $localize`${post.type} feedback regarding ${feedbackUrl}/${itemName}`
+      ? $localize`${post.type} regarding ${feedbackUrl}/${itemName}`
       : feedbackUrl
-        ? $localize`${post.type} feedback regarding ${feedbackUrl}`
+        ? $localize`${post.type} regarding ${feedbackUrl}`
         : $localize`General ${post.type}`;
     const startingMessage: Message = { message: post.message, time: date, user };
     const newFeedback: Feedback = {
