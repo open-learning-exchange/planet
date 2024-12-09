@@ -114,7 +114,6 @@ export class FeedbackDirective {
     );
   }
 
-
   @HostListener('click')
   openFeedback() {
     const title = $localize`Feedback`;
