@@ -72,6 +72,15 @@
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
         <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">
+          <div class="calendar-legend" *ngIf="showLegend">
+            <h3>Event Legend</h3>
+            <div *ngFor="let legend of eventLegend">
+              <div class="legend-item">
+                <div class="legend-color" [style.backgroundColor]="legend.color"></div>
+                <span>{{ legend.label }}</span>
+              </div>
+            </div>
+          </div>
           <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
         </mat-tab>
       </mat-tab-group>
