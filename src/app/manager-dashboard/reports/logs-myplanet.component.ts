@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
-import { filterSpecificFields } from '../shared/table-helpers';
-import { attachNamesToPlanets, areNoChildren } from '../manager-dashboard/reports/reports.utils';
+import { StateService } from '../../shared/state.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { ManagerService } from '../manager.service';
+import { filterSpecificFields } from '../../shared/table-helpers';
+import { attachNamesToPlanets, areNoChildren } from './reports.utils';
 
 
 @Component({
