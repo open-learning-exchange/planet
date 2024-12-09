@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
+import { UserService } from '../../shared/user.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { languages } from '../../shared/languages';
 
@@ -23,13 +24,13 @@ export class CoursesViewDetailComponent implements OnChanges {
   languageOptions: any = languages;
 
   constructor(
-    private stateService: StateService
+    private stateService: StateService,
+    private userService: UserService
   ) {}
 
   ngOnChanges() {
     this.imageSource = this.parent === true ? 'parent' : 'local';
   }
-
 }
 
 @Component({
@@ -68,5 +69,4 @@ export class CoursesViewDetailDialogComponent implements OnInit {
   routeToCourses(courseId) {
     this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
   }
-
 }
