@@ -175,7 +175,7 @@
               <mat-icon>clear</mat-icon>
               <span i18n>Leave</span>
             </a>
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id, name: element.doc.courseTitle}" i18n-title title="Feedback">
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
             </a>

@@ -79,31 +79,41 @@ export class FeedbackDirective {
 
   addFeedback(post: any) {
     const date = this.couchService.datePlaceholder;
-    const user = this.userService.get().name,
-      { message, ...feedbackInfo } = post,
-      startingMessage: Message = { message, time: date, user },
-      newFeedback: Feedback = {
-        owner: user,
-        ...feedbackInfo,
-        openTime: date,
-        status: 'Open',
-        messages: [ startingMessage ],
-        url: this.router.url,
-        source: this.stateService.configuration.code,
-        parentCode: this.stateService.configuration.parentCode,
-        ...this.feedbackOf
-      };
-    const feedbackUrl = newFeedback.url.substring(0, newFeedback.url.indexOf(';')) || newFeedback.url;
-    this.couchService.updateDocument('feedback', {
-      ...newFeedback, title: $localize`${newFeedback.type} regarding ${feedbackUrl}` })
-    .subscribe((data) => {
-      this.feedbackService.setFeedback();
-      this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
-    },
-    (error) => {
-      this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
-    });
+    const user = this.userService.get().name;
+    const feedbackUrl = this.router.url && this.router.url !== '/' ? this.router.url.split(';')[0] : '';
+    let itemName = this.feedbackOf.name || '';
+    if (itemName.length > 25) {
+      itemName = `${itemName.slice(0, 30)}...`;
+    }
+    const feedbackTitle = itemName
+      ? $localize`${post.type} feedback regarding ${feedbackUrl}/${itemName}`
+      : feedbackUrl
+        ? $localize`${post.type} feedback regarding ${feedbackUrl}`
+        : $localize`General ${post.type}`;
+    const startingMessage: Message = { message: post.message, time: date, user };
+    const newFeedback: Feedback = {
+      owner: user,
+      ...post,
+      openTime: date,
+      status: 'Open',
+      messages: [ startingMessage ],
+      url: feedbackUrl,
+      source: this.stateService.configuration.code,
+      parentCode: this.stateService.configuration.parentCode,
+      ...this.feedbackOf,
+      title: feedbackTitle,
+    };
+    this.couchService.updateDocument('feedback', newFeedback).subscribe(
+      () => {
+        this.feedbackService.setFeedback();
+        this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
+      },
+      () => {
+        this.planetMessageService.showAlert($localize`Error, your feedback cannot be submitted`);
+      }
+    );
   }
+
 
   @HostListener('click')
   openFeedback() {
