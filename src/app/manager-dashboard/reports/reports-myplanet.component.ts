@@ -132,7 +132,11 @@ export class ReportsMyPlanetComponent implements OnInit {
       ...(planetName ? { 'Planet Name': planetName } : {}),
       'ID': data.androidId.toString() || data.uniqueAndroidId.toString(),
       'Name': data.deviceName || data.customDeviceName,
-      'Last Synced': data.time || data.last_synced,
+      'Last Synced': data.time && data.time !== 0 ?
+      new Date(data.time).toDateString() :
+      data.last_synced && data.last_synced !== 0 ?
+      new Date(data.last_synced).toDateString() :
+      'N/A',
       'Version': data.versionName,
       'No of Visits': data.count,
       'Used Time': this.formatTotalTime(data.totalUsedTime),
