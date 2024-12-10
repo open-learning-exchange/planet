@@ -62,4 +62,21 @@ export class CoursesProgressChartComponent implements OnChanges {
     this.clickAction.emit(set);
   }
 
+  calculateSuccessPercentage(stepIndex: number): number | null {
+    if (!this.sets || this.sets.length === 0) {
+      return null;
+    }
+    const hasData = this.sets.some(set => set.items[stepIndex] && typeof set.items[stepIndex].number === 'number');
+    if (!hasData) {
+      return null;
+    }
+    const successfulAttempts = this.sets.filter(set => set.items[stepIndex]?.number === 0).length;
+    const percentage = (successfulAttempts / this.sets.length) * 100;
+    return percentage;
+  }
+
+  hasTestData(index: number): boolean {
+    return this.sets.some(set => set.items[index] && set.items[index].number !== undefined);
+  }
+
 }

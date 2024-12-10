@@ -10,6 +10,7 @@ import { dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { StateService } from '../../shared/state.service';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -40,7 +41,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -216,21 +218,44 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     const dataArr = [];
     data.forEach(element => {
       const dataDict = {};
+      let totalErrors = 0;
+      let totalSteps = 0;
       dataDict['Username'] = element.label;
-      for (let i = 0; i < element.items.length; i++) {
-        dataDict[`Step ${(i + 1)}`] = element.items[i].number;
-      }
-
+      element.items.forEach(item => {
+        const stepErrors = item.number || 0;
+        if (typeof stepErrors === 'number') {
+          totalErrors += stepErrors;
+          totalSteps++;
+        }
+      });
+      dataDict['Total Errors'] = totalErrors;
+      dataDict['Success Percentage'] = totalSteps
+        ? `${(((totalSteps - totalErrors) / totalSteps) * 100).toFixed(2)}%`
+        : 'N/A';
+      element.items.forEach((item, index) => {
+        dataDict[`Step ${(index + 1)}`] = item.number || '';
+      });
       dataArr.push(dataDict);
     });
     return dataArr;
   }
 
   exportChartData() {
+    if (!this.course) {
+      console.error('Course data is not available.');
+      return;
+    }
+  
+    const planetName = this.stateService.configuration.name || 'Unnamed';
+    const courseTitle = this.course.courseTitle || 'Unnamed Course';
+    const title = $localize`Progress Report for ${courseTitle} ${planetName}`;
+  
+    const structuredData = this.structureChartData(this.chartData);
+  
     this.csvService.exportCSV({
-      data:  this.structureChartData(this.chartData),
-      title: $localize`Course Progress Data`
+      data: structuredData,
+      title: title
     });
   }
-
+  
 }
