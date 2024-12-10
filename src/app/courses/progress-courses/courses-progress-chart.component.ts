@@ -62,8 +62,4 @@ export class CoursesProgressChartComponent implements OnChanges {
     this.clickAction.emit(set);
   }
 
-  hasTestData(index: number): boolean {
-    return this.sets.some(set => set.items[index] && set.items[index].number !== undefined);
-  }
-
 }
