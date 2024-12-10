@@ -114,19 +114,29 @@ export class ReportsMyPlanetComponent implements OnInit {
     );
   }
 
+  private formatTotalTime(totalMilliseconds: number): string {
+    if (!totalMilliseconds || totalMilliseconds === 0) {
+        return '00:00:00';
+    }
+    const totalSeconds = Math.floor(totalMilliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+
   private mapToCsvData(children: any[], planetName?: string): any[] {
-    return children.map((data: any) => {
-      console.log(data);
-      return {
+    return children.map((data: any) => ({
       ...(planetName ? { 'Planet Name': planetName } : {}),
       'ID': data.uniqueAndroidId,
       'Name': data.deviceName || data.customDeviceName,
       'Last Synced': new Date(data.last_synced),
       'Version': data.versionName,
       'No of Visits': data.count,
-      'Used Time': new Date(data.totalUsedTime).toISOString().substr(11, 8)
-    };
-  });
+      'Used Time': this.formatTotalTime(data.totalUsedTime),
+    }));
   }
 
 
@@ -134,6 +144,8 @@ export class ReportsMyPlanetComponent implements OnInit {
     const csvData: any[] = this.planets.flatMap((planet: any) => {
       return this.mapToCsvData(planet.children, planet.name);
     });
+    console.log(csvData);
+
 
     this.csvService.exportCSV({
       data: csvData,
@@ -143,6 +155,8 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   exportSingle(planet: any): void {
     const csvData = this.mapToCsvData(planet.children);
+    console.log(csvData);
+
 
     this.csvService.exportCSV({
       data: csvData,
