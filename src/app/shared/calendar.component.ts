@@ -172,16 +172,31 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
 
   openAddEventDialog(event) {
     let meetup;
+  
     if (event?.start) {
+      // Check if the event is a single-day event (end date is the next day at midnight)
+      const isSingleDay = !event.end || 
+                          (event.end.getDate() === event.start.getDate() + 1 && 
+                           event.end.getHours() === 0 && 
+                           event.end.getMinutes() === 0);
+  
       meetup = {
-        startDate: event?.start,
-        endDate: this.adjustEndDate(event?.end)
+        startDate: event.start,
+        endDate: isSingleDay ? event.start : this.adjustEndDate(event.end)
       };
     }
+  
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
+      data: { 
+        meetup: meetup, 
+        link: this.link, 
+        sync: this.sync, 
+        onMeetupsChange: this.onMeetupsChange.bind(this), 
+        editable: this.editable 
+      }
     });
   }
+  
 
   adjustEndDate(endDate: Date): Date {
     return new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate() - 1, 23, 59, 59, 999);
