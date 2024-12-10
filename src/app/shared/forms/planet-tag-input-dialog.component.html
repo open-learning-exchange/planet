@@ -12,7 +12,7 @@
     </mat-expansion-panel-header>
     <form class="form-spacing" [formGroup]="addTagForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Collection" formControlName="name" required>
+        <input matInput i18n-placeholder placeholder="Collection" formControlName="name" required maxlength="30">
         <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
