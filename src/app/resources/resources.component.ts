@@ -71,7 +71,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.removeFilteredFromSelection();
   }
   myView = this.route.snapshot.data.view;
-  emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
   selectedSync = [];
@@ -138,7 +137,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             (resource.doc.private === true && (resource.doc.privateFor || {}).users === this.userService.get()._id) :
             resource.doc.private !== true)
       );
-      this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
     });

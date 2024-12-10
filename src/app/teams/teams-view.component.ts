@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -63,7 +64,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   tabSelectedIndex = 0;
   initTab;
   taskCount = 0;
+  reportsCount = 0;
+  financesCount = 0;
   configuration = this.stateService.configuration;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     private couchService: CouchService,
@@ -78,8 +83,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private newsService: NewsService,
     private reportsService: ReportsService,
     private stateService: StateService,
-    private tasksService: TasksService
-  ) {}
+    private tasksService: TasksService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
@@ -108,8 +120,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getActiveTab(initTab: string) {
     const activeTabs = {
-      'taskTab' : this.taskTab,
-      'applicantTab' : this.applicantTab
+      'taskTab': this.taskTab,
+      'applicantTab': this.applicantTab
     };
     return activeTabs[initTab];
   }
@@ -205,7 +217,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
+      this.financesCount = this.finances.length;
       this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.reportsCount = this.reports.length;
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));

@@ -40,7 +40,7 @@ export class ResourcesAddComponent implements OnInit {
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
-  pageType = 'Add new';
+  pageType: string | null = null;
   disableDownload = true;
   disableDelete = true;
   resourceFilename = '';
@@ -90,12 +90,14 @@ export class ResourcesAddComponent implements OnInit {
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
         .subscribe((resources: any[]) => {
-          this.pageType = 'Update';
+          this.pageType = 'Edit';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
           this.existingResource = resource;
         }, (error) => {
           console.log(error);
         });
+    } else {
+      this.pageType = 'Add';
     }
 
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
@@ -182,7 +184,7 @@ export class ResourcesAddComponent implements OnInit {
       // Start with empty object so this.resourceForm.value does not change
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
       const message = newResource.title +
-        (this.pageType === 'Update' || this.existingResource.doc ? $localize` Updated Successfully` : $localize` Added`);
+        (this.pageType === 'Edit' || this.existingResource.doc ? $localize` Updated Successfully` : $localize` Added`);
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(

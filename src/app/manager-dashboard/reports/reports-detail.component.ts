@@ -157,6 +157,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
+    this.setStepCompletion();
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(

@@ -34,7 +34,8 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   emptyTable = true;
   showBalanceWarning = false;
   curCode = this.stateService.configuration.currency || {};
-
+  configuration: any = {};
+  planetName: any;
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -119,13 +120,13 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
             options: [ { value: 'credit', name: $localize`Credit` }, { value: 'debit', name: $localize`Debit` } ], required: true
           },
           { name: 'description', placeholder: $localize`Note`, type: 'textbox', required: true },
-          { name: 'amount', placeholder: $localize`Amount`, type: 'textbox', inputType: 'number', required: true },
+          { name: 'amount', placeholder: $localize`Amount`, type: 'textbox', inputType: 'number', required: true, step: '0.01' },
           { name: 'date', placeholder: $localize`Date`, type: 'date', required: true }
         ],
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
           description: [ transaction.description || '', CustomValidators.required ],
-          amount: [ transaction.amount || '', [ CustomValidators.integerValidator, CustomValidators.positiveNumberValidator ] ],
+          amount: [ transaction.amount || '', [ CustomValidators.positiveNumberValidator ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {
@@ -198,10 +199,12 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       debit: row.debit,
       balance: row.balance
     }));
-
+    const planetName = this.stateService.configuration.name || 'Unnamed';
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const titleName = this.team.name || `${entityLabel} ${planetName}`;
     this.csvService.exportCSV({
       data: updatedData,
-      title: $localize`Financial Transactions for ${this.team.name} Enterprise`
+      title: $localize`Financial Transactions for ${titleName}`
     });
   }
 

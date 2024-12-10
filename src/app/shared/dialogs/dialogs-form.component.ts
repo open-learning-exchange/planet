@@ -7,7 +7,7 @@ import { DialogsListComponent } from './dialogs-list.component';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
-  styles: [`
+  styles: [ `
     .checkbox-wrapper:last-child {
       margin: 0 0 20px 0;
     }
@@ -19,7 +19,7 @@ import { DialogsListComponent } from './dialogs-list.component';
     .ng-touched.ng-valid {
       border: none;
     }
-  `]
+  ` ]
 })
 export class DialogsFormComponent {
 

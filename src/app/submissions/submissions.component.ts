@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,7 +11,7 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
-
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 const columnsByFilterAndMode = {
   exam: {
     grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
@@ -25,7 +25,7 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styleUrls: ['./submission.component.scss'],
+  styleUrls: [ './submission.component.scss' ],
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -37,14 +37,15 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  initTable = true;
+  isMobile: boolean;
+  deviceType: DeviceType;
+  showFiltersRow = false;
   statusOptions: any = [
     { text: $localize`Pending`, value: 'pending' },
     { text: $localize`Not Graded`, value: 'requires grading' },
     { text: $localize`Completed`, value: 'complete' }
   ];
   mode = 'grade';
-  emptyData = false;
   filter = {
     type: 'exam',
     status: 'requires grading'
@@ -56,9 +57,12 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private coursesService: CoursesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnInit() {
@@ -91,17 +95,21 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
-      this.emptyData = !this.submissions.filteredData.length;
     });
     this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
   }
 
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.showFiltersRow = false;
+  }
+
   ngAfterViewChecked() {
-    if (this.initTable === true) {
+    if (this.sort && this.paginator && !this.submissions.paginator && !this.submissions.sort) {
       this.submissions.paginator = this.paginator;
       this.submissions.sort = this.sort;
-      this.initTable = false;
     }
   }
 
@@ -153,9 +161,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
-    this.emptyData = !this.submissions.filteredData.length;
-    this.initTable = !this.emptyData;
     this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
+    this.submissions.paginator = undefined;
+    this.submissions.sort = undefined;
   }
 
   dropdownsFill() {

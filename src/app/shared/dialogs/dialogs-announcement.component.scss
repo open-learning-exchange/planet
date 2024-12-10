@@ -1,0 +1,95 @@
+@import '../../variables';
+
+.announcement-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.announcement-banner {
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.steps-container {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.step mat-icon {
+  margin-right: 10px;
+}
+
+.step span {
+  flex-grow: 1;
+}
+
+.thermometer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.thermometer {
+  width: 100%;
+  height: 40px;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.thermometer-bar {
+  height: 100%;
+  background-color: $primary;
+  transition: width 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.thermometer-label {
+  color: black;
+  font-size: 1.5rem;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.thermometer-label.outside {
+  position: absolute;
+  left: 0.5rem;
+}
+
+.success-msg {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.daily-voces-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: lightgray;
+}
+
+.dot.completed {
+  background-color: $primary;
+}
