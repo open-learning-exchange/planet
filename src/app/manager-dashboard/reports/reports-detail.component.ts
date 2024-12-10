@@ -24,6 +24,7 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
+import { create } from 'domain';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -121,11 +122,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
       this.getTeams();
-      this.getChat();
+      this.getChatUsage();
       this.dialogsLoadingService.stop();
     });
 
-    console.log('log:', this.reports)
+    // console.log('log:', this.reports);
   }
 
   setUserCounts({ count, byGender }) {
@@ -187,6 +188,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   setStepCompletion() {
     const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData);
+    console.log('log byMonth: ', byMonth);
     this.reports.totalStepCompleted = byMonth.reduce((total, doc: any) => total + doc.count, 0);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
@@ -281,8 +283,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  getChat() {
-    
+  getChatUsage() {
+    this.activityService.getChatHistory().subscribe((data) => {
+      this.activityService.groupChatUsage(data)
+    })
+
+    //i should put down this.report = total of chat usage later
   }
 
   getTeamMembers(team: any) {
