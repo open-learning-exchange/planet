@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { CsvService } from '../../shared/csv.service';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
@@ -40,6 +41,7 @@ export class ReportsMyPlanetComponent implements OnInit {
     private reportsService: ReportsService,
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService,
+    private csvService: CsvService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
@@ -110,6 +112,39 @@ export class ReportsMyPlanetComponent implements OnInit {
         return [ filteredPlanets, myPlanets.concat(hubMyPlanets) ];
       })
     );
+  }
+
+  private mapToCsvData(children: any[], planetName?: string): any[] {
+    return children.map((data: any) => ({
+      ...(planetName ? { "Planet Name": planetName } : {}),
+      "ID": data.uniqueAndroidId,
+      "Name": data.deviceName || data.customDeviceName,
+      "Last Synced": new Date(data.last_synced),
+      "Version": data.versionName,
+      "No of Visits": data.count,
+      "Used Time": data.totalUsedTime,
+    }));
+  }
+
+
+  exportAll(): void {
+    const csvData: any[] = this.planets.flatMap((planet: any) => {
+      return this.mapToCsvData(planet.children, planet.name);
+    });
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: "myPlanet Reports",
+    });
+  }
+
+  exportSingle(planet: any): void {
+    const csvData = this.mapToCsvData(planet.children);
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: `myPlanet on ${planet.name}`,
+    });
   }
 
 }
