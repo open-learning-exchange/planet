@@ -34,7 +34,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="meetups" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -103,6 +103,9 @@
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Meetups Found</div></td>
+      </tr>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
@@ -110,7 +113,4 @@
       (page)="onPaginateChange($event)">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Meetups Found</div>
-  </ng-template>
 </div>
