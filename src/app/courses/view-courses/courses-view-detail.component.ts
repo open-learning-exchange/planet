@@ -29,7 +29,6 @@ export class CoursesViewDetailComponent implements OnChanges {
   ngOnChanges() {
     this.imageSource = this.parent === true ? 'parent' : 'local';
   }
-
 }
 
 @Component({
@@ -68,5 +67,4 @@ export class CoursesViewDetailDialogComponent implements OnInit {
   routeToCourses(courseId) {
     this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
   }
-
 }
