@@ -262,6 +262,10 @@ export class ReportsService {
     }));
   }
 
+  getchatUsage() {
+    const chatHistory = this.couchService.get('')
+  }
+
   groupStepCompletion(steps: any[]) {
     return ({
       byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')

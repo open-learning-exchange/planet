@@ -121,8 +121,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
       this.getTeams();
+      this.getChat();
       this.dialogsLoadingService.stop();
     });
+
+    console.log('log:', this.reports)
   }
 
   setUserCounts({ count, byGender }) {
@@ -276,6 +279,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
         }), { enterprise: [], team: [] });
     });
+  }
+
+  getChat() {
+    
   }
 
   getTeamMembers(team: any) {
