@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
+import { PlanetMessageService } from '../planet-message.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -47,7 +48,8 @@ export class DialogsFormComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private planetMessage: PlanetMessageService,
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
@@ -100,6 +102,10 @@ export class DialogsFormComponent {
       this.dialogListRef.close();
       this.modalForm.markAsDirty();
     };
+  }
+
+  clearRating(){
+    this.planetMessage.showMessage($localize`Your rating has been cleared!`);
   }
 
   isValid() {
