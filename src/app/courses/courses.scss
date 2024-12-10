@@ -65,14 +65,6 @@ $label-height: 1rem;
   }
 }
 
-.truncate-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80vw;
-  display: block;
-}
-
 @media(max-width: $screen-sm) {
   .created-label {
     display: inline-block;
@@ -103,5 +95,4 @@ $label-height: 1rem;
   .rating-cell {
     align-self: flex-end;
   }
-
 }
