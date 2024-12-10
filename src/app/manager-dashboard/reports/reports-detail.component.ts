@@ -24,7 +24,6 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
-import { create } from 'domain';
 
 @Component({
   templateUrl: './reports-detail.component.html',
