@@ -77,7 +77,6 @@ export class LogsMyPlanetComponent implements OnInit {
     }));
   }
 
-
   exportAll(): void {
     const csvData: any[] = this.apklogs.flatMap((planet: any) => {
       return this.mapToCsvData(planet.children, planet.name);

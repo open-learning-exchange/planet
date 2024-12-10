@@ -126,7 +126,6 @@ export class ReportsMyPlanetComponent implements OnInit {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
-
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { 'Planet Name': planetName } : {}),
@@ -143,12 +142,10 @@ export class ReportsMyPlanetComponent implements OnInit {
     }));
   }
 
-
   exportAll(): void {
     const csvData: any[] = this.planets.flatMap((planet: any) => {
       return this.mapToCsvData(planet.children, planet.name);
     });
-    console.log(csvData);
 
     this.csvService.exportCSV({
       data: csvData,
@@ -158,7 +155,6 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   exportSingle(planet: any): void {
     const csvData = this.mapToCsvData(planet.children);
-    console.log(csvData);
 
     this.csvService.exportCSV({
       data: csvData,
