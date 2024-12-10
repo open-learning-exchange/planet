@@ -1,27 +1,43 @@
-<!-- Request template -->
 <mat-toolbar>
   <button class="btnBack" mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <span i18n>{ planetType, select, nation {Communities} center {Nations} }</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group
-    class="margin-lr-5 font-size-1"
-    (change)="shownStatusChange($event.value)"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'" i18n>
-      Pending
-    </mat-button-toggle>
-    <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'" i18n>
-      Connected
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
-    <input matInput (keyup)="requestListFilter($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
-  </mat-form-field>
+  <ng-container *ngIf="!isMobile">
+    <ng-container *ngTemplateOutlet="filterItems"></ng-container>
+  </ng-container>
+  <button mat-icon-button *ngIf="isMobile" (click)="toggleMobileFilterList()">
+    <mat-icon>filter_list</mat-icon>
+  </button>
 </mat-toolbar>
-
+<mat-toolbar *ngIf="isMobile && showFilterRow" class="mobile-filter-toolbar">
+  <div class="mobile-filter-row">
+    <ng-container *ngTemplateOutlet="filterItems"></ng-container>
+  </div>
+</mat-toolbar>
+<ng-template #filterItems>
+  <mat-button-toggle-group
+      class="margin-lr-5 font-size-1"
+      (change)="shownStatusChange($event.value)"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="pending" [checked]="shownStatus === 'pending'" i18n>
+        Pending
+      </mat-button-toggle>
+      <mat-button-toggle value="accepted" [checked]="shownStatus === 'accepted'" i18n>
+        Connected
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1">
+      <input
+        matInput
+        (keyup)="requestListFilter($event.target.value)"
+        [value]="searchValue"
+        i18n-placeholder
+        placeholder="Search">
+    </mat-form-field>
+  </ng-template>
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
