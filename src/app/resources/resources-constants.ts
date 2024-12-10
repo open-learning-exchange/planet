@@ -39,7 +39,8 @@ export const media = [
   { 'label': $localize`Text`, 'value': 'Text' },
   { 'label': $localize`Graphic/Pictures`, 'value': 'Graphic/Pictures' },
   { 'label': $localize`Audio/Music/Book`, 'value': 'Audio/Music/Book' },
-  { 'label': $localize`Video`, 'value': 'Video' }
+  { 'label': $localize`Video`, 'value': 'Video' },
+  { 'label': $localize`Game`, 'value': 'Game' }
 ];
 
 export const openWith = [
@@ -58,7 +59,8 @@ export const resourceType = [
   { 'label': $localize`Lesson Plan`, 'value': 'Lesson Plan' },
   { 'label': $localize`Activities`, 'value': 'Activities' },
   { 'label': $localize`Exercises`, 'value': 'Exercises' },
-  { 'label': $localize`Discussion Questions`, 'value': 'Discussion Questions' }
+  { 'label': $localize`Discussion Questions`, 'value': 'Discussion Questions' },
+  { 'label': $localize`Game`, 'value': 'Game' }
 ];
 
 export const resourceFor = [
