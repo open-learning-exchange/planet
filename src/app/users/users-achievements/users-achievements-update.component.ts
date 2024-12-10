@@ -20,7 +20,7 @@ import { showFormErrors } from '../../shared/table-helpers';
   encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
-
+  title: string = $localize`Edit Achievements`; 
   user = this.userService.get();
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
@@ -57,26 +57,39 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.title = '';  
+    
     this.profileForm.patchValue(this.user);
     this.usersAchievementsService.getAchievements(this.docInfo._id)
-    .pipe(catchError(() => this.usersAchievementsService.getAchievements(this.user._id)))
-    .subscribe((achievements) => {
-      this.editForm.patchValue(achievements);
-      this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
-      this.editForm.controls.references = this.fb.array(achievements.references || []);
-      this.editForm.controls.links = this.fb.array(achievements.links || []);
-      // Keeping older otherInfo property so we don't lose this info on database
-      this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
-      if (this.docInfo._id === achievements._id) {
-        this.docInfo._rev = achievements._rev;
-      }
-    }, (error) => {
-      console.log(error);
-    });
+      .pipe(
+        catchError(() => this.usersAchievementsService.getAchievements(this.user._id))
+      )
+      .subscribe((achievements) => {
+        if (achievements && achievements.achievements && achievements.achievements.length) {
+          this.title = $localize`Edit Achievements`; 
+        } else {
+          this.title = $localize`Add Achievements`;  
+        }
+  
+        this.editForm.patchValue(achievements);
+        this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
+        this.editForm.controls.references = this.fb.array(achievements.references || []);
+        this.editForm.controls.links = this.fb.array(achievements.links || []);
+        // Keeping older otherInfo property so we don't lose this info on database
+        this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
+  
+        if (this.docInfo._id === achievements._id) {
+          this.docInfo._rev = achievements._rev;
+        }      
+      }, (error) => {
+        console.log(error);
+      });
+  
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
       () => this.editForm.controls.dateSortOrder.setValue('none')
     );
   }
+  
 
   ngOnDestroy() {
     this.onDestroy$.next();
