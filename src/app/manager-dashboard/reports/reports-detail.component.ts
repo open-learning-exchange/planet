@@ -126,8 +126,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getChatUsage();
       this.dialogsLoadingService.stop();
     });
-
-    // console.log('log:', this.reports);
   }
 
   setUserCounts({ count, byGender }) {
@@ -191,7 +189,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   setStepCompletion() {
     const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData);
-    console.log('log byMonth: ', byMonth);
     this.reports.totalStepCompleted = byMonth.reduce((total, doc: any) => total + doc.count, 0);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
