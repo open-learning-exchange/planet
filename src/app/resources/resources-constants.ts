@@ -1,4 +1,3 @@
-
 export const subjectList = [
   { 'label': $localize`Agriculture`, 'value': 'Agriculture' },
   { 'label': $localize`Arts`, 'value': 'Arts' },
