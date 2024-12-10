@@ -33,6 +33,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   submittedExamSteps: any[] = [];
   planetCodes: string[] = [];
   selectedPlanetCode: string;
+  configuration: any = {};
 
   constructor(
     private router: Router,
@@ -215,29 +216,27 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   structureChartData(data) {
-    const dataArr = [];
-    data.forEach(element => {
-      const dataDict = {};
+    return data.map(element => {
       let totalErrors = 0;
       let totalSteps = 0;
-      dataDict['Username'] = element.label;
-      element.items.forEach(item => {
+      const steps = {};
+      element.items.forEach((item, index) => {
         const stepErrors = item.number || 0;
         if (typeof stepErrors === 'number') {
           totalErrors += stepErrors;
           totalSteps++;
         }
+        steps[`Step ${(index + 1)}`] = stepErrors;
       });
-      dataDict['Total Errors'] = totalErrors;
-      dataDict['Success Percentage'] = totalSteps
-        ? `${(((totalSteps - totalErrors) / totalSteps) * 100).toFixed(2)}%`
-        : 'N/A';
-      element.items.forEach((item, index) => {
-        dataDict[`Step ${(index + 1)}`] = item.number || '';
-      });
-      dataArr.push(dataDict);
+      return {
+        'Username': element.label,
+        'Success Percentage': totalSteps
+          ? `${(((totalSteps - totalErrors) / totalSteps) * 100).toFixed(2)}%`
+          : 'N/A',
+        'Total Errors': totalErrors, 
+        ...steps
+      };
     });
-    return dataArr;
   }
 
   exportChartData() {
@@ -245,17 +244,18 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       console.error('Course data is not available.');
       return;
     }
-  
+
     const planetName = this.stateService.configuration.name || 'Unnamed';
     const courseTitle = this.course.courseTitle || 'Unnamed Course';
-    const title = $localize`Progress Report for ${courseTitle} ${planetName}`;
-  
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const title = $localize`${courseTitle} Course Progress for ${entityLabel} ${planetName}`;
+
     const structuredData = this.structureChartData(this.chartData);
-  
+
     this.csvService.exportCSV({
       data: structuredData,
       title: title
     });
   }
-  
+
 }
