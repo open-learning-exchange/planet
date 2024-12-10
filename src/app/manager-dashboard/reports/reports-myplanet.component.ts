@@ -130,9 +130,9 @@ export class ReportsMyPlanetComponent implements OnInit {
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { 'Planet Name': planetName } : {}),
-      'ID': data.uniqueAndroidId,
+      'ID': data.androidId.toString() || data.uniqueAndroidId.toString(),
       'Name': data.deviceName || data.customDeviceName,
-      'Last Synced': new Date(data.last_synced),
+      'Last Synced': new Date(data.last_synced) || new Date(data.time),
       'Version': data.versionName,
       'No of Visits': data.count,
       'Used Time': this.formatTotalTime(data.totalUsedTime),
@@ -146,7 +146,6 @@ export class ReportsMyPlanetComponent implements OnInit {
     });
     console.log(csvData);
 
-
     this.csvService.exportCSV({
       data: csvData,
       title: 'myPlanet Reports',
@@ -156,7 +155,6 @@ export class ReportsMyPlanetComponent implements OnInit {
   exportSingle(planet: any): void {
     const csvData = this.mapToCsvData(planet.children);
     console.log(csvData);
-
 
     this.csvService.exportCSV({
       data: csvData,
