@@ -3,7 +3,6 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-
 import { UserService } from '../user.service';
 
 @Component({
