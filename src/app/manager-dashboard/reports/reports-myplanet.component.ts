@@ -34,14 +34,14 @@ export class ReportsMyPlanetComponent implements OnInit {
   hub = { spokes: [] };
 
   constructor(
+    private csvService: CsvService,
     private couchService: CouchService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private reportsService: ReportsService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService,
-    private csvService: CsvService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
@@ -116,13 +116,13 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
-      ...(planetName ? { "Planet Name": planetName } : {}),
-      "ID": data.uniqueAndroidId,
-      "Name": data.deviceName || data.customDeviceName,
-      "Last Synced": new Date(data.last_synced),
-      "Version": data.versionName,
-      "No of Visits": data.count,
-      "Used Time": data.totalUsedTime,
+      ...(planetName ? { 'Planet Name': planetName } : {}),
+      'ID': data.uniqueAndroidId,
+      'Name': data.deviceName || data.customDeviceName,
+      'Last Synced': new Date(data.last_synced),
+      'Version': data.versionName,
+      'No of Visits': data.count,
+      'Used Time': data.totalUsedTime,
     }));
   }
 
@@ -134,7 +134,7 @@ export class ReportsMyPlanetComponent implements OnInit {
 
     this.csvService.exportCSV({
       data: csvData,
-      title: "myPlanet Reports",
+      title: 'myPlanet Reports',
     });
   }
 
