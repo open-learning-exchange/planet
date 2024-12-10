@@ -11,6 +11,10 @@ mat-toolbar mat-form-field {
   line-height: 3.7em
 }
 
+.subheading {
+  font-weight: bold;
+}
+
 .manager-reports-detail {
   mat-grid-tile.label figure {
     justify-content: start;
