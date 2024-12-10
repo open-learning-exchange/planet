@@ -122,7 +122,7 @@
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
-          <h3 class="header">
+          <h3 class="header truncate-title">
             <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
               <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
@@ -131,8 +131,8 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
-              <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a></ng-template>
+              <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{element.doc.courseTitle }}</a>
+              <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{element.doc.courseTitle }}</a></ng-template>
               <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
                 <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
