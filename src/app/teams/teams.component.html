@@ -107,7 +107,7 @@
                 <label *ngIf="!isMobile" i18n> Request pending </label>
               </button>
             </ng-container>
-            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id}" (click)="$event.stopPropagation()">
+            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id, name: element.doc.name}" (click)="$event.stopPropagation()">
               <mat-icon>feedback</mat-icon>
               <label *ngIf="!isMobile" i18n> Feedback </label>
             </button>
