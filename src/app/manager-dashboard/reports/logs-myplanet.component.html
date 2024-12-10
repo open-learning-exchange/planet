@@ -1,5 +1,5 @@
 <mat-toolbar>
-    <button class="btnBack" mat-icon-button routerLink="/">
+    <button class="btnBack" mat-icon-button routerLink="/manager">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span i18n>Logs</span>
@@ -13,6 +13,10 @@
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
       <span i18n>myPlanet</span>
+      <span class="toolbar-fill"></span>
+      <button mat-raised-button color="accent" (click)="exportAll()">
+        Export All
+      </button>
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
@@ -22,6 +26,9 @@
           <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
         </mat-expansion-panel-header>
         <planet-myplanet-table dataType="logs" [data]="planet.children"></planet-myplanet-table>
+        <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;">
+          Export
+        </button>
       </mat-expansion-panel>
     </ng-container>
     <ng-container *ngIf="isEmpty">

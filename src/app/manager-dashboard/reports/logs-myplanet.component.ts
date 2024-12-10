@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
+import { CouchService } from '../../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
-import { StateService } from '../shared/state.service';
-import { PlanetMessageService } from '../shared/planet-message.service';
-import { ManagerService } from '../manager-dashboard/manager.service';
-import { filterSpecificFields } from '../shared/table-helpers';
-import { attachNamesToPlanets, areNoChildren } from '../manager-dashboard/reports/reports.utils';
-
+import { StateService } from '../../shared/state.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { ManagerService } from '../manager.service';
+import { filterSpecificFields } from '../../shared/table-helpers';
+import { attachNamesToPlanets, areNoChildren } from './reports.utils';
+import { CsvService } from '../../shared/csv.service';
 
 @Component({
   templateUrl: './logs-myplanet.component.html'
@@ -23,6 +23,7 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   constructor(
+    private csvService: CsvService,
     private couchService: CouchService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
@@ -62,6 +63,38 @@ export class LogsMyPlanetComponent implements OnInit {
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
+  }
+
+  private mapToCsvData(children: any[], planetName?: string): any[] {
+    return children.map((data: any) => ({
+      ...(planetName ? { 'Planet Name': planetName } : {}),
+      'ID': data.androidId,
+      'Name': data.deviceName || data.customDeviceName,
+      'Type': data.type,
+      'Time': new Date(Number(data.time)),
+      'Version': data.version,
+      'Error':  data.error || 'N/A',
+    }));
+  }
+
+  exportAll(): void {
+    const csvData: any[] = this.apklogs.flatMap((planet: any) => {
+      return this.mapToCsvData(planet.children, planet.name);
+    });
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: 'myPlanet Logs',
+    });
+  }
+
+  exportSingle(planet: any): void {
+    const csvData = this.mapToCsvData(planet.children);
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: `myPlanet Logs for ${planet.name}`,
+    });
   }
 
 }
