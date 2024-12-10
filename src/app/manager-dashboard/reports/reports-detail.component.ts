@@ -52,6 +52,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     completions: new ReportsDetailData('time'),
     steps: new ReportsDetailData('time')
   };
+  chatActivities = new ReportsDetailData('createdDate');
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -169,6 +170,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         )
       )
     ));
+    this.chatActivities.filter(this.filter);
+    this.setChatUsage();
   }
 
   getLoginActivities() {
@@ -285,10 +288,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
-      this.activityService.groupChatUsage(data);
+      this.chatActivities.data = data;
     });
+  }
 
-    // i should put down this.report = total of chat usage later
+  setChatUsage() {
+    const { byMonth } = this.activityService.groupChatUsage(this.chatActivities.filteredData);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'chatUsageChart' });
   }
 
   getTeamMembers(team: any) {

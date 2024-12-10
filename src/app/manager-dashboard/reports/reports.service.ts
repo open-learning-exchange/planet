@@ -270,12 +270,14 @@ export class ReportsService {
   }
 
   groupChatUsage(chats: any) {
-    console.log('log chat gender:', this.appendGender(chats));
-    return null;
+    console.log('log chat byMonth:', this.groupByMonth(this.appendGender(chats), 'createdDate', '_id'));
+    return ({
+      byMonth: this.groupByMonth(this.appendGender(chats), 'createdDate', '_id')
+    });
   }
 
   groupStepCompletion(steps: any[]) {
-    console.log('log steps:', this.appendGender(steps));
+    // console.log('log steps:', this.appendGender(steps));
     return ({
       byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')
     });
