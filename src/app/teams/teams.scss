@@ -1,29 +1,16 @@
 @import "../variables.scss";
 
 :host {
-  /* Column Widths */
   .mat-column-doc-teamType {
     max-width: 150px;
     padding-right: 0.5rem;
   }
 
-  .mat-column-visitLog-visitCount, .mat-column-visitLog.lastVisit {
-    max-width: 80px;
-    padding-right: 0.5rem;
-    text-align: center; // Center-align the text
-  }
-
-  .visit-log-cell{
-    display: flex;
+  .mat-column-visitLog-visitCount {
     justify-content: center;
-    margin-right: 1rem;
-    align-items: center;
-    text-align: center;
-    width: 100%;
-  }
-
-  .recent-visit-log{
-    margin-left: 2rem;
+    max-width: 80px;
+    padding-right: 1rem;
+    margin-right: 1rem
   }
 
   mat-row {
@@ -43,10 +30,6 @@
     mat-cell button {
       min-width: 0;
       padding: 0 3px;
-    }
-
-    .visit-log-cell, .recent-visit-log{
-      margin-left: 1rem;
     }
   }
 }

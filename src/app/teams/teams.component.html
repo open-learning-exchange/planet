@@ -51,13 +51,13 @@
       </ng-container>
       <ng-container matColumnDef="visitLog.lastVisit">
         <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.lastVisit" i18n>Most recent visit</mat-header-cell>
-        <mat-cell class="recent-visit-log" *matCellDef="let element">
+        <mat-cell *matCellDef="let element">
           {{(element.visitLog.lastVisit | date: 'medium') || 'N/A'}}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.visitCount">
         <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.visitCount" i18n>Total visits from last 30 days</mat-header-cell>
-        <mat-cell class="visit-log-cell" *matCellDef="let element">
+        <mat-cell *matCellDef="let element">
           {{element.visitLog.visitCount}}
         </mat-cell>
       </ng-container>
