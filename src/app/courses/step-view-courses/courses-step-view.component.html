@@ -36,7 +36,7 @@
         class="margin-lr-10"
         *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
         (click)="goToExam('survey')" i18n>
-        Take Survey
+        {surveyText, select, take {Take Survey} continue {Continue Survey} retake {Retake Survey}}
       </a>
       <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
         Preview

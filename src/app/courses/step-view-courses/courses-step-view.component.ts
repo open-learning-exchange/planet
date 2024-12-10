@@ -28,6 +28,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   resourceUrl = '';
   examStart = 1;
   examText: 'continue' | 'retake' | 'take' = 'take';
+  surveyText: 'continue' | 'retake' | 'take' = 'take';
   attempts = 0;
   isUserEnrolled = false;
   resource: any;
@@ -125,6 +126,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         parent: exams.find(exam => exam._id === this.stepDetail.exam._id) || this.stepDetail.exam,
         user: this.userService.get(),
         type: 'exam' });
+    }
+    if (this.stepDetail.survey) {
+      console.log('log: survey', this.stepDetail.survey);
+      // if (this.stepDetail.survey)
     }
     this.isLoading = false;
   }
