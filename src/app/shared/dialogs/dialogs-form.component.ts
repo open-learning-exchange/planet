@@ -1,10 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { PlanetMessageService } from '../planet-message.service';
+import { RatingService } from '../forms/rating.service';
+import { UserService } from '../user.service';
+import { CouchService } from '../couchdb.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -32,6 +35,8 @@ export class DialogsFormComponent {
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  @Input() rating: any = {userRating: {}};
+  currentUser = this.userService.get();
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -48,6 +53,9 @@ export class DialogsFormComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService,
+    private ratingService: RatingService,
+    private userService: UserService,
+    private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private planetMessage: PlanetMessageService,
   ) {
@@ -104,7 +112,21 @@ export class DialogsFormComponent {
     };
   }
 
-  clearRating(){
+  clearRating() {
+    // Reset the rating to its initial state
+    this.rating.userRating = {};
+    
+    // If there's a form control for rating, reset it to 0
+    if (this.modalForm && this.modalForm.get('rate')) {
+      this.modalForm.get('rate').setValue(0);
+    }
+  
+    // If there's a comment field, clear it as well
+    if (this.modalForm && this.modalForm.get('comment')) {
+      this.modalForm.get('comment').setValue('');
+    }
+  
+    // Show a message to the user
     this.planetMessage.showMessage($localize`Your rating has been cleared!`);
   }
 
