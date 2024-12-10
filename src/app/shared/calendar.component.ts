@@ -174,7 +174,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     let meetup;
   
     if (event?.start) {
-      // Check if the event is a single-day event (end date is the next day at midnight)
       const isSingleDay = !event.end || 
                           (event.end.getDate() === event.start.getDate() + 1 && 
                            event.end.getHours() === 0 && 
