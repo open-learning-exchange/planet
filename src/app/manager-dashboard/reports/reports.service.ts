@@ -262,6 +262,19 @@ export class ReportsService {
     }));
   }
 
+  getChatHistory() {
+    return this.couchService.get('chat_history/_all_docs', { params: { include_docs: 'true' } })
+    .pipe(
+      map((data: any) => data.rows.map((row: any) => row.doc))
+    );
+  }
+
+  groupChatUsage(chats: any) {
+    return ({
+      byMonth: this.groupByMonth(this.appendGender(chats), 'createdDate', '_id')
+    });
+  }
+
   groupStepCompletion(steps: any[]) {
     return ({
       byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')
