@@ -285,10 +285,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
-      this.activityService.groupChatUsage(data)
-    })
+      this.activityService.groupChatUsage(data);
+    });
 
-    //i should put down this.report = total of chat usage later
+    // i should put down this.report = total of chat usage later
   }
 
   getTeamMembers(team: any) {
