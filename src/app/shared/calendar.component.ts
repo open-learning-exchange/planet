@@ -85,7 +85,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    console.log('log:', this.link);
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
