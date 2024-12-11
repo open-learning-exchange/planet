@@ -32,13 +32,13 @@
         </a>
       </ng-template>
       <span class="toolbar-fill"></span>
-      <a *ngIf="feedback?.state" [routerLink]="['/', feedback.state, 'view', feedback.item]" mat-icon-button>
+      <a *ngIf="feedback?.state" [routerLink]="['/', feedback.state, 'view', feedback.item]" mat-raised-button color="accent">
         <ng-container [ngSwitch]="feedback.state">
-          <mat-icon *ngSwitchCase="'resources'" svgIcon="myLibrary"></mat-icon>
-          <mat-icon *ngSwitchCase="'courses'" svgIcon="myCourses"></mat-icon>
-          <mat-icon *ngSwitchCase="'meetups'" svgIcon="myMeetups"></mat-icon>
-          <mat-icon *ngSwitchCase="'teams'" svgIcon="myTeams"></mat-icon>
-          <mat-icon *ngSwitchCase="'enterprises'">business</mat-icon>
+          <span *ngSwitchCase="'resources'" i18n>Go to Resource</span>
+          <span *ngSwitchCase="'courses'" i18n>Go to Course</span>
+          <span *ngSwitchCase="'meetups'" i18n>Go to Meetup</span>
+          <span *ngSwitchCase="'teams'" i18n>Go to Team</span>
+          <span *ngSwitchCase="'enterprises'" i18n>Go to Enterprise</span>
         </ng-container>
       </a>
     </mat-toolbar-row>
