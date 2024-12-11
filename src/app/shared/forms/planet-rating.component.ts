@@ -167,5 +167,4 @@ export class PlanetRatingComponent implements OnChanges {
       this.rateForm.patchValue({ comment: this.rating.userRating.comment || '' });
     }
   }
-
 }
