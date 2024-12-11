@@ -38,7 +38,7 @@
     </ng-container>
   </mat-toolbar>
 
-  <div class="primary-link-hover" *ngIf="!emptyData; else notFoundMessage" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
+  <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
     <mat-table #table [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
@@ -116,6 +116,9 @@
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
+      </tr>
     </mat-table>
     <div *ngIf="userNotInShelf" i18n style="text-align: center;">
       Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
@@ -125,7 +128,4 @@
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div>
-  </ng-template>
 </div>
