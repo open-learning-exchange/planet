@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -11,15 +11,14 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { StateService } from '../../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
-  templateUrl: 'courses-progress-leader.component.html',
-  styleUrls: [ 'courses-progress.scss' ]
+  templateUrl: 'courses-progress-leader.component.html'
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   course: any;
-  // Need to define this variable for template which is shared with CoursesProgressLearner
   headingStart = '';
   chartLabel = $localize`Steps`;
   selectedStep: any;
@@ -34,6 +33,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   planetCodes: string[] = [];
   selectedPlanetCode: string;
   configuration: any = {};
+  deviceType: DeviceType;
+  deviceTypes = DeviceType;
 
   constructor(
     private router: Router,
@@ -44,8 +45,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
     private stateService: StateService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
@@ -67,6 +70,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   setProgress(course) {

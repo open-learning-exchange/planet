@@ -5,25 +5,38 @@ import { Injectable } from '@angular/core';
 })
 export class UserChallengeStatusService {
   userStatus = {
-    joinedCourse: false,
-    surveyComplete: false,
-    hasPost: false,
-    amountEarned: 0
+    joinedCourse: {
+      status: false,
+      amount: 0
+    },
+    surveyComplete: {
+      status: false,
+      amount: 0
+    },
+    hasPost: {
+      status: false,
+      amount: 0
+    },
+    userPosts: 0
   };
 
-  updateStatus(key: string, value: boolean | number) {
+  updateStatus(key: string, value: Object | number) {
     this.userStatus[key] = value;
   }
 
   getCompleteChallenge(): boolean {
     const complete = Object.values(this.userStatus).every(
-      (value, index) => index !== 3 && value === true
+      (value, index) => typeof value === 'object' && 'status' in value && value.status === true
     );
     return complete;
   }
 
-  getStatus(key: string): boolean| number {
-    return this.userStatus[key];
+  getPosts(): number {
+    return this.userStatus.userPosts;
+  }
+
+  getStatus(key: string): boolean {
+    return this.userStatus[key].status;
   }
 
   printStatus(): any {
@@ -32,10 +45,19 @@ export class UserChallengeStatusService {
 
   resetStatus() {
     this.userStatus = {
-      joinedCourse: false,
-      surveyComplete: false,
-      hasPost: false,
-      amountEarned: 0
+      joinedCourse: {
+        status: false,
+        amount: 0
+      },
+      surveyComplete: {
+        status: false,
+        amount: 0
+      },
+      hasPost: {
+        status: false,
+        amount: 0
+      },
+      userPosts: 0
     };
   }
 }

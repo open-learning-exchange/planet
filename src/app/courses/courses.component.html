@@ -104,7 +104,7 @@
     </ng-container>
   </ng-template>
 
-  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }" *ngIf="!emptyData; else notFoundMessage">
+  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -180,8 +180,8 @@
               <span i18n>Feedback</span>
             </a>
             <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
+              <mat-icon>edit</mat-icon>
+              <span i18n>Edit Course</span>
             </a>
             <a mat-menu-item [routerLink]="['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>
@@ -231,15 +231,14 @@
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Course Found</div></td>
+      </tr>
     </mat-table>
-
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
       (page)="onPaginateChange($event)">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Course Found</div>
-  </ng-template>
 </div>

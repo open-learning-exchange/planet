@@ -23,19 +23,25 @@
   </mat-toolbar>
   <div class="view-container">
     <div *ngIf="achievements !== undefined" class="achievements-container">
-      <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
-      <div>
-        <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
-        <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
+      <div class="user-info">
+        <img class="profile-image" [src]="profileImg">
+        <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
+        <div class="birth-info">
+          <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
+          <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
+        </div>
       </div>
+      <mat-divider></mat-divider>
       <div *ngIf="achievements.purpose">
         <h3 i18n>My Purpose</h3>
         <td-markdown [content]="achievements.purpose"></td-markdown>
       </div>
+      <mat-divider></mat-divider>
       <div *ngIf="achievements.goals">
         <h3 i18n>My Goals</h3>
         <td-markdown [content]="achievements.goals"></td-markdown>
       </div>
+      <mat-divider></mat-divider>
       <ng-container *planetBeta>
         <div *ngIf="certifications.length > 0">
           <h3 i18n>My Certifications</h3>
@@ -46,6 +52,7 @@
           </mat-list>
         </div>
       </ng-container>
+      <mat-divider></mat-divider>
       <div *ngIf="achievements?.links?.length > 0">
         <h3 i18n>My Links</h3>
         <mat-list>
@@ -55,6 +62,7 @@
           </mat-list-item>
         </mat-list>
       </div>
+      <mat-divider></mat-divider>
       <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
@@ -77,6 +85,7 @@
           </mat-list-item>
         </mat-list>
       </div>
+      <mat-divider></mat-divider>
       <div *ngIf="achievements.references.length > 0">
         <h3 i18n>My References</h3>
         <mat-list class="references-list">
