@@ -44,7 +44,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
-    private stateService: StateService
+    private stateService: StateService,
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
