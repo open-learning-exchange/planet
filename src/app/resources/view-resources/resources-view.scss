@@ -35,6 +35,15 @@
     }
   }
 
+  .toolbar-title {
+    flex-grow: 1;
+  }
+  
+  .toolbar-button {
+    flex-shrink: 0;
+  }
+  
+
   @media (max-width: $screen-sm) {
     .view-container {
       grid-template-columns: 1fr;

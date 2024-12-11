@@ -5,7 +5,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
+    <span class="toolbar-title margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
     <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
@@ -43,11 +43,11 @@
 
   <ng-template #actionButtons>
     <ng-container *ngIf="!parent">
-      <a mat-raised-button *ngIf="resource.doc?._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n>Open in new tab</a>
-      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled">
+      <a mat-raised-button *ngIf="resource.doc?._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n class = "toolbar-button margin-lr-3">Open in new tab</a>
+      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="toolbar-button margin-lr-3" *ngIf="!isUserEnrolled">
         Add to myLibrary
       </button>
-      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="margin-lr-3" *ngIf="isUserEnrolled">
+      <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'remove')" i18n class="toolbar-button margin-lr-3" *ngIf="isUserEnrolled">
         Remove from myLibrary
       </button>
     </ng-container>
