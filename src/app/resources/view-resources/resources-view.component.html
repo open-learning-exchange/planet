@@ -5,7 +5,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="toolbar-title margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
+    <span class="margin-lr-3 ellipsis-title">{{resource?.doc?.title}}</span>
     <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
