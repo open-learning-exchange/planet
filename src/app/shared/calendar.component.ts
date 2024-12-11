@@ -34,7 +34,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  @Input() type: string = ""
+  @Input() type = '';
 
   @Input() header?: any = {
     left: 'title',
@@ -85,7 +85,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    console.log('log:', this.link)
+    console.log('log:', this.link);
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
