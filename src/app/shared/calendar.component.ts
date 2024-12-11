@@ -16,9 +16,9 @@ import { addDateAndTime, styleVariables } from './utils';
   selector: 'planet-calendar',
   template: `
     <div class="calendar-legend" *ngIf="showLegend">
-      <h3>Event Legend</h3>
+      <h3>Event Legend(s)</h3>
       <div *ngFor="let legend of eventLegend">
-        <div class="legend-item">
+        <div class="legend-item" *ngIf="!legend.type || legend.type === this.type">
           <div class="legend-color" [style.backgroundColor]="legend.color"></div>
           <span>{{ legend.label }}</span>
         </div>
@@ -34,6 +34,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
+  @Input() type: string = ""
 
   @Input() header?: any = {
     left: 'title',
@@ -59,8 +60,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   showLegend = true;
   eventLegend = [
     { color: styleVariables.primary, label: 'Event' },
-    { color: 'yellow', label: 'Uncompleted Task' },
-    { color: 'grey', label: 'Completed Task' }
+    { color: 'orange', label: 'Uncompleted Task', type: 'team' },
+    { color: 'grey', label: 'Completed Task', type: 'team' }
   ];
 
   calendarOptions: CalendarOptions = {
@@ -84,6 +85,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
+    console.log('log:', this.link)
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
