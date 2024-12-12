@@ -5,7 +5,8 @@ import { TagsService } from './tags.service';
   template: `
     <span [ngSwitch]="selectedIds.length" class="small margin-lr-5">
       <span *ngSwitchCase="0" i18n>No collections selected</span>
-      <span *ngSwitchCase="1"><span i18n>Selected:</span>{{' ' + tooltipLabels}}</span>
+      <span *ngSwitchCase="1"><span i18n>Selected:</span>
+        {{ tooltipLabels.length > 50 ? (tooltipLabels | slice:0:50) + '...' : tooltipLabels }}</span>
       <span *ngSwitchDefault [matTooltip]="tooltipLabels" i18n>Hover to see selected collections</span>
     </span>
   `,
