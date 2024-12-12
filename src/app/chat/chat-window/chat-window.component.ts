@@ -20,7 +20,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   spinnerOn = true;
   streaming: boolean;
   disabled = false;
-  clear_chat = true;
+  clearChat = true;
   provider: AIProvider;
   conversations: any[] = [];
   selectedConversationId: any;
@@ -84,8 +84,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         takeUntil(this.onDestroy$),
         filter(() => {
-          if (this.clear_chat) {
-            this.clear_chat = false;
+          if (this.clearChat) {
+            this.clearChat = false;
             return false;
           }
           return true;
