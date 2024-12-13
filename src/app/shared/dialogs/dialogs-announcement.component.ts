@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, of } from 'rxjs';
+import { Subject, of, Observable } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
@@ -88,7 +88,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   initializeData() {
-    this.fetchMembers();
+    this.fetchMembers().subscribe(members => { this.members = members; });
     this.coursesService.requestCourses();
     this.newsService.requestNews({
       selectors: {
@@ -156,31 +156,22 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     );
   }
 
-  fetchMembers() {
-    this.couchService.findAll(
-      'login_activities',
-      findDocuments({
-        type: 'login',
-        loginTime: { $gte: this.startDate.getTime() }
-      }, [ 'user' ])
-    ).pipe(
+  fetchMembers(): Observable<any[]> {
+    return this.couchService.findAll('login_activities', findDocuments({
+      type: 'login',
+      loginTime: { $gte: this.startDate.getTime() }
+    }, [ 'user' ])).pipe(
       catchError(() => of([])),
-      map((res: any[]) => {
-        return Array.from(new Set(res.map(doc => doc.user)));
-      }),
-      switchMap((uniqueUsers: string[]) => {
+      map((res: any[]) => Array.from(new Set(res.map(doc => doc.user)))),
+      switchMap(uniqueUsers => {
         if (uniqueUsers.length === 0) { return of([]); }
         return this.couchService.findAll(
           '_users',
-          findDocuments({
-            name: { $in: uniqueUsers }
-          }, [ '_id', '_rev', 'name', 'roles', 'type', 'isUserAdmin', 'planetCode', 'parentCode', 'joinDate' ])
+          findDocuments({ name: { $in: uniqueUsers } }, [ '_id', 'name' ])
         );
       }),
       catchError(() => of([]))
-    ).subscribe((members: any[]) => {
-      this.members = members;
-    });
+    );
   }
 
   fetchEnrolledMembers() {
