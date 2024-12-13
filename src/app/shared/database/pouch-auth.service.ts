@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, Observable, forkJoin } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { PouchService } from './pouch.service';
 import { CouchService } from '../couchdb.service';
+import { UserChallengeStatusService } from '../user-challenge-status.service';
 
 interface SessionInfo {
   userCtx: {
@@ -18,7 +19,8 @@ export class PouchAuthService {
 
   constructor(
     private pouchService: PouchService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private userStatusService: UserChallengeStatusService
   ) {
     this.authDB = this.pouchService.getAuthDB();
   }
@@ -32,10 +34,6 @@ export class PouchAuthService {
   login(username, password) {
     this.pouchService.configureDBs();
     return from(this.authDB.logIn(username, password)).pipe(
-      tap(() => {
-        // Reset the popup flag on successful login
-        localStorage.removeItem('announcementPopupShown');
-      }),
       catchError(this.handleError)
     );
   }
@@ -48,6 +46,7 @@ export class PouchAuthService {
   }
 
   logout() {
+    this.userStatusService.resetStatus();
     return from(this.authDB.logOut()).pipe(
       switchMap(() => forkJoin(this.pouchService.deconfigureDBs())),
       catchError(this.handleError)

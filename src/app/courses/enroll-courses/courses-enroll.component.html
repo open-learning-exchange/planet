@@ -8,12 +8,10 @@
   <mat-toolbar class="primary-color font-size-1">
     {{ course }}
     <span class="toolbar-fill"></span>
+    <button mat-raised-button color="accent" (click)="exportCSV()">
+      Export
+    </button>
   </mat-toolbar>
 
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
-    <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table"></planet-users-table>
-  </ng-container>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No User Found</div>
-  </ng-template>
+  <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table"></planet-users-table>
 </div>

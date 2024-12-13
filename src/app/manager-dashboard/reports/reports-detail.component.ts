@@ -51,6 +51,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     completions: new ReportsDetailData('time'),
     steps: new ReportsDetailData('time')
   };
+  chatActivities = new ReportsDetailData('createdDate');
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -121,6 +122,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
       this.getTeams();
+      this.getChatUsage();
       this.dialogsLoadingService.stop();
     });
   }
@@ -165,6 +167,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         )
       )
     ));
+    this.chatActivities.filter(this.filter);
+    this.setChatUsage();
   }
 
   getLoginActivities() {
@@ -276,6 +280,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
         }), { enterprise: [], team: [] });
     });
+  }
+
+  getChatUsage() {
+    this.activityService.getChatHistory().subscribe((data) => {
+      this.chatActivities.data = data;
+    });
+  }
+
+  setChatUsage() {
+    const { byMonth } = this.activityService.groupChatUsage(this.chatActivities.filteredData);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'chatUsageChart' });
   }
 
   getTeamMembers(team: any) {
