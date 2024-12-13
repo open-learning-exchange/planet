@@ -33,7 +33,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   userMembership: any[] = [];
   teamActivities: any[] = [];
   dbName = 'teams';
-  emptyData = false;
   user = this.userService.get();
   isAuthorized = false;
   planetType = this.stateService.configuration.planetType;
@@ -123,7 +122,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       )) {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
-      this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
     }, (error) => {
       if (this.userNotInShelf) {
@@ -238,7 +236,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted a team.`);
+        const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
+        this.planetMessageService.showMessage($localize`You have deleted ${entityType} ${team.name}.`);
         this.removeTeamFromTable(team);
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)

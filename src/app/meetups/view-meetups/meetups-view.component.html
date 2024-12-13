@@ -36,7 +36,7 @@
       <p *ngIf="meetupDetail?.deadline"><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
       <p *ngIf="meetupDetail?.completedTime"><b i18n>Completed On:</b> {{meetupDetail?.completedTime | date: 'fullDate'}} {{meetupDetail?.completedTime | date: 'shortTime'}}</p>
       <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
-      <p *ngIf="meetupDetail?.recurring"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}}</p>
+      <p *ngIf="meetupDetail?.recurring && meetupDetail?.recurring !== 'none'"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}} for {{ meetupDetail?.recurringNumber }} {{ meetupDetail?.recurring === 'daily' ? 'days' : 'weeks' }}</p>
       <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
       <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
       <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>

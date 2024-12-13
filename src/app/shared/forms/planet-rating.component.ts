@@ -45,6 +45,7 @@ export class PlanetRatingComponent implements OnChanges {
   popupForm: FormGroup;
   isPopupOpen = false;
   stackedBarData = [];
+  enrolled = true;
   get rateFormField() {
     return { rate: this.rating.userRating.rate || 0 };
   }
@@ -83,7 +84,24 @@ export class PlanetRatingComponent implements OnChanges {
     this.popupForm.setValue(Object.assign({}, this.rateFormField, this.commentField));
   }
 
+  isEnrolled(id: any, type: any): boolean {
+    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
+    const { inShelf } = this.userService.countInShelf([ id ], idType);
+    return inShelf;
+  }
+
   onStarClick(form = this.rateForm) {
+    if (!this.isEnrolled(this.item._id, this.ratingType)) {
+      if (this.ratingType === 'course') {
+        this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
+      } else {
+        this.planetMessage.showMessage($localize`Please add the ${this.ratingType} to your library before rating!`);
+      }
+      this.enrolled = false;
+      return;
+    }
+
+    this.enrolled = true;
     if (this.disabled || form.controls.rate.value === 0) {
       return;
     }
