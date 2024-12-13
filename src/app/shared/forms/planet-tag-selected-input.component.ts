@@ -41,7 +41,8 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   }
 
   get truncatedTooltip(): string {
-    const maxLength = this.deviceType === this.deviceTypes.DESKTOP ? 50 : 20;
+    const maxLength = this.deviceType === this.deviceTypes.DESKTOP ? 50 :
+                      this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
     return this.tooltipLabels.length > maxLength
       ? this.tooltipLabels.slice(0, maxLength) + '...'
       : this.tooltipLabels;
