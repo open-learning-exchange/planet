@@ -59,10 +59,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     combineLatest(
       this.coursesService.courseUpdated$,
       this.resourcesService.resourcesListener(this.parent),
-      this.stateService.getCouchState('exams', 'local')
+      this.stateService.getCouchState('exams', 'local'),
+      this.stateService.getCouchState('surveys', 'local')
     ).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
-      this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
+    .subscribe(([ { course, progress = [] }, resources, exams, surveys ]: [ { course: any, progress: any }, any[], any[], any[] ]) => {
+      this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams, surveys);
       if (this.countActivity) {
         this.coursesService.courseActivity('visit', course, this.stepNum);
         this.countActivity = false;
@@ -106,7 +107,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  initCourse(course, progress, resources, exams) {
+  initCourse(course, progress, resources, exams, surveys) {
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.initResources(resources);
@@ -129,7 +130,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     if (this.stepDetail.survey) {
       console.log('log: survey', this.stepDetail.survey);
-      // if (this.stepDetail.survey)
+      this.submissionsService.openSubmission({
+        parentId: this.stepDetail.surveys._id + '@' + course._id,
+        parent: surveys.find(survey => survey._id === this.stepDetail.surveys._id) || this.stepDetail.survey,
+        user: this.userService.get(),
+        type: 'survey' });
     }
     this.isLoading = false;
   }
