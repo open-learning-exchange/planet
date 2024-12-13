@@ -176,10 +176,6 @@ onSubmit() {
     }
   }
 
-  isClassDay(day) {
-    return this.meetupFrequency.includes(day) ? true : false;
-  }
-
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.meetupForm.controls.day;
     if (isChecked) {
