@@ -23,7 +23,7 @@ export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Dat
   template: `
     <div class="announcement-container">
       <img
-        src="https://res.cloudinary.com/mutugiii/image/upload/v1733224910/dec_challenge_svcbi3.jpg"
+        src="assets/challenge/dec challenge.jpeg"
         alt="Issues Challenge"
         class="announcement-banner"
       />
