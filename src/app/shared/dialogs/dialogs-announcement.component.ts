@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
 import { CouchService } from '../couchdb.service';
@@ -11,7 +11,6 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
-import { UsersService } from '../../users/users.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
@@ -67,7 +66,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private usersService: UsersService,
     private userStatusService: UserChallengeStatusService
   ) {}
 
@@ -90,6 +88,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   initializeData() {
+    this.fetchMembers();
     this.coursesService.requestCourses();
     this.newsService.requestNews({
       selectors: {
@@ -100,7 +99,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       },
       viewId: this.teamId
     });
-    this.fetchMembers();
     this.fetchCourseAndNews();
     this.fetchEnrolledMembers();
   }
@@ -159,14 +157,29 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   fetchMembers() {
-    this.usersService.getAllUsers().subscribe((users: any) => {
-      this.members = users.map((member: any) => {
-        const [ , memberName ] = member?._id.split(':');
-        return {
-          ...member,
-          name: memberName,
-        };
-      });
+    this.couchService.findAll(
+      'login_activities',
+      findDocuments({
+        type: 'login',
+        loginTime: { $gte: this.startDate.getTime() }
+      }, [ 'user' ])
+    ).pipe(
+      catchError(() => of([])),
+      map((res: any[]) => {
+        return Array.from(new Set(res.map(doc => doc.user)));
+      }),
+      switchMap((uniqueUsers: string[]) => {
+        if (uniqueUsers.length === 0) { return of([]); }
+        return this.couchService.findAll(
+          '_users',
+          findDocuments({
+            name: { $in: uniqueUsers }
+          }, [ '_id', '_rev', 'name', 'roles', 'type', 'isUserAdmin', 'planetCode', 'parentCode', 'joinDate' ])
+        );
+      }),
+      catchError(() => of([]))
+    ).subscribe((members: any[]) => {
+      this.members = members;
     });
   }
 
