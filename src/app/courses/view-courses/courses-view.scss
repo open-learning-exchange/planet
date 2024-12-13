@@ -34,6 +34,10 @@
     margin-left: 8px;
   }
 
+  .view-step-button{
+    flex-shrink: 0;
+  }
+
   @media (max-width: $screen-sm) {
     .course-container {
       grid-template-columns: 1fr;
