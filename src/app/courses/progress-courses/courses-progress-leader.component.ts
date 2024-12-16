@@ -223,14 +223,14 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  structureChartData(data) { 
-    return data.map(element => { 
+  structureChartData(data) {
+    return data.map(element => {
       let successfulSteps = 0;
       let totalSteps = 0;
       let totalErrors = 0;
       const steps = {};
-  
-      element.items.forEach((item, index) => { 
+
+      element.items.forEach((item, index) => {
         const stepErrors = item.number || 0;
         totalSteps++;
         if (stepErrors === 0) {
@@ -239,7 +239,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         totalErrors += stepErrors;
         steps[`Step ${(index + 1)}`] = stepErrors;
       });
-  
+
       return {
         'Username': element.label,
         'Success Percentage': `${((successfulSteps / totalSteps) * 100).toFixed(2)}%`,
@@ -247,7 +247,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
         ...steps
       };
     });
-  }  
+  }
 
   exportChartData() {
     if (!this.course) {
