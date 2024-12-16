@@ -354,14 +354,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (typeof ac.value === 'string') {
       return ac.value.trim() ? null : { required: true };
     }
-  
+
     if (Array.isArray(ac.value)) {
       return ac.value.length > 0 ? null : { required: true };
     }
-  
+
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
   }
-  
+
 
   setViewAnswerText(answer: any) {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
