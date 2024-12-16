@@ -132,7 +132,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
-    console.log('log:', this.answer.valid)
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
 // Only navigate away from page until after successful post (ensures DB is updated for submission list)
@@ -297,9 +296,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer.setValue(value);
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
-
-    console.log('log:', this.answer.valid)
-    console.log('log:', this.answer.value)
   }
 
   calculateCorrect() {
