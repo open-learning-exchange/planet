@@ -250,18 +250,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   exportChartData() {
-    if (!this.course) {
-      console.error('Course data is not available.');
-      return;
-    }
-
-    const planetName = this.stateService.configuration.name || 'Unnamed';
-    const courseTitle = this.course.courseTitle || 'Unnamed Course';
+    const planetName = this.stateService.configuration.name;
+    const courseTitle = this.course.courseTitle;
     const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
     const title = $localize`${courseTitle} Course Progress for ${entityLabel} ${planetName}`;
 
     const structuredData = this.structureChartData(this.chartData);
-
     this.csvService.exportCSV({
       data: structuredData,
       title: title
