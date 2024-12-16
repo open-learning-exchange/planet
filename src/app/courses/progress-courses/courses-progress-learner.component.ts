@@ -62,7 +62,6 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   createChartData(courses = [], submissions) {
     return courses.map((course: any) => ({
       label: course.doc.courseTitle,
-      courseId: course._id,
       items: this.courseBySteps(
         course,
         submissions.filter(submission => submission.parentId.indexOf(course._id) > -1)
@@ -106,13 +105,5 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   }
 
   changeData(event) {}
-
-  handleCourseClick(event: any) {
-    if (event.courseId) {
-      this.router.navigate([ '/courses', 'view', event.courseId ]);
-    } else {
-      console.error('Missing Course ID');
-    }
-  }
 
 }
