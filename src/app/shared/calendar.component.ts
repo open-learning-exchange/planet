@@ -15,8 +15,8 @@ import { addDateAndTime, styleVariables } from './utils';
 @Component({
   selector: 'planet-calendar',
   template: `
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
-      <h3>Event Legend(s)</h3>
       <div *ngFor="let legend of eventLegend">
         <div class="legend-item" *ngIf="!legend.type || legend.type === this.type">
           <div class="legend-color" [style.backgroundColor]="legend.color"></div>
@@ -24,7 +24,6 @@ import { addDateAndTime, styleVariables } from './utils';
         </div>
       </div>
     </div>
-    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
   `
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {

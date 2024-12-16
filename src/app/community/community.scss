@@ -35,10 +35,18 @@ planet-calendar {
   overflow-y: auto;
 }
 
-.calendar-legend .legend-item {
+.calendar-legend {
+  padding-top: 10px;
+  text-align: right;
   display: flex;
+  flex-wrap: wrap; /* Allows wrapping to next line if necessary */
+  justify-content: flex-end; /* Aligns items to the right */
+  gap: 10px; /* Adds space between items */
+}
+
+.calendar-legend .legend-item {
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 5px;
 }
 
 .calendar-legend .legend-color {
