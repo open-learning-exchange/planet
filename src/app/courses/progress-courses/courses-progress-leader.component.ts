@@ -223,29 +223,31 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  structureChartData(data) {
-    return data.map(element => {
-      let totalErrors = 0;
+  structureChartData(data) { 
+    return data.map(element => { 
+      let successfulSteps = 0;
       let totalSteps = 0;
+      let totalErrors = 0;
       const steps = {};
-      element.items.forEach((item, index) => {
+  
+      element.items.forEach((item, index) => { 
         const stepErrors = item.number || 0;
-        if (typeof stepErrors === 'number') {
-          totalErrors += stepErrors;
-          totalSteps++;
+        totalSteps++;
+        if (stepErrors === 0) {
+          successfulSteps++;
         }
+        totalErrors += stepErrors;
         steps[`Step ${(index + 1)}`] = stepErrors;
       });
+  
       return {
         'Username': element.label,
-        'Success Percentage': totalSteps
-          ? `${(((totalSteps - totalErrors) / totalSteps) * 100).toFixed(2)}%`
-          : 'N/A',
-        'Total Errors': totalErrors, 
+        'Success Percentage': `${((successfulSteps / totalSteps) * 100).toFixed(2)}%`,
+        'Total Errors': totalErrors,
         ...steps
       };
     });
-  }
+  }  
 
   exportChartData() {
     if (!this.course) {
