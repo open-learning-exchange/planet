@@ -14,6 +14,14 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styles': [ `
+    :host {
+      display: block;
+      overflow: hidden;
+    }
+    :host mat-dialog-content {
+      overflow-y: auto;
+      max-height: calc(100vh - 100px); 
+    }
     :host .mat-list-option span {
       font-weight: inherit;
     }
