@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
@@ -20,6 +20,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   spinnerOn = true;
   streaming: boolean;
   disabled = false;
+  clearChat = true;
   provider: AIProvider;
   conversations: any[] = [];
   selectedConversationId: any;
@@ -71,8 +72,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.chatService.newChatSelected$
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
-        this.selectedConversationId = null;
-        this.conversations = [];
+        this.resetConversation();
         this.focusInput();
       }, error => {
         console.error('Error subscribing to newChatSelected$', error);
@@ -81,7 +81,16 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   subscribeToSelectedConversation() {
     this.chatService.selectedConversationId$
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(
+        takeUntil(this.onDestroy$),
+        filter(() => {
+          if (this.clearChat) {
+            this.clearChat = false;
+            return false;
+          }
+          return true;
+        })
+      )
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
@@ -100,6 +109,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         };
         this.focusInput();
       }));
+  }
+
+  resetConversation() {
+    this.conversations = [];
+    this.selectedConversationId = null;
   }
 
   createForm() {
