@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { CsvService } from '../../shared/csv.service';
 
 @Component({
   templateUrl: './reports-myplanet.component.html'
@@ -33,13 +34,14 @@ export class ReportsMyPlanetComponent implements OnInit {
   hub = { spokes: [] };
 
   constructor(
+    private csvService: CsvService,
     private couchService: CouchService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private reportsService: ReportsService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
@@ -110,6 +112,54 @@ export class ReportsMyPlanetComponent implements OnInit {
         return [ filteredPlanets, myPlanets.concat(hubMyPlanets) ];
       })
     );
+  }
+
+  private formatTotalTime(totalMilliseconds: number): string {
+    if (!totalMilliseconds || totalMilliseconds === 0) {
+        return '00:00:00';
+    }
+    const totalSeconds = Math.floor(totalMilliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  private mapToCsvData(children: any[], planetName?: string): any[] {
+    return children.map((data: any) => ({
+      ...(planetName ? { 'Planet Name': planetName } : {}),
+      'ID': data.androidId.toString() || data.uniqueAndroidId.toString(),
+      'Name': data.deviceName || data.customDeviceName,
+      'Last Synced': data.time && data.time !== 0 ?
+      new Date(data.time).toDateString() :
+      data.last_synced && data.last_synced !== 0 ?
+      new Date(data.last_synced).toDateString() :
+      'N/A',
+      'Version': data.versionName,
+      'No of Visits': data.count,
+      'Used Time': this.formatTotalTime(data.totalUsedTime),
+    }));
+  }
+
+  exportAll(): void {
+    const csvData: any[] = this.planets.flatMap((planet: any) => {
+      return this.mapToCsvData(planet.children, planet.name);
+    });
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: 'myPlanet Reports',
+    });
+  }
+
+  exportSingle(planet: any): void {
+    const csvData = this.mapToCsvData(planet.children);
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: `myPlanet Reports for ${planet.name}`,
+    });
   }
 
 }
