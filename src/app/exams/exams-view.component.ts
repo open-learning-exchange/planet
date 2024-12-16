@@ -132,6 +132,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    console.log('log:', this.answer.valid)
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
 // Only navigate away from page until after successful post (ensures DB is updated for submission list)
@@ -279,14 +280,26 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 }
 
   setAnswer(event, option) {
-    this.answer.setValue(Array.isArray(this.answer.value) ? this.answer.value : []);
-    const value = this.answer.value;
-    if (event.checked === true) {
-      value.push(option);
-    } else if (event.checked === false) {
-      value.splice(value.indexOf(option), 1);
+    const value = this.answer.value || [];
+
+
+    if (event.checked) {
+      if (!value.includes(option)) {
+        value.push(option);
+      }
+    } else {
+      const index = value.indexOf(option);
+      if (index > -1) {
+        value.splice(index, 1);
+      }
     }
+
+    this.answer.setValue(value);
+    this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
+
+    console.log('log:', this.answer.valid)
+    console.log('log:', this.answer.value)
   }
 
   calculateCorrect() {
@@ -343,10 +356,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   answerValidator(ac: AbstractControl) {
     if (typeof ac.value === 'string') {
-      return CustomValidators.required(ac);
+      return ac.value.trim() ? null : { required: true };
     }
-    return ac.value !== null ? null : { required: true };
+  
+    if (Array.isArray(ac.value)) {
+      return ac.value.length > 0 ? null : { required: true };
+    }
+  
+    return ac.value !== null && ac.value !== undefined ? null : { required: true };
   }
+  
 
   setViewAnswerText(answer: any) {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
