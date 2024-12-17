@@ -8,8 +8,6 @@
         <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
       </span>
     </ng-template>
-    <a class="small" *ngIf="cardType==='myLibrary'" routerLink="/chat" i18n>myChat</a>
-    <a class="small" *ngIf="cardType==='myCourses'" routerLink="myProgress" i18n>myProgress</a>
   </div>
   <div class="right-tile" #items>
     <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
@@ -25,7 +23,7 @@
             #dashboardTile
           >
             <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
-            <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': tileLines,'word-wrap': 'break-word' }">{{item.title | slice:0:80}}</p>
+            <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': tileLines }">{{item.title | slice:0:80}}</p>
             <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardType!=='myLife' && !item?.canRemove">
               <mat-icon i18n-matTooltip [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
             </button>
