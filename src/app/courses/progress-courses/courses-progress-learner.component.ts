@@ -110,8 +110,6 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   handleCourseClick(event: any) {
     if (event.courseId) {
       this.router.navigate([ '/courses', 'view', event.courseId ]);
-    } else {
-      console.error('Missing Course ID');
     }
   }
 
