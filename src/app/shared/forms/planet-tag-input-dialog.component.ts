@@ -6,6 +6,7 @@ import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
@@ -52,6 +53,8 @@ export class PlanetTagInputDialogComponent {
   get okClickValue() {
     return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
   }
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -63,7 +66,8 @@ export class PlanetTagInputDialogComponent {
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -80,6 +84,7 @@ export class PlanetTagInputDialogComponent {
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   dataInit() {
@@ -266,6 +271,12 @@ export class PlanetTagInputDialogComponent {
       return checkValue(iterator);
     };
     return checkValue(this.selected.entries());
+  }
+
+  truncateTagName(subTag: { name: string; count?: number }, maxLength: number = 25): string {
+    if (this.deviceType == this.deviceTypes.DESKTOP) { maxLength = 50}
+    let truncatedName = subTag.name.length > maxLength ? subTag.name.slice(0, maxLength) + '...' : subTag.name;
+    return `${truncatedName} (${subTag.count || 0})`;
   }
 
 }
