@@ -362,7 +362,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
   }
 
-
   setViewAnswerText(answer: any) {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
     this.grade = answer.grade;
