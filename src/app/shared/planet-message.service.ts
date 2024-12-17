@@ -8,18 +8,9 @@ export class PlanetMessageService {
   constructor(
     private snackBar: MatSnackBar,
   ) {}
-
-  truncateMessage(message: string) {
-    const maxLength = 45;
-    if (message.length <= maxLength) {
-      return message;
-    } else {
-      return message.slice(0, maxLength) + '...';
-    }
-  }
   
   showMessage(message: string) {
-    this.snackBar.open(this.truncateMessage(message), undefined, {
+    this.snackBar.open(message, undefined, {
       duration: 3000,
     });
   }
