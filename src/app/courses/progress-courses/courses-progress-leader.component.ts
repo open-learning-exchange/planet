@@ -10,6 +10,7 @@ import { dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
@@ -31,6 +32,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   submittedExamSteps: any[] = [];
   planetCodes: string[] = [];
   selectedPlanetCode: string;
+  configuration: any = {};
   deviceType: DeviceType;
   deviceTypes = DeviceType;
 
@@ -42,6 +44,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
+    private stateService: StateService,
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
@@ -221,23 +224,41 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   structureChartData(data) {
-    const dataArr = [];
-    data.forEach(element => {
-      const dataDict = {};
-      dataDict['Username'] = element.label;
-      for (let i = 0; i < element.items.length; i++) {
-        dataDict[`Step ${(i + 1)}`] = element.items[i].number;
-      }
+    return data.map(element => {
+      let successfulSteps = 0;
+      let totalSteps = 0;
+      let totalErrors = 0;
+      const steps = {};
 
-      dataArr.push(dataDict);
+      element.items.forEach((item, index) => {
+        const stepErrors = item.number || 0;
+        totalSteps++;
+        if (stepErrors === 0) {
+          successfulSteps++;
+        }
+        totalErrors += stepErrors;
+        steps[`Step ${(index + 1)}`] = stepErrors;
+      });
+
+      return {
+        'Username': element.label,
+        'Success Percentage': `${((successfulSteps / totalSteps) * 100).toFixed(2)}%`,
+        'Total Errors': totalErrors,
+        ...steps
+      };
     });
-    return dataArr;
   }
 
   exportChartData() {
+    const planetName = this.stateService.configuration.name;
+    const courseTitle = this.course.courseTitle;
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const title = $localize`${courseTitle} Course Progress for ${entityLabel} ${planetName}`;
+
+    const structuredData = this.structureChartData(this.chartData);
     this.csvService.exportCSV({
-      data:  this.structureChartData(this.chartData),
-      title: $localize`Course Progress Data`
+      data: structuredData,
+      title: title
     });
   }
 
