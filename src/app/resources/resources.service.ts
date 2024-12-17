@@ -102,7 +102,6 @@ export class ResourcesService {
     }));
   }
 
-
   updateResourceTags(resourceIds, tagIds, indeterminateIds = []) {
     return this.tagsService.updateManyTags(
       this.resources.local, this.dbName, { selectedIds: resourceIds, tagIds, indeterminateIds }
