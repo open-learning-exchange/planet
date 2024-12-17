@@ -1,4 +1,4 @@
-import { Injectable, HostListener } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
@@ -7,8 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class PlanetMessageService {
   constructor(
     private snackBar: MatSnackBar,
-  ) { 
-  }
+  ) {}
 
   truncateMessage(message: string) {
     const maxLength = 45;
