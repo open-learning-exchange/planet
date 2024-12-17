@@ -1,13 +1,59 @@
 @import '../../variables';
 
 .achievements-container {
-  max-width: 800px;
+  max-width: 95%;
   margin: 0 auto;
-  text-align: center;
+
+  .references-list {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .certs-list .mat-list-item{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
 
   & mat-list, & ul, & ol {
     text-align: left;
   }
+
+  mat-divider {
+    margin-top: 1rem;
+    background-color: $primary;
+  }
+
+  .profile-image{
+    max-width: 15vh;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 2rem;
+   }
+
+   .birth-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+   }
+
+   .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem;
+   }
 
   .mat-list-base .mat-list-item {
     &.mat-list-item-word-wrap {
@@ -44,7 +90,6 @@
         margin-right: 0;
       }
     }
-
   }
 
   .styled-link {
@@ -88,7 +133,7 @@
     gap: 0.2rem;
     width: 100%;
   }
-  
+
   .auto-adjust-buttons a {
     flex-grow: 1;
     text-align: center;

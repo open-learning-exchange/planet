@@ -34,7 +34,7 @@
         </mat-tab>
         <mat-tab i18n-label label="Services">
           <ng-container *ngIf="!planetCode">
-            <button *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
+            <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
               { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
             </button>
           </ng-container>

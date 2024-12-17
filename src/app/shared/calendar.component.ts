@@ -186,13 +186,16 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openAddEventDialog(event) {
-    let meetup;
-    if (event?.start) {
-      meetup = {
-        startDate: event?.start,
-        endDate: this.adjustEndDate(event?.end)
-      };
+    const today = new Date();
+    const meetup = event?.start
+    ? {
+      startDate: event.start,
+      endDate: this.adjustEndDate(event.end),
     }
+  : {
+      startDate: today,
+      endDate: today,
+    };
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });
