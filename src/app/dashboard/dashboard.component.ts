@@ -1,10 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-
 
 import { map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
@@ -18,13 +16,11 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
-
 @Component({
   templateUrl: './dashboard.component.html',
   styleUrls: [ './dashboard.scss' ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-
 
   user = this.userService.get();
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
@@ -36,7 +32,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
 
-
   dateNow: any;
   visits = 0;
   surveysCount = 0;
@@ -44,7 +39,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   leaderIds = [];
   onDestroy$ = new Subject<void>();
   showBanner = false;
-
 
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
@@ -57,7 +51,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { firstLine: $localize`my`, title: $localize`Chat`, link: '/chat' }
   ];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
-
 
   constructor(
     private userService: UserService,
@@ -84,7 +77,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-
   ngOnInit() {
     this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
     this.planetName = this.stateService.configuration.name;
@@ -103,15 +95,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.reminderBanner();
   }
 
-
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
-
   initDashboard() {
-
 
     const userShelf = this.userService.shelf;
     if (this.isEmptyShelf(userShelf)) {
@@ -134,7 +123,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.bulkGet(db, shelf.filter(id => id))
       .pipe(
@@ -146,7 +134,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         })
       );
   }
-
 
   getTeamMembership() {
     const configuration = this.stateService.configuration;
@@ -165,7 +152,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-
   get profileImg() {
     const attachments = this.user._attachments;
     if (attachments) {
@@ -174,14 +160,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return 'assets/image.png';
   }
 
-
   isEmptyShelf(shelf) {
     return shelf.courseIds.length === 0
       && shelf.meetupIds.length === 0
       && shelf.myTeamIds.length === 0
       && shelf.resourceIds.length === 0;
   }
-
 
   getSubmissions(type: string, status: string, username?: string) {
     return this.submissionsService.getSubmissions(findDocuments({
@@ -199,7 +183,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-
   getExams() {
     this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
       this.examsCount = exams.length;
@@ -212,7 +195,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
   }
 
-
   openCourseView(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId: course._id },
@@ -222,7 +204,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       autoFocus: false
     });
   }
-
 
   setBadgesCourses(courses, certifications) {
     this.badgesCourses = courses
@@ -237,7 +218,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }), { none: [] });
     this.badgeGroups = [ ...foundations, 'none' ].filter(group => this.badgesCourses[group] && this.badgesCourses[group].length);
   }
-
 
   reminderBanner() {
     this.userService.isProfileComplete();
@@ -254,6 +234,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.userService.profileBanner.next(false);
     this.showBanner = false;
   }
-
 
 }
