@@ -225,7 +225,8 @@ export class CoursesService {
   courseAdmissionMany(courseIds, type) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
       const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
-      const message = type === 'remove' ? $localize`${prefix} successfully removed from myCourses` : $localize`${prefix} added to myCourses`;
+      const message = type === 'remove' ? $localize`${prefix} successfully removed from myCourses` :
+        $localize`${prefix} added to myCourses`;
       this.planetMessageService.showMessage(message);
       return shelf;
     }));

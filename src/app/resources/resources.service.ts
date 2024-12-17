@@ -90,12 +90,18 @@ export class ResourcesService {
 
   libraryAddRemove(resourceIds, type) {
     return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map(({ shelf, countChanged }) => {
+      const resource = this.resources.local.find(r => r._id === resourceIds[0]);
+      const resourceTitle = resource ? resource.doc.title : '';
       const message = type === 'remove' ?
-        countChanged + $localize` Resource(s) successfully removed from myLibrary` : countChanged + $localize` Resource(s) added to myLibrary`;
+        (countChanged === 1 ? $localize`${resourceTitle} successfully removed from myLibrary` :
+          `${countChanged} ${$localize`Resources`} successfully removed from myLibrary`) :
+        (countChanged === 1 ? $localize`${resourceTitle} added to myLibrary` :
+          `${countChanged} ${$localize`Resources`} added to myLibrary`);
       this.planetMessageService.showMessage(message);
       return shelf;
     }));
   }
+
 
   updateResourceTags(resourceIds, tagIds, indeterminateIds = []) {
     return this.tagsService.updateManyTags(
