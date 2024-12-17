@@ -278,7 +278,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   truncateTagName(subTag: { name: string; count?: number }, maxLength: number): string {
-    if (this.deviceType === this.deviceTypes.DESKTOP) { maxLength = 50; } else { maxLength = 25;}
+    if (this.deviceType === this.deviceTypes.DESKTOP) { maxLength = 50; } else { maxLength = 25; }
     const truncatedName = subTag.name.length > maxLength ? subTag.name.slice(0, maxLength) + '...' : subTag.name;
     return `${truncatedName} (${subTag.count || 0})`;
   }
