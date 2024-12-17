@@ -107,7 +107,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
     }
 
-
     forkJoin([
       this.getData('resources', userShelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true }),
@@ -175,7 +174,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }));
   }
 
-
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.user.name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
@@ -189,7 +187,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.myLifeItems = this.myLifeItems.map(item => item.link === 'submissions' ? { ...item, badge: this.examsCount } : item);
     });
   }
-
 
   teamRemoved(team: any) {
     this.data.myTeams = this.data.myTeams.filter(myTeam => team._id !== myTeam._id);
@@ -228,7 +225,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.showBanner = profileBanner && !profileComplete;
     });
   }
-
 
   closeBanner() {
     this.userService.profileBanner.next(false);
