@@ -18,7 +18,7 @@ import { addDateAndTime, styleVariables } from './utils';
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
       <div *ngFor="let legend of eventLegend">
-        <div class="legend-item" *ngIf="!legend.type || legend.type === this.type">
+        <div class="legend-item" *ngIf="!legend.type || legend.type === type">
           <div class="legend-color" [style.backgroundColor]="legend.color"></div>
           <span>{{ legend.label }}</span>
         </div>
