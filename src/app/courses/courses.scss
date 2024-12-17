@@ -55,6 +55,10 @@ $label-height: 1rem;
   height: $toolbar-height;
 }
 
+.break-word {
+  word-break: break-word;
+}
+
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
