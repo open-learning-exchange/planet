@@ -91,7 +91,7 @@ export class ResourcesService {
   libraryAddRemove(resourceIds, type) {
     return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map(({ shelf, countChanged }) => {
       const message = type === 'remove' ?
-        countChanged + $localize` Resources successfully removed from myLibrary` : countChanged + $localize` Resources added to your dashboard`;
+        countChanged + $localize` Resource(s) successfully removed from myLibrary` : countChanged + $localize` Resource(s) added to myLibrary`;
       this.planetMessageService.showMessage(message);
       return shelf;
     }));
