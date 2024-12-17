@@ -68,7 +68,7 @@
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(subTag._id || subTag.name)">
           <mat-icon>subdirectory_arrow_right</mat-icon>
-          {{subTag.name + ' (' + (subTag.count || 0) + ')'}}
+          {{ (subTag.name + ' (' + (subTag.count || 0) + ')') | slice:0:30 }}{{ (subTag.name.length + subTag.count.toString().length) > 30 ? '...' : '' }}
           <span class="toolbar-fill"></span>
           <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)" i18n>Edit</button>
           <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event,subTag)" i18n>Delete</button>
