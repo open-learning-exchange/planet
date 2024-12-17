@@ -16,6 +16,14 @@ import { addDateAndTime, styleVariables } from './utils';
   selector: 'planet-calendar',
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    <div class="calendar-legend" *ngIf="showLegend">
+      <div *ngFor="let legend of eventLegend">
+        <div class="legend-item" *ngIf="!legend.type || legend.type === type">
+          <div class="legend-color" [style.backgroundColor]="legend.color"></div>
+          <span>{{ legend.label }}</span>
+        </div>
+      </div>
+    </div>
   `
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
@@ -25,6 +33,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
+  @Input() type = '';
 
   @Input() header?: any = {
     left: 'title',
@@ -47,6 +56,12 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   dbName = 'meetups';
   meetups: any[] = [];
   tasks: any[] = [];
+  showLegend = true;
+  eventLegend = [
+    { color: styleVariables.primary, label: 'Event' },
+    { color: 'orange', label: 'Uncompleted Task', type: 'team' },
+    { color: 'grey', label: 'Completed Task', type: 'team' }
+  ];
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
