@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, HostListener } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { TagsService } from './tags.service';
@@ -86,6 +86,10 @@ export class PlanetTagInputDialogComponent {
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
+
+  @HostListener('window:resize') OnResize() {
+      this.deviceType = this.deviceInfoService.getDeviceType();
+    }
 
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
@@ -274,8 +278,8 @@ export class PlanetTagInputDialogComponent {
   }
 
   truncateTagName(subTag: { name: string; count?: number }, maxLength: number = 25): string {
-    if (this.deviceType == this.deviceTypes.DESKTOP) { maxLength = 50}
-    let truncatedName = subTag.name.length > maxLength ? subTag.name.slice(0, maxLength) + '...' : subTag.name;
+    if (this.deviceType == this.deviceTypes.DESKTOP) { maxLength = 50; }
+    const truncatedName = subTag.name.length > maxLength ? subTag.name.slice(0, maxLength) + '...' : subTag.name;
     return `${truncatedName} (${subTag.count || 0})`;
   }
 
