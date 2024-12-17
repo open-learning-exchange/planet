@@ -20,7 +20,6 @@ import { showFormErrors } from '../../shared/table-helpers';
   encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
-  pageType: string | null = null;
   user = this.userService.get();
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
@@ -86,7 +85,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       () => this.editForm.controls.dateSortOrder.setValue('none')
     );
   }
-
 
   ngOnDestroy() {
     this.onDestroy$.next();
