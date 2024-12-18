@@ -43,6 +43,7 @@
   <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
+        <a class="margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
         <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
           Add Members
         </button>
@@ -68,6 +69,9 @@
 
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
+      <mat-tab i18n-label label="Surveys">
+        <planet-surveys [teamId]="teamId"></planet-surveys>
+      </mat-tab>
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
@@ -211,9 +215,9 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab i18n-label label="Surveys">
+        <!-- <mat-tab i18n-label label="Surveys">
           <planet-surveys [teamId]="teamId"></planet-surveys>
-        </mat-tab>
+        </mat-tab> -->
         <mat-tab *ngIf="mode!=='services'" #applicantTab>
           <ng-template mat-tab-label>
             <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} }</ng-container> ({{requests.length}})
