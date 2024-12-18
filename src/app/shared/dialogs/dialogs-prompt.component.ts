@@ -17,7 +17,13 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
-  styleUrls: [ './dialogs-prompt.component.scss' ]
+  styles: [ `
+    .break-word {
+      word-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
+    }
+  ` ]
 })
 export class DialogsPromptComponent {
 
