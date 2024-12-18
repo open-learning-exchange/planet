@@ -32,7 +32,8 @@ export const levelList = [
   { 'label': $localize`Upper Secondary`, 'value': 'Upper Secondary' },
   { 'label': $localize`Undergraduate`, 'value': 'Undergraduate' },
   { 'label': $localize`Graduate`, 'value': 'Graduate' },
-  { 'label': $localize`Professional`, 'value': 'Professional' }
+  { 'label': $localize`Professional`, 'value': 'Professional' },
+  { 'label': $localize`All`, 'value': 'All' }
 ];
 
 export const media = [
