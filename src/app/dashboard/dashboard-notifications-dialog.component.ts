@@ -23,5 +23,4 @@ export class DashboardNotificationsDialogComponent implements OnInit {
     }));
     this.surveysCount = this.surveys.length;
   }
-
 }

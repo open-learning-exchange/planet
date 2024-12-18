@@ -5,8 +5,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { forkJoin, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, Subject, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import {
   filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
@@ -281,4 +281,35 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  archiveSurvey(survey) {
+    const updatedSurvey = {
+      ...survey,
+      isArchived: true,
+    };
+
+    return this.couchService.updateDocument(this.dbName, updatedSurvey).pipe(
+      switchMap(() => {
+        this.planetMessageService.showMessage($localize`Survey archived: ${survey.name}`);
+        this.surveys.data = this.surveys.data.map((s) =>
+          s._id === survey._id ? { ...s, isArchived: true } : s
+        );
+
+        const submissionRequests = this.submissionDeleteReq([], survey).map((req) =>
+          req.pipe(
+            catchError((err) => throwError(err))
+          )
+        );
+
+        return forkJoin(submissionRequests);
+      }),
+      catchError((err) => {
+        this.planetMessageService.showAlert($localize`There was a problem archiving this survey or deleting submissions.`);
+        return throwError(err);
+      })
+    ).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+
+  }
 }
