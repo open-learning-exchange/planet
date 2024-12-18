@@ -184,7 +184,7 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Courses">
+        <mat-tab i18n-label label="Courses">
           <ng-template mat-tab-label>
             <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
           </ng-template>
@@ -210,6 +210,9 @@
               </mat-card>
             </div>
           </ng-template>
+        </mat-tab>
+        <mat-tab i18n-label label="Surveys">
+          <planet-surveys [teamId]="teamId"></planet-surveys>
         </mat-tab>
         <mat-tab *ngIf="mode!=='services'" #applicantTab>
           <ng-template mat-tab-label>
