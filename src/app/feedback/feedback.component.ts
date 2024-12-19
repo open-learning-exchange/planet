@@ -125,7 +125,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-
   deleteClick(feedback) {
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
