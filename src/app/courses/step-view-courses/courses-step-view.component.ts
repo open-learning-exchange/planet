@@ -19,7 +19,6 @@ import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challen
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
-
   onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
@@ -40,6 +39,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   showChat = false;
   isOpenai = false;
   isLoading = true;
+  surveyAnswers: any[] = [];
+  surveySubmission: any = null;
+  surveyCompleted = false;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -86,19 +88,39 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
-      this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
-      this.attempts = attempts;
-      const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-      this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-      if (!this.parent && this.progress.passed !== this.examPassed) {
-        this.coursesService.updateProgress({
-          courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
-        });
-      }
-    });
+      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+        this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
+        this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
+        this.attempts = attempts;
+        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
+        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
+
+        // Log submissions for the survey
+        console.log('Fetching submissions related to survey ID:', this.stepDetail.survey._id);
+
+        this.submissionsService.getSubmissionsBySurveyId(this.stepDetail.survey._id).pipe(takeUntil(this.onDestroy$))
+          .subscribe((submissions) => {
+            console.log('Submissions related to survey:', this.stepDetail.survey._id);
+            submissions.forEach((submission: any) => {  // Type assertion to avoid TypeScript error
+              console.log('Submission (child) for survey:', submission);
+
+              // Check if the submission's status is 'complete' and the usernames match
+              if (submission.status === 'complete' && submission.user.name === this.userService.get().name) {
+                this.surveyCompleted = true;
+                console.log('Survey is complete and usernames match.');
+              }
+            });
+          });
+
+        // Update progress if necessary
+        if (!this.parent && this.progress.passed !== this.examPassed) {
+          this.coursesService.updateProgress({
+            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
+          });
+        }
+      });
   }
+
 
   ngOnDestroy() {
     this.onDestroy$.next();

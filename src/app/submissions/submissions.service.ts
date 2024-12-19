@@ -350,4 +350,24 @@ export class SubmissionsService {
       (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
   }
 
+  // Add this method inside your SubmissionsService
+
+  getSubmissionsBySurveyId(surveyId: string) {
+    // Construct the query to fetch submissions based on the survey ID
+    const query = findDocuments({
+      parentId: { "$regex": `^${surveyId}` } // Match submissions where parentId starts with the surveyId
+    });
+
+    // Call the existing getSubmissions method to fetch the submissions
+    return this.getSubmissions(query).pipe(
+      tap((submissions) => {
+        // Log all submissions related to the survey
+        console.log('Submissions for survey:', surveyId);
+        submissions.forEach(submission => {
+          console.log('Submission (child) for survey:', submission);
+        });
+      })
+    );
+  }
+
 }
