@@ -94,7 +94,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       onNext: (data) => {
         this.deleteDialog.close();
         this.dialog.closeAll();
-        this.planetMessageService.showMessage($localize`You have deleted this resource`);
+        this.planetMessageService.showMessage($localize`You have deleted this examination`);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
       }
