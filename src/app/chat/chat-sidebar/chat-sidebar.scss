@@ -77,6 +77,10 @@ li:hover {
   margin: 0;
 }
 
+.no-chats-message {
+  margin-left: 4px;
+}
+
 @media only screen and (max-width: $screen-md) {
   .expand-button {
     top: 10px;
