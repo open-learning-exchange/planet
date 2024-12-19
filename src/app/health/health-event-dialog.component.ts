@@ -7,12 +7,9 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { HealthService } from './health.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { format } from 'path';
-import { request } from 'http';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -38,7 +35,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private usersService: UsersService,
     private couchService: CouchService,
-    private healthService: HealthService,
     private userService: UserService,
     private planetMessageService: PlanetMessageService,
   ) {

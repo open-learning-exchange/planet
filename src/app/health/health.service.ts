@@ -118,33 +118,6 @@ export class HealthService {
     );
   }
 
-  deleteEvent(eventId: string, userId: string) {
-    return forkJoin([
-      this.getHealthData(userId, { createKeyIfNone: true }),
-      this.couchService.currentTime()
-    ]).pipe(
-      switchMap(([[ healthDoc, keyDoc ], time]: [any, number]) => {
-        // Fetch the specific event document to verify and prepare for deletion
-        return this.couchService.get(`_users/${eventId}`).pipe(
-          switchMap((eventDoc) => {
-            // Verify the user has permission to delete the event
-            if (eventDoc.profileId !== healthDoc.userKey) {
-              throw new Error('Not authorized to delete this event');
-            }
-  
-            // Delete the event document
-            return this.couchService.delete(eventId, eventDoc._rev);
-          })
-        );
-      }),
-      catchError((error) => {
-        // Handle potential errors (e.g., not found, not authorized)
-        console.error('Error deleting event:', error);
-        return error;
-      })
-    );
-  }
-
   newEventDoc(oldEvent: any, newEvent: any, time: number) {
     return {
       ...oldEvent,
