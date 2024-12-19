@@ -12,11 +12,7 @@
         <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
       </ng-container>
       <ng-container *ngIf="!editTitleMode; else editTitleBlock">
-        <span 
-          class="margin-lr-3 ellipsis-title" 
-          matTooltip="{{feedback.title || feedback.type + ' regarding ' + feedback.url}}">
-          {{feedback.title || feedback.type + ' regarding ' + feedback.url}}
-        </span>
+        <span class="margin-lr-3 ellipsis-title" matTooltip="{{feedback.title || feedback.type + ' regarding ' + feedback.url}}">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
         <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
