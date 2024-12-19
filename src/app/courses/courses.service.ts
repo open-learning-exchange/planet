@@ -203,6 +203,7 @@ export class CoursesService {
 
   courseResignAdmission(courseId, type, courseTitle?) {
     const title = courseTitle ? courseTitle : this.getCourseNameFromId(courseId);
+    const truncatedTitle = title.length > 180 ? `${title.slice(0, 180)}...` : title;
     const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
       const myCourseIndex = courseIds.indexOf(courseId);
@@ -211,8 +212,9 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? $localize`${title} successfully removed from myCourses` :
-        $localize`${title} added to myCourses`;
+      const admissionMessage = type === 'resign'
+        ? $localize`${truncatedTitle} successfully removed from myCourses`
+        : $localize`${truncatedTitle} added to your dashboard`;
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
