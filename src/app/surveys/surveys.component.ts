@@ -258,7 +258,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   recordSurvey(survey: any) {
     this.submissionsService.createSubmission(survey, 'survey').subscribe((res: any) => {
       this.router.navigate([
-        'dispense',
+        this.teamId ? 'surveys/dispense' : 'dispense',
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
       ], { relativeTo: this.route });
     });
