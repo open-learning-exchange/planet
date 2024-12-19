@@ -23,6 +23,7 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     SurveysRouterModule,
     SharedComponentsModule
   ],
+  exports: [ SurveysComponent ],
   declarations: [
     SurveysComponent
   ]
