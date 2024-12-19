@@ -81,15 +81,12 @@ export class FeedbackDirective {
     const date = this.couchService.datePlaceholder;
     const user = this.userService.get().name;
     const feedbackUrl = this.router.url && this.router.url !== '/' ? this.router.url.split(';')[0] : '';
-    let itemName = this.feedbackOf.name || '';
-    if (itemName.length > 40) {
-      itemName = `${itemName.slice(0, 40)}...`;
-    }
+    const itemName = this.feedbackOf.name || '';
     const feedbackTitle = itemName
       ? $localize`${post.type} regarding ${feedbackUrl}/${itemName}`
       : feedbackUrl
         ? $localize`${post.type} regarding ${feedbackUrl}`
-        : $localize`General ${post.type}`;
+        : $localize`${post.type} regarding Home`;
     const startingMessage: Message = { message: post.message, time: date, user };
     const newFeedback: Feedback = {
       owner: user,
@@ -113,6 +110,7 @@ export class FeedbackDirective {
       }
     );
   }
+
 
   @HostListener('click')
   openFeedback() {
