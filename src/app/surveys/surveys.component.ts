@@ -45,7 +45,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
-  @Input() teamId: string;
+  routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
+  @Input() teamId?: string;
 
   constructor(
     private couchService: CouchService,
@@ -81,7 +82,17 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           }).length
         })),
         ...this.createParentSurveys(submissions)
-      ];
+      ].filter(survey => {
+        if (this.routeTeamId) {
+          return survey.teamId === this.routeTeamId;
+        }
+
+        if (this.teamId) {
+          return survey.teamId === this.teamId;
+        } else {
+          return true;
+        }
+      });
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
     });
