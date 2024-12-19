@@ -251,6 +251,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
+  truncateMessage(message: string, maxLength: number=50): string {
+    if (message.length <= maxLength) {
+      return message;
+    }
+    const truncatedMessage = message.slice(0, maxLength - 3);
+    return truncatedMessage + '...';
+  }
+
   deleteCourse(course) {
     const { _id: courseId, _rev: courseRev } = course;
     return {
@@ -260,7 +268,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
+        this.planetMessageService.showMessage($localize`Course deleted: ${this.truncateMessage(course.courseTitle, 30)}`);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this course.`)
     };
