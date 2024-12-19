@@ -86,14 +86,14 @@ export class FeedbackDirective {
       ? $localize`${post.type} regarding ${feedbackUrl}/${itemName}`
       : feedbackUrl
         ? $localize`${post.type} regarding ${feedbackUrl}`
-        : $localize`${post.type} regarding Home`;
+        : $localize`${post.type} regarding Home`
     const startingMessage: Message = { message: post.message, time: date, user };
     const newFeedback: Feedback = {
       owner: user,
       ...post,
       openTime: date,
       status: 'Open',
-      messages: [ startingMessage ],
+      messages: [startingMessage],
       url: feedbackUrl,
       source: this.stateService.configuration.code,
       parentCode: this.stateService.configuration.parentCode,
@@ -110,7 +110,7 @@ export class FeedbackDirective {
       }
     );
   }
-
+  
 
   @HostListener('click')
   openFeedback() {
