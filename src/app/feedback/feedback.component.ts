@@ -109,7 +109,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
     this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
-      // Map feedback data and truncate titles if necessary
       this.feedback.data = feedbackData.map(feedback => {
         const truncatedTitle = feedback.title.length > 100
           ? `${feedback.title.slice(0, 100)}...`
