@@ -10,7 +10,7 @@
       {{ member?.doc?.leadershipTitle | slice:0:40 }}
       <span *ngIf="member?.doc?.leadershipTitle.length > 40">...</span>
     </p>
-    <p class="primary-text-color" *ngIf="member?.role">{{member?.role}}</p>
+    <p class="break-word primary-text-color" *ngIf="member?.role">{{member?.role | slice:0:485}}<span *ngIf="member?.role.length > 485">...</span></p>
   </mat-card-subtitle>
   <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
     <mat-icon>more_vert</mat-icon>

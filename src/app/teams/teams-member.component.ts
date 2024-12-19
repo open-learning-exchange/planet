@@ -19,6 +19,11 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
       font-size: 16px;
       font-weight: bold;
     }
+    .break-word{
+      word-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
+    }
   ` ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
