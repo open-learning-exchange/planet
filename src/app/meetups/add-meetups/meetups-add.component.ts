@@ -103,22 +103,24 @@ export class MeetupsAddComponent implements OnInit {
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
-  }
+}
 
-  onSubmit() {
-    if (!this.meetupForm.valid) {
-      showFormErrors(this.meetupForm.controls);
-      return;
-    }
-    this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
-    this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
-    const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
-    if (this.pageType === 'Update') {
+onSubmit() {
+  if (!this.meetupForm.valid) {
+    showFormErrors(this.meetupForm.controls);
+    return;
+  }
+  const dayFormArray = this.meetupForm.get('day') as FormArray;
+  dayFormArray.updateValueAndValidity();
+  this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
+  this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
+  const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
+  if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
       this.addMeetup(meetup);
-    }
   }
+}
 
   changeTimeFormat(time: string): string {
     if (time && time.length < 5) {
@@ -174,35 +176,50 @@ export class MeetupsAddComponent implements OnInit {
     }
   }
 
-  isClassDay(day) {
-    return this.meetupFrequency.includes(day) ? true : false;
-  }
-
   onDayChange(day: string, isChecked: boolean) {
     const dayFormArray = <FormArray>this.meetupForm.controls.day;
     if (isChecked) {
       // add to day array if checked
       dayFormArray.push(new FormControl(day));
     } else {
-      // remove from day array if unchecked
-      const index = dayFormArray.controls.findIndex(x => x.value === day);
-      dayFormArray.removeAt(index);
+        // remove from day array if unchecked
+        const index = dayFormArray.controls.findIndex(x => x.value === day);
+        if (index >= 0) {
+            dayFormArray.removeAt(index);
+        }
     }
-  }
+    dayFormArray.updateValueAndValidity();
+}
 
-  toggleDaily(val, showCheckbox) {
-    // empty the array
-    this.meetupForm.setControl('day', this.fb.array([]));
-    switch (val) {
+toggleDaily(val: string, showCheckbox: boolean) {
+  const dayFormArray = this.meetupForm.get('day') as FormArray;
+  dayFormArray.clear();
+  dayFormArray.clearValidators();
+
+  switch (val) {
+      // add all days to the array if the course is daily
       case 'daily':
-        // add all days to the array if the course is daily
-        this.meetupForm.setControl('day', this.fb.array(this.days));
-        break;
+          this.days.forEach((day) => {
+              dayFormArray.push(new FormControl(day));
+          });
+          break;
       case 'weekly':
-        this.meetupForm.setControl('day', this.fb.array(this.meetupFrequency));
-        break;
-    }
+          dayFormArray.setValidators(CustomValidators.atLeastOneDaySelected());
+          const startDate = this.meetupForm.controls.startDate.value;
+          if (startDate) {
+              const startDateObj = new Date(startDate);
+              const dayOfWeek = this.days[startDateObj.getDay()];
+              if (dayOfWeek) {
+                  dayFormArray.push(new FormControl(dayOfWeek));
+              }
+          }
+          break;
+
+      default:
+          break;
   }
+  dayFormArray.updateValueAndValidity();
+}
 
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({

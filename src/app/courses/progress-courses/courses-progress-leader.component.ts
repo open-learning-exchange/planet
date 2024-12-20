@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -10,15 +10,15 @@ import { dedupeObjectArray } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { StateService } from '../../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
-  templateUrl: 'courses-progress-leader.component.html',
-  styleUrls: [ 'courses-progress.scss' ]
+  templateUrl: 'courses-progress-leader.component.html'
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
   course: any;
-  // Need to define this variable for template which is shared with CoursesProgressLearner
   headingStart = '';
   chartLabel = $localize`Steps`;
   selectedStep: any;
@@ -32,6 +32,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   submittedExamSteps: any[] = [];
   planetCodes: string[] = [];
   selectedPlanetCode: string;
+  configuration: any = {};
+  deviceType: DeviceType;
+  deviceTypes = DeviceType;
 
   constructor(
     private router: Router,
@@ -40,9 +43,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private csvService: CsvService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService,
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
@@ -64,6 +70,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   setProgress(course) {
@@ -213,23 +224,41 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   structureChartData(data) {
-    const dataArr = [];
-    data.forEach(element => {
-      const dataDict = {};
-      dataDict['Username'] = element.label;
-      for (let i = 0; i < element.items.length; i++) {
-        dataDict[`Step ${(i + 1)}`] = element.items[i].number;
-      }
+    return data.map(element => {
+      let successfulSteps = 0;
+      let totalSteps = 0;
+      let totalErrors = 0;
+      const steps = {};
 
-      dataArr.push(dataDict);
+      element.items.forEach((item, index) => {
+        const stepErrors = item.number || 0;
+        totalSteps++;
+        if (stepErrors === 0) {
+          successfulSteps++;
+        }
+        totalErrors += stepErrors;
+        steps[`Step ${(index + 1)}`] = stepErrors;
+      });
+
+      return {
+        'Username': element.label,
+        'Success Percentage': `${((successfulSteps / totalSteps) * 100).toFixed(2)}%`,
+        'Total Errors': totalErrors,
+        ...steps
+      };
     });
-    return dataArr;
   }
 
   exportChartData() {
+    const planetName = this.stateService.configuration.name;
+    const courseTitle = this.course.courseTitle;
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const title = $localize`${courseTitle} Course Progress for ${entityLabel} ${planetName}`;
+
+    const structuredData = this.structureChartData(this.chartData);
     this.csvService.exportCSV({
-      data:  this.structureChartData(this.chartData),
-      title: $localize`Course Progress Data`
+      data: structuredData,
+      title: title
     });
   }
 
