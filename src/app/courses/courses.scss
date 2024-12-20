@@ -59,6 +59,14 @@ $label-height: 1rem;
   word-break: break-word;
 }
 
+.tags-list mat-chip {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
