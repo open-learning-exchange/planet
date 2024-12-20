@@ -84,46 +84,54 @@ export class FeedbackDirective {
     const urlParts = feedbackUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
-    const itemName = this.feedbackOf?.name || 'test';
-    let feedbackTitle: string;
+    let feedback: any = {
+      ...post,
+      routerLink: null,
+      state: firstPart,
+    };
     if (firstPart === 'home') {
-      feedbackTitle = $localize`Feedback regarding home`;
+      feedback.title = $localize`Feedback regarding home`;
+      feedback.routerLink = ['/home'];
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (this.feedbackOf?.name) {
-      feedbackTitle = $localize`Feedback regarding ${firstPart}/${itemName}`;
-      this.createFeedback(post, feedbackTitle, feedbackUrl, user, date);
-      return;
+      feedback.title = $localize`Feedback regarding ${firstPart}/${this.feedbackOf.name}`;
+      feedback.routerLink = ['/', firstPart, 'view', this.feedbackOf.item];
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (urlParts.length === 2) {
-      feedbackTitle = $localize`Feedback regarding ${firstPart}`;
+      feedback.title = $localize`Feedback regarding ${firstPart}`;
+      feedback.routerLink = ['/', firstPart];
+      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (lastPart) {
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
         (document: any) => {
-          const resourceName = document?.title || document?.courseTitle || document?.name || lastPart;
-          feedbackTitle = $localize`Feedback regarding ${firstPart}/${resourceName}`;
-          this.createFeedback(post, feedbackTitle, feedbackUrl, user, date);
+          const resourceName = document?.type === 'enterprise'
+            ? document?.name
+            : document?.title || document?.courseTitle || document?.name || lastPart;
+          feedback.title = $localize`Feedback regarding ${firstPart}/${resourceName}`;
+          feedback.routerLink = ['/', firstPart, 'view', lastPart];
+          this.updateFeedback(feedback, date, user, feedbackUrl);
         },
-        () => {
-          feedbackTitle = $localize`Feedback regarding ${firstPart}/${lastPart}`;
-          this.createFeedback(post, feedbackTitle, feedbackUrl, user, date);
+        (error) => {
+          feedback.title = $localize`Feedback regarding ${firstPart}/${lastPart}`;
+          feedback.routerLink = ['/', firstPart, 'view', lastPart];
+          this.updateFeedback(feedback, date, user, feedbackUrl);
         }
       );
-      return;
     }
-    this.createFeedback(post, feedbackTitle, feedbackUrl, user, date);
   }
-
-  private createFeedback(post: any, title: string, url: string, user: string, date: Date) {
-    const startingMessage: Message = { message: post.message, time: date, user };
+  
+  private updateFeedback(feedback: any, date: Date, user: string, url: string) {
+    const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
       owner: user,
-      ...post,
+      ...feedback,
       openTime: date,
       status: 'Open',
-      messages: [ startingMessage ],
+      messages: [startingMessage],
       url,
       source: this.stateService.configuration.code,
       parentCode: this.stateService.configuration.parentCode,
       ...this.feedbackOf,
-      title,
     };
     this.couchService.updateDocument('feedback', newFeedback).subscribe(
       () => {
@@ -135,6 +143,7 @@ export class FeedbackDirective {
       }
     );
   }
+  
 
   @HostListener('click')
   openFeedback() {
