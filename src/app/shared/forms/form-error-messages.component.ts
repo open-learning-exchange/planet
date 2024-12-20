@@ -22,6 +22,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       duplicate {Value already exists}
       duplicateUser {User already exists}
       email {Please enter a valid email}
+      phone {Please enter a valid phone number}
       matchPassword {Passwords must match}
       unmatchPassword {Passwords must not match}
       invalidInt {Please enter a number}

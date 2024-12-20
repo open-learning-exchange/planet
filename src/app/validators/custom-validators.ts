@@ -50,6 +50,11 @@ export class CustomValidators {
     };
   }
 
+  static phoneValidator(ac: AbstractControl): ValidationErrors {
+    const phonePattern = /^[0-9]{10}$/;
+    return !ac.value || phonePattern.test(ac.value) ? null : { phone: true };
+  }
+
   // Allows us to supply a different errorType for specific patterns
   static pattern(pattern, errorType = 'pattern') {
     return (ac: AbstractControl): ValidationErrors => {

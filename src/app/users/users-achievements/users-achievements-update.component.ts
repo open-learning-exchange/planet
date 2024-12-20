@@ -151,10 +151,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       ],
       this.fb.group({
         relationship: '',
-        phone: '',
         ...reference,
         name: [ reference.name, CustomValidators.required ],
         email: [ reference.email, Validators.email ],
+        phone: [ reference.phone, CustomValidators.phoneValidator]
       }),
       { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
     );
