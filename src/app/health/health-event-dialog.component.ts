@@ -7,6 +7,9 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -24,13 +27,16 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
+  deleteDialog: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
+    private dialog: MatDialog,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService,
   ) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
@@ -59,6 +65,40 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
   }
+
+  openDeleteDialog(event) {
+    const formattedDate = new Date(event.date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteExamination(event),
+        request: 'none',
+        changeType: 'Cancel',
+        type: `examination`,
+        displayName: formattedDate
+      }
+    });
+  }
+
+  deleteExamination(event){
+    const {_id: eventId, _rev: eventRev} = event;
+    return {
+      request: this.couchService.delete('health' + '/' + eventId + '?rev=' + eventRev),
+      onNext: (data) => {
+        this.deleteDialog.close();
+        this.dialog.closeAll();
+        this.planetMessageService.showMessage($localize`You have deleted this examination`);
+      },
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
+      }
+    }
 
   editButtonCountdown() {
     this.couchService.currentTime().pipe(
