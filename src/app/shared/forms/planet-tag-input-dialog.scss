@@ -34,7 +34,7 @@
 :host mat-dialog-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 4px;
   padding: 16px;
   box-sizing: border-box;
   flex-wrap: wrap;
@@ -44,3 +44,7 @@
   border-top: 1px solid #e0e0e0;
 }
 
+:host mat-dialog-actions button {
+  margin: 0;
+  padding: 4px;
+}
