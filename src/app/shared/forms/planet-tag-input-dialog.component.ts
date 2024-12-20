@@ -14,28 +14,7 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
-  'styles': [ `
-    :host {
-      display: block;
-      overflow: hidden;
-    }
-    :host mat-dialog-content {
-      overflow-y: auto;
-      max-height: calc(100vh - 100px); 
-    }
-    :host .mat-list-option span {
-      font-weight: inherit;
-    }
-    :host p[matLine] *, :host .mat-nav-list .mat-list-item * {
-      margin-right: 0.25rem;
-    }
-    :host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
-      margin-right: 0;
-    }
-    :host mat-dialog-actions {
-      padding: 0;
-    }
-  ` ]
+  'styleUrls': [ 'planet-tag-input-dialog.scss' ]
 })
 export class PlanetTagInputDialogComponent {
 

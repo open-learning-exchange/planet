@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  overflow: hidden;
+}
+
+:host mat-dialog-content {
+  overflow-y: auto; /* Enables vertical scrolling if content overflows */
+  max-height: calc(100vh - 156px); /* Adjusts height to account for actions and title */
+  box-sizing: border-box; /* Ensures padding and borders are included in the size */
+  padding-bottom: 16px; /* Adds padding to ensure actions aren't cut off */
+}
+
+:host .mat-list-option span {
+  font-weight: inherit;
+}
+
+:host p[matLine] *, :host .mat-nav-list .mat-list-item * {
+  margin-right: 0.25rem;
+}
+
+:host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
+  margin-right: 0;
+}
+
+:host .mat-nav-list {
+  margin-bottom: 16px;
+}
+
+:host mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  background-color: #fff;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  border-top: 1px solid #e0e0e0;
+}
+
+:host mat-dialog-actions button {
+  min-width: 64px;
+}
+
+:host mat-dialog-actions button[type="button"] {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.mat-list-item:last-of-type {
+  margin-bottom: 8px;
+}
