@@ -66,3 +66,11 @@
   word-wrap: break-word;
   overflow-wrap: anywhere;
 }
+
+.count {
+  white-space: nowrap;
+}
+
+.mat-action-list .count {
+  margin-left: 2px;
+}
