@@ -76,6 +76,7 @@
         grid-area: txt;
         display: flex;
         align-items: center;
+        max-width: 75%;
       }
 
       .achievement-date {
@@ -90,6 +91,10 @@
         margin-right: 0;
       }
     }
+  }
+
+  .link-title{
+    max-width: 75%;
   }
 
   .styled-link {
