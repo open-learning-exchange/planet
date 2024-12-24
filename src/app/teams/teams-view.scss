@@ -44,4 +44,25 @@
     flex-shrink: 0;
   }
 
+  .calendar-legend {
+    padding-top: 10px;
+    text-align: right;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .calendar-legend .legend-item {
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .calendar-legend .legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 4px;
+  }
+
 }
