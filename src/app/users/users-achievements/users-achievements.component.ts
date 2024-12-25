@@ -11,6 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { HttpClient } from '@angular/common/http';
 
 const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -39,6 +40,7 @@ export class UsersAchievementsComponent implements OnInit {
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
     private coursesService: CoursesService,
+    private http: HttpClient,
     private certificationsService: CertificationsService
   ) { }
 
@@ -121,6 +123,61 @@ export class UsersAchievementsComponent implements OnInit {
       return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
     });
   }
+
+  toBase64(file, callback) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => callback(reader.result);
+    reader.onerror = (error) => console.error('Error: ', error);
+  }
+
+  downloadCertificate(certification) {
+    this.http.get('assets/ole-cert-template.jpg', { responseType: 'blob' }).subscribe(blob => {
+        this.toBase64(blob, (result) => {
+            const imgSig = result;
+
+            const documentDefinition = {
+                content: [
+                    {
+                        text: `${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}`,
+                        style: 'name'
+                    },
+                    {
+                        text: `${certification.name}`,
+                        style: 'courseName'
+                    }
+                ],
+                styles: {
+                    name: {
+                        fontSize: 20,
+                        alignment: 'center',
+                        margin: [ 0, 180, 0, 20 ]
+                    },
+                    courseName: {
+                        fontSize: 18,
+                        italics: true,
+                        alignment: 'center',
+                        margin: [ 0, 50, 0, 30 ]
+                    }
+                },
+                pageSize: {
+                  width: 800,
+                  height: 500
+                },
+                background: function(currentPage, pageSize) {
+                    return {
+                        image: imgSig,
+                        width: pageSize.width,
+                        height: pageSize.height,
+                        alignment: 'center'
+                    };
+                }
+            };
+
+            pdfMake.createPdf(documentDefinition).download(`${certification.name} certificate.pdf`);
+        });
+    }, error => console.error('Error fetching image:', error));
+}
 
   generatePDF() {
     const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y');
