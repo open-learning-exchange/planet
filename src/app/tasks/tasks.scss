@@ -19,6 +19,14 @@ planet-tasks {
     }
   }
 
+  .deadline-soon{
+    color: #F6BE00
+  }
+
+  .deadline-passed{
+    color: red
+  }
+
   mat-button-toggle-group {
     font-size: 14px;
 

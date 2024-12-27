@@ -86,7 +86,7 @@
           </mat-autocomplete>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.openWhichFile"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <div class="inner-gaps by-column full-width">
+        <div class="file-upload inner-gaps by-column full-width">
           <label i18n>File Upload:</label>
           <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
