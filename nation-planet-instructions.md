@@ -1,0 +1,117 @@
+# Step 1 : Set up Google Cloud VM
+
+- https://console.cloud.google.com/
+- Log in with ole email
+- Sign up, choose personal, for org use. You may need a credit  card/debit card to verify you are a real person. A charge and refund in the amount of $1.9_ will show up on your card transaction history. You will need the code in the purchase description to verify.
+- There’s no risk of getting charged in the future if you do not click on “Activate full account”. If you are within the US, set up a privacy.com card if you want to be extra cautious.
+- Search for “Compute Engine API,” enable it, wait for it to activate
+- Search for “Metadata” and look for “Metadata Compute Engine”, go to “SSH KEYS”
+- add your public key there, you’ll need to append the key with ` name` to satisfy google’s format rule (Adding it manually to authorzied_keys would not work as it will get it overridden over time…)
+- Add other people’s keys here as well: https://docs.google.com/document/d/e/2PACX-1vRgf6WtvM7SyfpL3T826jWuCWiCzOei8PVwzOmyIh8SpOpZTJxe3rJC_kLty-gt5ILv05ERCPzorxpr/pub
+- Go to “Compute Engine”, click on “Create Instance” button
+- Select a location near you, price typically ranges between $25 - $35 a month
+- Leave everything else to default, 4GB of RAM and Debian 12 works for us
+- Click on the “Create” button
+  
+- Once the instance is created, try to ssh into the vm from your terminal
+- Search for “Firewall VPC Network”, clicko on “CREATE FIREWALL RULE” button
+- Name: planetdev-rules
+- Action on match - Allow - “Targets” dropdown - select “All instances in the network”
+- Under “Source IPv4 Range”, enter “0.0.0.0/0”
+- Under ”Protocols and ports”, check TCP, enter “2200,3000,5000” (ports for couchdb, default ng serve port, and chatpi)
+- Click on the blue “Create” button
+- Tools installation
+- Install git, unzip apt-get update && apt-get install git unzip
+- Install docker https://docs.docker.com/engine/install/debian/#install-using-the-repository
+- Follow https://open-learning-exchange.github.io/#!pages/vi/vi-docker-development-tutorial.md
+- Ensure you are running as a regular user instead of root user while installing node.js
+- When you are ready to run `ng serve`, start up a screen session with `screen`, run `ng serve`, once you verified it’s working, use `ctrl + a` then press `d` to detach and keep it running
+- Configure your planet as a nation (instead of community, select nation from the dropdown), please avoid password that are too simple or common (12345, abc, 000, admin)
+- Share your vm IP address and username/pw with us!
+
+# Step 2 : Set up your dev environment 
+
+Install the following extensions: 
+Remote Explorer (Microsoft) 
+Remote Development (Microsoft) 
+
+![image](https://github.com/user-attachments/assets/8b19e456-27a6-4616-b4d5-a1b2dbeea5ab)
+
+Under the Remote explorer tab, add new remote connection via the plus sign.
+Type in the IP of your cloud VM
+Specify the location of your ssh config when prompted
+Select Linux as the platform of the host machine
+Open the Planet folder to begin editing. 
+Use the terminal to run Git commands as usual 
+
+# Troubleshooting
+
+Permission denied (publickey).
+
+Ensure the SSH agent is running:
+
+`eval $(ssh-agent -s)`
+
+Add the key to the agent:
+
+`ssh-add ~/.ssh/id_ed25519_new`
+
+Verify the key is added:
+
+`ssh-add -l`
+
+Alternatively, generate a New SSH Key Pair:
+
+`ssh-keygen -t ed25519 -C "your_email@example.com" -N "" -f ~/.ssh/id_ed25519_new`
+
+Add the New Key to the SSH Agent:
+
+`eval $(ssh-agent -s)`
+`ssh-add ~/.ssh/id_ed25519_new`
+
+Verify the Key is Added:
+
+`ssh-add -l`
+
+Copy the Public Key to Google Cloud: Display the public key:
+
+`cat ~/.ssh/id_ed25519_new.pub`
+
+Add the output to the SSH keys section in your Google Cloud VM.
+
+Connect to the VM via SSH:
+
+`ssh -A -i ~/.ssh/id_ed25519_new jesse@34.150.172.238`
+
+Issues with remote explorer in VS Code
+
+Connecting via Visual Studio Code Remote Explorer
+Install the Remote - SSH Extension:
+Open Visual Studio Code.
+Go to the Extensions view (Ctrl+Shift+X).
+Search for "Remote - SSH" and install the extension by Microsoft.
+
+Configure SSH in Visual Studio Code:
+Open the Command Palette (Ctrl+Shift+P).
+Type Remote-SSH: Open Configuration File... and select it.
+Choose the SSH configuration file to edit (usually ~/.ssh/config).
+Add Your VM to the SSH Config File:
+Add an entry for your Google Cloud VM in the SSH config file:
+```
+Host google-cloud-vm
+HostName 34.150.172.238
+Username jesse
+IdentityFile ~/.ssh/id_ed25519_new
+```
+Connect to the VM:
+Open the Command Palette (Ctrl+Shift+P).
+Type Remote-SSH: Connect to Host... and select it.
+Choose google-cloud-vm from the list.
+
+Open a Folder on the Remote VM:
+Once connected, click on the "Open Folder" button in the Remote Explorer view.
+SSH Key Permissions:
+Ensure the permissions of your SSH key files are correct:
+`chmod 600 ~/.ssh/id_ed25519_new`
+`chmod 644 ~/.ssh/id_ed25519_new.pub`
+
