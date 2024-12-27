@@ -47,7 +47,7 @@
           <h3 i18n>My Certifications</h3>
           <mat-list class="certs-list">
             <mat-list-item *ngFor="let certification of certifications">
-              {{certification.name}}
+              <span class="cert-item">{{certification.name}}</span>
             </mat-list-item>
           </mat-list>
         </div>
