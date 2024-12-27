@@ -57,7 +57,7 @@
         <h3 i18n>My Links</h3>
         <mat-list>
           <mat-list-item class="mat-list-item-word-wrap" *ngFor="let link of achievements.links">
-            <h4 mat-line>{{link.title}}:</h4>
+            <h4 class="link-title" mat-line>{{link.title}}:</h4>
             <a href="{{link.url}}" target="_blank" class="styled-link"> {{link.url}} </a>
           </mat-list-item>
         </mat-list>
