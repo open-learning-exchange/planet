@@ -11,7 +11,7 @@
       </mat-select>
     </mat-form-field>
   </mat-toolbar>
-  <ng-container *ngIf="!emptyData; else notFoundMessage">
+  <ng-container>
     <mat-table #table [dataSource]="notifications">
       <ng-container matColumnDef="message">
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
@@ -37,13 +37,13 @@
         </mat-cell>
       </ng-container>
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Notification Found</div></td>
+      </tr>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>
   </ng-container>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Notification Found</div>
-  </ng-template>
 </div>
