@@ -10,10 +10,12 @@
     text-align: center;
   }
 
-  .certs-list .mat-list-item{
-    display: flex;
-    justify-content: center;
-    text-align: center;
+  .certs-list {
+    .cert-item {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 
   & mat-list, & ul, & ol {
