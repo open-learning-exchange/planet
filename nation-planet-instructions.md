@@ -7,7 +7,6 @@
 - Search for “Compute Engine API,” enable it, wait for it to activate
 - Search for “Metadata” and look for “Metadata Compute Engine”, go to “SSH KEYS”
 - add your public key there, you’ll need to append the key with ` name` to satisfy google’s format rule (Adding it manually to authorzied_keys would not work as it will get it overridden over time…)
-- Add other people’s keys here as well: https://docs.google.com/document/d/e/2PACX-1vRgf6WtvM7SyfpL3T826jWuCWiCzOei8PVwzOmyIh8SpOpZTJxe3rJC_kLty-gt5ILv05ERCPzorxpr/pub
 - Go to “Compute Engine”, click on “Create Instance” button
 - Select a location near you, price typically ranges between $25 - $35 a month
 - Leave everything else to default, 4GB of RAM and Debian 12 works for us
