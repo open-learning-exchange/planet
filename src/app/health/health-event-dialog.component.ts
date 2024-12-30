@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { timer, of, combineLatest } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
+import { HealthService } from './health.service';
 import { UserService } from '../shared/user.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,6 +19,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
   event: any;
   hasConditionAndTreatment = false;
+  @Output() examinationDeleted = new EventEmitter<string>();
   conditionAndTreatmentFields = conditionAndTreatmentFields;
   conditions: string;
   hasVital = false;
@@ -36,6 +38,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private couchService: CouchService,
     private userService: UserService,
+    private healthService: HealthService,
     private planetMessageService: PlanetMessageService,
   ) {
     this.event = this.data.event || {};
@@ -87,18 +90,19 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteExamination(event){
+  deleteExamination(event) {
     const {_id: eventId, _rev: eventRev} = event;
     return {
-      request: this.couchService.delete('health' + '/' + eventId + '?rev=' + eventRev),
-      onNext: (data) => {
+      request: this.healthService.deleteExamination(eventId, eventRev),
+      onNext: () => {
         this.deleteDialog.close();
         this.dialog.closeAll();
+        this.examinationDeleted.emit(eventId);
         this.planetMessageService.showMessage($localize`You have deleted this examination`);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
-      }
-    }
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
+    };
+  }
 
   editButtonCountdown() {
     this.couchService.currentTime().pipe(
