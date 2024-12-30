@@ -22,5 +22,11 @@
     .form-container {
       width: auto;
     }
+
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+    }
+
   }
 }
