@@ -155,13 +155,7 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <planet-markdown
-              class="img-wrap"
-              [imageSource]="parent ? 'parent' : 'local'"
-              i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-              element.doc.description">
-            </planet-markdown>
+            <div class="plain-text-description">{{ stripMarkdown(element.doc.description) }}</div>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent && !isDialog && !isForm" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">

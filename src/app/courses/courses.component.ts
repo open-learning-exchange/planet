@@ -32,6 +32,7 @@ import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'planet-courses',
@@ -122,7 +123,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private sanitizer: DomSanitizer
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -469,6 +471,22 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
     }
+  }
+
+  stripHtmlTags(html: string): string {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  }
+
+  stripMarkdown(markdown: string): string {
+    const html = markdown
+      .replace(/#/g, '') // Remove Markdown headers
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting
+      .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
+      .replace(/\[.*?\]\(.*?\)/g, '$1'); // Remove links
+    return this.stripHtmlTags(html);
   }
 
 }
