@@ -32,4 +32,16 @@
     margin: 0;
   }
 
+  .mat-subheading-2 b {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toolbar-button{
+    flex-shrink: 0;
+  }
+
 }

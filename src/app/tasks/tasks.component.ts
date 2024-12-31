@@ -72,6 +72,26 @@ export class TasksComponent implements OnInit {
     });
   }
 
+  isTaskDueSoon(task): boolean {
+    if (!task || task.completed || !task.deadline) { return false; }
+
+    const now = new Date();
+    const deadline = new Date(task.deadline);
+    const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    const isWithinNextDay = deadline <= twentyFourHoursFromNow && deadline > now;
+
+    return isWithinNextDay;
+  }
+
+  isTaskOverdue(task): boolean {
+    if (task.completed || !task.deadline) { return false; }
+
+    const now = new Date();
+    const deadline = new Date(task.deadline);
+    return deadline < now;
+  }
+
   openAddDialog(additionalFields, task: any = {}, onSuccess = (res) => {}) {
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
     this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
