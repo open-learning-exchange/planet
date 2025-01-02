@@ -3,19 +3,20 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { Router } from '@angular/router';
-import { Subject, interval, of } from 'rxjs';
+import { Router, NavigationStart } from '@angular/router';
+import { Subject, interval, of, Subscription } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { StateService } from '../shared/state.service';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
+import { StateService } from '../shared/state.service'; // Add the import statement for StateService
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   templateUrl: './home.component.html',
-  styleUrls: [ './home.scss' ],
+  styleUrls: ['./home.scss'],
   animations: [
     trigger('sidenavState', [
       state('closed', style({
@@ -49,8 +50,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
-    }
-  ));
+    })
+  );
   // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
@@ -58,13 +59,18 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   planetType = this.stateService.configuration.planetType;
 
   private onDestroy$ = new Subject<void>();
+  private hasUnsavedChangesSubscription: Subscription;
+  hasUnsavedChanges = false;
+  private pendingNavigation: any;
+  private routerSubscription: Subscription;
 
   constructor(
     private couchService: CouchService,
     private router: Router,
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
-    private stateService: StateService,
+    private unsavedChangesService: UnsavedChangesService,
+    private stateService: StateService, // Add stateService to the constructor
     private deviceInfoService: DeviceInfoService,
     private notificationsService: NotificationsService
   ) {
@@ -75,6 +81,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
     this.isAndroid = this.deviceInfoService.isAndroid();
+
+    this.subscribeToRouterEvents();
   }
 
   ngOnInit() {
@@ -90,6 +98,13 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
     });
     this.subscribeToLogoutClick();
+
+    this.hasUnsavedChangesSubscription = this.unsavedChangesService.getHasUnsavedChanges().subscribe(
+      (hasUnsavedChanges) => {
+        this.hasUnsavedChanges = hasUnsavedChanges;
+        console.log('hasUnsavedChanges:', this.hasUnsavedChanges); // Logging to ensure the flag is passed
+      }
+    );
   }
 
   ngDoCheck() {
@@ -112,6 +127,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngOnDestroy() {
+    if (this.hasUnsavedChangesSubscription) {
+      this.hasUnsavedChangesSubscription.unsubscribe();
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -176,28 +197,30 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       catchError(errorCatch)
     ).subscribe((response: any) => {
       this.userService.unset();
-      this.router.navigate([ '/login' ], {});
+      this.router.navigate(['/login'], {});
     });
   }
 
   getNotification() {
-    const userFilter = [ {
+    const userFilter = [{
       'user': 'org.couchdb.user:' + this.userService.get().name
-    } ];
+    }];
     if (this.userService.get().isUserAdmin) {
       userFilter.push({ 'user': 'SYSTEM' });
     }
     this.couchService.findAll('notifications', findDocuments(
-      { '$or': userFilter,
-      // The sorted item must be included in the selector for sort to work
+      {
+        '$or': userFilter,
+        // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 },
         'status': 'unread'
       },
       0,
-      [ { 'time': 'desc' } ]))
-    .subscribe(data => {
-      this.notifications = data;
-    }, (error) => console.log(error));
+      [{ 'time': 'desc' }]
+    ))
+      .subscribe(data => {
+        this.notifications = data;
+      }, (error) => console.log(error));
   }
 
   readNotification(notification) {
@@ -229,4 +252,46 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
+  subscribeToRouterEvents() {
+    this.routerSubscription = this.router.events.pipe(takeUntil(this.onDestroy$)).subscribe(event => {
+      if (event instanceof NavigationStart) {
+        console.log('NavigationStart event detected:', event.url); // Logging to ensure event detection
+        this.pendingNavigation = event.url;
+        this.navigateAway();
+      }
+    });
+  }
+
+  // Example method to handle navigation
+  navigateAway() {
+    console.log('navigateAway called, hasUnsavedChanges:', this.hasUnsavedChanges); // Logging to ensure the flag is passed
+    if (!this.hasUnsavedChanges) {
+      // Proceed with navigation
+      console.log('No unsaved changes, navigating to:', this.pendingNavigation); // Logging the navigation
+      this.unsubscribeFromRouterEvents();
+      this.router.navigate([this.pendingNavigation]).then(() => {
+        this.subscribeToRouterEvents();
+      });
+    } else {
+      const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+      if (confirmLeave) {
+        // Proceed with navigation
+        console.log('User confirmed navigation to:', this.pendingNavigation); // Logging the navigation
+        this.unsubscribeFromRouterEvents();
+        this.router.navigate([this.pendingNavigation]).then(() => {
+          this.subscribeToRouterEvents();
+        });
+      } else {
+        // Cancel navigation
+        console.log('User canceled navigation'); // Logging the cancellation
+        this.pendingNavigation = null;
+      }
+    }
+  }
+
+  unsubscribeFromRouterEvents() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
 }

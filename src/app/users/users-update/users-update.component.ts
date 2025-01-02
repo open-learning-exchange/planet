@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
@@ -12,6 +12,7 @@ import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guard';
+import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -35,7 +36,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   languages = languages;
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
-  ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
+  ngxImgConfig = { crop: [{ ratio: 1 }], fileType: ['image/gif', 'image/jpeg', 'image/png'] };
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
@@ -65,7 +66,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private router: Router,
     private userService: UserService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.userData();
   }
@@ -95,6 +97,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         console.log('data: ' + data);
         this.editForm.valueChanges.subscribe((value) => {
           this.hasUnsavedChanges = !this.isFormPristine();
+          this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
         });
       }, (error) => {
         console.log(error);
@@ -103,19 +106,19 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      firstName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       middleName: '',
-      lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
-      email: [ '', [this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
-      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      lastName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      email: ['', [this.conditionalValidator(Validators.required).bind(this), Validators.email]],
+      language: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      phoneNumber: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       birthDate: [
         '',
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
-      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      gender: ['', this.conditionalValidator(Validators.required).bind(this)],
+      level: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       betaEnabled: false
     });
   }
@@ -130,7 +133,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.submitUser();
-
   }
 
   submitUser() {
@@ -144,6 +146,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         this.avatarChanged = false;
         this.editForm.markAsPristine();
         this.initialFormValues = { ...this.editForm.value };
+        this.unsavedChangesService.setHasUnsavedChanges(false);
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -176,6 +179,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       this.editForm.reset(this.user);
       this.hasUnsavedChanges = false;
       this.avatarChanged = false;
+      this.unsavedChangesService.setHasUnsavedChanges(false);
       this.router.navigate([this.redirectUrl], { relativeTo: this.route });
     }
   }
@@ -185,6 +189,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.previewSrc = img;
     this.uploadImage = true;
     this.avatarChanged = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   removeImageFile() {
@@ -192,6 +197,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.file = null;
     this.uploadImage = false;
     this.avatarChanged = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   deleteImageAttachment() {
@@ -206,6 +212,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.currentProfileImg = 'assets/image.png';
     this.removeImageFile();
     this.avatarChanged = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   appendToSurvey(user) {
@@ -236,5 +243,4 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
-  
 }
