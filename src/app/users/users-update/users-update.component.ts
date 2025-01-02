@@ -23,6 +23,7 @@ import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guar
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: any = {};
+  initialFormValues: any;
   educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
@@ -86,6 +87,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           this.redirectUrl = '../../profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
+        this.initialFormValues = { ...this.editForm.value }; // Store initial form values
         if (data['_attachments']) {
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
@@ -94,14 +96,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         }
         this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
+  
+        // Set up valueChanges subscription after initial values are set
+        this.editForm.valueChanges.subscribe((value) => {
+          this.hasUnsavedChanges = !this.isFormPristine();
+          this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges);
+        });
       }, (error) => {
         console.log(error);
       });
-
-    this.editForm.valueChanges.subscribe((value) => {
-        this.hasUnsavedChanges = !this.editForm.pristine;
-      });
-
   }
 
   userData() {
@@ -145,6 +148,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         switchMap(() => this.userService.addImageForReplication(true))
       ).subscribe(() => {
         this.hasUnsavedChanges = false;
+        this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges);
+        this.editForm.markAsPristine();
+        this.initialFormValues = { ...this.editForm.value }; // Update initial form values after submission
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -178,13 +184,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       this.hasUnsavedChanges = false;
       this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
     }
-}
+  }
 
   onImageSelect(img) {
     this.file = img;
     this.previewSrc = img;
     this.uploadImage = true;
     this.hasUnsavedChanges = true;
+    this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges); // Emit the change
+    this.editForm.markAsDirty(); // Mark the form as dirty
   }
 
   removeImageFile() {
@@ -192,21 +200,25 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.file = null;
     this.uploadImage = false;
     this.hasUnsavedChanges = true;
+    this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges); // Emit the change
+    this.editForm.markAsDirty(); // Mark the form as dirty
   }
 
-  deleteImageAttachment() {
-    if (!this.currentImgKey) {
-      return;
-    }
-
-    if (this.user._attachments && this.user._attachments[this.currentImgKey]) {
-      delete this.user._attachments[this.currentImgKey];
-    }
-
-    this.currentProfileImg = 'assets/image.png';
-    this.removeImageFile();
+deleteImageAttachment() {
+  if (!this.currentImgKey) {
+    return;
   }
 
+  if (this.user._attachments && this.user._attachments[this.currentImgKey]) {
+    delete this.user._attachments[this.currentImgKey];
+  }
+
+  this.currentProfileImg = 'assets/image.png';
+  this.removeImageFile();
+  this.hasUnsavedChanges = true;
+  this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges); // Emit the change
+  this.editForm.markAsDirty(); // Mark the form as dirty
+}
 
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
@@ -219,18 +231,21 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   canDeactivate(): boolean {
     console.log('canDeactivate called', this.hasUnsavedChanges);
-    if (this.hasUnsavedChanges) {
+    if (this.hasUnsavedChanges && !this.isFormPristine()) {
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
     }
     return true;
+  }
+  
+  isFormPristine(): boolean {
+    return JSON.stringify(this.editForm.value) === JSON.stringify(this.initialFormValues);
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     console.log('canDeactivate called', this.hasUnsavedChanges);
-    if (this.hasUnsavedChanges) {
+    if (this.hasUnsavedChanges && !this.isFormPristine()) {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
-
 }
