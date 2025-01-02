@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
@@ -35,7 +35,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   languages = languages;
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
-  ngxImgConfig = { crop: [{ ratio: 1 }], fileType: ['image/gif', 'image/jpeg', 'image/png'] };
+  ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
@@ -84,7 +84,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           this.redirectUrl = '../../profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
-        this.initialFormValues = { ...this.editForm.value }; // Store initial form values
+        this.initialFormValues = { ...this.editForm.value };
         if (data['_attachments']) {
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
@@ -93,7 +93,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         }
         this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
-
         this.editForm.valueChanges.subscribe((value) => {
           this.hasUnsavedChanges = !this.isFormPristine();
         });
@@ -104,19 +103,19 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       middleName: '',
-      lastName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
-      email: ['', [this.conditionalValidator(Validators.required).bind(this), Validators.email]],
-      language: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
-      phoneNumber: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      email: [ '', [this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
+      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       birthDate: [
         '',
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
-      gender: ['', this.conditionalValidator(Validators.required).bind(this)],
-      level: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       betaEnabled: false
     });
   }
@@ -131,6 +130,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.submitUser();
+    
   }
 
   submitUser() {

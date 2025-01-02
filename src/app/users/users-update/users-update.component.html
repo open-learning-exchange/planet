@@ -70,7 +70,7 @@
             </mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-select i18n-placeholder placeholder="Level" formControlName="level" [required]="!submissionMode">
+            <mat-select i18n-placeholder placeholder="level" formControlName="level" [required]="!submissionMode">
               <mat-option *ngFor="let level of educationLevel" [value]="level.value">{{level.label}}</mat-option>
             </mat-select>
             <mat-error>
@@ -110,8 +110,7 @@
     <div *ngIf="!submissionMode" class="profile-image-section">
       <div style="text-align: center;">
         <img class="profile-image-update" [src]="previewSrc"><br>
-        <button *ngIf="(uploadImage && currentImgKey) && !file" mat-raised-button color="accent"
-          (click)="deleteImageAttachment()">Remove</button>
+        <button *ngIf="(uploadImage && currentImgKey) && !file" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
       </div>
       <div class="profile-image-upload">
         <ngx-img (onSelect)="onImageSelect($event)" (onReset)="removeImageFile()" [config]="ngxImgConfig"
