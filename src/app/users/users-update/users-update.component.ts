@@ -130,7 +130,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.submitUser();
-    
+
   }
 
   submitUser() {
@@ -236,4 +236,5 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
+  
 }
