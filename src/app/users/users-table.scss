@@ -39,11 +39,6 @@ button-container {
 }
 
 @media (max-width: $screen-sm) {
-  mat-cell button, .visibility-cell {
-    min-width: 0;
-    padding: 0 3px;
-  }
-
   .mat-cell button, .mat-cell div button[mat-raised-button] {
     width: 50px;
   }
