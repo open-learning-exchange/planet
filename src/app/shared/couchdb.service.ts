@@ -197,4 +197,14 @@ export class CouchService {
     return Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate());
   }
 
+  getDocumentByID(db: string, docId: string): Observable<any> {
+    const url = `${this.baseUrl}/${db}/${docId}`;
+    return this.http.get(url, this.defaultOpts).pipe(
+      catchError(err => {
+        this.planetMessageService.showAlert($localize`Error fetching document: ${err.message}`);
+        return throwError(err);
+      })
+    );
+  }
+
 }
