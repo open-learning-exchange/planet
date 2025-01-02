@@ -1,11 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
@@ -19,7 +15,7 @@ import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guar
 
 @Component({
   templateUrl: './users-update.component.html',
-  styleUrls: [ './users-update.scss' ]
+  styleUrls: ['./users-update.scss']
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: any = {};
@@ -39,7 +35,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   languages = languages;
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
-  ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
+  ngxImgConfig = { crop: [{ ratio: 1 }], fileType: ['image/gif', 'image/jpeg', 'image/png'] };
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   ngxImgText = {
@@ -96,11 +92,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         }
         this.previewSrc = this.currentProfileImg;
         console.log('data: ' + data);
-  
+
         // Set up valueChanges subscription after initial values are set
         this.editForm.valueChanges.subscribe((value) => {
           this.hasUnsavedChanges = !this.isFormPristine();
-          this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges);
         });
       }, (error) => {
         console.log(error);
@@ -109,19 +104,19 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      firstName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       middleName: '',
-      lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
-      email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
-      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      lastName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      email: ['', [this.conditionalValidator(Validators.required).bind(this), Validators.email]],
+      language: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      phoneNumber: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       birthDate: [
         '',
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
-      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      gender: ['', this.conditionalValidator(Validators.required).bind(this)],
+      level: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       betaEnabled: false
     });
   }
@@ -136,7 +131,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.submitUser();
-
   }
 
   submitUser() {
@@ -148,7 +142,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         switchMap(() => this.userService.addImageForReplication(true))
       ).subscribe(() => {
         this.hasUnsavedChanges = false;
-        this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges);
         this.editForm.markAsPristine();
         this.initialFormValues = { ...this.editForm.value }; // Update initial form values after submission
         this.goBack();
@@ -182,7 +175,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     if (this.canDeactivate()) {
       this.editForm.reset(this.user);
       this.hasUnsavedChanges = false;
-      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
+      this.router.navigate([this.redirectUrl], { relativeTo: this.route });
     }
   }
 
@@ -191,7 +184,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.previewSrc = img;
     this.uploadImage = true;
     this.hasUnsavedChanges = true;
-    this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges); // Emit the change
     this.editForm.markAsDirty(); // Mark the form as dirty
   }
 
@@ -200,25 +192,23 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.file = null;
     this.uploadImage = false;
     this.hasUnsavedChanges = true;
-    this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges); // Emit the change
     this.editForm.markAsDirty(); // Mark the form as dirty
   }
 
-deleteImageAttachment() {
-  if (!this.currentImgKey) {
-    return;
-  }
+  deleteImageAttachment() {
+    if (!this.currentImgKey) {
+      return;
+    }
 
-  if (this.user._attachments && this.user._attachments[this.currentImgKey]) {
-    delete this.user._attachments[this.currentImgKey];
-  }
+    if (this.user._attachments && this.user._attachments[this.currentImgKey]) {
+      delete this.user._attachments[this.currentImgKey];
+    }
 
-  this.currentProfileImg = 'assets/image.png';
-  this.removeImageFile();
-  this.hasUnsavedChanges = true;
-  this.hasUnsavedChangesChange.emit(this.hasUnsavedChanges); // Emit the change
-  this.editForm.markAsDirty(); // Mark the form as dirty
-}
+    this.currentProfileImg = 'assets/image.png';
+    this.removeImageFile();
+    this.hasUnsavedChanges = true;
+    this.editForm.markAsDirty(); // Mark the form as dirty
+  }
 
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
@@ -236,12 +226,12 @@ deleteImageAttachment() {
     }
     return true;
   }
-  
+
   isFormPristine(): boolean {
     return JSON.stringify(this.editForm.value) === JSON.stringify(this.initialFormValues);
   }
 
-  @HostListener('window:beforeunload', [ '$event' ])
+  @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: BeforeUnloadEvent): void {
     console.log('canDeactivate called', this.hasUnsavedChanges);
     if (this.hasUnsavedChanges && !this.isFormPristine()) {
