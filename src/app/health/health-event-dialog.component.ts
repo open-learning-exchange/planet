@@ -77,4 +77,20 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     this.seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
   }
 
+  isLastSection(section: string): boolean {
+    const sections = [
+      'notes',
+      'diagnosis',
+      'treatments',
+      'medications',
+      'immunizations',
+      'allergies',
+      'xrays',
+      'tests',
+      'referrals'
+    ];
+    const activeSections = sections.filter(sec => this.event[sec]);
+    return activeSections[activeSections.length - 1] === section;
+  }
+
 }
