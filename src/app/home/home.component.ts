@@ -16,7 +16,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 
 @Component({
   templateUrl: './home.component.html',
-  styleUrls: ['./home.scss'],
+  styleUrls: [ './home.scss' ],
   animations: [
     trigger('sidenavState', [
       state('closed', style({
@@ -201,14 +201,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       catchError(errorCatch)
     ).subscribe((response: any) => {
       this.userService.unset();
-      this.router.navigate(['/login'], {});
+      this.router.navigate([ '/login' ], {});
     });
   }
 
   getNotification() {
-    const userFilter = [{
+    const userFilter = [ {
       'user': 'org.couchdb.user:' + this.userService.get().name
-    }];
+    } ];
     if (this.userService.get().isUserAdmin) {
       userFilter.push({ 'user': 'SYSTEM' });
     }
@@ -220,7 +220,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         'status': 'unread'
       },
       0,
-      [{ 'time': 'desc' }]
+      [ { 'time': 'desc' } ]
     ))
       .subscribe(data => {
         this.notifications = data;

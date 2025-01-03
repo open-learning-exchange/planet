@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './users-update.component.html',
-  styleUrls: ['./users-update.scss']
+  styleUrls: [ './users-update.scss' ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: any = {};
@@ -37,7 +37,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   languages = languages;
   submissionMode = false;
   planetConfiguration = this.stateService.configuration;
-  ngxImgConfig = { crop: [{ ratio: 1 }], fileType: ['image/gif', 'image/jpeg', 'image/png'] };
+  ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
@@ -114,19 +114,19 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   userData() {
     this.editForm = this.fb.group({
-      firstName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       middleName: '',
-      lastName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
-      email: ['', [this.conditionalValidator(CustomValidators.required).bind(this), Validators.email]],
-      language: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
-      phoneNumber: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      email: [ '', [ this.conditionalValidator(CustomValidators.required).bind(this), Validators.email ] ],
+      language: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       birthDate: [
         '',
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
-      gender: ['', this.conditionalValidator(Validators.required).bind(this)],
-      level: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
+      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
+      level: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       betaEnabled: false
     });
   }
@@ -200,7 +200,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       this.hasUnsavedChanges = false;
       this.avatarChanged = false;
       this.unsavedChangesService.setHasUnsavedChanges(false);
-      this.router.navigate([this.redirectUrl], { relativeTo: this.route });
+      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
     }
   }
 
@@ -258,11 +258,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     return JSON.stringify(this.editForm.value) === JSON.stringify(this.initialFormValues);
   }
 
-  @HostListener('window:beforeunload', ['$event'])
+  @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges || this.avatarChanged) {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
-  
+
 }
