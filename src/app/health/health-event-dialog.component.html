@@ -14,14 +14,14 @@
     <p>{{conditions}}</p>
   </ng-container>
   <h4 class="primary-text-color" *ngIf="hasConditionAndTreatment" i18n>Other Notes</h4>
-  <div *ngIf="event.notes"><p><b i18n>Observations & Notes: </b><td-markdown [content]="event.notes"></td-markdown></p><hr></div>
-  <div *ngIf="event.diagnosis"><p><b i18n>Diagnosis: </b><td-markdown [content]="event.diagnosis"></td-markdown></p><hr></div>
-  <div *ngIf="event.treatments"><p><b i18n>Treatments: </b><td-markdown [content]="event.treatments"></td-markdown></p><hr></div>
-  <div *ngIf="event.medications"><p><b i18n>Medications: </b><td-markdown [content]="event.medications"></td-markdown></p><hr></div>
-  <div *ngIf="event.immunizations"><p><b i18n>Immunizations: </b><td-markdown [content]="event.immunizations"></td-markdown></p><hr></div>
-  <div *ngIf="event.allergies"><p><b i18n>Allergies: </b><td-markdown [content]="event.allergies"></td-markdown></p><hr></div>
-  <div *ngIf="event.xrays"><p><b i18n>X-rays: </b><td-markdown [content]="event.xrays"></td-markdown></p><hr></div>
-  <div *ngIf="event.tests"><p><b i18n>Lab Tests: </b><td-markdown [content]="event.tests"></td-markdown></p><hr></div>
+  <div *ngIf="event.notes"><p><b i18n>Observations & Notes: </b><td-markdown [content]="event.notes"></td-markdown></p><hr *ngIf="!isLastSection('notes')"></div>
+  <div *ngIf="event.diagnosis"><p><b i18n>Diagnosis: </b><td-markdown [content]="event.diagnosis"></td-markdown></p><hr *ngIf="!isLastSection('diagnosis')"></div>
+  <div *ngIf="event.treatments"><p><b i18n>Treatments: </b><td-markdown [content]="event.treatments"></td-markdown></p><hr *ngIf="!isLastSection('treatments')"></div>
+  <div *ngIf="event.medications"><p><b i18n>Medications: </b><td-markdown [content]="event.medications"></td-markdown></p><hr *ngIf="!isLastSection('medications')"></div>
+  <div *ngIf="event.immunizations"><p><b i18n>Immunizations: </b><td-markdown [content]="event.immunizations"></td-markdown></p><hr *ngIf="!isLastSection('immunizations')"></div>
+  <div *ngIf="event.allergies"><p><b i18n>Allergies: </b><td-markdown [content]="event.allergies"></td-markdown></p><hr *ngIf="!isLastSection('allergies')"></div>
+  <div *ngIf="event.xrays"><p><b i18n>X-rays: </b><td-markdown [content]="event.xrays"></td-markdown></p><hr *ngIf="!isLastSection('xrays')"></div>
+  <div *ngIf="event.tests"><p><b i18n>Lab Tests: </b><td-markdown [content]="event.tests"></td-markdown></p><hr *ngIf="!isLastSection('tests')"></div>
   <div *ngIf="event.referrals"><p><b i18n>Referrals: </b><td-markdown [content]="event.referrals"></td-markdown></p></div>
 </mat-dialog-content>
 <mat-dialog-actions>
