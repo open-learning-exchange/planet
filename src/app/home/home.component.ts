@@ -102,12 +102,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         if (this.unsavedChangesService.getHasUnsavedChanges()) {
           const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
           if (confirmLeave) {
-            // Proceed with navigation
-            console.log('User confirmed navigation to:', event.url); // Logging the navigation
             this.unsavedChangesService.setHasUnsavedChanges(false); // Reset the flag
           } else {
-            // Cancel navigation
-            console.log('User canceled navigation'); // Logging the cancellation
             this.router.navigateByUrl(this.router.url); // Stay on the current URL
           }
         }

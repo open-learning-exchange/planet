@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap } from 'rxjs/operators';
@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss']
 })
-export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: any = {};
   initialFormValues: any;
   educationLevel = educationLevel;
@@ -42,7 +42,6 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
   hasUnsavedChanges = false;
   avatarChanged = false;
   isFormInitialized = false;
-  private isDestroying = false;
   private isNavigating = false;
   private subscriptions: Subscription = new Subscription();
 
@@ -84,7 +83,6 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   ngOnInit() {
-    console.log('ngOnInit called');
     if (this.route.snapshot.data.submission === true) {
       this.submissionMode = true;
       this.redirectUrl = '/manager/surveys';
@@ -114,11 +112,6 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
       });
   }
 
-  ngOnDestroy() {
-    this.isDestroying = true;
-    console.log('ngOnDestroy called, isDestroying set to', this.isDestroying);
-  }
-
   userData() {
     this.editForm = this.fb.group({
       firstName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
@@ -140,7 +133,6 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
 
   setupFormValueChanges() {
     this.editForm.valueChanges.subscribe(() => {
-      console.log('Form value changed, isFormInitialized:', this.isFormInitialized, 'isFormPristine:', this.isFormPristine());
       if (this.isFormInitialized && !this.isFormPristine()) {
         this.hasUnsavedChanges = true;
         this.unsavedChangesService.setHasUnsavedChanges(true);
@@ -148,7 +140,6 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
         this.hasUnsavedChanges = false;
         this.unsavedChangesService.setHasUnsavedChanges(false);
       }
-      console.log('hasUnsavedChanges:', this.hasUnsavedChanges);
     });
   }
 
@@ -222,8 +213,7 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   removeImageFile() {
-    console.log('removeImageFile called with isDestroying set to', this.isDestroying, 'and isNavigating set to', this.isNavigating);
-    if (this.isDestroying || this.isNavigating) {
+    if (this.isNavigating) {
       return;
     }
     this.previewSrc = this.currentProfileImg;
@@ -258,7 +248,6 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   canDeactivate(): boolean {
-    console.log('canDeactivate called', this.hasUnsavedChanges, this.avatarChanged);
     if (this.hasUnsavedChanges || this.avatarChanged) {
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
     }
@@ -271,9 +260,9 @@ export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
 
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: BeforeUnloadEvent): void {
-    console.log('canDeactivate called', this.hasUnsavedChanges, this.avatarChanged);
     if (this.hasUnsavedChanges || this.avatarChanged) {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
+  
 }
