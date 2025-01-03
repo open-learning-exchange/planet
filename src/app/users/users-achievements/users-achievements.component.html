@@ -31,17 +31,17 @@
           <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
         </div>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="achievements.purpose"></mat-divider>
       <div *ngIf="achievements.purpose">
         <h3 i18n>My Purpose</h3>
         <td-markdown [content]="achievements.purpose"></td-markdown>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="achievements.goals"></mat-divider>
       <div *ngIf="achievements.goals">
         <h3 i18n>My Goals</h3>
         <td-markdown [content]="achievements.goals"></td-markdown>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="certifications.length > 0"></mat-divider>
       <ng-container *planetBeta>
         <div *ngIf="certifications.length > 0">
           <h3 i18n>My Certifications</h3>
@@ -52,7 +52,7 @@
           </mat-list>
         </div>
       </ng-container>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="achievements?.links?.length > 0"></mat-divider>
       <div *ngIf="achievements?.links?.length > 0">
         <h3 i18n>My Links</h3>
         <mat-list>
@@ -62,7 +62,7 @@
           </mat-list-item>
         </mat-list>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0"></mat-divider>
       <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
         <h3 i18n>My Achievements</h3>
         <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
@@ -85,7 +85,7 @@
           </mat-list-item>
         </mat-list>
       </div>
-      <mat-divider></mat-divider>
+      <mat-divider *ngIf="achievements.references.length > 0"></mat-divider>
       <div *ngIf="achievements.references.length > 0">
         <h3 i18n>My References</h3>
         <mat-list class="references-list">
