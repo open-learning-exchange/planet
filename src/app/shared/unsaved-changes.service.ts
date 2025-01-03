@@ -8,6 +8,8 @@ export class UnsavedChangesService {
   private hasUnsavedChangesSubject = new BehaviorSubject<boolean>(false);
 
   setHasUnsavedChanges(hasUnsavedChanges: boolean): void {
+    console.log('setHasUnsavedChanges called with:', hasUnsavedChanges); // Add logging
+    console.trace(); // Add stack trace logging
     this.hasUnsavedChangesSubject.next(hasUnsavedChanges);
   }
 

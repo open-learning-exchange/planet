@@ -1,8 +1,8 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
@@ -13,12 +13,13 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guard';
 import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss']
 })
-export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
+export class UsersUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user: any = {};
   initialFormValues: any;
   educationLevel = educationLevel;
@@ -40,6 +41,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
+  isFormInitialized = false;
+  private isDestroying = false;
+  private isNavigating = false;
+  private subscriptions: Subscription = new Subscription();
+
   ngxImgText = {
     default: $localize`Drag and drop`,
     _default: $localize`Drag and drop or click`,
@@ -70,9 +76,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private unsavedChangesService: UnsavedChangesService
   ) {
     this.userData();
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
+    });
   }
 
   ngOnInit() {
+    console.log('ngOnInit called');
     if (this.route.snapshot.data.submission === true) {
       this.submissionMode = true;
       this.redirectUrl = '/manager/surveys';
@@ -94,14 +106,17 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           this.uploadImage = true;
         }
         this.previewSrc = this.currentProfileImg;
-        console.log('data: ' + data);
-        this.editForm.valueChanges.subscribe((value) => {
-          this.hasUnsavedChanges = !this.isFormPristine();
-          this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
-        });
+        console.log('data: ', data);
+        this.isFormInitialized = true;
+        this.setupFormValueChanges();
       }, (error) => {
         console.log(error);
       });
+  }
+
+  ngOnDestroy() {
+    this.isDestroying = true;
+    console.log('ngOnDestroy called, isDestroying set to', this.isDestroying);
   }
 
   userData() {
@@ -109,7 +124,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       firstName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       middleName: '',
       lastName: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
-      email: ['', [this.conditionalValidator(Validators.required).bind(this), Validators.email]],
+      email: ['', [this.conditionalValidator(CustomValidators.required).bind(this), Validators.email]],
       language: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       phoneNumber: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       birthDate: [
@@ -120,6 +135,20 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       gender: ['', this.conditionalValidator(Validators.required).bind(this)],
       level: ['', this.conditionalValidator(CustomValidators.required).bind(this)],
       betaEnabled: false
+    });
+  }
+
+  setupFormValueChanges() {
+    this.editForm.valueChanges.subscribe(() => {
+      console.log('Form value changed, isFormInitialized:', this.isFormInitialized, 'isFormPristine:', this.isFormPristine());
+      if (this.isFormInitialized && !this.isFormPristine()) {
+        this.hasUnsavedChanges = true;
+        this.unsavedChangesService.setHasUnsavedChanges(true);
+      } else {
+        this.hasUnsavedChanges = false;
+        this.unsavedChangesService.setHasUnsavedChanges(false);
+      }
+      console.log('hasUnsavedChanges:', this.hasUnsavedChanges);
     });
   }
 
@@ -193,6 +222,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   removeImageFile() {
+    console.log('removeImageFile called with isDestroying set to', this.isDestroying, 'and isNavigating set to', this.isNavigating);
+    if (this.isDestroying || this.isNavigating) {
+      return;
+    }
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;

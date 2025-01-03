@@ -10,7 +10,7 @@ import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { UnsavedChangesService } from '../shared/unsaved-changes.service';
-import { StateService } from '../shared/state.service'; // Add the import statement for StateService
+import { StateService } from '../shared/state.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -70,7 +70,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
     private unsavedChangesService: UnsavedChangesService,
-    private stateService: StateService, // Add stateService to the constructor
+    private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
     private notificationsService: NotificationsService
   ) {
@@ -262,7 +262,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     });
   }
 
-  // Example method to handle navigation
   navigateAway() {
     console.log('navigateAway called, hasUnsavedChanges:', this.hasUnsavedChanges); // Logging to ensure the flag is passed
     if (!this.hasUnsavedChanges) {
@@ -278,6 +277,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         // Proceed with navigation
         console.log('User confirmed navigation to:', this.pendingNavigation); // Logging the navigation
         this.unsubscribeFromRouterEvents();
+        this.unsavedChangesService.setHasUnsavedChanges(false); // Reset the flag
         this.router.navigate([this.pendingNavigation]).then(() => {
           this.subscribeToRouterEvents();
         });
