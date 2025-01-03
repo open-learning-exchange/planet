@@ -1,7 +1,7 @@
-<h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
+<h2 mat-dialog-title>{{event.date | date: 'medium'}}</h2>
 <mat-dialog-content>
   <p *ngIf="!event.selfExamination"><b i18n>Performed by: </b>{{performedBy}}</p>
-  <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
+  <h3 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h3>
   <p *ngIf="event.temperature"><b i18n>Temperature: </b>{{event.temperature}} °C</p>
   <p *ngIf="event.pulse"><b i18n>Pulse: </b>{{event.pulse}} bpm</p>
   <p *ngIf="event.bp"><b i18n>Blood Pressure: </b>{{event.bp}}</p>
@@ -10,10 +10,10 @@
   <p *ngIf="event.vision"><b i18n>Vision: </b>{{event.vision}}</p>
   <p *ngIf="event.hearing"><b i18n>Hearing: </b>{{event.hearing}}</p>
   <ng-container *ngIf="conditions">
-    <h4 class="primary-text-color" i18n>Conditions</h4>
+    <h3 class="primary-text-color" i18n>Conditions</h3>
     <p>{{conditions}}</p>
   </ng-container>
-  <h4 class="primary-text-color" *ngIf="hasConditionAndTreatment" i18n>Other Notes</h4>
+  <h3 class="primary-text-color" *ngIf="hasConditionAndTreatment" i18n>Other Notes</h3>
   <div *ngIf="event.notes"><p><b i18n>Observations & Notes: </b><td-markdown [content]="event.notes"></td-markdown></p><hr *ngIf="!isLastSection('notes')"></div>
   <div *ngIf="event.diagnosis"><p><b i18n>Diagnosis: </b><td-markdown [content]="event.diagnosis"></td-markdown></p><hr *ngIf="!isLastSection('diagnosis')"></div>
   <div *ngIf="event.treatments"><p><b i18n>Treatments: </b><td-markdown [content]="event.treatments"></td-markdown></p><hr *ngIf="!isLastSection('treatments')"></div>
