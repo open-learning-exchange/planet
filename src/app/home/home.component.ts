@@ -100,10 +100,16 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (this.unsavedChangesService.getHasUnsavedChanges()) {
-          this.pendingNavigation = event.url;
-          this.handleUnsavedChanges();
-          // Prevent navigation
-          this.router.navigateByUrl(this.router.url);
+          const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+          if (confirmLeave) {
+            // Proceed with navigation
+            console.log('User confirmed navigation to:', event.url); // Logging the navigation
+            this.unsavedChangesService.setHasUnsavedChanges(false); // Reset the flag
+          } else {
+            // Cancel navigation
+            console.log('User canceled navigation'); // Logging the cancellation
+            this.router.navigateByUrl(this.router.url); // Stay on the current URL
+          }
         }
       }
     });
@@ -251,65 +257,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   endAnimation() {
     if (this.animDisp) {
       this.animDisp.unsubscribe();
-    }
-  }
-
-  subscribeToRouterEvents() {
-    this.routerSubscription = this.router.events.pipe(takeUntil(this.onDestroy$)).subscribe(event => {
-      if (event instanceof NavigationStart) {
-        console.log('NavigationStart event detected:', event.url); // Logging to ensure event detection
-        this.pendingNavigation = event.url;
-        this.navigateAway();
-      }
-    });
-  }
-
-  unsubscribeFromRouterEvents() {
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
-  }
-
-  handleUnsavedChanges() {
-    const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-    if (confirmLeave) {
-      // Proceed with navigation
-      console.log('User confirmed navigation to:', this.pendingNavigation); // Logging the navigation
-      this.unsavedChangesService.setHasUnsavedChanges(false); // Reset the flag
-      this.router.navigate([this.pendingNavigation]).then(() => {
-        this.pendingNavigation = null;
-      });
-    } else {
-      // Cancel navigation
-      console.log('User canceled navigation'); // Logging the cancellation
-      this.pendingNavigation = null;
-    }
-  }
-
-  navigateAway() {
-    console.log('navigateAway called, hasUnsavedChanges:', this.unsavedChangesService.getHasUnsavedChanges()); // Logging to ensure the flag is passed
-    if (!this.unsavedChangesService.getHasUnsavedChanges()) {
-      // Proceed with navigation
-      console.log('No unsaved changes, navigating to:', this.pendingNavigation); // Logging the navigation
-      this.unsubscribeFromRouterEvents();
-      this.router.navigate([this.pendingNavigation]).then(() => {
-        this.subscribeToRouterEvents();
-      });
-    } else {
-      const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-      if (confirmLeave) {
-        // Proceed with navigation
-        console.log('User confirmed navigation to:', this.pendingNavigation); // Logging the navigation
-        this.unsubscribeFromRouterEvents();
-        this.unsavedChangesService.setHasUnsavedChanges(false); // Reset the flag
-        this.router.navigate([this.pendingNavigation]).then(() => {
-          this.subscribeToRouterEvents();
-        });
-      } else {
-        // Cancel navigation
-        console.log('User canceled navigation'); // Logging the cancellation
-        this.pendingNavigation = null;
-      }
     }
   }
 
