@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
@@ -152,6 +152,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.submitUser();
+
   }
 
   submitUser() {
@@ -238,6 +239,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
+  
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
     this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
