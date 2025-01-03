@@ -212,7 +212,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       userFilter.push({ 'user': 'SYSTEM' });
     }
     this.couchService.findAll('notifications', findDocuments(
-      {'$or': userFilter,
+      { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 },
         'status': 'unread'
