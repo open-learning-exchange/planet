@@ -239,7 +239,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
-  
+
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
     this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
