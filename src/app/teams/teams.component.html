@@ -43,8 +43,8 @@
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <h3>
-            {{element.doc.name}}
+          <h3 class="team-name">
+            {{element.doc.name.length > 200 ? element.doc.name.slice(0, 200) + '...': element.doc.name }}
             <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
           </h3>
         </mat-cell>
