@@ -50,8 +50,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
-    })
-  );
+    }
+  ));
   // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
@@ -81,7 +81,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
     this.isAndroid = this.deviceInfoService.isAndroid();
-
   }
 
   ngOnInit() {
@@ -213,15 +212,13 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       userFilter.push({ 'user': 'SYSTEM' });
     }
     this.couchService.findAll('notifications', findDocuments(
-      {
-        '$or': userFilter,
+      {'$or': userFilter,
         // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 },
         'status': 'unread'
       },
       0,
-      [ { 'time': 'desc' } ]
-    ))
+      [ { 'time': 'desc' } ]))
       .subscribe(data => {
         this.notifications = data;
       }, (error) => console.log(error));

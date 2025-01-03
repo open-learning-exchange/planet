@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { map, switchMap, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StateService {
-  private hasUnsavedChangesSubject = new BehaviorSubject<boolean>(false);
-  hasUnsavedChanges$ = this.hasUnsavedChangesSubject.asObservable();
 
-  state: any = { loal: {}, parent: {} };
+  state: any = { local: {}, parent: {} };
   private stateUpdated = new Subject<any>();
   private inProgress = { local: new Map(), parent: new Map() };
 

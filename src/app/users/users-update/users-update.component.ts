@@ -44,7 +44,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   isFormInitialized = false;
   private isNavigating = false;
   private subscriptions: Subscription = new Subscription();
-
   ngxImgText = {
     default: $localize`Drag and drop`,
     _default: $localize`Drag and drop or click`,
@@ -117,8 +116,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       middleName: '',
       lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
-      email: [ '', [ this.conditionalValidator(CustomValidators.required).bind(this), Validators.email ] ],
-      language: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
+      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       birthDate: [
         '',
@@ -126,7 +125,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         ac => this.validatorService.notDateInFuture$(ac)
       ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      level: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
+      level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       betaEnabled: false
     });
   }
@@ -213,6 +212,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   removeImageFile() {
+    //required to prevent this from being called automatically when navigating away from the page
     if (this.isNavigating) {
       return;
     }
