@@ -61,8 +61,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   private onDestroy$ = new Subject<void>();
   private hasUnsavedChangesSubscription: Subscription;
   hasUnsavedChanges = false;
-  private pendingNavigation: any;
   private routerSubscription: Subscription;
+  private pendingNavigation: string;
 
   constructor(
     private couchService: CouchService,
@@ -82,7 +82,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.onlineStatus = this.stateService.configuration.registrationRequest;
     this.isAndroid = this.deviceInfoService.isAndroid();
 
-    this.subscribeToRouterEvents();
   }
 
   ngOnInit() {
@@ -98,13 +97,16 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
     });
     this.subscribeToLogoutClick();
-
-    this.hasUnsavedChangesSubscription = this.unsavedChangesService.getHasUnsavedChanges().subscribe(
-      (hasUnsavedChanges) => {
-        this.hasUnsavedChanges = hasUnsavedChanges;
-        console.log('hasUnsavedChanges:', this.hasUnsavedChanges); // Logging to ensure the flag is passed
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        if (this.unsavedChangesService.getHasUnsavedChanges()) {
+          this.pendingNavigation = event.url;
+          this.handleUnsavedChanges();
+          // Prevent navigation
+          this.router.navigateByUrl(this.router.url);
+        }
       }
-    );
+    });
   }
 
   ngDoCheck() {
@@ -262,9 +264,31 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     });
   }
 
+  unsubscribeFromRouterEvents() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
+
+  handleUnsavedChanges() {
+    const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+    if (confirmLeave) {
+      // Proceed with navigation
+      console.log('User confirmed navigation to:', this.pendingNavigation); // Logging the navigation
+      this.unsavedChangesService.setHasUnsavedChanges(false); // Reset the flag
+      this.router.navigate([this.pendingNavigation]).then(() => {
+        this.pendingNavigation = null;
+      });
+    } else {
+      // Cancel navigation
+      console.log('User canceled navigation'); // Logging the cancellation
+      this.pendingNavigation = null;
+    }
+  }
+
   navigateAway() {
-    console.log('navigateAway called, hasUnsavedChanges:', this.hasUnsavedChanges); // Logging to ensure the flag is passed
-    if (!this.hasUnsavedChanges) {
+    console.log('navigateAway called, hasUnsavedChanges:', this.unsavedChangesService.getHasUnsavedChanges()); // Logging to ensure the flag is passed
+    if (!this.unsavedChangesService.getHasUnsavedChanges()) {
       // Proceed with navigation
       console.log('No unsaved changes, navigating to:', this.pendingNavigation); // Logging the navigation
       this.unsubscribeFromRouterEvents();
@@ -289,9 +313,4 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
   }
 
-  unsubscribeFromRouterEvents() {
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
-  }
 }
