@@ -2,23 +2,28 @@
 
 ## Step 1 : Set up Google Cloud VM
 
+### Preparation
 - Go to https://console.cloud.google.com/ and log in with your OLE Google account.
 - Sign up, choose individual account, for organizational use. You may need a credit card/debit card to verify you are a real person. A charge and refund in the amount less than $2 will show up on your card transaction history. You will need the code in the purchase description to verify. There’s no risk of getting charged in the future if you do not click on “Activate full account” within Google Cloud Console.
 - Search for “Compute Engine API,” enable and wait for it to activate
-- Search for “Metadata” and look for “Metadata Compute Engine”, go to “SSH KEYS” tab
+- Search for “Metadata Compute Engine,” go to “SSH KEYS” tab
   - Add your public key there. If the key does not already include a comment, you’ll need to append ` name` to the key to comply with Google’s format rules.
   - Adding it manually to `authorized_keys` in the VM would not work as it will get it overridden over time.
-- Go to “Compute Engine”, click on “Create Instance” button
-- Select a location near you, price typically ranges between $25 - $35 a month
-- Leave everything else to default, 4GB of RAM and Debian 12 works for us
-- Click on the “Create” button
-- Once the instance is created, try to ssh into the vm from your terminal
-- Search for “Firewall VPC Network”, click on “CREATE FIREWALL RULE” button
+- Search for “Firewall VPC Network,” click on “CREATE FIREWALL RULE” button
     - Name: `planetdev-rules`
     - Action on match - Allow - “Targets” dropdown - select “All instances in the network”
     - Under “Source IPv4 Range”, enter `0.0.0.0/0`
     - Under ”Protocols and ports”, check TCP, enter `2200,3000,5000` (ports for couchdb, default `ng serve` port, and chatpi)
     - Click on the blue “Create” button
+
+### Create Instance
+- Go to “[Compute Engine](https://console.cloud.google.com/compute/overview)”, click on “Create Instance” button
+- Select a location near you, price typically ranges between $25 - $35 a month
+- Leave everything else to default, 4GB of RAM and Debian 12 works for us
+- Click on the “Create” button
+
+### Configuration and Installation
+- Once the instance is up and running, try to ssh into the vm from your terminal
 - Tools installation
     - Install git, unzip: `apt-get update && apt-get install git unzip`
     - Install docker https://docs.docker.com/engine/install/debian/#install-using-the-repository
@@ -30,7 +35,7 @@
 
 ## Step 2 : Setting up your dev environment 
 
-- Install the following extensions: 
+- Install the following extensions in VS Code
     - Microsoft Remote Explorer
     - Microsoft Remote Development
 - Connect you IDE to the VM
