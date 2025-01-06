@@ -113,7 +113,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       }
     }), {});
   }
-  
+
   isLastSection(section: string): boolean {
     const sections = [
       'notes',
