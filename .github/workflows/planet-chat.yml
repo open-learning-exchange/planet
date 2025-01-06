@@ -55,8 +55,8 @@ jobs:
           docker build -f './docker/chatapi/${{ matrix.arch }}-Dockerfile' -t $repo .
           docker images
           docker tag $repo $branchrepo
-          docker --max-concurrent-uploads=3 push $repo
-          docker --max-concurrent-uploads=3 push $branchrepo
+          docker push --max-concurrent-uploads=3 $repo
+          docker push --max-concurrent-uploads=3 $branchrepo
 
   multiarch:
     name: Manifest build
