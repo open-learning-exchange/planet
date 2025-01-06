@@ -113,6 +113,21 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       }
     }), {});
   }
-
+  
+  isLastSection(section: string): boolean {
+    const sections = [
+      'notes',
+      'diagnosis',
+      'treatments',
+      'medications',
+      'immunizations',
+      'allergies',
+      'xrays',
+      'tests',
+      'referrals'
+    ];
+    const activeSections = sections.filter(sec => this.event[sec]);
+    return activeSections[activeSections.length - 1] === section;
+  }
 
 }
