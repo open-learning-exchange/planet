@@ -8,7 +8,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
-import { DialogsAnnouncementComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -20,6 +19,13 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import {
+  DialogsAnnouncementComponent,
+  DialogsAnnouncementSuccessComponent,
+  includedCodes,
+  challengePeriod
+} from '../shared/dialogs/dialogs-announcement.component';
+import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 
 @Component({
   selector: 'planet-community',
@@ -49,7 +55,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  challengeActive: boolean;
   isLoading: boolean;
 
   constructor(
@@ -64,7 +69,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private userStatusService: UserChallengeStatusService,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -101,22 +107,31 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'embakasi', 'uriur' ];
-    this.challengeActive = includedCodes.includes(this.configuration.code) &&
-    ((new Date() > new Date(2024, 9, 31)) && (new Date() < new Date(2024, 11, 1)));
-    const popupShown = localStorage.getItem('announcementPopupShown');
+    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
 
-    if (this.challengeActive && !popupShown) {
-      this.openAnnouncementDialog();
-      localStorage.setItem('announcementPopupShown', 'true');
+    if (challengeActive) {
+      const dialogRef = this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+      dialogRef.afterClosed().subscribe(() => {
+        if (!this.userStatusService.getCompleteChallenge()) {
+          this.sendChallengeNotification(this.user).subscribe();
+        }
+      });
     }
   }
 
-  openAnnouncementDialog() {
-    this.dialog.open(DialogsAnnouncementComponent, {
-      width: '50vw',
-      maxHeight: '100vh'
-    });
+  sendChallengeNotification(user) {
+    const data = {
+      'user': user._id,
+      'message': `El reto está en`,
+      'type': 'challenges',
+      'priority': 1,
+      'status': 'unread',
+      'time': this.couchService.datePlaceholder
+    };
+    return this.couchService.updateDocument('notifications', data);
   }
 
   getCommunityData() {
@@ -193,7 +208,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => this.dialogsFormService.closeDialogsForm());
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm();
+      if (
+        this.userStatusService.getStatus('joinedCourse') &&
+        this.userStatusService.getStatus('surveyComplete') &&
+        !this.userStatusService.getStatus('hasPost')
+      ) {
+        this.dialog.open(DialogsAnnouncementSuccessComponent, {
+          width: '50vw',
+          maxHeight: '100vh'
+        });
+        this.userStatusService.updateStatus('hasPost', true);
+      }
+    });
   }
 
   sendNotifications(user, currentUser) {
@@ -327,14 +355,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.teamsService.updateTeam({ ...this.team, description: description.text }).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(newTeam => {
+        const previousDescription = Boolean(this.team.description);
         this.team = newTeam;
         this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+        const msg = newTeam.description
+      ? (previousDescription ? $localize`Description edited` : $localize`Description added`)
+      : $localize`Description deleted`;
+        this.dialogsFormService.closeDialogsForm();
+        this.planetMessageService.showMessage(msg);
       });
-      this.dialogsFormService.closeDialogsForm();
     };
     this.dialogsFormService.openDialogsForm(
       this.team.description ? $localize`Edit Description` : $localize`Add Description`,
-      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: true, imageGroup: 'community' } ],
+      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: false, imageGroup: 'community' } ],
       { description: this.team.description || '' },
       { autoFocus: true, onSubmit: submitDescription }
     );

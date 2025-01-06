@@ -12,6 +12,13 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-list-item-disabled {
       background-color: white;
     }
+    .mat-card-tasks {
+      padding-top: 20px;
+    }
+    .mat-caption {
+      font-size: 16px;
+      font-weight: bold;
+    }
   ` ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {

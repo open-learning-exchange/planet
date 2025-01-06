@@ -6,6 +6,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 action-buttons">
+    <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['update']" *ngIf="isOwnUser">Update Details</a>
     <a mat-raised-button color="accent" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
     <span *ngIf="userDetail.firstName === undefined"><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
@@ -86,7 +87,7 @@
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
               <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
-                <div>
+                <div class="header-items">
                   <div class="header-date">
                     {{ column === 'label' ? '' : (column | date) }}<mat-icon *ngIf="additionalInfo[column]?.hasInfo===true || additionalInfo[column]?.hasConditions===true" class="primary-text-color" i18n-tooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
                   </div>

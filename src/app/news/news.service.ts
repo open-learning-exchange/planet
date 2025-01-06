@@ -54,7 +54,7 @@ export class NewsService {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
   }
 
-  postNews(post, successMessage = $localize`Thank you for submitting your news`, isMessageEdit = true) {
+  postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
     const { configuration } = this.stateService;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
     const images = this.createImagesArray(post, message);
@@ -76,7 +76,7 @@ export class NewsService {
   }
 
   deleteNews(post) {
-    return this.postNews({ ...post, _deleted: true }, $localize`Post deleted`);
+    return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
   }
 
   createImagesArray(post, message) {
@@ -90,7 +90,7 @@ export class NewsService {
     return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply.doc, replyTo: newReplyToId })));
   }
 
-  shareNews(news, planets?: any[], successMessage = $localize`News has been successfully shared`) {
+  shareNews(news, planets?: any[], successMessage = $localize`Message has been successfully shared`) {
     const viewInObject = (planet) => (
       { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
     );

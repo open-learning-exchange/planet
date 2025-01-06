@@ -7,6 +7,7 @@
         nation {nation}
         course {course}
         resource {resource}
+        document {document}
         meetup {meetup}
         user {member}
         change {change}
@@ -16,6 +17,7 @@
         event {event}
         transaction {transaction}
         link {link}
+        news {message}
         report {report}}?
       }
       many
@@ -30,7 +32,7 @@
     }
   </p>
   <p [innerHTML]=data.extraMessage></p>
-  <b>{{data.displayName}}</b>
+  <b class = break-word>{{data.displayName | slice:0:140}}<span *ngIf="data.displayName.length > 140">...</span></b>
   <b *ngIf="data.displayDates">{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>
   <ng-container *ngFor="let label of labels; last as last">
     <p><b><planet-label [label]="label.field"></planet-label>: {{label.value}}</b></p>

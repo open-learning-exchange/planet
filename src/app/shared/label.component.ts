@@ -25,7 +25,7 @@ import { Component, Input } from '@angular/core';
       Epilepsy {Epilepsy}
       FGM {FGM}
       Influenza {Influenza}
-      Ischaemic heat disease {Ischaemic heat disease}
+      Ischaemic heart disease {Ischaemic heart disease}
       Malaria {Malaria}
       Malnutrition {Malnutrition}
       Measles {Measles}

@@ -10,7 +10,7 @@ export const conditions = [
   $localize`FGM`,
   $localize`HIV/AIDS`,
   $localize`Influenza`,
-  $localize`Ischaemic heat disease`,
+  $localize`Ischaemic heart disease`,
   $localize`Malaria`,
   $localize`Malnutrition`,
   $localize`Measles`,
