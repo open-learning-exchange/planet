@@ -31,7 +31,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   isDestroyed = false;
   userDetail = this.userService.get();
   healthDetail: any = {};
-  
+
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -134,8 +134,8 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   }
 
   exportAsPDF() {
-    const fullName = this.userDetail.firstName 
-      ? `${this.userDetail.firstName} ${this.userDetail.middleName || ''} ${this.userDetail.lastName || ''}` 
+    const fullName = this.userDetail.firstName
+      ? `${this.userDetail.firstName} ${this.userDetail.middleName || ''} ${this.userDetail.lastName || ''}`
       : 'N/A';
     const submissionDate = this.event.date ? new Date(this.event.date).toLocaleDateString() : 'N/A';
     const docDefinition: any = {
@@ -144,16 +144,16 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         header: {
           fontSize: 18,
           bold: true,
-          margin: [0, 10, 0, 10]
+          margin: [ 0, 10, 0, 10 ]
         },
         subheader: {
           fontSize: 14,
           bold: true,
-          margin: [0, 10, 0, 5]
+          margin: [ 0, 10, 0, 5 ]
         },
         text: {
           fontSize: 12,
-          margin: [0, 5, 0, 5]
+          margin: [ 0, 5, 0, 5 ]
         },
         small: {
           fontSize: 10
@@ -186,13 +186,13 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     docDefinition.content.push({ text: this.healthDetail?.notes || 'N/A', style: 'text' });
     if (this.hasVital) {
       docDefinition.content.push({ text: 'Vitals', style: 'subheader' });
-      if (this.event.temperature) docDefinition.content.push({ text: `Temperature: ${this.event.temperature} °C`, style: 'text' });
-      if (this.event.pulse) docDefinition.content.push({ text: `Pulse: ${this.event.pulse} bpm`, style: 'text' });
-      if (this.event.bp) docDefinition.content.push({ text: `Blood Pressure: ${this.event.bp}`, style: 'text' });
-      if (this.event.height) docDefinition.content.push({ text: `Height: ${this.event.height} cm`, style: 'text' });
-      if (this.event.weight) docDefinition.content.push({ text: `Weight: ${this.event.weight} kg`, style: 'text' });
-      if (this.event.vision) docDefinition.content.push({ text: `Vision: ${this.event.vision}`, style: 'text' });
-      if (this.event.hearing) docDefinition.content.push({ text: `Hearing: ${this.event.hearing}`, style: 'text' });
+      if (this.event.temperature) { docDefinition.content.push({ text: `Temperature: ${this.event.temperature} °C`, style: 'text' }); }
+      if (this.event.pulse) { docDefinition.content.push({ text: `Pulse: ${this.event.pulse} bpm`, style: 'text' }); }
+      if (this.event.bp) { docDefinition.content.push({ text: `Blood Pressure: ${this.event.bp}`, style: 'text' }); }
+      if (this.event.height) { docDefinition.content.push({ text: `Height: ${this.event.height} cm`, style: 'text' }); }
+      if (this.event.weight) { docDefinition.content.push({ text: `Weight: ${this.event.weight} kg`, style: 'text' }); }
+      if (this.event.vision) { docDefinition.content.push({ text: `Vision: ${this.event.vision}`, style: 'text' }); }
+      if (this.event.hearing) { docDefinition.content.push({ text: `Hearing: ${this.event.hearing}`, style: 'text' }); }
     }
     if (this.conditions) {
       docDefinition.content.push({ text: 'Conditions', style: 'subheader' });
@@ -216,6 +216,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       }
     });
     pdfMake.createPdf(docDefinition).download('Examination_Report.pdf');
-  }  
+  }
 
 }
