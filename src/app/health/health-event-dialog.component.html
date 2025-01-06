@@ -1,6 +1,26 @@
-<h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
+<h3 mat-dialog-title>Examination for {{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}} submitted on {{event.date | date: 'medium'}}</h3>
+<h3 *ngIf="!event.selfExamination" mat-dialog-title i18n>Performed by: {{performedBy}}</h3>
+
+<h4 class="primary-text-color" i18n>Patient Information</h4>
+<p><b>Name: </b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</p>
+<p><b>Date: </b>{{event.date | date: 'medium'}}</p>
+<p><b>DOB: </b>{{(userDetail.birthDate | date: 'longDate') || 'N/A'}}</p>
+<p><b>Email: </b>{{userDetail.email || 'N/A'}}</p>
+<p><b>Phone: </b>{{userDetail.phoneNumber || 'N/A'}}</p>
+<p><b>Language: </b>{{userDetail.language || 'N/A'}}</p>
+<p><b>Birthplace: </b>{{userDetail.birthplace || 'N/A'}}</p>
+<h4 class="primary-text-color" i18n>Emergency Contact</h4>
+<p><b i18n>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
+<p><b i18n>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
+<p><b i18n>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+
+<h4 class="primary-text-color" i18n>Special Needs</h4>
+<td-markdown [content]="healthDetail?.specialNeeds || 'N/A'"></td-markdown>
+
+<h4 class="primary-text-color" i18n>Notes</h4>
+<td-markdown [content]="healthDetail?.notes || 'N/A'"></td-markdown>
+
 <mat-dialog-content>
-  <p *ngIf="!event.selfExamination"><strong class="mat-body-strong" i18n>Performed by: </strong>{{performedBy}}</p>
   <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
   <p *ngIf="event.temperature"><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}} °C</p>
   <p *ngIf="event.pulse"><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}} bpm</p>
