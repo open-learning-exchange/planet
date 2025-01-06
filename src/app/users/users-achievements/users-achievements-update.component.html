@@ -1,9 +1,7 @@
 <mat-toolbar>
-    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-    <span *ngIf="!isLoading">
-      <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
-      <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
-  </span>
+  <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
+  <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
 </mat-toolbar>
 
 <div class="planet-users-achievements-update space-container">

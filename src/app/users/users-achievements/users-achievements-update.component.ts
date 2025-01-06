@@ -25,7 +25,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   achievementNotFound = false;
-  isLoading = true;
   editForm: FormGroup;
   profileForm: FormGroup;
   private onDestroy$ = new Subject<void>();
@@ -64,7 +63,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         catchError(() => this.usersAchievementsService.getAchievements(this.user._id))
       )
       .subscribe((achievements) => {
-        this.isLoading = false;
         this.editForm.patchValue(achievements);
         this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
         this.editForm.controls.references = this.fb.array(achievements.references || []);
@@ -78,7 +76,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
       }, (error) => {
         console.log(error);
         this.achievementNotFound = true;
-        this.isLoading = false;
       });
 
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
