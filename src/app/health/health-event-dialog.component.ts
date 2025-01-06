@@ -32,7 +32,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   userDetail = this.userService.get();
   healthDetail: any = {};
 
-
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
@@ -102,7 +101,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
       this.processEventData();
     });
   }
-
 
   processEventData() {
     this.additionalInfo = this.events.reduce((info, { date, selfExamination, conditions, hasInfo, ...event }) => ({
