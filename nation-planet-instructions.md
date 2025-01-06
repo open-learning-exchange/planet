@@ -2,12 +2,12 @@
 
 ## Step 1 : Set up Google Cloud VM
 
-- Go to https://console.cloud.google.com/ and log in with your OLE Google account
-- Sign up, choose individual account, for organizational use. You may need a credit card/debit card to verify you are a real person. A charge and refund in the amount less than $2 will show up on your card transaction history. You will need the code in the purchase description to verify.
-    - There’s no risk of getting charged in the future if you do not click on “Activate full account” within Google Cloud Console.
+- Go to https://console.cloud.google.com/ and log in with your OLE Google account.
+- Sign up, choose individual account, for organizational use. You may need a credit card/debit card to verify you are a real person. A charge and refund in the amount less than $2 will show up on your card transaction history. You will need the code in the purchase description to verify. There’s no risk of getting charged in the future if you do not click on “Activate full account” within Google Cloud Console.
 - Search for “Compute Engine API,” enable and wait for it to activate
-- Search for “Metadata” and look for “Metadata Compute Engine”, go to “SSH KEYS”
-- add your public key there, you’ll need to append the key with ` name` to satisfy google’s format rule (Adding it manually to authorized_keys in the VM would not work as it will get it overridden over time)
+- Search for “Metadata” and look for “Metadata Compute Engine”, go to “SSH KEYS” tab
+  - Add your public key there. If the key does not already include a comment, you’ll need to append ` name` to the key to comply with Google’s format rules.
+  - Adding it manually to `authorized_keys` in the VM would not work as it will get it overridden over time.
 - Go to “Compute Engine”, click on “Create Instance” button
 - Select a location near you, price typically ranges between $25 - $35 a month
 - Leave everything else to default, 4GB of RAM and Debian 12 works for us
