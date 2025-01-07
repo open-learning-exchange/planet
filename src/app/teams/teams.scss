@@ -26,6 +26,11 @@
     justify-content: center;
   }
 
+  .team-name{
+    max-width: 95%;
+    overflow: hidden;
+  }
+
   @media screen and (max-width: #{$screen-sm}) {
     mat-cell button {
       min-width: 0;
