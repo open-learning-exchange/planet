@@ -44,6 +44,19 @@ $label-height: 1rem;
   }
 }
 
+.list-content-menu {
+  &.list-content-menu-auto {
+    .header {
+      word-break: break-word;
+      max-width: 100%;
+      
+      a {
+        display: inline-block;
+      }
+    }
+  }
+}
+
 .ellipsis-menu {
   text-align: center;
 }

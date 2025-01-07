@@ -115,7 +115,8 @@ export class NewsListComponent implements OnChanges {
       data: {
         okClick: this.deleteNews(news),
         changeType: 'delete',
-        type: 'news'
+        type: 'news',
+        displayName: news.message
       }
     });
   }
@@ -134,7 +135,7 @@ export class NewsListComponent implements OnChanges {
         this.deleteDialog.close();
       },
       onError: (error) => {
-        this.planetMessageService.showAlert($localize`There was a problem deleting this news.`);
+        this.planetMessageService.showAlert($localize`There was a problem deleting this message.`);
       }
     };
   }

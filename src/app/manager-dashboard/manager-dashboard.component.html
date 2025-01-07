@@ -75,7 +75,7 @@
         <p *ngSwitchDefault i18n><b>Your request has not yet been accepted by { planetType, select, community {nation} nation {center}}</b></p>
       </ng-container>
     </div>
-    <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
+    <div *ngIf="pin"><span i18n>myPlanet Server pin:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
       <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
     </div>
   </ng-container>
