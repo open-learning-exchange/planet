@@ -16,7 +16,14 @@ import { timer, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 @Component({
-  templateUrl: './dialogs-prompt.component.html'
+  templateUrl: './dialogs-prompt.component.html',
+  styles: [ `
+    .break-word {
+      word-wrap: break-word;
+      white-space: normal;
+      word-break: break-word;
+    }
+  ` ]
 })
 export class DialogsPromptComponent {
 
