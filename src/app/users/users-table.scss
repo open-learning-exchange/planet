@@ -32,16 +32,15 @@ button-container {
   text-overflow: ellipsis;
 }
 
-.action-button{
+.action-button {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
 
-  mat-icon{
+  mat-icon {
     margin-right: 4px;
   }
 }
-
 
 @media(max-width: $screen-md) {
   .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
@@ -60,5 +59,4 @@ button-container {
     justify-content: center;
 
   }
-
 }
