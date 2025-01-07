@@ -51,6 +51,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   initialLoad = true;
   isLoading = true;
   courseId: string;
+  isTeamSurvey = false;
 
   constructor(
     private router: Router,
@@ -87,6 +88,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.setExam(params);
       this.courseId = params.get('id');
     });
+    this.isTeamSurvey = this.route.snapshot.params.teamId;
   }
 
   ngOnDestroy() {
@@ -191,7 +193,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   examComplete() {
-    if (this.route.snapshot.data.newUser === true) {
+    if (this.route.snapshot.data.newUser === true && !this.isTeamSurvey) {
       this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
     } else {
       this.goBack();
