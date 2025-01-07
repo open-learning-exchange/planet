@@ -32,6 +32,17 @@ button-container {
   text-overflow: ellipsis;
 }
 
+.action-button{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  mat-icon{
+    margin-right: 4px;
+  }
+}
+
+
 @media(max-width: $screen-md) {
   .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
     max-width: 70px;
@@ -42,4 +53,12 @@ button-container {
   .mat-cell button, .mat-cell div button[mat-raised-button] {
     width: 50px;
   }
+
+  .action-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+  }
+
 }
