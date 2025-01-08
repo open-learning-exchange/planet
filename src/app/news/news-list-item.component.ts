@@ -58,10 +58,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
     if (this.item.sharedSource) {
-      this.item.sharedSourceInfo = `shared on ${this.item.sharedDate} from ${this.item.sharedSource.type} ${this.item.sharedSource.name}`;
+      const sourceType = this.item.sharedSource.type === 'enterprise' ? 'enterprises' : 'teams';
+      this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${this.item.sharedSource.name}`;
     } else if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0) {
       const viewIn = this.item.doc.viewIn[0];
-      this.item.sharedSourceInfo = `shared on ${this.item.sharedDate} from ${viewIn.section} ${viewIn.name}`;
+      const sourceType = viewIn.section === 'enterprise' ? 'enterprises' : 'teams';
+      this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${viewIn.name}`;
     } else {
       this.item.sharedSourceInfo = null;
     }
