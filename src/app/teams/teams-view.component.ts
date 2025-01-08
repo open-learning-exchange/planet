@@ -472,8 +472,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   postMessage(message) {
+    console.log('Posting message with the following details:');
+    console.log('Team Name:', this.team.name);
+    console.log('Team Type:', this.mode);
+
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
+      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
