@@ -177,7 +177,7 @@ export class UsersAchievementsComponent implements OnInit {
         ...this.achievements.achievements.map((achievement) => {
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: format(new Date(achievement.date), 'MMM d, y'), marginLeft: 40 },
+            { text: achievement.date ? format(new Date(achievement?.date), 'MMM d, y') : '', marginLeft: 40 },
             { text: achievement.link, marginLeft: 40 },
             { text: achievement.description, marginLeft: 40 },
           ];
