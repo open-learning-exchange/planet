@@ -116,6 +116,7 @@ export class HealthEventComponent implements OnInit {
             this.goBack();
           }
         },
+        displayName: '',
         showMainParagraph: false,
         extraMessage: $localize`The value(s) of the following are not in the normal range. Click <b>Cancel</b> to fix or click <b>OK</b> to submit.`,
         showLabels: invalidFields
