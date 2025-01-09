@@ -17,7 +17,7 @@ import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'okuro', 'uriur', 'mutugi', 'vi' ];
 export const challengeCourseId = '4e6b78800b6ad18b4e8b0e1e38a98cac';
 export const examId = '4e6b78800b6ad18b4e8b0e1e38b382ab';
-export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2024, 12, 1));
+export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2025, 0, 16));
 
 @Component({
   template: `
