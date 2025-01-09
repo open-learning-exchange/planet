@@ -27,6 +27,7 @@ import { UsersModule } from '../users/users.module';
 import { PlanetComponent } from './planet.component';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
 import { ChatModule } from '../chat/chat.module';
+import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import { ChatModule } from '../chat/chat.module';
     PlanetCalendarModule,
     UsersModule,
     CoursesViewDetailModule,
-    ChatModule
+    ChatModule,
+    SurveysModule
   ],
   declarations: [
     HomeComponent,

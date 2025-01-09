@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, of, Observable } from 'rxjs';
+import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
 import { CouchService } from '../couchdb.service';
@@ -11,20 +11,19 @@ import { NewsService } from '../../news/news.service';
 import { StateService } from '../state.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
-import { UsersService } from '../../users/users.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'okuro', 'uriur', 'mutugi', 'vi' ];
 export const challengeCourseId = '4e6b78800b6ad18b4e8b0e1e38a98cac';
 export const examId = '4e6b78800b6ad18b4e8b0e1e38b382ab';
-export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2024, 12, 1));
+export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2025, 0, 16));
 
 @Component({
   template: `
     <div class="announcement-container">
       <img
-        src="https://res.cloudinary.com/mutugiii/image/upload/v1733224910/dec_challenge_svcbi3.jpg"
+        src="assets/challenge/dec challenge.jpeg"
         alt="Issues Challenge"
         class="announcement-banner"
       />
@@ -67,7 +66,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private usersService: UsersService,
     private userStatusService: UserChallengeStatusService
   ) {}
 
@@ -90,6 +88,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   initializeData() {
+    this.fetchMembers().subscribe(members => { this.members = members; });
     this.coursesService.requestCourses();
     this.newsService.requestNews({
       selectors: {
@@ -100,7 +99,6 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       },
       viewId: this.teamId
     });
-    this.fetchMembers();
     this.fetchCourseAndNews();
     this.fetchEnrolledMembers();
   }
@@ -158,16 +156,22 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     );
   }
 
-  fetchMembers() {
-    this.usersService.getAllUsers().subscribe((users: any) => {
-      this.members = users.map((member: any) => {
-        const [ , memberName ] = member?._id.split(':');
-        return {
-          ...member,
-          name: memberName,
-        };
-      });
-    });
+  fetchMembers(): Observable<any[]> {
+    return this.couchService.findAll('login_activities', findDocuments({
+      type: 'login',
+      loginTime: { $gte: this.startDate.getTime() }
+    }, [ 'user' ])).pipe(
+      catchError(() => of([])),
+      map((res: any[]) => Array.from(new Set(res.map(doc => doc.user)))),
+      switchMap(uniqueUsers => {
+        if (uniqueUsers.length === 0) { return of([]); }
+        return this.couchService.findAll(
+          '_users',
+          findDocuments({ name: { $in: uniqueUsers } }, [ '_id', 'name' ])
+        );
+      }),
+      catchError(() => of([]))
+    );
   }
 
   fetchEnrolledMembers() {
