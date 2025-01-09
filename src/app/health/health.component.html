@@ -57,7 +57,7 @@
           </div>
           <mat-divider></mat-divider>
         </div>
-        <div>
+        <div class="full-width">
           <div>
             <h4 class="primary-text-color" i18n>Emergency Contact</h4>
             <p><b i18n>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
@@ -82,7 +82,7 @@
         </div>
       </div>
       <ng-container *ngIf="events.length > 0">
-        <h4 class="full-width" i18n>Examinations</h4>
+        <h3 class="full-width examinations-header" i18n>Examinations</h3>
         <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
