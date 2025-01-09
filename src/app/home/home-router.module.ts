@@ -73,8 +73,8 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'landing', component: LandingComponent },
-  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
+  { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
 ];
 
 @NgModule({
