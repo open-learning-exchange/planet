@@ -44,8 +44,8 @@
     </ng-container>
     <span *ngIf="layout === 'classic' && !forceModern">
       <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>chat_bubble_outline</mat-icon></button>
-      <button mat-icon-button planetFeedback i18n-title title="Feedback"><mat-icon>feedback_outline</mat-icon></button>
-      <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
+      <button mat-icon-button planetFeedback i18n-title title="Submit Feedback"><mat-icon>feedback_outline</mat-icon></button>
+      <button mat-icon-button routerLink="/feedback" i18n-title title="Review Feedback"><mat-icon>mail_outline</mat-icon></button>
       <ng-container *planetAuthorizedRoles>
         <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted'"><mat-icon svgIcon="feedback"></mat-icon></button>
       </ng-container>
@@ -72,12 +72,12 @@
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
         <a mat-menu-item (click)="readAllNotification()" i18n>Mark all as Read</a>
-        <a [routerLink]="!notification.link ? '/notifications' : notification.link !== '/' ? [ notification.link, notification.linkParams || {} ] : '/'"
+        <a [routerLink]="notification.type !== 'challenges' ? (!notification.link ? '/notifications' : notification.link !== '/' ? [notification.link, notification.linkParams || {}] : '/') : null"
           class="menu-item-notification"
           [ngClass]="{'primary-text-color':notification.status==='unread'}"
           mat-menu-item
           *ngFor="let notification of notifications"
-          (click)="readNotification(notification)">
+          (click)="notification.type === 'challenges' ? openAnnouncementDialog(notification) : readNotification(notification)">
           <p [innerHTML]="notification.message"><p>
           <p *ngIf="notification.time > 0" class="small">{{notification.time | date: 'mediumDate'}}</p>
           <mat-divider></mat-divider>

@@ -10,6 +10,7 @@
   </ng-container>
   <a *ngIf="planetType !== 'community' || isHub" [routerLink]="['reports', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>Reports</a>
   <a [routerLink]="['reports', 'myplanet', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>myPlanet Reports</a>
+  <a [routerLink]="['logs', 'myplanet', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>myPlanet Logs</a>
   <ng-container *planetAuthorizedRoles="'manager'">
     <a [routerLink]="['surveys']" mat-raised-button i18n>Surveys</a>
     <button *ngIf="planetType !== center && showResendConfiguration"
@@ -74,7 +75,7 @@
         <p *ngSwitchDefault i18n><b>Your request has not yet been accepted by { planetType, select, community {nation} nation {center}}</b></p>
       </ng-container>
     </div>
-    <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
+    <div *ngIf="pin"><span i18n>myPlanet Server pin:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
       <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
     </div>
   </ng-container>

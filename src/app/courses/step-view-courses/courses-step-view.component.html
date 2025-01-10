@@ -5,7 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
-    <button *ngIf="isOpenai" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+    <button *ngIf="isOpenai && stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
     <span class="toolbar-fill"></span>
@@ -66,11 +66,11 @@
       <span>{{stepNum}}/{{maxStep}}</span>
       <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
       <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length > 0 && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
-      <button mat-raised-button *ngIf="stepNum === maxStep && maxStep !== 1" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()" i18n>Finish</button>
+      <button mat-raised-button class="finish-button" *ngIf="stepNum === maxStep" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()" i18n>Finish</button>
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-chat-window *ngIf="showChat" [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource._id, attachments: resource._attachments } }"></planet-chat-window>
+    <planet-chat-window *ngIf="showChat" [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource?._id, attachments: resource?._attachments } }"></planet-chat-window>
     <ng-container *ngIf="showChat; else stepViewContent">
       <div class="flex-view">
         <ng-container *ngTemplateOutlet="stepViewContent"></ng-container>
@@ -78,7 +78,7 @@
     </ng-container>
     <ng-template #stepViewContent>
       <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
-      <div>
+      <div *ngIf="resource?._attachments">
         <mat-button-toggle-group class="full-width-toggle-group" *ngIf="stepDetail.resources.length > 1" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
           <mat-button-toggle *ngFor="let resource of stepDetail.resources; index as i" [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
         </mat-button-toggle-group>
@@ -93,6 +93,11 @@
     </ng-template>
   </div>
   <ng-template #emptyRecord>
-    <div class="view-container view-full-height" i18n>No description provided.</div>
+    <div class="view-container view-full-height" i18n>
+      <ng-container *ngIf="isLoading; else noContent">
+        Loading Content...
+      </ng-container>
+      <ng-template #noContent>No description provided.</ng-template>
+    </div>
   </ng-template>
 </div>

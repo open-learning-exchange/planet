@@ -9,6 +9,7 @@ import { catchError, auditTime } from 'rxjs/operators';
 import { throwError, combineLatest } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -25,6 +26,7 @@ export class UsersAchievementsComponent implements OnInit {
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
+  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
 
@@ -103,6 +105,14 @@ export class UsersAchievementsComponent implements OnInit {
     return achievement.description.length > 0;
   }
 
+  get profileImg() {
+    const attachments = this.userService.get()._attachments;
+    if (attachments) {
+      return this.urlPrefix + Object.keys(attachments)[0];
+    }
+    return 'assets/image.png';
+  }
+
   setCertifications(courses = [], progress = [], certifications = []) {
     this.certifications = certifications.filter(certification => {
       const certificateCourses = courses
@@ -123,8 +133,8 @@ export class UsersAchievementsComponent implements OnInit {
       {
         text: `
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
-          ${formattedBirthDate ? $localize`Birthplace: ${formattedBirthDate}` : ''}
-          ${this.user.Birthplace ? $localize`Birthdate: ${this.user.Birthplace}` : ''}
+          ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
+          ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           `,
         alignment: 'center',
       },

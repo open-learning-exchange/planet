@@ -11,7 +11,7 @@
     </button>
   </mat-toolbar>
 
-  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="pushedItems" matSort>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -41,6 +41,9 @@
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Record Found</div></td>
+      </tr>
     </mat-table>
 
     <mat-paginator #paginator
@@ -49,7 +52,4 @@
       (page)="onPaginateChange($event)">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Record Found</div>
-  </ng-template>
 </div>

@@ -203,6 +203,7 @@ export class CoursesService {
 
   courseResignAdmission(courseId, type, courseTitle?) {
     const title = courseTitle ? courseTitle : this.getCourseNameFromId(courseId);
+    const truncatedTitle = title.length > 180 ? `${title.slice(0, 180)}...` : title;
     const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
       const myCourseIndex = courseIds.indexOf(courseId);
@@ -211,8 +212,9 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? $localize`${title} successfully removed from myCourses` :
-        $localize`${title} added to your dashboard`;
+      const admissionMessage = type === 'resign'
+        ? $localize`${truncatedTitle} successfully removed from myCourses`
+        : $localize`${truncatedTitle} added to your dashboard`;
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
@@ -225,7 +227,8 @@ export class CoursesService {
   courseAdmissionMany(courseIds, type) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
       const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
-      const message = type === 'remove' ? $localize`${prefix} successfully removed from myCourses` : $localize`${prefix} added to your dashboard`;
+      const message = type === 'remove' ? $localize`${prefix} successfully removed from myCourses` :
+        $localize`${prefix} added to myCourses`;
       this.planetMessageService.showMessage(message);
       return shelf;
     }));

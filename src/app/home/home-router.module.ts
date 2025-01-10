@@ -6,7 +6,6 @@ import { NotificationsComponent } from '../notifications/notifications.component
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
 import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
-import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
@@ -35,7 +34,6 @@ const routes: Routes = [
       { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
       { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
-      { path: 'logs/myplanet', component: LogsMyPlanetComponent },
       { path: 'health', component: HealthListComponent },
       { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
@@ -75,8 +73,8 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'landing', component: LandingComponent },
-  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
+  { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
 ];
 
 @NgModule({

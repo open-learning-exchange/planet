@@ -27,6 +27,6 @@
 <mat-dialog-actions>
   <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
   <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
-    <span i18n>Edit</span> <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container>
+    <span i18n>Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container></span> 
   </button>
 </mat-dialog-actions>

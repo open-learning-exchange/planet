@@ -43,26 +43,27 @@
   <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
-        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+        <a class="margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
+        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class=" toolbar-button margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
           Add Members
         </button>
-        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
+        <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openResourcesDialog()" i18n>
           { mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }
         </button>
-        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+        <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openCourseDialog()" i18n>
           Add Courses
         </button>
         <ng-container *ngIf="!isUserLeader && mode !== 'services'">
-          <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
+          <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
         </ng-container>
       </ng-container>
-      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
+      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="toolbar-button margin-lr-3" (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
       <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
-      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
   </ng-template>
 
@@ -131,16 +132,19 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         </mat-tab>
         <mat-tab *ngIf="mode!=='team'">
           <ng-template mat-tab-label>
-            <ng-container i18n>Finances</ng-container>
+            <ng-container i18n>Finances</ng-container> ({{ financesCount }})
           </ng-template>
           <planet-teams-view-finances [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
         </mat-tab>
       </ng-container>
       <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
+        <ng-template mat-tab-label>
+          <ng-container i18n>Reports</ng-container> ({{ reportsCount }})
+        </ng-template>
         <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
@@ -168,7 +172,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'resource' })">
+                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'document' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
@@ -181,7 +185,7 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Courses">
+        <mat-tab i18n-label label="Courses">
           <ng-template mat-tab-label>
             <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
           </ng-template>
@@ -207,6 +211,9 @@
               </mat-card>
             </div>
           </ng-template>
+        </mat-tab>
+        <mat-tab i18n-label label="Surveys">
+          <planet-surveys [teamId]="teamId"></planet-surveys>
         </mat-tab>
         <mat-tab *ngIf="mode!=='services'" #applicantTab>
           <ng-template mat-tab-label>

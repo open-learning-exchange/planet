@@ -11,6 +11,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { tap } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
+import { StateService } from '../shared/state.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -25,6 +26,8 @@ export class TeamsReportsComponent implements DoCheck {
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;
   minColumnWidth = 300;
+  configuration: any = {};
+  planetName: any;
 
   constructor(
     private couchService: CouchService,
@@ -33,7 +36,8 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private csvService: CsvService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private stateService: StateService,
   ) {}
 
   ngDoCheck() {
@@ -47,7 +51,7 @@ export class TeamsReportsComponent implements DoCheck {
     }
   }
 
-  openAddReportDialog(oldReport = {}, isEdit:boolean) {
+  openAddReportDialog(oldReport = {}, isEdit: boolean) {
     const actionType = isEdit ? 'Edit' : 'Add';
     const dialogTitle = $localize`${actionType} Report`;
 
@@ -164,7 +168,13 @@ export class TeamsReportsComponent implements DoCheck {
       'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
       'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
     }));
-    this.csvService.exportCSV({ data: exportData, title: $localize`${this.team.name} Financial Report Summary` });
+    const planetName = this.stateService.configuration.name || 'Unnamed';
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const titleName = this.team.name || `${entityLabel} ${planetName}`;
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Financial Summary for ${titleName}`
+    });
   }
 
 }
