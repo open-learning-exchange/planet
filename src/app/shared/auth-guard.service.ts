@@ -45,6 +45,15 @@ export class AuthService {
   // For main app (which requires login).  Uses canActivateChild to check on every route
   // change if session has expired
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    let currentRoute: ActivatedRouteSnapshot | null = route;
+
+    while (currentRoute) {
+      if (currentRoute.data && currentRoute.data.requiresAuth === false) {
+        return of(true);
+      }
+      currentRoute = currentRoute.parent;
+    }
+
     return this.checkUser(state.url);
   }
 
