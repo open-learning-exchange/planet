@@ -216,7 +216,7 @@
             <mat-icon>translate</mat-icon>
             <label *ngIf="sidenavState === 'open'" i18n>Language</label>
           </a>
-        </li>       
+        </li>
         <ng-container *planetAuthorizedRoles>
           <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">
@@ -227,7 +227,7 @@
         </ng-container>
         <li>
           <a mat-button (click)="logoutClick()" i18n-title title="Logout">
-            <mat-icon svgIcon="logout">logout</mat-icon>
+            <mat-icon svgIcon="logout"></mat-icon>
             <label i18n>Logout</label>
           </a>
         </li>
