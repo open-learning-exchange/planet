@@ -133,8 +133,8 @@ export class UsersAchievementsComponent implements OnInit {
       {
         text: `
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
-          ${formattedBirthDate ? $localize`Birthplace: ${formattedBirthDate}` : ''}
-          ${this.user.Birthplace ? $localize`Birthdate: ${this.user.Birthplace}` : ''}
+          ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
+          ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           `,
         alignment: 'center',
       },
