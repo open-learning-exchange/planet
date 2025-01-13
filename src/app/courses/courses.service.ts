@@ -203,7 +203,6 @@ export class CoursesService {
 
   courseResignAdmission(courseId, type, courseTitle?) {
     const title = courseTitle ? courseTitle : this.getCourseNameFromId(courseId);
-    const truncatedTitle = this.planetMessageService.truncateMessage(title, 180);
     const courseIds: any = [ ...this.userService.shelf.courseIds ];
     if (type === 'resign') {
       const myCourseIndex = courseIds.indexOf(courseId);
@@ -213,8 +212,8 @@ export class CoursesService {
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
       const admissionMessage = type === 'resign'
-        ? $localize`Successfully removed from myCourses: ${truncatedTitle}`
-        : $localize`Course added to your dashboard: ${truncatedTitle}`;
+        ? $localize`Removed from myCourses: ${title}`
+        : $localize`Course added to your dashboard: ${title}`;
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
@@ -227,7 +226,7 @@ export class CoursesService {
   courseAdmissionMany(courseIds, type) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
       const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
-      const message = type === 'remove' ? $localize`Successfully removed from myCourses: ${prefix}` :
+      const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
         $localize`Added to myCourses: ${prefix} `;
       this.planetMessageService.showMessage(message);
       return shelf;
