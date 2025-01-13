@@ -43,7 +43,7 @@
   <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
-        <a class="margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
+        <a class="toolbar-button margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
         <button *ngIf="mode!=='services'" mat-stroked-button mat-button class=" toolbar-button margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
           Add Members
         </button>
