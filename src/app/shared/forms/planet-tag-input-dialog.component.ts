@@ -22,6 +22,7 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     :host mat-dialog-content {
       overflow-y: auto;
       max-height: calc(100vh - 100px);
+      width: 600px;
     }
     :host .mat-list-option span {
       font-weight: inherit;
@@ -34,6 +35,9 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     }
     :host mat-dialog-actions {
       padding: 0;
+    }
+    button[mat-stroked-button] {
+      min-width: 64px;
     }
   ` ]
 })
