@@ -237,7 +237,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       onNext: () => {
         this.deleteDialog.close();
         const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-        this.planetMessageService.showMessage($localize`You have deleted ${entityType} ${team.name}.`);
+        this.planetMessageService.showMessage(this.planetMessageService.truncateMessage($localize`You have deleted ${entityType} ${team.name}.`));
         this.removeTeamFromTable(team);
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)

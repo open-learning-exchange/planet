@@ -257,10 +257,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       request: this.couchService.delete('courses/' + courseId + '?rev=' + courseRev),
       onNext: (data) => {
         this.selection.deselect(course._id);
-        // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
+        this.planetMessageService.showMessage(this.planetMessageService.truncateMessage($localize`Course deleted: ${course.courseTitle}`));
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this course.`)
     };
