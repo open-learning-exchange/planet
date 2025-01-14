@@ -199,11 +199,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ])
     )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = this.planetMessageService.truncateMessage(
-        (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle
-      );
+      const message = this.planetMessageService.truncateMessage((this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle);
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
+      // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
   }
@@ -219,11 +218,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseChangeComplete(message, response: any, shouldNavigate) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.isSaved = true;
-    this.planetMessageService.showMessage(message);
     if (shouldNavigate) {
       this.navigateBack();
       return;
     }
+    this.planetMessageService.showMessage(message);
     if (this.isDestroyed) {
       return;
     }
