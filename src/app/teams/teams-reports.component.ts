@@ -103,7 +103,8 @@ export class TeamsReportsComponent implements DoCheck {
             this.planetMessageService.showAlert('There was a problem deleting the report.');
             this.dialogsLoadingService.stop();
           }
-        }
+        },
+        isDateUtc: true
       }
     });
   }
