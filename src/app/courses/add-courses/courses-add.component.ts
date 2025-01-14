@@ -199,8 +199,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ])
     )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = this.planetMessageService.truncateMessage(courseInfo.courseTitle +
-        (this.pageType === 'Edit' ? $localize` Updated Successfully` : $localize` Added`));
+      const message = this.planetMessageService.truncateMessage(
+        (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle
+      );
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       console.log(err);
