@@ -91,7 +91,7 @@ export class TeamsReportsComponent implements DoCheck {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString()} ${$localize`to`} ${new Date(report.endDate).toLocaleDateString()}`,
+        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })} ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
