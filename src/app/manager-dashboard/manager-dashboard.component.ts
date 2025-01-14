@@ -199,7 +199,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         changeType: 'delete',
         type: 'community',
         displayName: this.userService.get().name,
-        extraMessage: '(This is a destructive action that cannot be undone)'
+        extraMessage: '(This is a destructive action that cannot be undone.git ad)'
       }
     });
     // Reset the message when the dialog closes
