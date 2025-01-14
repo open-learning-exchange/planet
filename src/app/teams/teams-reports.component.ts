@@ -12,6 +12,7 @@ import { tap } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -38,6 +39,7 @@ export class TeamsReportsComponent implements DoCheck {
     private csvService: CsvService,
     private elementRef: ElementRef,
     private stateService: StateService,
+    private planetMessageService: PlanetMessageService,
   ) {}
 
   ngDoCheck() {
@@ -76,6 +78,8 @@ export class TeamsReportsComponent implements DoCheck {
           disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
+            const action = isEdit ? 'edited' : 'added';
+            this.planetMessageService.showMessage(`Report ${action}`);
           })
         }
       );
@@ -92,6 +96,7 @@ export class TeamsReportsComponent implements DoCheck {
           request: this.updateReport(report),
           onNext: () => {
             deleteDialog.close();
+            this.planetMessageService.showMessage('Report deleted');
           }
         },
         isDateUtc: true
