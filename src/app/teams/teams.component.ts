@@ -220,7 +220,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           onNext: () => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
-            this.planetMessageService.showMessage($localize`You have left ${team.name}`);
+            const msg = 'left';
+            this.planetMessageService.showMessage($localize`You have ${msg} ${team.name}`);
           },
         },
         changeType: 'leave',

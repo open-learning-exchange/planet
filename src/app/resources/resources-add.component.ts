@@ -183,7 +183,7 @@ export class ResourcesAddComponent implements OnInit {
       const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
       // Start with empty object so this.resourceForm.value does not change
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-      const message = this.planetMessageService.truncateMessage((this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title);
+      const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
