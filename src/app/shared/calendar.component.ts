@@ -14,6 +14,7 @@ import { addDateAndTime, styleVariables } from './utils';
 
 @Component({
   selector: 'planet-calendar',
+  styleUrls: [ './calendar.component.scss' ],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
@@ -98,6 +99,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
     this.calendarOptions.events = [ ...this.events, ...this._events ];
+    console.log('eventLegend:', this.eventLegend);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
