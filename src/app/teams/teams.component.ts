@@ -220,8 +220,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           onNext: () => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
-            const msg = 'left';
-            this.planetMessageService.showMessage($localize`You have ${msg} ${team.name}`);
+            this.planetMessageService.showMessage($localize`You have left ${team.name}`);
           },
         },
         changeType: 'leave',
@@ -237,7 +236,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       onNext: () => {
         this.deleteDialog.close();
         const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-        this.planetMessageService.showMessage(this.planetMessageService.truncateMessage($localize`You have deleted ${entityType} ${team.name}.`));
+        this.planetMessageService.showMessage($localize`You have deleted ${entityType} ${team.name}.`);
         this.removeTeamFromTable(team);
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)

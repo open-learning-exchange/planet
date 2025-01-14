@@ -195,7 +195,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.deselect(survey._id);
         this.surveys.data = filterById(this.surveys.data, survey._id);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage(this.planetMessageService.truncateMessage($localize`Survey deleted: ${survey.name}`));
+        this.planetMessageService.showMessage($localize`Survey deleted: ${survey.name}`);
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this survey.`)
     };
