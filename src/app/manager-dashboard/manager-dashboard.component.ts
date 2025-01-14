@@ -198,7 +198,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         okClick: this.deleteCommunity(),
         changeType: 'delete',
         type: 'community',
-        displayName: this.userService.get().name
+        displayName: this.userService.get().name,
+        extraMessage: '(This is a destructive action that cannot be undone)'
       }
     });
     // Reset the message when the dialog closes
