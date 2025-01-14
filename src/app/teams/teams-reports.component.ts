@@ -91,15 +91,19 @@ export class TeamsReportsComponent implements DoCheck {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayDates: report,
+        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString()} ${$localize`to`} ${new Date(report.endDate).toLocaleDateString()}`,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
-            deleteDialog.close();
             this.planetMessageService.showMessage('Report deleted');
+            this.dialogsLoadingService.stop();
+            deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert('There was a problem deleting the report.');
+            this.dialogsLoadingService.stop();
           }
-        },
-        isDateUtc: true
+        }
       }
     });
   }
