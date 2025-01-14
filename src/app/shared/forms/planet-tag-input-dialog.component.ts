@@ -223,10 +223,10 @@ export class PlanetTagInputDialogComponent {
       onNext: (data) => {
         this.data.initTags();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Tag deleted: ${tag.name}`);
+        this.planetMessageService.showMessage($localize`Collection deleted: ${tag.name}`);
         this.resetValidationAndCheck(this.addTagForm);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this tag.`)
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this collection.`)
     };
   }
 
