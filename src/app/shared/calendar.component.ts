@@ -99,7 +99,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
     this.calendarOptions.events = [ ...this.events, ...this._events ];
-    console.log('eventLegend:', this.eventLegend);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
