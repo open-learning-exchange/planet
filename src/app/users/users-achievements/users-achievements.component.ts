@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -29,6 +30,7 @@ export class UsersAchievementsComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
+  publicView = this.route.snapshot.data.requiresAuth === false;
 
   constructor(
     private couchService: CouchService,
@@ -39,7 +41,8 @@ export class UsersAchievementsComponent implements OnInit {
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
     private coursesService: CoursesService,
-    private certificationsService: CertificationsService
+    private certificationsService: CertificationsService,
+    private clipboard: Clipboard
   ) { }
 
   ngOnInit() {
@@ -120,6 +123,11 @@ export class UsersAchievementsComponent implements OnInit {
         .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
       return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
     });
+  }
+
+  copyLink() {
+    const link = `${window.location.origin}/profile/${this.user.name}/achievements;planet=${this.stateService.configuration.code}`;
+    this.clipboard.copy(link);
   }
 
   generatePDF() {
