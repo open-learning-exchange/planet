@@ -12,6 +12,7 @@ import { tap } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -38,6 +39,7 @@ export class TeamsReportsComponent implements DoCheck {
     private csvService: CsvService,
     private elementRef: ElementRef,
     private stateService: StateService,
+    private planetMessageService: PlanetMessageService,
   ) {}
 
   ngDoCheck() {
@@ -76,6 +78,8 @@ export class TeamsReportsComponent implements DoCheck {
           disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
+            const action = isEdit ? 'edited' : 'added';
+            this.planetMessageService.showMessage(`Report ${action}`);
           })
         }
       );
@@ -87,11 +91,17 @@ export class TeamsReportsComponent implements DoCheck {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayDates: report,
+        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })} ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
+            this.planetMessageService.showMessage('Report deleted');
+            this.dialogsLoadingService.stop();
             deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert('There was a problem deleting the report.');
+            this.dialogsLoadingService.stop();
           }
         },
         isDateUtc: true

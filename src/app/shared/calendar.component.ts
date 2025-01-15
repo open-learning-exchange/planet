@@ -14,6 +14,7 @@ import { addDateAndTime, styleVariables } from './utils';
 
 @Component({
   selector: 'planet-calendar',
+  styleUrls: [ './calendar.component.scss' ],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
