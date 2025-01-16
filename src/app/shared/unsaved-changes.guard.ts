@@ -15,4 +15,3 @@ export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate
     return component.canDeactivate ? component.canDeactivate() : true;
   }
 }
-
