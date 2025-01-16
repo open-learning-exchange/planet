@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, HostListener } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { TagsService } from './tags.service';
@@ -6,6 +6,7 @@ import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { UserService } from '../user.service';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
@@ -14,6 +15,15 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styles': [ `
+    :host {
+      display: block;
+      overflow: hidden;
+    }
+    :host mat-dialog-content {
+      overflow-y: auto;
+      max-height: calc(100vh - 100px);
+      width: 600px;
+    }
     :host .mat-list-option span {
       font-weight: inherit;
     }
@@ -25,6 +35,9 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     }
     :host mat-dialog-actions {
       padding: 0;
+    }
+    button[mat-stroked-button] {
+      min-width: 64px;
     }
   ` ]
 })
@@ -52,6 +65,8 @@ export class PlanetTagInputDialogComponent {
   get okClickValue() {
     return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
   }
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
@@ -63,7 +78,8 @@ export class PlanetTagInputDialogComponent {
     private dialogsFormService: DialogsFormService,
     private userService: UserService,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.dataInit();
     // April 17, 2019: Removing selectMany toggle, but may revisit later
@@ -80,7 +96,12 @@ export class PlanetTagInputDialogComponent {
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
+
+  @HostListener('window:resize') OnResize() {
+      this.deviceType = this.deviceInfoService.getDeviceType();
+    }
 
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
@@ -202,9 +223,10 @@ export class PlanetTagInputDialogComponent {
       onNext: (data) => {
         this.data.initTags();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Tag deleted: ${tag.name}`);
+        this.planetMessageService.showMessage($localize`Collection deleted: ${tag.name}`);
+        this.resetValidationAndCheck(this.addTagForm);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this tag.`)
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this collection.`)
     };
   }
 
@@ -230,6 +252,21 @@ export class PlanetTagInputDialogComponent {
     );
   }
 
+  resetValidationAndCheck(form: FormGroup) {
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      control?.clearValidators();
+
+      if (key === 'name') {
+        control?.setValidators(this.tagNameSyncValidator());
+        control?.setAsyncValidators(ac => this.tagNameAsyncValidator(ac));
+      }
+
+      control?.markAsUntouched();
+      control?.updateValueAndValidity();
+    });
+  }
+
   toggleSubcollection(event, tagId) {
     event.stopPropagation();
     const newState = !this.subcollectionIsOpen.get(tagId);
@@ -250,6 +287,12 @@ export class PlanetTagInputDialogComponent {
       return checkValue(iterator);
     };
     return checkValue(this.selected.entries());
+  }
+
+  truncateTagName(subTag: { name: string; count?: number }, maxLength: number): string {
+    if (this.deviceType === this.deviceTypes.DESKTOP) { maxLength = 50; } else { maxLength = 25; }
+    const truncatedName = subTag.name.length > maxLength ? subTag.name.slice(0, maxLength) + '...' : subTag.name;
+    return `${truncatedName} (${subTag.count || 0})`;
   }
 
 }

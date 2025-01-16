@@ -16,7 +16,6 @@ export class HealthListComponent implements OnInit, OnDestroy {
   users: any[] = [];
   displayedColumns = [ 'profile', 'name', 'contact', 'birthDate', 'lastVisit' ];
   tableState = new TableState();
-  emptyData = true;
   healthRequests: string[] = [];
 
   constructor(
@@ -29,7 +28,6 @@ export class HealthListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.users = users;
-      this.emptyData = this.users.length === 0;
     });
     this.usersService.requestUserData();
   }

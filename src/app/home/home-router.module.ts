@@ -6,7 +6,6 @@ import { NotificationsComponent } from '../notifications/notifications.component
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
 import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
-import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
 import { TeamsViewComponent } from '../teams/teams-view.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
@@ -24,7 +23,11 @@ const routes: Routes = [
       { path: '', component: CommunityComponent },
       { path: 'community/:code', component: CommunityComponent },
       { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
-      { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
+      {
+        path: 'manager',
+        loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule),
+        data: { roles: [ '_admin' ] }
+      },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
       { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
@@ -35,9 +38,8 @@ const routes: Routes = [
       { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
       { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
       { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
-      { path: 'logs/myplanet', component: LogsMyPlanetComponent },
-      { path: 'health', component: HealthListComponent },
-      { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
+      { path: 'health', component: HealthListComponent, data: { roles: [ '_admin', 'health' ] } },
+      { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule), data: { roles: [ '_admin', 'health' ] } },
       { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
       { path: myDashboardRoute, component: DashboardComponent },
@@ -75,8 +77,8 @@ const routes: Routes = [
       }
     ]
   },
-  { path: 'landing', component: LandingComponent },
-  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule) }
+  { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
+  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
 ];
 
 @NgModule({
