@@ -37,6 +37,7 @@ export class ExamsAddComponent implements OnInit {
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
+  teamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
   steps = [];
   showFormError = false;
@@ -120,6 +121,9 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
+      if (this.teamId) {
+        this.examForm.value.teamId = this.teamId;
+      }
       this.showFormError = false;
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {

@@ -96,9 +96,16 @@ export class MeetupService {
   openDeleteDialog(meetups: any[] | any, callback) {
     const isMany = meetups.length > 1;
     const displayName = isMany ? '' : (meetups[0] || meetups).title;
-    const recurringInfo = (meetups[0] || meetups).recurring && (meetups[0] || meetups).recurring !== 'none' && (meetups[0] || meetups).recurringNumber
-      ? `(Recurs ${ (meetups[0] || meetups).recurring} for ${ (meetups[0] || meetups).recurringNumber } ${ (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks' })`
-      : '';
+    const recurringInfo =
+      (meetups[0] || meetups).recurring &&
+      (meetups[0] || meetups).recurring !== 'none' &&
+      (meetups[0] || meetups).recurringNumber
+        ? `(Recurs ${(meetups[0] || meetups).recurring} for ${
+            (meetups[0] || meetups).recurringNumber
+          } ${
+            (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks'
+          })`
+        : '';
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteMeetups([ meetups ].flat(), displayName, callback),
