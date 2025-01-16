@@ -8,7 +8,6 @@ export class UnsavedChangesService {
 
   setHasUnsavedChanges(hasChanges: boolean) {
     this.unsavedChanges = hasChanges;
-    console.log('setHasUnsavedChanges called with:', hasChanges);
   }
 
   getHasUnsavedChanges(): boolean {

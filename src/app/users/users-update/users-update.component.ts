@@ -11,7 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
-import { CanComponentDeactivate } from '../../shared/guards/unsaved-changes.guard';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
 import { Subscription } from 'rxjs';
 
@@ -213,7 +213,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   removeImageFile() {
-    //required to prevent this from being called automatically when navigating away from the page
+    // required to prevent this from being called automatically when navigating away from the page
     if (this.isNavigating) {
       return;
     }

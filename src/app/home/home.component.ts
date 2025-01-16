@@ -62,7 +62,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   private hasUnsavedChangesSubscription: Subscription;
   hasUnsavedChanges = false;
   private routerSubscription: Subscription;
-  private pendingNavigation: string;
 
   constructor(
     private couchService: CouchService,
