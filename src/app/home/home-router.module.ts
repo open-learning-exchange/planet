@@ -23,7 +23,11 @@ const routes: Routes = [
       { path: '', component: CommunityComponent },
       { path: 'community/:code', component: CommunityComponent },
       { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
-      { path: 'manager', loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule) },
+      {
+        path: 'manager',
+        loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule),
+        data: { roles: [ '_admin' ] }
+      },
       { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
       { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
       { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
