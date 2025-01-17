@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 
 @Component({
+  selector: 'planet-surveys',
   templateUrl: './surveys.component.html',
   styleUrls: [ './surveys.component.scss' ]
 })
@@ -44,6 +45,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
+  routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
+  @Input() teamId?: string;
 
   constructor(
     private couchService: CouchService,
@@ -79,7 +82,17 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           }).length
         })),
         ...this.createParentSurveys(submissions)
-      ];
+      ].filter(survey => {
+        if (this.routeTeamId) {
+          return survey.teamId === this.routeTeamId;
+        }
+
+        if (this.teamId) {
+          return survey.teamId === this.teamId;
+        } else {
+          return true;
+        }
+      });
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
     });
@@ -245,7 +258,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   recordSurvey(survey: any) {
     this.submissionsService.createSubmission(survey, 'survey').subscribe((res: any) => {
       this.router.navigate([
-        'dispense',
+        this.teamId ? 'surveys/dispense' : 'dispense',
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
       ], { relativeTo: this.route });
     });

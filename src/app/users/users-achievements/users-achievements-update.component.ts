@@ -20,11 +20,11 @@ import { showFormErrors } from '../../shared/table-helpers';
   encapsulation: ViewEncapsulation.None
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
-
   user = this.userService.get();
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
+  achievementNotFound = false;
   editForm: FormGroup;
   profileForm: FormGroup;
   private onDestroy$ = new Subject<void>();
@@ -59,20 +59,25 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.profileForm.patchValue(this.user);
     this.usersAchievementsService.getAchievements(this.docInfo._id)
-    .pipe(catchError(() => this.usersAchievementsService.getAchievements(this.user._id)))
-    .subscribe((achievements) => {
-      this.editForm.patchValue(achievements);
-      this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
-      this.editForm.controls.references = this.fb.array(achievements.references || []);
-      this.editForm.controls.links = this.fb.array(achievements.links || []);
-      // Keeping older otherInfo property so we don't lose this info on database
-      this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
-      if (this.docInfo._id === achievements._id) {
-        this.docInfo._rev = achievements._rev;
-      }
-    }, (error) => {
-      console.log(error);
-    });
+      .pipe(
+        catchError(() => this.usersAchievementsService.getAchievements(this.user._id))
+      )
+      .subscribe((achievements) => {
+        this.editForm.patchValue(achievements);
+        this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
+        this.editForm.controls.references = this.fb.array(achievements.references || []);
+        this.editForm.controls.links = this.fb.array(achievements.links || []);
+        // Keeping older otherInfo property so we don't lose this info on database
+        this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
+
+        if (this.docInfo._id === achievements._id) {
+          this.docInfo._rev = achievements._rev;
+        }
+      }, (error) => {
+        console.log(error);
+        this.achievementNotFound = true;
+      });
+
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
       () => this.editForm.controls.dateSortOrder.setValue('none')
     );
@@ -128,7 +133,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         ...achievement,
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
-        link: [ achievement.link, [], CustomValidators.validLink ],
+        link: [ achievement.link ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {
