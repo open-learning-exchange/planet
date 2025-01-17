@@ -43,7 +43,7 @@
   <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
-        <a class="margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
+        <a class="toolbar-button margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
         <button *ngIf="mode!=='services'" mat-stroked-button mat-button class=" toolbar-button margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
           Add Members
         </button>
@@ -132,7 +132,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [resizeCalendar]="resizeCalendar" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         </mat-tab>
         <mat-tab *ngIf="mode!=='team'">
           <ng-template mat-tab-label>

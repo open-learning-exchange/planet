@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'delete/request', component: UsersArchiveComponent },
   { path: 'profile/:name', component: UsersProfileComponent },
   { path: 'update/:name', component: UsersUpdateComponent },
-  { path: 'profile/:name/achievements', component: UsersAchievementsComponent },
+  { path: 'profile/:name/achievements', component: UsersAchievementsComponent, data: { requiresAuth: false } },
   { path: 'profile/:name/achievements/update', component: UsersAchievementsUpdateComponent },
   { path: 'submission', component: UsersUpdateComponent, data: { submission: true } }
 ];
