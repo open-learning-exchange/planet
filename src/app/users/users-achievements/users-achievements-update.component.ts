@@ -133,7 +133,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         ...achievement,
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
-        link: [ achievement.link ],
+        link: [ achievement.link, [], CustomValidators.validLink ],
         date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
       }),
       { onSubmit: (formValue, formGroup) => {

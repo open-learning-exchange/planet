@@ -246,11 +246,15 @@ export class CustomValidators {
 
   static validLink(ac: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
     return new Promise((resolve, reject) => {
-      try {
-        const url = new URL(ac.value);
+      if (!ac.value) {
         resolve(null);
-      } catch (_) {
-        resolve({ 'invalidLink': true });
+      } else {
+        try {
+          const url = new URL(ac.value);
+          resolve(null);
+        } catch (_) {
+          resolve({ 'invalidLink': true });
+        }
       }
     });
   }
