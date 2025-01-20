@@ -130,7 +130,7 @@ export async function aiChatNonStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if (context.resource) {
+  if (context.resource && context.resource.attachments) {
     for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
       const typedAttachment = attachment as Attachment;
       const contentType = typedAttachment.content_type;
