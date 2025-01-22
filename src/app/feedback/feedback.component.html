@@ -68,8 +68,10 @@
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell title={{element.title}} *matCellDef="let element" i18n>{{element.title || element.type + ' regarding ' + element.url}}</mat-cell>
-      </ng-container>
+        <mat-cell *matCellDef="let element">
+          <span class="ellipsis-title" matTooltip="{{ element.title || element.type + ' regarding ' + element.url }}">{{ element.title || element.type + ' regarding ' + element.url }}</span>
+        </mat-cell>
+      </ng-container>      
       <!-- Type Column -->
       <ng-container matColumnDef="type">
         <mat-header-cell *matHeaderCellDef mat-sort-header="type" i18n>Type</mat-header-cell>
