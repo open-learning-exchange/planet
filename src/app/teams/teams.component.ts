@@ -62,7 +62,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   isMobile: boolean;
   userNotInShelf = false;
   showFiltersRow = false;
-  teamId: string;
 
   constructor(
     private userService: UserService,
@@ -123,7 +122,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       )) {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
-      this.teamId = this.teams.data.length > 0 ? this.teams.data[0].doc._id : '';
       this.dialogsLoadingService.stop();
     }, (error) => {
       if (this.userNotInShelf) {
