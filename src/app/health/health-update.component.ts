@@ -65,7 +65,8 @@ export class HealthUpdateComponent implements OnInit {
       emergencyContactType: '',
       emergencyContact: '',
       specialNeeds: '',
-      notes: ''
+      notes: '',
+      immunizations: ''
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.healthForm.controls.emergencyContact.setValidators(value === 'email' ? Validators.email : null);

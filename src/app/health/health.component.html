@@ -68,6 +68,13 @@
         </div>
         <div class="full-width">
           <div>
+            <h4 class="primary-text-color" i18n>Immunization Dates</h4>
+            <td-markdown [content]="healthDetail?.immunizations || 'N/A'"></td-markdown>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+        <div class="full-width">
+          <div>
             <h4 class="primary-text-color" i18n>Special Needs</h4>
             <td-markdown [content]="healthDetail?.specialNeeds || 'N/A'"></td-markdown>
           </div>
