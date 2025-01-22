@@ -7,6 +7,10 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { HealthService } from './health.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -24,13 +28,18 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
+  deleteDialog: any;
+  message = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private dialog: MatDialog,
+    private healthService: HealthService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
@@ -58,6 +67,34 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
+  }
+
+  deleteExam(event) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.deleteEvent(event),
+        changeType: 'delete',
+        type: 'examination',
+        displayName: event.date,
+        count: 1
+      }
+    });
+    // Reset the message when the dialog closes
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.message = '';
+    });
+  }
+
+  deleteEvent(event) {
+    return {
+      request: this.healthService.deleteEvent(event._id),
+      onNext: (data) => {
+        this.deleteDialog.close();
+        this.planetMessageService.showMessage(`You have deleted examination: ${event.date}`);
+        this.router.navigate([ '..' ], { relativeTo: this.data.route });
+      },
+      onError: (error) => this.planetMessageService.showAlert(`There was a problem deleting this examination.`)
+    };
   }
 
   editButtonCountdown() {

@@ -149,4 +149,12 @@ export class HealthService {
     return this.couchService.findAll('health', findDocuments({ planetCode }));
   }
 
+  deleteEvent(eventId: string) {
+    return this.couchService.delete(`health/${eventId}`);
+  }
+
+  bulkDeleteEvents(events) {
+    return this.couchService.post('health/_bulk_docs', { docs: events });
+  }
+
 }

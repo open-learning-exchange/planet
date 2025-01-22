@@ -19,7 +19,8 @@
         transaction {transaction}
         link {link}
         news {message}
-        report {report}}?
+        report {report}
+        examination {examination on {{data.displayName | date: 'mediumDate'}}}}?
       }
       many
       {selected {{data.count}} {data.type, select,
