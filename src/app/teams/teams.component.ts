@@ -62,6 +62,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   isMobile: boolean;
   userNotInShelf = false;
   showFiltersRow = false;
+  surveysCount = 0;
+  teamId: string;
 
   constructor(
     private userService: UserService,
@@ -122,7 +124,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       )) {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
+      this.teamId = this.teams.data.length > 0 ? this.teams.data[0].doc._id : '';
       this.dialogsLoadingService.stop();
+
+      if (this.teamId) {
+        this.countSurveys(this.teamId);
+      }
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
@@ -135,6 +142,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       console.log(error);
+    });
+  }
+
+  countSurveys(teamId: string) {
+    this.couchService.findAll('surveys', { 'selector': { 'teamId': teamId } }).subscribe((surveys: any[]) => {
+      this.surveysCount = surveys.length;
     });
   }
 
