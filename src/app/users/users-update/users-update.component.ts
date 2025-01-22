@@ -152,7 +152,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       showFormErrors(this.editForm.controls);
       return;
     }
-    this.hasUnsavedChanges = false; // Set unsaved changes to false before submitting
+    this.hasUnsavedChanges = false;
     this.submitUser();
   }
 
