@@ -9,20 +9,13 @@ import { deepEqual } from '../utils';
 
 @Component({
   templateUrl: './dialogs-images.component.html',
-  styles: [ `
-    mat-grid-tile {
-      width: 150px;
-    }
-    img {
-      max-width: 150px;
-      max-height: 150px;
-    }
-  ` ]
+  styleUrls: ['./dialogs-images.component.scss']
 })
 export class DialogsImagesComponent implements OnInit {
 
   images: any[] = [];
   urlPrefix = environment.couchAddress + '/resources/';
+  searchQuery: string = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -44,6 +37,10 @@ export class DialogsImagesComponent implements OnInit {
       }
     });
     this.resourcesService.requestResourcesUpdate(false, false);
+  }
+
+  get filteredImages() {
+    return this.images.filter(image => image.filename.toLowerCase().includes(this.searchQuery.toLowerCase()));
   }
 
   uploadImage(event) {
