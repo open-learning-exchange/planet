@@ -107,7 +107,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.mode === 'services') {
 
     }
-    this.countSurveys(this.teamId);
   }
 
   ngAfterViewChecked() {
@@ -554,15 +553,5 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
-  }
-
-  countSurveys(teamId: string) {
-    this.couchService.findAll('surveys', { 'selector': { 'teamId': teamId } }).subscribe((surveys: any[]) => {
-      this.surveysCount = surveys.length;
-    });
-  }
-
-  onSurveyCountChange(count: number) {
-    this.surveysCount = count;
   }
 }
