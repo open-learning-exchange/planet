@@ -153,6 +153,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.hasUnsavedChanges = false;
+    this.submitUser();
 
   }
 
