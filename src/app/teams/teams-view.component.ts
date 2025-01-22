@@ -69,7 +69,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  surveysCount = 0;
 
   constructor(
     private couchService: CouchService,
