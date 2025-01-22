@@ -11,6 +11,8 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { tap } from 'rxjs/operators';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
+import { StateService } from '../shared/state.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -25,6 +27,8 @@ export class TeamsReportsComponent implements DoCheck {
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;
   minColumnWidth = 300;
+  configuration: any = {};
+  planetName: any;
 
   constructor(
     private couchService: CouchService,
@@ -33,7 +37,9 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private csvService: CsvService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private stateService: StateService,
+    private planetMessageService: PlanetMessageService,
   ) {}
 
   ngDoCheck() {
@@ -47,13 +53,16 @@ export class TeamsReportsComponent implements DoCheck {
     }
   }
 
-  openAddReportDialog(oldReport = {}) {
+  openAddReportDialog(oldReport = {}, isEdit: boolean) {
+    const actionType = isEdit ? 'Edit' : 'Add';
+    const dialogTitle = $localize`${actionType} Report`;
+
     this.couchService.currentTime().subscribe((time: number) => {
       const currentDate = new Date(time);
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
       const lastMonthEnd = currentDate.setDate(0);
       this.dialogsFormService.openDialogsForm(
-        $localize`Add Report`,
+        dialogTitle,
         [
           { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
           { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
@@ -69,6 +78,8 @@ export class TeamsReportsComponent implements DoCheck {
           disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
+            const action = isEdit ? 'edited' : 'added';
+            this.planetMessageService.showMessage(`Report ${action}`);
           })
         }
       );
@@ -80,11 +91,17 @@ export class TeamsReportsComponent implements DoCheck {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayDates: report,
+        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })} ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
+            this.planetMessageService.showMessage('Report deleted');
+            this.dialogsLoadingService.stop();
             deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert('There was a problem deleting the report.');
+            this.dialogsLoadingService.stop();
           }
         },
         isDateUtc: true
@@ -161,7 +178,13 @@ export class TeamsReportsComponent implements DoCheck {
       'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
       'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
     }));
-    this.csvService.exportCSV({ data: exportData, title: $localize`${this.team.name} Financial Report Summary` });
+    const planetName = this.stateService.configuration.name || 'Unnamed';
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const titleName = this.team.name || `${entityLabel} ${planetName}`;
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Financial Summary for ${titleName}`
+    });
   }
 
 }
