@@ -84,22 +84,22 @@ export class FeedbackDirective {
     const urlParts = feedbackUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
-    let feedback: any = {
+    const feedback: any = {
       ...post,
       routerLink: null,
       state: firstPart,
     };
     if (firstPart === 'home') {
       feedback.title = $localize`Feedback regarding home`;
-      feedback.routerLink = ['/home'];
+      feedback.routerLink = [ '/home' ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (this.feedbackOf?.name) {
       feedback.title = $localize`Feedback regarding ${firstPart}/${this.feedbackOf.name}`;
-      feedback.routerLink = ['/', firstPart, 'view', this.feedbackOf.item];
+      feedback.routerLink = [ '/', firstPart, 'view', this.feedbackOf.item ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (urlParts.length === 2) {
       feedback.title = $localize`Feedback regarding ${firstPart}`;
-      feedback.routerLink = ['/', firstPart];
+      feedback.routerLink = [ '/', firstPart ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (lastPart) {
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
@@ -108,18 +108,18 @@ export class FeedbackDirective {
             ? document?.name
             : document?.title || document?.courseTitle || document?.name || lastPart;
           feedback.title = $localize`Feedback regarding ${firstPart}/${resourceName}`;
-          feedback.routerLink = ['/', firstPart, 'view', lastPart];
+          feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
           this.updateFeedback(feedback, date, user, feedbackUrl);
         },
         (error) => {
           feedback.title = $localize`Feedback regarding ${firstPart}/${lastPart}`;
-          feedback.routerLink = ['/', firstPart, 'view', lastPart];
+          feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
           this.updateFeedback(feedback, date, user, feedbackUrl);
         }
       );
     }
   }
-  
+
   private updateFeedback(feedback: any, date: Date, user: string, url: string) {
     const startingMessage: Message = { message: feedback.message, time: date, user };
     const newFeedback: Feedback = {
@@ -127,7 +127,7 @@ export class FeedbackDirective {
       ...feedback,
       openTime: date,
       status: 'Open',
-      messages: [startingMessage],
+      messages: [ startingMessage ],
       url,
       source: this.stateService.configuration.code,
       parentCode: this.stateService.configuration.parentCode,
@@ -143,7 +143,7 @@ export class FeedbackDirective {
       }
     );
   }
-  
+
   @HostListener('click')
   openFeedback() {
     const title = $localize`Feedback`;

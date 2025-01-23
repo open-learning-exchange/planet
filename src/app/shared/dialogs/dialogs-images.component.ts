@@ -9,13 +9,13 @@ import { deepEqual } from '../utils';
 
 @Component({
   templateUrl: './dialogs-images.component.html',
-  styleUrls: ['./dialogs-images.component.scss']
+  styleUrls: [ './dialogs-images.component.scss' ]
 })
 export class DialogsImagesComponent implements OnInit {
 
   images: any[] = [];
   urlPrefix = environment.couchAddress + '/resources/';
-  searchQuery: string = '';
+  searchQuery = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
