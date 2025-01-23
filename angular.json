@@ -39,7 +39,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -59,7 +58,13 @@
             ],
             "scripts": [],
             "i18nMissingTranslation": "ignore",
-            "poll": 2000
+            "poll": 2000,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -73,7 +78,6 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -101,7 +105,6 @@
               ]
             },
             "eng": {
-              "aot": true,
               "outputPath": "dist/eng",
               "localize": ["en"],
               "budgets": [
@@ -111,7 +114,6 @@
                 }
               ]},
             "som": {
-              "aot": true,
               "outputPath": "dist/som",
               "localize": ["so"],
               "budgets": [
@@ -121,7 +123,6 @@
                 }
               ]},
             "fra": {
-              "aot": true,
               "outputPath": "dist/fra",
               "localize": ["fr"],
               "budgets": [
@@ -131,7 +132,6 @@
                 }
               ]},
             "nep": {
-              "aot": true,
               "outputPath": "dist/nep",
               "localize": ["ne"],
               "budgets": [
@@ -141,7 +141,6 @@
                 }
               ]},
             "ara": {
-              "aot": true,
               "outputPath": "dist/ara",
               "localize": ["ar"],
               "budgets": [
@@ -151,7 +150,6 @@
                 }
               ]},
             "spa": {
-              "aot": true,
               "outputPath": "dist/spa",
               "localize": ["es"],
               "budgets": [
@@ -160,7 +158,8 @@
                   "maximumWarning": "6kb"
                 }
               ]}
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -199,7 +198,6 @@
             "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
             "format": "xlf",
-            "i18nFormat": "xlf",
             "ivy": true
           },
           "ivy":true
