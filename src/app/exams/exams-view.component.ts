@@ -7,7 +7,6 @@ import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
-import { CustomValidators } from '../validators/custom-validators';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
@@ -51,6 +50,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   initialLoad = true;
   isLoading = true;
   courseId: string;
+  teamId = this.route.snapshot.params.teamId || null;
 
   constructor(
     private router: Router,
@@ -192,7 +192,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   examComplete() {
     if (this.route.snapshot.data.newUser === true) {
-      this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
+      this.router.navigate(
+        [ '/users/submission', { id: this.submissionId } ],
+        { queryParams: { teamId: this.teamId } }
+      );
     } else {
       this.goBack();
     }
@@ -279,13 +282,22 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 }
 
   setAnswer(event, option) {
-    this.answer.setValue(Array.isArray(this.answer.value) ? this.answer.value : []);
-    const value = this.answer.value;
-    if (event.checked === true) {
-      value.push(option);
-    } else if (event.checked === false) {
-      value.splice(value.indexOf(option), 1);
+    const value = this.answer.value || [];
+
+
+    if (event.checked) {
+      if (!value.includes(option)) {
+        value.push(option);
+      }
+    } else {
+      const index = value.indexOf(option);
+      if (index > -1) {
+        value.splice(index, 1);
+      }
     }
+
+    this.answer.setValue(value);
+    this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
   }
 
@@ -343,9 +355,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   answerValidator(ac: AbstractControl) {
     if (typeof ac.value === 'string') {
-      return CustomValidators.required(ac);
+      return ac.value.trim() ? null : { required: true };
     }
-    return ac.value !== null ? null : { required: true };
+
+    if (Array.isArray(ac.value)) {
+      return ac.value.length > 0 ? null : { required: true };
+    }
+
+    return ac.value !== null && ac.value !== undefined ? null : { required: true };
   }
 
   setViewAnswerText(answer: any) {

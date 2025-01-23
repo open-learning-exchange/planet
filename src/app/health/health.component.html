@@ -6,6 +6,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 action-buttons">
+    <span class="toolbar-fill"></span>
     <a mat-raised-button color="accent" i18n [routerLink]="['update']" *ngIf="isOwnUser">Update Details</a>
     <a mat-raised-button color="accent" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
     <span *ngIf="userDetail.firstName === undefined"><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
@@ -56,7 +57,7 @@
           </div>
           <mat-divider></mat-divider>
         </div>
-        <div>
+        <div class="full-width">
           <div>
             <h4 class="primary-text-color" i18n>Emergency Contact</h4>
             <p><b i18n>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
@@ -81,7 +82,7 @@
         </div>
       </div>
       <ng-container *ngIf="events.length > 0">
-        <h4 class="full-width" i18n>Examinations</h4>
+        <h3 class="full-width examinations-header" i18n>Examinations</h3>
         <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
