@@ -1,8 +1,14 @@
 <h3 *ngIf="images.length !== 0" mat-dialog-title i18n>Select an Image</h3>
 <h3 *ngIf="images.length === 0" mat-dialog-title i18n>No Images to Select</h3>
 <mat-dialog-content>
+  <div class="search-container">
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="search-input">
+      <input matInput [(ngModel)]="searchQuery" i18n-placeholder placeholder="Search by filename">
+    </mat-form-field>
+  </div>
   <mat-grid-list cols="3" rowHeight="1:1">
-    <mat-grid-tile *ngFor="let image of images" (click)="selectImage(image)">
+    <mat-grid-tile *ngFor="let image of filteredImages" (click)="selectImage(image)">
       <img [src]="urlPrefix + '/' + image._id + '/' + image.filename">
       <mat-grid-tile-footer>{{image.title}}</mat-grid-tile-footer>
     </mat-grid-tile>
