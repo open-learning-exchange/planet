@@ -249,11 +249,16 @@ export class CustomValidators {
       if (!ac.value) {
         resolve(null);
       } else {
-        try {
-          const url = new URL(ac.value);
-          resolve(null);
-        } catch (_) {
+        const trimmedValue = ac.value.trim();
+        if (/\s/.test(trimmedValue)) {
           resolve({ 'invalidLink': true });
+        } else {
+          try {
+            const url = new URL(trimmedValue);
+            resolve(null);
+          } catch (_) {
+            resolve({ 'invalidLink': true });
+          }
         }
       }
     });
