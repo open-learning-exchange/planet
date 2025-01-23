@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval, Subscription } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
@@ -41,6 +41,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   private isFormInitialized = false;
   private subscriptions: Subscription = new Subscription();
   private isNavigating = false;
+  private initialFormValues: any;
   get steps() {
     return this._steps;
   }
@@ -81,6 +82,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   ) {
     this.createForm();
     this.onFormChanges();
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
+    });
   }
 
   createForm() {
@@ -134,6 +140,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.coursesService.stepIndex = undefined;
     this.setupFormValueChanges();
     this.isFormInitialized = true;
+    this.initialFormValues = { ...this.courseForm.value };
   }
 
   ngOnDestroy() {
@@ -166,6 +173,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.images = course.form.images || [];
     this.steps = course.steps || [];
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
+    this.initialFormValues = { ...this.courseForm.value };
   }
 
   setInitialTags(tags, documentInfo, draft?) {
@@ -223,6 +231,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       return;
     }
     this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.updateCourse(this.courseForm.value, shouldNavigate);
   }
 
@@ -287,17 +296,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
 
   setupFormValueChanges() {
     this.courseForm.valueChanges.subscribe(() => {
-      console.log('Form value changed');
-      console.log('Current form value:', this.courseForm.value);
-      console.log('Initial form value:', this.coursesService.course.form);
-      if (this.isFormInitialized && !this.isFormPristine()) {
-        console.log('Form is not pristine');
-        this.hasUnsavedChanges = true;
-        this.unsavedChangesService.setHasUnsavedChanges(true);
-      } else {
-        console.log('Form is pristine');
-        this.hasUnsavedChanges = false;
-        this.unsavedChangesService.setHasUnsavedChanges(false);
+      if (this.isFormInitialized) {
+        if (!this.isFormPristine()) {
+          this.hasUnsavedChanges = true;
+          this.unsavedChangesService.setHasUnsavedChanges(true);
+        } else {
+          this.hasUnsavedChanges = false;
+          this.unsavedChangesService.setHasUnsavedChanges(false);
+        }
       }
     });
   }
@@ -312,8 +318,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   isFormPristine(): boolean {
-    const currentFormValue = { ...this.courseForm.value, description: JSON.stringify(this.courseForm.value.description) };
-    const initialFormValue = { ...this.coursesService.course.form, description: JSON.stringify(this.coursesService.course.form.description) };
+    const currentFormValue = { ...this.courseForm.value, description: this.courseForm.value.description.text || this.courseForm.value.description };
+    const initialFormValue = { ...this.initialFormValues, description: this.initialFormValues.description.text || this.initialFormValues.description };
     const isPristine = JSON.stringify(currentFormValue) === JSON.stringify(initialFormValue);
     console.log('isFormPristine:', isPristine);
     return isPristine;
