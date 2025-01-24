@@ -17,6 +17,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FormArray } from '@angular/forms';
 import { uniqueId } from '../utils';
+import { UnsavedChangesService } from '../unsaved-changes.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,12 +27,16 @@ export class PlanetStepListService {
   stepMoveClick$ = new Subject<any>();
   stepAdded$ = new Subject<number>();
 
+  constructor(private unsavedChangesService: UnsavedChangesService) {}
+
   moveStep(index, direction, listId) {
     this.stepMoveClick$.next({ index, direction, listId });
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   addStep(index: number) {
     this.stepAdded$.next(index);
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
 }

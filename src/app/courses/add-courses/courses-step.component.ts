@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
 
 @Component({
   selector: 'planet-courses-step',
@@ -31,7 +32,8 @@ export class CoursesStepComponent implements OnDestroy {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.stepForm = this.fb.group({
       id: '',
@@ -41,6 +43,7 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
       this.stepsChange.emit(this.steps);
+      this.unsavedChangesService.setHasUnsavedChanges(true);
     });
   }
 
@@ -76,10 +79,12 @@ export class CoursesStepComponent implements OnDestroy {
     this.stepsChange.emit(this.steps);
     this.dialogsLoadingService.stop();
     this.dialogRef.close();
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   removeResource(position: number) {
     this.steps[this.activeStepIndex].resources.splice(position, 1);
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   addExam(type = 'exam') {
@@ -89,15 +94,18 @@ export class CoursesStepComponent implements OnDestroy {
     } else {
       this.router.navigate([ '/courses/exam/', { type } ]);
     }
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   stepsMoved(steps) {
     this.steps = steps;
     this.stepsChange.emit(this.steps);
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   addStep() {
     this.addStepEvent.emit();
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
 }

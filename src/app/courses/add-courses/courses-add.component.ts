@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval, Subscription } from 'rxjs';
-import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
+import { takeWhile, debounce, catchError, switchMap, takeUntil } from 'rxjs/operators';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -42,6 +42,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   private subscriptions: Subscription = new Subscription();
   private isNavigating = false;
   private initialFormValues: any;
+  private initialStepCount: number;
   get steps() {
     return this._steps;
   }
@@ -53,6 +54,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
+    this.checkPristineState();
   }
 
   // from the constants import
@@ -86,6 +88,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       if (event instanceof NavigationStart) {
         this.isNavigating = true;
       }
+    });
+    this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.checkPristineState();
+    });
+    this.planetStepListService.stepAdded$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.checkPristineState();
     });
   }
 
@@ -141,6 +149,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.setupFormValueChanges();
     this.isFormInitialized = true;
     this.initialFormValues = { ...this.courseForm.value };
+    this.initialStepCount = this.steps.length;
   }
 
   ngOnDestroy() {
@@ -174,6 +183,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.steps = course.steps || [];
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
     this.initialFormValues = { ...this.courseForm.value };
+    this.initialStepCount = this.steps.length;
   }
 
   setInitialTags(tags, documentInfo, draft?) {
@@ -264,6 +274,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       images: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
+    this.checkPristineState();
   }
 
   cancel() {
@@ -284,6 +295,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
 
   removeStep(pos) {
     this.steps.splice(pos, 1);
+    this.checkPristineState();
   }
 
   stepTrackByFn(index, item) {
@@ -297,15 +309,26 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   setupFormValueChanges() {
     this.courseForm.valueChanges.subscribe(() => {
       if (this.isFormInitialized) {
-        if (!this.isFormPristine()) {
-          this.hasUnsavedChanges = true;
-          this.unsavedChangesService.setHasUnsavedChanges(true);
-        } else {
-          this.hasUnsavedChanges = false;
-          this.unsavedChangesService.setHasUnsavedChanges(false);
-        }
+        this.checkPristineState();
       }
     });
+  }
+
+  checkPristineState() {
+    const currentFormValue = { ...this.courseForm.value, description: this.courseForm.value.description.text || this.courseForm.value.description };
+    const initialFormValue = { ...this.initialFormValues, description: this.initialFormValues.description.text || this.initialFormValues.description };
+    const currentStepCount = this.steps.length;
+    const stepCountChanged = currentStepCount !== this.initialStepCount;
+    const formChanged = JSON.stringify(currentFormValue) !== JSON.stringify(initialFormValue);
+    const isPristine = !stepCountChanged && !formChanged;
+    console.log('isPristine:', isPristine);
+    if (!isPristine) {
+      this.hasUnsavedChanges = true;
+      this.unsavedChangesService.setHasUnsavedChanges(true);
+    } else {
+      this.hasUnsavedChanges = false;
+      this.unsavedChangesService.setHasUnsavedChanges(false);
+    }
   }
 
   canDeactivate(): boolean {
@@ -315,14 +338,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
     }
     return true;
-  }
-
-  isFormPristine(): boolean {
-    const currentFormValue = { ...this.courseForm.value, description: this.courseForm.value.description.text || this.courseForm.value.description };
-    const initialFormValue = { ...this.initialFormValues, description: this.initialFormValues.description.text || this.initialFormValues.description };
-    const isPristine = JSON.stringify(currentFormValue) === JSON.stringify(initialFormValue);
-    console.log('isFormPristine:', isPristine);
-    return isPristine;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
