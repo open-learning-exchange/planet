@@ -8,8 +8,8 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
       <span *ngSwitchCase="0" i18n>No collections selected</span>
       <span *ngSwitchCase="1"><span i18n>Selected:</span>
         {{ truncatedTooltip }}
-      <span *ngSwitchDefault [matTooltip]="tooltipLabels" i18n>Hover to see selected collections</span>
     </span>
+    <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
   `,
   selector: 'planet-tag-selected-input'
 })
