@@ -57,7 +57,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
       .pipe(
         catchError((err) => {
           console.error(err);
-          return of({ openai: false, perplexity: false, gemini: false });
+          return of({ openai: false, perplexity: false, deepseek: false, gemini: false });
         }),
         map((services: AIServices) => {
           if (services) {

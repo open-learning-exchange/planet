@@ -5,6 +5,7 @@ Ensure you have set the chatapi configs via the manager -> AI Configurations or 
 For model choices view:
   Openai: https://platform.openai.com/docs/models
   Perplexity: https://docs.perplexity.ai/guides/model-cards
+  deepseek: https://api-docs.deepseek.com/quick_start/pricing
   Gemini: https://deepmind.google/technologies/gemini/
 
 
@@ -68,7 +69,7 @@ In the production environment these configs are set in the `planet.yml` file.
   - **assistant**: boolean(required) -> Set to true if you want to use the assistants endpoint
   - **context**: string(optional) -> The text context you would like to pre-load the AI Assistant   with
   - **aiProvider**: Object(required)
-    - **name**: string(required) -> Name of the API provider to choose from i.e openai, perplexity or gemini.
+    - **name**: string(required) -> Name of the API provider to choose from i.e openai, perplexity, deepseek or gemini.
     - **model**: string(optional) -> Name of the specific provider model to use.
   - **_id**: couchdb document id
   - **_rev**: couchdb revision id
@@ -99,7 +100,8 @@ In the production environment these configs are set in the `planet.yml` file.
   ```
   {
     "openai": true,
-    "perplexity": false,
+    "perplexity": true,
+    "deepseek": true,
     "gemini": true
   }
   ```
@@ -110,7 +112,7 @@ In the production environment these configs are set in the `planet.yml` file.
 
 **Description**: Establishes a WebSocket connection for real-time chat.
 **Usage**: Connect via WebSocket and send JSON messages containing chat data. Responses will be provided through the WebSocket connection.
-aiProviders supported: openai, perplexity, and gemini.
+aiProviders supported: openai, perplexity, deepseek and gemini.
 any provider model supported by the provider can be used.
 
 - Request json sample

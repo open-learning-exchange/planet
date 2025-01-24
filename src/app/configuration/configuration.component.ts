@@ -233,11 +233,13 @@ export class ConfigurationComponent implements OnInit {
       keys: {
         openai: '',
         perplexity: '',
+        deepseek: '',
         gemini: ''
       },
       models: {
         openai: '',
         perplexity: '',
+        deepseek: '',
         gemini: ''
       },
       assistant: {

@@ -24,7 +24,7 @@ export interface Message {
   response: string;
 }
 
-export type ProviderName = 'openai' | 'perplexity' | 'gemini';
+export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
 
 export interface AIProvider {
   name: string;
@@ -34,5 +34,6 @@ export interface AIProvider {
 export interface AIServices {
   openai: boolean;
   perplexity: boolean;
+  deepseek: boolean;
   gemini: boolean;
 }
