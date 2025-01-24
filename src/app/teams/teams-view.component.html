@@ -228,7 +228,11 @@
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
                   <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
-                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name}}</a>
+                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">
+                    {{
+                      truncateText(request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name, 20)
+                    }}
+                  </a>
                   <mat-card-subtitle>
                     <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
                   </mat-card-subtitle>
