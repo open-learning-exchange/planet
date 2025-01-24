@@ -218,11 +218,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseChangeComplete(message, response: any, shouldNavigate) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.isSaved = true;
+    this.planetMessageService.showMessage(message);
     if (shouldNavigate) {
       this.navigateBack();
       return;
     }
-    this.planetMessageService.showMessage(message);
     if (this.isDestroyed) {
       return;
     }
