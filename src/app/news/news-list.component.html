@@ -30,4 +30,7 @@
   (deleteNews)="openDeleteDialog($event)"
   (shareNews)="shareNews($event)"
   (changeLabels)="changeLabels($event)">
+  <ng-container *ngIf="item.sharedSourceInfo">
+    <p>{{ item.sharedSourceInfo }}</p>
+  </ng-container>
 </planet-news-list-item>
