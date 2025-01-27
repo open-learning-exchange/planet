@@ -11,8 +11,8 @@
     <mat-card-subtitle>
       <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
       <ng-container i18n>posted on</ng-container> {{item.doc.time | date: 'medium' }}
-      <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
       <ng-container *ngIf="item.sharedSourceInfo; else sharedDateOnly"> | {{item.sharedSourceInfo}}</ng-container>
+      <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
       <ng-template #sharedDateOnly>
         <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
       </ng-template>
