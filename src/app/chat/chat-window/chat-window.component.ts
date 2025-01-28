@@ -36,6 +36,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   providers: AIProvider[] = [];
   @Input() context: any;
+  @Input() isEditing: boolean;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -94,7 +95,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
-        this.focusInput();
+        if (!this.isEditing) {
+          this.focusInput();
+        }
       }, error => {
         console.error('Error subscribing to selectedConversationId$', error);
       });
@@ -107,7 +110,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         this.provider = {
           name: aiService
         };
-        this.focusInput();
+        if (!this.isEditing) {
+          this.focusInput();
+        }
       }));
   }
 
