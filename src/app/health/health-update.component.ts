@@ -65,6 +65,7 @@ export class HealthUpdateComponent implements OnInit {
       emergencyContactType: '',
       emergencyContact: '',
       specialNeeds: '',
+      allergies: '',
       notes: ''
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
