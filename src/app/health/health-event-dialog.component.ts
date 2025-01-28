@@ -88,7 +88,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         this.deleteDialog.close();
       }
     };
-
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,

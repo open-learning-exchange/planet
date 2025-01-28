@@ -50,7 +50,6 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.userDetail = user;
       this.initData();
     });
-
     this.healthService.examinationsUpdated.subscribe(() => {
       this.refreshExaminations();
     });
