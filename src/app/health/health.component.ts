@@ -101,20 +101,13 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.healthService.getHealthData(this.userDetail._id, { docId: event._id })
         : of([ event ])
       ).subscribe(([ eventDoc ]) => {
-        this.openExamDialog(eventDoc);
+        this.dialog.open(HealthEventDialogComponent, {
+          data: { event: eventDoc, user: this.userDetail._id, route: this.route },
+          width: '50vw',
+          maxHeight: '90vh'
+        });
       });
     }
-  }
-
-  openExamDialog(event) {
-    const dialogRef = this.dialog.open(HealthEventDialogComponent, {
-      data: { event }
-    });
-  
-    dialogRef.componentInstance.examDeleted.subscribe((deletedExamId: string) => {
-      this.events = this.events.filter(e => e._id !== deletedExamId);
-      this.setEventData();
-    });
   }
 
   refreshExaminations() {

@@ -30,7 +30,6 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   timeLimit = 300000;
   isDestroyed = false;
   deleteDialog: any;
-  spinnerOn: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -73,10 +72,23 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
   deleteExam(event) {
     const displayName = new Date(event.date).toLocaleString();
-    this.openDeleteDialog(this.deleteExamination(event._id, event._rev), 'single', displayName, 1);
+    this.openDeleteDialog(event._id, event._rev, 'single', displayName, 1);
   }
 
-  openDeleteDialog(okClick, amount, displayName = '', count) {
+  openDeleteDialog(eventId: string, eventRev: string, amount, displayName = '', count) {
+    const okClick = {
+      request: this.healthService.deleteExamination(eventId, eventRev),
+      onNext: () => {
+        this.planetMessageService.showMessage('Examination deleted successfully');
+        this.deleteDialog.close();
+        this.dialogRef.close();
+      },
+      onError: () => {
+        this.planetMessageService.showAlert('There was a problem deleting the examination.');
+        this.deleteDialog.close();
+      }
+    };
+
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,
@@ -89,25 +101,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     });
     this.deleteDialog.afterClosed().subscribe(() => {
       this.examDeleted.emit();
-      this.spinnerOn = false;
     });
-  }
-
-  deleteExamination(eventId: string, eventRev: string) {
-    return {
-      request: this.healthService.deleteExamination(eventId, eventRev),
-      onNext: () => {
-        this.spinnerOn = false;
-        this.planetMessageService.showMessage('Examination deleted successfully');
-        this.deleteDialog.close();
-        this.dialogRef.close();
-      },
-      onError: () => {
-        this.spinnerOn = false;
-        this.planetMessageService.showAlert('There was a problem deleting the examination.');
-        this.deleteDialog.close();
-      }
-    };
   }
 
   editButtonCountdown() {

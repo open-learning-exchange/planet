@@ -25,8 +25,7 @@ export class HealthService {
   constructor(
     private couchService: CouchService,
     private stateService: StateService,
-    private usersService: UsersService,
-
+    private usersService: UsersService
   ) {}
 
   userDatabaseName(userId: string) {
