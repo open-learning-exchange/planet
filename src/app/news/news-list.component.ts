@@ -122,9 +122,10 @@ export class NewsListComponent implements OnChanges {
   deleteNews(news) {
     const isMainStory = this.replyViewing._id === news._id;
     const parentId = isMainStory ? this.replyViewing.doc.replyTo || 'root' : this.replyViewing._id;
+    const deleteFromAllViews = this.viewableBy === 'teams';
     return {
       request: forkJoin([
-        this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
+        this.newsService.deleteNews(news, this.viewableId, deleteFromAllViews), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
       ]),
       onNext: (data) => {
         if (isMainStory) {

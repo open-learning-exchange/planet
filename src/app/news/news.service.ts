@@ -76,8 +76,17 @@ export class NewsService {
     }));
   }
 
-  deleteNews(post) {
-    return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+  deleteNews(post, viewId, deleteFromAllViews = false) {
+    if (deleteFromAllViews) {
+      return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+    } else {
+      const updatedViewIn = post.viewIn.filter(view => view._id !== viewId);
+      if (updatedViewIn.length === 0) {
+        return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+      } else {
+        return this.postNews({ ...post, viewIn: updatedViewIn }, $localize`Message deleted`);
+      }
+    }
   }
 
   createImagesArray(post, message) {
