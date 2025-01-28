@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
@@ -10,6 +10,7 @@ import { HealthService } from './health.service';
 import { UserService } from '../shared/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -28,11 +29,14 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
+  deleteDialog: any;
+  spinnerOn: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
     private dialog: MatDialog,
+    private dialogRef: MatDialogRef<HealthEventDialogComponent>,
     private usersService: UsersService,
     private couchService: CouchService,
     private userService: UserService,
@@ -68,10 +72,42 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   }
 
   deleteExam(event) {
-    this.healthService.deleteExamination(event._id, event._rev).subscribe(() => {
-      this.examDeleted.emit(event._id);
-      this.dialog.closeAll();
+    const displayName = new Date(event.date).toLocaleString();
+    this.openDeleteDialog(this.deleteExamination(event._id, event._rev), 'single', displayName, 1);
+  }
+
+  openDeleteDialog(okClick, amount, displayName = '', count) {
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'examination',
+        displayName,
+        count
+      }
     });
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.examDeleted.emit();
+      this.spinnerOn = false;
+    });
+  }
+
+  deleteExamination(eventId: string, eventRev: string) {
+    return {
+      request: this.healthService.deleteExamination(eventId, eventRev),
+      onNext: () => {
+        this.spinnerOn = false;
+        this.planetMessageService.showMessage('Examination deleted successfully');
+        this.deleteDialog.close();
+        this.dialogRef.close();
+      },
+      onError: () => {
+        this.spinnerOn = false;
+        this.planetMessageService.showAlert('There was a problem deleting the examination.');
+        this.deleteDialog.close();
+      }
+    };
   }
 
   editButtonCountdown() {

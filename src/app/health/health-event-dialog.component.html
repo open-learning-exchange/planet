@@ -25,9 +25,9 @@
   <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" mat-raised-button mat-dialog-delete (click)="deleteExam(event)" i18n>Delete</button>
   <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
   <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
     <span i18n>Edit</span> <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container>
   </button>
+  <button type="button" mat-raised-button (click)="deleteExam(event)" color="warn" i18n>Delete</button>
 </mat-dialog-actions>

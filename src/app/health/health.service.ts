@@ -153,12 +153,18 @@ export class HealthService {
   }
 
   deleteExamination(eventId: string, eventRev: string) {
+    console.log('Deleting examination:', eventId);
     return this.couchService.delete(`health/${eventId}?rev=${eventRev}`).pipe(
-      switchMap(() => this.getExaminations(this.stateService.configuration.code)), 
+      switchMap(() => {
+        console.log('Examination deleted, fetching updated list');
+        return this.getExaminations(this.stateService.configuration.code);
+      }), 
       switchMap((exams: any[]) => {
+        console.log('Updated examinations list:', exams);
         const updatedExams = exams.filter(exam => exam._id !== eventId); 
         this.examinations.next(updatedExams); 
-        return of(true); 
+        return of(true);
       })
     );
-  }}
+  }
+}

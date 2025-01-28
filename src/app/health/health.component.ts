@@ -50,6 +50,10 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.userDetail = user;
       this.initData();
     });
+
+    this.healthService.examinationsUpdated.subscribe(() => {
+      this.refreshExaminations();
+    });
   }
 
   ngAfterViewChecked() {
@@ -106,7 +110,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     const dialogRef = this.dialog.open(HealthEventDialogComponent, {
       data: { event }
     });
-
+  
     dialogRef.componentInstance.examDeleted.subscribe((deletedExamId: string) => {
       this.events = this.events.filter(e => e._id !== deletedExamId);
       this.setEventData();
