@@ -38,12 +38,17 @@ const initialize = async () => {
         'apiKey': doc?.keys.perplexity || '',
         'baseURL': 'https://api.perplexity.ai',
       }),
+      'deepseek': new OpenAI({
+        'apiKey': doc?.keys.deepseek || '',
+        'baseURL': 'https://api.deepseek.com',
+      }),
       'gemini': new GoogleGenerativeAI(doc?.keys.gemini || '')
     };
 
     models = {
       'openai': { 'ai': keys.openai, 'defaultModel': doc?.models.openai || '' },
       'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc?.models.perplexity || '' },
+      'deepseek': { 'ai': keys.deepseek, 'defaultModel': doc?.models.deepseek || '' },
       'gemini': { 'ai': keys.gemini, 'defaultModel': doc?.models.gemini || '' },
     };
 

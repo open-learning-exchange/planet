@@ -22,7 +22,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   disabled = false;
   clearChat = true;
   provider: AIProvider;
-  conversations: any[] = [];
+  fallbackConversation: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
   data: ConversationForm = {
@@ -37,6 +37,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   providers: AIProvider[] = [];
   @Input() context: any;
   @Input() isEditing: boolean;
+  @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -49,6 +50,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    if (this.conversations === null) {
+      this.conversations = this.fallbackConversation;
+    }
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
