@@ -74,24 +74,20 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
       this.surveys.data = [
-        ...surveys.map((survey: any) => ({
-          ...survey,
-          course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
-          taken: submissions.filter(data => {
-            return data.parentId.match(survey._id) && data.status !== 'pending';
-          }).length
-        })),
+        ...surveys.map((survey: any) => {
+          const relatedSubmissions = submissions.filter(sub => sub.parentId === survey._id);
+          const teamId = survey.teamId || relatedSubmissions[0]?.user?.membershipDoc?.teamId;
+          return {
+            ...survey,
+            teamId: teamId,
+            course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
+            taken: relatedSubmissions.filter(data => data.status !== 'pending').length
+          };
+        }),
         ...this.createParentSurveys(submissions)
       ].filter(survey => {
-        if (this.routeTeamId) {
-          return survey.teamId === this.routeTeamId;
-        }
-
-        if (this.teamId) {
-          return survey.teamId === this.teamId;
-        } else {
-          return true;
-        }
+        const targetTeamId = this.routeTeamId || this.teamId;
+        return targetTeamId ? survey.teamId === targetTeamId : true;
       });
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
@@ -120,7 +116,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       if (parentSurvey) {
         parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
       } else if (submission.parent.sourcePlanet === this.stateService.configuration.parentCode) {
-        return [ ...parentSurveys, { ...submission.parent, taken: submission.status !== 'pending' ? 1 : 0, parent: true } ];
+        return [...parentSurveys, {
+          ...submission.parent,
+          taken: submission.status !== 'pending' ? 1 : 0,
+          parent: true,
+          teamId: submission.user?.membershipDoc?.teamId
+        }];
       }
       return parentSurveys;
     }, []);
@@ -229,7 +230,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  openSendSurveyDialog(survey) {
+  openSendSurveyToUsersDialog(survey) {
     this.submissionsService.getSubmissions(
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
     ).subscribe((submissions: any[]) => {
@@ -240,6 +241,22 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           okClick: (selection: any[]) => this.sendSurvey(survey, selection),
           excludeIds: [ ...excludeIds, this.userService.get()._id ],
           mode: 'users'
+        }
+      });
+    });
+  }
+
+  openSendSurveyToTeamsDialog(survey) {
+    this.submissionsService.getSubmissions(
+      findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
+    ).subscribe((submissions: any[]) => {
+      const excludeIds = submissions.map((submission: any) => submission.teamId);
+      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+        width: '80vw',
+        data: {
+          okClick: (selection: any[]) => this.sendSurvey(survey, selection),
+          excludeIds: [ ...excludeIds ],
+          mode: 'teams'
         }
       });
     });
