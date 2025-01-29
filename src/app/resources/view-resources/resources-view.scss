@@ -34,6 +34,10 @@
       max-height: 60vh;
     }
   }
+  
+  .toolbar-button {
+    flex-shrink: 0;
+  }
 
   @media (max-width: $screen-sm) {
     .view-container {

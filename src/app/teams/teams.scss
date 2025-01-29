@@ -1,23 +1,22 @@
 @import "../variables.scss";
 
 :host {
-  /* Column Widths */
   .mat-column-doc-teamType {
     max-width: 150px;
     padding-right: 0.5rem;
   }
 
   .mat-column-visitLog-visitCount {
+    justify-content: center;
     max-width: 80px;
-    padding-right: 0.5rem;
+    padding-right: 1rem;
+    margin-right: 1rem
   }
-  .mat-column-visitLog-lastVisit {
-    max-width: 180px;
-    padding-right: 0.5rem;
-  }
+
   mat-row {
     cursor: pointer;
   }
+
   .button-container {
     display: flex;
     flex-direction: row;
@@ -27,10 +26,33 @@
     justify-content: center;
   }
 
-  @media screen and (max-width: #{$screen-sm}) {
+  .team-name{
+    max-width: 95%;
+    overflow: hidden;
+  }
+
+  .mat-cell button, .mat-cell div button[mat-raised-button] {
+    width: 150px;
+    text-align: center;
+    padding: 8px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: $screen-sm) {
     mat-cell button {
       min-width: 0;
       padding: 0 3px;
+    }
+
+    .mat-cell button, .mat-cell div button[mat-raised-button] {
+      width: 50px;
+    }
+
+    .button-container {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 }

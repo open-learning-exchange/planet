@@ -299,7 +299,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
           request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
           onNext: (res) => {
             this.setLinksAndFinances(res);
-            this.planetMessageService.showMessage($localize`${link.title} deleted`);
+            this.planetMessageService.showMessage($localize` Deleted link: ${link.title}`);
             deleteDialog.close();
           },
           onError: () => this.planetMessageService.showAlert($localize`There was an error deleting ${link.title}`)
