@@ -30,29 +30,6 @@ mat-card-content {
   padding: 40px;
 }
 
-.conversation-query {
-  text-align: left;
-  padding: 8px;
-  border-radius: 5px;
-  background-color: #{$primary};
-  color: white;
-}
-
-.conversation-response {
-  margin: 8px 16px;
-}
-
-.conversation-error {
-  color: #ff0000;
-  font-style: italic;
-}
-
-mat-card-title a {
-  word-break: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
-
 @media (max-width: $screen-md) {
   .chat-container {
     padding: 20px;
