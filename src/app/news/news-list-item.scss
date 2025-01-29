@@ -47,6 +47,12 @@ mat-card-content {
   font-style: italic;
 }
 
+mat-card-title a {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
 @media (max-width: $screen-md) {
   .chat-container {
     padding: 20px;
