@@ -76,10 +76,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.surveys.data = [
         ...surveys.map((survey: any) => {
           const relatedSubmissions = submissions.filter(sub => sub.parentId === survey._id);
-          const teamId = survey.teamId || relatedSubmissions[0]?.user?.membershipDoc?.teamId;
+          const teamIds = [
+            ...new Set([
+              survey.teamId,
+              ...relatedSubmissions.map(sub => sub.user?.membershipDoc?.teamId)
+            ])
+          ].filter(Boolean);
           return {
             ...survey,
-            teamId: teamId,
+            teamIds: teamIds,
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
             taken: relatedSubmissions.filter(data => data.status !== 'pending').length
           };
@@ -87,7 +92,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ].filter(survey => {
         const targetTeamId = this.routeTeamId || this.teamId;
-        return targetTeamId ? survey.teamId === targetTeamId : true;
+        return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
       });
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
