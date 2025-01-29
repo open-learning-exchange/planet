@@ -23,6 +23,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
+  conversations: any[] = [];
   courseId: string;
   maxStep = 1;
   resourceUrl = '';
@@ -139,6 +140,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   changeStep(direction) {
     this.isLoading = true;
     this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
+    this.conversations = [];
     this.resetCourseStep();
     this.countActivity = true;
   }

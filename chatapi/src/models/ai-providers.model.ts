@@ -13,6 +13,7 @@ interface Assistant {
 interface Providers {
   openai?: string;
   perplexity?: string;
+  deepseek?: string;
   gemini?: string;
 }
 
