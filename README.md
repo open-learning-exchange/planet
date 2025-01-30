@@ -162,9 +162,9 @@ npm i @types/mime@3.0.0
 
 If your npm install fails on your first try, first check if you are using Node v14. Other versions of Node may throw errors when installing dependencies.
 
-### Fatal error in chatapi using an arm64 device
+### Fatal error in chatapi using an arm32 device
 
-If you are using an arm/arm64 device and encounter a fatal error while running the chatapi container run the following:
+If you are using an 32bit arm device and encounter a fatal error while running the chatapi container run the following:
 ```
   wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1-1~bpo10+1_armhf.deb
 
