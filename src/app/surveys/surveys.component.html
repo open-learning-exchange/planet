@@ -16,6 +16,10 @@
       <mat-icon>add</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
+    <mat-button-toggle-group *ngIf="routeTeamId" [(ngModel)]="currentFilter.viewMode" (change)="toggleSurveysView()">
+      <mat-button-toggle value="team" i18n>Team Surveys</mat-button-toggle>
+      <mat-button-toggle value="clone" i18n>Clone a survey</mat-button-toggle>
+    </mat-button-toggle-group>
     <ng-container *planetAuthorizedRoles="'manager'">
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>

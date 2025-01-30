@@ -42,6 +42,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
+  currentFilter = { viewMode: 'team' };
+  allSurveys: any[] = [];
   deleteDialog: any;
   message = '';
   configuration = this.stateService.configuration;
@@ -74,7 +76,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.couchService.findAll('courses')
     ]).subscribe(([ surveys, submissions, courses ]: any) => {
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
-      this.surveys.data = [
+      this.allSurveys = [
         ...surveys.map((survey: any) => {
           const relatedSubmissions = submissions.filter(sub => sub.parentId === survey._id);
           const teamIds = [
@@ -91,10 +93,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           };
         }),
         ...this.createParentSurveys(submissions)
-      ].filter(survey => {
-        const targetTeamId = this.routeTeamId || this.teamId;
-        return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
-      });
+      ];
+      this.applyViewModeFilter();
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
     });
@@ -318,6 +318,25 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
+  }
+
+  private applyViewModeFilter() {
+    const targetTeamId = this.routeTeamId || this.teamId;
+    this.surveys.data = this.allSurveys.filter(survey => {
+      if (this.currentFilter.viewMode === 'team') {
+        return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
+      } else if (this.currentFilter.viewMode === 'clone') {
+        return survey.teamShareAllowed === true;
+      }
+      return true;
+    });
+  }
+
+  toggleSurveysView(): void {
+    this.applyViewModeFilter();
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
   }
 
 }
