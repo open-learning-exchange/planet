@@ -36,6 +36,8 @@ cd / && ./create_version_json.sh
 
 cd /usr/share/nginx/html && ./credentials.sh
 
+envsubst '$DEFAULT_LANGUAGE' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+
 spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 
 nginx -g "daemon off;"
