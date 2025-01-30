@@ -89,12 +89,12 @@ export class CoursesStepComponent implements OnDestroy {
 
   addExam(type = 'exam') {
     this.coursesService.stepIndex = this.activeStepIndex;
+    this.unsavedChangesService.setHasUnsavedChanges(false); // Bypass the guard
     if (this.activeStep[type]) {
-      this.router.navigate([ '/courses/update/exam/', this.activeStep[type]._id, { type } ]);
+      this.router.navigate([ '/courses/update/exam/', this.activeStep[type]._id, { type } ], { skipLocationChange: true });
     } else {
-      this.router.navigate([ '/courses/exam/', { type } ]);
+      this.router.navigate([ '/courses/exam/', { type } ], { skipLocationChange: true });
     }
-    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   stepsMoved(steps) {

@@ -348,4 +348,16 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
+
+  addExam(type = 'exam') {
+    this.coursesService.stepIndex = this.steps.length - 1; // Use the last step index
+    this.hasUnsavedChanges = false; // Bypass the guard
+    this.unsavedChangesService.setHasUnsavedChanges(false); // Bypass the guard
+    const step = this.steps[this.coursesService.stepIndex];
+    if (step[type]) {
+      this.router.navigate([ '/courses/update/exam/', step[type]._id, { type } ], { skipLocationChange: true });
+    } else {
+      this.router.navigate([ '/courses/exam/', { type } ], { skipLocationChange: true });
+    }
+  }
 }

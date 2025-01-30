@@ -23,6 +23,7 @@ import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { forkJoin, of } from 'rxjs';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
 
 const showdown = require('showdown');
 
@@ -45,6 +46,7 @@ export class ExamsAddComponent implements OnInit {
   isCourseContent = this.router.url.match(/courses/);
   returnUrl = this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
+  hasUnsavedChanges = false; // Define the property
   private _question: FormGroup;
   get question(): FormGroup {
     return this._question;
@@ -72,7 +74,8 @@ export class ExamsAddComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
     private stateService: StateService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private unsavedChangesService: UnsavedChangesService // Add the service to the constructor
   ) {
     this.createForm();
   }
@@ -125,6 +128,10 @@ export class ExamsAddComponent implements OnInit {
         this.examForm.value.teamId = this.teamId;
       }
       this.showFormError = false;
+      if (reRoute) {
+        this.hasUnsavedChanges = false; // Bypass the guard
+        this.unsavedChangesService.setHasUnsavedChanges(false); // Bypass the guard
+      }
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
       this.showErrorMessage();
