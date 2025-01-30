@@ -47,7 +47,7 @@ export const conditions = [
   $localize`Measles`,
   $localize`Meningitis`,
   $localize`Mycoplasma genitalium`,
-  $localize`Neonatal sepsis`,
+  $localize`Neonatal sepsis and infections`,
   $localize`Obesity`,
   $localize`Pneumonia`,
   $localize`Preeclampsia/Eclampsia`,

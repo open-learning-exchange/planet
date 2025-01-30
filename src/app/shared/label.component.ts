@@ -5,16 +5,17 @@ import { Component, Input } from '@angular/core';
   template: `
     <span i18n>{label, select,
       // Form labels
-      advice {Request for Advice}
-      bp {Blood Pressure}
-      hearing {Hearing}
-      height {Height (cm)}
-      offer {Offer}
-      pulse {Pulse (bpm)}
-      Shared Chat {Shared Chat}
       temperature {Temperature (°C)}
-      vision {Vision}
+      pulse {Pulse (bpm)}
+      bp {Blood Pressure}
+      height {Height (cm)}
       weight {Weight (kg)}
+      vision {Vision}
+      hearing {Hearing}
+      help {Help Wanted}
+      offer {Offer}
+      advice {Request for Advice}
+      shared chat {Shared Chat}
       // Diseases
       Amebiasis {Amebiasis}
       Acute Otitis Media {Acute Otitis Media}
