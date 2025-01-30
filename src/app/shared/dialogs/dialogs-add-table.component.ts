@@ -63,8 +63,13 @@ export class DialogsAddTableComponent implements AfterViewInit {
   }
 
   teamSelect({ teamId }) {
-    this.okDisabled = !teamId;
-    this.teamsSelected.push(teamId);
+    const index = this.teamsSelected.indexOf(teamId);
+    if (index === -1) {
+      this.teamsSelected.push(teamId);
+    } else {
+      this.teamsSelected.splice(index, 1);
+    }
+    this.okDisabled = this.teamsSelected.length === 0;
   }
 
 }

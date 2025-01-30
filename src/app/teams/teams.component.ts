@@ -64,6 +64,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   userNotInShelf = false;
   showFiltersRow = false;
   selection = new SelectionModel(true, []);
+  selectedIds: string[] = [];
   get tableData() {
     return this.teams;
   }
@@ -189,6 +190,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamClick(teamId, teamType) {
     if (this.isDialog) {
+      // Toggle selection
+      const index = this.selectedIds.indexOf(teamId);
+      index === -1 ? this.selectedIds.push(teamId) : this.selectedIds.splice(index, 1);
+
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }
