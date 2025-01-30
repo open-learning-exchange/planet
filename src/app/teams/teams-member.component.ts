@@ -12,8 +12,9 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-list-item-disabled {
       background-color: white;
     }
-    .mat-card-tasks {
+    .mat-selection-list {
       padding-top: 20px;
+      overflow-y: auto;
     }
     .mat-caption {
       font-size: 16px;
