@@ -22,7 +22,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   disabled = false;
   clearChat = true;
   provider: AIProvider;
-  conversations: any[] = [];
+  fallbackConversation: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup;
   data: ConversationForm = {
@@ -36,6 +36,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   providers: AIProvider[] = [];
   @Input() context: any;
+  @Input() isEditing: boolean;
+  @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
 
@@ -48,6 +50,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    if (this.conversations === null) {
+      this.conversations = this.fallbackConversation;
+    }
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
@@ -94,7 +99,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((conversationId) => {
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
-        this.focusInput();
+        if (!this.isEditing) {
+          this.focusInput();
+        }
       }, error => {
         console.error('Error subscribing to selectedConversationId$', error);
       });
@@ -107,7 +114,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         this.provider = {
           name: aiService
         };
-        this.focusInput();
+        if (!this.isEditing) {
+          this.focusInput();
+        }
       }));
   }
 

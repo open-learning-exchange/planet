@@ -93,9 +93,9 @@ export class ResourcesService {
       const resource = this.resources.local.find(r => r._id === resourceIds[0]);
       const resourceTitle = resource ? resource.doc.title : '';
       const message = type === 'remove' ?
-        (countChanged === 1 ? $localize`${resourceTitle} successfully removed from myLibrary` :
-          `${countChanged} ${$localize`Resources`} successfully removed from myLibrary`) :
-        (countChanged === 1 ? $localize`${resourceTitle} added to myLibrary` :
+        (countChanged === 1 ? $localize`Removed from myLibrary: ${resourceTitle}` :
+          `${countChanged} ${$localize`Resources`} removed from myLibrary`) :
+        (countChanged === 1 ? $localize`Added to myLibrary: ${resourceTitle}` :
           `${countChanged} ${$localize`Resources`} added to myLibrary`);
       this.planetMessageService.showMessage(message);
       return shelf;

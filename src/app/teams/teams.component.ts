@@ -205,7 +205,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
       const action = $localize`${team._id ? 'updated' : 'created'}`;
-      const msg = $localize`${toProperCase(this.mode)} ${action} successfully`;
+      const entityType = this.mode === 'enterprise' ? 'Enterprise' : 'Team';
+      const msg = $localize`${entityType} ${action} successfully`;
       this.planetMessageService.showMessage(msg);
     });
   }
@@ -230,12 +231,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           onNext: () => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
-            const msg = 'left';
-            this.planetMessageService.showMessage($localize`You have ${msg} ${team.name}`);
+            const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
+            const msg = $localize`You have left ${entityType} ${team.name}`;
+            this.planetMessageService.showMessage(msg);
           },
         },
         changeType: 'leave',
-        type: 'team',
+        type: this.mode === 'enterprise' ? 'enterprise' : 'team',
         displayName: team.name
       }
     });
@@ -250,7 +252,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         this.planetMessageService.showMessage($localize`You have deleted ${entityType} ${team.name}.`);
         this.removeTeamFromTable(team);
       },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this ${this.mode === 'enterprise' ? 'enterprise' : 'team'}.`)
     };
   }
 
@@ -259,7 +261,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       data: {
         okClick: this.archiveTeam(team),
         changeType: 'delete',
-        type: 'team',
+        type: this.mode === 'enterprise' ? 'enterprise' : 'team',
         displayName: team.name
       }
     });
@@ -278,7 +280,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      this.planetMessageService.showMessage($localize`Request to join ${team.name} sent`);
+      const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
+      this.planetMessageService.showMessage($localize`Request to join ${entityType} ${team.name} sent`);
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -34,6 +34,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   surveys = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @Output() surveyCount = new EventEmitter<number>();
   displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
     [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
   );
@@ -98,7 +99,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogsLoadingService.stop();
     });
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.surveys.connect().subscribe(surveys => this.parentCount = surveys.filter(survey => survey.parent === true).length);
+    this.surveys.connect().subscribe(surveys => {
+      this.parentCount = surveys.filter(survey => survey.parent === true).length;
+      this.surveyCount.emit(surveys.length);
+    });
   }
 
   ngAfterViewInit() {

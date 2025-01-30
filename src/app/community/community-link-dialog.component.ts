@@ -58,7 +58,7 @@ export class CommunityLinkDialogComponent {
     ).subscribe({
       next: () => {
         this.dialogRef.close();
-        this.planetMessageService.showMessage(`${linkTitle} added successfully`);
+        this.planetMessageService.showMessage(`Added link: ${linkTitle}`);
       },
       error: () => {
         this.planetMessageService.showAlert(`Error adding link`);
