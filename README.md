@@ -164,7 +164,7 @@ If your npm install fails on your first try, first check if you are using Node v
 
 ### Fatal error in chatapi using an arm64 device
 
-If you are using an arm64 device and encounter a fatal error in chatapi container run the following:
+If you are using an arm/arm64 device and encounter a fatal error in chatapi container run the following:
 ```
   wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1-1~bpo10+1_armhf.deb
 
