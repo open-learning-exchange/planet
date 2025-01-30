@@ -62,7 +62,7 @@ import { Component, Input } from '@angular/core';
       Measles {Measles}
       Meningitis {Meningitis}
       Mycoplasma genitalium {Mycoplasma genitalium}
-      Neonatal sepsis {Neonatal sepsis}
+      Neonatal sepsis and infections {Neonatal sepsis and infections}
       Obesity {Obesity}
       Preeclampsia/Eclampsia {Preeclampsia/Eclampsia}
       Preterm Birth Complications {Preterm Birth Complications}
