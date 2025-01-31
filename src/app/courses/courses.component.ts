@@ -463,7 +463,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       maxHeight: '90vh',
       autoFocus: false
     });
-
     dialogRef.afterClosed().subscribe(() => {
       this.dialog.closeAll();
     });
