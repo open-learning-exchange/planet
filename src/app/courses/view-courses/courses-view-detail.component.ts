@@ -1,7 +1,7 @@
 import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
@@ -52,7 +52,8 @@ export class CoursesViewDetailDialogComponent implements OnInit {
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private coursesService: CoursesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialogRef: MatDialogRef<CoursesViewDetailDialogComponent>
   ) {}
 
   ngOnInit() {
@@ -65,6 +66,8 @@ export class CoursesViewDetailDialogComponent implements OnInit {
   }
 
   routeToCourses(courseId) {
-    this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
+    this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route }).then(() => {
+      this.dialogRef.close();
+    });
   }
 }

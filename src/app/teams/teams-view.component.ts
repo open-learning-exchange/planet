@@ -533,12 +533,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openCourseView(courseId) {
-    this.dialog.open(CoursesViewDetailDialogComponent, {
+    const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId: courseId },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
       autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.dialog.closeAll();
     });
   }
 
