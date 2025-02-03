@@ -267,7 +267,7 @@ export class CustomValidators {
         }
       }
     });
-  } 
+  }
 
   static atLeastOneDaySelected(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
