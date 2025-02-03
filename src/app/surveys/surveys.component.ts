@@ -259,7 +259,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissionsService.getSubmissions(
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
     ).subscribe((submissions: any[]) => {
-      const excludeIds = submissions.map((submission: any) => submission.teamId);
+      const excludeIds = submissions.map((submission: any) => submission.user.membershipDoc?.teamId);
       this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
         width: '80vw',
         data: {
@@ -274,7 +274,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   adoptSurvey(survey) {
     this.couchService.get('teams/' + this.routeTeamId).subscribe(
       team => {
-        this.sendSurvey(survey, [ team ]);
+        const selection = {
+          doc: team,
+          membershipDoc: { teamId: this.routeTeamId }
+        };
+        this.sendSurvey(survey, [ selection ]);
       },
       error => {
         this.planetMessageService.showAlert($localize`Error adopting survey: ${error.message}`);
@@ -339,7 +343,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.currentFilter.viewMode === 'team') {
         return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
       } else if (this.currentFilter.viewMode === 'adopt') {
-        return survey.teamShareAllowed === true;
+        return survey.teamShareAllowed === true && survey.teamId !== targetTeamId && survey.teamIds?.includes(targetTeamId) === false;
       }
       return true;
     });

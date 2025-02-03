@@ -64,7 +64,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="!element.parent === true">
+          <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
             <button mat-raised-button color="primary" *ngIf="!teamId" (click)="routeToEditSurvey('update', element._id)" i18n><mat-icon>edit</mat-icon> Edit</button>
             <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId" [disabled]="!element.questions.length" [matMenuTriggerFor]="sendMenu"i18n><mat-icon>arrow_drop_down</mat-icon> Send</button>
             <mat-menu #sendMenu="matMenu">
@@ -75,9 +75,9 @@
               i18n-matTooltip matTooltip="Record survey information from a person who is not a member of {{configuration.name}}" i18n>
               <mat-icon>fiber_manual_record</mat-icon> Record
             </button>
-            <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
           </ng-container>
-          <div i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
+          <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
+          <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
             <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu" i18n>
               <mat-icon>move_to_inbox</mat-icon> Export
             </button>
