@@ -271,13 +271,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  adoptSurvey(survey) {
+    this.couchService.get('teams/' + this.routeTeamId).subscribe(
+      team => {
+        this.sendSurvey(survey, [ team ]);
+      },
+      error => {
+        this.planetMessageService.showAlert($localize`Error adopting survey: ${error.message}`);
+      }
+    );
+  }
+
   sendSurvey(survey: any, users: any[]) {
     this.submissionsService.sendSubmissionRequests(users, {
       'parentId': survey._id, 'parent': survey }
     ).subscribe(() => {
       this.planetMessageService.showMessage($localize`Survey requests sent`);
       this.dialogsLoadingService.stop();
-      this.dialogRef.close();
+      if (this.dialogRef) {
+        this.dialogRef.close();
+      }
     });
   }
 
@@ -325,7 +338,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.allSurveys.filter(survey => {
       if (this.currentFilter.viewMode === 'team') {
         return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
-      } else if (this.currentFilter.viewMode === 'clone') {
+      } else if (this.currentFilter.viewMode === 'adopt') {
         return survey.teamShareAllowed === true;
       }
       return true;
