@@ -143,5 +143,4 @@ export class RequestsComponent implements OnInit, OnDestroy {
   toggleMobileFilterList() {
     this.showFilterRow = !this.showFilterRow;
   }
-
 }
