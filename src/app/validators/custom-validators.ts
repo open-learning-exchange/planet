@@ -253,11 +253,16 @@ export class CustomValidators {
         if (/\s/.test(trimmedValue)) {
           resolve({ 'invalidLink': true });
         } else {
-          try {
-            const url = new URL(trimmedValue);
-            resolve(null);
-          } catch (_) {
+          const domainRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*(\/.*)?$/;
+          if (!domainRegex.test(trimmedValue)) {
             resolve({ 'invalidLink': true });
+          } else {
+            try {
+              new URL(trimmedValue);
+              resolve(null);
+            } catch (_) {
+              resolve({ 'invalidLink': true });
+            }
           }
         }
       }
