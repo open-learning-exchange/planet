@@ -43,10 +43,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
     badge: this.examsCount },
+    { firstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
     { firstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
     { firstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
     { firstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
-    { firstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
+    { firstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' },
+    { firstLine: $localize`my`, title: $localize`Chat`, link: '/chat' }
   ];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
