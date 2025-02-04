@@ -1,0 +1,20 @@
+mat-grid-tile {
+  width: 150px;
+}
+
+img {
+  max-width: 150px;
+  max-height: 150px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.search-input {
+  width: 80%;
+  margin-left: 10px;
+}

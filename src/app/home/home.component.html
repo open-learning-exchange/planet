@@ -43,9 +43,9 @@
       <button mat-icon-button *planetAuthorizedRoles="'only,health'" i18n-title title="Health" routerLink="/health"><mat-icon>local_hospital</mat-icon></button>
     </ng-container>
     <span *ngIf="layout === 'classic' && !forceModern">
-      <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>chat_bubble_outline</mat-icon></button>
+      <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>question_answer</mat-icon></button>
       <button mat-icon-button planetFeedback i18n-title title="Submit Feedback"><mat-icon>feedback_outline</mat-icon></button>
-      <button mat-icon-button routerLink="/feedback" i18n-title title="Review Feedback"><mat-icon>mail_outline</mat-icon></button>
+      <button mat-icon-button routerLink="/feedback" i18n-title title="Review Feedback"><mat-icon>mail</mat-icon></button>
       <ng-container *planetAuthorizedRoles>
         <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted'"><mat-icon svgIcon="feedback"></mat-icon></button>
       </ng-container>
@@ -211,12 +211,9 @@
             </a>
           </li>
         </ng-container>
+        <li style="text-align: center;">
+          <planet-language [iconOnly]="layout === 'modern' || forceModern"></planet-language>
         <li>
-          <a mat-button (click)="openLanguageDialog()" i18n-title title="Change Language">
-            <mat-icon>translate</mat-icon>
-            <label *ngIf="sidenavState === 'open'" i18n>Language</label>
-          </a>
-        </li>
         <ng-container *planetAuthorizedRoles>
           <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">

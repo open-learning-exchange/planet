@@ -456,12 +456,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openCourseViewDialog(courseId) {
-    this.dialog.open(CoursesViewDetailDialogComponent, {
+    const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
       autoFocus: false
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.dialog.closeAll();
     });
   }
 

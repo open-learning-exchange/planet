@@ -82,9 +82,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
-    if (this.route.snapshot.data.submission === true) {
+    const routeSnapshot = this.route.snapshot;
+    if (routeSnapshot.data.submission === true) {
       this.submissionMode = true;
-      this.redirectUrl = '/manager/surveys';
+      this.redirectUrl = routeSnapshot.queryParams.teamId ? `/teams/view/${routeSnapshot.queryParams.teamId}` : '/manager/surveys';
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name');
@@ -151,6 +152,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       showFormErrors(this.editForm.controls);
       return;
     }
+    this.hasUnsavedChanges = false;
     this.submitUser();
 
   }
