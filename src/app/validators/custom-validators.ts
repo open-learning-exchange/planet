@@ -258,7 +258,7 @@ export class CustomValidators {
             resolve({ 'invalidLink': true });
           } else {
             try {
-              new URL(trimmedValue);
+              const url = new URL(trimmedValue);
               resolve(null);
             } catch (_) {
               resolve({ 'invalidLink': true });
