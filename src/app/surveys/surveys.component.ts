@@ -69,7 +69,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
-    this.loadSurveys()
+    this.loadSurveys();
     this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().subscribe(surveys => {
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
