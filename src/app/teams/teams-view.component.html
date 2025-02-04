@@ -132,7 +132,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [resizeCalendar]="resizeCalendar" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         </mat-tab>
         <mat-tab *ngIf="mode!=='team'">
           <ng-template mat-tab-label>
@@ -213,7 +213,10 @@
           </ng-template>
         </mat-tab>
         <mat-tab i18n-label label="Surveys">
-          <planet-surveys [teamId]="teamId"></planet-surveys>
+          <ng-template mat-tab-label>
+            <ng-container i18n>Surveys</ng-container> ({{surveysCount}})
+          </ng-template>
+          <planet-surveys [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
         </mat-tab>
         <mat-tab *ngIf="mode!=='services'" #applicantTab>
           <ng-template mat-tab-label>
@@ -225,7 +228,11 @@
               <mat-card *ngFor="let request of requests">
                 <mat-card-header>
                   <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
-                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name}}</a>
+                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">
+                    {{
+                      truncateText(request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name, 20)
+                    }}
+                  </a>
                   <mat-card-subtitle>
                     <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
                   </mat-card-subtitle>

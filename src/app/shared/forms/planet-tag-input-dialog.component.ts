@@ -14,32 +14,7 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
-  'styles': [ `
-    :host {
-      display: block;
-      overflow: hidden;
-    }
-    :host mat-dialog-content {
-      overflow-y: auto;
-      max-height: calc(100vh - 100px);
-      width: 600px;
-    }
-    :host .mat-list-option span {
-      font-weight: inherit;
-    }
-    :host p[matLine] *, :host .mat-nav-list .mat-list-item * {
-      margin-right: 0.25rem;
-    }
-    :host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
-      margin-right: 0;
-    }
-    :host mat-dialog-actions {
-      padding: 0;
-    }
-    button[mat-stroked-button] {
-      min-width: 64px;
-    }
-  ` ]
+  'styleUrls': [ 'planet-tag-input-dialog.scss' ]
 })
 export class PlanetTagInputDialogComponent {
 
@@ -223,10 +198,10 @@ export class PlanetTagInputDialogComponent {
       onNext: (data) => {
         this.data.initTags();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`Tag deleted: ${tag.name}`);
+        this.planetMessageService.showMessage($localize`Collection deleted: ${tag.name}`);
         this.resetValidationAndCheck(this.addTagForm);
       },
-      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this tag.`)
+      onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this collection.`)
     };
   }
 
@@ -287,12 +262,6 @@ export class PlanetTagInputDialogComponent {
       return checkValue(iterator);
     };
     return checkValue(this.selected.entries());
-  }
-
-  truncateTagName(subTag: { name: string; count?: number }, maxLength: number): string {
-    if (this.deviceType === this.deviceTypes.DESKTOP) { maxLength = 50; } else { maxLength = 25; }
-    const truncatedName = subTag.name.length > maxLength ? subTag.name.slice(0, maxLength) + '...' : subTag.name;
-    return `${truncatedName} (${subTag.count || 0})`;
   }
 
 }

@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!publicView">
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Achievements</span>
   <span class="toolbar-fill"></span>
@@ -19,6 +19,9 @@
         <span *ngIf="achievementNotFound" i18n>Add Achievements</span>
         <span *ngIf="!achievementNotFound" i18n>Edit Achievements</span>
       </a>
+      <button mat-icon-button matTooltip="Copy Achievements Link" i18n-matTooltip (click)="copyLink()">
+        <mat-icon>link</mat-icon>
+      </button>
     </div>
   </mat-toolbar>
   <div class="view-container">
@@ -26,7 +29,7 @@
       <div class="user-info">
         <img class="profile-image" [src]="profileImg">
         <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
-        <div class="birth-info">
+        <div class="birth-info" *ngIf="!publicView">
           <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
           <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
         </div>

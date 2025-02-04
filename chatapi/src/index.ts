@@ -88,6 +88,7 @@ app.get('/checkproviders', async (req: any, res: any) => {
   res.status(200).json({
     'openai': keys.openai.apiKey ? true : false,
     'perplexity': keys.perplexity.apiKey ? true : false,
+    'deepseek': keys.deepseek.apiKey ? true : false,
     'gemini': keys.gemini.apiKey ? true : false
   });
 });

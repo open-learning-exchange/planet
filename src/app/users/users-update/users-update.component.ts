@@ -1,12 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, map } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
@@ -15,13 +11,17 @@ import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './users-update.component.html',
   styleUrls: [ './users-update.scss' ]
 })
-export class UsersUpdateComponent implements OnInit {
+export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: any = {};
+  initialFormValues: any;
   educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup;
@@ -39,6 +39,11 @@ export class UsersUpdateComponent implements OnInit {
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
+  hasUnsavedChanges = false;
+  avatarChanged = false;
+  isFormInitialized = false;
+  private isNavigating = false;
+  private subscriptions: Subscription = new Subscription();
   ngxImgText = {
     default: $localize`Drag and drop`,
     _default: $localize`Drag and drop or click`,
@@ -65,15 +70,22 @@ export class UsersUpdateComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.userData();
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
+    });
   }
 
   ngOnInit() {
-    if (this.route.snapshot.data.submission === true) {
+    const routeSnapshot = this.route.snapshot;
+    if (routeSnapshot.data.submission === true) {
       this.submissionMode = true;
-      this.redirectUrl = '/manager/surveys';
+      this.redirectUrl = routeSnapshot.queryParams.teamId ? `/teams/view/${routeSnapshot.queryParams.teamId}` : '/manager/surveys';
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name');
@@ -84,6 +96,7 @@ export class UsersUpdateComponent implements OnInit {
           this.redirectUrl = '../../profile/' + this.user.name;
         }
         this.editForm.patchValue(data);
+        this.initialFormValues = { ...this.editForm.value };
         if (data['_attachments']) {
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
@@ -91,7 +104,9 @@ export class UsersUpdateComponent implements OnInit {
           this.uploadImage = true;
         }
         this.previewSrc = this.currentProfileImg;
-        console.log('data: ' + data);
+        console.log('data: ', data);
+        this.isFormInitialized = true;
+        this.setupFormValueChanges();
       }, (error) => {
         console.log(error);
       });
@@ -116,6 +131,18 @@ export class UsersUpdateComponent implements OnInit {
     });
   }
 
+  setupFormValueChanges() {
+    this.editForm.valueChanges.subscribe(() => {
+      if (this.isFormInitialized && !this.isFormPristine()) {
+        this.hasUnsavedChanges = true;
+        this.unsavedChangesService.setHasUnsavedChanges(true);
+      } else {
+        this.hasUnsavedChanges = false;
+        this.unsavedChangesService.setHasUnsavedChanges(false);
+      }
+    });
+  }
+
   conditionalValidator(validator: any) {
     return (ac) => this.submissionMode ? null : validator(ac);
   }
@@ -125,6 +152,7 @@ export class UsersUpdateComponent implements OnInit {
       showFormErrors(this.editForm.controls);
       return;
     }
+    this.hasUnsavedChanges = false;
     this.submitUser();
 
   }
@@ -137,6 +165,10 @@ export class UsersUpdateComponent implements OnInit {
       this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).pipe(
         switchMap(() => this.userService.addImageForReplication(true))
       ).subscribe(() => {
+        this.avatarChanged = false;
+        this.editForm.markAsPristine();
+        this.initialFormValues = { ...this.editForm.value };
+        this.unsavedChangesService.setHasUnsavedChanges(false);
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -165,19 +197,33 @@ export class UsersUpdateComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
+    if (this.canDeactivate()) {
+      this.editForm.reset(this.user);
+      this.hasUnsavedChanges = false;
+      this.avatarChanged = false;
+      this.unsavedChangesService.setHasUnsavedChanges(false);
+      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
+    }
   }
 
   onImageSelect(img) {
     this.file = img;
     this.previewSrc = img;
     this.uploadImage = true;
+    this.avatarChanged = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   removeImageFile() {
+    // required to prevent this from being called automatically when navigating away from the page
+    if (this.isNavigating) {
+      return;
+    }
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
+    this.avatarChanged = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   deleteImageAttachment() {
@@ -191,6 +237,8 @@ export class UsersUpdateComponent implements OnInit {
 
     this.currentProfileImg = 'assets/image.png';
     this.removeImageFile();
+    this.avatarChanged = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
 
@@ -201,6 +249,24 @@ export class UsersUpdateComponent implements OnInit {
     })).subscribe(() => {
       this.goBack();
     });
+  }
+
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges || this.avatarChanged) {
+      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+    }
+    return true;
+  }
+
+  isFormPristine(): boolean {
+    return JSON.stringify(this.editForm.value) === JSON.stringify(this.initialFormValues);
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges || this.avatarChanged) {
+      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    }
   }
 
 }
