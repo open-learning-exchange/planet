@@ -5,8 +5,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { forkJoin, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, Subject, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import {
   filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
@@ -69,6 +69,29 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
+    this.loadSurveys()
+    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.surveys.connect().subscribe(surveys => {
+      this.parentCount = surveys.filter(survey => survey.parent === true).length;
+      this.surveyCount.emit(surveys.length);
+    });
+  }
+
+  ngAfterViewInit() {
+    this.surveys.sort = this.sort;
+    this.surveys.paginator = this.paginator;
+  }
+
+  onPaginateChange(e: PageEvent) {
+    this.selection.clear();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  private loadSurveys() {
     const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
     forkJoin([
       receiveData('exams', 'surveys'),
@@ -98,25 +121,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
     });
-    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.surveys.connect().subscribe(surveys => {
-      this.parentCount = surveys.filter(survey => survey.parent === true).length;
-      this.surveyCount.emit(surveys.length);
+  }
+
+  private applyViewModeFilter() {
+    const targetTeamId = this.routeTeamId || this.teamId;
+    this.surveys.data = this.allSurveys.filter(survey => {
+      if (this.currentFilter.viewMode === 'team') {
+        return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
+      } else if (this.currentFilter.viewMode === 'adopt') {
+        return survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+      }
+      return true;
     });
-  }
-
-  ngAfterViewInit() {
-    this.surveys.sort = this.sort;
-    this.surveys.paginator = this.paginator;
-  }
-
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   createParentSurveys(submissions) {
@@ -278,7 +294,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           doc: team,
           membershipDoc: { teamId: this.routeTeamId }
         };
-        this.sendSurvey(survey, [ selection ]);
+        this.sendSurvey(survey, [ selection ]).subscribe(() => {
+          this.loadSurveys();
+        });
       },
       error => {
         this.planetMessageService.showAlert($localize`Error adopting survey: ${error.message}`);
@@ -286,16 +304,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  sendSurvey(survey: any, users: any[]) {
-    this.submissionsService.sendSubmissionRequests(users, {
-      'parentId': survey._id, 'parent': survey }
-    ).subscribe(() => {
-      this.planetMessageService.showMessage($localize`Survey requests sent`);
-      this.dialogsLoadingService.stop();
-      if (this.dialogRef) {
-        this.dialogRef.close();
-      }
-    });
+  sendSurvey(survey: any, users: any[]): Observable<void> {
+    return this.submissionsService.sendSubmissionRequests(users, {
+      'parentId': survey._id,
+      'parent': survey
+    }).pipe(
+      tap(() => {
+        this.planetMessageService.showMessage($localize`Survey requests sent`);
+        this.dialogsLoadingService.stop();
+        if (this.dialogRef) {
+          this.dialogRef.close();
+        }
+      }),
+      catchError(error => {
+        this.planetMessageService.showAlert($localize`Error sending survey requests.`);
+        return throwError(error);
+      })
+    );
   }
 
   recordSurvey(survey: any) {
@@ -335,18 +360,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
-  }
-
-  private applyViewModeFilter() {
-    const targetTeamId = this.routeTeamId || this.teamId;
-    this.surveys.data = this.allSurveys.filter(survey => {
-      if (this.currentFilter.viewMode === 'team') {
-        return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
-      } else if (this.currentFilter.viewMode === 'adopt') {
-        return survey.teamShareAllowed === true && survey.teamId !== targetTeamId && survey.teamIds?.includes(targetTeamId) === false;
-      }
-      return true;
-    });
   }
 
   toggleSurveysView(): void {
