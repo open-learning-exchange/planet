@@ -78,7 +78,7 @@ Run `cd chatapi`
 
 Add a .env file in the `chatapi` directory
 
-Add the following configs in the .env file[change the username and password to your CouchDB admin credentials]:
+Add the following configs in the .env file(change the username and password to your CouchDB admin credentials):
   ```
     SERVE_PORT=5000
     COUCHDB_HOST=http://localhost:2200
@@ -86,14 +86,15 @@ Add the following configs in the .env file[change the username and password to y
     COUCHDB_PASS=password
   ```
 
-Configure the models[API keys & Models && Assistant settings] through the `manager dashboard -> AI Configurations` or in the `configurations` database directly in CouchDB.
+Configure the models(API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or in the `configurations` database directly in CouchDB.
 
 Note: Currently we support *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini* models.
 
 To run the chatapi locally, you need to use node v18. You can use nvm(linux) or fnm(windows/macos) to manage your node versions.
 
-** Note: The dev chatapi runs on port 5000 similar to the production environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1[or container id]` **
+**Note: The dev chatapi runs on port 5000 similar to the production environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1(or container id)`**
 
+To start the chatapi:
 ```
   npm install
   nvm use 18
