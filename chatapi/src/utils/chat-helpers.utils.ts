@@ -54,7 +54,7 @@ async function handleGemini(
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming enabled
  * @param messages - Array of chat messages
- * @param aiProvider - AI provider option(openai, perplexity, gemini)
+ * @param aiProvider - AI provider option
  * @returns Completion text
  */
 export async function aiChatStream(
@@ -115,7 +115,7 @@ export async function aiChatStream(
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming disabled
  * @param messages - Array of chat messages
- * @param aiProvider - AI provider option(openai, perplexity, gemini)
+ * @param aiProvider - AI provider option
  * @returns Completion text
  */
 export async function aiChatNonStream(
@@ -130,7 +130,7 @@ export async function aiChatNonStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if (context.resource) {
+  if (context.resource && context.resource.attachments) {
     for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
       const typedAttachment = attachment as Attachment;
       const contentType = typedAttachment.content_type;

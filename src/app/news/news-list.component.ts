@@ -22,7 +22,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 export class NewsListComponent implements OnChanges {
 
   @Input() items: any[] = [];
-  @Input() editSuccessMessage = $localize`News has been updated successfully.`;
+  @Input() editSuccessMessage = $localize`Message updated successfully.`;
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;

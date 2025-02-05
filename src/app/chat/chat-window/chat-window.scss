@@ -38,20 +38,3 @@
   right: 8px;
   transform: translateY(-50%);
 }
-
-.conversation-query {
-  text-align: left;
-  padding: 8px;
-  border-radius: 5px;
-  background-color: #{$primary};
-  color: white;
-}
-
-.conversation-response {
-  margin: 8px 16px;
-}
-
-.conversation-error {
-  color: #ff0000;
-  font-style: italic;
-}

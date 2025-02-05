@@ -22,12 +22,17 @@ export class AuthService {
     return this.pouchAuthService.getSessionInfo();
   }
 
-  private checkUser(url: any): Observable<boolean> {
+  private checkUser(url: any, roles: any[]): Observable<boolean> {
     return this.getSession$().pipe(
       switchMap((sessionInfo) => {
         if (sessionInfo.userCtx.name) {
           // If user already matches one on the user service, do not make additional call to CouchDB
-          if (sessionInfo.userCtx.name === this.userService.get().name) {
+          const user = this.userService.get();
+          if (sessionInfo.userCtx.name === user.name) {
+            if (roles.length > 0) {
+              const hasRole = roles.some(role => user.roles.includes(role));
+              return hasRole ? of(true) : of(false);
+            }
             return of(true);
           }
           this.stateService.requestBaseData();
@@ -45,7 +50,15 @@ export class AuthService {
   // For main app (which requires login).  Uses canActivateChild to check on every route
   // change if session has expired
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.checkUser(state.url);
+    let currentRoute: ActivatedRouteSnapshot | null = route;
+    const roles: Array<string> = currentRoute.data?.roles ?? [];
+    while (currentRoute) {
+      if (currentRoute.data && currentRoute.data.requiresAuth === false) {
+        return of(true);
+      }
+      currentRoute = currentRoute.parent;
+    }
+    return this.checkUser(state.url, roles);
   }
 
   // For login route will redirect to main app if there is an active session

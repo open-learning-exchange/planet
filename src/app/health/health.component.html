@@ -68,6 +68,13 @@
         </div>
         <div class="full-width">
           <div>
+            <h4 class="primary-text-color" i18n>Allergies</h4>
+            <td-markdown [content]="healthDetail?.allergies || 'N/A'"></td-markdown>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+        <div class="full-width">
+          <div>
             <h4 class="primary-text-color" i18n>Special Needs</h4>
             <td-markdown [content]="healthDetail?.specialNeeds || 'N/A'"></td-markdown>
           </div>
@@ -82,7 +89,7 @@
         </div>
       </div>
       <ng-container *ngIf="events.length > 0">
-        <h4 class="full-width" i18n>Examinations</h4>
+        <h3 class="full-width examinations-header" i18n>Examinations</h3>
         <div class="full-width table-container" #examsTable>
           <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
