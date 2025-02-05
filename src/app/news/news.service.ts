@@ -67,7 +67,8 @@ export class NewsService {
       ...post,
       message,
       images,
-      updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate
+      updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate,
+      viewIn: post.viewIn || []
     };
     return this.couchService.updateDocument(this.dbName, newPost).pipe(map(() => {
       this.planetMessageService.showMessage(successMessage);
@@ -75,8 +76,17 @@ export class NewsService {
     }));
   }
 
-  deleteNews(post) {
-    return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+  deleteNews(post, viewId, deleteFromAllViews = false) {
+    if (deleteFromAllViews) {
+      return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+    } else {
+      const updatedViewIn = post.viewIn.filter(view => view._id !== viewId);
+      if (updatedViewIn.length === 0) {
+        return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+      } else {
+        return this.postNews({ ...post, viewIn: updatedViewIn }, $localize`Message deleted`);
+      }
+    }
   }
 
   createImagesArray(post, message) {
@@ -94,8 +104,10 @@ export class NewsService {
     const viewInObject = (planet) => (
       { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
     );
-    // TODO: Filter newPlanets by ones currently existing in viewIn array
-    const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
+    const existingPlanetIds = (news.viewIn || []).map(view => view._id);
+    const newPlanets = planets ? planets
+      .filter(planet => !existingPlanetIds.includes(`${planet.code}@${planet.parentCode}`))
+      .map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     if (newPlanets.length === 0) {
       return of(undefined);
     }
