@@ -21,7 +21,7 @@
       <mat-button-toggle value="adopt" i18n>Adopt a survey</mat-button-toggle>
     </mat-button-toggle-group>
     <ng-container *planetAuthorizedRoles="'manager'">
-      <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+      <button mat-button (click)="deleteSelected()" [disabled]="routeTeamId && (currentFilter.viewMode === 'team' || currentFilter.viewMode === 'adopt') || !selection.selected.length" class="delete-button">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
         <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
       </button>
