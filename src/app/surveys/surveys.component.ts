@@ -275,7 +275,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissionsService.getSubmissions(
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
     ).subscribe((submissions: any[]) => {
-      const excludeIds = submissions.map((submission: any) => submission.user.membershipDoc?.teamId);
+      const submissionIds = submissions.map((submission: any) => submission.user.membershipDoc?.teamId);
+      const excludeIds = survey.teamId ? [ ...submissionIds, survey.teamId ] : submissionIds;
       this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
         width: '80vw',
         data: {
