@@ -263,7 +263,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
         width: '80vw',
         data: {
-          okClick: (selection: any[]) => this.sendSurvey(survey, selection),
+          okClick: (selection: any[]) => {
+            this.dialogsLoadingService.start();
+            this.sendSurvey(survey, selection).subscribe(() => {
+              this.dialogsLoadingService.stop();
+            });
+          },
           excludeIds: [ ...excludeIds, this.userService.get()._id ],
           mode: 'users'
         }
@@ -280,7 +285,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
         width: '80vw',
         data: {
-          okClick: (selection: any[]) => this.sendSurvey(survey, selection),
+          okClick: (selection: any[]) => {
+            this.dialogsLoadingService.start();
+            this.sendSurvey(survey, selection).subscribe(() => {
+              this.dialogsLoadingService.stop();
+            });
+          },
           excludeIds: [ ...excludeIds ],
           mode: 'teams'
         }
@@ -295,7 +305,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           doc: team,
           membershipDoc: { teamId: this.routeTeamId }
         };
-        this.sendSurvey(survey, [ selection ]).subscribe(() => {
+        this.sendSurvey(survey, [ selection ], true).subscribe(() => {
           this.loadSurveys();
         });
       },
@@ -305,20 +315,21 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  sendSurvey(survey: any, users: any[]): Observable<void> {
+  sendSurvey(survey: any, users: any[], isAdopt: boolean = false): Observable<void> {
     return this.submissionsService.sendSubmissionRequests(users, {
       'parentId': survey._id,
       'parent': survey
     }).pipe(
       tap(() => {
-        this.planetMessageService.showMessage($localize`Survey requests sent`);
-        this.dialogsLoadingService.stop();
+        const message = isAdopt ? $localize`Survey adopted` : $localize`Survey requests sent`;
+        this.planetMessageService.showMessage(message);
         if (this.dialogRef) {
           this.dialogRef.close();
         }
       }),
       catchError(error => {
         this.planetMessageService.showAlert($localize`Error sending survey requests.`);
+        this.dialogsLoadingService.stop();
         return throwError(error);
       })
     );

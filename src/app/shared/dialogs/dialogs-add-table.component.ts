@@ -21,22 +21,19 @@ export class DialogsAddTableComponent implements AfterViewInit {
       this.mode === 'teams' ? this.teamsComponent :
       undefined;
   }
-  selectedLink: { db, title, selector? };
-  links: { db, title, selector? }[] = [
-    { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
-    { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } }
+  selectedLink: { title, selector? };
+  links: { title, selector? }[] = [
+    { title: $localize`Teams`, selector: { type: 'team' } },
+    { title: $localize`Enterprises`, selector: { type: 'enterprise' } }
   ];
   teamsSelected = [];
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddTableComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogsLoadingService: DialogsLoadingService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.mode = this.data.mode;
-    if (this.mode === 'teams') {
-      this.selectedLink = this.links[0];
-    }
   }
 
   ngAfterViewInit() {
@@ -70,6 +67,10 @@ export class DialogsAddTableComponent implements AfterViewInit {
       this.teamsSelected.splice(index, 1);
     }
     this.okDisabled = this.teamsSelected.length === 0;
+  }
+
+  onSelectionChange(selected: any) {
+    this.selectedLink = this.links.find(link => link.selector?.type === selected.value.selector.type);
   }
 
 }

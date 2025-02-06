@@ -5,12 +5,12 @@
     <div mat-dialog-title>
       <mat-form-field class="full-width">
         <mat-label i18n>Send to team or enterprise</mat-label>
-        <mat-select [(ngModel)]="selectedLink">
+        <mat-select (selectionChange)="onSelectionChange($event)">
           <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
-    <mat-dialog-content *ngIf="selectedLink?.db === 'teams'">
+    <mat-dialog-content *ngIf="selectedLink">
       <planet-teams
         [isDialog]="true"
         [excludeIds]="data.excludeIds"
