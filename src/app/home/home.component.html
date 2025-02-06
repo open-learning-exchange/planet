@@ -50,7 +50,7 @@
         <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted'"><mat-icon svgIcon="feedback"></mat-icon></button>
       </ng-container>
       <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings" *planetAuthorizedRoles="'manager,monitor'"><mat-icon>settings</mat-icon></button>
-      <planet-language></planet-language>
+      <planet-language i18n-title title="Language"></planet-language>
     </span>
     <ng-container *planetAuthorizedRoles="'learner'">
       <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
@@ -212,9 +212,9 @@
           </li>
         </ng-container>
         <li>
-          <a mat-button style="padding-left: 5px;">
-            <planet-language [iconOnly]= 'true'></planet-language>
-            <label *ngIf="sidenavState === 'open'" style="margin-left: 2px;" i18n>Language</label>
+          <a mat-button class="language-button" i18n-title title="Language">
+            <planet-language [iconOnly]="true"></planet-language>
+            <label *ngIf="sidenavState === 'open'" class="language-label" i18n>Language</label>
           </a>
         </li>
         <ng-container *planetAuthorizedRoles>
