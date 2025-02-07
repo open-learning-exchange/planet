@@ -34,29 +34,39 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked {
   private renderKaTeX() {
     const elements = this.el.nativeElement.querySelectorAll('td-markdown');
     elements.forEach(element => {
-      const text = element.innerHTML;
-      const inlinePattern = /\((.*?)\)/g;
-      const blockPattern = /\$\$(.*?)\$\$/gs;
-
+      let text = element.innerHTML;
+  
+      // Decode HTML entities
+      text = this.decodeHtmlEntities(text);
+  
+      // Regex patterns
+      const blockPattern = /\$\$([\s\S]*?)\$\$/g;
+      const inlinePattern = /\\\(((?:.|\n)*?)\\\)/g; // Improved inline pattern  
+      // Render block LaTeX first
+      text = text.replace(blockPattern, (match, p1) => {
+        try {
+          return katex.renderToString(p1.trim(), { throwOnError: false, displayMode: true });
+        } catch (error) {
+          return match;
+        }
+      });
+  
       // Render inline LaTeX
-      element.innerHTML = text.replace(inlinePattern, (match, p1) => {
+      text = text.replace(inlinePattern, (match, p1) => {
         try {
-          return katex.renderToString(p1, { throwOnError: false });
+          return katex.renderToString(p1.trim(), { throwOnError: false });
         } catch (error) {
-          console.error('KaTeX render error:', error);
           return match;
         }
       });
-
-      // Render block LaTeX
-      element.innerHTML = element.innerHTML.replace(blockPattern, (match, p1) => {
-        try {
-          return katex.renderToString(p1, { throwOnError: false, displayMode: true });
-        } catch (error) {
-          console.error('KaTeX render error:', error);
-          return match;
-        }
-      });
+  
+      element.innerHTML = text;
     });
+  }
+  
+  private decodeHtmlEntities(text: string): string {
+    const textArea = document.createElement('textarea');
+    textArea.innerHTML = text;
+    return textArea.value;
   }
 }
