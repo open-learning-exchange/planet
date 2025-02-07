@@ -8,7 +8,6 @@ import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
-import { DialogsAddTableModule } from '../shared/dialogs/dialogs-add-table.module';
 import { DialogsResourcesViewerModule } from '../shared/dialogs/dialogs-resources-viewer.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
@@ -29,7 +28,6 @@ import { SurveysModule } from '../surveys/surveys.module';
     PlanetDialogsModule,
     NewsModule,
     DialogsAddResourcesModule,
-    DialogsAddTableModule,
     DialogsResourcesViewerModule,
     CovalentMarkdownModule,
     SharedComponentsModule,

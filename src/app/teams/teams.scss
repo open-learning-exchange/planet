@@ -40,6 +40,10 @@
     text-overflow: ellipsis;
   }
 
+  .highlighted {
+    background-color: $accent;
+  }
+
   @media (max-width: $screen-sm) {
     mat-cell button {
       min-width: 0;
