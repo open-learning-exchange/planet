@@ -39,4 +39,3 @@ services:
       - DEFAULT_LANGUAGE=eng
     depends_on:
       - couchdb
-version: "2"

@@ -8,4 +8,3 @@ services:
     volumes:
       - "/srv/hub/pwd:/usr/share/nginx/html/credentials"
       - "/srv/hub/fs:/usr/share/nginx/html/fs"
-version: "2"
