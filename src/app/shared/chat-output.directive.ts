@@ -1,17 +1,19 @@
-import { Directive, ElementRef, Renderer2, Input, AfterViewInit } from '@angular/core';
+import { Directive, ElementRef, Renderer2, Input, SimpleChanges, OnChanges } from '@angular/core';
 
 @Directive({
   selector: '[planetChatOutput]'
 })
-export class ChatOutputDirective implements AfterViewInit {
+export class ChatOutputDirective implements OnChanges {
   @Input('planetChatOutput') text: string;
 
   constructor(private el: ElementRef, private renderer: Renderer2) {}
 
-  ngAfterViewInit() {
-    const formattedText = this.formatOutput(this.text);
-    this.renderer.setProperty(this.el.nativeElement, 'innerHTML', formattedText);
-    this.addCopyButtons();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.text) {
+      const formattedText = this.formatOutput(changes.text.currentValue || '');
+      this.renderer.setProperty(this.el.nativeElement, 'innerHTML', formattedText);
+      this.addCopyButtons();
+    }
   }
 
   private formatOutput(text: string): string {

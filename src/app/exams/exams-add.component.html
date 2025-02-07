@@ -20,6 +20,7 @@
           <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
         </mat-menu>
         <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" class="margin-lr-5" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
+        <mat-checkbox *ngIf="isManagerRoute" formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic; margin: 0.1rem" i18n>Allow team view</span></mat-checkbox>
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
         <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
       </div>

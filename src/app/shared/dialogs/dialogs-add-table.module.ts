@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoursesModule } from '../../courses/courses.module';
 import { UsersModule } from '../../users/users.module';
+import { TeamsModule } from '../../teams/teams.module';
 import { DialogsAddTableComponent } from './dialogs-add-table.component';
 
 @NgModule({
@@ -10,7 +11,8 @@ import { DialogsAddTableComponent } from './dialogs-add-table.component';
     CommonModule,
     MaterialModule,
     CoursesModule,
-    UsersModule
+    UsersModule,
+    TeamsModule
   ],
   exports: [
     DialogsAddTableComponent

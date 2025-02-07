@@ -115,7 +115,11 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row
+        (click)="teamClick(row.doc._id, row.doc.teamType)"
+        *matRowDef="let row; columns: displayedColumns;"
+        [class.highlighted]="selectedIds.includes(row.doc._id)">
+      </mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
       </tr>
