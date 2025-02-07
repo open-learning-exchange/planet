@@ -45,6 +45,7 @@ export class ExamsAddComponent implements OnInit {
   isCourseContent = this.router.url.match(/courses/);
   returnUrl = this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
+  isManagerRoute = this.router.url.startsWith('/manager/surveys/');
   private _question: FormGroup;
   get question(): FormGroup {
     return this._question;
