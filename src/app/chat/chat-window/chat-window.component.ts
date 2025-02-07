@@ -207,18 +207,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
+      this.postSubmit();
     } else {
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
       lastConversation.response += message.response;
-      this.postSubmit();
+      this.scrollTo('bottom');
     }
   }
 
   postSubmit() {
-    this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
-    this.scrollTo('bottom');
     this.promptForm.controls['prompt'].setValue('');
     this.chatService.sendNewChatAddedSignal();
   }
