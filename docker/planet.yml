@@ -38,4 +38,3 @@ services:
       - CENTER_ADDRESS=planet.earth.ole.org/db
     depends_on:
       - couchdb
-version: "2"
