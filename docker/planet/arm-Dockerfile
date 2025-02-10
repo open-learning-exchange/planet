@@ -11,9 +11,11 @@ RUN apk add --no-cache \
     curl \
       oniguruma \
     jq \
-      openssl
+      openssl \
+    libintl \
+    gettext
 
-COPY ./docker/planet/default.conf /etc/nginx/conf.d/
+COPY ./docker/planet/default.conf.template /etc/nginx/templates/
 RUN touch /etc/nginx/conf.d/auth.txt
 COPY package.json ./
 COPY ./docker/planet/scripts/ ./
