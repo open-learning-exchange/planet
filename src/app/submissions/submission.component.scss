@@ -34,14 +34,4 @@
   .status-dropdown {
     max-width: 100px;
   }
-
-  .mat-cell-name,
-  .mat-cell-courseTitle {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 }
