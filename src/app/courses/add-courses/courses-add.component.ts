@@ -126,11 +126,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
     this.coursesService.stepIndex = undefined;
   }
-
+  
   ngOnDestroy() {
     if (this.coursesService.stepIndex === undefined) {
       this.coursesService.reset();
     }
+    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.isDestroyed = true;
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -182,7 +183,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       );
     });
   }
-
+  
   updateCourse(courseInfo, shouldNavigate) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
@@ -251,16 +252,18 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.navigateBack();
   }
 
-  navigateBack() {
-    const relativeRoute = (urlArray: string[]) => {
-      const lastIndex = urlArray.length - 1;
-      const endConditions = [ 'update', 'add' ];
-      return `../${
-        (lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
-      }`;
-    };
-    this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });
-  }
+navigateBack() {
+  // Reset the course state in the service
+  this.coursesService.reset();
+  const relativeRoute = (urlArray: string[]) => {
+    const lastIndex = urlArray.length - 1;
+    const endConditions = [ 'update', 'add' ];
+    return `../${
+      (lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
+    }`;
+  };
+  this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });
+}
 
   removeStep(pos) {
     this.steps.splice(pos, 1);
