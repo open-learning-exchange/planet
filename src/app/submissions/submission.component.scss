@@ -3,8 +3,13 @@
 .mat-column-name,
 .mat-column-courseTitle {
   max-width: 25vw;
+}
+
+.mat-cell-name,
+.mat-cell-courseTitle {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -30,11 +35,11 @@
     max-width: 100px;
   }
 
-  .mat-column-name,
-  .mat-column-courseTitle {
-    max-width: 200px;
+  .mat-cell-name,
+  .mat-cell-courseTitle {
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
