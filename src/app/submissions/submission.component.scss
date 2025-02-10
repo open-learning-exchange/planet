@@ -1,8 +1,15 @@
 @import "../variables";
 
-.mat-column-name {
+.mat-column-name,
+.mat-column-courseTitle {
   max-width: 25vw;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 .mat-column-stepNum {
   max-width: 90px;
 }
@@ -21,5 +28,15 @@
 
   .status-dropdown {
     max-width: 100px;
+  }
+
+  .mat-column-name,
+  .mat-column-courseTitle {
+    max-width: 200px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
