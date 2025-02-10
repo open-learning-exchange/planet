@@ -126,7 +126,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
     this.coursesService.stepIndex = undefined;
   }
-  
+
   ngOnDestroy() {
     if (this.coursesService.stepIndex === undefined) {
       this.coursesService.reset();
@@ -183,7 +183,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       );
     });
   }
-  
+
   updateCourse(courseInfo, shouldNavigate) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
