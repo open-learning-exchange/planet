@@ -17,4 +17,3 @@ services:
       # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/spa/assets/landing-page/video/landing.mp4"
       # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/fra/assets/landing-page/video/landing.mp4"
       # - "/srv/planet/src/src/assets/landing-page/video/landing.mp4:/usr/share/nginx/html/eng/assets/landing-page/video/landing.mp4"
-version: "2"
