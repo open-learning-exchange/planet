@@ -182,14 +182,15 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   initializeErrorStream() {
-    // Subscribe to WebSocket error messages
     this.chatService.getErrorStream().subscribe((errorMessage) => {
-      this.conversations.push({
-        query: errorMessage,
+      const lastQuery = this.conversations[this.conversations.length - 1]?.query;
+      this.conversations[this.conversations.length - 1] = {
+        query: lastQuery,
         response: 'Error: ' + errorMessage,
-        error: true,
-      });
-      this.postSubmit();
+        error: true
+      };
+      this.spinnerOn = true;
+      this.promptForm.controls['prompt'].setValue('');
     });
   }
 
@@ -207,18 +208,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
+      this.postSubmit();
     } else {
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
       lastConversation.response += message.response;
-      this.postSubmit();
+      this.scrollTo('bottom');
     }
   }
 
   postSubmit() {
-    this.changeDetectorRef.detectChanges();
     this.spinnerOn = true;
-    this.scrollTo('bottom');
     this.promptForm.controls['prompt'].setValue('');
     this.chatService.sendNewChatAddedSignal();
   }
@@ -255,11 +255,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
             '_rev': completion.couchDBResponse?.rev
           };
           this.postSubmit();
-          this.chatService.sendNewChatAddedSignal();
         },
         (error: any) => {
           this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
-          this.postSubmit();
+          this.spinnerOn = true;
+          this.promptForm.controls['prompt'].setValue('');
         }
       );
     }
