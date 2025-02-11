@@ -59,6 +59,7 @@ export class ResourcesAddComponent implements OnInit {
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
+  attachmentMarkedForDeletion: boolean = false;
 
   constructor(
     private router: Router,
@@ -171,6 +172,9 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.attachmentMarkedForDeletion) {
+      delete this.existingResource.doc._attachments;
+    }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
       showFormErrors(this.resourceForm.controls);
@@ -180,7 +184,7 @@ export class ResourcesAddComponent implements OnInit {
     fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
       const { _id, _rev } = this.existingResource;
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
-      const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
+      const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
       // Start with empty object so this.resourceForm.value does not change
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
       const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
@@ -238,6 +242,13 @@ export class ResourcesAddComponent implements OnInit {
     // Also disable downloadable toggle if user is removing file
     this.disableDownload = event.checked;
     this.resourceForm.patchValue({ isDownloadable: false });
+  }
+
+  markAttachmentForDeletion() {
+    this.attachmentMarkedForDeletion = true;
+    this.resourceFilename = '';
+    this.disableDownload = true;
+    this.disableDelete = true;
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
