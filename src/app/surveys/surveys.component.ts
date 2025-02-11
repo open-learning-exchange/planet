@@ -381,4 +381,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  isUserMember(): boolean {
+    return this.userService.get().roles.length > 0;
+  }
+
 }

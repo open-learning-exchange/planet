@@ -72,7 +72,8 @@
               <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team <mat-icon>send</mat-icon></button>
             </mat-menu>
             <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)"
-              i18n-matTooltip matTooltip="Record survey information from a person who is not a member of {{configuration.name}}" i18n>
+              [matTooltip]="userService.get().roles.length > 0 ? 'Record survey information from a member of ' + configuration.name : 'Record survey information from a person who is not a member of ' + configuration.name"
+              i18n-matTooltip>
               <mat-icon>fiber_manual_record</mat-icon> Record
             </button>
           </ng-container>
