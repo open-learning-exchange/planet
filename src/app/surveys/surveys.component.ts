@@ -48,6 +48,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
+  isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
 
@@ -169,6 +170,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.selection.selected.length === (itemsShown(this.paginator) - this.parentCount);
   }
 
+  isRowSelectable(row: any): boolean {
+    const isDisabled = (row.teamId && this.isManagerRoute) || (!this.isManagerRoute && !row.teamId);
+    return row.parent !== true && !isDisabled;
+  }
+
   masterToggle() {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
@@ -176,7 +182,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.clear();
     } else {
       this.surveys.filteredData.slice(start, end).forEach((row: any) => {
-        if (row.parent !== true) {
+        if (this.isRowSelectable(row)) {
           this.selection.select(row._id);
         }
       });
