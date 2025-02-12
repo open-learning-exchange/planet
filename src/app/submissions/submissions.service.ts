@@ -214,7 +214,7 @@ export class SubmissionsService {
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = '', team: string = '') {
+  createSubmission(parent: any, type: string, user: any = '', team?: string) {
     return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
@@ -262,9 +262,12 @@ export class SubmissionsService {
     return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
   }
 
-  exportSubmissionsCsv(exam, type: 'exam' | 'survey') {
+  exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     return this.getSubmissionsExport(exam, type).pipe(tap(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
-      const data = submissions.map((submission) => {
+      const filteredSubmissions = team
+        ? submissions.filter((s) => s.team === team)
+        : submissions;
+      const data = filteredSubmissions.map((submission) => {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
         return {
           'Gender': submission.user.gender || 'N/A',
@@ -300,18 +303,21 @@ export class SubmissionsService {
       answerText;
   }
 
-  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }) {
+  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }, team?: string) {
     forkJoin([
       this.getSubmissionsExport(exam, type),
       this.managerService.getChildPlanets(true)
     ]).subscribe(([ [ submissions, time, questionTexts ], planets ]: [ [ any[], number, string[] ], any[] ]) => {
-      if (!submissions.length) {
+      const filteredSubmissions = team
+        ? submissions.filter((s) => s.team === team)
+        : submissions;
+      if (!filteredSubmissions.length) {
         this.dialogsLoadingService.stop();
         this.planetMessageService.showMessage($localize`There is no survey response`);
         return;
       }
       const planetsWithName = attachNamesToPlanets(planets);
-      const submissionsWithPlanetName = submissions.map(submission => ({
+      const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
         ...submission,
         planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
       }));
