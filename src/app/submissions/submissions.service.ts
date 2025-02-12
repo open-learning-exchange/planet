@@ -74,11 +74,11 @@ export class SubmissionsService {
     this.submission = this.createNewSubmission({ parentId, parent, user, type });
   }
 
-  private createNewSubmission({ parentId, parent, user, type, sender }: { parentId, parent, user, type, sender? }) {
+  private createNewSubmission({ parentId, parent, user, type, sender, team }: { parentId, parent, user, type, sender?, team? }) {
     const date = this.couchService.datePlaceholder;
     const times = { startTime: date, lastUpdateTime: date };
     const configuration = this.stateService.configuration;
-    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', sender,
+    return { parentId, parent, user, type, answers: [], grade: 0, status: 'pending', sender, team,
       ...this.submissionSource(configuration, user), ...times };
   }
 
@@ -214,8 +214,8 @@ export class SubmissionsService {
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = '') {
-    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type }));
+  createSubmission(parent: any, type: string, user: any = '', team: string = '') {
+    return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
   submissionName(user) {
