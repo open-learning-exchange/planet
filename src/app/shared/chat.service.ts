@@ -37,16 +37,25 @@ import { AIServices, AIProvider } from '../chat/chat.model';
     private couchService: CouchService
   ) {
     this.fetchAIProviders();
-   }
+  }
 
   initializeWebSocket() {
     if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
       this.socket = new WebSocket('ws' + this.baseUrl.slice(4));
       this.socket.onerror = (error) => {
-        this.errorSubject.next('WebSocket error');
+        this.errorSubject.next('WebSocket connection error');
       };
       this.socket.addEventListener('message', (event) => {
-        this.chatStreamSubject.next(event.data);
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'error') {
+            this.errorSubject.next(message.error);
+          } else {
+            this.chatStreamSubject.next(event.data);
+          }
+        } catch (error) {
+          this.errorSubject.next('Invalid message format');
+        }
       });
     }
   }
