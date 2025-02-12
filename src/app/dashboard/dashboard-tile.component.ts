@@ -79,7 +79,8 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   removeMessage(item) {
-    this.planetMessageService.showMessage($localize`${item.title} removed from ${this.cardTitle}`);
+    const message = `Removed from ${this.cardTitle}: ${item.title}`;
+    this.planetMessageService.showMessage($localize`${message}`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
