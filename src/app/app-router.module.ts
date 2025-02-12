@@ -4,9 +4,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AuthService } from './shared/auth-guard.service';
 import { HomeComponent } from './home/home.component';
+import { UserGuard } from './shared/user-guard.service';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
+  { path: '', component: HomeComponent, loadChildren: () => import('./home/home.module').then(m => m.HomeModule), canActivateChild: [ UserGuard ] },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthService ] },
   { path: '**', component: PageNotFoundComponent }
 ];
