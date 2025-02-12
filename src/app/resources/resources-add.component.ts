@@ -59,7 +59,7 @@ export class ResourcesAddComponent implements OnInit {
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
-  attachmentMarkedForDeletion: boolean = false;
+  attachmentMarkedForDeletion = false;
 
   constructor(
     private router: Router,
