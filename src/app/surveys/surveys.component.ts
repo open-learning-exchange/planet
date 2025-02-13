@@ -113,7 +113,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             ...survey,
             teamIds: teamIds,
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
-            taken: relatedSubmissions.filter(data => data.status !== 'pending').length
+            taken: this.teamId || this.routeTeamId
+              ? relatedSubmissions.filter(
+                (data) => data.status !== 'pending' &&
+                (data.team === this.teamId || data.team === this.routeTeamId)).length
+              : relatedSubmissions.filter(data => data.status !== 'pending').length
           };
         }),
         ...this.createParentSurveys(submissions)
@@ -167,7 +171,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    return this.selection.selected.length === (itemsShown(this.paginator) - this.parentCount);
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
+
+    const selectableRowsInPage = this.surveys.filteredData
+      .slice(start, end)
+      .filter(row => this.isRowSelectable(row));
+
+    return selectableRowsInPage.every(row => this.selection.isSelected(row._id));
   }
 
   isRowSelectable(row: any): boolean {
@@ -342,7 +353,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   recordSurvey(survey: any) {
-    this.submissionsService.createSubmission(survey, 'survey').subscribe((res: any) => {
+    this.submissionsService.createSubmission(survey, 'survey', '', this.teamId || this.routeTeamId || '' ).subscribe((res: any) => {
       this.router.navigate([
         this.teamId ? 'surveys/dispense' : 'dispense',
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take' }
@@ -351,7 +362,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportCSV(survey) {
-    this.submissionsService.exportSubmissionsCsv(survey, 'survey').subscribe(res => {
+    this.submissionsService.exportSubmissionsCsv(survey, 'survey', this.teamId || this.routeTeamId || '').subscribe(res => {
       if (!res.length) {
         this.planetMessageService.showMessage($localize`There is no survey response`);
       }
@@ -371,7 +382,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         disableIfInvalid: true,
         onSubmit: (options: { includeQuestions, includeAnswers}) => {
           this.dialogsFormService.closeDialogsForm();
-          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options);
+          this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
           validator: (ac: FormGroup) => Object.values(ac.controls).some(({ value }) => value) ? null : { required: true }
