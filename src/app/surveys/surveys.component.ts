@@ -170,10 +170,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.deselect(...selectedOutOfFilter(this.surveys.filteredData, this.selection, this.paginator));
   }
 
-  isRowSelectable(row: any): boolean {
-    return row.parent !== true && !this.isManagerRoute && !row.teamId;
-  }
-
   isAllSelected() {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
