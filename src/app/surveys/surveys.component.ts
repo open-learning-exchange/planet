@@ -169,8 +169,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.deselect(...selectedOutOfFilter(this.surveys.filteredData, this.selection, this.paginator));
   }
 
+  isRowSelectable(row: any): boolean {
+    return row.parent !== true && !this.isManagerRoute && !row.teamId;
+  }
+
   isAllSelected() {
-    return this.selection.selected.length === (itemsShown(this.paginator) - this.parentCount);
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
+
+    const selectableRowsInPage = this.surveys.filteredData
+      .slice(start, end)
+      .filter(row => this.isRowSelectable(row));
+
+    return selectableRowsInPage.every(row => this.selection.isSelected(row._id));
   }
 
   masterToggle() {
@@ -180,7 +191,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.clear();
     } else {
       this.surveys.filteredData.slice(start, end).forEach((row: any) => {
-        if (row.parent !== true) {
+        if (this.isRowSelectable(row)) {
           this.selection.select(row._id);
         }
       });
