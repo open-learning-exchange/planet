@@ -50,6 +50,9 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.userDetail = user;
       this.initData();
     });
+    this.healthService.examinationsUpdated.subscribe(() => {
+      this.refreshExaminations();
+    });
   }
 
   ngAfterViewChecked() {
@@ -104,6 +107,13 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
       });
     }
+  }
+
+  refreshExaminations() {
+    this.healthService.getExaminations(this.userDetail._id).subscribe(events => {
+      this.events = events;
+      this.setEventData();
+    });
   }
 
   setEventData() {
