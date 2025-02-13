@@ -91,7 +91,7 @@
             <button mat-raised-button color="primary"
               (click)="recordSurvey(element)"
               [disabled]="!element.questions.length || element.teamId && isManagerRoute"
-              [matTooltip]="userService.get().roles.length > 0 ? 'Record survey information from a member of ' + configuration.name : 'Record survey information from a person who is not a member of ' + configuration.name"
+              [matTooltip]="isManagerRoute ? 'Record survey information from a person who is not a member of ' + configuration.name : 'Record Survey'"
               i18n-matTooltip
               i18n><mat-icon>fiber_manual_record</mat-icon> Record
             </button>
