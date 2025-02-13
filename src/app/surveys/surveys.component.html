@@ -39,6 +39,13 @@
         <mat-cell *matCellDef="let row">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)"
+            [disabled]="(row.teamId && isManagerRoute) || (!isManagerRoute && !row.teamId)"
+            [matTooltip]="row.teamId && isManagerRoute
+              ? 'This is a team created survey'
+              : !row.teamId && !isManagerRoute
+                ? 'This is a community survey'
+                : ''"
+            i18n-tooltip
             *ngIf="!row.parent === true">
           </mat-checkbox>
         </mat-cell>
@@ -65,16 +72,28 @@
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
-            <button mat-raised-button color="primary" *ngIf="!teamId" (click)="routeToEditSurvey('update', element._id)" i18n><mat-icon>edit</mat-icon> Edit</button>
-            <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId" [disabled]="!element.questions.length" [matMenuTriggerFor]="sendMenu"i18n><mat-icon>arrow_drop_down</mat-icon> Send</button>
+            <button mat-raised-button color="primary"
+              *ngIf="!teamId"
+              (click)="routeToEditSurvey('update', element._id)"
+              [disabled]="(element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId)"
+              i18n><mat-icon>edit</mat-icon> Edit
+            </button>
+            <button mat-raised-button color="primary"
+              *ngIf="!teamId && !routeTeamId"
+              [matMenuTriggerFor]="sendMenu"
+              [disabled]="!element.questions.length || element.teamId && isManagerRoute"
+              i18n><mat-icon>arrow_drop_down</mat-icon> Send
+            </button>
             <mat-menu #sendMenu="matMenu">
               <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User <mat-icon>send</mat-icon></button>
               <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team <mat-icon>send</mat-icon></button>
             </mat-menu>
-            <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)"
+            <button mat-raised-button color="primary"
+              (click)="recordSurvey(element)"
+              [disabled]="!element.questions.length || element.teamId && isManagerRoute"
               [matTooltip]="userService.get().roles.length > 0 ? 'Record survey information from a member of ' + configuration.name : 'Record survey information from a person who is not a member of ' + configuration.name"
-              i18n-matTooltip>
-              <mat-icon>fiber_manual_record</mat-icon> Record
+              i18n-matTooltip
+              i18n><mat-icon>fiber_manual_record</mat-icon> Record
             </button>
           </ng-container>
           <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>

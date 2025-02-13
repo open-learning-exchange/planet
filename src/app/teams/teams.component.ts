@@ -281,7 +281,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
       const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-      this.planetMessageService.showMessage($localize`Request to join ${entityType} ${team.name} sent`);
+      this.planetMessageService.showMessage($localize`Sent request to join ${entityType} ${team.name}`);
     });
   }
 
