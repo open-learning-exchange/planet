@@ -48,6 +48,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
+  isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
 
@@ -182,6 +183,11 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       .filter(row => this.isRowSelectable(row));
 
     return selectableRowsInPage.every(row => this.selection.isSelected(row._id));
+  }
+
+  isRowSelectable(row: any): boolean {
+    const isDisabled = (row.teamId && this.isManagerRoute) || (!this.isManagerRoute && !row.teamId);
+    return row.parent !== true && !isDisabled;
   }
 
   masterToggle() {
