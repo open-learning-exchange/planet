@@ -13,18 +13,25 @@ export class ExamsService {
 
   newQuestionForm(requireCorrect, initialValue?: any) {
     const choices = (initialValue && initialValue.choices) || [];
-    return this.setInitalFormValue(this.fb.group(Object.assign(
-      {
-        body: [ '', CustomValidators.required ],
-        type: 'input',
-        correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
-        marks: [ 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array(
-          choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
-        )
-      }
-    ), { validators: this.choiceRequiredValidator }
-    ), initialValue);
+    return this.setInitalFormValue(
+      this.fb.group(
+        Object.assign(
+          {
+            body: [ '', CustomValidators.required ],
+            type: 'input',
+            correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
+            marks: [ 1, CustomValidators.positiveNumberValidator ],
+            choices: this.fb.array(
+              choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
+            ),
+            // NEW: Add a control for toggling LaTeX rendering.
+            latexEnabled: [ initialValue && initialValue.latexEnabled !== undefined ? initialValue.latexEnabled : false ]
+          }
+        ),
+        { validators: this.choiceRequiredValidator }
+      ),
+      initialValue
+    );
   }
 
   choiceRequiredValidator(ac) {

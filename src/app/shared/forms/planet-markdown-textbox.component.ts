@@ -1,6 +1,4 @@
-import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
-} from '@angular/core';
+import { Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -12,13 +10,13 @@ interface ImageInfo { resourceId: string; filename: string; markdown: string; }
 interface ValueWithImages { text: string; images: ImageInfo[]; }
 
 @Component({
-  'selector': 'planet-markdown-textbox',
-  'templateUrl': './planet-markdown-textbox.component.html',
-  'styleUrls': [ 'planet-markdown-textbox.scss' ],
-  'providers': [
+  selector: 'planet-markdown-textbox',
+  templateUrl: './planet-markdown-textbox.component.html',
+  styleUrls: [ 'planet-markdown-textbox.scss' ],
+  providers: [
     { provide: MatFormFieldControl, useExisting: PlanetMarkdownTextboxComponent },
   ],
-  'encapsulation': ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
 
@@ -27,6 +25,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @ViewChild('editor') editor;
+  
+  // Existing input for value
   @Input() _value: ValueWithImages | string;
   get value(): ValueWithImages | string {
     return this._value;
@@ -37,6 +37,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this.onChange(this._value);
     this.stateChanges.next();
   }
+
   private _textValue: string;
   get textValue(): string {
     return this._textValue;
@@ -47,6 +48,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       this.value = typeof this._value === 'string' ? newText : { ...this._value, text: newText };
     }
   }
+
   @Output() valueChanges = new EventEmitter<string[]>();
 
   get empty() {
@@ -76,6 +78,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   @Input() imageGroup: 'community' | { [db: string]: string };
+
+  // NEW: Add an input to toggle LaTeX processing.
+  @Input() latexEnabled: boolean = false;
+
   onTouched;
   stateChanges = new Subject<void>();
   focused = false;
@@ -185,5 +191,4 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       }
     });
   }
-
 }

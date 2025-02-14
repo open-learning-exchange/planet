@@ -9,18 +9,41 @@
       </mat-select>
     </mat-form-field>
   </div>
+
+  <!-- New toggle: control whether LaTeX should be rendered -->
+  <div class="latex-toggle">
+    <mat-checkbox formControlName="latexEnabled" i18n>
+      Enable LaTeX Rendering
+    </mat-checkbox>
+  </div>
+
   <mat-form-field class="full-width mat-form-field-type-no-underline">
-    <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Question Detail" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
-    <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
+    <!-- Pass the latexEnabled value into the markdown textbox component -->
+    <planet-markdown-textbox
+      class="full-width"
+      required="true"
+      i18n-placeholder
+      placeholder="Question Detail"
+      [formControl]="questionForm.controls.body"
+      [latexEnabled]="questionForm.controls.latexEnabled.value">
+    </planet-markdown-textbox>
+    <mat-error>
+      <planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages>
+    </mat-error>
   </mat-form-field>
+
   <div class="question-choices">
     <div>
-      <button type="button" mat-stroked-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')" i18n>Add Choice</button>
+      <button type="button" mat-stroked-button (click)="addChoice()" class="margin-lr-5"
+        *ngIf="questionForm.controls.type.value.includes('select')" i18n>
+        Add Choice
+      </button>
       <span i18n class="mat-caption warn-text-color" *ngIf="questionForm.errors?.noChoices && questionForm.touched">
         You must add a choice
       </span>
     </div>
-    <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
+    <div i18n class="mat-caption warn-text-color"
+      *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
       You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
     </div>
     <div *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
@@ -31,7 +54,9 @@
       </mat-checkbox>
       <mat-form-field>
         <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text" #choiceInput>
-        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
+        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix>
+          <mat-icon>remove_circle</mat-icon>
+        </button>
       </mat-form-field>
     </div>
   </div>

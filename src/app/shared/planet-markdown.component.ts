@@ -13,6 +13,9 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked {
 
   @Input() content: string;
   @Input() imageSource: 'parent' | 'local' = 'local';
+  // NEW: Toggle for LaTeX rendering
+  @Input() latexEnabled: boolean = false;
+
   couchAddress: string;
 
   constructor(
@@ -21,9 +24,9 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked {
   ) {}
 
   ngOnChanges() {
-    this.couchAddress = this.imageSource === 'parent' ?
-      `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
-      `${environment.couchAddress}/`;
+    this.couchAddress = this.imageSource === 'parent'
+      ? `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/`
+      : `${environment.couchAddress}/`;
     this.renderKaTeX();
   }
 
@@ -32,16 +35,24 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked {
   }
 
   private renderKaTeX() {
+    // Only run KaTeX processing if latexEnabled is true.
+    if (!this.latexEnabled) {
+      return;
+    }
+
     const elements = this.el.nativeElement.querySelectorAll('td-markdown');
     elements.forEach(element => {
       let text = element.innerHTML;
-  
+
       // Decode HTML entities
       text = this.decodeHtmlEntities(text);
-  
+
       // Regex patterns
       const blockPattern = /\$\$([\s\S]*?)\$\$/g;
-      const inlinePattern = /\\\(((?:.|\n)*?)\\\)/g; // Improved inline pattern  
+      const inlinePattern1 = /\\\(((?:.|\n)*?)\\\)/g;
+      // Negative lookbehind ensures that escaped dollars are ignored.
+      const inlinePattern2 = /(?<!\\)\$([^$]+?)(?<!\\)\$/g;
+
       // Render block LaTeX first
       text = text.replace(blockPattern, (match, p1) => {
         try {
@@ -50,20 +61,29 @@ export class PlanetMarkdownComponent implements OnChanges, AfterViewChecked {
           return match;
         }
       });
-  
-      // Render inline LaTeX
-      text = text.replace(inlinePattern, (match, p1) => {
+
+      // Render inline LaTeX for \(...\)
+      text = text.replace(inlinePattern1, (match, p1) => {
         try {
           return katex.renderToString(p1.trim(), { throwOnError: false });
         } catch (error) {
           return match;
         }
       });
-  
+
+      // Render inline LaTeX for $...$
+      text = text.replace(inlinePattern2, (match, p1) => {
+        try {
+          return katex.renderToString(p1.trim(), { throwOnError: false });
+        } catch (error) {
+          return match;
+        }
+      });
+
       element.innerHTML = text;
     });
   }
-  
+
   private decodeHtmlEntities(text: string): string {
     const textArea = document.createElement('textarea');
     textArea.innerHTML = text;
