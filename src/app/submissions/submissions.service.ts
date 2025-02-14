@@ -361,9 +361,8 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toLocaleString()}</h3>`;
-      // Use the preloaded teamName (if available)
       if (submission.teamName) {
-        const teamHeader = `<h4>Team/enterprise: ${submission.teamName}</h4>`;
+        const teamHeader = `<h5>${submission.teamName}</h5>`;
         return `${mainHeader}\n${teamHeader}\n`;
       } else {
         return `${mainHeader}\n`;
@@ -372,7 +371,6 @@ export class SubmissionsService {
       return `### ${exam.name} Questions\n`;
     }
   }
-  
   
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {

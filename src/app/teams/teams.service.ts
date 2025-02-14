@@ -363,9 +363,18 @@ export class TeamsService {
 
   getTeamName(teamId: string): Observable<string> {
     return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
-      map((team: any) => team && team.name ? team.name : teamId),
+      map((team: any) => {
+        if (team && team.name) {
+          if (team.type && team.type.toLowerCase() === 'enterprise') {
+            return `Enterprise: ${team.name}`;
+          } else {
+            return `Team: ${team.name}`;
+          }
+        }
+        return teamId;
+      }),
       catchError(() => of(teamId))
     );
   }
-
+  
 }
