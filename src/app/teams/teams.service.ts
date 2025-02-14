@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { of, empty, forkJoin, Observable  } from 'rxjs';
-import { switchMap, map, take, catchError } from 'rxjs/operators';
+import { switchMap, map, take } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
@@ -365,7 +365,7 @@ export class TeamsService {
     return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
       map((team: any) => {
         if (team && team.name) {
-          if (team.type && team.type.toLowerCase() === 'enterprise') {
+          if (team.type && team.type === 'enterprise') {
             return `Enterprise: ${team.name}`;
           } else {
             return `Team: ${team.name}`;
@@ -373,8 +373,7 @@ export class TeamsService {
         }
         return teamId;
       }),
-      catchError(() => of(teamId))
     );
   }
-  
+
 }

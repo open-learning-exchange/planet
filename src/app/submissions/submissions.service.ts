@@ -119,8 +119,7 @@ export class SubmissionsService {
       timeZoneName: 'short'
     });
   }
-  
-  
+
   submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
@@ -279,11 +278,10 @@ export class SubmissionsService {
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     return this.getSubmissionsExport(exam, type).pipe(
-      switchMap(([submissions, time, questionTexts]: [any[], number, string[]]) => {
+      switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
         const filteredSubmissions = team
           ? submissions.filter(s => s.team === team)
           : submissions;
-        // Preload the teamName for each submission that has a team
         return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
@@ -294,15 +292,12 @@ export class SubmissionsService {
             return of(submission);
           })
         ).pipe(
-          // Explicitly cast the tuple result so we know its structure
-          map((updatedSubmissions: any[]): [any[], number, string[]] => [updatedSubmissions, time, questionTexts])
+          map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ])
         );
-        
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
-          // Determine the values for Team and Enterprise columns
           let teamColumn = '';
           let enterpriseColumn = '';
           if (submission.teamName) {
@@ -330,7 +325,6 @@ export class SubmissionsService {
       })
     );
   }
-  
 
   answerIndexes(questionTexts: string[], submission: any) {
     return questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
@@ -350,50 +344,61 @@ export class SubmissionsService {
       answerText;
   }
 
-  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }, team?: string) {
+  exportSubmissionsPdf(
+    exam,
+    type: 'exam' | 'survey',
+    exportOptions: { includeQuestions, includeAnswers },
+    team?: string
+  ) {
     forkJoin([
       this.getSubmissionsExport(exam, type),
       this.managerService.getChildPlanets(true)
-    ]).subscribe(([ [ submissions, time, questionTexts ], planets ]: [ [ any[], number, string[] ], any[] ]) => {
-      const filteredSubmissions = team
-        ? submissions.filter((s) => s.team === team)
-        : submissions;
-      if (!filteredSubmissions.length) {
-        this.dialogsLoadingService.stop();
-        this.planetMessageService.showMessage($localize`There is no survey response`);
-        return;
-      }
-      const planetsWithName = attachNamesToPlanets(planets);
-      const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
-        ...submission,
-        planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
-      }));
-      
-      // Preload team names for submissions that have a team
-      const submissionsWithTeamNames$ = forkJoin(
-        submissionsWithPlanetName.map(submission => {
-          if (submission.team) {
-            return this.teamsService.getTeamName(submission.team).pipe(
-              map(teamName => ({ ...submission, teamName }))
-            );
-          } else {
-            return of(submission);
+    ])
+      .pipe(
+        switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
+          const [ submissions, time, questionTexts ] = submissionsTuple;
+          const filteredSubmissions = team
+            ? submissions.filter(s => s.team === team)
+            : submissions;
+          if (!filteredSubmissions.length) {
+            this.dialogsLoadingService.stop();
+            this.planetMessageService.showMessage($localize`There is no survey response`);
+            return of(null);
           }
+          const planetsWithName = attachNamesToPlanets(planets);
+          const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
+            ...submission,
+            planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
+          }));
+          return forkJoin(
+            submissionsWithPlanetName.map(submission => {
+              if (submission.team) {
+                return this.teamsService.getTeamName(submission.team).pipe(
+                  map(teamName => ({ ...submission, teamName }))
+                );
+              }
+              return of(submission);
+            })
+          ).pipe(
+            map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
+          );
         })
-      );
-      
-      submissionsWithTeamNames$.subscribe(updatedSubmissions => {
+      )
+      .subscribe(tuple => {
+        if (!tuple) {
+          return;
+        }
+        const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
         const markdown = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
         const converter = new showdown.Converter();
         pdfMake.createPdf({
           content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
-          pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+          pageBreakBefore: (currentNode) =>
+            currentNode.style && currentNode.style.indexOf('pdf-break') > -1
         }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
         this.dialogsLoadingService.stop();
       });
-    });
   }
-  
 
   preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
     return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
@@ -406,7 +411,7 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = this.formatShortDate(submission.lastUpdateTime);
-      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${shortDate}</h3>`;      
+      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${shortDate}</h3>`;
       if (submission.teamName) {
         const teamHeader = `<h5>${submission.teamName}</h5>`;
         return `${mainHeader}\n${teamHeader}\n`;
@@ -416,8 +421,8 @@ export class SubmissionsService {
     } else {
       return `### ${exam.name} Questions\n`;
     }
-  }  
-  
+  }
+
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
