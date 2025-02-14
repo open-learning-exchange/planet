@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of, empty, forkJoin } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { of, empty, forkJoin, Observable  } from 'rxjs';
+import { switchMap, map, take, catchError } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
@@ -359,6 +359,13 @@ export class TeamsService {
       route
     };
     return this.updateTeam(newServicesDoc);
+  }
+
+  getTeamName(teamId: string): Observable<string> {
+    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
+      map((team: any) => team && team.name ? team.name : teamId),
+      catchError(() => of(teamId))
+    );
   }
 
 }

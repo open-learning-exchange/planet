@@ -13,6 +13,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { TeamsService } from '../teams/teams.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -42,7 +43,8 @@ export class SubmissionsService {
     private csvService: CsvService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private teamsService: TeamsService
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
@@ -321,17 +323,32 @@ export class SubmissionsService {
         ...submission,
         planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
       }));
-      const markdown = this.preparePDF(exam, submissionsWithPlanetName, questionTexts, exportOptions);
-      const converter = new showdown.Converter();
-      pdfMake.createPdf(
-        {
+      
+      // Preload team names for submissions that have a team
+      const submissionsWithTeamNames$ = forkJoin(
+        submissionsWithPlanetName.map(submission => {
+          if (submission.team) {
+            return this.teamsService.getTeamName(submission.team).pipe(
+              map(teamName => ({ ...submission, teamName }))
+            );
+          } else {
+            return of(submission);
+          }
+        })
+      );
+      
+      submissionsWithTeamNames$.subscribe(updatedSubmissions => {
+        const markdown = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const converter = new showdown.Converter();
+        pdfMake.createPdf({
           content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
           pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
-        }
-      ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
-      this.dialogsLoadingService.stop();
+        }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
+        this.dialogsLoadingService.stop();
+      });
     });
   }
+  
 
   preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
     return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
@@ -341,18 +358,21 @@ export class SubmissionsService {
     }).join('  \n');
   }
 
-  surveyHeader(responseHeader: boolean, exam, index: number, submission) {
+  surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toLocaleString()}</h3>`;
-      // If the submission came from a team/enterprise, add a subheader.
-      const teamHeader = submission.team 
-        ? `<h4>Team/enterprise: ${submission.team}</h4>`
-        : '';
-      return `${mainHeader}\n${teamHeader}\n`;
+      // Use the preloaded teamName (if available)
+      if (submission.teamName) {
+        const teamHeader = `<h4>Team/enterprise: ${submission.teamName}</h4>`;
+        return `${mainHeader}\n${teamHeader}\n`;
+      } else {
+        return `${mainHeader}\n`;
+      }
     } else {
       return `### ${exam.name} Questions\n`;
     }
   }
+  
   
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
