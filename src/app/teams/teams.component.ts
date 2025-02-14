@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
+import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -62,6 +63,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   isMobile: boolean;
   userNotInShelf = false;
   showFiltersRow = false;
+  selection = new SelectionModel(true, []);
+  selectedIds: string[] = [];
+  get tableData() {
+    return this.teams;
+  }
 
   constructor(
     private userService: UserService,
@@ -184,6 +190,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamClick(teamId, teamType) {
     if (this.isDialog) {
+      // Toggle selection
+      const index = this.selectedIds.indexOf(teamId);
+      index === -1 ? this.selectedIds.push(teamId) : this.selectedIds.splice(index, 1);
+
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }
@@ -271,7 +281,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
       const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-      this.planetMessageService.showMessage($localize`Request to join ${entityType} ${team.name} sent`);
+      this.planetMessageService.showMessage($localize`Sent request to join ${entityType} ${team.name}`);
     });
   }
 
