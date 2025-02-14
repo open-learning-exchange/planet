@@ -277,8 +277,7 @@ export class SubmissionsService {
   }
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-    return this.getSubmissionsExport(exam, type).pipe(
-      switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
+    return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
         const filteredSubmissions = team
           ? submissions.filter(s => s.team === team)
           : submissions;
@@ -379,8 +378,7 @@ export class SubmissionsService {
               }
               return of(submission);
             })
-          ).pipe(
-            map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
+          ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
           );
         })
       )
