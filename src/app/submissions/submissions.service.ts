@@ -108,6 +108,19 @@ export class SubmissionsService {
     });
   }
 
+  private formatShortDate(timestamp: number): string {
+    return new Date(timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short'
+    });
+  }
+  
+  
   submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
     const submission = { ...this.submission, answers: [ ...this.submission.answers ], lastUpdateTime: this.couchService.datePlaceholder };
     const oldAnswer = submission.answers[index];
@@ -264,58 +277,59 @@ export class SubmissionsService {
     return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
   }
 
-exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-  return this.getSubmissionsExport(exam, type).pipe(
-    switchMap(([submissions, time, questionTexts]: [any[], number, string[]]) => {
-      const filteredSubmissions = team
-        ? submissions.filter(s => s.team === team)
-        : submissions;
-      // Preload the teamName for each submission that has a team
-      return forkJoin(
-        filteredSubmissions.map(submission => {
-          if (submission.team) {
-            return this.teamsService.getTeamName(submission.team).pipe(
-              map(teamName => ({ ...submission, teamName }))
-            );
+  exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
+    return this.getSubmissionsExport(exam, type).pipe(
+      switchMap(([submissions, time, questionTexts]: [any[], number, string[]]) => {
+        const filteredSubmissions = team
+          ? submissions.filter(s => s.team === team)
+          : submissions;
+        // Preload the teamName for each submission that has a team
+        return forkJoin(
+          filteredSubmissions.map(submission => {
+            if (submission.team) {
+              return this.teamsService.getTeamName(submission.team).pipe(
+                map(teamName => ({ ...submission, teamName }))
+              );
+            }
+            return of(submission);
+          })
+        ).pipe(
+          // Explicitly cast the tuple result so we know its structure
+          map((updatedSubmissions: any[]): [any[], number, string[]] => [updatedSubmissions, time, questionTexts])
+        );
+        
+      }),
+      tap(([ updatedSubmissions, time, questionTexts ]) => {
+        const data = updatedSubmissions.map(submission => {
+          const answerIndexes = this.answerIndexes(questionTexts, submission);
+          // Determine the values for Team and Enterprise columns
+          let teamColumn = '';
+          let enterpriseColumn = '';
+          if (submission.teamName) {
+            if (submission.teamName.startsWith('Enterprise:')) {
+              enterpriseColumn = submission.teamName.replace('Enterprise:', '').trim();
+            } else if (submission.teamName.startsWith('Team:')) {
+              teamColumn = submission.teamName.replace('Team:', '').trim();
+            }
           }
-          return of(submission);
-        })
-      ).pipe(
-        map(updatedSubmissions => ({ updatedSubmissions, time, questionTexts }))
-      );
-    }),
-    tap(({ updatedSubmissions, time, questionTexts }) => {
-      const data = updatedSubmissions.map(submission => {
-        const answerIndexes = this.answerIndexes(questionTexts, submission);
-        // Determine the values for Team and Enterprise columns
-        let teamColumn = '';
-        let enterpriseColumn = '';
-        if (submission.teamName) {
-          if (submission.teamName.startsWith('Enterprise:')) {
-            enterpriseColumn = submission.teamName.replace('Enterprise:', '').trim();
-          } else if (submission.teamName.startsWith('Team:')) {
-            teamColumn = submission.teamName.replace('Team:', '').trim();
-          }
-        }
-        return {
-          'Gender': submission.user.gender || 'N/A',
-          'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
-          'Planet': submission.source,
-          'Date': submission.lastUpdateTime,
-          'Team': teamColumn,
-          'Enterprise': enterpriseColumn,
-          ...questionTexts.reduce((answerObj, text, index) => ({
-            ...answerObj,
-            [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
-              this.getAnswerText(submission.answers, index, answerIndexes)
-          }), {})
-        };
-      });
-      this.csvService.exportCSV({ data, title: `${toProperCase(type)} - ${exam.name}` });
-    })
-  );
-}
-
+          return {
+            'Gender': submission.user.gender || 'N/A',
+            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
+            'Planet': submission.source,
+            'Date': this.formatShortDate(submission.lastUpdateTime),
+            'Team': teamColumn,
+            'Enterprise': enterpriseColumn,
+            ...questionTexts.reduce((answerObj, text, index) => ({
+              ...answerObj,
+              [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+                this.getAnswerText(submission.answers, index, answerIndexes)
+            }), {})
+          };
+        });
+        this.csvService.exportCSV({ data, title: `${toProperCase(type)} - ${exam.name}` });
+      })
+    );
+  }
   
 
   answerIndexes(questionTexts: string[], submission: any) {
@@ -391,7 +405,8 @@ exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
-      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toLocaleString()}</h3>`;
+      const shortDate = this.formatShortDate(submission.lastUpdateTime);
+      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${shortDate}</h3>`;      
       if (submission.teamName) {
         const teamHeader = `<h5>${submission.teamName}</h5>`;
         return `${mainHeader}\n${teamHeader}\n`;
@@ -401,7 +416,7 @@ exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     } else {
       return `### ${exam.name} Questions\n`;
     }
-  }
+  }  
   
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
