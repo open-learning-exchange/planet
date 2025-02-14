@@ -264,18 +264,46 @@ export class SubmissionsService {
     return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
   }
 
-  exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-    return this.getSubmissionsExport(exam, type).pipe(tap(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
+exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
+  return this.getSubmissionsExport(exam, type).pipe(
+    switchMap(([submissions, time, questionTexts]: [any[], number, string[]]) => {
       const filteredSubmissions = team
-        ? submissions.filter((s) => s.team === team)
+        ? submissions.filter(s => s.team === team)
         : submissions;
-      const data = filteredSubmissions.map((submission) => {
+      // Preload the teamName for each submission that has a team
+      return forkJoin(
+        filteredSubmissions.map(submission => {
+          if (submission.team) {
+            return this.teamsService.getTeamName(submission.team).pipe(
+              map(teamName => ({ ...submission, teamName }))
+            );
+          }
+          return of(submission);
+        })
+      ).pipe(
+        map(updatedSubmissions => ({ updatedSubmissions, time, questionTexts }))
+      );
+    }),
+    tap(({ updatedSubmissions, time, questionTexts }) => {
+      const data = updatedSubmissions.map(submission => {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
+        // Determine the values for Team and Enterprise columns
+        let teamColumn = '';
+        let enterpriseColumn = '';
+        if (submission.teamName) {
+          if (submission.teamName.startsWith('Enterprise:')) {
+            enterpriseColumn = submission.teamName.replace('Enterprise:', '').trim();
+          } else if (submission.teamName.startsWith('Team:')) {
+            teamColumn = submission.teamName.replace('Team:', '').trim();
+          }
+        }
         return {
           'Gender': submission.user.gender || 'N/A',
           'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
           'Planet': submission.source,
           'Date': submission.lastUpdateTime,
+          'Team': teamColumn,
+          'Enterprise': enterpriseColumn,
           ...questionTexts.reduce((answerObj, text, index) => ({
             ...answerObj,
             [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
@@ -283,9 +311,12 @@ export class SubmissionsService {
           }), {})
         };
       });
-      this.csvService.exportCSV({ data, title: `${toProperCase(type)} -  ${exam.name}` });
-    }));
-  }
+      this.csvService.exportCSV({ data, title: `${toProperCase(type)} - ${exam.name}` });
+    })
+  );
+}
+
+  
 
   answerIndexes(questionTexts: string[], submission: any) {
     return questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
