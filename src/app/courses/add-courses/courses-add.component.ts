@@ -47,7 +47,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
   }
-  
+
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
