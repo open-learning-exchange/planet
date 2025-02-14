@@ -36,6 +36,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   roles: string[] = [];
   languages = languages;
   submissionMode = false;
+  showAdditionalFields = false;
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
