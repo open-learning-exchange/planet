@@ -311,7 +311,7 @@ export class SubmissionsService {
             'Gender': submission.user.gender || 'N/A',
             'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
             'Planet': submission.source,
-            'Date': this.formatShortDate(submission.lastUpdateTime),
+            'Date': submission.lastUpdateTime,
             'Team': teamColumn,
             'Enterprise': enterpriseColumn,
             ...questionTexts.reduce((answerObj, text, index) => ({
