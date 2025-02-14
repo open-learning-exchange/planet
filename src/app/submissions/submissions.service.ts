@@ -342,12 +342,18 @@ export class SubmissionsService {
   }
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission) {
-    return responseHeader ?
-      `<h3${index === 0 ? '' : ' class="pdf-break"'}>
-        Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toString()}
-      </h3>  \n` :
-      `### ${exam.name} Questions  \n`;
+    if (responseHeader) {
+      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toLocaleString()}</h3>`;
+      // If the submission came from a team/enterprise, add a subheader.
+      const teamHeader = submission.team 
+        ? `<h4>Team/enterprise: ${submission.team}</h4>`
+        : '';
+      return `${mainHeader}\n${teamHeader}\n`;
+    } else {
+      return `### ${exam.name} Questions\n`;
+    }
   }
+  
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
