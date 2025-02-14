@@ -12,9 +12,11 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-list-item-disabled {
       background-color: white;
     }
+    .mat-card-subtitle p.role-text {
+      min-height: 35px;
+    }
     .mat-card-tasks {
-      padding-top: 5px;
-      max-height: 100px;
+      max-height: 70px;
       overflow: hidden;
     }
     .mat-caption {
