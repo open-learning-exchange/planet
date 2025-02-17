@@ -9,9 +9,8 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" [ngSwitch]="submissionMode">
-    <span *ngSwitchCase="true" i18n>{{user.name}}</span>
-    <span *ngSwitchCase="false" i18n>Optional data form</span>
+  <mat-toolbar class="primary-color font-size-1">
+    <span>{{user.name}}</span>
   </mat-toolbar>
   <div class="view-container">
     <div class="form-container">
