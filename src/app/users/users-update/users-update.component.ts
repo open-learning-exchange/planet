@@ -126,6 +126,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
+      age: [ '' ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       betaEnabled: false

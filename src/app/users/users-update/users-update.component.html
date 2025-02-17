@@ -107,7 +107,7 @@
         <ng-container *ngIf="submissionMode">
           <ng-container *ngIf="!showAdditionalFields">
             <mat-form-field>
-              <input matInput i18n-placeholder placeholder="Age" formControlName="birthDate" min="0" max="99" [required]="false">
+              <input matInput i18n-placeholder placeholder="Age" formControlName="age" min="0" max="99" [required]="false">
               <mat-error>
                 <planet-form-error-messages [control]="editForm.controls.age"></planet-form-error-messages>
               </mat-error>
