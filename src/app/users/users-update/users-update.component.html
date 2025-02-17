@@ -107,13 +107,12 @@
         <ng-container *ngIf="submissionMode">
           <ng-container *ngIf="!showAdditionalFields">
             <mat-form-field>
-              <input matInput i18n-placeholder placeholder="Age" formControlName="age" min="0" max="99" [required]="false">
+              <input matInput i18n-placeholder placeholder="Age" type="number" formControlName="age" [required]="false">
               <mat-error>
                 <planet-form-error-messages [control]="editForm.controls.age"></planet-form-error-messages>
               </mat-error>
             </mat-form-field>
           </ng-container>
-
           <button mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
             {{ showAdditionalFields ? 'Hide Additional Fields' : 'Show Additional Fields' }}
           </button>
