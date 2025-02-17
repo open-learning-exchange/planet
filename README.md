@@ -10,7 +10,7 @@ Planet Learning is a generic learning system built in Angular & CouchDB.
 
 Link to [Angular Doc](https://angular.io/docs) and [Material Design](https://material.angular.io/).
 
-## To work on this
+## Planet Development Notes
 
 For development, the following additional tools are required:
 
@@ -71,6 +71,27 @@ ng serve
 
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001```
+
+## Chatapi Development Notes
+
+Run `cd chatapi` and add a .env file in the `chatapi` directory with the following configs in the .env file(change the username and password to your CouchDB admin credentials):
+  ```
+    SERVE_PORT=5000
+    COUCHDB_HOST=http://localhost:2200
+    COUCHDB_USER=username
+    COUCHDB_PASS=password
+  ```
+
+Configure the models(API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or in the `configurations` database directly in CouchDB. Currently we support *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini* models.
+
+**Note:** The dev chatapi runs on port 5000 similar to the production environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1(or container id)`
+
+To run the chatapi locally, you need to use node v18. You can use nvm(linux) or fnm(windows/macos) to manage your node versions. To start the chatapi:
+```
+  npm install
+  nvm use 18
+  npm run dev
+```
 
 ## Project Guidelines
 
@@ -161,5 +182,14 @@ npm i @types/mime@3.0.0
 ### Error on initial npm install
 
 If your npm install fails on your first try, first check if you are using Node v14. Other versions of Node may throw errors when installing dependencies.
+
+### Fatal error in chatapi using an arm32 device
+
+If you are using an 32bit arm device and encounter a fatal error while running the chatapi container run the following:
+```
+  wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1-1~bpo10+1_armhf.deb
+
+  dpkg -i libseccomp2_2.5.1-1~bpo10+1_armhf.deb
+```
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

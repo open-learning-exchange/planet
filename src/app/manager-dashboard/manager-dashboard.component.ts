@@ -198,7 +198,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         okClick: this.deleteCommunity(),
         changeType: 'delete',
         type: 'community',
-        displayName: this.userService.get().name
+        displayName: this.planetConfiguration.name
       }
     });
     // Reset the message when the dialog closes

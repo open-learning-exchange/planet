@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 
 import { configurationDB } from './nano.config';
-import { ModelsDocument } from '../models/ai-providers.model';
+import { ModelsDocument } from '../models/chat.model';
 
 let keys: Record<string, any> = {};
 let models: Record<string, any> = {};
@@ -42,7 +41,10 @@ const initialize = async () => {
         'apiKey': doc?.keys.deepseek || '',
         'baseURL': 'https://api.deepseek.com',
       }),
-      'gemini': new GoogleGenerativeAI(doc?.keys.gemini || '')
+      'gemini': new OpenAI({
+        'apiKey': doc?.keys.gemini || '',
+        'baseURL': 'https://generativelanguage.googleapis.com/v1beta/openai/',
+      })
     };
 
     models = {
