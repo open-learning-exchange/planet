@@ -48,7 +48,6 @@ export class LoginFormComponent {
   showPassword = false;
   showRepeatPassword = false;
   notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
-  public socialMedia: { [key: string]: string } = {};
 
   constructor(
     private couchService: CouchService,
@@ -74,7 +73,6 @@ export class LoginFormComponent {
     ];
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
-    this.loadSocialUrls();
   }
 
   createMode: boolean = this.router.url.split('?')[0] === '/login/newmember';
@@ -273,25 +271,4 @@ export class LoginFormComponent {
     });
   }
 
-  loadSocialUrls() {
-    const configurationId = this.stateService.configuration._id;
-    this.couchService.get('configurations/' + configurationId).subscribe(
-      (data: any) => {
-        this.socialMedia = data.social;
-        console.log(this.socialMedia);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  getSocialMediaUrls() {
-    return Object.keys(this.socialMedia)
-      .filter(key => this.socialMedia[key])
-      .map(key => ({
-        platform: key.charAt(0).toUpperCase() + key.slice(1),
-        url: this.socialMedia[key]
-      }));
-  }
 }

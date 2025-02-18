@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { of } from 'rxjs';
+import { tap, switchMap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
-import { Router } from '@angular/router';
-import { tap, switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './login.component.html',
@@ -14,14 +15,19 @@ export class LoginComponent implements OnInit {
 
   online = 'off';
   planetVersion: string;
+  socials: any;
 
   constructor(
     private couchService: CouchService,
-    private router: Router
+    private router: Router,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
     this.getPlanetVersion();
+    this.socials = this.stateService.configuration.social;
+    console.log(this.socials);
+
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
       this.checkAdminExistence().pipe(
