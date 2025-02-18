@@ -8,7 +8,10 @@ import { Subject } from 'rxjs';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
+import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -19,15 +22,16 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
-  emptyData = false;
   notificationStatus = [ 'All', 'Read', 'Unread' ];
   filter = { 'status': '' };
   anyUnread = true;
 
   constructor(
+    private dialog: MatDialog,
+    private stateService: StateService,
+    private notificationsService: NotificationsService,
     private couchService: CouchService,
     private userService: UserService,
-    private notificationsService: NotificationsService
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -60,7 +64,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     .subscribe(notifications => {
        this.notifications.data = notifications;
        this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-       this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
   }
 
@@ -87,5 +90,15 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   readAllNotification() {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
+  }
+
+  openAnnouncementDialog() {
+    const challengeActive = includedCodes.includes(this.stateService.configuration.code) && challengePeriod;
+    if (challengeActive) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    }
   }
 }

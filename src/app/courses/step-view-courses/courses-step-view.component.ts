@@ -11,6 +11,7 @@ import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
+import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../../shared/dialogs/dialogs-announcement.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -22,6 +23,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
+  conversations: any[] = [];
   courseId: string;
   maxStep = 1;
   resourceUrl = '';
@@ -38,6 +40,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   isGridView = true;
   showChat = false;
   isOpenai = false;
+  isLoading = true;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -124,6 +127,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         user: this.userService.get(),
         type: 'exam' });
     }
+    this.isLoading = false;
   }
 
   initResources(resources) {
@@ -134,13 +138,28 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   // direction = -1 for previous, 1 for next
   changeStep(direction) {
+    this.isLoading = true;
     this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
-    this.resource = undefined;
+    this.conversations = [];
+    this.resetCourseStep();
     this.countActivity = true;
+  }
+
+  resetCourseStep() {
+    this.resource = undefined;
+    this.stepDetail = { stepTitle: '', description: '', resources: [] };
+    this.attempts = 0;
   }
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
+    // Challenge option only
+    if (includedCodes.includes(this.stateService.configuration.code) && challengePeriod && this.courseId === challengeCourseId) {
+      this.dialog.open(DialogsAnnouncementComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+    }
   }
 
   setResourceUrl(resourceUrl: string) {

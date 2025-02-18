@@ -63,13 +63,19 @@
           <planet-markdown-textbox i18n-placeholder placeholder="Special Needs" [formControl]="healthForm.controls.specialNeeds"></planet-markdown-textbox>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox i18n-placeholder placeholder="Allergies" [formControl]="healthForm.controls.allergies"></planet-markdown-textbox>
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <planet-markdown-textbox i18n-placeholder placeholder="Immunization Dates" [formControl]="healthForm.controls.immunizations"></planet-markdown-textbox>
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
           <planet-markdown-textbox i18n-placeholder placeholder="Other Notes" [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
         </mat-form-field>
       </form>
     </div>
     <div class="action-buttons">
-      <button mat-raised-button type="button" color="primary" (click)="onSubmit()" i18n>Submit</button>
       <button mat-raised-button type="button" (click)="goBack()" i18n>Cancel</button>
+      <button mat-raised-button type="button" color="primary" (click)="onSubmit()" i18n>Submit</button>
     </div>
   </div>
 </div>

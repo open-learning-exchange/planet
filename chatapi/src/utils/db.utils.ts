@@ -1,6 +1,6 @@
 import { chatDB, resourceDB } from '../config/nano.config';
 import { DbDoc } from '../models/db-doc.model';
-import { ChatMessage } from '../models/chat-message.model';
+import { ChatMessage } from '../models/chat.model';
 
 /**
  * Retrieves chat history from CouchDB for a given document ID.

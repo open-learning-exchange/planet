@@ -12,6 +12,17 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-list-item-disabled {
       background-color: white;
     }
+    .mat-card-subtitle p.role-text {
+      min-height: 35px;
+    }
+    .mat-card-tasks {
+      max-height: 70px;
+      overflow: hidden;
+    }
+    .mat-caption {
+      font-size: 16px;
+      font-weight: bold;
+    }
   ` ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
@@ -62,6 +73,11 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
     });
+  }
+
+  truncateText(text: string, maxLength: number = 70): string {
+    if (!text) { return ''; }
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
   }
 
 }

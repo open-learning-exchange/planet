@@ -10,12 +10,11 @@
   </ng-container>
   <a *ngIf="planetType !== 'community' || isHub" [routerLink]="['reports', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>Reports</a>
   <a [routerLink]="['reports', 'myplanet', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>myPlanet Reports</a>
+  <a [routerLink]="['logs', 'myplanet', isHub ? { 'hubId': planetConfiguration._id } : {}]" i18n mat-raised-button>myPlanet Logs</a>
   <ng-container *planetAuthorizedRoles="'manager'">
     <a [routerLink]="['surveys']" mat-raised-button i18n>Surveys</a>
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-    <button *ngIf="devMode"
-      (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
     <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
     <a routerLink="fetch" mat-raised-button *ngIf="fetchItemCount > 0"><span i18n>Fetch Items</span>{{ ' (' + fetchItemCount + ')' }}</a>
@@ -28,6 +27,8 @@
   <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
   <a routerLink="/manager/aiservices" i18n mat-raised-button>AI Configurations</a>
   <a routerLink="certifications" i18n mat-raised-button *planetBeta>Certifications</a>
+  <button *ngIf="devMode"
+  (click)="openDeleteCommunityDialog()" i18n mat-raised-button color = "warn">Delete Community</button>
   <ng-container *planetAuthorizedRoles="'manager'">
     <div *ngIf="pendingPushCount > 0">
       <p>
@@ -74,7 +75,7 @@
         <p *ngSwitchDefault i18n><b>Your request has not yet been accepted by { planetType, select, community {nation} nation {center}}</b></p>
       </ng-container>
     </div>
-    <div *ngIf="pin"><span i18n>Your tablet pin number is:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
+    <div *ngIf="pin"><span i18n>myPlanet Server pin:</span> <b class="pinClass">{{ ' ' + pin + ' ' }}</b>
       <button mat-raised-button i18n (click)="resetPin()">Reset Pin</button>
     </div>
   </ng-container>

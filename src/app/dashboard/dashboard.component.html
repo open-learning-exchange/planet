@@ -1,28 +1,41 @@
-<mat-card class="horizontal">
-  <img [src]="profileImg">
-  <div class="dashboard-name">
-    <h1 class="mat-title">{{displayName}}  ({{visits | number}})</h1>
-    <h1 class="mat-title">
-      <span class="mat-subheading-2"><ng-container *ngFor="let role of roles; last as last">
-        <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
-      </ng-container></span>
-    </h1>
-  </div>
-  <div class="date">
-    <p>{{dateNow | date:'longDate'}}</p>
-  </div>
-  <div class="badges">
-    <div *ngFor="let badgeGroup of badgeGroups">
-      <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
-        <mat-icon
-          [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
-          fontSet="fa"
-          [fontIcon]="badgeIcons[badgeGroup]">
-        </mat-icon>
-      </span>
+<div *ngIf="showBanner" class="alert">
+  <a [routerLink]="['/users/update', user.name]">
+    <span class="banner-text" i18n>Please complete your profile to enjoy full features!</span>
+  </a>
+  <span class="closebtn" (click)="closeBanner()">&times;</span>
+</div>
+<mat-card class="horizontal" style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
+  <div style="display: flex; align-items: flex-start;">
+    <a [routerLink]="['/users/profile', user.name]" class="profile-link">
+      <img [src]="profileImg" class="profile-avatar">
+    </a>
+    <div class="dashboard-name" style="margin-left: 16px;">
+      <a [routerLink]="['/users/profile', user.name]" class="profile-link">
+        <h1 class="mat-title">{{displayName}} ({{visits | number}})</h1>
+      </a>
+      <h1 class="mat-title">
+        <span class="mat-subheading-2">
+          <ng-container *ngFor="let role of roles; last as last">
+            <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
+          </ng-container>
+        </span>
+      </h1>
     </div>
-    <div class="cursor-pointer" (click)="openChallengeView()" matTooltip="challenge">
-      <mat-icon>stars</mat-icon>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: flex-end;">
+    <div class="date" style="text-align: right;">
+      <p>{{dateNow | date:'longDate'}}</p>
+    </div>
+    <div class="badges" style="display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: 100%; margin-top: 8px;">
+      <div *ngFor="let badgeGroup of badgeGroups" style="margin-right: 4px;">
+        <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
+          <mat-icon
+            [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
+            fontSet="fa"
+            [fontIcon]="badgeIcons[badgeGroup]">
+          </mat-icon>
+        </span>
+      </div>
     </div>
   </div>
 </mat-card>

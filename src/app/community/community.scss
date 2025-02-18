@@ -45,6 +45,7 @@ planet-calendar {
     top: -0.25rem;
     right: -0.25rem;
   }
+  word-break: break-word;
 }
 
 mat-tab-group, mat-tab {
@@ -57,4 +58,9 @@ mat-tab-group, mat-tab {
   z-index: 10;
   background-color: white;
   padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.toggle-button {
+  margin-bottom: 1rem;
 }

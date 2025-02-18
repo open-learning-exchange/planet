@@ -40,7 +40,7 @@ export class ResourcesAddComponent implements OnInit {
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
   userDetail: any = {};
-  pageType = 'Add new';
+  pageType: string | null = null;
   disableDownload = true;
   disableDelete = true;
   resourceFilename = '';
@@ -59,6 +59,7 @@ export class ResourcesAddComponent implements OnInit {
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
+  attachmentMarkedForDeletion = false;
 
   constructor(
     private router: Router,
@@ -90,12 +91,14 @@ export class ResourcesAddComponent implements OnInit {
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
         .subscribe((resources: any[]) => {
-          this.pageType = 'Update';
+          this.pageType = 'Edit';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
           this.existingResource = resource;
         }, (error) => {
           console.log(error);
         });
+    } else {
+      this.pageType = 'Add';
     }
 
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
@@ -169,6 +172,9 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.attachmentMarkedForDeletion) {
+      delete this.existingResource.doc._attachments;
+    }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
       showFormErrors(this.resourceForm.controls);
@@ -178,11 +184,10 @@ export class ResourcesAddComponent implements OnInit {
     fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
       const { _id, _rev } = this.existingResource;
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
-      const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
+      const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
       // Start with empty object so this.resourceForm.value does not change
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-      const message = newResource.title +
-        (this.pageType === 'Update' || this.existingResource.doc ? $localize` Updated Successfully` : $localize` Added`);
+      const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
@@ -237,6 +242,13 @@ export class ResourcesAddComponent implements OnInit {
     // Also disable downloadable toggle if user is removing file
     this.disableDownload = event.checked;
     this.resourceForm.patchValue({ isDownloadable: false });
+  }
+
+  markAttachmentForDeletion() {
+    this.attachmentMarkedForDeletion = true;
+    this.resourceFilename = '';
+    this.disableDownload = true;
+    this.disableDelete = true;
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer

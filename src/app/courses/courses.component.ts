@@ -88,7 +88,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   userShelf: any = [];
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
-  emptyData = false;
   isAuthorized = false;
   tagFilter = new FormControl([]);
   tagFilterValue = [];
@@ -158,7 +157,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
-      this.emptyData = !this.courses.data.length;
       this.dialogsLoadingService.stop();
     });
     this.selection.changed.subscribe(({ source }) => {
@@ -335,7 +333,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   removeFilteredFromSelection() {
     this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
-    this.emptyData = this.courses.filteredData.length === 0;
   }
 
   onSearchChange({ items, category }) {
@@ -459,12 +456,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openCourseViewDialog(courseId) {
-    this.dialog.open(CoursesViewDetailDialogComponent, {
+    const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
       autoFocus: false
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.dialog.closeAll();
     });
   }
 

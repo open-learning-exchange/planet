@@ -17,7 +17,7 @@ import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { UsersAchievementsModule } from '../users/users-achievements/users-achievements.module';
 import { NewsModule } from '../news/news.module';
-import { LogsMyPlanetComponent } from '../logs-myplanet/logs-myplanet.component';
+import { LogsMyPlanetComponent } from '../manager-dashboard/reports/logs-myplanet.component';
 import { TeamsModule } from '../teams/teams.module';
 import { CommunityComponent } from '../community/community.component';
 import { PlanetCalendarModule } from '../shared/calendar.module';
@@ -27,6 +27,7 @@ import { UsersModule } from '../users/users.module';
 import { PlanetComponent } from './planet.component';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
 import { ChatModule } from '../chat/chat.module';
+import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import { ChatModule } from '../chat/chat.module';
     PlanetCalendarModule,
     UsersModule,
     CoursesViewDetailModule,
-    ChatModule
+    ChatModule,
+    SurveysModule
   ],
   declarations: [
     HomeComponent,

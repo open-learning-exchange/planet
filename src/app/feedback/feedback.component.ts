@@ -23,12 +23,8 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './feedback.component.html',
-  styles: [ `
-    .mat-column-type {
-      display: flex;
-      align-items: center;
-    }
-  ` ]
+  styleUrls: [ './feedback.scss' ]
+
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
@@ -53,7 +49,6 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   user: any = {};
   private onDestroy$ = new Subject<void>();
-  emptyData = false;
   users = [];
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
@@ -114,10 +109,20 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   getFeedback() {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
     this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
-      this.feedback.data = feedbackData.map(feedback => ({ ...feedback, user: this.users.find(u => u.doc.name === feedback.owner) }));
-      this.emptyData = !this.feedback.data.length;
+      this.feedback.data = feedbackData.map(feedback => {
+        const truncatedTitle = feedback.title.length > 100
+          ? `${feedback.title.slice(0, 100)}...`
+          : feedback.title;
+        return {
+          ...feedback,
+          title: truncatedTitle,
+          user: this.users.find(u => u.doc.name === feedback.owner)
+        };
+      });
       this.dialogsLoadingService.stop();
-    }, (error) => this.message = $localize`There is a problem of getting data.`);
+    }, (error) => {
+      this.message = $localize`There is a problem of getting data.`;
+    });
   }
 
   deleteClick(feedback) {

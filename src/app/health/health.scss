@@ -35,6 +35,14 @@ $exam-table-col-width: 100px;
   overflow-x: auto;
 }
 
+.header-items{
+  margin-left: 1.5rem;
+}
+
+.header-items{
+  margin-left: 1.6rem;
+}
+
 mat-table {
   width: max-content;
 
@@ -46,7 +54,10 @@ mat-table {
       margin-left: 0.25rem;
       font-size: 1.4em;
     }
+  }
 
+  mat-cell{
+    margin-left: 3rem;
   }
 
 }
@@ -56,4 +67,12 @@ mat-table {
   &.mat-column-label {
     min-width: 110px;
   }
+}
+
+.examinations-header {
+  text-align: center;
+}
+
+mat-header-cell div .header-date {
+  min-height: 1.7rem;
 }

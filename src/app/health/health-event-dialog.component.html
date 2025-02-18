@@ -19,7 +19,6 @@
   <p *ngIf="event.treatments"><strong class="mat-body-strong" i18n>Treatments: </strong><td-markdown [content]="event.treatments"></td-markdown>
   <p *ngIf="event.medications"><strong class="mat-body-strong" i18n>Medications: </strong><td-markdown [content]="event.medications"></td-markdown>
   <p *ngIf="event.immunizations"><strong class="mat-body-strong" i18n>Immunizations: </strong><td-markdown [content]="event.immunizations"></td-markdown>
-  <p *ngIf="event.allergies"><strong class="mat-body-strong" i18n>Allergies: </strong><td-markdown [content]="event.allergies"></td-markdown>
   <p *ngIf="event.xrays"><strong class="mat-body-strong" i18n>X-rays: </strong><td-markdown [content]="event.xrays"></td-markdown>
   <p *ngIf="event.tests"><strong class="mat-body-strong" i18n>Lab Tests: </strong><td-markdown [content]="event.tests"></td-markdown>
   <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
@@ -27,6 +26,6 @@
 <mat-dialog-actions>
   <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
   <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
-    <span i18n>Edit</span> <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container>
+    <span i18n>Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container></span> 
   </button>
 </mat-dialog-actions>

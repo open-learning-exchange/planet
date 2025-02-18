@@ -93,7 +93,41 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
     p {
       margin: 0;
     }
-
   }
+}
 
+.alert {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  padding: 20px;
+  background-color: #fdee7f;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.banner-text {
+  display: block;
+  margin: 0 2rem;
+}
+
+.closebtn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgb(126, 126, 126);
+  font-weight: bold;
+  font-size: 22px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.closebtn:hover {
+  color: rgb(0, 0, 0);
 }

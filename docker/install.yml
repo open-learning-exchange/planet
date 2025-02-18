@@ -5,4 +5,3 @@ services:
       - INSTALL=1
   planet:
     image: treehouses/planet:latest
-version: "2"

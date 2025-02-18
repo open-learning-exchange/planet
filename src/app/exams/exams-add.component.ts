@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -16,13 +18,11 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 import { UserService } from '../shared/user.service';
-import { switchMap } from 'rxjs/operators';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { forkJoin, of } from 'rxjs';
 
 const showdown = require('showdown');
 
@@ -37,6 +37,7 @@ export class ExamsAddComponent implements OnInit {
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
+  teamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
   steps = [];
   showFormError = false;
@@ -44,6 +45,7 @@ export class ExamsAddComponent implements OnInit {
   isCourseContent = this.router.url.match(/courses/);
   returnUrl = this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
+  isManagerRoute = this.router.url.startsWith('/manager/surveys');
   private _question: FormGroup;
   get question(): FormGroup {
     return this._question;
@@ -88,7 +90,8 @@ export class ExamsAddComponent implements OnInit {
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
       ],
       questions: this.fb.array([]),
-      type: { exam: 'courses', survey: 'surveys' }[this.examType]
+      type: { exam: 'courses', survey: 'surveys' }[this.examType],
+      teamShareAllowed: false
     });
   }
 
@@ -120,6 +123,9 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
+      if (this.teamId) {
+        this.examForm.value.teamId = this.teamId;
+      }
       this.showFormError = false;
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {

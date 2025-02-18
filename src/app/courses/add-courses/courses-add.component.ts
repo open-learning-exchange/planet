@@ -28,7 +28,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
-  pageType = 'Add new';
+  pageType: string | null = null;
   tags = this.fb.control([]);
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
@@ -41,8 +41,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   set steps(value: any[]) {
     this._steps = value.map(step => ({
       ...step,
-      description: step.description.text || step.description,
-      images: [ ...(step.description.images || []), ...(step.images || []) ]
+      description: step.description?.text ?? step.description ?? '',
+      images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
     }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
@@ -107,7 +107,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
-        this.pageType = 'Update';
+        this.pageType = 'Edit';
+      } else {
+        this.pageType = 'Add';
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
@@ -197,7 +199,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ])
     )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = courseInfo.courseTitle + (this.pageType === 'Update' ? $localize` Updated Successfully` : $localize` Added`);
+      const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -216,11 +218,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseChangeComplete(message, response: any, shouldNavigate) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.isSaved = true;
+    this.planetMessageService.showMessage(message);
     if (shouldNavigate) {
       this.navigateBack();
       return;
     }
-    this.planetMessageService.showMessage(message);
     if (this.isDestroyed) {
       return;
     }
@@ -229,7 +231,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.setDocumentInfo(response.doc);
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
-    if (this.pageType === 'Add new') {
+    if (this.pageType === 'Add') {
       this.router.navigate([ '../update/', this.courseId ], { relativeTo: this.route, replaceUrl: true });
     }
   }
