@@ -13,9 +13,7 @@
         <div class="button-group">
           <button mat-raised-button color="primary" type="submit" i18n>Save</button>
           <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n>Save & Return</button>
-          <div class="menu-button">
-            <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button>
-          </div>
+          <div class="menu-button"><button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button></div>
           <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
         </div>
         <mat-checkbox *ngIf="isManagerRoute" formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic; margin: 0.1rem" i18n>Allow team view</span></mat-checkbox>

@@ -20,7 +20,7 @@
 
   form.survey-form {
     grid-template-areas: "buttons" "inputs" "questions";
-    grid-template-rows: auto 72px calc(#{$view-container-height-no-toolbar} - 72px - 2rem);
+    grid-template-rows: auto 72px calc(#{$view-container-height-no-toolbar} - 120px - 2rem);
   }
 
   .exam-buttons {
