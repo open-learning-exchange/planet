@@ -41,8 +41,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   set steps(value: any[]) {
     this._steps = value.map(step => ({
       ...step,
-      description: step.description.text || step.description,
-      images: [ ...(step.description.images || []), ...(step.images || []) ]
+      description: step.description?.text ?? step.description ?? '',
+      images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
     }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
