@@ -28,17 +28,21 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    padding: 4px 0;
-
-    .button-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
     }
 
-    .warn-text-color {
-      margin: 4px;
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-right: 8px;
     }
+
+    .menu-button {
+      margin-right: 2px;
+    }
+
+  .warn-text-color {
+    margin: 4px;
   }
 
   .exam-inputs {
