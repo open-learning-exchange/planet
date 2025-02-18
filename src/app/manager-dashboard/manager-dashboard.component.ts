@@ -48,6 +48,9 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
     .pinClass {
       font-size: 1.5rem;
     }
+    mat-slide-toggle {
+      padding: 3px;
+    }
   ` ]
 })
 
