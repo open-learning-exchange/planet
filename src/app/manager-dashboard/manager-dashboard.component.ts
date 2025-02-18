@@ -47,6 +47,9 @@ import { StateService } from '../shared/state.service';
     .pinClass {
       font-size: 1.5rem;
     }
+    mat-slide-toggle {
+      padding: 3px;
+    }
   ` ]
 })
 
