@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { of, forkJoin, BehaviorSubject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
@@ -12,6 +12,8 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class HealthService {
 
+  private examinations = new BehaviorSubject<any[]>([]);
+  examinationsUpdated = this.examinations.asObservable();
   healthData: any = {};
   readonly encryptedFields = [
     'events', 'profile', 'lastExamination', 'userKey',
@@ -149,4 +151,19 @@ export class HealthService {
     return this.couchService.findAll('health', findDocuments({ planetCode }));
   }
 
+  deleteExamination(eventId: string, eventRev: string) {
+    console.log('Deleting examination:', eventId);
+    return this.couchService.delete(`health/${eventId}?rev=${eventRev}`).pipe(
+      switchMap(() => {
+        console.log('Examination deleted, fetching updated list');
+        return this.getExaminations(this.stateService.configuration.code);
+      }), 
+      switchMap((exams: any[]) => {
+        console.log('Updated examinations list:', exams);
+        const updatedExams = exams.filter(exam => exam._id !== eventId); 
+        this.examinations.next(updatedExams); 
+        return of(true);
+      })
+    );
+  }
 }
