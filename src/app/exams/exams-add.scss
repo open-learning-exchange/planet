@@ -28,17 +28,17 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+  }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-right: 8px;
     }
 
-  .button-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-right: 8px;
-    }
-
-    .menu-button {
-      margin-right: 2px;
+    .warn-text-color {
+      display: block;
+      width: 100%;
     }
 
   .warn-text-color {
