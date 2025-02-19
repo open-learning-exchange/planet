@@ -157,4 +157,19 @@ export class HealthEventComponent implements OnInit {
     );
   }
 
+  isLastSection(section: string): boolean {
+    const sections = [
+      'notes',
+      'diagnosis',
+      'treatments',
+      'medications',
+      'immunizations',
+      'xrays',
+      'tests',
+      'referrals'
+    ];
+    const activeSections = sections.filter(sec => this.event[sec]);
+    return activeSections[activeSections.length - 1] === section;
+  }
+
 }
