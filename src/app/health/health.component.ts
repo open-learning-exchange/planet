@@ -11,9 +11,6 @@ import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
 import { findDocuments } from '../shared/mangoQueries';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   templateUrl: './health.component.html',
@@ -129,22 +126,6 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     }), {});
     this.displayedColumns = Object.keys(this.eventTable.data[0]);
     this.isWaitingForEvents = false;
-  }
-
-  exportToPdf(event) {
-    const documentDefinition = {
-      content: [
-        { text: `Health Event on ${new Date(event.date).toLocaleDateString()}`, style: 'header' },
-        { text: `Performed by: ${event.selfExamination ? 'Self' : this.userDetail.name}`, style: 'subheader' },
-        // ...additional event details...
-      ],
-      styles: {
-        header: { fontSize: 18, bold: true },
-        subheader: { fontSize: 14, margin: [ 0, 10, 0, 5 ] },
-        // ...additional styles...
-      }
-    };
-    pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`);
   }
 
 }
