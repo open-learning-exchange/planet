@@ -9,7 +9,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -35,6 +34,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService
   ) {
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
@@ -86,28 +86,37 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         { text: `Health examination on ${new Date(event.date).toLocaleDateString()}`, style: 'header' },
         { text: [ { text: 'Performed by: ', bold: true }, `${event.selfExamination ? 'Self' : this.performedBy}` ], style: 'subheader' },
         { text: 'Vitals', style: 'sectionHeader' },
-        { text: [ { text: 'Temperature: ', bold: true }, event.temperature ? `${event.temperature} °C` : 'N/A' ], style: 'content' },
-        { text: [ { text: 'Pulse: ', bold: true }, event.pulse ? `${event.pulse} bpm` : 'N/A' ], style: 'content' },
-        { text: [ { text: 'Blood Pressure: ', bold: true }, event.bp ? `${event.bp}` : 'N/A' ], style: 'content' },
-        { text: [ { text: 'Height: ', bold: true }, event.height ? `${event.height} cm` : 'N/A' ], style: 'content' },
-        { text: [ { text: 'Weight: ', bold: true }, event.weight ? `${event.weight} kg` : 'N/A' ], style: 'content' },
-        { text: [ { text: 'Vision: ', bold: true }, event.vision ? `${event.vision}` : 'N/A' ], style: 'content' },
-        { text: [ { text: 'Hearing: ', bold: true }, event.hearing ? `${event.hearing}` : 'N/A' ], style: 'content' },
-        { text: '\nConditions', style: 'sectionHeader' },
-        { text: this.conditions || 'N/A', style: 'content' },
+        event.temperature ? { text: [ { text: 'Temperature: ', bold: true }, `${event.temperature} °C` ], style: 'content' } : '',
+        event.pulse ? { text: [ { text: 'Pulse: ', bold: true }, `${event.pulse} bpm` ], style: 'content' } : '',
+        event.bp ? { text: [ { text: 'Blood Pressure: ', bold: true }, `${event.bp}` ], style: 'content' } : '',
+        event.height ? { text: [ { text: 'Height: ', bold: true }, `${event.height} cm` ], style: 'content' } : '',
+        event.weight ? { text: [ { text: 'Weight: ', bold: true }, `${event.weight} kg` ], style: 'content' } : '',
+        event.vision ? { text: [ { text: 'Vision: ', bold: true }, `${event.vision}` ], style: 'content' } : '',
+        event.hearing ? { text: [ { text: 'Hearing: ', bold: true }, `${event.hearing}` ], style: 'content' } : '',
+        this.conditions ? { text: '\nConditions', style: 'sectionHeader' } : '',
+        this.conditions ? { text: this.conditions, style: 'content' } : '',
         { text: '\nOther Notes', style: 'sectionHeader' },
-        { text: [ { text: 'Observations & Notes: ', bold: true }, `${event.notes || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'Diagnosis: ', bold: true }, `${event.diagnosis || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'Treatments: ', bold: true }, `${event.treatments || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'Medications: ', bold: true }, `${event.medications || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'Immunizations: ', bold: true }, `${event.immunizations || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'X-rays: ', bold: true }, `${event.xrays || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'Lab Tests: ', bold: true }, `${event.tests || 'N/A'}` ], style: 'content' },
-        { text: [ { text: 'Referrals: ', bold: true }, `${event.referrals || 'N/A'}` ], style: 'content' }
-      ],
+        event.notes ? { text: 'Observations & Notes:', style: 'subheaderBold' } : '',
+        event.notes ? { text: event.notes, style: 'content' } : '',
+        event.diagnosis ? { text: 'Diagnosis:', style: 'subheaderBold' } : '',
+        event.diagnosis ? { text: event.diagnosis, style: 'content' } : '',
+        event.treatments ? { text: 'Treatments:', style: 'subheaderBold' } : '',
+        event.treatments ? { text: event.treatments, style: 'content' } : '',
+        event.medications ? { text: 'Medications:', style: 'subheaderBold' } : '',
+        event.medications ? { text: event.medications, style: 'content' } : '',
+        event.immunizations ? { text: 'Immunizations:', style: 'subheaderBold' } : '',
+        event.immunizations ? { text: event.immunizations, style: 'content' } : '',
+        event.xrays ? { text: 'X-rays:', style: 'subheaderBold' } : '',
+        event.xrays ? { text: event.xrays, style: 'content' } : '',
+        event.tests ? { text: 'Lab Tests:', style: 'subheaderBold' } : '',
+        event.tests ? { text: event.tests, style: 'content' } : '',
+        event.referrals ? { text: 'Referrals:', style: 'subheaderBold' } : '',
+        event.referrals ? { text: event.referrals, style: 'content' } : ''
+      ].filter(Boolean),
       styles: {
         header: { fontSize: 18, bold: true },
         subheader: { fontSize: 14, margin: [ 0, 10, 0, 5 ] },
+        subheaderBold: { fontSize: 14, bold: true, margin: [ 0, 10, 0, 5 ] },
         sectionHeader: { fontSize: 16, bold: true, margin: [ 0, 10, 0, 5 ] },
         content: { fontSize: 12, margin: [ 0, 2, 0, 2 ] }
       }
