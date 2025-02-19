@@ -37,6 +37,11 @@ const removeProtocol = (str: string) => {
       width: 30px;
       margin: 10px;
     }
+    .expansion-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
   ` ]
 })
 export class ConfigurationComponent implements OnInit {
@@ -111,7 +116,13 @@ export class ConfigurationComponent implements OnInit {
       createdDate: this.couchService.datePlaceholder,
       autoAccept: true,
       alwaysOnline: false,
-      betaEnabled: 'off'
+      betaEnabled: 'off',
+      social: this.formBuilder.group({
+        facebook: [ '', [], CustomValidators.validLink ],
+        instagram: [ '', [], CustomValidators.validLink ],
+        youtube: [ '', [], CustomValidators.validLink ],
+        x: [ '', [], CustomValidators.validLink ],
+      })
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],
