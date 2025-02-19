@@ -71,6 +71,12 @@ export class LoginFormComponent {
       Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ],
       ac => this.validatorService.isUnique$('_users', 'name', ac, { errorType: 'duplicateUser' })
     ];
+    registerForm.password = [ '', Validators.compose([
+      Validators.required,
+      CustomValidators.spaceValidator,
+      CustomValidators.matchPassword('repeatPassword', false),
+      CustomValidators.pattern(/^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(.{8,})$/i, 'weakPassword'), 
+    ]) ]
     const formObj = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
