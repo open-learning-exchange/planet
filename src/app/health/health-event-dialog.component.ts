@@ -84,7 +84,9 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     const documentDefinition = {
       content: [
         { text: `Health examination on ${new Date(event.date).toLocaleDateString()}`, style: 'header' },
-        { text: [ { text: 'Performed by: ', bold: true }, `${event.selfExamination ? 'Self' : this.performedBy}` ], style: 'subheader' },
+        { canvas: [ { type: 'line', x1: 0, y1: 5, x2: 595, y2: 5, lineWidth: 1 } ] },
+        { text: 'Performed by', style: 'sectionHeader' },
+        { text: `${event.selfExamination ? 'Self' : this.performedBy}`, style: 'subheader' },
         { text: 'Vitals', style: 'sectionHeader' },
         event.temperature ? { text: [ { text: 'Temperature: ', bold: true }, `${event.temperature} °C` ], style: 'content' } : '',
         event.pulse ? { text: [ { text: 'Pulse: ', bold: true }, `${event.pulse} bpm` ], style: 'content' } : '',
