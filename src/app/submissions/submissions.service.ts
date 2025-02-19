@@ -271,7 +271,7 @@ export class SubmissionsService {
         const answerIndexes = this.answerIndexes(questionTexts, submission);
         return {
           'Gender': submission.user.gender || 'N/A',
-          'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
+          'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
           'Planet': submission.source,
           'Date': submission.lastUpdateTime,
           ...questionTexts.reduce((answerObj, text, index) => ({
