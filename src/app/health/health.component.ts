@@ -140,7 +140,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
       ],
       styles: {
         header: { fontSize: 18, bold: true },
-        subheader: { fontSize: 14, margin: [0, 10, 0, 5] },
+        subheader: { fontSize: 14, margin: [ 0, 10, 0, 5 ] },
         // ...additional styles...
       }
     };
