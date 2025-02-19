@@ -76,7 +76,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   streaming: boolean;
   overlayOpen = false;
   isMobile: boolean;
-  gridRowHeight = '2rem';
+  gridRowHeight: string = '2rem';
 
   constructor(
     private userService: UserService,
