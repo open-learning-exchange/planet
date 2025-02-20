@@ -5,8 +5,9 @@ import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets, areNoChildren } from './reports.utils';
+import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
 import { CsvService } from '../../shared/csv.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './logs-myplanet.component.html'
@@ -21,17 +22,43 @@ export class LogsMyPlanetComponent implements OnInit {
   get childType() {
     return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
+  startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  endDate: Date = new Date();
+  selectedChildren: any[] = [];
+  logsForm: FormGroup;
+  minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  today = new Date();
 
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
-    private managerService: ManagerService
-  ) {}
+    private managerService: ManagerService,
+    private fb: FormBuilder
+  ) {
+    this.logsForm = this.fb.group({
+      startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
+      endDate: [ this.today, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ]
+    }, {
+      validator: (ac) => {
+        if (ac.get('startDate').value > ac.get('endDate').value) {
+          return { invalidDates: true };
+        }
+        return null;
+      }
+    });
+  }
 
   ngOnInit() {
     this.getApkLogs();
+    this.logsForm.valueChanges.subscribe(() => {
+      this.startDate = this.logsForm.get('startDate').value;
+      this.endDate = this.logsForm.get('endDate').value;
+      if (!this.logsForm.errors?.invalidDates) {
+        this.onDateChange();
+      }
+    });
   }
 
   filterData(filterValue: string) {
@@ -42,11 +69,19 @@ export class LogsMyPlanetComponent implements OnInit {
   setAllPlanets(planets: any[], apklogs: any[]) {
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: apklogs.filter(myPlanet => {
+      children: this.filterLogsByDate(apklogs.filter(myPlanet => {
           return (myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code);
-        })
+        }))
       })
     );
+  }
+
+  filterLogsByDate(logs: any[]) {
+    return filterByDate(logs, 'time', { startDate: this.startDate, endDate: this.endDate });
+  }
+
+  onDateChange() {
+    this.getApkLogs();
   }
 
   getApkLogs() {
