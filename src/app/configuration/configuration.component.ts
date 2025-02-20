@@ -57,6 +57,7 @@ export class ConfigurationComponent implements OnInit {
   isAdvancedOptionsChanged = false;
   isAdvancedOptionConfirmed = false;
   spinnerOn = true;
+  showPanels = false;
   configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
 
@@ -149,6 +150,7 @@ export class ConfigurationComponent implements OnInit {
       this.nationOrCommunity = data.planetType;
       this.configurationFormGroup.patchValue(data);
       this.contactFormGroup.patchValue(data);
+      this.showPanels = true;
     }, error => {
       console.log(error);
     } );

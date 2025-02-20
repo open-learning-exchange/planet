@@ -52,8 +52,8 @@
         <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <mat-accordion class="full-width" style="margin-bottom: 20px;">
-        <mat-expansion-panel class="custom-expansion-panel">
+      <mat-accordion class="full-width" style="margin-bottom: 20px;" *ngIf="showPanels">
+        <mat-expansion-panel class="custom-expansion-panel" [expanded]="false">
           <mat-expansion-panel-header>
             <mat-panel-title i18n>Advanced Options</mat-panel-title>
           </mat-expansion-panel-header>
@@ -94,7 +94,7 @@
             </button>
           </div>
         </mat-expansion-panel>
-        <mat-expansion-panel class="custom-expansion-panel">
+        <mat-expansion-panel class="custom-expansion-panel" [expanded]="false">
           <mat-expansion-panel-header>
             <mat-panel-title i18n>Social Media</mat-panel-title>
           </mat-expansion-panel-header>
