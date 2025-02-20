@@ -40,6 +40,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
+  isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
   links: any[] = [];
   finances: any[] = [];
