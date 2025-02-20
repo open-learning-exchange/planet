@@ -1,5 +1,5 @@
 <h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
-<mat-dialog-content>
+<mat-dialog-content cdkFocusInitial>
   <p *ngIf="!event.selfExamination"><b i18n>Performed by: </b>{{performedBy}}</p>
   <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
   <p *ngIf="event.temperature"><b i18n>Temperature: </b>{{event.temperature}} °C</p>
@@ -24,8 +24,11 @@
   <p *ngIf="event.referrals"><b i18n>Referrals: </b><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
   <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
     <span i18n>Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container></span> 
   </button>
+  <button type="button" color="accent" (click)="exportToPdf(event)" mat-raised-button>
+    <span i18n>Export</span>
+  </button>
+  <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>
