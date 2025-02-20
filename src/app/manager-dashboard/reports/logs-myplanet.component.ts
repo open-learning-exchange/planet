@@ -28,6 +28,10 @@ export class LogsMyPlanetComponent implements OnInit {
   logsForm: FormGroup;
   minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   today = new Date();
+  versions: string[] = [];
+  selectedVersion = '';
+  types: string[] = [];
+  selectedType = '';
 
   constructor(
     private csvService: CsvService,
@@ -69,19 +73,29 @@ export class LogsMyPlanetComponent implements OnInit {
   setAllPlanets(planets: any[], apklogs: any[]) {
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: this.filterLogsByDate(apklogs.filter(myPlanet => {
-          return (myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code);
-        }))
-      })
-    );
+      children: this.filterLogs(apklogs.filter(myPlanet =>
+        myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code
+      ))
+    }));
   }
 
-  filterLogsByDate(logs: any[]) {
-    return filterByDate(logs, 'time', { startDate: this.startDate, endDate: this.endDate });
+  filterLogs(logs: any[]) {
+    return logs
+      .filter(log => !this.selectedVersion || log.version === this.selectedVersion)
+      .filter(log => !this.selectedType || log.type === this.selectedType)
+      .filter(log => filterByDate([ log ], 'time', { startDate: this.startDate, endDate: this.endDate }).length > 0);
   }
 
   onDateChange() {
     this.getApkLogs();
+  }
+
+  getUniqueVersions(logs: any[]) {
+    this.versions = Array.from(new Set(logs.map(log => log.version))).filter(version => version).sort();
+  }
+
+  getUniqueTypes(logs: any[]) {
+    this.types = Array.from(new Set(logs.map(log => log.type))).filter(type => type).sort();
   }
 
   getApkLogs() {
@@ -89,6 +103,8 @@ export class LogsMyPlanetComponent implements OnInit {
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
     ]).subscribe(([ planets, apklogs ]) => {
+      this.getUniqueVersions(apklogs);
+      this.getUniqueTypes(apklogs);
       this.setAllPlanets(
         [ { doc: this.stateService.configuration } ].concat(attachNamesToPlanets(planets))
           .filter((planet: any) => planet.doc.docType !== 'parentName')
@@ -98,6 +114,28 @@ export class LogsMyPlanetComponent implements OnInit {
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
+  }
+
+  onVersionChange(version: string) {
+    this.selectedVersion = version;
+    this.applyFilters();
+  }
+
+  onTypeChange(type: string) {
+    this.selectedType = type;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.apklogs = this.allPlanets.map(planet => ({
+      ...planet,
+      children: this.filterLogs(
+        planet.children.filter(log =>
+          log.createdOn === planet.doc.code || log.parentCode === planet.doc.code
+        )
+      )
+    }));
+    this.isEmpty = areNoChildren(this.apklogs);
   }
 
   private mapToCsvData(children: any[], planetName?: string): any[] {

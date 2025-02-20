@@ -4,6 +4,18 @@
     </button>
     <span i18n>Logs</span>
     <span class="toolbar-fill"></span>
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-select i18n-placeholder placeholder="Type" (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
+        <mat-option [value]="" i18n>All Types</mat-option>
+        <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-select i18n-placeholder placeholder="Version" (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
+        <mat-option [value]="" i18n>All Versions</mat-option>
+        <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
+      </mat-select>
+    </mat-form-field>
     <form [formGroup]="logsForm">
       <mat-form-field class="margin-lr-5 font-size-1">
         <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="today">
