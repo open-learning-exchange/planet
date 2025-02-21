@@ -138,8 +138,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       endDate: [ '' ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      if (value.startDate && value.endDate && value.startDate > value.endDate) {
+      const hasInvalidDates = value.startDate && value.endDate && value.startDate > value.endDate;
+      if (hasInvalidDates) {
         this.dateFilterForm.setErrors({ invalidEndDate: true });
+        this.filter = { ...this.filter, startDate: null, endDate: null };
+        this.filterData();
         return;
       }
       this.dateFilterForm.setErrors(null);
