@@ -32,6 +32,7 @@ export class LogsMyPlanetComponent implements OnInit {
   selectedVersion = '';
   types: string[] = [];
   selectedType = '';
+  disableShowAllTime = true;
 
   constructor(
     private csvService: CsvService,
@@ -60,9 +61,16 @@ export class LogsMyPlanetComponent implements OnInit {
       this.startDate = this.logsForm.get('startDate').value;
       this.endDate = this.logsForm.get('endDate').value;
       if (!this.logsForm.errors?.invalidDates) {
-        this.onDateChange();
+        this.applyFilters();
       }
+      this.updateShowAllTimeButton();
     });
+  }
+
+  updateShowAllTimeButton() {
+    const startIsMin = new Date(this.startDate).setHours(0, 0, 0, 0) === new Date(this.minDate).setHours(0, 0, 0, 0);
+    const endIsToday = new Date(this.endDate).setHours(0, 0, 0, 0) === new Date(this.today).setHours(0, 0, 0, 0);
+    this.disableShowAllTime = startIsMin && endIsToday;
   }
 
   filterData(filterValue: string) {
@@ -86,10 +94,6 @@ export class LogsMyPlanetComponent implements OnInit {
       .filter(log => filterByDate([ log ], 'time', { startDate: this.startDate, endDate: this.endDate }).length > 0);
   }
 
-  onDateChange() {
-    this.getApkLogs();
-  }
-
   getUniqueVersions(logs: any[]) {
     this.versions = Array.from(new Set(logs.map(log => log.version))).filter(version => version).sort();
   }
@@ -98,11 +102,20 @@ export class LogsMyPlanetComponent implements OnInit {
     this.types = Array.from(new Set(logs.map(log => log.type))).filter(type => type).sort();
   }
 
+  getEarliestDate(logs: any[]): Date {
+    const earliest = Math.min(...logs.map(log => Number(log.time)));
+    return new Date(earliest);
+  }
+
   getApkLogs() {
     forkJoin([
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
     ]).subscribe(([ planets, apklogs ]) => {
+      this.minDate = this.getEarliestDate(apklogs);
+      this.logsForm.patchValue({
+        startDate: this.minDate
+      });
       this.getUniqueVersions(apklogs);
       this.getUniqueTypes(apklogs);
       this.setAllPlanets(
@@ -129,11 +142,7 @@ export class LogsMyPlanetComponent implements OnInit {
   applyFilters() {
     this.apklogs = this.allPlanets.map(planet => ({
       ...planet,
-      children: this.filterLogs(
-        planet.children.filter(log =>
-          log.createdOn === planet.doc.code || log.parentCode === planet.doc.code
-        )
-      )
+      children: this.filterLogs(planet.children)
     }));
     this.isEmpty = areNoChildren(this.apklogs);
   }
@@ -167,6 +176,13 @@ export class LogsMyPlanetComponent implements OnInit {
     this.csvService.exportCSV({
       data: csvData,
       title: `myPlanet Logs for ${planet.name}`,
+    });
+  }
+
+  resetDateFilter() {
+    this.logsForm.patchValue({
+      startDate: this.minDate,
+      endDate: this.today
     });
   }
 
