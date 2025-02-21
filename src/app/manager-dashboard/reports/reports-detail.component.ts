@@ -134,16 +134,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: new Date(),
-      endDate: new Date()
+      startDate: [ '' ],
+      endDate: [ '' ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      this.filter = { ...this.filter, ...value };
-      if (this.minDate && this.today) {
-        this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
-          value.endDate.getTime() === this.today.getTime();
+      if (value.startDate && value.endDate && value.startDate > value.endDate) {
+        this.dateFilterForm.setErrors({ invalidEndDate: true });
+        return;
       }
-      this.filterData();
+      this.dateFilterForm.setErrors(null);
+      if (value.startDate && value.endDate) {
+        this.filter = { ...this.filter, ...value };
+        if (this.minDate && this.today) {
+          this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
+            value.endDate.getTime() === this.today.getTime();
+        }
+        this.filterData();
+      }
     });
   }
 
