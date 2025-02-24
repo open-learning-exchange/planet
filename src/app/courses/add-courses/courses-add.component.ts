@@ -203,7 +203,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       this.hasUnsavedChanges = currentState !== this.initialState;
     });
   }
-  
+
   updateCourse(courseInfo, shouldNavigate) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
