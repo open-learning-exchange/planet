@@ -1,4 +1,4 @@
-import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
+import { Component, OnInit, isDevMode, OnDestroy, HostListener } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -16,6 +16,7 @@ import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
@@ -47,6 +48,9 @@ import { StateService } from '../shared/state.service';
     .pinClass {
       font-size: 1.5rem;
     }
+    mat-slide-toggle {
+      padding: 3px;
+    }
   ` ]
 })
 
@@ -71,6 +75,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isHub = false;
   streaming: boolean;
   overlayOpen = false;
+  isMobile: boolean;
+  gridRowHeight = '2rem';
 
   constructor(
     private userService: UserService,
@@ -82,7 +88,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private deviceInfoService: DeviceInfoService
   ) {}
 
   ngOnInit() {
@@ -315,6 +322,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.planetMessageService.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
       }
     );
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = this.deviceInfoService.getDeviceType() === DeviceType.MOBILE;
+    this.gridRowHeight = this.isMobile ? '3.6rem' : '2rem';
   }
 
 }

@@ -1,31 +1,34 @@
 <h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
-<mat-dialog-content>
-  <p *ngIf="!event.selfExamination"><strong class="mat-body-strong" i18n>Performed by: </strong>{{performedBy}}</p>
+<mat-dialog-content cdkFocusInitial>
+  <p *ngIf="!event.selfExamination"><b i18n>Performed by: </b>{{performedBy}}</p>
   <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
-  <p *ngIf="event.temperature"><strong class="mat-body-strong" i18n>Temperature: </strong>{{event.temperature}} °C</p>
-  <p *ngIf="event.pulse"><strong class="mat-body-strong" i18n>Pulse: </strong>{{event.pulse}} bpm</p>
-  <p *ngIf="event.bp"><strong class="mat-body-strong" i18n>Blood Pressure: </strong>{{event.bp}}</p>
-  <p *ngIf="event.height"><strong class="mat-body-strong" i18n>Height: </strong>{{event.height}} cm</p>
-  <p *ngIf="event.weight"><strong class="mat-body-strong" i18n>Weight: </strong>{{event.weight}} kg</p>
-  <p *ngIf="event.vision"><strong class="mat-body-strong" i18n>Vision: </strong>{{event.vision}}</p>
-  <p *ngIf="event.hearing"><strong class="mat-body-strong" i18n>Hearing: </strong>{{event.hearing}}</p>
+  <p *ngIf="event.temperature"><b i18n>Temperature: </b>{{event.temperature}} °C</p>
+  <p *ngIf="event.pulse"><b i18n>Pulse: </b>{{event.pulse}} bpm</p>
+  <p *ngIf="event.bp"><b i18n>Blood Pressure: </b>{{event.bp}}</p>
+  <p *ngIf="event.height"><b i18n>Height: </b>{{event.height}} cm</p>
+  <p *ngIf="event.weight"><b i18n>Weight: </b>{{event.weight}} kg</p>
+  <p *ngIf="event.vision"><b i18n>Vision: </b>{{event.vision}}</p>
+  <p *ngIf="event.hearing"><b i18n>Hearing: </b>{{event.hearing}}</p>
   <ng-container *ngIf="conditions">
     <h4 class="primary-text-color" i18n>Conditions</h4>
     <p>{{conditions}}</p>
   </ng-container>
   <h4 class="primary-text-color" *ngIf="hasConditionAndTreatment" i18n>Other Notes</h4>
-  <p *ngIf="event.notes"><strong class="mat-body-strong" i18n>Observations & Notes: </strong><td-markdown [content]="event.notes"></td-markdown>
-  <p *ngIf="event.diagnosis"><strong class="mat-body-strong" i18n>Diagnosis: </strong><td-markdown [content]="event.diagnosis"></td-markdown>
-  <p *ngIf="event.treatments"><strong class="mat-body-strong" i18n>Treatments: </strong><td-markdown [content]="event.treatments"></td-markdown>
-  <p *ngIf="event.medications"><strong class="mat-body-strong" i18n>Medications: </strong><td-markdown [content]="event.medications"></td-markdown>
-  <p *ngIf="event.immunizations"><strong class="mat-body-strong" i18n>Immunizations: </strong><td-markdown [content]="event.immunizations"></td-markdown>
-  <p *ngIf="event.xrays"><strong class="mat-body-strong" i18n>X-rays: </strong><td-markdown [content]="event.xrays"></td-markdown>
-  <p *ngIf="event.tests"><strong class="mat-body-strong" i18n>Lab Tests: </strong><td-markdown [content]="event.tests"></td-markdown>
-  <p *ngIf="event.referrals"><strong class="mat-body-strong" i18n>Referrals: </strong><td-markdown [content]="event.referrals"></td-markdown>
+  <p *ngIf="event.notes"><b i18n>Observations & Notes: </b><td-markdown [content]="event.notes"></td-markdown>
+  <p *ngIf="event.diagnosis"><b i18n>Diagnosis: </b><td-markdown [content]="event.diagnosis"></td-markdown>
+  <p *ngIf="event.treatments"><b i18n>Treatments: </b><td-markdown [content]="event.treatments"></td-markdown>
+  <p *ngIf="event.medications"><b i18n>Medications: </b><td-markdown [content]="event.medications"></td-markdown>
+  <p *ngIf="event.immunizations"><b i18n>Immunizations: </b><td-markdown [content]="event.immunizations"></td-markdown>
+  <p *ngIf="event.xrays"><b i18n>X-rays: </b><td-markdown [content]="event.xrays"></td-markdown>
+  <p *ngIf="event.tests"><b i18n>Lab Tests: </b><td-markdown [content]="event.tests"></td-markdown>
+  <p *ngIf="event.referrals"><b i18n>Referrals: </b><td-markdown [content]="event.referrals"></td-markdown>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
   <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
     <span i18n>Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container></span> 
   </button>
+  <button type="button" color="accent" (click)="exportToPdf(event)" mat-raised-button>
+    <span i18n>Export</span>
+  </button>
+  <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>
