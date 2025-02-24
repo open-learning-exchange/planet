@@ -121,7 +121,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
         this.initialState = JSON.stringify({
           form: this.courseForm.value,
-          steps: this.steps
+          steps: this.steps,
+          tags: this.tags.value
         });
       }
     });
@@ -176,7 +177,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   onFormChanges() {
-    combineLatest(this.courseForm.valueChanges, this.stepsChange$, this.tags.valueChanges).pipe(
+    combineLatest([
+      this.courseForm.valueChanges,
+      this.stepsChange$,
+      this.tags.valueChanges
+    ]).pipe(
       debounce(() => race(interval(200), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
     ).subscribe(([ value, steps, tags ]) => {
@@ -192,12 +197,13 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       );
       const currentState = JSON.stringify({
         form: this.courseForm.value,
-        steps: this.steps
+        steps: this.steps,
+        tags: this.tags.value
       });
       this.hasUnsavedChanges = currentState !== this.initialState;
     });
   }
-
+  
   updateCourse(courseInfo, shouldNavigate) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
