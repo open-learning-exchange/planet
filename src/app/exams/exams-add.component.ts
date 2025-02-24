@@ -85,7 +85,7 @@ export class ExamsAddComponent implements OnInit {
         CustomValidators.required,
         this.nameValidator()
       ],
-      description: [ '', CustomValidators.requiredMarkdown ],
+      description: '',
       passingPercentage: [
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]

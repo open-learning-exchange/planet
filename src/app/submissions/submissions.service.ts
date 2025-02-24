@@ -283,7 +283,7 @@ export class SubmissionsService {
       });
       this.csvService.exportCSV({
         data,
-        title: `${toProperCase(type)} -  ${exam.name}\n${exam.description}`,
+        title: `${toProperCase(type)} -  ${exam.name}${exam.description ? '\n' + exam.description : ''}`,
       });
     }));
   }
@@ -331,7 +331,7 @@ export class SubmissionsService {
           header: function(currentPage) {
             if (currentPage === 1) {
               return [
-                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}:&nbsp${exam.description}</h1>`)),
+                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}${exam.description ? ': ' + exam.description : ''}</h1>`)),
               ];
             }
             return null;

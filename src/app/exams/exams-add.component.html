@@ -32,7 +32,7 @@
           <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Survey Description" [formControl]="examForm.controls.description"></planet-markdown-textbox>
+          <planet-markdown-textbox class="full-width" [required]="false" i18n-placeholder placeholder="Survey Description" [formControl]="examForm.controls.description"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="examForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
