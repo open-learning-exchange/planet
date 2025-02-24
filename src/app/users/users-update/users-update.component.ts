@@ -36,6 +36,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   roles: string[] = [];
   languages = languages;
   submissionMode = false;
+  showAdditionalFields = false;
   planetConfiguration = this.stateService.configuration;
   ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
@@ -125,6 +126,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
+      age: [ '', [ Validators.min(0), Validators.max(120) ] ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       betaEnabled: false
