@@ -270,7 +270,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   cancel() {
     this.navigationViaCancel = true;
     if (this.hasUnsavedChanges) {
-      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
+      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to leave?');
       if (!confirmCancel) {
         this.navigationViaCancel = false;
         return;
