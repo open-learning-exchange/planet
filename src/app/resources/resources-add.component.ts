@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
@@ -10,8 +10,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 import * as JSZip from 'jszip/dist/jszip.min';
-import { Observable, of, forkJoin } from 'rxjs';
-import { switchMap, first } from 'rxjs/operators';
+import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
+import { switchMap, first, debounce } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
@@ -24,6 +24,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { map, startWith } from 'rxjs/operators';
 import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 
 @Component({
   selector: 'planet-resources-add',
@@ -31,7 +32,7 @@ import { deepEqual } from '../shared/utils';
   styleUrls: [ './resources-add.scss' ]
 })
 
-export class ResourcesAddComponent implements OnInit {
+export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   constants = constants;
   file: any;
   attachedZipFiles: string[] = [];
@@ -60,6 +61,8 @@ export class ResourcesAddComponent implements OnInit {
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
   attachmentMarkedForDeletion = false;
+  hasUnsavedChanges: boolean = false;
+  private initialState: string = '';
 
   constructor(
     private router: Router,
@@ -102,10 +105,12 @@ export class ResourcesAddComponent implements OnInit {
     }
 
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
-    .pipe(
-      startWith(''),
-      map(value => this._filter(value))
-    );
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
+    this.onFormChanges();
+    this.captureInitialState();
   }
 
   createForm() {
@@ -201,7 +206,7 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   createFileObs() {
-    // If file doesn't exist, mediaType will be undefined
+        // If file doesn't exist, mediaType will be undefined
     const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
     switch (mediaType) {
       case undefined:
@@ -235,6 +240,8 @@ export class ResourcesAddComponent implements OnInit {
       this.router.navigate([ '/resources' ]);
     }
     this.planetMessageService.showMessage(message);
+    this.captureInitialState();
+    this.hasUnsavedChanges = false;
   }
 
   deleteAttachmentToggle(event) {
@@ -309,21 +316,28 @@ export class ResourcesAddComponent implements OnInit {
       });
     });
   }
-
+  
   cancel() {
+    if (this.hasUnsavedChanges) {
+      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
+      if (!confirmCancel) {
+        return;
+      }
+    }
     this.router.navigate([ '/resources' ]);
   }
 
-  bindFile(event) {
+  bindFile(event: Event) {
+    const input = event.target as HTMLInputElement;
     const disableOpenWhichFile = () => {
       this.resourceForm.controls.openWhichFile.setValue('');
       this.resourceForm.controls.openWhichFile.disable();
     };
-    if (event.target.files.length === 0) {
+    if (!input.files || input.files.length === 0) {
       disableOpenWhichFile();
       return;
     }
-    this.file = event.target.files[0];
+    this.file = input.files[0];
     this.disableDownload = false;
     this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
@@ -338,11 +352,50 @@ export class ResourcesAddComponent implements OnInit {
     const zip = new JSZip();
 
     zip.loadAsync(this.file).then((data) => {
-        this.attachedZipFiles = this.getFileNames(data);
-      },
-      err => {
-        console.log('error', err.message);
+      this.attachedZipFiles = this.getFileNames(data);
+    },
+    err => {
+      console.log('error', err.message);
     });
   }
 
+
+  // Capture initial state for unsaved changes tracking
+  private captureInitialState() {
+    this.initialState = JSON.stringify({
+      form: this.resourceForm.value,
+      tags: this.tags.value
+    });
+  }
+
+  onFormChanges() {
+    combineLatest([
+      this.resourceForm.valueChanges,
+      this.tags.valueChanges
+    ]).pipe(
+      debounce(() => race(interval(200), of(true)))
+    ).subscribe(([ value, tags ]) => {
+      const currentState = JSON.stringify({
+        form: this.resourceForm.value,
+        tags: this.tags.value
+      });
+      this.hasUnsavedChanges = currentState !== this.initialState;
+    });
+  }
+
+  // Prompt the user on refresh/close if there are unsaved changes
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    }
+  }
+
+  // Implement the guard method so that navigation from the app shows the prompt
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+    }
+    return true;
+  }
 }
