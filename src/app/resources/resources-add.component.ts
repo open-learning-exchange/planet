@@ -62,8 +62,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
   attachmentMarkedForDeletion = false;
-  hasUnsavedChanges: boolean = false;
-  private initialState: string = '';
+  hasUnsavedChanges = false;
+  private initialState = '';
 
   constructor(
     private router: Router,
@@ -105,7 +105,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     } else {
       this.pageType = 'Add';
     }
-    
+
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
       .pipe(
         startWith(''),
@@ -163,11 +163,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     this.resourceForm.patchValue(resource.doc);
     this.tags.setValue(resource.tags.map((tag: any) => tag._id));
-    
-    // Capture the initial state after patching the form
     this.captureInitialState();
   }
-  
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -214,7 +211,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   createFileObs() {
-        // If file doesn't exist, mediaType will be undefined
+    // If file doesn't exist, mediaType will be undefined
     const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
     switch (mediaType) {
       case undefined:
@@ -242,20 +239,17 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   afterResourceUpdate(message, resourceRes?) {
-    // Show the success message
-    this.planetMessageService.showMessage(message);
-    // Clear unsaved changes immediately so that canDeactivate() returns true
     this.hasUnsavedChanges = false;
     this.unsavedChangesService.setHasUnsavedChanges(false);
-    // Capture the current state as the new baseline
     this.captureInitialState();
-    
+
     if (this.isDialog) {
       this.afterSubmit.next({ doc: resourceRes });
     } else {
       this.router.navigate([ '/resources' ]);
     }
-  }  
+    this.planetMessageService.showMessage(message);
+  }
 
   deleteAttachmentToggle(event) {
     this.deleteAttachment = event.checked;
@@ -269,11 +263,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.resourceFilename = '';
     this.disableDownload = true;
     this.disableDelete = true;
-    // Manually set the unsaved changes flag to true
     this.hasUnsavedChanges = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);
   }
-  
 
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
@@ -333,7 +325,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       });
     });
   }
-  
+
   cancel() {
     this.router.navigate([ '/resources' ]);
   }
@@ -358,7 +350,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       return;
     }
 
-    // If the uploaded file is a zip, update attachedZipFiles to show options in openWhichFile
     this.resourceForm.controls.openWhichFile.enable();
     const zip = new JSZip();
 
@@ -370,8 +361,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-
-  // Capture initial state for unsaved changes tracking
   private captureInitialState() {
     this.initialState = JSON.stringify({
       form: this.resourceForm.value,
@@ -393,7 +382,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       .pipe(
         debounce(() => race(interval(200), of(true)))
       )
-      .subscribe(([formValue, tags]) => {
+      .subscribe(([ formValue, tags ]) => {
         const currentState = JSON.stringify({
           form: this.resourceForm.value,
           tags: this.tags.value,
@@ -408,16 +397,14 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
-  
-  // Prompt the user on refresh/close if there are unsaved changes
-  @HostListener('window:beforeunload', ['$event'])
+
+  @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
 
-  // Implement the guard method so that navigation from the app shows the prompt
   canDeactivate(): boolean {
     if (this.hasUnsavedChanges) {
       return window.confirm('You have unsaved changes. Are you sure you want to leave?');
