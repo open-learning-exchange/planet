@@ -25,6 +25,7 @@ import { map, startWith } from 'rxjs/operators';
 import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
 
 @Component({
   selector: 'planet-resources-add',
@@ -74,7 +75,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     private route: ActivatedRoute,
     private stateService: StateService,
     private resourcesService: ResourcesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -103,7 +105,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     } else {
       this.pageType = 'Add';
     }
-
+    
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
       .pipe(
         startWith(''),
@@ -234,15 +236,20 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   afterResourceUpdate(message, resourceRes?) {
+    // Show the success message
+    this.planetMessageService.showMessage(message);
+    // Clear unsaved changes immediately so that canDeactivate() returns true
+    this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
+    // Capture the current state as the new baseline
+    this.captureInitialState();
+    
     if (this.isDialog) {
       this.afterSubmit.next({ doc: resourceRes });
     } else {
       this.router.navigate([ '/resources' ]);
     }
-    this.planetMessageService.showMessage(message);
-    this.captureInitialState();
-    this.hasUnsavedChanges = false;
-  }
+  }  
 
   deleteAttachmentToggle(event) {
     this.deleteAttachment = event.checked;
@@ -318,12 +325,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
   
   cancel() {
-    if (this.hasUnsavedChanges) {
-      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
-      if (!confirmCancel) {
-        return;
-      }
-    }
     this.router.navigate([ '/resources' ]);
   }
 
@@ -380,9 +381,10 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         tags: this.tags.value
       });
       this.hasUnsavedChanges = currentState !== this.initialState;
+      this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
     });
   }
-
+  
   // Prompt the user on refresh/close if there are unsaved changes
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: BeforeUnloadEvent): void {
