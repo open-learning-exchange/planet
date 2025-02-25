@@ -4,6 +4,34 @@
     </button>
     <span i18n>Logs</span>
     <span class="toolbar-fill"></span>
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-select i18n-placeholder placeholder="Type" (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
+        <mat-option [value]="" i18n>All Types</mat-option>
+        <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-select i18n-placeholder placeholder="Version" (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
+        <mat-option [value]="" i18n>All Versions</mat-option>
+        <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <form [formGroup]="logsForm">
+      <mat-form-field class="margin-lr-5 font-size-1">
+        <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+        <mat-error i18n *ngIf="logsForm.errors?.invalidDates">Start date must be before end date</mat-error>
+      </mat-form-field>
+      <mat-form-field class="margin-lr-5 font-size-1">
+        <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </form>
+    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime" class="margin-lr-5">
+      Show All Time
+    </button>
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1">
       <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
