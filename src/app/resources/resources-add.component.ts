@@ -154,14 +154,20 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     // If the resource does not have an attachment, disable file downloadable toggle
     this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
-    this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments).join(', ') : '';
+    this.resourceFilename = resource.doc._attachments
+      ? Object.keys(resource.doc._attachments).join(', ')
+      : '';
     if (resource.doc._attachments && Object.keys(resource.doc._attachments).length > 1) {
       this.resourceForm.controls.openWhichFile.enable();
       this.attachedZipFiles = Object.keys(resource.doc._attachments);
     }
     this.resourceForm.patchValue(resource.doc);
     this.tags.setValue(resource.tags.map((tag: any) => tag._id));
+    
+    // Capture the initial state after patching the form
+    this.captureInitialState();
   }
+  
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
