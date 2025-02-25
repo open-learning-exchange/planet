@@ -134,14 +134,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: new Date(),
-      endDate: new Date()
+      startDate: [ '' ],
+      endDate: [ '' ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      this.filter = { ...this.filter, ...value };
-      if (this.minDate && this.today) {
-        this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
-          value.endDate.getTime() === this.today.getTime();
+      const startDate = value.startDate ? new Date(value.startDate) : null;
+      const endDate = value.endDate ? new Date(value.endDate) : null;
+      const hasInvalidDates = startDate && endDate && startDate > endDate;
+
+      this.dateFilterForm.setErrors(hasInvalidDates ? { invalidEndDate: true } : null);
+      this.filter = { ...this.filter, startDate, endDate };
+
+      if (startDate && endDate && this.minDate && this.today) {
+        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
+          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -533,8 +539,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
-    this.dateFilterForm.controls.startDate.setValue(startDate || this.minDate);
-    this.dateFilterForm.controls.endDate.setValue(endDate || this.today);
+    const newStartDate = startDate || this.minDate;
+    const newEndDate = endDate || this.today;
+    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
+    setTimeout(() => {
+      this.disableShowAllTime = true;
+    });
+    this.dateFilterForm.patchValue({
+      startDate: newStartDate,
+      endDate: newEndDate
+    }, { emitEvent: true });
   }
 
 }
