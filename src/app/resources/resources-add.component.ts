@@ -269,7 +269,11 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.resourceFilename = '';
     this.disableDownload = true;
     this.disableDelete = true;
+    // Manually set the unsaved changes flag to true
+    this.hasUnsavedChanges = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
+  
 
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
@@ -371,7 +375,13 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private captureInitialState() {
     this.initialState = JSON.stringify({
       form: this.resourceForm.value,
-      tags: this.tags.value
+      tags: this.tags.value,
+      attachment: this.file ? {
+        name: this.file.name,
+        size: this.file.size,
+        type: this.file.type
+      } : null,
+      attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
     });
   }
 
@@ -379,16 +389,24 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     combineLatest([
       this.resourceForm.valueChanges,
       this.tags.valueChanges
-    ]).pipe(
-      debounce(() => race(interval(200), of(true)))
-    ).subscribe(([ value, tags ]) => {
-      const currentState = JSON.stringify({
-        form: this.resourceForm.value,
-        tags: this.tags.value
+    ])
+      .pipe(
+        debounce(() => race(interval(200), of(true)))
+      )
+      .subscribe(([formValue, tags]) => {
+        const currentState = JSON.stringify({
+          form: this.resourceForm.value,
+          tags: this.tags.value,
+          attachment: this.file ? {
+            name: this.file.name,
+            size: this.file.size,
+            type: this.file.type
+          } : null,
+          attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
+        });
+        this.hasUnsavedChanges = currentState !== this.initialState;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
-      this.hasUnsavedChanges = currentState !== this.initialState;
-      this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
-    });
   }
   
   // Prompt the user on refresh/close if there are unsaved changes
