@@ -47,15 +47,27 @@ export class AuthService {
     );
   }
 
+  private hasNoAuth(route: ActivatedRouteSnapshot): boolean {
+    if (route.data && route.data.requiresAuth === false) {
+      return true;
+    }
+    for (const child of route.children) {
+      if (this.hasNoAuth(child)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // For main app (which requires login).  Uses canActivateChild to check on every route
   // change if session has expired
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     let currentRoute: ActivatedRouteSnapshot | null = route;
     const roles: Array<string> = currentRoute.data?.roles ?? [];
+    if (this.hasNoAuth(route)) {
+      return of(true);
+    }
     while (currentRoute) {
-      if (currentRoute.data && currentRoute.data.requiresAuth === false) {
-        return of(true);
-      }
       currentRoute = currentRoute.parent;
     }
     return this.checkUser(state.url, roles);
