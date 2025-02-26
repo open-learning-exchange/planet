@@ -55,7 +55,7 @@ export class NewsListComponent implements OnInit, OnChanges {
         this.newsService.requestNews({ selectors: replySelector, viewId: this.viewableId });
 
         const subscription = this.newsService.newsUpdated$.subscribe(replies => {
-          this.items = [newsItem, ...replies];
+          this.items = [ newsItem, ...replies ];
           this.processNews(this.items, newsItem._id);
           this.showReplies(newsItem);
           subscription.unsubscribe();
