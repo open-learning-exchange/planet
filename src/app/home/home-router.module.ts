@@ -12,6 +12,7 @@ import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { LandingComponent } from '../landing/landing.component';
+import { NewsListComponent } from '../news/news-list.component';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent,
     children: [
       { path: '', component: CommunityComponent },
+      { path: 'voices/:id', component: NewsListComponent, data: { requiresAuth: false } },
       { path: 'community/:code', component: CommunityComponent },
       { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
       {
