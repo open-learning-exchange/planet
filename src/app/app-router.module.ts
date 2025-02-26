@@ -7,7 +7,11 @@ import { HomeComponent } from './home/home.component';
 import { UserGuard } from './shared/user-guard.service';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, loadChildren: () => import('./home/home.module').then(m => m.HomeModule), canActivateChild: [ UserGuard ] },
+  { path: '',
+    component: HomeComponent,
+    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    canActivateChild: [ UserGuard ]
+  },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthService ] },
   { path: '**', component: PageNotFoundComponent }
 ];

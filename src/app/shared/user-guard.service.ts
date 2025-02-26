@@ -1,12 +1,12 @@
-import { Injectable } from "@angular/core";
-import { UserService } from "./user.service";
-import { PouchAuthService } from "./database/pouch-auth.service";
-import { StateService } from "./state.service";
-import { switchMap } from "rxjs/operators";
-import { of } from "rxjs";
+import { Injectable } from '@angular/core';
+import { UserService } from './user.service';
+import { PouchAuthService } from './database/pouch-auth.service';
+import { StateService } from './state.service';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 // Guard simply ensures user data is fetched for application
-@Injectable({ providedIn: 'root' }) 
+@Injectable({ providedIn: 'root' })
 export class UserGuard {
 
   constructor(
