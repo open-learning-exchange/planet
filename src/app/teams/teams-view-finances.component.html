@@ -2,16 +2,17 @@
   <div class="transaction-buttons">
     <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()" *ngIf="editable">Add Transaction</button>
     <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
-    <button class="margin-lr-10" color="accent" mat-raised-button i18n (click)="exportTableData()" *ngIf="!emptyTable">Export Transactions</button>
+    <button mat-raised-button color="accent"  i18n (click)="exportTableData()" *ngIf="!emptyTable">Export Transactions</button>
   </div>
   <div class="transaction-date-fields">
     <mat-form-field>
-      <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick Start Date">
+      <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick Start Date" [max]="endDate">
       <mat-datepicker-toggle matSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterStart></mat-datepicker>
+      <mat-error i18n *ngIf="startDate > endDate">Start date must be before end date</mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick End Date">
+      <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick End Date" [min]="startDate">
       <mat-datepicker-toggle matSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterEnd></mat-datepicker>
     </mat-form-field>
