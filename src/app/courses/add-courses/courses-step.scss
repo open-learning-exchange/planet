@@ -16,11 +16,7 @@ planet-courses-step .mat-chip-list-wrapper {
   max-width: 300px;
   
   a {
-    display: inline-block;
-    max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
   }
 }
