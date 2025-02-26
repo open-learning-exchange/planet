@@ -7,7 +7,8 @@ import { HomeComponent } from './home/home.component';
 import { UserGuard } from './shared/user-guard.service';
 
 const routes: Routes = [
-  { path: '',
+  {
+    path: '',
     component: HomeComponent,
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
     canActivateChild: [ UserGuard ]
