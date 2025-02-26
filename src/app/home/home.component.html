@@ -63,10 +63,13 @@
       <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
     </button>
     <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
-      <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
-      <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
-      <button mat-menu-item i18n planetChangePassword *ngIf="user.planetCode === this.configuration.code">Change Password</button>
-      <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+      <ng-container *ngIf="isLoggedIn">
+        <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
+        <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
+        <button mat-menu-item i18n planetChangePassword *ngIf="user.planetCode === this.configuration.code">Change Password</button>
+        <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+      </ng-container>
+      <button mat-menu-item i18n routerLink="/login" *ngIf="!isLoggedIn">Login</button>
     </mat-menu>
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
