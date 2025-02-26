@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { forkJoin } from 'rxjs';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
 
@@ -19,7 +20,7 @@ import { dedupeShelfReduce } from '../shared/utils';
     }
   ` ]
 })
-export class NewsListComponent implements OnChanges {
+export class NewsListComponent implements OnInit, OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`Message updated successfully.`;
@@ -33,6 +34,7 @@ export class NewsListComponent implements OnChanges {
   showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
+  publicView = this.route.snapshot.data.requiresAuth === false;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   @Output() viewChange = new EventEmitter<any>();
 
@@ -41,23 +43,45 @@ export class NewsListComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private route: ActivatedRoute,
   ) {}
 
+  ngOnInit() {
+    if (this.publicView) {
+      const newsId = this.route.snapshot.params.id;
+      this.newsService.requestNewsItem(newsId).subscribe(newsItem => {
+        const replySelector = { replyTo: newsId };
+        this.newsService.requestNews({ selectors: replySelector, viewId: this.viewableId });
+
+        const subscription = this.newsService.newsUpdated$.subscribe(replies => {
+          this.items = [newsItem, ...replies];
+          this.processNews(this.items, newsItem._id);
+          this.showReplies(newsItem);
+          subscription.unsubscribe();
+        });
+      });
+    }
+  }
+
   ngOnChanges() {
+    this.processNews(this.items);
+  }
+
+  processNews(news: any[], viewingId: string = 'root') {
     let isLatest = true;
     this.replyObject = {};
-    this.items.forEach(item => {
+    news.forEach(item => {
       this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
       if (!item.doc.replyTo && isLatest) {
         item.latestMessage = true;
         isLatest = false;
       }
     });
-    this.displayedItems = this.replyObject[this.replyViewing._id];
-    if (this.replyViewing._id !== 'root') {
-      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
+    if (viewingId !== 'root') {
+      this.replyViewing = news.find(item => item._id === viewingId) || { _id: 'root' };
     }
+    this.displayedItems = this.replyObject[this.replyViewing._id];
   }
 
   showReplies(news) {

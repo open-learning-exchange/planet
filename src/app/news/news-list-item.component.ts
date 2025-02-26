@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
-import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
@@ -43,7 +44,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private clipboard: Clipboard
   ) {}
 
   ngOnInit() {
@@ -166,5 +168,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
+  }
+
+  copyLink(voice) {
+    const link = `${window.location.origin}/voices/${voice._id}`;
+    this.clipboard.copy(link);
   }
 }
