@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { PouchAuthService } from './database/pouch-auth.service';
-import { StateService } from './state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,6 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private pouchAuthService: PouchAuthService,
-    private stateService: StateService
   ) { }
 
   private getSession$() {

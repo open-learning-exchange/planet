@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-import { HomeComponent } from './home.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { UpgradeComponent } from '../upgrade/upgrade.component';
 import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
