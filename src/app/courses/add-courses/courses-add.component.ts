@@ -17,6 +17,7 @@ import { PlanetStepListService } from '../../shared/forms/planet-step-list.compo
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { ChatService } from '../../shared/chat.service';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -57,6 +58,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   languageNames = languages.map(list => list.name);
 
   mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
+  rating: String;
 
   constructor(
     private router: Router,
@@ -70,7 +72,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private chatService: ChatService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -272,6 +275,45 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   convertMarkdownImagesText(course, steps) {
     return { ...this.coursesService.storeMarkdownImages({ ...course, steps }) };
+  }
+
+  rateCourse() {
+    if (this.courseForm.valid) {
+      const stepsContent = this.steps.length > 0 ?
+      `The course has ${this.steps.length} steps: ${this.steps.map(step => `${step.stepTitle} - ${step.description}`).join('\n')}`
+       : '';
+
+      const content = `In 3 clear blobs, 1. provide a rating for this course(granular rating out of 100%), 2. Explain why you gave the rating 3. Explain how to improve the course
+      Course Title: ${this.courseForm.get('courseTitle').value}
+      Course Description: ${this.courseForm.get('description').value.text}
+      Grade Level: ${this.courseForm.get('gradeLevel').value}
+      Subject Level: ${this.courseForm.get('subjectLevel').value}
+      ${stepsContent}
+      `;
+
+      this.chatService.getPrompt(content).subscribe(
+      (rating) => {
+        this.rating = this.sanitizeText(rating?.chat);
+      }
+    );
+    } else {
+      showFormErrors(this.courseForm.controls);
+      return;
+    }
+  }
+
+  sanitizeText(text: any): any {
+    // Replace newline characters with <br> tags
+    const textWithLineBreaks = text.replace(/\n/g, '<br>');
+
+    // Replace code block markers with <code> tags
+    const codeBlockStart = /```/g;
+    const codeBlockEnd = /```/g;
+    const textWithCodeBlocks = textWithLineBreaks
+      .replace(codeBlockStart, '<code>')
+      .replace(codeBlockEnd, '</code>');
+
+    return textWithCodeBlocks;
   }
 
 }
