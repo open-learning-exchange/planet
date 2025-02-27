@@ -133,4 +133,14 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  getUserRoles(): string[] {
+    const rolesSet = new Set<string>();
+    if (this.userDetail.isUserAdmin) {
+      rolesSet.add('admin');
+    }
+    if (this.userDetail.roles && this.userDetail.roles.length > 0) {
+      this.userDetail.roles.forEach(role => rolesSet.add(role));
+    }
+    return Array.from(rolesSet);
+  }
 }
