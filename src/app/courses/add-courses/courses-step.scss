@@ -11,3 +11,12 @@ planet-courses-step .mat-chip-list-wrapper {
     overflow-y: auto;
   }
 }
+
+.mat-chip {
+  max-width: 300px;
+  
+  a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
