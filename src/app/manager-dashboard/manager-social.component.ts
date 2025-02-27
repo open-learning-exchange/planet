@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -13,7 +13,7 @@ import { CustomValidators } from '../validators/custom-validators';
   templateUrl: './manager-social.component.html',
   styleUrls: [ './manager.scss' ]
 })
-export class ManagerSocialComponent implements OnInit {
+export class ManagerSocialComponent implements OnInit, OnDestroy {
   configuration: any = {};
   socialForm: FormGroup = this.fb.group({});
   spinnerOn = true;
@@ -41,10 +41,15 @@ export class ManagerSocialComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   initForm() {
     const controls = {};
     for (const key of Object.keys(this.configuration.social)) {
-      controls[key] = [this.configuration.social[key] || '', [CustomValidators.validLink]];
+      controls[key] = [this.configuration.social[key] || '', [], [CustomValidators.validLink]];
     }
     this.socialForm = this.fb.group(controls);
   }
@@ -65,13 +70,12 @@ export class ManagerSocialComponent implements OnInit {
         takeUntil(this.unsubscribe$)
       )
       .subscribe(
-        () => {
-          this.stateService.requestData('configurations', 'local');
-          this.router.navigate(['/manager']);
-          this.planetMessageService.showMessage('Configuration Updated Successfully');
-        },
+        () => this.stateService.requestData('configurations', 'local'),
         err => {
-          this.planetMessageService.showAlert('There was an error updating the configuration');
+          this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
+        }, () => {
+          this.router.navigate([ '/manager' ]);
+          this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
         }
       );
   }
