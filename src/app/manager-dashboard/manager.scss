@@ -112,13 +112,11 @@
     line-height: 1.5;
   }
 
-  // Change this
-  mat-form-field {
+  .configuration-list-item-content mat-form-field {
     flex-basis: 70%;
   }
 
-  // change as well
-  input {
+  .configuration-list-item-content input {
     width: 100%;
   }
 }
@@ -151,8 +149,7 @@
     overflow: hidden;
   }
 
-  // change this
-  mat-form-field {
+  .configuration-list-item-content mat-form-field {
     flex-basis: 80%;
     min-width: 0;
   }
