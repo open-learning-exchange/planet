@@ -105,7 +105,24 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   }
 
   isFormPristine(): boolean {
-    return JSON.stringify(this.healthForm.value) === JSON.stringify(this.initialFormValues);
+    const form = this.healthForm.value;
+    const initial = this.initialFormValues;
+    const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
+
+    return Object.keys(form).every(key => {
+      if (key === 'conditions') {
+        const formConditions = form[key] || {};
+        const initialConditions = initial[key] || {};
+        return Object.keys({ ...formConditions, ...initialConditions })
+          .every(condition => Boolean(formConditions[condition]) === Boolean(initialConditions[condition]));
+      }
+      if (numericFields.includes(key)) {
+        const formVal = form[key] === '' || form[key] === null ? undefined : Number(form[key]);
+        const initialVal = initial[key] === '' || initial[key] === null ? undefined : Number(initial[key]);
+        return formVal === initialVal;
+      }
+      return JSON.stringify(form[key]) === JSON.stringify(initial[key]);
+    });
   }
 
   onSubmit() {
