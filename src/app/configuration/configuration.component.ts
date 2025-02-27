@@ -8,7 +8,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { distinctUntilChanged, finalize } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
 
@@ -28,19 +28,6 @@ const removeProtocol = (str: string) => {
     .configuration-form {
       grid-template-areas: "none none ." "none none none";
       justify-items: center;
-    }
-    .icon-small {
-      font-size: 1.2em;
-    }
-    .fab-button {
-      height: 30px;
-      width: 30px;
-      margin: 10px;
-    }
-    .expansion-fields {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
     }
   ` ]
 })
@@ -118,12 +105,6 @@ export class ConfigurationComponent implements OnInit {
       autoAccept: true,
       alwaysOnline: false,
       betaEnabled: 'off',
-      social: this.formBuilder.group({
-        facebook: [ '', [], CustomValidators.validLink ],
-        instagram: [ '', [], CustomValidators.validLink ],
-        youtube: [ '', [], CustomValidators.validLink ],
-        x: [ '', [], CustomValidators.validLink ],
-      })
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],
