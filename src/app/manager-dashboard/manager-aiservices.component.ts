@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-
 import { ConfigurationService } from '../configuration/configuration.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -11,13 +11,14 @@ import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-aiservices.component.html',
-  styleUrls: [ './manager-aiservices.component.scss' ],
+  styleUrls: [ './manager.scss' ]
 })
-export class ManagerAIServicesComponent implements OnInit {
+export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: any = {};
-  configForm: FormGroup;
+  configForm: FormGroup = this.fb.group({});
   hideKey: { [key: string]: boolean } = {};
   spinnerOn = true;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +43,11 @@ export class ManagerAIServicesComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   initForm() {
     this.configForm = this.fb.group({
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
@@ -57,7 +63,6 @@ export class ManagerAIServicesComponent implements OnInit {
     }
   }
 
-
   mapConfigToFormGroup(configObject: any, prefix: string) {
     const formGroupObj = {};
     if (configObject) {
@@ -66,10 +71,6 @@ export class ManagerAIServicesComponent implements OnInit {
       }
     }
     return formGroupObj;
-  }
-
-  objectKeys(obj: any): string[] {
-    return Object.keys(obj);
   }
 
   saveConfig() {

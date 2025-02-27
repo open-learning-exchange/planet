@@ -49,7 +49,7 @@ export class ManagerSocialComponent implements OnInit, OnDestroy {
   initForm() {
     const controls = {};
     for (const key of Object.keys(this.configuration.social)) {
-      controls[key] = [this.configuration.social[key] || '', [], [CustomValidators.validLink]];
+      controls[key] = [ this.configuration.social[key] || '', [], [ CustomValidators.validLink ] ];
     }
     this.socialForm = this.fb.group(controls);
   }

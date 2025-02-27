@@ -2,28 +2,28 @@
   <button mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span>AI API Configurations</span>
+  <span i18n>AI API Configurations</span>
 </mat-toolbar>
 
-<div class="container" [formGroup]="configForm">
-  <mat-card class="card">
-    <mat-card-title>API Keys</mat-card-title>
+<div class="configuration-container" [formGroup]="configForm">
+  <mat-card class="configuration-card">
+    <mat-card-title i18n>API Keys</mat-card-title>
     <mat-card-content *ngIf="configuration.keys">
       <mat-list>
-        <mat-list-item *ngFor="let key of objectKeys(configuration.keys)">
-          <div class="list-item-content">
-            <span>{{ key | titlecase }}</span>
+        <mat-list-item *ngFor="let apikey of configuration.keys | keyvalue">
+          <div class="configuration-list-item-content">
+            <span>{{ apikey.key | titlecase }}</span>
             <mat-form-field>
               <input
                 matInput
-                [type]="hideKey[key] ? 'password' : 'text'"
-                [formControlName]="'keys_' + key"
+                [type]="hideKey[apikey.key] ? 'password' : 'text'"
+                [formControlName]="'keys_' + apikey.key"
                 placeholder="Enter API key"
               />
-              <button mat-icon-button matSuffix (click)="toggleHideKey(key)">
-                <mat-icon>{{ hideKey[key] ? 'visibility_off' : 'visibility' }}</mat-icon>
+              <button mat-icon-button matSuffix (click)="toggleHideKey(apikey.key)">
+                <mat-icon>{{ hideKey[apikey.key] ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              <button mat-icon-button matSuffix (click)="copyKey(key)">
+              <button mat-icon-button matSuffix (click)="copyKey(apikey.key)">
                 <mat-icon>content_copy</mat-icon>
               </button>
             </mat-form-field>
@@ -34,15 +34,15 @@
   </mat-card>
 
 
-  <mat-card class="card">
-    <mat-card-title>Models</mat-card-title>
+  <mat-card class="configuration-card">
+    <mat-card-title i18n>Models</mat-card-title>
     <mat-card-content *ngIf="configuration.models">
       <mat-list>
-        <mat-list-item *ngFor="let model of objectKeys(configuration.models)">
-          <div class="list-item-content">
-            <span>{{ model | titlecase }}</span>
+        <mat-list-item *ngFor="let model of configuration.models | keyvalue">
+          <div class="configuration-list-item-content">
+            <span>{{ model.key | titlecase }}</span>
             <mat-form-field>
-              <input matInput [formControlName]="'models_' + model" placeholder="Enter model" />
+              <input matInput [formControlName]="'models_' + model.key" placeholder="Enter model" />
             </mat-form-field>
           </div>
         </mat-list-item>
@@ -50,13 +50,13 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="card">
-    <mat-card-title>Assistant Configuration</mat-card-title>
+  <mat-card class="configuration-card">
+    <mat-card-title i18n>Assistant Configuration</mat-card-title>
     <mat-card-content *ngIf="configuration.assistant">
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
-            <span>Name:</span>
+          <div class="configuration-list-item-content">
+            <span i18n>Name:</span>
             <mat-form-field>
               <input matInput formControlName="assistantName" placeholder="Assistant name" />
             </mat-form-field>
@@ -64,8 +64,8 @@
         </mat-list-item>
       </mat-list>
 
-      <div class="list-item-content instructions">
-        <span>Instructions:</span>
+      <div class="configuration-list-item-content configuration-instructions">
+        <span i18n>Instructions:</span>
         <mat-form-field>
           <textarea matInput formControlName="assistantInstructions" placeholder="Assistant instructions"></textarea>
         </mat-form-field>
@@ -73,7 +73,7 @@
     </mat-card-content>
   </mat-card>
 
-  <div class="update-button-container">
+  <div class="configuration-update-button-container">
     <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()">Update Configuration</button>
   </div>
 </div>
