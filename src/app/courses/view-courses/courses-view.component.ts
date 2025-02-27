@@ -103,15 +103,25 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       parentId: step.exam._id + '@' + this.courseDetail._id,
       parent: step.exam,
       user: this.userService.get(),
-      type: 'exam' });
+      type: 'exam' 
+    });
     return this.submissionsService.submissionUpdated$.pipe(
       filter(({ submission }) => submission.parent._id === step.exam._id),
       take(1)
-    ).pipe(map(({ submission, attempts }) => ({
-      examText: submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake',
-      submission,
-      attempts
-    })));
+    ).pipe(
+      map(({ submission, attempts }) => {
+        console.log('Submission received:', submission); // Debug log
+        return {
+          examText: submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake',
+          submission: {
+            ...submission,
+            // Ensure we carry over the status from CouchDB
+            status: submission.status || (submission.answers?.length === submission.parent.questions.length ? 'requires grading' : 'pending')
+          },
+          attempts
+        };
+      })
+    );
   }
 
   setIsPreviousTestTaken(step, stepNum, stepClickedNum, attempts) {
@@ -194,4 +204,45 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return index;
   }
 
+  isExamComplete(step: any) {
+    // Use the exam questions if available; otherwise fallback to the parent’s questions.
+    const examQuestions = (step.exam && step.exam.questions) || (step.parent && step.parent.questions);
+    return step.submission &&
+           step.submission.answers &&
+           examQuestions &&
+           (step.submission.answers.length === examQuestions.length);
+  }
+
+  needsGrading(step: any) {
+    return step.submission && 
+           step.submission.status === 'requires grading' && 
+           this.isExamComplete(step);
+  }
+
+  getStepStatus(step: any) {
+    if (!step.exam || !step.submission) {
+      return 'not-started';
+    }
+    if (step.submission.status === 'requires grading') {
+      console.log('Step needs grading:', step);
+      return 'needs-grading';
+    }
+    if (!step.submission.answers || step.submission.answers.length < step.exam.questions.length) {
+      console.log('Step incomplete:', step);
+      return 'incomplete';
+    }
+    return 'complete';
+  }
+
+  getStepIcon(step: any) {
+    if (!step.submission) {
+      return 'rotate_right';
+    }
+    // Use the CouchDB status directly:
+    // 'requires grading' -> complete exam awaiting grading -> grading icon
+    // 'pending' -> incomplete exam -> incomplete icon
+    return step.submission.status === 'requires grading' ? 'pending_actions' : 'rotate_right';
+  }
+  
+  
 }

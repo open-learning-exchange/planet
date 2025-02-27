@@ -74,7 +74,9 @@
                 <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
               </mat-panel-description>
               <planet-course-icon *ngIf="step.progress && step.progress.passed" [icon]="'done'"></planet-course-icon>
-              <planet-course-icon *ngIf="step.progress && !step.progress.passed" [icon]="'rotate_right'"></planet-course-icon>
+              <planet-course-icon *ngIf="step.progress && !step.progress.passed" 
+                [icon]="getStepIcon(step)">
+              </planet-course-icon>
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>
             <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0; else contentMessage" i18n>
