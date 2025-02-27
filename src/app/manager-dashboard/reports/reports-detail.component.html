@@ -19,13 +19,14 @@
     <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
       <mat-form-field>
         <mat-label i18n>Start Date</mat-label>
-        <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
+        <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
         <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
         <mat-datepicker #startDate></mat-datepicker>
+        <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label i18n>End Date</mat-label>
-        <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
+        <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
         <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
         <mat-datepicker #endDate></mat-datepicker>
       </mat-form-field>
