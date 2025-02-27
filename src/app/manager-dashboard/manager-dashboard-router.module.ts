@@ -3,6 +3,7 @@ import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { Routes, RouterModule } from '@angular/router';
 import { ManagerSyncComponent } from './manager-sync.component';
 import { ManagerFetchComponent } from './manager-fetch.component';
+import { ManagerSocialComponent } from './manager-social.component';
 import { ManagerAIServicesComponent } from './manager-aiservices.component';
 import { ManagerDashboardConfigurationComponent } from './manager-dashboard-configuration.component';
 import { ReportsComponent } from './reports/reports.component';
@@ -15,6 +16,7 @@ import { LogsMyPlanetComponent } from './reports/logs-myplanet.component';
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
   { path: 'aiservices', component: ManagerAIServicesComponent },
+  { path: 'social', component: ManagerSocialComponent },
   { path: 'certifications', loadChildren: () => import('./certifications/certifications.module').then(m => m.CertificationsModule) },
   { path: 'sync', component: ManagerSyncComponent },
   { path: 'fetch', component: ManagerFetchComponent },

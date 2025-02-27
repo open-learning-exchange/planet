@@ -1,6 +1,41 @@
 @import "../variables.scss";
 
-.container {
+.view-container > * {
+  margin-bottom: 0.5rem;
+}
+
+.view-container > *:last-child {
+  margin-bottom: 0;
+}
+
+.send-view {
+  padding-bottom: 0;
+}
+
+.list-view {
+  padding-top: 0;
+}
+
+.mat-raised-button {
+  margin: 0.25rem;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.version-card {
+  flex: 1;
+  max-width: calc(50% - 20px);
+  margin: 1rem;
+}
+
+.pinClass {
+  font-size: 1.5rem;
+}
+
+.configuration-container {
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -8,12 +43,12 @@
   align-items: center;
 }
 
-.card {
+.configuration-card {
   width: 95%;
   margin: 0 auto;
 }
 
-.list-item-content {
+.configuration-list-item-content {
   display: grid;
   grid-template-columns: 1.5fr 4fr;
   width: 100%;
@@ -21,44 +56,54 @@
   gap: 20px;
 }
 
-.instructions {
+.configuration-instructions {
   padding: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   font-size: 16px;
   line-height: 1.5;
 }
 
-.update-button-container {
+.configuration-update-button-container {
   display: flex;
   justify-content: center;
   width: 100%;
   margin-top: 20px;
 }
 
-.update-button-container button {
+.configuration-update-button-container button {
   width: auto;
   margin-left: 0;
 }
 
+.configuration-icon-small {
+  font-size: 1.2em;
+}
+
+.configuration-fab-button {
+  height: 30px;
+  width: 30px;
+  margin: 10px;
+}
+
 /* Targeting tablet screens*/
 @media (max-width: $screen-md) {
-  .container {
+  .configuration-container {
     padding: 15px;
   }
 
-  .card {
+  .configuration-card {
     width: 100%;
     margin: 0;
   }
 
-  .list-item-content {
+  .configuration-list-item-content {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     gap: 10px;
   }
 
-  .list-item-content > span {
+  .configuration-list-item-content > span {
     flex-basis: 30%;
     text-align: left;
     white-space: nowrap;
@@ -67,27 +112,27 @@
     line-height: 1.5;
   }
 
-  mat-form-field {
+  .configuration-list-item-content mat-form-field {
     flex-basis: 70%;
   }
 
-  input {
+  .configuration-list-item-content input {
     width: 100%;
   }
 }
 
 /* Targeting mobile screens*/
 @media (max-width: $screen-sm) {
-  .container {
+  .configuration-container {
     padding: 10px;
   }
 
-  .card {
+  .configuration-card {
     width: 100%;
     margin: 0;
   }
 
-  .list-item-content {
+  .configuration-list-item-content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -97,23 +142,23 @@
     overflow-x: hidden;
   }
 
-  .list-item-content > span {
+  .configuration-list-item-content > span {
     flex-basis: 35%;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   }
 
-  mat-form-field {
+  .configuration-list-item-content mat-form-field {
     flex-basis: 80%;
     min-width: 0;
   }
 
-  .update-button-container {
+  .configuration-update-button-container {
     justify-content: flex-start;
   }
 
-  .update-button-container button {
+  .configuration-update-button-container button {
     width: auto;
   }
 }
