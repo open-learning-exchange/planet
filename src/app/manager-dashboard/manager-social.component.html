@@ -1,0 +1,30 @@
+<mat-toolbar>
+  <button mat-icon-button routerLink="/manager">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n>Social Configuration</span>
+</mat-toolbar>
+
+<div class="configuration-container">
+  <mat-card class="configuration-card">
+    <mat-card-title i18n>Social Media</mat-card-title>
+    <mat-card-content>
+      <form [formGroup]="socialForm">
+        <mat-list>
+          <mat-list-item *ngFor="let social of configuration.social | keyvalue">
+            <div class="configuration-list-item-content">
+              <span>{{ social.key | titlecase }}</span>
+              <mat-form-field>
+                <input matInput [formControlName]="social.key" placeholder="Enter Social URL" />
+              </mat-form-field>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="configuration-update-button-container">
+    <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()">Update Configuration</button>
+  </div>
+</div>
