@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { ActivatedRoute, Router, ParamMap, NavigationStart } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
@@ -12,17 +12,23 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { switchMap } from 'rxjs/operators';
 import { of, forkJoin } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
 
 @Component({
   templateUrl: './health-event.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthEventComponent implements OnInit {
+export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   event: any = {};
+  initialFormValues: any;
+  hasUnsavedChanges = false;
+  private isNavigating = false;
+  private navigationViaCancel = false;
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +39,8 @@ export class HealthEventComponent implements OnInit {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.healthForm = this.fb.group({
       temperature: [ '', Validators.min(1) ],
@@ -53,6 +60,12 @@ export class HealthEventComponent implements OnInit {
       tests: '',
       referrals: '',
       conditions: {}
+    });
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
     });
   }
 
@@ -74,7 +87,25 @@ export class HealthEventComponent implements OnInit {
       }
       this.event = event === 'new' ? {} : event;
       this.healthForm.patchValue(this.event);
+      this.initialFormValues = { ...this.healthForm.value };
+      this.setupFormValueChanges();
     });
+  }
+
+  setupFormValueChanges() {
+    this.healthForm.valueChanges.subscribe(() => {
+      if (!this.isFormPristine()) {
+        this.hasUnsavedChanges = true;
+        this.unsavedChangesService.setHasUnsavedChanges(true);
+      } else {
+        this.hasUnsavedChanges = false;
+        this.unsavedChangesService.setHasUnsavedChanges(false);
+      }
+    });
+  }
+
+  isFormPristine(): boolean {
+    return JSON.stringify(this.healthForm.value) === JSON.stringify(this.initialFormValues);
   }
 
   onSubmit() {
@@ -87,7 +118,11 @@ export class HealthEventComponent implements OnInit {
     if (promptFields.length) {
       this.showWarning(promptFields);
     } else {
-      this.saveEvent().subscribe(() => this.goBack());
+      this.saveEvent().subscribe(() => {
+        this.hasUnsavedChanges = false;
+        this.unsavedChangesService.setHasUnsavedChanges(false);
+        this.goBack();
+      });
     }
   }
 
@@ -98,6 +133,14 @@ export class HealthEventComponent implements OnInit {
   }
 
   goBack() {
+    if (this.hasUnsavedChanges) {
+      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      if (!confirmLeave) {
+        return;
+      }
+    }
+    this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
@@ -157,4 +200,17 @@ export class HealthEventComponent implements OnInit {
     );
   }
 
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+    }
+    return true;
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+    }
+  }
 }
