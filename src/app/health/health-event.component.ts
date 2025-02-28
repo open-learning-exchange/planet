@@ -29,7 +29,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   initialFormValues: any;
   hasUnsavedChanges = false;
   private isNavigating = false;
-  private navigationViaCancel = false;
 
   constructor(
     private fb: FormBuilder,
