@@ -95,7 +95,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
   private captureInitialState() {
     const formValue = this.healthForm.value;
-    const numericFields = ['temperature', 'pulse', 'height', 'weight'];
+    const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
     const processedForm = Object.keys(formValue).reduce((acc, key) => {
       if (numericFields.includes(key)) {
         acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
@@ -126,8 +126,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         debounce(() => race(interval(200), of(true)))
       )
       .subscribe(formValue => {
-        const numericFields = ['temperature', 'pulse', 'height', 'weight'];
-                const processedForm = Object.keys(formValue).reduce((acc, key) => {
+        const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
+        const processedForm = Object.keys(formValue).reduce((acc, key) => {
           if (numericFields.includes(key)) {
             acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
           } else if (key === 'conditions') {
