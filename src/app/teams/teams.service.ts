@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of, empty, forkJoin } from 'rxjs';
+import { of, empty, forkJoin, Observable } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -11,6 +11,8 @@ import { ValidatorService } from '../validators/validator.service';
 import { toProperCase } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
 
 const nameField = {
   'type': 'textbox',
@@ -61,7 +63,8 @@ export class TeamsService {
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private unsavedChangesService: UnsavedChangesService
   ) {}
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
@@ -84,20 +87,40 @@ export class TeamsService {
       teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
       public: [ team.public || false ]
     };
-    return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
-      .pipe(
-        switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
-          empty()
-        ),
-        switchMap((response) => !team._id ?
-          this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
-          of(response)
-        )
+    return new Observable(observer => {
+      this.dialogsFormService.openDialogsForm(
+        title,
+        this.addTeamFields(configuration, type),
+        formGroup,
+        {
+          onSubmit: (response) => {
+            if (response !== undefined) {
+              this.updateTeam({
+                limit: 12,
+                status: 'active',
+                createdDate: this.couchService.datePlaceholder,
+                teamPlanetCode: configuration.code,
+                parentCode: configuration.parentCode,
+                createdBy: userId,
+                ...team,
+                ...response,
+                type
+              }).subscribe(newTeam => {
+                observer.next(newTeam);
+                observer.complete();
+              });
+            }
+          },
+          onCancel: () => {
+            const form = this.dialogsFormService.getDialogForm();
+            if (form?.dirty) {
+              return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+            }
+            return true;
+          }
+        }
       );
+    });
   }
 
   addTeamFields(configuration, type) {

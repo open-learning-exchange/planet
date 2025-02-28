@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, HostListener } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -31,6 +31,15 @@ export class DialogsFormComponent {
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
+  private initialFormState: string;
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    const currentState = JSON.stringify(this.modalForm.value);
+    if (currentState !== this.initialFormState) {
+      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+    }
+  }
 
   private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
@@ -57,7 +66,16 @@ export class DialogsFormComponent {
       this.fields = this.data.fields;
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
+      this.captureInitialState();
     }
+    this.dialogRef.disableClose = true;
+    this.dialogRef.backdropClick().subscribe(() => {
+      this.closeDialog();
+    });
+  }
+
+  private captureInitialState() {
+    this.initialFormState = JSON.stringify(this.modalForm.value);
   }
 
   onSubmit(mForm, dialog) {
@@ -108,6 +126,17 @@ export class DialogsFormComponent {
 
   isDirty() {
     return this.modalForm.dirty;
+  }
+
+  closeDialog() {
+    const currentState = JSON.stringify(this.modalForm.value);
+    if (currentState !== this.initialFormState) {
+      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      if (!confirmLeave) {
+        return;
+      }
+    }
+    this.dialogRef.close();
   }
 
 }

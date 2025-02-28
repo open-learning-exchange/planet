@@ -46,4 +46,8 @@ export class DialogsFormService {
     this.dialogRef.componentInstance.errorMessage = errorMessage;
   }
 
+  getDialogForm(): FormGroup | undefined {
+    return this.dialogRef?.componentInstance?.modalForm;
+  }
+
 }
