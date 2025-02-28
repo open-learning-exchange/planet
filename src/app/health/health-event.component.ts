@@ -88,8 +88,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
       }
       this.event = event === 'new' ? {} : event;
       this.healthForm.patchValue(this.event);
+      this.onFormChanges();
       this.captureInitialState();
-      this.setupFormValueChanges();
     });
   }
 
@@ -120,7 +120,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     return processedConditions;
   }
 
-  setupFormValueChanges() {
+  onFormChanges() {
     this.healthForm.valueChanges
       .pipe(
         debounce(() => race(interval(200), of(true)))
