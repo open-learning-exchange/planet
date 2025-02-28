@@ -10,10 +10,11 @@ import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, interval, race } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { UnsavedChangesService } from '../shared/unsaved-changes.service';
+import { debounce } from 'rxjs/operators';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -87,42 +88,60 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
       }
       this.event = event === 'new' ? {} : event;
       this.healthForm.patchValue(this.event);
-      this.initialFormValues = { ...this.healthForm.value };
+      this.captureInitialState();
       this.setupFormValueChanges();
     });
   }
 
-  setupFormValueChanges() {
-    this.healthForm.valueChanges.subscribe(() => {
-      if (!this.isFormPristine()) {
-        this.hasUnsavedChanges = true;
-        this.unsavedChangesService.setHasUnsavedChanges(true);
+  private captureInitialState() {
+    const formValue = this.healthForm.value;
+    const numericFields = ['temperature', 'pulse', 'height', 'weight'];
+    const processedForm = Object.keys(formValue).reduce((acc, key) => {
+      if (numericFields.includes(key)) {
+        acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
+      } else if (key === 'conditions') {
+        acc[key] = this.processConditions(formValue[key] || {});
       } else {
-        this.hasUnsavedChanges = false;
-        this.unsavedChangesService.setHasUnsavedChanges(false);
+        acc[key] = formValue[key];
       }
-    });
+      return acc;
+    }, {});
+
+    this.initialFormValues = JSON.stringify(processedForm);
   }
 
-  isFormPristine(): boolean {
-    const form = this.healthForm.value;
-    const initial = this.initialFormValues;
-    const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
+  private processConditions(conditions: any) {
+    const processedConditions = Object.keys(conditions || {}).reduce((acc, key) => {
+      if (conditions[key]) {
+        acc[key] = true;
+      }
+      return acc;
+    }, {});
+    return processedConditions;
+  }
 
-    return Object.keys(form).every(key => {
-      if (key === 'conditions') {
-        const formConditions = form[key] || {};
-        const initialConditions = initial[key] || {};
-        return Object.keys({ ...formConditions, ...initialConditions })
-          .every(condition => Boolean(formConditions[condition]) === Boolean(initialConditions[condition]));
-      }
-      if (numericFields.includes(key)) {
-        const formVal = form[key] === '' || form[key] === null ? undefined : Number(form[key]);
-        const initialVal = initial[key] === '' || initial[key] === null ? undefined : Number(initial[key]);
-        return formVal === initialVal;
-      }
-      return JSON.stringify(form[key]) === JSON.stringify(initial[key]);
-    });
+  setupFormValueChanges() {
+    this.healthForm.valueChanges
+      .pipe(
+        debounce(() => race(interval(200), of(true)))
+      )
+      .subscribe(formValue => {
+        const numericFields = ['temperature', 'pulse', 'height', 'weight'];
+                const processedForm = Object.keys(formValue).reduce((acc, key) => {
+          if (numericFields.includes(key)) {
+            acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
+          } else if (key === 'conditions') {
+            acc[key] = this.processConditions(formValue[key] || {});
+          } else {
+            acc[key] = formValue[key];
+          }
+          return acc;
+        }, {});
+
+        const currentState = JSON.stringify(processedForm);
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
   }
 
   onSubmit() {
