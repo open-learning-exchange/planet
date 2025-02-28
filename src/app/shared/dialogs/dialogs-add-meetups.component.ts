@@ -1,11 +1,12 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogsLoadingService } from './dialogs-loading.service';
+import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.component';
 
 @Component({
   template: `
     <ng-container [ngSwitch]="view">
-      <planet-meetups-add *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
+      <planet-meetups-add #meetupsAdd *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
         [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
       </planet-meetups-add>
       <planet-meetups-view *ngSwitchCase="'view'"
@@ -18,6 +19,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
   `
 })
 export class DialogsAddMeetupsComponent {
+  @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;
 
   link: any = {};
   view = 'add';
@@ -35,6 +37,19 @@ export class DialogsAddMeetupsComponent {
     this.view = this.data.view || this.view;
     this.meetup = this.data.meetup || this.meetup;
     this.editable = this.data.editable !== undefined && this.data.editable !== null ? this.data.editable : this.editable;
+    this.dialogRef.disableClose = true;
+    this.dialogRef.backdropClick().subscribe(() => {
+      if (this.meetupsAdd && this.meetupsAdd.hasUnsavedChanges) {
+        const confirmClose = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+        if (confirmClose) {
+          this.meetupsAdd.hasUnsavedChanges = false;
+          this.meetupsAdd.unsavedChangesService.setHasUnsavedChanges(false);
+          this.dialogRef.close();
+        }
+      } else {
+        this.dialogRef.close();
+      }
+    });
   }
 
   meetupsChange() {
