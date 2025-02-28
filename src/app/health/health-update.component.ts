@@ -62,22 +62,27 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       .pipe(
         debounce(() => race(interval(200), of(true)))
       )
-      .subscribe(() => this.checkFormChanges());
+      .subscribe(() => {
+        const currentState = JSON.stringify({
+          profile: this.profileForm.value,
+          health: this.healthForm.value
+        });
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
 
     this.healthForm.valueChanges
       .pipe(
         debounce(() => race(interval(200), of(true)))
       )
-      .subscribe(() => this.checkFormChanges());
-  }
-
-  checkFormChanges() {
-    const currentState = JSON.stringify({
-      profile: this.profileForm.value,
-      health: this.healthForm.value
-    });
-    this.hasUnsavedChanges = currentState !== this.initialFormValues;
-    this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      .subscribe(() => {
+        const currentState = JSON.stringify({
+          profile: this.profileForm.value,
+          health: this.healthForm.value
+        });
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
   }
 
   initProfileForm() {
