@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute, Router, ParamMap, NavigationStart } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
@@ -28,7 +28,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   event: any = {};
   initialFormValues: any;
   hasUnsavedChanges = false;
-  private isNavigating = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,12 +59,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
       tests: '',
       referrals: '',
       conditions: {}
-    });
-
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.isNavigating = true;
-      }
     });
   }
 
