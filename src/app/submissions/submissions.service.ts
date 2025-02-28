@@ -301,7 +301,7 @@ export class SubmissionsService {
 
   getPDFAnswerText(submission: any, index, answerIndexes: number[]) {
     const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
-    if (!submission.parent ||!Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
+    if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
       return answerText;
     }
     return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
