@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { PouchAuthService } from './database/pouch-auth.service';
-import { StateService } from './state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,6 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private pouchAuthService: PouchAuthService,
-    private stateService: StateService
   ) { }
 
   private getSession$() {
@@ -26,7 +24,7 @@ export class AuthService {
     return this.getSession$().pipe(
       switchMap((sessionInfo) => {
         if (sessionInfo.userCtx.name) {
-          // If user already matches one on the user service, do not make additional call to CouchDB
+          // User should be set on user-guard. If app user doesn't match session, boot to login
           const user = this.userService.get();
           if (sessionInfo.userCtx.name === user.name) {
             if (roles.length > 0) {
@@ -35,8 +33,6 @@ export class AuthService {
             }
             return of(true);
           }
-          this.stateService.requestBaseData();
-          return this.userService.setUserAndShelf(sessionInfo.userCtx);
         }
         this.userService.unset();
         const returnUrl = url === '/' ? null : url;

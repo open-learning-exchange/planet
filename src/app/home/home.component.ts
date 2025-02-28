@@ -45,6 +45,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   planetName;
   isAndroid: boolean;
   showBanner = true;
+  isLoggedIn = false;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -169,6 +170,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   onUserUpdate() {
     this.user = this.userService.get();
+    this.isLoggedIn = this.user._id !== undefined;
     if (this.user._attachments) {
       const filename = Object.keys(this.user._attachments)[0];
       this.userImgSrc = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/' + filename;
