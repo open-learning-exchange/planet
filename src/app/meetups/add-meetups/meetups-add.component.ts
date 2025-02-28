@@ -99,23 +99,14 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
   }
 
-  private normalizeFormValues(formValue: any) {
-    return {
-      ...formValue,
-      startDate: formValue.startDate ? formValue.startDate.valueOf() : null,
-      endDate: formValue.endDate ? formValue.endDate.valueOf() : null
-    };
-  }
-
   private captureInitialState() {
     const formValue = this.meetupForm.value;
-    const processedForm = {
+    this.initialFormValues = JSON.stringify({
       ...formValue,
-      startDate: formValue.startDate ? formValue.startDate.getTime() : null,
-      endDate: formValue.endDate ? formValue.endDate.getTime() : null,
+      startDate: formValue.startDate ? Date.parse(formValue.startDate) : null,
+      endDate: formValue.endDate ? Date.parse(formValue.endDate) : null,
       day: formValue.day || []
-    };
-    this.initialFormValues = JSON.stringify(processedForm);
+    });
   }
 
   onFormChanges() {
@@ -124,13 +115,12 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
         debounce(() => race(interval(200), of(true)))
       )
       .subscribe(formValue => {
-        const processedForm = {
+        const currentState = JSON.stringify({
           ...formValue,
-          startDate: formValue.startDate ? formValue.startDate.getTime() : null,
-          endDate: formValue.endDate ? formValue.endDate.getTime() : null,
+          startDate: formValue.startDate ? Date.parse(formValue.startDate) : null,
+          endDate: formValue.endDate ? Date.parse(formValue.endDate) : null,
           day: formValue.day || []
-        };
-        const currentState = JSON.stringify(processedForm);
+        });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
         this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
