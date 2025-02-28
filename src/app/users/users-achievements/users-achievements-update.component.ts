@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,16 +10,19 @@ import { StateService } from '../../shared/state.service';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, Subject, interval, of, race } from 'rxjs';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { debounce } from 'rxjs/operators';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
   styleUrls: [ 'users-achievements-update.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
+export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
@@ -28,6 +31,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   editForm: FormGroup;
   profileForm: FormGroup;
   private onDestroy$ = new Subject<void>();
+  initialFormValues: any;
+  hasUnsavedChanges = false;
   get achievements(): FormArray {
     return <FormArray>this.editForm.controls.achievements;
   }
@@ -50,7 +55,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService
+    private planetStepListService: PlanetStepListService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.createForm();
     this.createProfileForm();
@@ -73,6 +79,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
         if (this.docInfo._id === achievements._id) {
           this.docInfo._rev = achievements._rev;
         }
+        this.captureInitialState();
+        this.onFormChanges();
       }, (error) => {
         console.log(error);
         this.achievementNotFound = true;
@@ -81,6 +89,56 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
       () => this.editForm.controls.dateSortOrder.setValue('none')
     );
+  }
+
+  private captureInitialState() {
+    this.initialFormValues = JSON.stringify({
+      editForm: {
+        ...this.editForm.value,
+        achievements: this.achievements.value,
+        references: this.references.value,
+        links: this.links.value
+      },
+      profileForm: this.profileForm.value
+    });
+  }
+
+  onFormChanges() {
+    this.editForm.valueChanges
+      .pipe(
+        debounce(() => race(interval(200), of(true)))
+      )
+      .subscribe(() => {
+        const currentState = JSON.stringify({
+          editForm: {
+            ...this.editForm.value,
+            achievements: this.achievements.value,
+            references: this.references.value,
+            links: this.links.value
+          },
+          profileForm: this.profileForm.value
+        });
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
+
+    this.profileForm.valueChanges
+      .pipe(
+        debounce(() => race(interval(200), of(true)))
+      )
+      .subscribe(() => {
+        const currentState = JSON.stringify({
+          editForm: {
+            ...this.editForm.value,
+            achievements: this.achievements.value,
+            references: this.references.value,
+            links: this.links.value
+          },
+          profileForm: this.profileForm.value
+        });
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
   }
 
   ngOnDestroy() {
@@ -226,6 +284,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
     this.profileForm.updateValueAndValidity();
     if (this.editForm.valid && this.profileForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
+      this.hasUnsavedChanges = false;
+      this.unsavedChangesService.setHasUnsavedChanges(false);
     } else {
       this.markAsInvalid(this.editForm);
       this.markAsInvalid(this.profileForm);
@@ -253,7 +313,29 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
+    if (this.hasUnsavedChanges) {
+      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      if (!confirmLeave) {
+        return;
+      }
+    }
+    this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.router.navigate([ '..' ], { relativeTo: this.route });
+  }
+
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+    }
+    return true;
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+    }
   }
 
 }
