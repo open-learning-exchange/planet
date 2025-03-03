@@ -76,7 +76,7 @@ export class AuthService {
       map(sessionInfo => {
         const isLoggedIn = !!sessionInfo.userCtx.name;
         if (!isLoggedIn) {
-          this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+          this.router.navigate([ '/login' ], { queryParams: { returnUrl: this.router.url } });
         }
         return isLoggedIn;
       })
