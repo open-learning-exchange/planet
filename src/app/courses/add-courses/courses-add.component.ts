@@ -23,7 +23,7 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate  {
+export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
