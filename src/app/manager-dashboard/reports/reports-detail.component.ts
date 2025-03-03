@@ -79,12 +79,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService
   ) {
     this.initDateFilterForm();
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceType = window.innerWidth > 1200 ? DeviceType.DESKTOP : DeviceType.MOBILE;
   }
 
   @HostListener('window:resize')
   onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceType = window.innerWidth > 1200 ? DeviceType.DESKTOP : DeviceType.MOBILE;
   }
 
   ngOnInit() {

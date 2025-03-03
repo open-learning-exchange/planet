@@ -57,8 +57,7 @@ mat-toolbar mat-form-field {
   }
 }
 
-/* Mobile styles */
-@media(max-width: $screen-md) {
+@media(max-width: 1200px) {
   .mat-toolbar-row {
     height: auto;
     padding: 8px 16px;
