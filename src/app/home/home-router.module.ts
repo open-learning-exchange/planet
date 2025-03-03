@@ -11,7 +11,6 @@ import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { LandingComponent } from '../landing/landing.component';
-import { HomeComponent } from './home.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { BetaThenAuthService } from '../shared/beta-then-auth-guard-service';
@@ -80,7 +79,6 @@ const alwaysGuardedRoutes = [
 const routes: Routes = [
   { path: '', component: CommunityComponent, canActivate: [ BetaThenAuthService ] },
   { path: '',
-    component: HomeComponent,
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]
   },
