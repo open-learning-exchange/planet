@@ -64,6 +64,8 @@
           <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
         </mat-select>
       </mat-form-field>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
       <form [formGroup]="logsForm">
         <mat-form-field class="margin-lr-5 font-size-1">
           <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="today">
@@ -77,6 +79,8 @@
           <mat-datepicker #endPicker></mat-datepicker>
         </mat-form-field>
       </form>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
       <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime" class="margin-lr-5">
         Show All Time
       </button>
