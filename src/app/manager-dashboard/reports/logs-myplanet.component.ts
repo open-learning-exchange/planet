@@ -186,4 +186,12 @@ export class LogsMyPlanetComponent implements OnInit {
     });
   }
 
+  clearFilters() {
+    this.searchValue = '';
+    this.selectedVersion = '';
+    this.selectedType = '';
+    this.resetDateFilter();
+    this.applyFilters();
+  }
+
 }

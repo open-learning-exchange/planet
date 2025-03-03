@@ -32,6 +32,9 @@
     <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime" class="margin-lr-5">
       Show All Time
     </button>
+    <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
+      Clear
+    </button>
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1">
       <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
