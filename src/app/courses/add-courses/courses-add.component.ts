@@ -36,8 +36,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private navigationViaCancel = false;
-  hasUnsavedChanges: boolean = false;
-  private initialState: string = '';
+  hasUnsavedChanges = false;
+  private initialState = '';
   private _steps = [];
   get steps() {
     return this._steps;
