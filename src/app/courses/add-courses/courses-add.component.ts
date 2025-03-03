@@ -23,7 +23,7 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate  {
+export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
@@ -36,8 +36,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private navigationViaCancel = false;
-  hasUnsavedChanges: boolean = false;
-  private initialState: string = '';
+  hasUnsavedChanges = false;
+  private initialState = '';
   private _steps = [];
   get steps() {
     return this._steps;
