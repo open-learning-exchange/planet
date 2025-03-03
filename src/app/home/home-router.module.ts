@@ -22,7 +22,6 @@ export function dashboardPath(route): string {
 
 const alwaysGuardedRoutes = [
   { path: 'community/:code', component: CommunityComponent },
-  { path: 'voices/:id', component: NewsListComponent, data: { requiresAuth: false } },
   { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
   {
     path: 'manager',
@@ -85,6 +84,7 @@ const routes: Routes = [
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]
   },
+  { path: 'voices/:id', component: NewsListComponent, data: { requiresAuth: false } },
   { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
   { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
 ];
