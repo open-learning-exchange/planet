@@ -8,11 +8,19 @@ mat-toolbar mat-form-field {
 }
 
 .diagnosis-trend {
-  line-height: 3.7em
+  line-height: 3.7em;
 }
 
 .subheading {
   font-weight: bold;
+}
+
+.toolbar-fill {
+  flex: 1 1 auto;
+}
+
+.date-form {
+  width: 100%;
 }
 
 .manager-reports-detail {
@@ -46,5 +54,48 @@ mat-toolbar mat-form-field {
 
   canvas {
     max-height: 30vh;
+  }
+}
+
+/* Mobile styles */
+@media(max-width: $screen-md) {
+  .mat-toolbar-row {
+    height: auto;
+    padding: 8px 16px;
+  }
+  
+  form {
+    width: 100%;
+  }
+  
+  .mat-form-field {
+    width: 100%;
+    margin: 0;
+  }
+
+  .margin-lr-5 {
+    margin: 0.5rem 0;
+  }
+  
+  mat-button-toggle-group {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    
+    .mat-button-toggle {
+      flex: 1;
+    }
+  }
+  
+  /* Target the buttons in the filter rows */
+  mat-toolbar-row[class*="showFiltersRow"] button[mat-raised-button] {
+    width: 100%;
+    margin: 0;
+  }
+  
+  /* Ensure normal width for export button */
+  .primary-color button[mat-raised-button] {
+    width: auto;
+    margin: 0;
   }
 }
