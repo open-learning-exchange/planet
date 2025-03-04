@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { AuthService } from '../shared/auth-guard.service';
 
 export class Message {
   message: string;
@@ -74,7 +75,8 @@ export class FeedbackDirective {
     private router: Router,
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private stateService: StateService,
+    private authService: AuthService
   ) {}
 
   addFeedback(post: any) {
@@ -146,20 +148,24 @@ export class FeedbackDirective {
 
   @HostListener('click')
   openFeedback() {
-    const title = $localize`Feedback`;
-    const type = 'feedback';
-    const fields = dialogFieldOptions;
-    const formGroup = {
-      priority: [ this.priority, Validators.required ],
-      type: [ this.type, Validators.required ],
-      message: [ this.message, CustomValidators.required ]
-    };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .pipe(debug('Dialog confirm'))
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.addFeedback(response);
+    this.authService.isAuthenticated().subscribe(isAuthenticated => {
+      if (isAuthenticated) {
+        const title = $localize`Feedback`;
+        const type = 'feedback';
+        const fields = dialogFieldOptions;
+        const formGroup = {
+          priority: [ this.priority, Validators.required ],
+          type: [ this.type, Validators.required ],
+          message: [ this.message, CustomValidators.required ]
+        };
+        this.dialogsFormService
+          .confirm(title, fields, formGroup)
+          .pipe(debug('Dialog confirm'))
+          .subscribe((response) => {
+            if (response !== undefined) {
+              this.addFeedback(response);
+            }
+          });
         }
       });
   }
