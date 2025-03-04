@@ -281,7 +281,10 @@ export class SubmissionsService {
           }), {})
         };
       });
-      this.csvService.exportCSV({ data, title: `${toProperCase(type)} -  ${exam.name}` });
+      this.csvService.exportCSV({
+        data,
+        title: `${toProperCase(type)} -  ${exam.name}${exam.description ? '\n' + exam.description : ''}`,
+      });
     }));
   }
 
@@ -337,6 +340,14 @@ export class SubmissionsService {
       const converter = new showdown.Converter();
       pdfMake.createPdf(
         {
+          header: function(currentPage) {
+            if (currentPage === 1) {
+              return [
+                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}${exam.description ? ': ' + exam.description : ''}</h1>`)),
+              ];
+            }
+            return null;
+          },
           content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
           pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
         }
