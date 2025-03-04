@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { Subject, of, forkJoin, throwError } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
@@ -308,7 +308,7 @@ export class SubmissionsService {
           }
           return {
             'Gender': submission.user.gender || 'N/A',
-            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : 'N/A',
+            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
             'Planet': submission.source,
             'Date': submission.lastUpdateTime,
             'Team': teamColumn,
@@ -326,6 +326,9 @@ export class SubmissionsService {
   }
 
   answerIndexes(questionTexts: string[], submission: any) {
+    if (!submission || !submission.parent || !Array.isArray(submission.parent.questions) || !questionTexts) {
+      return questionTexts.map(() => -1);
+    }
     return questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
   }
 
@@ -338,6 +341,9 @@ export class SubmissionsService {
 
   getPDFAnswerText(submission: any, index, answerIndexes: number[]) {
     const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
+    if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
+      return answerText;
+    }
     return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
       '<pre>'.concat(answerText, '</pre>') :
       answerText;
@@ -354,6 +360,11 @@ export class SubmissionsService {
       this.managerService.getChildPlanets(true)
     ])
       .pipe(
+        finalize(() => this.dialogsLoadingService.stop()),
+        catchError((error) => {
+          this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
+          return throwError(error);
+        }),
         switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
           const [ submissions, time, questionTexts ] = submissionsTuple;
           const filteredSubmissions = team
