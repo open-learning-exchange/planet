@@ -297,22 +297,12 @@ export class SubmissionsService {
       tap(([ updatedSubmissions, time, questionTexts ]) => {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
-          let teamColumn = '';
-          let enterpriseColumn = '';
-          if (submission.teamName) {
-            if (submission.teamName.startsWith('Enterprise:')) {
-              enterpriseColumn = submission.teamName.replace('Enterprise:', '').trim();
-            } else if (submission.teamName.startsWith('Team:')) {
-              teamColumn = submission.teamName.replace('Team:', '').trim();
-            }
-          }
           return {
             'Gender': submission.user.gender || 'N/A',
             'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
             'Planet': submission.source,
             'Date': submission.lastUpdateTime,
-            'Team': teamColumn,
-            'Enterprise': enterpriseColumn,
+            'Team/Enterprise': submission.teamName || 'N/A',
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
               [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
