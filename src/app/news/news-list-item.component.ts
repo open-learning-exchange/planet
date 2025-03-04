@@ -167,10 +167,14 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { ...member, userPlanetCode: member.planetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+    this.authService.isAuthenticated().subscribe(isAuthenticated => {
+      if (isAuthenticated) {
+        this.dialog.open(UserProfileDialogComponent, {
+          data: { member: { ...member, userPlanetCode: member.planetCode } },
+          maxWidth: '90vw',
+          maxHeight: '90vh'
+        });
+      }
     });
   }
 }
