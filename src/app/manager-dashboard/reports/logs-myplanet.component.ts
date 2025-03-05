@@ -204,4 +204,8 @@ export class LogsMyPlanetComponent implements OnInit {
     this.applyFilters();
   }
 
+  isDesktopView(): boolean {
+    return window.innerWidth > 1350;
+  }
+
 }
