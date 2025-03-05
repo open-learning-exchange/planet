@@ -22,7 +22,7 @@ export class ExamsService {
         choices: this.fb.array(
           choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
         ),
-        hasOtherOption: [false]
+        hasOtherOption: [ false ]
       }
     ), { validators: this.choiceRequiredValidator }
     ), initialValue);

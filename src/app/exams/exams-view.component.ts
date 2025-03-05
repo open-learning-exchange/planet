@@ -405,7 +405,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
       if (otherIndex > -1) {
         value[otherIndex].text = this.otherTextMulti.value;
-        this.answer.setValue([...value]);
+        this.answer.setValue([ ...value ]);
       }
     }
   }
