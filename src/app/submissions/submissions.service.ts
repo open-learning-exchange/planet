@@ -422,7 +422,6 @@ export class SubmissionsService {
     }
   }
 
-
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
     return (question, questionIndex) =>
