@@ -51,6 +51,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
+  otherText = new FormControl('');
+  otherTextMulti = new FormControl('');
+  otherOptionValue: any = { id: 'other', text: '', isOther: true };
 
   constructor(
     private router: Router,
@@ -283,20 +286,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setAnswer(event, option) {
     const value = this.answer.value || [];
-
-
     if (event.checked) {
-      if (!value.includes(option)) {
+      if (!value.find(val => val.id === option.id)) {
         value.push(option);
+      } else if (option.id === 'other') {
+        const otherIndex = value.findIndex(val => val.id === 'other');
+        if (otherIndex > -1) {
+          value[otherIndex].text = option.text;
+        }
       }
     } else {
-      const index = value.indexOf(option);
+      const index = value.findIndex(val => val.id === option.id);
       if (index > -1) {
         value.splice(index, 1);
       }
     }
 
-    this.answer.setValue(value);
+    this.answer.setValue(value.length > 0 ? value : null);
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
   }
@@ -346,7 +352,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         setSelectMultipleAnswer(answer.value);
         break;
       case 'select':
-        this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        if (answer.value && answer.value.id === 'other') {
+          this.answer.setValue(this.otherOptionValue);
+        } else {
+          this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        }
         break;
       default:
         this.answer.setValue(answer.value);
@@ -369,6 +379,35 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
+  }
+
+  isOtherSelected() {
+    return this.answer.value && this.answer.value.id === 'other';
+  }
+
+  updateOtherOptionValue() {
+    this.otherOptionValue = { id: 'other', text: this.otherText.value, isOther: true };
+    this.answer.setValue(this.otherOptionValue);
+  }
+
+  setOtherOptionMultiple(event) {
+    this.checkboxState['other'] = event.checked;
+    if (event.checked) {
+      const otherOption = { id: 'other', text: this.otherTextMulti.value || '', isOther: true };
+      this.setAnswer({ checked: true }, otherOption);
+    }
+  }
+
+  updateOtherOptionValueMultiple() {
+    if (this.checkboxState['other']) {
+      const value = this.answer.value || [];
+      const otherIndex = value.findIndex(option => option.id === 'other');
+
+      if (otherIndex > -1) {
+        value[otherIndex].text = this.otherTextMulti.value;
+        this.answer.setValue([...value]);
+      }
+    }
   }
 
 }
