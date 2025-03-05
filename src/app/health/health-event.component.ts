@@ -102,9 +102,9 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     this.initialFormValues = JSON.stringify(processedForm);
   }
 
-  private processConditions(conditions: any) {
-    const processedConditions = Object.keys(conditions || {}).reduce((acc, key) => {
-      if (conditions[key]) {
+  private processConditions(inputConditions: any) {
+    const processedConditions = Object.keys(inputConditions || {}).reduce((acc, key) => {
+      if (inputConditions[key]) {
         acc[key] = true;
       }
       return acc;
