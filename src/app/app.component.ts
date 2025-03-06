@@ -23,20 +23,17 @@ export class AppComponent {
       'myCourses',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/courses.svg'));
     iconRegistry.addSvgIcon(
-      'myMeetups',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/meetups.svg'));
-    iconRegistry.addSvgIcon(
       'myLife',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/meetups.svg'));
     iconRegistry.addSvgIcon(
       'myTeams',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team.svg'));
     iconRegistry.addSvgIcon(
-      'surveys',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/survey.svg'));
-    iconRegistry.addSvgIcon(
       'feedback',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
+    iconRegistry.addSvgIcon(
+      'feedbacklist',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedbacklist.svg'));
     iconRegistry.addSvgIcon(
       'logout',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/logout.svg'));
@@ -52,6 +49,9 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'home',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/home.svg'));
+    iconRegistry.addSvgIcon(
+      'sync',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sync.svg'));
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
