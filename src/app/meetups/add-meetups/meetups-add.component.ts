@@ -87,7 +87,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  
+
   setMeetupData(meetup: any) {
     this.pageType = 'Update';
     this.revision = meetup._rev;
