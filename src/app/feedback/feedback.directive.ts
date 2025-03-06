@@ -147,25 +147,25 @@ export class FeedbackDirective {
   }
 
   @HostListener('click')
+  checkAuthentication() {
+    this.authService.checkAuthenticationStatus().subscribe(this.openFeedback);
+  }
+
   openFeedback() {
-    this.authService.isAuthenticated().subscribe(isAuthenticated => {
-      if (isAuthenticated) {
-        const title = $localize`Feedback`;
-        const type = 'feedback';
-        const fields = dialogFieldOptions;
-        const formGroup = {
-          priority: [ this.priority, Validators.required ],
-          type: [ this.type, Validators.required ],
-          message: [ this.message, CustomValidators.required ]
-        };
-        this.dialogsFormService
-          .confirm(title, fields, formGroup)
-          .pipe(debug('Dialog confirm'))
-          .subscribe((response) => {
-            if (response !== undefined) {
-              this.addFeedback(response);
-            }
-          });
+    const title = $localize`Feedback`;
+    const type = 'feedback';
+    const fields = dialogFieldOptions;
+    const formGroup = {
+      priority: [ this.priority, Validators.required ],
+      type: [ this.type, Validators.required ],
+      message: [ this.message, CustomValidators.required ]
+    };
+    this.dialogsFormService
+      .confirm(title, fields, formGroup)
+      .pipe(debug('Dialog confirm'))
+      .subscribe((response) => {
+        if (response !== undefined) {
+          this.addFeedback(response);
         }
       });
   }

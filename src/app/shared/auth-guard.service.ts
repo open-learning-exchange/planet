@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { Observable, of } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { PouchAuthService } from './database/pouch-auth.service';
 
@@ -70,15 +70,13 @@ export class AuthService {
     );
   }
 
-  isAuthenticated(): Observable<boolean> {
+  checkAuthenticationStatus(): Observable<void> {
     return this.getSession$().pipe(
-      take(1),
       map(sessionInfo => {
         const isLoggedIn = !!sessionInfo.userCtx.name;
         if (!isLoggedIn) {
-          this.router.navigate([ '/login' ], { queryParams: { returnUrl: this.router.url } });
+          throw new Error('Not authorized');
         }
-        return isLoggedIn;
       })
     );
   }

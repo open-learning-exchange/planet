@@ -87,21 +87,19 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   addReply(news) {
     const label = this.formLabel(news);
-    this.authService.isAuthenticated().subscribe(isAuthenticated => {
-      if (isAuthenticated) {
-        this.updateNews.emit({
-          title: $localize`Reply to ${label}`,
-          placeholder:  $localize`Your ${label}`,
-          initialValue: '',
-          news: {
-            replyTo: news._id,
-            messagePlanetCode: news.messagePlanetCode,
-            messageType: news.messageType,
-            viewIn: news.viewIn
-          }
-        });
-        this.sendNewsNotifications(news);
-      }
+    this.authService.checkAuthenticationStatus().subscribe(() => {
+      this.updateNews.emit({
+        title: $localize`Reply to ${label}`,
+        placeholder:  $localize`Your ${label}`,
+        initialValue: '',
+        news: {
+          replyTo: news._id,
+          messagePlanetCode: news.messagePlanetCode,
+          messageType: news.messageType,
+          viewIn: news.viewIn
+        }
+      });
+      this.sendNewsNotifications(news);
     });
   }
 
@@ -167,14 +165,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   openMemberDialog(member) {
-    this.authService.isAuthenticated().subscribe(isAuthenticated => {
-      if (isAuthenticated) {
-        this.dialog.open(UserProfileDialogComponent, {
-          data: { member: { ...member, userPlanetCode: member.planetCode } },
-          maxWidth: '90vw',
-          maxHeight: '90vh'
-        });
-      }
+    this.authService.checkAuthenticationStatus().subscribe(() => {
+      this.dialog.open(UserProfileDialogComponent, {
+        data: { member: { ...member, userPlanetCode: member.planetCode } },
+        maxWidth: '90vw',
+        maxHeight: '90vh'
+      });
     });
   }
 }

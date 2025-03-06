@@ -76,11 +76,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     dayMaxEventRows: 2,
     selectable: true,
     select: (arg) => {
-      this.authService.isAuthenticated().subscribe(isAuthenticated => {
-        if (isAuthenticated) {
-          this.openAddEventDialog(arg);
-        }
-      });
+      this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
     eventClick: this.eventClick.bind(this)
   };
@@ -100,11 +96,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         addEventButton: {
           text: $localize`Add Event`,
           click: (arg) => {
-            this.authService.isAuthenticated().subscribe(isAuthenticated => {
-              if (isAuthenticated) {
-                this.openAddEventDialog(arg);
-              }
-            });
+            this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
           }
         }
       } :
