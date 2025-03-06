@@ -1,5 +1,9 @@
 @import '~@angular/material/theming';
 
+/*
+ * PRIMARY/DEFAULT THEME
+ */
+
 $primary-hue: 500;
 $accent-hue: 500;
 $warn-hue: 500;
@@ -66,6 +70,42 @@ $form-field-width: 180px;
   greyText: $grey-text;
   lightGrey: $light-grey;
 }
+
+/*
+ * SECOND THEME (based on uPlanet)
+ */
+
+$uplanet-primary: (
+  50 : #f2e5f9,
+  100 : #dfbef0,
+  200 : #cb92e6,
+  300 : #b566dc,
+  400 : #a544d5,
+  500 : #951fcc,
+  600 : #851ec6,
+  700 : #6e1cbe,
+  800 : #5919b7,
+  900 : #2515ac,
+  contrast: (
+      50 : #000000,
+      100 : #000000,
+      200 : #000000,
+      300 : #000000,
+      400 : #000000,
+      500 : #ffffff,
+      600 : #ffffff,
+      700 : #ffffff,
+      800 : #ffffff,
+      900 : #ffffff
+  )
+);
+$uplanet-app-primary: mat-palette($uplanet-primary, $primary-hue);
+$uplanet-app-theme: mat-light-theme($uplanet-app-primary, $planet-app-accent, $planet-app-warn);
+
+.uplanet-theme {
+  @include angular-material-color($uplanet-app-theme);
+}
+
 
 /*
  * Old Planet Material Colors
