@@ -16,7 +16,6 @@ SUFFIX="$PACKAGE_VERSION-$BRANCH-$COMMIT_HASH"
   echo "    image: treehouses/planet-tags:db-init-$SUFFIX"
   echo "  planet:"
   echo "    image: treehouses/planet-tags:$SUFFIX"
-  echo "version: \"2\""
 } > "install-$SUFFIX.yml"
 
 echo "install-$SUFFIX.yml"

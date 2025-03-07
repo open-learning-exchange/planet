@@ -45,6 +45,7 @@ planet-calendar {
     top: -0.25rem;
     right: -0.25rem;
   }
+  word-break: break-word;
 }
 
 mat-tab-group, mat-tab {
@@ -60,6 +61,6 @@ mat-tab-group, mat-tab {
   padding-top: 0.5rem;
 }
 
-.toggle-button{
+.toggle-button {
   margin-bottom: 1rem;
 }

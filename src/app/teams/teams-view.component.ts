@@ -376,17 +376,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'removed':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
-          message: $localize`{memberName} removed from team`
+          message: $localize`Removed: {memberName}`
         });
       case 'added':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, { ...memberDoc, docType: 'membership' }),
-          message: $localize`${memberName} accepted`
+          message: $localize`Accepted: ${memberName}`
         });
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
-          message: $localize`${memberName} rejected`
+          message: $localize`Rejected: ${memberName}`
         });
     }
   }
@@ -473,10 +473,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
+      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
-      ...message
+      ...message,
+      sharedDate: null,
+      sharedTeam: null
     }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
@@ -553,4 +555,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxHeight: '90vh'
     });
   }
+
+  truncateText(text: string, maxLength: number): string {
+    if (!text) { return ''; }
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+  }
+
 }

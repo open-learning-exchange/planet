@@ -20,7 +20,7 @@
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab i18n-label label="Community Leaders">
+        <mat-tab i18n-label label="Community Leaders" *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
@@ -32,7 +32,7 @@
             </mat-card>
           </div>
         </mat-tab>
-        <mat-tab i18n-label label="Services">
+        <mat-tab i18n-label label="Services" *ngIf="isLoggedIn">
           <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
           <ng-container *ngIf="!planetCode">
           </ng-container>
@@ -67,17 +67,17 @@
             <span *ngIf="deleteMode" i18n>Done Removing Links</span>
           </button>
         </mat-tab>
-        <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
+        <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
         </mat-tab>
-        <mat-tab i18n-label label="Finances">
+        <mat-tab i18n-label label="Finances" *ngIf="isLoggedIn">
           <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
-        <mat-tab i18n-label label="Reports">
+        <mat-tab i18n-label label="Reports" *ngIf="isLoggedIn">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
         <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">
-          <planet-calendar [resizeCalendar]="resizeCalendar" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+          <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'community'" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
         </mat-tab>
       </mat-tab-group>
     </div>

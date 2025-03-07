@@ -17,12 +17,13 @@ import { PlanetStepListService } from '../../shared/forms/planet-step-list.compo
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit, OnDestroy {
+export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   readonly dbName = 'courses'; // make database name a constant
   courseForm: FormGroup;
@@ -34,6 +35,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private isDestroyed = false;
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
+  private navigationViaCancel = false;
+  hasUnsavedChanges = false;
+  private initialState = '';
   private _steps = [];
   get steps() {
     return this._steps;
@@ -41,8 +45,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   set steps(value: any[]) {
     this._steps = value.map(step => ({
       ...step,
-      description: step.description.text || step.description,
-      images: [ ...(step.description.images || []), ...(step.images || []) ]
+      description: step.description?.text ?? step.description ?? '',
+      images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
     }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
@@ -115,6 +119,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.setInitialTags(tags, this.documentInfo, draft);
       if (!continued) {
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
+        this.initialState = JSON.stringify({
+          form: this.courseForm.value,
+          steps: this.steps,
+          tags: this.tags.value
+        });
       }
     });
     if (continued) {
@@ -168,8 +177,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onFormChanges() {
-    combineLatest(this.courseForm.valueChanges, this.stepsChange$, this.tags.valueChanges).pipe(
-      debounce(() => race(interval(2000), this.onDestroy$)),
+    combineLatest([
+      this.courseForm.valueChanges,
+      this.stepsChange$,
+      this.tags.valueChanges
+    ]).pipe(
+      debounce(() => race(interval(200), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
     ).subscribe(([ value, steps, tags ]) => {
       if (this.isSaved) {
@@ -178,8 +191,16 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
       this.coursesService.course = { form: course, steps: course.steps, tags };
       this.pouchService.saveDocEditing(
-        { ...course, tags, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId
+        { ...course, tags, initialTags: this.coursesService.course.initialTags },
+        this.dbName,
+        this.courseId
       );
+      const currentState = JSON.stringify({
+        form: this.courseForm.value,
+        steps: this.steps,
+        tags: this.tags.value
+      });
+      this.hasUnsavedChanges = currentState !== this.initialState;
     });
   }
 
@@ -199,7 +220,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         )
       ])
     )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = courseInfo.courseTitle + (this.pageType === 'Edit' ? $localize` Updated Successfully` : $localize` Added`);
+      const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
@@ -218,11 +239,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   courseChangeComplete(message, response: any, shouldNavigate) {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.isSaved = true;
+    this.planetMessageService.showMessage(message);
     if (shouldNavigate) {
       this.navigateBack();
       return;
     }
-    this.planetMessageService.showMessage(message);
     if (this.isDestroyed) {
       return;
     }
@@ -247,8 +268,23 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
+    this.navigationViaCancel = true;
+    if (this.hasUnsavedChanges) {
+      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+      if (!confirmCancel) {
+        this.navigationViaCancel = false;
+        return;
+      }
+    }
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.navigateBack();
+  }
+
+  canDeactivate(): boolean {
+    if (this.navigationViaCancel) {
+      return true;
+    }
+    return true;
   }
 
   navigateBack() {

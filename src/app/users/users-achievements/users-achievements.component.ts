@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -9,6 +10,7 @@ import { catchError, auditTime } from 'rxjs/operators';
 import { throwError, combineLatest } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -25,8 +27,10 @@ export class UsersAchievementsComponent implements OnInit {
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
+  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
+  publicView = this.route.snapshot.data.requiresAuth === false;
 
   constructor(
     private couchService: CouchService,
@@ -37,7 +41,8 @@ export class UsersAchievementsComponent implements OnInit {
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
     private coursesService: CoursesService,
-    private certificationsService: CertificationsService
+    private certificationsService: CertificationsService,
+    private clipboard: Clipboard
   ) { }
 
   ngOnInit() {
@@ -103,6 +108,14 @@ export class UsersAchievementsComponent implements OnInit {
     return achievement.description.length > 0;
   }
 
+  get profileImg() {
+    const attachments = this.userService.get()._attachments;
+    if (attachments) {
+      return this.urlPrefix + Object.keys(attachments)[0];
+    }
+    return 'assets/image.png';
+  }
+
   setCertifications(courses = [], progress = [], certifications = []) {
     this.certifications = certifications.filter(certification => {
       const certificateCourses = courses
@@ -110,6 +123,11 @@ export class UsersAchievementsComponent implements OnInit {
         .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
       return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
     });
+  }
+
+  copyLink() {
+    const link = `${window.location.origin}/profile/${this.user.name}/achievements;planet=${this.stateService.configuration.code}`;
+    this.clipboard.copy(link);
   }
 
   generatePDF() {
@@ -123,8 +141,8 @@ export class UsersAchievementsComponent implements OnInit {
       {
         text: `
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
-          ${formattedBirthDate ? $localize`Birthplace: ${formattedBirthDate}` : ''}
-          ${this.user.Birthplace ? $localize`Birthdate: ${this.user.Birthplace}` : ''}
+          ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
+          ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           `,
         alignment: 'center',
       },
@@ -167,7 +185,7 @@ export class UsersAchievementsComponent implements OnInit {
         ...this.achievements.achievements.map((achievement) => {
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: format(new Date(achievement.date), 'MMM d, y'), marginLeft: 40 },
+            { text: achievement.date ? format(new Date(achievement?.date), 'MMM d, y') : '', marginLeft: 40 },
             { text: achievement.link, marginLeft: 40 },
             { text: achievement.description, marginLeft: 40 },
           ];

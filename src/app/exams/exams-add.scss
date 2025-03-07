@@ -15,16 +15,34 @@
   form {
     display: grid;
     grid-template-areas: "buttons" "questions";
-    grid-template-rows: 48px calc(#{$view-container-height-no-toolbar} - 48px - 2rem);
+    grid-template-rows: auto calc(#{$view-container-height-no-toolbar} - 2rem);
   }
 
   form.survey-form {
     grid-template-areas: "buttons" "inputs" "questions";
-    grid-template-rows: 48px 72px calc(#{$view-container-height-no-toolbar} - 120px - 2rem);
+    grid-template-rows: auto 72px calc(#{$view-container-height-no-toolbar} - 120px - 2rem);
   }
 
   .exam-buttons {
     grid-area: buttons;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-right: 8px;
+    }
+
+    .warn-text-color {
+      display: block;
+      width: 100%;
+    }
+
+  .warn-text-color {
+    margin: 4px;
   }
 
   .exam-inputs {

@@ -127,15 +127,18 @@
               <label *ngIf="!isMobile"> Demote </label>
             </button>
           </span>
-          <a class="visibility-cell" (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
+          <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
             <mat-icon>visibility</mat-icon>
             <label *ngIf="!isMobile"> View Profile </label>
-          </a>
+          </button>
         </div>
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef= "let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:isSelected(row.doc)}"></mat-row>
+    <tr class="mat-row" *matNoDataRow>
+      <td><div class="view-container" i18n>No User Found</div></td>
+    </tr>
   </mat-table>
   <mat-paginator #paginator
     [pageSize]="50"

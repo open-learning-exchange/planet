@@ -8,7 +8,6 @@ import { TeamsViewComponent } from './teams-view.component';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { NewsModule } from '../news/news.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
-import { DialogsAddTableModule } from '../shared/dialogs/dialogs-add-table.module';
 import { DialogsResourcesViewerModule } from '../shared/dialogs/dialogs-resources-viewer.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { TeamsViewFinancesComponent } from './teams-view-finances.component';
@@ -18,6 +17,7 @@ import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports.component';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
   exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent ],
@@ -28,12 +28,12 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
     PlanetDialogsModule,
     NewsModule,
     DialogsAddResourcesModule,
-    DialogsAddTableModule,
     DialogsResourcesViewerModule,
     CovalentMarkdownModule,
     SharedComponentsModule,
     PlanetCalendarModule,
     FormsModule,
+    SurveysModule
   ],
   declarations: [
     TeamsComponent,

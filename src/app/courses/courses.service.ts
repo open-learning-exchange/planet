@@ -211,8 +211,9 @@ export class CoursesService {
       courseIds.push(courseId);
     }
     return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
-      const admissionMessage = type === 'resign' ? $localize`${title} successfully removed from myCourses` :
-        $localize`${title} added to your dashboard`;
+      const admissionMessage = type === 'resign'
+        ? $localize`Removed from myCourses: ${title}`
+        : $localize`Course added to your dashboard: ${title}`;
       this.planetMessageService.showMessage(admissionMessage);
       return res;
     }));
@@ -225,7 +226,8 @@ export class CoursesService {
   courseAdmissionMany(courseIds, type) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
       const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
-      const message = type === 'remove' ? $localize`${prefix} successfully removed from myCourses` : $localize`${prefix} added to your dashboard`;
+      const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
+        $localize`Added to myCourses: ${prefix} `;
       this.planetMessageService.showMessage(message);
       return shelf;
     }));

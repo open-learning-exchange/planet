@@ -86,17 +86,22 @@
           </mat-autocomplete>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.openWhichFile"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <div class="inner-gaps by-column full-width">
-          <label i18n>File Upload:</label>
+        <div class="file-upload inner-gaps full-width">
+          <label class="header-label"><b i18n>File Upload:</b></label>
           <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
         </div>
-        <p *ngIf="existingResource.doc?._attachments"><b i18n>Existing Resource/file:</b> {{resourceFilename}}</p>
+        <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion">
+          <label class="header-label"><b i18n>Existing Resource/file:</b></label>
+          <div class="existing-file-container">
+            <span class="filename">{{resourceFilename}}</span>
+            <button mat-icon-button [disabled]="disableDelete || this.file" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove attachment">
+              <mat-icon color ="warn">delete</mat-icon>
+            </button>
+          </div>
+        </div>
         <div class="inner-gaps full-width">
           <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
-          <ng-container *ngIf="existingResource.doc?._attachments">
-            <mat-checkbox [disabled]="disableDelete || this.file" (change)="deleteAttachmentToggle($event)" i18n>Delete File</mat-checkbox>
-          </ng-container>
           <mat-checkbox *ngIf="privateFor" formControlName="private" i18n-matTooltip matTooltip="If checked, resource will only be viewable by this team" i18n>Private Resource</mat-checkbox>
         </div>
       </form>

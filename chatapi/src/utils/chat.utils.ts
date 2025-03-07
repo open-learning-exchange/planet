@@ -1,7 +1,6 @@
 import { aiChatStream, aiChatNonStream } from './chat-helpers.utils';
 
-import { AIProvider } from '../models/ai-providers.model';
-import { ChatMessage } from '../models/chat-message.model';
+import { AIProvider, ChatMessage } from '../models/chat.model';
 
 export async function aiChat(
   messages: ChatMessage[],

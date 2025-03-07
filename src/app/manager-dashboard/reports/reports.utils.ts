@@ -27,10 +27,16 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
 });
 
 export const itemInDateRange = (item, dateField, startDate, endDate) => {
+  if (!startDate || !endDate || startDate > endDate) {
+    return false;
+  }
   return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
 };
 
 export const filterByDate = (array, dateField, { startDate, endDate, isEndInclusive = true, additionalFilterFunction = (i?) => true }) => {
+  if (!startDate || !endDate || new Date(startDate).getTime() > new Date(endDate).getTime()) {
+    return [];
+  }
   const endTime = isEndInclusive ? new Date(new Date(endDate).setHours(24)) : endDate;
   return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
 };
@@ -83,7 +89,8 @@ export const titleOfChartName = (chartName: string) => {
     courseViewChart: $localize`Course Views by Month`,
     visitChart: $localize`Total Member Visits by Month`,
     uniqueVisitChart: $localize`Unique Member Visits by Month`,
-    stepCompletedChart: $localize`Steps Completed by Month`
+    stepCompletedChart: $localize`Steps Completed by Month`,
+    chatUsageChart: $localize`Chats Created by Month`
   };
   return chartNames[chartName];
 };

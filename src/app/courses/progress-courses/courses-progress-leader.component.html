@@ -1,31 +1,45 @@
 <mat-toolbar>
   <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
+  <span>
+    <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
+    <ng-container *ngIf="selectedStep !== undefined" i18n>Test Progress</ng-container>
+  </span>
 </mat-toolbar>
 
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 action-buttons">
-    <span>
-      {{headingStart ? headingStart + ' ' : ''}}
-      <ng-container *ngIf="selectedStep === undefined" i18n>Course Progress</ng-container>
-      <ng-container *ngIf="selectedStep !== undefined" i18n>Test Progress</ng-container>
-    </span>
+<mat-toolbar class="primary-color font-size-1">
+  <h3 class="ellipsis-title margin-lr-3">
+    {{ headingStart | slice:0:140 }}
+  </h3>
+  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
     <span class="toolbar-fill"></span>
-    <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
-    <mat-form-field *ngIf="submittedExamSteps?.length > 1">
-      <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
-        <mat-option *ngFor="let step of submittedExamSteps" [value]="step" i18n>
-          {{ step.stepTitle || 'Step ' + (step.index + 1) }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" i18n>Show full course</button>
-    <button *ngIf="chartData?.length" class="margin-lr-10" color="accent" mat-raised-button i18n (click)="exportChartData()">
-      Export
-    </button>
-  </mat-toolbar>
-  <div class="view-container view-full-height">
-    <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [label]="chartLabel" [inputs]="chartData" [height]="yAxisLength" [showAvatar]="true" (clickAction)="memberClick($event)" (changeData)="changeData($event)">
-    </planet-courses-progress-chart>
-    <ng-template #noProgress i18n>No Progress record available</ng-template>
-  </div>
+    <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
+    <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+  </ng-container>
+  <ng-container *ngIf="deviceType !== deviceTypes.DESKTOP">
+    <span class="toolbar-fill"></span>
+    <button class="menu" *ngIf="chartData?.length" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
+    <mat-menu #actionsMenu="matMenu" class="actions-menu">
+      <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </mat-menu>
+  </ng-container>
+</mat-toolbar>
+<ng-template #filterSelectors>
+  <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
+  <mat-form-field *ngIf="submittedExamSteps?.length > 1" class="margin-lr-3">
+    <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
+      <mat-option *ngFor="let step of submittedExamSteps" [value]="step" i18n>
+        {{ step.stepTitle || 'Step ' + (step.index + 1) }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-template>
+<ng-template #actionButtons>
+  <button mat-raised-button color="accent" *ngIf="selectedStep !== undefined" (click)="resetToFullCourse()" class="margin-lr-3" i18n>Show full course</button>
+  <button mat-raised-button color="accent" *ngIf="chartData?.length" (click)="exportChartData()" class="margin-lr-3" i18n>Export</button>
+</ng-template>
+<div class="view-container view-full-height">
+  <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [label]="chartLabel" [inputs]="chartData" [height]="yAxisLength" [showAvatar]="true" (clickAction)="memberClick($event)" (changeData)="changeData($event)">
+  </planet-courses-progress-chart>
+  <ng-template #noProgress i18n>No Progress record available</ng-template>
 </div>

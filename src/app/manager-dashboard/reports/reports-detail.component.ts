@@ -51,6 +51,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     completions: new ReportsDetailData('time'),
     steps: new ReportsDetailData('time')
   };
+  chatActivities = new ReportsDetailData('createdDate');
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -121,6 +122,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getDocVisits('courseActivities');
       this.getPlanetCounts(local);
       this.getTeams();
+      this.getChatUsage();
       this.dialogsLoadingService.stop();
     });
   }
@@ -132,14 +134,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: new Date(),
-      endDate: new Date()
+      startDate: [ '' ],
+      endDate: [ '' ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      this.filter = { ...this.filter, ...value };
-      if (this.minDate && this.today) {
-        this.disableShowAllTime = value.startDate.getTime() === this.minDate.getTime() &&
-          value.endDate.getTime() === this.today.getTime();
+      const startDate = value.startDate ? new Date(value.startDate) : null;
+      const endDate = value.endDate ? new Date(value.endDate) : null;
+      const hasInvalidDates = startDate && endDate && startDate > endDate;
+
+      this.dateFilterForm.setErrors(hasInvalidDates ? { invalidEndDate: true } : null);
+      this.filter = { ...this.filter, startDate, endDate };
+
+      if (startDate && endDate && this.minDate && this.today) {
+        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
+          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -165,6 +173,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         )
       )
     ));
+    this.chatActivities.filter(this.filter);
+    this.setChatUsage();
   }
 
   getLoginActivities() {
@@ -276,6 +286,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           [team.type || 'team']: [ ...teamObj[team.type || 'team'], team ]
         }), { enterprise: [], team: [] });
     });
+  }
+
+  getChatUsage() {
+    this.activityService.getChatHistory().subscribe((data) => {
+      this.chatActivities.data = data;
+    });
+  }
+
+  setChatUsage() {
+    const { byMonth } = this.activityService.groupChatUsage(this.chatActivities.filteredData);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'chatUsageChart' });
   }
 
   getTeamMembers(team: any) {
@@ -518,8 +539,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
-    this.dateFilterForm.controls.startDate.setValue(startDate || this.minDate);
-    this.dateFilterForm.controls.endDate.setValue(endDate || this.today);
+    const newStartDate = startDate || this.minDate;
+    const newEndDate = endDate || this.today;
+    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
+    setTimeout(() => {
+      this.disableShowAllTime = true;
+    });
+    this.dateFilterForm.patchValue({
+      startDate: newStartDate,
+      endDate: newEndDate
+    }, { emitEvent: true });
   }
 
 }
