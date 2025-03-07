@@ -7,6 +7,7 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { AuthService } from '../shared/auth-guard.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -43,7 +44,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -85,18 +87,20 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   addReply(news) {
     const label = this.formLabel(news);
-    this.updateNews.emit({
-      title: $localize`Reply to ${label}`,
-      placeholder:  $localize`Your ${label}`,
-      initialValue: '',
-      news: {
-        replyTo: news._id,
-        messagePlanetCode: news.messagePlanetCode,
-        messageType: news.messageType,
-        viewIn: news.viewIn
-      }
+    this.authService.checkAuthenticationStatus().subscribe(() => {
+      this.updateNews.emit({
+        title: $localize`Reply to ${label}`,
+        placeholder:  $localize`Your ${label}`,
+        initialValue: '',
+        news: {
+          replyTo: news._id,
+          messagePlanetCode: news.messagePlanetCode,
+          messageType: news.messageType,
+          viewIn: news.viewIn
+        }
+      });
+      this.sendNewsNotifications(news);
     });
-    this.sendNewsNotifications(news);
   }
 
   sendNewsNotifications(news: any = '') {
@@ -161,10 +165,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { ...member, userPlanetCode: member.planetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+    this.authService.checkAuthenticationStatus().subscribe(() => {
+      this.dialog.open(UserProfileDialogComponent, {
+        data: { member: { ...member, userPlanetCode: member.planetCode } },
+        maxWidth: '90vw',
+        maxHeight: '90vh'
+      });
     });
   }
 }
