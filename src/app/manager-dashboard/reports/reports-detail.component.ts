@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -59,6 +59,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
+  showFiltersRow = false;
 
   constructor(
     private activityService: ReportsService,
@@ -101,6 +102,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  isDesktopView(): boolean {
+    return window.innerWidth > 1200;
   }
 
   onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
