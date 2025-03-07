@@ -8,7 +8,6 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
 import { CsvService } from '../../shared/csv.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: './logs-myplanet.component.html'
@@ -34,8 +33,6 @@ export class LogsMyPlanetComponent implements OnInit {
   types: string[] = [];
   selectedType = '';
   disableShowAllTime = true;
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
 
   constructor(
@@ -45,7 +42,6 @@ export class LogsMyPlanetComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private fb: FormBuilder,
-    private deviceInfoService: DeviceInfoService
   ) {
     this.logsForm = this.fb.group({
       startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
@@ -58,12 +54,12 @@ export class LogsMyPlanetComponent implements OnInit {
         return null;
       }
     });
-    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+  isDesktopView(): boolean {
+    return window.innerWidth > 1350;
   }
+
 
   ngOnInit() {
     this.getApkLogs();
@@ -202,10 +198,6 @@ export class LogsMyPlanetComponent implements OnInit {
     this.selectedType = '';
     this.resetDateFilter();
     this.applyFilters();
-  }
-
-  isDesktopView(): boolean {
-    return window.innerWidth > 1350;
   }
 
 }
