@@ -24,7 +24,6 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -61,8 +60,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
-  deviceType: DeviceType;
-  deviceTypes = DeviceType;
 
   constructor(
     private activityService: ReportsService,
@@ -75,17 +72,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: FormBuilder,
-    private deviceInfoService: DeviceInfoService
+    private fb: FormBuilder
   ) {
     this.initDateFilterForm();
-    this.deviceType = window.innerWidth > 1200 ? DeviceType.DESKTOP : DeviceType.MOBILE;
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = window.innerWidth > 1200 ? DeviceType.DESKTOP : DeviceType.MOBILE;
-  }
 
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
@@ -112,6 +103,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+
+  isDesktopView(): boolean {
+    return window.innerWidth > 1200;
   }
 
   onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
