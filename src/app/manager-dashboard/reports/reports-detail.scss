@@ -15,14 +15,6 @@ mat-toolbar mat-form-field {
   font-weight: bold;
 }
 
-.toolbar-fill {
-  flex: 1 1 auto;
-}
-
-.date-form {
-  width: 100%;
-}
-
 .manager-reports-detail {
   mat-grid-tile.label figure {
     justify-content: start;
@@ -58,26 +50,15 @@ mat-toolbar mat-form-field {
 }
 
 @media(max-width: 1200px) {
-  .mat-toolbar-row {
-    height: auto;
-    padding: 8px 16px;
-  }
-  
-  form {
-    width: 100%;
-  }
-  
   .mat-form-field {
     width: 100%;
-    margin: 0;
   }
 
-  .margin-lr-5 {
-    margin: 0.5rem 0;
+  .date-form {
+    width: 100%;
   }
-  
+
   mat-button-toggle-group {
-    margin: 0;
     width: 100%;
     display: flex;
     
@@ -85,16 +66,5 @@ mat-toolbar mat-form-field {
       flex: 1;
     }
   }
-  
-  /* Target the buttons in the filter rows */
-  mat-toolbar-row[class*="showFiltersRow"] button[mat-raised-button] {
-    width: 100%;
-    margin: 0;
-  }
-  
-  /* Ensure normal width for export button */
-  .primary-color button[mat-raised-button] {
-    width: auto;
-    margin: 0;
-  }
+
 }

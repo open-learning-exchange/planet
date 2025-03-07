@@ -77,7 +77,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.initDateFilterForm();
   }
 
-
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
     this.dialogsLoadingService.start();
@@ -104,7 +103,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
-
 
   isDesktopView(): boolean {
     return window.innerWidth > 1200;
