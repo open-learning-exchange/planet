@@ -52,6 +52,18 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'home',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/home.svg'));
+    iconRegistry.addSvgIcon(
+      'facebook',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/social/facebook.svg'));
+    iconRegistry.addSvgIcon(
+      'instagram',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/social/instagram.svg'));
+    iconRegistry.addSvgIcon(
+      'youtube',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/social/youtube.svg'));
+    iconRegistry.addSvgIcon(
+      'x',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/social/x.svg'));
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
