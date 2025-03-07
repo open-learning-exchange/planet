@@ -23,6 +23,7 @@ import { ReportsMyPlanetComponent } from './reports/reports-myplanet.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activities.component';
 import { ReportsHealthComponent } from './reports/reports-health.component';
+import { ThemeComponent } from './theme/theme.component';
 
 @NgModule({
   imports: [
@@ -53,7 +54,8 @@ import { ReportsHealthComponent } from './reports/reports-health.component';
     PendingTableComponent,
     ReportsMyPlanetComponent,
     ReportsDetailActivitiesComponent,
-    ReportsHealthComponent
+    ReportsHealthComponent,
+    ThemeComponent
   ]
 })
 export class ManagerDashboardModule {}

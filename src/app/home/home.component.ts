@@ -46,6 +46,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   isAndroid: boolean;
   showBanner = true;
   isLoggedIn = false;
+  urlPrefix = environment.couchAddress + '/resources/';
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -60,6 +61,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   onlineStatus = 'offline';
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
+  logoSrc = this.configuration.customization?.logo ?
+    this.urlPrefix + this.configuration.customization?.logo :
+    'assets/cropped-ole-ico-logo-32x32.png';
 
   private onDestroy$ = new Subject<void>();
   private hasUnsavedChangesSubscription: Subscription;
