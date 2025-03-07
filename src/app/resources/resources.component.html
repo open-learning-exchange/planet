@@ -103,7 +103,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -167,15 +167,15 @@
               <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
                 <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
               </a>
-              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
+              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id, name: element.doc.title}" i18n-title title="Feedback">
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>
             </ng-container>
             <ng-container *ngIf="element.canManage && myView !== 'myPersonals'">
               <a mat-menu-item (click)="updateResource(element)">
-                <mat-icon>folder</mat-icon>
-                <span i18n>Manage</span>
+                <mat-icon>edit</mat-icon>
+                <span i18n>Edit Resource</span>
               </a>
               <button mat-menu-item (click)="deleteClick(element)">
                 <mat-icon>delete_forever</mat-icon>
@@ -208,6 +208,9 @@
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Resource Found</div></td>
+      </tr>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
@@ -215,7 +218,4 @@
       (page)="onPaginateChange($event)">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Resource Found</div>
-  </ng-template>
 </div>

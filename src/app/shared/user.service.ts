@@ -17,7 +17,7 @@ import { StateService } from './state.service';
   providedIn: 'root'
 })
 export class UserService {
-  private user: any = { name: '' };
+  private user: any = { name: '', roles: [] };
   private usersDb = '_users';
   private logsDb = 'login_activities';
   private _shelf: any = { };
@@ -46,6 +46,10 @@ export class UserService {
   userLogout$ = this.userLogout.asObservable();
   private notificationStateChange = new Subject<void>();
   notificationStateChange$ = this.notificationStateChange.asObservable();
+  profileComplete = new BehaviorSubject<boolean>(false);
+  profileComplete$ = this.profileComplete.asObservable();
+  profileBanner = new BehaviorSubject<boolean>(true);
+  profileBanner$ = this.profileBanner.asObservable();
   minBirthDate = new Date(1900, 0, 1);
 
 
@@ -293,6 +297,12 @@ export class UserService {
       _rev: userDoc.attachmentDoc._rev,
       _attachments: userDoc._attachments
     })));
+  }
+
+  isProfileComplete() {
+    const isComplete = !!(this.user.firstName && this.user.lastName && this.user.email && this.user.birthDate &&
+      this.user.gender && this.user.language && this.user.phoneNumber && this.user.level);
+    this.profileComplete.next(isComplete);
   }
 
 }

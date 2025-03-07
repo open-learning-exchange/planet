@@ -40,6 +40,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
+  isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
   links: any[] = [];
   finances: any[] = [];
@@ -299,7 +300,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
           request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
           onNext: (res) => {
             this.setLinksAndFinances(res);
-            this.planetMessageService.showMessage($localize`${link.title} deleted`);
+            this.planetMessageService.showMessage($localize` Deleted link: ${link.title}`);
             deleteDialog.close();
           },
           onError: () => this.planetMessageService.showAlert($localize`There was an error deleting ${link.title}`)

@@ -13,8 +13,8 @@
       <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
         <mat-icon>delete</mat-icon>
       </button><br>
-      <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
       <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
+      <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
       <button style="text-align: end;" mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
         <mat-icon>help_outline</mat-icon>
       </button>
@@ -69,7 +69,7 @@
       </ul>
     </ng-container>
     <ng-template #noChats>
-      <div i18n>No previous conversations.</div>
+      <div class="no-chats-message" i18n>No previous conversations.</div>
     </ng-template>
   </mat-drawer>
 
@@ -79,6 +79,6 @@
         <i class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</i>
       </button>
     </div>
-    <planet-chat-window></planet-chat-window>
+    <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
   </div>
 </mat-drawer-container>

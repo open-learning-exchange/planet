@@ -54,7 +54,7 @@ export class NewsService {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
   }
 
-  postNews(post, successMessage = $localize`Thank you for submitting your news`, isMessageEdit = true) {
+  postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
     const { configuration } = this.stateService;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
     const images = this.createImagesArray(post, message);
@@ -67,7 +67,8 @@ export class NewsService {
       ...post,
       message,
       images,
-      updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate
+      updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate,
+      viewIn: post.viewIn || []
     };
     return this.couchService.updateDocument(this.dbName, newPost).pipe(map(() => {
       this.planetMessageService.showMessage(successMessage);
@@ -75,8 +76,17 @@ export class NewsService {
     }));
   }
 
-  deleteNews(post) {
-    return this.postNews({ ...post, _deleted: true }, $localize`Post deleted`);
+  deleteNews(post, viewId, deleteFromAllViews = false) {
+    if (deleteFromAllViews) {
+      return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+    } else {
+      const updatedViewIn = post.viewIn.filter(view => view._id !== viewId);
+      if (updatedViewIn.length === 0) {
+        return this.postNews({ ...post, _deleted: true }, $localize`Message deleted`);
+      } else {
+        return this.postNews({ ...post, viewIn: updatedViewIn }, $localize`Message deleted`);
+      }
+    }
   }
 
   createImagesArray(post, message) {
@@ -90,12 +100,14 @@ export class NewsService {
     return this.couchService.bulkDocs(this.dbName, replies.map(reply => ({ ...reply.doc, replyTo: newReplyToId })));
   }
 
-  shareNews(news, planets?: any[], successMessage = $localize`News has been successfully shared`) {
+  shareNews(news, planets?: any[], successMessage = $localize`Message has been successfully shared`) {
     const viewInObject = (planet) => (
       { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
     );
-    // TODO: Filter newPlanets by ones currently existing in viewIn array
-    const newPlanets = planets ? planets.map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
+    const existingPlanetIds = (news.viewIn || []).map(view => view._id);
+    const newPlanets = planets ? planets
+      .filter(planet => !existingPlanetIds.includes(`${planet.code}@${planet.parentCode}`))
+      .map(planet => viewInObject(planet)) : [ viewInObject(this.stateService.configuration) ];
     if (newPlanets.length === 0) {
       return of(undefined);
     }

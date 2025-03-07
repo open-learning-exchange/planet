@@ -104,7 +104,7 @@
     </ng-container>
   </ng-template>
 
-  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }" *ngIf="!emptyData; else notFoundMessage">
+  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -131,8 +131,9 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
-              <ng-template #newTabLink><a class="cursor-pointer" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a></ng-template>
+              <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]" class="break-word">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
+            <ng-template #newTabLink><a class="cursor-pointer break-word" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
+            </ng-template>
               <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
                 <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
@@ -175,13 +176,13 @@
               <mat-icon>clear</mat-icon>
               <span i18n>Leave</span>
             </a>
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id}" i18n-title title="Feedback">
+            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id, name: element.doc.courseTitle}" i18n-title title="Feedback">
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
             </a>
             <a mat-menu-item *ngIf="element.canManage" (click)="updateCourse(element.doc)">
-              <mat-icon>folder</mat-icon>
-              <span i18n>Manage</span>
+              <mat-icon>edit</mat-icon>
+              <span i18n>Edit Course</span>
             </a>
             <a mat-menu-item [routerLink]="['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>
@@ -231,15 +232,14 @@
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Course Found</div></td>
+      </tr>
     </mat-table>
-
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
       (page)="onPaginateChange($event)">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Course Found</div>
-  </ng-template>
 </div>

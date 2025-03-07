@@ -63,13 +63,15 @@
     </mat-toolbar-row>
   </mat-toolbar>
 
-  <div class="view-container view-full-height view-table" *ngIf="!emptyData; else notFoundMessage">
+  <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="feedback" matSort [matSortDisableClear]="true">
       <!-- Title Column -->
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell title={{element.title}} *matCellDef="let element" i18n>{{element.title || element.type + ' regarding ' + element.url}}</mat-cell>
-      </ng-container>
+        <mat-cell *matCellDef="let element">
+          <span class="ellipsis-title" matTooltip="{{ element.title || element.type + ' regarding ' + element.url }}">{{ element.title || element.type + ' regarding ' + element.url }}</span>
+        </mat-cell>
+      </ng-container>      
       <!-- Type Column -->
       <ng-container matColumnDef="type">
         <mat-header-cell *matHeaderCellDef mat-sort-header="type" i18n>Type</mat-header-cell>
@@ -148,12 +150,11 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns" class="cursor-pointer" [routerLink]="['view', row._id]">
-      </mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns" class="cursor-pointer" [routerLink]="['view', row._id]"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>No Feedback Found</div></td>
+      </tr>
     </mat-table>
     <mat-paginator #paginator [pageSize]="50" [pageSizeOptions]="[5, 10, 20, 50, 100, 200]" i18n></mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Feedback Found</div>
-  </ng-template>
 </div>

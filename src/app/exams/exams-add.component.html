@@ -10,19 +10,22 @@
   <div class="view-container view-full-height">
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent}" novalidate>
       <div class="exam-buttons">
-        <button mat-raised-button color="primary" type="submit" i18n>Save</button>
-        <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n class="margin-lr-5">Save & Return</button>
-        <button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button>
-        <mat-menu #questionMenu>
-          <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
-          <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
-          <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
-          <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
-        </mat-menu>
-        <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" class="margin-lr-5" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
+        <div class="button-group">
+          <button mat-raised-button color="primary" type="submit" i18n>Save</button>
+          <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n>Save & Return</button>
+          <div class="menu-button"><button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button></div>
+          <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
+        </div>
+        <mat-checkbox *ngIf="isManagerRoute" formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic; margin: 0.1rem" i18n>Allow team view</span></mat-checkbox>
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
         <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
       </div>
+      <mat-menu #questionMenu>
+        <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
+        <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
+        <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
+        <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
+      </mat-menu>
       <div class="exam-inputs" *ngIf="!isCourseContent">
         <mat-form-field class="full-width">
           <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>

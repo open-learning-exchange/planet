@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import {
@@ -16,6 +16,10 @@ import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { interval, of, race } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-meetups-add',
@@ -30,7 +34,7 @@ import { StateService } from '../../shared/state.service';
     }
   ` ]
 })
-export class MeetupsAddComponent implements OnInit {
+export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   @Input() link: any = {};
   @Input() isDialog = false;
@@ -46,6 +50,8 @@ export class MeetupsAddComponent implements OnInit {
   id = null;
   days = constants.days;
   meetupFrequency = [];
+  initialFormValues: any;
+  hasUnsavedChanges = false;
 
   constructor(
     private couchService: CouchService,
@@ -54,7 +60,8 @@ export class MeetupsAddComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    public unsavedChangesService: UnsavedChangesService
   ) {
     this.createForm();
    }
@@ -67,11 +74,19 @@ export class MeetupsAddComponent implements OnInit {
     }
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.couchService.get('meetups/' + this.route.snapshot.paramMap.get('id')).subscribe(
-        data => this.setMeetupData(data),
+        data => {
+          this.setMeetupData(data);
+          this.captureInitialState();
+          this.onFormChanges();
+        },
         error => console.log(error)
       );
+    } else {
+      this.captureInitialState();
+      this.onFormChanges();
     }
   }
+
 
   setMeetupData(meetup: any) {
     this.pageType = 'Update';
@@ -82,6 +97,33 @@ export class MeetupsAddComponent implements OnInit {
     meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : '';
     this.meetupForm.patchValue(meetup);
     meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
+  }
+
+  private captureInitialState() {
+    const formValue = this.meetupForm.value;
+    this.initialFormValues = JSON.stringify({
+      ...formValue,
+      startDate: formValue.startDate ? Date.parse(formValue.startDate) : null,
+      endDate: formValue.endDate ? Date.parse(formValue.endDate) : null,
+      day: formValue.day || []
+    });
+  }
+
+  onFormChanges() {
+    this.meetupForm.valueChanges
+      .pipe(
+        debounce(() => race(interval(200), of(true)))
+      )
+      .subscribe(formValue => {
+        const currentState = JSON.stringify({
+          ...formValue,
+          startDate: formValue.startDate ? Date.parse(formValue.startDate) : null,
+          endDate: formValue.endDate ? Date.parse(formValue.endDate) : null,
+          day: formValue.day || []
+        });
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
   }
 
   createForm() {
@@ -103,22 +145,26 @@ export class MeetupsAddComponent implements OnInit {
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
-  }
+}
 
-  onSubmit() {
-    if (!this.meetupForm.valid) {
-      showFormErrors(this.meetupForm.controls);
-      return;
-    }
-    this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
-    this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
-    const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
-    if (this.pageType === 'Update') {
+onSubmit() {
+  if (!this.meetupForm.valid) {
+    showFormErrors(this.meetupForm.controls);
+    return;
+  }
+  const dayFormArray = this.meetupForm.get('day') as FormArray;
+  dayFormArray.updateValueAndValidity();
+  this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
+  this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
+  const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
+  if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
       this.addMeetup(meetup);
-    }
   }
+  this.hasUnsavedChanges = false;
+  this.unsavedChangesService.setHasUnsavedChanges(false);
+}
 
   changeTimeFormat(time: string): string {
     if (time && time.length < 5) {
@@ -163,6 +209,14 @@ export class MeetupsAddComponent implements OnInit {
   }
 
   cancel() {
+    if (this.hasUnsavedChanges) {
+      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      if (!confirmLeave) {
+        return;
+      }
+    }
+    this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.goBack();
   }
 
@@ -174,8 +228,18 @@ export class MeetupsAddComponent implements OnInit {
     }
   }
 
-  isClassDay(day) {
-    return this.meetupFrequency.includes(day) ? true : false;
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+    }
+    return true;
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+    }
   }
 
   onDayChange(day: string, isChecked: boolean) {
@@ -184,25 +248,44 @@ export class MeetupsAddComponent implements OnInit {
       // add to day array if checked
       dayFormArray.push(new FormControl(day));
     } else {
-      // remove from day array if unchecked
-      const index = dayFormArray.controls.findIndex(x => x.value === day);
-      dayFormArray.removeAt(index);
+        // remove from day array if unchecked
+        const index = dayFormArray.controls.findIndex(x => x.value === day);
+        if (index >= 0) {
+            dayFormArray.removeAt(index);
+        }
     }
-  }
+    dayFormArray.updateValueAndValidity();
+}
 
-  toggleDaily(val, showCheckbox) {
-    // empty the array
-    this.meetupForm.setControl('day', this.fb.array([]));
-    switch (val) {
+toggleDaily(val: string, showCheckbox: boolean) {
+  const dayFormArray = this.meetupForm.get('day') as FormArray;
+  dayFormArray.clear();
+  dayFormArray.clearValidators();
+
+  switch (val) {
+      // add all days to the array if the course is daily
       case 'daily':
-        // add all days to the array if the course is daily
-        this.meetupForm.setControl('day', this.fb.array(this.days));
-        break;
+          this.days.forEach((day) => {
+              dayFormArray.push(new FormControl(day));
+          });
+          break;
       case 'weekly':
-        this.meetupForm.setControl('day', this.fb.array(this.meetupFrequency));
-        break;
-    }
+          dayFormArray.setValidators(CustomValidators.atLeastOneDaySelected());
+          const startDate = this.meetupForm.controls.startDate.value;
+          if (startDate) {
+              const startDateObj = new Date(startDate);
+              const dayOfWeek = this.days[startDateObj.getDay()];
+              if (dayOfWeek) {
+                  dayFormArray.push(new FormControl(dayOfWeek));
+              }
+          }
+          break;
+
+      default:
+          break;
   }
+  dayFormArray.updateValueAndValidity();
+}
 
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({

@@ -246,13 +246,38 @@ export class CustomValidators {
 
   static validLink(ac: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
     return new Promise((resolve, reject) => {
-      try {
-        const url = new URL(ac.value);
+      if (!ac.value) {
         resolve(null);
-      } catch (_) {
-        resolve({ 'invalidLink': true });
+      } else {
+        const trimmedValue = ac.value.trim();
+        if (/\s/.test(trimmedValue)) {
+          resolve({ 'invalidLink': true });
+        } else {
+          const domainRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*(\/.*)?$/;
+          if (!domainRegex.test(trimmedValue)) {
+            resolve({ 'invalidLink': true });
+          } else {
+            try {
+              const url = new URL(trimmedValue);
+              resolve(null);
+            } catch (_) {
+              resolve({ 'invalidLink': true });
+            }
+          }
+        }
       }
     });
   }
 
+  static atLeastOneDaySelected(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        if (!control.parent) { return null; }
+        const recurringControl = control.parent.get('recurring');
+        if (!recurringControl || recurringControl.value !== 'weekly') {
+            return null;
+        }
+        const selectedDays = control.value;
+        return selectedDays && selectedDays.length > 0 ? null : { noDaysSelected: true };
+    };
+  }
 }

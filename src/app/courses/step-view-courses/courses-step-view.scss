@@ -1,3 +1,5 @@
+@import '../../variables';
+
 :host {
 
   .view-container {
@@ -54,6 +56,18 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .finish-button {
+    margin-left: 10px;
+  }
+
+  @media (max-width: $screen-sm) {
+    .grid-view {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
   }
 
 }

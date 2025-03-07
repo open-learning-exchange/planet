@@ -22,7 +22,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
-  emptyData = false;
   notificationStatus = [ 'All', 'Read', 'Unread' ];
   filter = { 'status': '' };
   anyUnread = true;
@@ -65,7 +64,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     .subscribe(notifications => {
        this.notifications.data = notifications;
        this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-       this.emptyData = !this.notifications.data.length;
     }, (err) => console.log(err.error.reason));
   }
 
