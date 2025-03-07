@@ -18,28 +18,28 @@ export class AppComponent {
   ) {
     iconRegistry.addSvgIcon(
       'myLibrary',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/library.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/folder.svg'));
     iconRegistry.addSvgIcon(
       'myCourses',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/courses.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/school.svg'));
     iconRegistry.addSvgIcon(
       'myLife',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/meetups.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/selfimprovement.svg'));
     iconRegistry.addSvgIcon(
       'myTeams',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/team.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/group.svg'));
     iconRegistry.addSvgIcon(
       'feedback',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
     iconRegistry.addSvgIcon(
       'feedbacklist',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedbacklist.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/mail.svg'));
     iconRegistry.addSvgIcon(
       'logout',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/logout.svg'));
     iconRegistry.addSvgIcon(
       'usersettings',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/usersettings.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/settings.svg'));
     iconRegistry.addSvgIcon(
       'male',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/male.svg'));
