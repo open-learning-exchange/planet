@@ -1,0 +1,20 @@
+button {
+  flex-shrink: 0;
+  margin: 4px;
+}
+
+@media (max-width: 1350px) {
+  .mat-form-field {
+    width: 100%;
+  }
+
+  mat-toolbar-row {
+    form {
+      width: 100%;
+
+      .mat-form-field {
+        width: 100%;
+      }
+    }
+  }
+}

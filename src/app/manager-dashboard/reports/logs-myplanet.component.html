@@ -73,6 +73,10 @@
           <mat-datepicker #startPicker></mat-datepicker>
           <mat-error i18n *ngIf="logsForm.errors?.invalidDates">Start date must be before end date</mat-error>
         </mat-form-field>
+      </form>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
+      <form [formGroup]="logsForm">
         <mat-form-field class="margin-lr-5 font-size-1">
           <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="minDate" [max]="today">
           <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>

@@ -10,7 +10,8 @@ import { CsvService } from '../../shared/csv.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  templateUrl: './logs-myplanet.component.html'
+  templateUrl: './logs-myplanet.component.html',
+  styleUrls: ['./logs-myplanet.component.scss']
 })
 export class LogsMyPlanetComponent implements OnInit {
 
