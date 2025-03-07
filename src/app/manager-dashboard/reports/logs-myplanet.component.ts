@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
 import { StateService } from '../../shared/state.service';
@@ -10,7 +10,8 @@ import { CsvService } from '../../shared/csv.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  templateUrl: './logs-myplanet.component.html'
+  templateUrl: './logs-myplanet.component.html',
+  styleUrls: ['./logs-myplanet.component.scss']
 })
 export class LogsMyPlanetComponent implements OnInit {
 
@@ -33,6 +34,7 @@ export class LogsMyPlanetComponent implements OnInit {
   types: string[] = [];
   selectedType = '';
   disableShowAllTime = true;
+  showFiltersRow = false;
 
   constructor(
     private csvService: CsvService,
@@ -40,7 +42,7 @@ export class LogsMyPlanetComponent implements OnInit {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.logsForm = this.fb.group({
       startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
@@ -54,6 +56,11 @@ export class LogsMyPlanetComponent implements OnInit {
       }
     });
   }
+
+  isDesktopView(): boolean {
+    return window.innerWidth > 1350;
+  }
+
 
   ngOnInit() {
     this.getApkLogs();
@@ -184,6 +191,14 @@ export class LogsMyPlanetComponent implements OnInit {
       startDate: this.minDate,
       endDate: this.today
     });
+  }
+
+  clearFilters() {
+    this.searchValue = '';
+    this.selectedVersion = '';
+    this.selectedType = '';
+    this.resetDateFilter();
+    this.applyFilters();
   }
 
 }
