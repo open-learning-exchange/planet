@@ -4,6 +4,8 @@ import { Observable, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { PouchAuthService } from './database/pouch-auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { LoginDialogComponent } from '../login/login-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,7 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private pouchAuthService: PouchAuthService,
+    private dialog: MatDialog
   ) { }
 
   private getSession$() {
@@ -36,10 +39,15 @@ export class AuthService {
         }
         this.userService.unset();
         const returnUrl = url === '/' ? null : url;
-        this.router.navigate([ '/login' ], { queryParams: { returnUrl }, replaceUrl: true });
-        return of(false);
+        // this.router.navigate([ '/login' ], { queryParams: { returnUrl }, replaceUrl: true });
+        const dialogRef = this.dialog.open(LoginDialogComponent);
+        return dialogRef.afterClosed().pipe(switchMap(() => {
+          return this.checkUser(url, roles)
+        }));
       }),
-      map(isLoggedIn => isLoggedIn)
+      map(isLoggedIn => {
+        return isLoggedIn
+      })
     );
   }
 

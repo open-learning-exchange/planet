@@ -41,6 +41,7 @@ const loginForm = {
 
 @Component({
   templateUrl: './login-form.component.html',
+  selector: 'planet-login-form',
   styleUrls: [ './login.scss' ]
 })
 export class LoginFormComponent {
