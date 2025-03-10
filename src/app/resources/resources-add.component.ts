@@ -361,9 +361,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-  private captureInitialState() {
+  private getNormalizedState(): any {
     const formValue = this.resourceForm.value;
-    this.initialState = JSON.stringify({
+    return {
       title: formValue.title || '',
       description: formValue.description || '',
       language: formValue.language || '',
@@ -378,46 +378,25 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       author: formValue.author || '',
       year: formValue.year || '',
       tags: this.tags.value || [],
-      attachment: this.file ? {
-        name: this.file.name,
-        size: this.file.size,
-        type: this.file.type
-      } : null,
+      attachment: this.file
+        ? { name: this.file.name, size: this.file.size, type: this.file.type }
+        : null,
       attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
-    });
+    };
   }
-
+  
+  private captureInitialState() {
+    this.initialState = JSON.stringify(this.getNormalizedState());
+  }
+  
   onFormChanges() {
     combineLatest([
       this.resourceForm.valueChanges,
       this.tags.valueChanges
     ])
-      .pipe(
-        debounce(() => race(interval(200), of(true)))
-      )
-      .subscribe(([ formValue, tags ]) => {
-        const currentState = JSON.stringify({
-          title: formValue.title || '',
-          description: formValue.description || '',
-          language: formValue.language || '',
-          publisher: formValue.publisher || '',
-          linkToLicense: formValue.linkToLicense || '',
-          subject: formValue.subject || [],
-          level: formValue.level || [],
-          openWith: formValue.openWith || '',
-          resourceFor: formValue.resourceFor || [],
-          medium: formValue.medium || '',
-          resourceType: formValue.resourceType || '',
-          author: formValue.author || '',
-          year: formValue.year || '',
-          tags: this.tags.value || [],
-          attachment: this.file ? {
-            name: this.file.name,
-            size: this.file.size,
-            type: this.file.type
-          } : null,
-          attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
-        });
+      .pipe(debounce(() => race(interval(200), of(true))))
+      .subscribe(() => {
+        const currentState = JSON.stringify(this.getNormalizedState());
         this.hasUnsavedChanges = currentState !== this.initialState;
         this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
