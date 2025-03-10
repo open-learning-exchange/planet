@@ -362,9 +362,22 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private captureInitialState() {
+    const formValue = this.resourceForm.value;
     this.initialState = JSON.stringify({
-      form: this.resourceForm.value,
-      tags: this.tags.value,
+      title: formValue.title || '',
+      description: formValue.description || '',
+      language: formValue.language || '',
+      publisher: formValue.publisher || '',
+      linkToLicense: formValue.linkToLicense || '',
+      subject: formValue.subject || [],
+      level: formValue.level || [],
+      openWith: formValue.openWith || '',
+      resourceFor: formValue.resourceFor || [],
+      medium: formValue.medium || '',
+      resourceType: formValue.resourceType || '',
+      author: formValue.author || '',
+      year: formValue.year || '',
+      tags: this.tags.value || [],
       attachment: this.file ? {
         name: this.file.name,
         size: this.file.size,
@@ -384,8 +397,20 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       )
       .subscribe(([ formValue, tags ]) => {
         const currentState = JSON.stringify({
-          form: this.resourceForm.value,
-          tags: this.tags.value,
+          title: formValue.title || '',
+          description: formValue.description || '',
+          language: formValue.language || '',
+          publisher: formValue.publisher || '',
+          linkToLicense: formValue.linkToLicense || '',
+          subject: formValue.subject || [],
+          level: formValue.level || [],
+          openWith: formValue.openWith || '',
+          resourceFor: formValue.resourceFor || [],
+          medium: formValue.medium || '',
+          resourceType: formValue.resourceType || '',
+          author: formValue.author || '',
+          year: formValue.year || '',
+          tags: this.tags.value || [],
           attachment: this.file ? {
             name: this.file.name,
             size: this.file.size,
