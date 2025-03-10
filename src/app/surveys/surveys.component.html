@@ -74,7 +74,7 @@
           <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
             <div [matTooltip]="(element.teamId && isManagerRoute) ? 'This is a team created survey' :
                                (!isManagerRoute && !element.teamId) ? 'This is a community survey' :
-                               element.isArchived ? 'Survey is archived and cannot be edit' : ''">
+                               element.isArchived ? 'Survey is archived and cannot be edited' : ''">
               <button mat-raised-button color="primary"
                 *ngIf="!teamId"
                 (click)="routeToEditSurvey('update', element._id)"
@@ -83,7 +83,7 @@
               </button>
             </div>
             <div [matTooltip]="element.teamId && isManagerRoute ? 'This is a team created survey' :
-                              element.isArchived ? 'Survey is archived and cannot be send' : ''">
+                              element.isArchived ? 'Survey is archived and cannot be sent' : ''">
               <button mat-raised-button color="primary"
                 *ngIf="!teamId && !routeTeamId"
                 [matMenuTriggerFor]="sendMenu"
@@ -96,14 +96,24 @@
               <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team <mat-icon>send</mat-icon></button>
             </mat-menu>
             <div [matTooltip]="element.teamId && isManagerRoute ? 'This is a team created survey' :
-                               isManagerRoute ? 'Record survey information from a person who is not a member of ' + configuration.name :
-                               element.isArchived ? 'Survey is archived and cannot be record' : 'Record Survey'">
+                              element.isArchived ? 'Survey is archived and cannot be recorded' :
+                              isManagerRoute ? 'Record survey information from a person who is not a member of ' + configuration.name : 'Record Survey'">
               <button mat-raised-button color="primary"
                 (click)="recordSurvey(element)"
                 [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
                 i18n><mat-icon>fiber_manual_record</mat-icon> Record
               </button>
             </div>
+            <ng-container *ngIf="!element.course">
+              <div [matTooltip]="(element.teamId && isManagerRoute) ? 'This is a team created survey' :
+                               (!isManagerRoute && !element.teamId) ? 'This is a community survey' :
+                               element.isArchived ? 'Survey is already archived' : ''">
+                <button mat-raised-button color="primary"
+                (click)="archiveSurvey(element)"
+                [disabled]="element.isArchived || (element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId)"
+                i18n><mat-icon>archive</mat-icon> Archive</button>
+              </div>
+            </ng-container>
           </ng-container>
           <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
           <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
@@ -115,9 +125,6 @@
               <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
             </mat-menu>
           </div>
-          <ng-container *ngIf="!element.parent === true && !element.course">
-            <button mat-raised-button color="primary" (click)="archiveSurvey(element)" [disabled]="element.isArchived" i18n><mat-icon>archive</mat-icon> Archive</button>
-          </ng-container>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
