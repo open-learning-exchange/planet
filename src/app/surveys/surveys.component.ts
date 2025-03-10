@@ -416,10 +416,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.planetMessageService.showAlert($localize`There was a problem archiving this survey or deleting submissions.`);
         return throwError(err);
       })
-    ).subscribe({
-      next: () => {},
-      error: () => {},
-    });
+    ).subscribe();
   }
 
   toggleSurveysView(): void {
