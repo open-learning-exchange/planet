@@ -391,7 +391,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-
   archiveSurvey(survey) {
     const archiveSurvey = this.couchService.updateDocument(this.dbName, {
       ...survey,
