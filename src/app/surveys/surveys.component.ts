@@ -391,13 +391,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+
   archiveSurvey(survey) {
-    const updatedSurvey = {
+    const archiveSurvey = this.couchService.updateDocument(this.dbName, {
       ...survey,
       isArchived: true,
-    };
-
-    return this.couchService.updateDocument(this.dbName, updatedSurvey).pipe(
+    }).pipe(
       switchMap(() => {
         this.planetMessageService.showMessage($localize`Survey archived: ${survey.name}`);
         this.surveys.data = this.surveys.data.map((s) =>
@@ -416,7 +415,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.planetMessageService.showAlert($localize`There was a problem archiving this survey or deleting submissions.`);
         return throwError(err);
       })
-    ).subscribe();
+    );
+
+    const archiveDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: archiveSurvey,
+          onNext: () => archiveDialog.close()
+        },
+        changeType: 'archive',
+        type: 'survey',
+        displayName: survey.name
+      }
+    });
   }
 
   toggleSurveysView(): void {
