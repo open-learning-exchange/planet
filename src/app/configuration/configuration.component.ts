@@ -29,9 +29,6 @@ const removeProtocol = (str: string) => {
       grid-template-areas: "none none ." "none none none";
       justify-items: center;
     }
-    .advanced {
-      grid-column-start: 2;
-    }
   ` ]
 })
 export class ConfigurationComponent implements OnInit {
@@ -106,7 +103,13 @@ export class ConfigurationComponent implements OnInit {
       createdDate: this.couchService.datePlaceholder,
       autoAccept: true,
       alwaysOnline: false,
-      betaEnabled: 'off'
+      betaEnabled: 'off',
+      social: this.formBuilder.group({
+        facebook: [ '', [], CustomValidators.validLink ],
+        instagram: [ '', [], CustomValidators.validLink ],
+        youtube: [ '', [], CustomValidators.validLink ],
+        x: [ '', [], CustomValidators.validLink ]
+      })
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],
