@@ -86,5 +86,33 @@
         <mat-divider></mat-divider>
       </mat-list>
     </div>
+    <div class="teams-container">
+      <mat-card>
+        <mat-card-title i18n>Teams</mat-card-title>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let team of teams" [routerLink]="['/teams/view', team.doc._id]" class="cursor-pointer">
+              <h4 matLine>{{team.doc.name}}</h4>
+            </mat-list-item>
+            <mat-list-item *ngIf="teams.length === 0">
+              <p matLine i18n>User is not a member of any teams</p>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="margin-t-10">
+        <mat-card-title i18n>Enterprises</mat-card-title>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let enterprise of enterprises" [routerLink]="['/enterprises/view', enterprise.doc._id]" class="cursor-pointer">
+              <h4 matLine>{{enterprise.doc.name}}</h4>
+            </mat-list-item>
+            <mat-list-item *ngIf="enterprises.length === 0">
+              <p matLine i18n>User is not a member of any enterprises</p>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>

@@ -375,4 +375,21 @@ export class TeamsService {
       }),
     );
   }
+  
+  getTeamsByUser(userName: string, userPlanetCode: string) {
+    const selector = {
+      '$or': [
+        { 'userId': `org.couchdb.user:${userName}` },
+        { 'userId': `org.couchdb.user:${userName}@${userPlanetCode}` }
+      ],
+      'docType': 'membership'
+    };
+    return this.couchService.findAll('teams', findDocuments(selector)).pipe(
+      switchMap(memberships => {
+        const teamIds = memberships.map((doc: any) => doc.teamId);
+        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } }));
+      }),
+      map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
+    );
+  }
 }
