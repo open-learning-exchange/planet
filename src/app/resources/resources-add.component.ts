@@ -384,11 +384,11 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
     };
   }
-  
+
   private captureInitialState() {
     this.initialState = JSON.stringify(this.getNormalizedState());
   }
-  
+
   onFormChanges() {
     combineLatest([
       this.resourceForm.valueChanges,
