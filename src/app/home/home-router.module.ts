@@ -81,7 +81,7 @@ const routes: Routes = [
     path: '',
     component: CommunityComponent,
     children: [
-      { path: 'voices/:id', component: NewsListComponent, data: { requiresAuth: false } },
+      { path: 'voices/:id', component: NewsListComponent },
     ],
     canActivate: [ BetaThenAuthService ]
   },
