@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
-  styleUrls: ['./logs-myplanet.component.scss']
+  styleUrls: [ './logs-myplanet.component.scss' ]
 })
 export class LogsMyPlanetComponent implements OnInit {
 
