@@ -74,7 +74,7 @@ export class NewsListComponent implements OnChanges {
     this.viewChange.emit(this.replyViewing);
 
     if (news._id !== 'root') {
-      this.router.navigate(['/voices', news._id]);
+      this.router.navigate([ '/voices', news._id ]);
     }
   }
 
