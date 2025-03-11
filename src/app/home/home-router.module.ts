@@ -77,12 +77,19 @@ const alwaysGuardedRoutes = [
 ];
 
 const routes: Routes = [
-  { path: '', component: CommunityComponent, canActivate: [ BetaThenAuthService ] },
-  { path: '',
+  {
+    path: '',
+    component: CommunityComponent,
+    children: [
+      { path: 'voices/:id', component: NewsListComponent, data: { requiresAuth: false } },
+    ],
+    canActivate: [ BetaThenAuthService ]
+  },
+  {
+    path: '',
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]
   },
-  { path: 'voices/:id', component: NewsListComponent, data: { requiresAuth: false } },
   { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
   { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
 ];

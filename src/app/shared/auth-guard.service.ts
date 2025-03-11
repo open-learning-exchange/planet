@@ -43,12 +43,12 @@ export class AuthService {
     );
   }
 
-  private hasNoAuth(route: ActivatedRouteSnapshot): boolean {
+  private requiresNoAuth(route: ActivatedRouteSnapshot): boolean {
     if (route.data && route.data.requiresAuth === false) {
       return true;
     }
     for (const child of route.children) {
-      if (this.hasNoAuth(child)) {
+      if (this.requiresNoAuth(child)) {
         return true;
       }
     }
@@ -60,7 +60,7 @@ export class AuthService {
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     let currentRoute: ActivatedRouteSnapshot | null = route;
     const roles: Array<string> = currentRoute.data?.roles ?? [];
-    if (this.hasNoAuth(route)) {
+    if (this.requiresNoAuth(route)) {
       return of(true);
     }
     while (currentRoute) {
