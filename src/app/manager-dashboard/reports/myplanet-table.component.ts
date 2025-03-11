@@ -29,7 +29,7 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
         case 'versionName': return (item.versionName || item.version || '');
         case 'name': return (item.customDeviceName || item.deviceName || '').toLowerCase();
         default: return typeof item[property] === undefined ? '' :
-            typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
+          typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       }
     };
     if (this.dataType === 'logs') {
