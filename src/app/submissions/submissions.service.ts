@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
-import { Subject, of, forkJoin } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { Subject, of, forkJoin, throwError } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
@@ -13,6 +13,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { TeamsService } from '../teams/teams.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -42,7 +43,8 @@ export class SubmissionsService {
     private csvService: CsvService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private teamsService: TeamsService
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
@@ -103,6 +105,18 @@ export class SubmissionsService {
       }
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
+    });
+  }
+
+  private formatShortDate(timestamp: number): string {
+    return new Date(timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short'
     });
   }
 
@@ -263,29 +277,48 @@ export class SubmissionsService {
   }
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-    return this.getSubmissionsExport(exam, type).pipe(tap(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
-      const filteredSubmissions = team
-        ? submissions.filter((s) => s.team === team)
-        : submissions;
-      const data = filteredSubmissions.map((submission) => {
-        const answerIndexes = this.answerIndexes(questionTexts, submission);
-        return {
-          'Gender': submission.user.gender || 'N/A',
-          'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
-          'Planet': submission.source,
-          'Date': submission.lastUpdateTime,
-          ...questionTexts.reduce((answerObj, text, index) => ({
-            ...answerObj,
-            [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
-              this.getAnswerText(submission.answers, index, answerIndexes)
-          }), {})
-        };
-      });
-      this.csvService.exportCSV({ data, title: `${toProperCase(type)} -  ${exam.name}` });
-    }));
+    return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
+        const filteredSubmissions = team
+          ? submissions.filter(s => s.team === team)
+          : submissions;
+        return forkJoin(
+          filteredSubmissions.map(submission => {
+            if (submission.team) {
+              return this.teamsService.getTeamName(submission.team).pipe(
+                map(teamName => ({ ...submission, teamName }))
+              );
+            }
+            return of(submission);
+          })
+        ).pipe(
+          map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ])
+        );
+      }),
+      tap(([ updatedSubmissions, time, questionTexts ]) => {
+        const data = updatedSubmissions.map(submission => {
+          const answerIndexes = this.answerIndexes(questionTexts, submission);
+          return {
+            'Gender': submission.user.gender || 'N/A',
+            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
+            'Planet': submission.source,
+            'Date': submission.lastUpdateTime,
+            'Team/Enterprise': submission.teamName || 'N/A',
+            ...questionTexts.reduce((answerObj, text, index) => ({
+              ...answerObj,
+              [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+                this.getAnswerText(submission.answers, index, answerIndexes)
+            }), {})
+          };
+        });
+        this.csvService.exportCSV({ data, title: `${toProperCase(type)} - ${exam.name}` });
+      })
+    );
   }
 
   answerIndexes(questionTexts: string[], submission: any) {
+    if (!submission || !submission.parent || !Array.isArray(submission.parent.questions) || !questionTexts) {
+      return questionTexts.map(() => -1);
+    }
     return questionTexts.map(text => submission.parent.questions.findIndex(question => question.body === text));
   }
 
@@ -298,39 +331,72 @@ export class SubmissionsService {
 
   getPDFAnswerText(submission: any, index, answerIndexes: number[]) {
     const answerText = this.getAnswerText(submission.answers, index, answerIndexes);
+    if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
+      return answerText;
+    }
     return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
       '<pre>'.concat(answerText, '</pre>') :
       answerText;
   }
 
-  exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: { includeQuestions, includeAnswers }, team?: string) {
+  exportSubmissionsPdf(
+    exam,
+    type: 'exam' | 'survey',
+    exportOptions: { includeQuestions, includeAnswers },
+    team?: string
+  ) {
     forkJoin([
       this.getSubmissionsExport(exam, type),
       this.managerService.getChildPlanets(true)
-    ]).subscribe(([ [ submissions, time, questionTexts ], planets ]: [ [ any[], number, string[] ], any[] ]) => {
-      const filteredSubmissions = team
-        ? submissions.filter((s) => s.team === team)
-        : submissions;
-      if (!filteredSubmissions.length) {
-        this.dialogsLoadingService.stop();
-        this.planetMessageService.showMessage($localize`There is no survey response`);
-        return;
-      }
-      const planetsWithName = attachNamesToPlanets(planets);
-      const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
-        ...submission,
-        planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
-      }));
-      const markdown = this.preparePDF(exam, submissionsWithPlanetName, questionTexts, exportOptions);
-      const converter = new showdown.Converter();
-      pdfMake.createPdf(
-        {
-          content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
-          pageBreakBefore: (currentNode) => currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+    ])
+      .pipe(
+        finalize(() => this.dialogsLoadingService.stop()),
+        catchError((error) => {
+          this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
+          return throwError(error);
+        }),
+        switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
+          const [ submissions, time, questionTexts ] = submissionsTuple;
+          const filteredSubmissions = team
+            ? submissions.filter(s => s.team === team)
+            : submissions;
+          if (!filteredSubmissions.length) {
+            this.dialogsLoadingService.stop();
+            this.planetMessageService.showMessage($localize`There is no survey response`);
+            return of(null);
+          }
+          const planetsWithName = attachNamesToPlanets(planets);
+          const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
+            ...submission,
+            planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
+          }));
+          return forkJoin(
+            submissionsWithPlanetName.map(submission => {
+              if (submission.team) {
+                return this.teamsService.getTeamName(submission.team).pipe(
+                  map(teamName => ({ ...submission, teamName }))
+                );
+              }
+              return of(submission);
+            })
+          ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
+          );
+        })
+      )
+      .subscribe(tuple => {
+        if (!tuple) {
+          return;
         }
-      ).download(`${toProperCase(type)} - ${exam.name}.pdf`);
-      this.dialogsLoadingService.stop();
-    });
+        const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
+        const markdown = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const converter = new showdown.Converter();
+        pdfMake.createPdf({
+          content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
+          pageBreakBefore: (currentNode) =>
+            currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+        }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
+        this.dialogsLoadingService.stop();
+      });
   }
 
   preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
@@ -341,12 +407,19 @@ export class SubmissionsService {
     }).join('  \n');
   }
 
-  surveyHeader(responseHeader: boolean, exam, index: number, submission) {
-    return responseHeader ?
-      `<h3${index === 0 ? '' : ' class="pdf-break"'}>
-        Response from ${submission.planetName} on ${new Date(submission.lastUpdateTime).toString()}
-      </h3>  \n` :
-      `### ${exam.name} Questions  \n`;
+  surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
+    if (responseHeader) {
+      const shortDate = this.formatShortDate(submission.lastUpdateTime);
+      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${shortDate}</h3>`;
+      if (submission.teamName) {
+        const teamHeader = `<h5>${submission.teamName}</h5>`;
+        return `${mainHeader}\n${teamHeader}\n`;
+      } else {
+        return `${mainHeader}\n`;
+      }
+    } else {
+      return `### ${exam.name} Questions\n`;
+    }
   }
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
