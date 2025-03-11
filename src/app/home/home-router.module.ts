@@ -80,9 +80,7 @@ const routes: Routes = [
   {
     path: '',
     component: CommunityComponent,
-    children: [
-      { path: 'voices/:id', component: NewsListComponent },
-    ],
+    children: [ { path: 'voices/:id', component: NewsListComponent } ],
     canActivate: [ BetaThenAuthService ]
   },
   {
