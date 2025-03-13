@@ -20,7 +20,7 @@
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab i18n-label label="Community Leaders">
+        <mat-tab i18n-label label="Community Leaders" *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
@@ -32,24 +32,24 @@
             </mat-card>
           </div>
         </mat-tab>
-        <mat-tab i18n-label label="Services">
+        <mat-tab i18n-label label="Services" *ngIf="isLoggedIn">
+          <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
           <ng-container *ngIf="!planetCode">
-            <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
-              { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
-            </button>
           </ng-container>
-          <planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown>
+          <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
+          <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
+            { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
+          </button>
+          <button (click)="confirmDeleteDescription()" mat-stroked-button>
+            <span i18n>Remove Description</span>
+          </button>
           <ng-container *ngIf="!planetCode">
             <div *planetAuthorizedRoles="''" class="action-buttons sticky-button">
-              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-                <span *ngIf="!deleteMode" i18n>Remove Links</span>
-                <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-              </button>
             </div>
           </ng-container>
           <ng-container>
+            <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
             <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
             <mat-nav-list>
               <mat-list-item *ngFor="let link of links" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
@@ -61,14 +61,19 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
+          <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+          <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+            <span *ngIf="!deleteMode" i18n>Remove Links</span>
+            <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+          </button>
         </mat-tab>
-        <mat-tab *ngIf="configuration.planetType==='nation'" i18n-label label="Communities">
+        <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
         </mat-tab>
-        <mat-tab i18n-label label="Finances">
+        <mat-tab i18n-label label="Finances" *ngIf="isLoggedIn">
           <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
-        <mat-tab i18n-label label="Reports">
+        <mat-tab i18n-label label="Reports" *ngIf="isLoggedIn">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
         <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">

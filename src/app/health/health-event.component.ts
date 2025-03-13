@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
@@ -10,19 +10,24 @@ import { CustomValidators } from '../validators/custom-validators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
-import { of, forkJoin } from 'rxjs';
+import { of, forkJoin, interval, race } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
+import { debounce } from 'rxjs/operators';
 
 @Component({
   templateUrl: './health-event.component.html',
   styleUrls: [ './health-update.scss' ]
 })
-export class HealthEventComponent implements OnInit {
+export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
   healthForm: FormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   event: any = {};
+  initialFormValues: any;
+  hasUnsavedChanges = false;
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +38,8 @@ export class HealthEventComponent implements OnInit {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     this.healthForm = this.fb.group({
       temperature: [ '', Validators.min(1) ],
@@ -74,7 +80,60 @@ export class HealthEventComponent implements OnInit {
       }
       this.event = event === 'new' ? {} : event;
       this.healthForm.patchValue(this.event);
+      this.onFormChanges();
+      this.captureInitialState();
     });
+  }
+
+  private captureInitialState() {
+    const formValue = this.healthForm.value;
+    const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
+    const processedForm = Object.keys(formValue).reduce((acc, key) => {
+      if (numericFields.includes(key)) {
+        acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
+      } else if (key === 'conditions') {
+        acc[key] = this.processConditions(formValue[key] || {});
+      } else {
+        acc[key] = formValue[key];
+      }
+      return acc;
+    }, {});
+
+    this.initialFormValues = JSON.stringify(processedForm);
+  }
+
+  private processConditions(inputConditions: any) {
+    const processedConditions = Object.keys(inputConditions || {}).reduce((acc, key) => {
+      if (inputConditions[key]) {
+        acc[key] = true;
+      }
+      return acc;
+    }, {});
+    return processedConditions;
+  }
+
+  onFormChanges() {
+    this.healthForm.valueChanges
+      .pipe(
+        debounce(() => race(interval(200), of(true)))
+      )
+      .subscribe(formValue => {
+        const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
+        const processedForm = Object.keys(formValue).reduce((acc, key) => {
+          if (numericFields.includes(key)) {
+            acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
+          } else if (key === 'conditions') {
+            acc[key] = this.processConditions(formValue[key] || {});
+          } else {
+            acc[key] = formValue[key];
+          }
+          return acc;
+        }, {});
+
+        const currentState = JSON.stringify(processedForm);
+        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
   }
 
   onSubmit() {
@@ -87,7 +146,11 @@ export class HealthEventComponent implements OnInit {
     if (promptFields.length) {
       this.showWarning(promptFields);
     } else {
-      this.saveEvent().subscribe(() => this.goBack());
+      this.saveEvent().subscribe(() => {
+        this.hasUnsavedChanges = false;
+        this.unsavedChangesService.setHasUnsavedChanges(false);
+        this.goBack();
+      });
     }
   }
 
@@ -98,6 +161,14 @@ export class HealthEventComponent implements OnInit {
   }
 
   goBack() {
+    if (this.hasUnsavedChanges) {
+      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      if (!confirmLeave) {
+        return;
+      }
+    }
+    this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
@@ -157,4 +228,17 @@ export class HealthEventComponent implements OnInit {
     );
   }
 
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+    }
+    return true;
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+    }
+  }
 }
