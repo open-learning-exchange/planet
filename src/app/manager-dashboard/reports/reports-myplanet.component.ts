@@ -12,9 +12,11 @@ import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { CsvService } from '../../shared/csv.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  templateUrl: './reports-myplanet.component.html'
+  templateUrl: './reports-myplanet.component.html',
+  styleUrls: ['./reports-myplanet.component.scss']
 })
 export class ReportsMyPlanetComponent implements OnInit {
 
@@ -32,6 +34,14 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
   hubId: string | null = null;
   hub = { spokes: [] };
+  startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  endDate: Date = new Date();
+  reportsForm: FormGroup;
+  minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  today = new Date();
+  versions: string[] = [];
+  selectedVersion = '';
+  disableShowAllTime = true;
 
   constructor(
     private csvService: CsvService,
@@ -41,33 +51,122 @@ export class ReportsMyPlanetComponent implements OnInit {
     private managerService: ManagerService,
     private reportsService: ReportsService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private fb: FormBuilder
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.reportsForm = this.fb.group({
+      startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
+      endDate: [ this.today, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ]
+    }, {
+      validator: (ac) => {
+        if (ac.get('startDate').value > ac.get('endDate').value) {
+          return { invalidDates: true };
+        }
+        return null;
+      }
+    });
   }
 
   ngOnInit() {
     this.getMyPlanetList(this.route.snapshot.params.hubId);
+    this.reportsForm.valueChanges.subscribe(() => {
+      this.startDate = this.reportsForm.get('startDate').value;
+      this.endDate = this.reportsForm.get('endDate').value;
+      if (!this.reportsForm.errors?.invalidDates) {
+        this.applyFilters();
+      }
+      this.updateShowAllTimeButton();
+    });
   }
 
-  @HostListener('window:resize') onResize() {
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
-    this.showFiltersRow = false;
+    if (event && event.target.innerWidth > 1350) {
+      this.showFiltersRow = false;
+    }
   }
 
   filterData(filterValue: string) {
     this.searchValue = filterValue;
-    this.planets = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, filterValue));
+    this.applyFilters();
+  }
+
+  clearFilters() {
+    this.searchValue = '';
+    this.selectedVersion = '';
+    this.resetDateFilter();
+    this.applyFilters();
   }
 
   setAllPlanets(planets: any[], myPlanets: any[]) {
+    this.getUniqueVersions(myPlanets);
+    this.minDate = this.getEarliestDate(myPlanets);
+    this.reportsForm.patchValue({
+      startDate: this.minDate
+    });
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: this.myPlanetGroups(planet, myPlanets)
-        .map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max }))
+      children: this.filterMyPlanetData(this.myPlanetGroups(planet, myPlanets)
+        .map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max })))
     }));
+  }
+
+  filterMyPlanetData(data: any[]) {
+    return data
+      .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
+      .filter(item => {
+        const itemDate = item.time || item.last_synced;
+        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= this.endDate.getTime());
+      });
+  }
+
+  getUniqueVersions(myPlanets: any[]) {
+    this.versions = Array.from(new Set(myPlanets.map(planet => 
+      planet.versionName || (planet.usages && planet.usages.length > 0 ? planet.usages[0].versionName : null)
+    ))).filter(version => version).sort();
+  }
+
+  getEarliestDate(myPlanets: any[]): Date {
+    const earliest = Math.min(...myPlanets.flatMap(planet => {
+      const dates = [];
+      if (planet.time) dates.push(Number(planet.time));
+      if (planet.last_synced) dates.push(Number(planet.last_synced));
+      if (planet.usages) {
+        dates.push(...planet.usages.map(usage => Number(usage.time || usage.last_synced)));
+      }
+      return dates;
+    }));
+    return new Date(earliest);
+  }
+
+  updateShowAllTimeButton() {
+    const startIsMin = new Date(this.startDate).setHours(0, 0, 0, 0) === new Date(this.minDate).setHours(0, 0, 0, 0);
+    const endIsToday = new Date(this.endDate).setHours(0, 0, 0, 0) === new Date(this.today).setHours(0, 0, 0, 0);
+    this.disableShowAllTime = startIsMin && endIsToday;
+  }
+
+  onVersionChange(version: string) {
+    this.selectedVersion = version;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.planets = this.allPlanets.map(planet => ({
+      ...planet,
+      children: this.filterMyPlanetData(planet.children)
+    }));
+    this.isEmpty = areNoChildren(this.planets);
+  }
+
+  resetDateFilter() {
+    this.reportsForm.patchValue({
+      startDate: this.minDate,
+      endDate: this.today
+    });
   }
 
   myPlanetGroups(planet: any, myPlanets: any[]) {
@@ -160,6 +259,10 @@ export class ReportsMyPlanetComponent implements OnInit {
       data: csvData,
       title: `myPlanet Reports for ${planet.name}`,
     });
+  }
+
+  isDesktopView(): boolean {
+    return window.innerWidth > 1350;
   }
 
 }
