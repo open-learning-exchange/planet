@@ -374,8 +374,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
-  
-    // If the reportType is coursesOverview, build a simpler form (only date fields)
     if (reportType === 'coursesOverview') {
       const fields = [
         { placeholder: $localize`From`, name: 'startDate', ...commonProps },
@@ -392,8 +390,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       return;
     }
-  
-    // Otherwise, proceed with the standard form for other report types.
     const teamOptions = [
       { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
