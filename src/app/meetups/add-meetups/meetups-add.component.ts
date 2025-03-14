@@ -138,7 +138,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       endTime: [ '', CustomValidators.timeValidator() ],
       category: '',
       meetupLocation: '',
-      meetupLink: ['', [], CustomValidators.validLink],
+      meetupLink: [ '', [], CustomValidators.validLink ],
       createdBy: this.userService.get().name,
       sourcePlanet: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
