@@ -371,9 +371,29 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
+  
+    // If the reportType is coursesOverview, build a simpler form (only date fields)
+    if (reportType === 'coursesOverview') {
+      const fields = [
+        { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+        { placeholder: $localize`To`, name: 'endDate', ...commonProps }
+      ];
+      const formGroup = {
+        startDate: this.dateFilterForm.controls.startDate.value,
+        endDate: [this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator()]
+      };
+      this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, fields, formGroup, {
+        onSubmit: (formValue: any) => {
+          this.exportCourseOverview(formValue.startDate, formValue.endDate);
+        }
+      });
+      return;
+    }
+  
+    // Otherwise, proceed with the standard form for other report types.
     const teamOptions = [
       { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
@@ -406,26 +426,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  openExportCourseOverviewDialog() {
-    console.log('openExportCourseOverviewDialog() called');
-    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
-    const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
-    const fields = [
-      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
-      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
-    ];
-    const formGroup = {
-      startDate: this.dateFilterForm.controls.startDate.value,
-      endDate: [this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator()]
-    };
-    this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, fields, formGroup, {
-      onSubmit: (formValue: any) => {
-        console.log('Courses overview form submitted:', formValue);
-        this.exportCourseOverview(formValue.startDate, formValue.endDate);
-      }
-    });
-  }
+  
 
   exportCourseOverview(startDate: Date, endDate: Date) {
     this.dialogsLoadingService.start();

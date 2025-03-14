@@ -62,7 +62,7 @@
         <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
         <button mat-menu-item *ngIf="progress?.steps" (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
         <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
-        <button mat-menu-item (click)="openExportCourseOverviewDialog()" i18n>Courses Overview Report</button>
+        <button mat-menu-item (click)="openExportDialog('coursesOverview')" i18n>Courses Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
     </mat-toolbar-row>
