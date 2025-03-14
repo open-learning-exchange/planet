@@ -25,6 +25,19 @@ import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 
+// Define CourseStats interface locally so it can be used throughout this file.
+interface CourseStats {
+  title: string;
+  steps: number;
+  exams: number;
+  enrollments: number;
+  count: number;
+  stepsCompleted: number;
+  completions: number;
+  rating: number;
+  ratingCount: number;
+}
+
 @Component({
   templateUrl: './reports-detail.component.html',
   styleUrls: [ 'reports-detail.scss' ],
@@ -373,28 +386,28 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
-    const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
+    const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     const teamOptions = [
       { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
-      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
+      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { placeholder: $localize`Team`, name: 'team', options: teamOptions, type: 'selectbox' };
     const sortingOptions = sortingOptionsMap[reportType];
     const fields = [
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
+        ? [{ placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' }]
         : [])
     ];
     const formGroup = {
       startDate: this.dateFilterForm.controls.startDate.value,
-      endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ],
+      endDate: [this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator()],
       team: reportType === 'health' ? 'All' : this.selectedTeam,
       sortBy: sortingOptions && sortingOptions.length > 0 ? sortingOptions[0].value : null
     };
@@ -406,7 +419,120 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+  
+  openExportCourseOverviewDialog() {
+    console.log('openExportCourseOverviewDialog() called');
+    const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
+    const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
+    const fields = [
+      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
+    ];
+    const formGroup = {
+      startDate: this.dateFilterForm.controls.startDate.value,
+      endDate: [this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator()]
+    };
+    this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, fields, formGroup, {
+      onSubmit: (formValue: any) => {
+        console.log('Courses overview form submitted:', formValue);
+        this.exportCourseOverview(formValue.startDate, formValue.endDate);
+      }
+    });
+  }
+  
+  exportCourseOverview(startDate: Date, endDate: Date) {
+    this.dialogsLoadingService.start();
+  
+    const dateRange = { startDate, endDate };
+  
+    // Filter course activity data by the date range.
+    const filteredCourseData = filterByDate(
+      this.courseActivities?.total?.data,
+      'time',
+      dateRange
+    ) as any[];
+  
+    // Aggregate course statistics.
+    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: CourseStats }, activity: any) => {
+      if (!stats[activity.courseId]) {
+        stats[activity.courseId] = {
+          // Try multiple properties for the course title.
+          title: activity.courseTitle || activity.title || activity.max?.title || '',
+          steps: activity.steps || 0,
+          exams: activity.exams || 0,
+          enrollments: 0,
+          count: 0,
+          stepsCompleted: 0,
+          completions: 0,
+          rating: 0,
+          ratingCount: 0
+        };
+      }
+      stats[activity.courseId].count++; // Increment the view count.
+      return stats;
+    }, {} as { [courseId: string]: CourseStats });
+  
+    console.log('Merged course activity data:', this.courseActivities.total.data);
+  
+    // Process progress data.
+    const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
+    const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
+    const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
+  
+    filteredEnrollments.forEach((enrollment: any) => {
+      if (courseStats[enrollment.courseId]) {
+        courseStats[enrollment.courseId].enrollments++;
+      }
+    });
+  
+    filteredCompletions.forEach((completion: any) => {
+      if (courseStats[completion.courseId]) {
+        courseStats[completion.courseId].completions++;
+      }
+    });
+  
+    filteredSteps.forEach((step: any) => {
+      if (courseStats[step.courseId]) {
+        courseStats[step.courseId].stepsCompleted++;
+      }
+    });
+  
+    // Mimic the UI's rating calculation.
+    // Filter the raw ratings data by date and group it as the UI does.
+    const filteredRatings = filterByDate(this.ratings.total.data, 'time', dateRange) as any[];
+    const averageRatings = this.activityService.groupRatings(filteredRatings);
+    // In the UI, the grouped rating objects use the property "item" to denote the course ID.
+    const courseRatings = averageRatings.filter((item: any) => item.type === 'course');
+  
+    courseRatings.forEach((rating: any) => {
+      if (courseStats[rating.item]) {
+        courseStats[rating.item].rating = rating.rating;
+        courseStats[rating.item].ratingCount = rating.ratingCount;
+      }
+    });
+  
+    // Map aggregated data to CSV rows.
+    const csvData = Object.values(courseStats).map((course: CourseStats) => ({
+      'Title': course.title,
+      'Steps': course.steps,
+      'Exams': course.exams,
+      'Enrollments': course.enrollments,
+      'Count': course.count,
+      'Steps Completed': course.stepsCompleted,
+      'Completions': course.completions,
+      'Average Rating': course.ratingCount > 0 ? (course.rating / course.ratingCount).toFixed(1) : 'N/A'
+    }));
+  
+    this.csvService.exportCSV({
+      data: csvData,
+      title: $localize`Courses Overview`
+    });
+  
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
+  }
+  
+  
   sortData(data: any[], sortBy: string): any[] {
     const order = sortBy.endsWith('Asc') ? 1 : -1;
     let field = sortBy.replace(/Asc|Desc/, '');
@@ -423,7 +549,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return comparison * order;
     });
   }
-
+  
   exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
     switch (reportType) {
       case 'logins':
@@ -457,13 +583,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
-
+  
   exportSummary(dateRange: any, members: any[], sortBy: string) {
     const loginData = filterByMember(filterByDate(this.loginActivities?.data, 'loginTime', dateRange), members);
     const resourceData = filterByMember(filterByDate(this.resourceActivities?.total?.data, 'time', dateRange), members);
     const courseData = filterByMember(filterByDate(this.courseActivities?.total?.data, 'time', dateRange), members);
     const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
-
+  
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
       const sortFunction = (a, b) => {
@@ -479,7 +605,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       courseData.sort(sortFunction);
       progressData.sort(sortFunction);
     }
-
+  
     this.csvService.exportSummaryCSV(
       loginData,
       resourceData,
@@ -488,7 +614,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.planetName
     );
   }
-
+  
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId: courseId },
@@ -498,7 +624,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       autoFocus: false
     });
   }
-
+  
   exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
     let data = {
       'resourceViews': this.resourceActivities.total.data,
@@ -521,23 +647,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       title
     });
   }
-
+  
   goBack() {
     const route = this.codeParam === null ? '../../' : '../';
     this.router.navigate([ route ], { relativeTo: this.route });
   }
-
+  
   openResourceView(resourceId) {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
-
+  
   openMemberView(user) {
     this.dialog.open(UserProfileDialogComponent, {
       data: { member: { name: user.name, userPlanetCode: user.planetCode } },
       autoFocus: false
     });
   }
-
+  
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
@@ -550,5 +676,5 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       endDate: newEndDate
     }, { emitEvent: true });
   }
-
+  
 }
