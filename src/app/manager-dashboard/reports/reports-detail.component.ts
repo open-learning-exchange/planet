@@ -568,7 +568,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       courseData.sort(sortFunction);
       progressData.sort(sortFunction);
     }
-    
+
     this.csvService.exportSummaryCSV(
       loginData,
       resourceData,
