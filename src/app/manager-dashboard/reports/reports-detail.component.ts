@@ -442,21 +442,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   
   exportCourseOverview(startDate: Date, endDate: Date) {
     this.dialogsLoadingService.start();
-  
     const dateRange = { startDate, endDate };
-  
-    // Filter course activity data by the date range.
     const filteredCourseData = filterByDate(
       this.courseActivities?.total?.data,
       'time',
       dateRange
     ) as any[];
-  
-    // Aggregate course statistics.
-    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: CourseStats }, activity: any) => {
+    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: CourseStats & { averageRating?: any } }, activity: any) => {
       if (!stats[activity.courseId]) {
         stats[activity.courseId] = {
-          // Try multiple properties for the course title.
           title: activity.courseTitle || activity.title || activity.max?.title || '',
           steps: activity.steps || 0,
           exams: activity.exams || 0,
@@ -465,16 +459,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           stepsCompleted: 0,
           completions: 0,
           rating: 0,
-          ratingCount: 0
+          ratingCount: 0,
+          averageRating: null
         };
       }
-      stats[activity.courseId].count++; // Increment the view count.
+      stats[activity.courseId].count++;
       return stats;
-    }, {} as { [courseId: string]: CourseStats });
+    }, {} as { [courseId: string]: CourseStats & { averageRating?: any } });
   
     console.log('Merged course activity data:', this.courseActivities.total.data);
-  
-    // Process progress data.
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
     const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
@@ -484,43 +477,35 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         courseStats[enrollment.courseId].enrollments++;
       }
     });
-  
     filteredCompletions.forEach((completion: any) => {
       if (courseStats[completion.courseId]) {
         courseStats[completion.courseId].completions++;
       }
     });
-  
     filteredSteps.forEach((step: any) => {
       if (courseStats[step.courseId]) {
         courseStats[step.courseId].stepsCompleted++;
       }
     });
-  
-    // Mimic the UI's rating calculation.
-    // Filter the raw ratings data by date and group it as the UI does.
-    const filteredRatings = filterByDate(this.ratings.total.data, 'time', dateRange) as any[];
-    const averageRatings = this.activityService.groupRatings(filteredRatings);
-    // In the UI, the grouped rating objects use the property "item" to denote the course ID.
-    const courseRatings = averageRatings.filter((item: any) => item.type === 'course');
-  
-    courseRatings.forEach((rating: any) => {
-      if (courseStats[rating.item]) {
-        courseStats[rating.item].rating = rating.rating;
-        courseStats[rating.item].ratingCount = rating.ratingCount;
+    this.ratings.courses.forEach((rating: any) => {
+      if (rating.item && courseStats[rating.item]) {
+        courseStats[rating.item].averageRating = rating.value;
       }
     });
-  
-    // Map aggregated data to CSV rows.
-    const csvData = Object.values(courseStats).map((course: CourseStats) => ({
+    Object.keys(courseStats).forEach(courseId => {
+      if (courseStats[courseId].averageRating === null || courseStats[courseId].averageRating === undefined) {
+        courseStats[courseId].averageRating = 'N/A';
+      }
+    });
+      const csvData = Object.values(courseStats).map((course: any) => ({
       'Title': course.title,
       'Steps': course.steps,
       'Exams': course.exams,
       'Enrollments': course.enrollments,
-      'Count': course.count,
+      'Views': course.count,
       'Steps Completed': course.stepsCompleted,
       'Completions': course.completions,
-      'Average Rating': course.ratingCount > 0 ? (course.rating / course.ratingCount).toFixed(1) : 'N/A'
+      'Average Rating': course.averageRating
     }));
   
     this.csvService.exportCSV({
