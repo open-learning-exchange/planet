@@ -475,7 +475,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
     Object.keys(courseStats).forEach(courseId => {
       const foundRating = (this.ratings.courses || []).find((rating: any) => rating.item === courseId);
-      courseStats[courseId].averageRating = foundRating ? foundRating.value : 'N/A';
+      courseStats[courseId].averageRating = foundRating ? foundRating.value : '';
     });
     const csvData = Object.values(courseStats).map((course: any) => ({
       'Title': course.title,
