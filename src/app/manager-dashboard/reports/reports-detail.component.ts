@@ -25,19 +25,6 @@ import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 
-// Define CourseStats interface locally so it can be used throughout this file.
-interface CourseStats {
-  title: string;
-  steps: number;
-  exams: number;
-  enrollments: number;
-  count: number;
-  stepsCompleted: number;
-  completions: number;
-  rating: number;
-  ratingCount: number;
-}
-
 @Component({
   templateUrl: './reports-detail.component.html',
   styleUrls: [ 'reports-detail.scss' ],
@@ -419,7 +406,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   openExportCourseOverviewDialog() {
     console.log('openExportCourseOverviewDialog() called');
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
@@ -439,7 +426,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   exportCourseOverview(startDate: Date, endDate: Date) {
     this.dialogsLoadingService.start();
     const dateRange = { startDate, endDate };
@@ -448,7 +435,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'time',
       dateRange
     ) as any[];
-    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: CourseStats & { averageRating?: any } }, activity: any) => {
+    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: any }, activity: any) => {
       if (!stats[activity.courseId]) {
         stats[activity.courseId] = {
           title: activity.courseTitle || activity.title || activity.max?.title || '',
@@ -458,15 +445,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           count: 0,
           stepsCompleted: 0,
           completions: 0,
-          rating: 0,
-          ratingCount: 0,
-          averageRating: null
         };
       }
       stats[activity.courseId].count++;
       return stats;
-    }, {} as { [courseId: string]: CourseStats & { averageRating?: any } });
-  
+    }, {});
+
     console.log('Merged course activity data:', this.courseActivities.total.data);
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
@@ -487,17 +471,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         courseStats[step.courseId].stepsCompleted++;
       }
     });
-    this.ratings.courses.forEach((rating: any) => {
-      if (rating.item && courseStats[rating.item]) {
-        courseStats[rating.item].averageRating = rating.value;
-      }
-    });
+
     Object.keys(courseStats).forEach(courseId => {
-      if (courseStats[courseId].averageRating === null || courseStats[courseId].averageRating === undefined) {
-        courseStats[courseId].averageRating = 'N/A';
-      }
+      const foundRating = (this.ratings.courses || []).find((rating: any) => rating.item === courseId);
+      courseStats[courseId].averageRating = foundRating ? foundRating.value : 'N/A';
     });
-      const csvData = Object.values(courseStats).map((course: any) => ({
+    const csvData = Object.values(courseStats).map((course: any) => ({
       'Title': course.title,
       'Steps': course.steps,
       'Exams': course.exams,
@@ -516,8 +495,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
-  
-  
+
   sortData(data: any[], sortBy: string): any[] {
     const order = sortBy.endsWith('Asc') ? 1 : -1;
     let field = sortBy.replace(/Asc|Desc/, '');
@@ -534,7 +512,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return comparison * order;
     });
   }
-  
+
   exportCSV(reportType: string, dateRange: { startDate: Date, endDate: Date }, members: any[], sortBy: string) {
     switch (reportType) {
       case 'logins':
@@ -568,7 +546,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
-  
+
   exportSummary(dateRange: any, members: any[], sortBy: string) {
     const loginData = filterByMember(filterByDate(this.loginActivities?.data, 'loginTime', dateRange), members);
     const resourceData = filterByMember(filterByDate(this.resourceActivities?.total?.data, 'time', dateRange), members);
@@ -590,7 +568,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       courseData.sort(sortFunction);
       progressData.sort(sortFunction);
     }
-  
     this.csvService.exportSummaryCSV(
       loginData,
       resourceData,
@@ -599,7 +576,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.planetName
     );
   }
-  
+
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId: courseId },
@@ -609,7 +586,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       autoFocus: false
     });
   }
-  
+
   exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
     let data = {
       'resourceViews': this.resourceActivities.total.data,
@@ -632,23 +609,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       title
     });
   }
-  
+
   goBack() {
     const route = this.codeParam === null ? '../../' : '../';
     this.router.navigate([ route ], { relativeTo: this.route });
   }
-  
+
   openResourceView(resourceId) {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
-  
+
   openMemberView(user) {
     this.dialog.open(UserProfileDialogComponent, {
       data: { member: { name: user.name, userPlanetCode: user.planetCode } },
       autoFocus: false
     });
   }
-  
+
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
@@ -661,5 +638,5 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       endDate: newEndDate
     }, { emitEvent: true });
   }
-  
+
 }
