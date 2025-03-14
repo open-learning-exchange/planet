@@ -375,7 +375,7 @@ export class TeamsService {
       }),
     );
   }
-  
+
   getTeamsByUser(userName: string, userPlanetCode: string) {
     const selector = {
       '$or': [
