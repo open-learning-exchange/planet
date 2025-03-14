@@ -396,21 +396,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
-      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
+      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
+      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
     ];
-    const teamField = { placeholder: $localize`Team`, name: 'team', options: teamOptions, type: 'selectbox' };
+    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
     const sortingOptions = sortingOptionsMap[reportType];
     const fields = [
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [{placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' }]
+        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
         : [])
     ];
     const formGroup = {
       startDate: this.dateFilterForm.controls.startDate.value,
-      endDate: [this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator()],
+      endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ],
       team: reportType === 'health' ? 'All' : this.selectedTeam,
       sortBy: sortingOptions && sortingOptions.length > 0 ? sortingOptions[0].value : null
     };
@@ -568,6 +568,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       courseData.sort(sortFunction);
       progressData.sort(sortFunction);
     }
+    
     this.csvService.exportSummaryCSV(
       loginData,
       resourceData,
