@@ -389,7 +389,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [{ placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' }]
+        ? [{placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' }]
         : [])
     ];
     const formGroup = {
@@ -552,7 +552,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const resourceData = filterByMember(filterByDate(this.resourceActivities?.total?.data, 'time', dateRange), members);
     const courseData = filterByMember(filterByDate(this.courseActivities?.total?.data, 'time', dateRange), members);
     const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
-  
+
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
       const sortFunction = (a, b) => {
