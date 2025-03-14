@@ -259,7 +259,6 @@
       }
     }
   },
-  "defaultProject": "planet-app",
   "schematics": {
     "@schematics/angular:class": {
       "skipTests": true
