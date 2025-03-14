@@ -423,7 +423,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
   
-
   exportCourseOverview(startDate: Date, endDate: Date) {
     this.dialogsLoadingService.start();
     const dateRange = { startDate, endDate };
@@ -447,7 +446,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       stats[activity.courseId].count++;
       return stats;
     }, {});
-
+  
     console.log('Merged course activity data:', this.courseActivities.total.data);
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
@@ -468,13 +467,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         courseStats[step.courseId].stepsCompleted++;
       }
     });
-
     Object.keys(courseStats).forEach(courseId => {
       const foundRating = (this.ratings.courses || []).find((rating: any) => rating.item === courseId);
       courseStats[courseId].averageRating = foundRating ? foundRating.value : '';
     });
-    const csvData = Object.values(courseStats).map((course: any) => ({
+    const planetForLink = (this.stateService.configuration.planetName ||
+                            this.planetName ||
+                            'default').toLowerCase();
+    const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
+    const csvData = Object.entries(courseStats).map(([courseId, course]: [string, any]) => ({
       'Title': course.title,
+      'Link': baseUrl + courseId,
       'Steps': course.steps,
       'Exams': course.exams,
       'Enrollments': course.enrollments,
