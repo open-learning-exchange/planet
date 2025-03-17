@@ -9,7 +9,7 @@ const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
   courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
   health: [ 'weekOf', 'count', 'unique' ],
-  chat: [ 'aiProvider', 'user', 'createdDate', 'hasAttachments', 'assistant', 'shared' ]
+  chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'hasAttachments', 'assistant', 'shared' ]
 };
 
 @Component({
@@ -54,9 +54,10 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
         createdDate: new Date(activity.createdDate),
-        hasAttachments: activity.context?.resource?.attachments ? 'True' : 'False',
-        assistant: activity.assistant ? 'True' : 'False',
-        shared: activity.shared ? 'True' : 'False'
+        hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
+        assistant: activity.assistant ? 'True' : '',
+        shared: activity.shared ? 'True' : '',
+        conversationLength: activity.conversations.length
       }));
     } else {
       this.activities.data = this.activitiesByDoc.map(activity => ({

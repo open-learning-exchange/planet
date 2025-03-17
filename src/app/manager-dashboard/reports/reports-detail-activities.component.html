@@ -54,6 +54,10 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Timestamp</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.createdDate | date:'medium'}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="conversationLength">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="conversationLength" i18n>Chat Responses</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.conversationLength}}</mat-cell>
+  </ng-container>
   <ng-container matColumnDef="hasAttachments">
     <mat-header-cell *matHeaderCellDef mat-sort-header="hasAttachments" i18n>Has Attachments</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.hasAttachments}}</mat-cell>
