@@ -9,7 +9,7 @@ const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
   courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
   health: [ 'weekOf', 'count', 'unique' ],
-  chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'hasAttachments', 'assistant', 'shared' ]
+  chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'assistant', 'shared' ]
 };
 
 @Component({
