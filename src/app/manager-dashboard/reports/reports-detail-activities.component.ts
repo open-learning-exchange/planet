@@ -49,7 +49,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[this.activityType];
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-    
+
     if (this.activityType === 'chat') {
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
