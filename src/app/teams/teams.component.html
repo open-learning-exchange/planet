@@ -43,8 +43,8 @@
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <h3>
-            {{element.doc.name}}
+          <h3 class="team-name">
+            {{element.doc.name.length > 200 ? element.doc.name.slice(0, 200) + '...': element.doc.name }}
             <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
           </h3>
         </mat-cell>
@@ -107,7 +107,7 @@
                 <label *ngIf="!isMobile" i18n> Request pending </label>
               </button>
             </ng-container>
-            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id}" (click)="$event.stopPropagation()">
+            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id, name: element.doc.name}" (click)="$event.stopPropagation()">
               <mat-icon>feedback</mat-icon>
               <label *ngIf="!isMobile" i18n> Feedback </label>
             </button>
@@ -115,7 +115,11 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row
+        (click)="teamClick(row.doc._id, row.doc.teamType)"
+        *matRowDef="let row; columns: displayedColumns;"
+        [class.highlighted]="selectedIds.includes(row.doc._id)">
+      </mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
       </tr>

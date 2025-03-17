@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
   FormBuilder,
@@ -10,8 +10,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import * as constants from './resources-constants';
 import * as JSZip from 'jszip/dist/jszip.min';
-import { Observable, of, forkJoin } from 'rxjs';
-import { switchMap, first } from 'rxjs/operators';
+import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
+import { switchMap, first, debounce } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
@@ -24,6 +24,8 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { map, startWith } from 'rxjs/operators';
 import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesService } from '../shared/unsaved-changes.service';
 
 @Component({
   selector: 'planet-resources-add',
@@ -31,7 +33,7 @@ import { deepEqual } from '../shared/utils';
   styleUrls: [ './resources-add.scss' ]
 })
 
-export class ResourcesAddComponent implements OnInit {
+export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   constants = constants;
   file: any;
   attachedZipFiles: string[] = [];
@@ -59,6 +61,9 @@ export class ResourcesAddComponent implements OnInit {
   @Input() isDialog = false;
   @Input() privateFor: any;
   @Output() afterSubmit = new EventEmitter<any>();
+  attachmentMarkedForDeletion = false;
+  hasUnsavedChanges = false;
+  private initialState = '';
 
   constructor(
     private router: Router,
@@ -70,7 +75,8 @@ export class ResourcesAddComponent implements OnInit {
     private route: ActivatedRoute,
     private stateService: StateService,
     private resourcesService: ResourcesService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -101,10 +107,12 @@ export class ResourcesAddComponent implements OnInit {
     }
 
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
-    .pipe(
-      startWith(''),
-      map(value => this._filter(value))
-    );
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
+    this.onFormChanges();
+    this.captureInitialState();
   }
 
   createForm() {
@@ -146,13 +154,16 @@ export class ResourcesAddComponent implements OnInit {
     // If the resource does not have an attachment, disable file downloadable toggle
     this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
-    this.resourceFilename = resource.doc._attachments ? Object.keys(this.existingResource.doc._attachments).join(', ') : '';
+    this.resourceFilename = resource.doc._attachments
+      ? Object.keys(resource.doc._attachments).join(', ')
+      : '';
     if (resource.doc._attachments && Object.keys(resource.doc._attachments).length > 1) {
       this.resourceForm.controls.openWhichFile.enable();
       this.attachedZipFiles = Object.keys(resource.doc._attachments);
     }
     this.resourceForm.patchValue(resource.doc);
     this.tags.setValue(resource.tags.map((tag: any) => tag._id));
+    this.captureInitialState();
   }
 
   private _filter(value: string): string[] {
@@ -171,6 +182,9 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.attachmentMarkedForDeletion) {
+      delete this.existingResource.doc._attachments;
+    }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
       showFormErrors(this.resourceForm.controls);
@@ -180,11 +194,10 @@ export class ResourcesAddComponent implements OnInit {
     fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
       const { _id, _rev } = this.existingResource;
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
-      const existingData = this.deleteAttachment ? { _id, _rev } : this.existingResource.doc;
+      const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
       // Start with empty object so this.resourceForm.value does not change
       const newResource = Object.assign({}, existingData, this.resourceForm.value, resource);
-      const message = newResource.title +
-        (this.pageType === 'Edit' || this.existingResource.doc ? $localize` Updated Successfully` : $localize` Added`);
+      const message = (this.pageType === 'Edit' ? $localize`Edited resource: ` : $localize`Added resource: `) + newResource.title;
       const currentTags = (this.existingResource.tags || []).map(tag => tag._id);
       if (JSON.stringify(existingData) !== JSON.stringify(newResource) || !deepEqual(currentTags, this.tags.value)) {
         this.updateResource(newResource, file).subscribe(
@@ -226,6 +239,10 @@ export class ResourcesAddComponent implements OnInit {
   }
 
   afterResourceUpdate(message, resourceRes?) {
+    this.hasUnsavedChanges = false;
+    this.unsavedChangesService.setHasUnsavedChanges(false);
+    this.captureInitialState();
+
     if (this.isDialog) {
       this.afterSubmit.next({ doc: resourceRes });
     } else {
@@ -239,6 +256,15 @@ export class ResourcesAddComponent implements OnInit {
     // Also disable downloadable toggle if user is removing file
     this.disableDownload = event.checked;
     this.resourceForm.patchValue({ isDownloadable: false });
+  }
+
+  markAttachmentForDeletion() {
+    this.attachmentMarkedForDeletion = true;
+    this.resourceFilename = '';
+    this.disableDownload = true;
+    this.disableDelete = true;
+    this.hasUnsavedChanges = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
@@ -304,16 +330,17 @@ export class ResourcesAddComponent implements OnInit {
     this.router.navigate([ '/resources' ]);
   }
 
-  bindFile(event) {
+  bindFile(event: Event) {
+    const input = event.target as HTMLInputElement;
     const disableOpenWhichFile = () => {
       this.resourceForm.controls.openWhichFile.setValue('');
       this.resourceForm.controls.openWhichFile.disable();
     };
-    if (event.target.files.length === 0) {
+    if (!input.files || input.files.length === 0) {
       disableOpenWhichFile();
       return;
     }
-    this.file = event.target.files[0];
+    this.file = input.files[0];
     this.disableDownload = false;
     this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
@@ -323,16 +350,69 @@ export class ResourcesAddComponent implements OnInit {
       return;
     }
 
-    // If the uploaded file is a zip, update attachedZipFiles to show options in openWhichFile
     this.resourceForm.controls.openWhichFile.enable();
     const zip = new JSZip();
 
     zip.loadAsync(this.file).then((data) => {
-        this.attachedZipFiles = this.getFileNames(data);
-      },
-      err => {
-        console.log('error', err.message);
+      this.attachedZipFiles = this.getFileNames(data);
+    },
+    err => {
+      console.log('error', err.message);
     });
   }
 
+  private getNormalizedState(): any {
+    const formValue = this.resourceForm.value;
+    return {
+      title: formValue.title || '',
+      description: formValue.description || '',
+      language: formValue.language || '',
+      publisher: formValue.publisher || '',
+      linkToLicense: formValue.linkToLicense || '',
+      subject: formValue.subject || [],
+      level: formValue.level || [],
+      openWith: formValue.openWith || '',
+      resourceFor: formValue.resourceFor || [],
+      medium: formValue.medium || '',
+      resourceType: formValue.resourceType || '',
+      author: formValue.author || '',
+      year: formValue.year || '',
+      tags: this.tags.value || [],
+      attachment: this.file
+        ? { name: this.file.name, size: this.file.size, type: this.file.type }
+        : null,
+      attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
+    };
+  }
+
+  private captureInitialState() {
+    this.initialState = JSON.stringify(this.getNormalizedState());
+  }
+
+  onFormChanges() {
+    combineLatest([
+      this.resourceForm.valueChanges,
+      this.tags.valueChanges
+    ])
+      .pipe(debounce(() => race(interval(200), of(true))))
+      .subscribe(() => {
+        const currentState = JSON.stringify(this.getNormalizedState());
+        this.hasUnsavedChanges = currentState !== this.initialState;
+        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
+      });
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    }
+  }
+
+  canDeactivate(): boolean {
+    if (this.hasUnsavedChanges) {
+      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+    }
+    return true;
+  }
 }

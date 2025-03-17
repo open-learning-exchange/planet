@@ -51,6 +51,9 @@
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  <tr class="mat-row" *matNoDataRow>
+    <td><div class="view-container" i18n>No Requests Found</div></td>
+  </tr>
 </mat-table>
 <mat-paginator #paginator
   [pageSize]="50"

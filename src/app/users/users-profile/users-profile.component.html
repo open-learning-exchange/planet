@@ -1,13 +1,3 @@
-<mat-toolbar *ngIf="!isDialog">
-  <mat-toolbar-row>
-    <button mat-icon-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span i18n>Member Profile</span>
-    <span class="toolbar-fill"></span>
-  </mat-toolbar-row>
-</mat-toolbar>
-
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{userDetail.name}}</span>
@@ -61,6 +51,11 @@
           <h4 class="primary-text-color" matLine i18n>Number of Visits</h4>
           <p matLine><b>{{totalLogins || ''}}</b></p>
         </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <h4 class="primary-text-color" matLine i18n>Roles</h4>
+          <p matLine><b>{{ getUserRoles().join(', ') }}</b></p>
+        </mat-list-item>   
         <mat-divider></mat-divider>
       </mat-list>
       <mat-list class="profile-list-rt">

@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!teamId">
   <button mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -11,11 +11,15 @@
 </mat-toolbar>
 
 <div class="space-container primary-link-hover">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar *ngIf="!teamId" class="primary-color font-size-1">
     <button mat-mini-fab (click)="routeToEditSurvey('add')" *ngIf="isAuthorized" >
       <mat-icon>add</mat-icon>
     </button>
     <span class="toolbar-fill"></span>
+    <mat-button-toggle-group *ngIf="routeTeamId" [(ngModel)]="currentFilter.viewMode" (change)="toggleSurveysView()">
+      <mat-button-toggle value="team" i18n>Team Surveys</mat-button-toggle>
+      <mat-button-toggle value="adopt" i18n>Adopt a survey</mat-button-toggle>
+    </mat-button-toggle-group>
     <ng-container *planetAuthorizedRoles="'manager'">
       <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
         <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
@@ -35,6 +39,13 @@
         <mat-cell *matCellDef="let row">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)"
+            [disabled]="(row.teamId && isManagerRoute) || (!isManagerRoute && !row.teamId)"
+            [matTooltip]="row.teamId && isManagerRoute
+              ? 'This is a team created survey'
+              : !row.teamId && !isManagerRoute
+                ? 'This is a community survey'
+                : ''"
+            i18n-tooltip
             *ngIf="!row.parent === true">
           </mat-checkbox>
         </mat-cell>
@@ -60,15 +71,56 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="!element.parent === true">
-            <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)" i18n><mat-icon>edit</mat-icon> Edit</button>
-            <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="openSendSurveyDialog(element)" i18n><mat-icon>send</mat-icon> Send</button>
-            <button mat-raised-button color="primary" [disabled]="!element.questions.length" (click)="recordSurvey(element)"
-              i18n-matTooltip matTooltip="Record survey information from a person who is not a member of {{configuration.name}}" i18n>
-              <mat-icon>fiber_manual_record</mat-icon> Record
-            </button>
+          <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
+            <div [matTooltip]="(element.teamId && isManagerRoute) ? 'This is a team created survey' :
+                               (!isManagerRoute && !element.teamId) ? 'This is a community survey' :
+                               element.isArchived ? 'Survey is archived and cannot be edited' : ''"
+                i18n-matTooltip>
+              <button mat-raised-button color="primary"
+                *ngIf="!teamId"
+                (click)="routeToEditSurvey('update', element._id)"
+                [disabled]="(element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId) || element.isArchived"
+                i18n><mat-icon>edit</mat-icon> Edit
+              </button>
+            </div>
+            <div [matTooltip]="element.teamId && isManagerRoute ? 'This is a team created survey' :
+                              element.isArchived ? 'Survey is archived and cannot be sent' : ''"
+                i18n-matTooltip>
+              <button mat-raised-button color="primary"
+                *ngIf="!teamId && !routeTeamId"
+                [matMenuTriggerFor]="sendMenu"
+                [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
+                i18n><mat-icon>arrow_drop_down</mat-icon> Send
+              </button>
+            </div>
+            <mat-menu #sendMenu="matMenu">
+              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User <mat-icon>send</mat-icon></button>
+              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team <mat-icon>send</mat-icon></button>
+            </mat-menu>
+            <div [matTooltip]="element.teamId && isManagerRoute ? 'This is a team created survey' :
+                              element.isArchived ? 'Survey is archived and cannot be recorded' :
+                              isManagerRoute ? 'Record survey information from a person who is not a member of ' + configuration.name : 'Record Survey'"
+                i18n-matTooltip>
+              <button mat-raised-button color="primary"
+                (click)="recordSurvey(element)"
+                [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
+                i18n><mat-icon>fiber_manual_record</mat-icon> Record
+              </button>
+            </div>
+            <ng-container *ngIf="!element.course">
+              <div [matTooltip]="(element.teamId && isManagerRoute) ? 'This is a team created survey' :
+                               (!isManagerRoute && !element.teamId) ? 'This is a community survey' :
+                               element.isArchived ? 'Survey is already archived' : ''"
+                  i18n-matTooltip>
+                <button mat-raised-button color="primary"
+                (click)="archiveSurvey(element)"
+                [disabled]="element.isArchived || (element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId)"
+                i18n><mat-icon>archive</mat-icon> Archive</button>
+              </div>
+            </ng-container>
           </ng-container>
-          <div i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
+          <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
+          <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
             <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu" i18n>
               <mat-icon>move_to_inbox</mat-icon> Export
             </button>

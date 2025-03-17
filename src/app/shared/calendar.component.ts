@@ -11,9 +11,11 @@ import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
 import { addDateAndTime, styleVariables } from './utils';
+import { AuthService } from './auth-guard.service';
 
 @Component({
   selector: 'planet-calendar',
+  styleUrls: [ './calendar.component.scss' ],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
@@ -73,14 +75,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     firstDay: 6,
     dayMaxEventRows: 2,
     selectable: true,
-    select: this.openAddEventDialog.bind(this),
+    select: (arg) => {
+      this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
+    },
     eventClick: this.eventClick.bind(this)
   };
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -90,7 +95,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       {
         addEventButton: {
           text: $localize`Add Event`,
-          click: this.openAddEventDialog.bind(this)
+          click: (arg) => {
+            this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
+          }
         }
       } :
       {};

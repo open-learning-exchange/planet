@@ -7,7 +7,6 @@ import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { FormControl, AbstractControl } from '@angular/forms';
-import { CustomValidators } from '../validators/custom-validators';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
@@ -51,6 +50,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   initialLoad = true;
   isLoading = true;
   courseId: string;
+  teamId = this.route.snapshot.params.teamId || null;
 
   constructor(
     private router: Router,
@@ -192,7 +192,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   examComplete() {
     if (this.route.snapshot.data.newUser === true) {
-      this.router.navigate([ '/users/submission', { id: this.submissionId } ]);
+      this.router.navigate(
+        [ '/users/submission', { id: this.submissionId } ],
+        { queryParams: { teamId: this.teamId } }
+      );
     } else {
       this.goBack();
     }
@@ -200,7 +203,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.isLoading = false;
-    this.router.navigate([ '../',
+    this.router.navigate([ this.route.snapshot.params.snap ? '../../' : '../',
       this.mode === 'take' ? {} :
       { type: this.mode === 'grade' ? 'exam' : 'survey' }
     ], { relativeTo: this.route });

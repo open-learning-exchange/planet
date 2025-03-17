@@ -19,6 +19,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { FormBuilder } from '@angular/forms';
 import {
   DialogsAnnouncementComponent,
   DialogsAnnouncementSuccessComponent,
@@ -40,6 +41,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
+  isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
   links: any[] = [];
   finances: any[] = [];
@@ -71,6 +73,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
+    private formBuilder: FormBuilder
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -299,7 +302,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
           request: this.couchService.updateDocument('teams', { ...link, _deleted: true }).pipe(switchMap(() => this.getLinks())),
           onNext: (res) => {
             this.setLinksAndFinances(res);
-            this.planetMessageService.showMessage($localize`${link.title} deleted`);
+            this.planetMessageService.showMessage($localize` Deleted link: ${link.title}`);
             deleteDialog.close();
           },
           onError: () => this.planetMessageService.showAlert($localize`There was an error deleting ${link.title}`)
@@ -307,6 +310,32 @@ export class CommunityComponent implements OnInit, OnDestroy {
         changeType: 'delete',
         type: 'link',
         displayName: link.title
+      }
+    });
+  }
+
+  confirmDeleteDescription() {
+    const deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.teamsService.updateTeam({ ...this.team, description: null }).pipe(
+            switchMap((updatedTeam) => {
+              this.team = updatedTeam;
+              this.servicesDescriptionLabel = 'Add';
+              return of(updatedTeam);
+            })
+          ),
+          onNext: () => {
+            this.planetMessageService.showMessage($localize`Description deleted successfully.`);
+            deleteDialog.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert($localize`There was an error deleting the description.`);
+          }
+        },
+        changeType: 'delete',
+        type: 'description',
+        displayName: $localize`Community Description`
       }
     });
   }
@@ -351,25 +380,47 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openDescriptionDialog() {
-    const submitDescription = ({ description }) => {
-      this.teamsService.updateTeam({ ...this.team, description: description.text }).pipe(
-        finalize(() => this.dialogsLoadingService.stop())
-      ).subscribe(newTeam => {
-        const previousDescription = Boolean(this.team.description);
-        this.team = newTeam;
-        this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
-        const msg = newTeam.description
-      ? (previousDescription ? $localize`Description edited` : $localize`Description added`)
-      : $localize`Description deleted`;
-        this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage(msg);
-      });
-    };
+    const formGroup = this.formBuilder.group({
+      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
+    });
+
     this.dialogsFormService.openDialogsForm(
       this.team.description ? $localize`Edit Description` : $localize`Add Description`,
-      [ { name: 'description', placeholder: $localize`Description`, type: 'markdown', required: false, imageGroup: 'community' } ],
-      { description: this.team.description || '' },
-      { autoFocus: true, onSubmit: submitDescription }
+      [
+        {
+          name: 'description',
+          placeholder: $localize`Description`,
+          type: 'markdown',
+          required: true
+        }
+      ],
+      formGroup,
+      {
+        autoFocus: true,
+        onSubmit: ({ description }: { description: string }) => {
+          const trimmedDescription = description.trim();
+
+          if (!trimmedDescription) {
+            this.planetMessageService.showAlert($localize`Description cannot be empty.`);
+            return;
+          }
+
+          this.teamsService.updateTeam({ ...this.team, description: trimmedDescription }).pipe(
+            finalize(() => this.dialogsLoadingService.stop())
+          ).subscribe(newTeam => {
+            const previousDescription = !!this.team.description;
+            this.team = newTeam;
+            this.servicesDescriptionLabel = newTeam.description ? 'Edit' : 'Add';
+
+            const message = previousDescription
+              ? $localize`Description edited successfully.`
+              : $localize`Description added successfully.`;
+
+            this.dialogsFormService.closeDialogsForm();
+            this.planetMessageService.showMessage(message);
+          });
+        }
+      }
     );
   }
 

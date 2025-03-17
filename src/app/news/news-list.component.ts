@@ -22,7 +22,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 export class NewsListComponent implements OnChanges {
 
   @Input() items: any[] = [];
-  @Input() editSuccessMessage = $localize`News has been updated successfully.`;
+  @Input() editSuccessMessage = $localize`Message updated successfully.`;
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;
@@ -90,10 +90,8 @@ export class NewsListComponent implements OnChanges {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          this.postNews(
-            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
-            newNews
-          );
+          const updatedNews = { ...news, ...newNews, viewIn: news.viewIn };
+          this.postNews(updatedNews, newNews);
         }
       },
       autoFocus: true
@@ -115,7 +113,8 @@ export class NewsListComponent implements OnChanges {
       data: {
         okClick: this.deleteNews(news),
         changeType: 'delete',
-        type: 'news'
+        type: 'news',
+        displayName: news.message
       }
     });
   }
@@ -123,9 +122,15 @@ export class NewsListComponent implements OnChanges {
   deleteNews(news) {
     const isMainStory = this.replyViewing._id === news._id;
     const parentId = isMainStory ? this.replyViewing.doc.replyTo || 'root' : this.replyViewing._id;
+    const deleteFromAllViews = this.viewableBy === 'teams';
     return {
       request: forkJoin([
-        this.newsService.deleteNews(news), this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
+        this.newsService.deleteNews(
+          news,
+          this.viewableId,
+          deleteFromAllViews),
+          this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId
+        )
       ]),
       onNext: (data) => {
         if (isMainStory) {
@@ -134,7 +139,7 @@ export class NewsListComponent implements OnChanges {
         this.deleteDialog.close();
       },
       onError: (error) => {
-        this.planetMessageService.showAlert($localize`There was a problem deleting this news.`);
+        this.planetMessageService.showAlert($localize`There was a problem deleting this message.`);
       }
     };
   }

@@ -43,14 +43,14 @@
       <button mat-icon-button *planetAuthorizedRoles="'only,health'" i18n-title title="Health" routerLink="/health"><mat-icon>local_hospital</mat-icon></button>
     </ng-container>
     <span *ngIf="layout === 'classic' && !forceModern">
-      <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>chat_bubble_outline</mat-icon></button>
-      <button mat-icon-button planetFeedback i18n-title title="Feedback"><mat-icon>feedback_outline</mat-icon></button>
-      <button mat-icon-button routerLink="/feedback" i18n-title title="Messages"><mat-icon>mail_outline</mat-icon></button>
+      <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>question_answer</mat-icon></button>
+      <button mat-icon-button planetFeedback i18n-title title="Submit Feedback"><mat-icon svgIcon="feedback"></mat-icon></button>
+      <button mat-icon-button routerLink="/feedback" i18n-title title="Review Feedback"><mat-icon svgIcon="feedbacklist"></mat-icon></button>
       <ng-container *planetAuthorizedRoles>
-        <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted'"><mat-icon svgIcon="feedback"></mat-icon></button>
+        <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted'"><mat-icon svgIcon="sync"></mat-icon></button>
       </ng-container>
-      <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings" *planetAuthorizedRoles="'manager,monitor'"><mat-icon svgIcon="usersettings"></mat-icon></button>
-      <planet-language></planet-language>
+      <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings" *planetAuthorizedRoles="'manager,monitor'"><mat-icon>settings</mat-icon></button>
+      <planet-language i18n-title title="Language"></planet-language>
     </span>
     <ng-container *planetAuthorizedRoles="'learner'">
       <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
@@ -63,10 +63,13 @@
       <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
     </button>
     <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
-      <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
-      <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
-      <button mat-menu-item i18n planetChangePassword *ngIf="user.planetCode === this.configuration.code">Change Password</button>
-      <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+      <ng-container *ngIf="isLoggedIn">
+        <button mat-menu-item routerLink="/users/profile/{{user.name}}" i18n>View Profile</button>
+        <button mat-menu-item i18n routerLink="/users/update/{{user.name}}">Edit Profile</button>
+        <button mat-menu-item i18n planetChangePassword *ngIf="user.planetCode === this.configuration.code">Change Password</button>
+        <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
+      </ng-container>
+      <button mat-menu-item i18n routerLink="/login" *ngIf="!isLoggedIn">Login</button>
     </mat-menu>
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
@@ -119,7 +122,7 @@
               planetPulsateIcon
               i18n-title title="Nation"
               [routerLinkActiveOptions]="{exact:true}">
-              <mat-icon svgIcon="home"></mat-icon>
+              <mat-icon>home</mat-icon>
               <label i18n>Nation</label>
             </a>
           </li>
@@ -129,7 +132,7 @@
             routerLinkActive="active"
             planetPulsateIcon
             i18n-title title="Dashboard">
-            <mat-icon>turned_in_not</mat-icon>
+            <mat-icon>dashboard</mat-icon>
             <label i18n>myDashboard</label>
           </a>
         </li>
@@ -165,7 +168,7 @@
             routerLinkActive="active"
             planetPulsateIcon
             i18n-title title="Enterprises">
-            <mat-icon>business</mat-icon>
+            <mat-icon>work</mat-icon>
             <label i18n>Enterprises</label>
           </a>
         </li>
@@ -187,19 +190,19 @@
       <ul class="bottom-nav">
         <li>
           <a mat-button routerLink="/chat" i18n-title title="Chat">
-            <mat-icon>chat_bubble_outline</mat-icon>
+            <mat-icon>question_answer</mat-icon>
             <label i18n>Chat</label>
           </a>
         </li>
         <li>
           <a mat-button planetFeedback i18n-title title="Feedback">
-            <mat-icon>feedback_outline</mat-icon>
+            <mat-icon svgIcon="feedback"></mat-icon>
             <label i18n>Feedback</label>
           </a>
         </li>
         <li>
           <a mat-button routerLink="/feedback" i18n-title title="Messages">
-            <mat-icon>mail_outline</mat-icon>
+            <mat-icon svgIcon="feedbacklist"></mat-icon>
             <label i18n>Messages</label>
           </a>
         </li>
@@ -211,13 +214,16 @@
             </a>
           </li>
         </ng-container>
-        <li style="text-align: center;">
-          <planet-language [iconOnly]="layout === 'modern' || forceModern"></planet-language>
+        <li>
+          <a mat-button class="language-button" i18n-title title="Language">
+            <planet-language [iconOnly]="true"></planet-language>
+            <label *ngIf="sidenavState === 'open'" class="language-label" i18n>Language</label>
+          </a>
         </li>
         <ng-container *planetAuthorizedRoles>
           <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">
-              <mat-icon svgIcon="feedback"></mat-icon>
+              <mat-icon svgIcon="sync"></mat-icon>
               <label i18n>Sync</label>
             </a>
           </li>

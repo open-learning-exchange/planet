@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.16.17",
+  "version": "0.17.54",
   "myplanet": {
-    "latest": "v0.21.45",
-    "min": "v0.20.45"
+    "latest": "v0.23.84",
+    "min": "v0.22.84"
   },
   "scripts": {
     "ng": "ng",
@@ -87,6 +87,7 @@
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.8",
+    "@types/ms": "0.7.34",
     "@types/node": "^12.11.1",
     "@types/pouchdb": "^6.4.0",
     "@types/pouchdb-find": "^6.3.4",

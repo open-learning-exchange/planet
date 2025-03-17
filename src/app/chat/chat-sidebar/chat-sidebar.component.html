@@ -1,9 +1,10 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
   <mat-drawer #drawer mode="side" [opened]="deviceType !== deviceTypes.MOBILE">
     <div class="header-container">
-      <div class="header" i18n>
+      <div class="header">
         <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
-          <mat-icon>add</mat-icon> Start New Chat
+          <mat-icon>add</mat-icon> 
+          <span i18n>Start New Chat</span>
         </button>
         <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
       </div>
@@ -13,8 +14,8 @@
       <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
         <mat-icon>delete</mat-icon>
       </button><br>
-      <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
       <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
+      <span style="font-size: small; font-style: italic;" i18n>Full Conversation Search </span>
       <button style="text-align: end;" mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
         <mat-icon>help_outline</mat-icon>
       </button>
@@ -69,7 +70,7 @@
       </ul>
     </ng-container>
     <ng-template #noChats>
-      <div i18n>No previous conversations.</div>
+      <div class="no-chats-message" i18n>No previous conversations.</div>
     </ng-template>
   </mat-drawer>
 
@@ -79,6 +80,6 @@
         <i class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</i>
       </button>
     </div>
-    <planet-chat-window></planet-chat-window>
+    <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
   </div>
 </mat-drawer-container>
