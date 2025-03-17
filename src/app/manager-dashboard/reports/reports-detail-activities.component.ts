@@ -45,6 +45,13 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
+  truncateTitle(title: string) {
+    if (title?.length > 150) {
+      return title.slice(0, 150) + '...';
+    }
+    return title;
+  }
+
   ngOnChanges() {
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[this.activityType];
@@ -60,13 +67,18 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         conversationLength: activity.conversations.length
       }));
     } else {
-      this.activities.data = this.activitiesByDoc.map(activity => ({
-        averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-        enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
-        completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
-        stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
-        ...activity
-      }));
+      this.activities.data = this.activitiesByDoc.map(activity => {
+        if (activity.max) {
+          activity.max.title = this.truncateTitle(activity.max.title);
+        }
+        return {
+          averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
+          enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+          completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+          stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
+          ...activity
+        };
+      });
     }
   }
 
