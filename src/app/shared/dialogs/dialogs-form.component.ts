@@ -1,9 +1,11 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, HostListener } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
+import { DialogsFormService } from './dialogs-form.service';
+import { UnsavedChangesService } from '../unsaved-changes.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -47,8 +49,13 @@ export class DialogsFormComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private dialogsFormService: DialogsFormService,
+    private unsavedChangesService: UnsavedChangesService
   ) {
+    dialogRef.disableClose = true;
+    dialogRef.backdropClick().subscribe(() => this.closeDialog());
+
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
         this.data.formGroup :
@@ -58,6 +65,24 @@ export class DialogsFormComponent {
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
     }
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    if (this.unsavedChangesService.getHasUnsavedChanges()) {
+      $event.returnValue = true;
+    }
+  }
+
+  closeDialog() {
+    if (this.unsavedChangesService.getHasUnsavedChanges()) {
+      const confirmClose = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      if (!confirmClose) {
+        return;
+      }
+      this.unsavedChangesService.setHasUnsavedChanges(false);
+    }
+    this.dialogsFormService.closeDialogsForm();
   }
 
   onSubmit(mForm, dialog) {
