@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
+import { FileInputComponent } from '../shared/forms/file-input.component';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
@@ -64,6 +65,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   attachmentMarkedForDeletion = false;
   hasUnsavedChanges = false;
   private initialState = '';
+  @ViewChild('fileInput') fileInput!: FileInputComponent;
 
   constructor(
     private router: Router,
@@ -330,11 +332,21 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate([ '/resources' ]);
   }
 
+  removeNewFile() {
+    this.file = null;
+    this.fileInput.clearFile();
+    this.disableDownload = !this.existingResource.doc?._attachments || this.attachmentMarkedForDeletion;
+    this.resourceForm.updateValueAndValidity();
+    this.hasUnsavedChanges = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
+  }
+
   bindFile(event: Event) {
     const input = event.target as HTMLInputElement;
     const disableOpenWhichFile = () => {
       this.resourceForm.controls.openWhichFile.setValue('');
       this.resourceForm.controls.openWhichFile.disable();
+      this.attachedZipFiles = [];
     };
     if (!input.files || input.files.length === 0) {
       disableOpenWhichFile();
@@ -342,7 +354,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     this.file = input.files[0];
     this.disableDownload = false;
-    this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
 
     if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
