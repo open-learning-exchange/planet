@@ -90,6 +90,9 @@
           <label class="header-label"><b i18n>File Upload:</b></label>
           <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
+          <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion && file" class="warn-text-color">
+            <p i18n>Warning: Existing Resource/file will be removed</p>
+          </div>
         </div>
         <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion">
           <label class="header-label"><b i18n>Existing Resource/file:</b></label>
