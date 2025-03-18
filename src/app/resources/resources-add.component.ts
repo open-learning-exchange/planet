@@ -261,8 +261,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   markAttachmentForDeletion() {
     this.attachmentMarkedForDeletion = true;
     this.resourceFilename = '';
-    this.disableDownload = true;
     this.disableDelete = true;
+    this.disableDownload = !this.file;
     this.hasUnsavedChanges = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);
   }

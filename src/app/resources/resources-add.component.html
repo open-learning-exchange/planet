@@ -91,14 +91,14 @@
           <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
           <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion && file" class="warn-text-color">
-            <p i18n>Warning: Existing Resource/file will be removed</p>
+            <p i18n>Warning: Existing Resource/file will be replaced</p>
           </div>
         </div>
         <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion">
           <label class="header-label"><b i18n>Existing Resource/file:</b></label>
           <div class="existing-file-container">
             <span class="filename">{{resourceFilename}}</span>
-            <button mat-icon-button [disabled]="disableDelete || this.file" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove attachment">
+            <button mat-icon-button [disabled]="disableDelete" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove attachment">
               <mat-icon color ="warn">delete</mat-icon>
             </button>
           </div>
