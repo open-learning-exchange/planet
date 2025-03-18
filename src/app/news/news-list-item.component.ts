@@ -7,6 +7,7 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { AuthService } from '../shared/auth-guard.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -43,7 +44,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -57,6 +59,16 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+    if (this.item.sharedSource && this.item.sharedDate) {
+      const sourceType = this.item.sharedSource.mode === 'enterprise' ? 'enterprise' : 'team';
+      this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${this.item.sharedSource.name}`;
+    } else if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate) {
+      const viewIn = this.item.doc.viewIn[0];
+      const sourceType = viewIn.mode === 'enterprise' ? 'enterprise' : 'team';
+      this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${viewIn.name}`;
+    } else {
+      this.item.sharedSourceInfo = null;
+    }
   }
 
   ngAfterViewChecked() {
@@ -75,18 +87,20 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   addReply(news) {
     const label = this.formLabel(news);
-    this.updateNews.emit({
-      title: $localize`Reply to ${label}`,
-      placeholder:  $localize`Your ${label}`,
-      initialValue: '',
-      news: {
-        replyTo: news._id,
-        messagePlanetCode: news.messagePlanetCode,
-        messageType: news.messageType,
-        viewIn: news.viewIn
-      }
+    this.authService.checkAuthenticationStatus().subscribe(() => {
+      this.updateNews.emit({
+        title: $localize`Reply to ${label}`,
+        placeholder:  $localize`Your ${label}`,
+        initialValue: '',
+        news: {
+          replyTo: news._id,
+          messagePlanetCode: news.messagePlanetCode,
+          messageType: news.messageType,
+          viewIn: news.viewIn
+        }
+      });
+      this.sendNewsNotifications(news);
     });
-    this.sendNewsNotifications(news);
   }
 
   sendNewsNotifications(news: any = '') {
@@ -111,11 +125,17 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   editNews(news) {
     const label = this.formLabel(news);
+    const editTimestamp = $localize`Edited on ${new Date().toLocaleString()}`;
+    const sharedSourceInfo = this.item.sharedSourceInfo;
     this.updateNews.emit({
-      title:  $localize`Edit ${label}`,
-      placeholder:  $localize`Your ${label}`,
+      title: $localize`Edit ${label}`,
+      placeholder: $localize`Your ${label}`,
       initialValue: news.message,
-      news
+      news: {
+        ...news,
+        editTimestamp,
+        sharedSourceInfo
+      }
     });
   }
 
@@ -145,10 +165,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { ...member, userPlanetCode: member.planetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+    this.authService.checkAuthenticationStatus().subscribe(() => {
+      this.dialog.open(UserProfileDialogComponent, {
+        data: { member: { ...member, userPlanetCode: member.planetCode } },
+        maxWidth: '90vw',
+        maxHeight: '90vh'
+      });
     });
   }
 }

@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { AuthService } from '../shared/auth-guard.service';
 
 export class Message {
   message: string;
@@ -74,7 +75,8 @@ export class FeedbackDirective {
     private router: Router,
     private feedbackService: FeedbackService,
     private planetMessageService: PlanetMessageService,
-    private stateService: StateService
+    private stateService: StateService,
+    private authService: AuthService
   ) {}
 
   addFeedback(post: any) {
@@ -145,6 +147,10 @@ export class FeedbackDirective {
   }
 
   @HostListener('click')
+  checkAuthentication() {
+    this.authService.checkAuthenticationStatus().subscribe(this.openFeedback);
+  }
+
   openFeedback() {
     const title = $localize`Feedback`;
     const type = 'feedback';

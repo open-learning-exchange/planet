@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of, empty, forkJoin } from 'rxjs';
+import { of, empty, forkJoin, Observable } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -361,4 +361,35 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
+  getTeamName(teamId: string): Observable<string> {
+    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
+      map((team: any) => {
+        if (team && team.name) {
+          if (team.type && team.type === 'enterprise') {
+            return `Enterprise: ${team.name}`;
+          } else {
+            return `Team: ${team.name}`;
+          }
+        }
+        return teamId;
+      }),
+    );
+  }
+
+  getTeamsByUser(userName: string, userPlanetCode: string) {
+    const selector = {
+      '$or': [
+        { 'userId': `org.couchdb.user:${userName}` },
+        { 'userId': `org.couchdb.user:${userName}@${userPlanetCode}` }
+      ],
+      'docType': 'membership'
+    };
+    return this.couchService.findAll('teams', findDocuments(selector)).pipe(
+      switchMap(memberships => {
+        const teamIds = memberships.map((doc: any) => doc.teamId);
+        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } }));
+      }),
+      map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
+    );
+  }
 }

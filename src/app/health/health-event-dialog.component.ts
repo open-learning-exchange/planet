@@ -11,6 +11,8 @@ import { UserService } from '../shared/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -42,6 +44,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private healthService: HealthService,
     private planetMessageService: PlanetMessageService,
   ) {
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
@@ -118,6 +121,52 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     const seconds = Math.floor(secondsLeft % 60).toString();
     this.minutes = Math.floor(secondsLeft / 60).toString();
     this.seconds = parseInt(seconds, 10) < 10 ? '0' + seconds : seconds;
+  }
+
+  exportToPdf(event) {
+    const documentDefinition = {
+      content: [
+        { text: `Health examination on ${new Date(event.date).toLocaleDateString()}`, style: 'header' },
+        { canvas: [ { type: 'line', x1: 0, y1: 5, x2: 595, y2: 5, lineWidth: 1 } ] },
+        { text: 'Performed by', style: 'sectionHeader' },
+        { text: `${event.selfExamination ? 'Self' : this.performedBy}`, style: 'subheader' },
+        { text: 'Vitals', style: 'sectionHeader' },
+        event.temperature ? { text: [ { text: 'Temperature: ', bold: true }, `${event.temperature} °C` ], style: 'content' } : '',
+        event.pulse ? { text: [ { text: 'Pulse: ', bold: true }, `${event.pulse} bpm` ], style: 'content' } : '',
+        event.bp ? { text: [ { text: 'Blood Pressure: ', bold: true }, `${event.bp}` ], style: 'content' } : '',
+        event.height ? { text: [ { text: 'Height: ', bold: true }, `${event.height} cm` ], style: 'content' } : '',
+        event.weight ? { text: [ { text: 'Weight: ', bold: true }, `${event.weight} kg` ], style: 'content' } : '',
+        event.vision ? { text: [ { text: 'Vision: ', bold: true }, `${event.vision}` ], style: 'content' } : '',
+        event.hearing ? { text: [ { text: 'Hearing: ', bold: true }, `${event.hearing}` ], style: 'content' } : '',
+        this.conditions ? { text: '\nConditions', style: 'sectionHeader' } : '',
+        this.conditions ? { text: this.conditions, style: 'content' } : '',
+        { text: '\nOther Notes', style: 'sectionHeader' },
+        event.notes ? { text: 'Observations & Notes:', style: 'subheaderBold' } : '',
+        event.notes ? { text: event.notes, style: 'content' } : '',
+        event.diagnosis ? { text: 'Diagnosis:', style: 'subheaderBold' } : '',
+        event.diagnosis ? { text: event.diagnosis, style: 'content' } : '',
+        event.treatments ? { text: 'Treatments:', style: 'subheaderBold' } : '',
+        event.treatments ? { text: event.treatments, style: 'content' } : '',
+        event.medications ? { text: 'Medications:', style: 'subheaderBold' } : '',
+        event.medications ? { text: event.medications, style: 'content' } : '',
+        event.immunizations ? { text: 'Immunizations:', style: 'subheaderBold' } : '',
+        event.immunizations ? { text: event.immunizations, style: 'content' } : '',
+        event.xrays ? { text: 'X-rays:', style: 'subheaderBold' } : '',
+        event.xrays ? { text: event.xrays, style: 'content' } : '',
+        event.tests ? { text: 'Lab Tests:', style: 'subheaderBold' } : '',
+        event.tests ? { text: event.tests, style: 'content' } : '',
+        event.referrals ? { text: 'Referrals:', style: 'subheaderBold' } : '',
+        event.referrals ? { text: event.referrals, style: 'content' } : ''
+      ].filter(Boolean),
+      styles: {
+        header: { fontSize: 18, bold: true },
+        subheader: { fontSize: 14, margin: [ 0, 10, 0, 5 ] },
+        subheaderBold: { fontSize: 14, bold: true, margin: [ 0, 10, 0, 5 ] },
+        sectionHeader: { fontSize: 16, bold: true, margin: [ 0, 10, 0, 5 ] },
+        content: { fontSize: 12, margin: [ 0, 2, 0, 2 ] }
+      }
+    };
+    pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`);
   }
 
 }

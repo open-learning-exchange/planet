@@ -18,15 +18,31 @@
     justify-content: center;
   }
 
-  @media (max-width: $screen-sm) {
+  .header-label {
+    display: block;
+    margin-top: 10px;
+  }
+
+  .existing-file-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .filename {
+    flex: 1;
+  }
+
+  @media (max-width: $screen-md) {
     .form-container {
       width: auto;
     }
 
-    .file-upload {
-      display: flex;
-      flex-direction: column;
-    }
 
+    .filename {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
   }
 }

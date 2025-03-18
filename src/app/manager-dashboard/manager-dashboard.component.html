@@ -15,8 +15,6 @@
     <a [routerLink]="['surveys']" mat-raised-button i18n>Surveys</a>
     <button *ngIf="planetType !== center && showResendConfiguration"
       (click)="resendConfig()" i18n mat-raised-button>Resend Registration Request</button>
-    <button *ngIf="devMode"
-      (click)="openDeleteCommunityDialog()" i18n mat-raised-button>Delete Community</button>
     <a routerLink="/feedback" i18n mat-raised-button>Feedback</a>
     <a routerLink="configuration" i18n mat-raised-button>Configuration</a>
     <a routerLink="fetch" mat-raised-button *ngIf="fetchItemCount > 0"><span i18n>Fetch Items</span>{{ ' (' + fetchItemCount + ')' }}</a>
@@ -29,6 +27,8 @@
   <a routerLink="/manager/users" i18n mat-raised-button>Members</a>
   <a routerLink="/manager/aiservices" i18n mat-raised-button>AI Configurations</a>
   <a routerLink="certifications" i18n mat-raised-button *planetBeta>Certifications</a>
+  <button *ngIf="devMode"
+  (click)="openDeleteCommunityDialog()" i18n mat-raised-button color = "warn">Delete Community</button>
   <ng-container *planetAuthorizedRoles="'manager'">
     <div *ngIf="pendingPushCount > 0">
       <p>
@@ -86,19 +86,21 @@
       <a class="margin-lr-8" [routerLink]="['reports', 'detail']" i18n mat-raised-button>Report Detail</a>
     </p>
     <p>
-      <span i18n>Chat streaming</span>
-      <mat-slide-toggle [(ngModel)]="streaming" (ngModelChange)="toggleStreaming()"></mat-slide-toggle>
-      <button mat-icon-button style="margin-left: 1rem;" (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+      <button mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
         <mat-icon>info_outline</mat-icon>
       </button>
+      <span i18n>Chat streaming</span>
+      <mat-slide-toggle [(ngModel)]="streaming" (ngModelChange)="toggleStreaming()"></mat-slide-toggle>
       <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
         <span class="overlay-text" i18n>Quicker line by line chat responses, could be costlier</span>
       </ng-template>
     </p>
   </div>
-  <mat-grid-list cols="4" rowHeight="2rem">
-    <mat-grid-tile i18n>Last Upgrade</mat-grid-tile><mat-grid-tile i18n>Last Sync</mat-grid-tile>
-    <mat-grid-tile i18n>Resource Views Last 30 Days</mat-grid-tile><mat-grid-tile i18n>Total Ratings Last 30 Days</mat-grid-tile>
+  <mat-grid-list cols="4" [rowHeight]="gridRowHeight">
+    <mat-grid-tile i18n><b>Last Upgrade</b></mat-grid-tile>
+    <mat-grid-tile i18n><b>Last Sync</b></mat-grid-tile>
+    <mat-grid-tile i18n><b>Resource Views Last 30 Days</b></mat-grid-tile>
+    <mat-grid-tile i18n><b>Total Ratings Last 30 Days</b></mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.lastSync?.max.time | date: 'medium'}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.resourceVisits}}</mat-grid-tile>
