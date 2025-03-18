@@ -1,5 +1,11 @@
 @import '../../variables';
 
+$screen-md: 1200px;
+
+:host {
+  @include screen-sizes($screen-md, $screen-sm); // This sets the custom properties too
+}
+
 mat-toolbar mat-form-field {
   margin-top: 10px;
   &.mat-form-field-type-no-underline {
@@ -38,18 +44,20 @@ mat-toolbar mat-form-field {
     color: $primary;
   }
 
-  @media(max-width:1000px) {
-    .reports-table-container {
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    }
-  }
-
   canvas {
     max-height: 30vh;
   }
 }
 
-@media(max-width: 1200px) {
+.mobile-view-styles {
+  display: none;
+}
+
+@media(max-width: #{$screen-md}) {
+  .mobile-view-styles {
+    display: block;
+  }
+
   .mat-form-field {
     width: 100%;
   }
@@ -67,4 +75,7 @@ mat-toolbar mat-form-field {
     }
   }
 
+  .reports-table-container {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
 }

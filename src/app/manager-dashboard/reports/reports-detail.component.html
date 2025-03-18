@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <ng-container *ngIf="isDesktopView(); else mobileView">
+  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
     <button class="btnBack" mat-icon-button (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
     </button>
