@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +24,7 @@ import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/cou
 import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -59,6 +60,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
+  showFiltersRow = false;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
   dateQueryParams = {
     startDate: null,
     endDate: null
@@ -75,9 +79,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private deviceInfoService: DeviceInfoService,
   ) {
     this.initDateFilterForm();
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
   }
 
   ngOnInit() {
@@ -110,6 +116,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  @HostListener('window:resize')
+  OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
   }
 
   onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
