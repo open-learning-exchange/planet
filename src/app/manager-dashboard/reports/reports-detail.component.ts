@@ -226,23 +226,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps }) => {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps}) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
       this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
       this.setStepCompletion();
-      // Update course activity data with progress information
-      this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
-        const courseEnrollments = enrollments.filter(enrollment => enrollment.courseId === courseActivity.courseId);
-        const courseCompletions = completions.filter(completion => completion.courseId === courseActivity.courseId);
-        const courseSteps = steps.filter(step => step.courseId === courseActivity.courseId);
-        return {
-          ...courseActivity,
-          enrollments: courseEnrollments.length,
-          completions: courseCompletions.length,
-          stepsCompleted: courseSteps.length
-        };
-      });
       this.setDocVisits('courseActivities', false);
     });
   }
