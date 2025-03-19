@@ -40,9 +40,17 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   constructor() {}
 
   ngOnInit() {
-    this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?
-      item.unique.length :
-      sortNumberOrString(this.sortingObject(item, property), property);
+    this.activities.sortingDataAccessor = (item: any, property: string) => {
+      switch (property) {
+        case 'unique':
+          return item.unique.length;
+        case 'steps':
+        case 'exams':
+          return item.max ? Number(item.max[property]) || 0 : 0;
+        default:
+          return sortNumberOrString(this.sortingObject(item, property), property);
+      }
+    };
   }
 
   truncateTitle(title: string) {

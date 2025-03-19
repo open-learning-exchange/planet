@@ -226,15 +226,24 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
+    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps }) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
       this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
       this.setStepCompletion();
+      // Update course activity data with progress information
       this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
-        const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
-        return { ...course, ...courseActivity };
+        const courseEnrollments = enrollments.filter(enrollment => enrollment.courseId === courseActivity.courseId);
+        const courseCompletions = completions.filter(completion => completion.courseId === courseActivity.courseId);
+        const courseSteps = steps.filter(step => step.courseId === courseActivity.courseId);
+        return {
+          ...courseActivity,
+          enrollments: courseEnrollments.length,
+          completions: courseCompletions.length,
+          stepsCompleted: courseSteps.length
+        };
       });
+      this.setDocVisits('courseActivities', false);
     });
   }
 
@@ -248,7 +257,29 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
           && !activity.private
       );
-      this.setDocVisits(type, true);
+      if (type === 'courseActivities') {
+        this.couchService.findAll('courses').subscribe((allCourses: any[]) => {
+          this[type].total.data = this[type].total.data.map(courseActivity => {
+            const course = allCourses.find(c => c._id === courseActivity.courseId);
+            if (!course) {
+              return { ...courseActivity, steps: 0, exams: 0 };
+            }
+            return {
+              ...courseActivity,
+              steps: course.steps.length,
+              exams: course.steps.filter(step => step.exam).length,
+              courseTitle: course.courseTitle,
+              // Initialize progress counts that will be updated in getCourseProgress
+              enrollments: 0,
+              completions: 0,
+              stepsCompleted: 0
+            };
+          });
+          this.setDocVisits(type, true);
+        });
+      } else {
+        this.setDocVisits(type, true);
+      }
     });
   }
 
@@ -417,8 +448,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const dateA = new Date(a[field]).getTime();
         const dateB = new Date(b[field]).getTime();
         comparison = dateA - dateB;
-      } else {
+      } else if ([ 'steps', 'exams', 'count', 'numberOfSteps', 'numberOfExams' ].includes(field)) {
+        // Force numeric comparison for these fields
+        const numA = Number(a[field]) || 0;
+        const numB = Number(b[field]) || 0;
+        comparison = numA - numB;
+      } else if (typeof a[field] === 'string') {
         comparison = a[field].localeCompare(b[field]);
+      } else {
+        comparison = (a[field] || 0) - (b[field] || 0);
       }
       return comparison * order;
     });
