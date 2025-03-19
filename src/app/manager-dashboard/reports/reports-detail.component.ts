@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
+import { Chart } from 'chart.js';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
-import { Chart } from 'chart.js';
 import { styleVariables } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
@@ -16,7 +17,6 @@ import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
   titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap
 } from './reports.utils';
-import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
@@ -59,6 +59,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
+  dateQueryParams = {
+    startDate: null,
+    endDate: null
+  };
 
   constructor(
     private activityService: ReportsService,
@@ -79,12 +83,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
     this.dialogsLoadingService.start();
-    combineLatest(this.route.paramMap, this.stateService.couchStateListener(dbName)).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ params, planetState ]: [ ParamMap, any ]) => {
+    combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
+    .pipe(takeUntil(this.onDestroy$))
+    .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
       if (planetState === undefined) {
         return;
       }
       const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+      this.dateQueryParams = {
+        startDate: queryParams['startDate'] ? this.setParamsTimestamp(new Date(queryParams['startDate']), false) : null,
+        endDate: queryParams['endDate'] ? this.setParamsTimestamp(new Date(queryParams['endDate']), true) : null
+      };
       this.codeParam = params.get('code');
       this.planetCode = this.codeParam || this.stateService.configuration.code;
       this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
@@ -94,7 +103,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.stateService.requestData(dbName, 'local');
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-      this.dateFilterForm.controls.endDate.setValue(this.today);
+      this.dateFilterForm.controls.endDate.setValue(this.dateQueryParams.endDate || this.today);
     });
   }
 
@@ -132,20 +141,41 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.reports.usersByGender = byGender;
   }
 
+  private setParamsTimestamp(date: Date, endDate: Boolean): Date {
+    const newDate = new Date(date);
+    endDate ? newDate.setHours(0, 0, 0, 0) : newDate.setHours(0, 0, 0);
+    return newDate;
+  }
+
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
       startDate: [ '' ],
-      endDate: [ '' ]
+      endDate: [ '' ],
+      validators: [ CustomValidators.endDateValidator() ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
       const startDate = value.startDate ? new Date(value.startDate) : null;
       const endDate = value.endDate ? new Date(value.endDate) : null;
-      const hasInvalidDates = startDate && endDate && startDate > endDate;
 
-      this.dateFilterForm.setErrors(hasInvalidDates ? { invalidEndDate: true } : null);
       this.filter = { ...this.filter, startDate, endDate };
 
       if (startDate && endDate && this.minDate && this.today) {
+        const formatDate = (date: Date) => {
+          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        };
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            startDate: formattedStartDate,
+            endDate: formattedEndDate
+          },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+
         this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
           endDate.getTime() === this.today.getTime();
       }
@@ -186,7 +216,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const adminName = this.stateService.configuration.adminName.split('@')[0];
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
-      this.dateFilterForm.controls.startDate.setValue(this.minDate);
+      this.dateFilterForm.controls.startDate.setValue(this.dateQueryParams.startDate || this.minDate);
       this.setLoginActivities();
     });
     this.usersService.requestUserData();
@@ -226,15 +256,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps, courses }) => {
+    combineLatest([
+      this.activityService.courseProgressReport(),
+      this.couchService.findAll('courses')
+    ]).subscribe(([ { enrollments, completions, steps }, courses ]: [ any, any[] ]) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
       this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
-      this.setStepCompletion();
       this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
-        const course = courses.find(c => c._id === courseActivity.courseId) || { steps: 0, exams: 0 };
-        return { ...course, ...courseActivity };
+        const course: any = courses.find(c => c._id === courseActivity.courseId) || { steps: [] };
+        return {
+          ...courseActivity,
+          steps: course.steps?.length || 0,
+          exams: course.steps?.filter(step => step.exam)?.length || 0
+        };
       });
+      this.setStepCompletion();
+      this.setDocVisits('courseActivities', false);
     });
   }
 
