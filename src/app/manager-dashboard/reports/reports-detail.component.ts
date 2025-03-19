@@ -448,15 +448,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const dateA = new Date(a[field]).getTime();
         const dateB = new Date(b[field]).getTime();
         comparison = dateA - dateB;
-      } else if ([ 'steps', 'exams', 'count', 'numberOfSteps', 'numberOfExams' ].includes(field)) {
-        // Force numeric comparison for these fields
-        const numA = Number(a[field]) || 0;
-        const numB = Number(b[field]) || 0;
-        comparison = numA - numB;
       } else if (typeof a[field] === 'string') {
         comparison = a[field].localeCompare(b[field]);
       } else {
-        comparison = (a[field] || 0) - (b[field] || 0);
+        comparison = (Number(a[field]) || 0) - (Number(b[field]) || 0);
       }
       return comparison * order;
     });
