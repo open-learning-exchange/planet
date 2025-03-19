@@ -1,4 +1,4 @@
-<mat-table #table [dataSource]="myPlanets" matSort>
+<mat-table #table [dataSource]="myPlanets" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef i18n>ID</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.androidId}}</mat-cell>
