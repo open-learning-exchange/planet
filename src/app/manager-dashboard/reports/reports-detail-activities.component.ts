@@ -41,15 +41,10 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnInit() {
     this.activities.sortingDataAccessor = (item: any, property: string) => {
-      switch (property) {
-        case 'unique':
-          return item.unique.length;
-        case 'steps':
-        case 'exams':
-          return item.max ? Number(item.max[property]) || 0 : 0;
-        default:
-          return sortNumberOrString(this.sortingObject(item, property), property);
+      if (property === 'unique') {
+        return item.unique.length;
       }
+      return sortNumberOrString(this.sortingObject(item, property), property);
     };
   }
 
@@ -84,6 +79,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
           enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
           completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
           stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
+          steps: activity.max?.steps,
+          exams: activity.max?.exams,
           ...activity
         };
       });
