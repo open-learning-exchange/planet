@@ -429,10 +429,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const dateA = new Date(a[field]).getTime();
         const dateB = new Date(b[field]).getTime();
         comparison = dateA - dateB;
-      } else if (typeof a[field] === 'string') {
-        comparison = a[field].localeCompare(b[field]);
       } else {
-        comparison = (Number(a[field]) || 0) - (Number(b[field]) || 0);
+        comparison = a[field].localeCompare(b[field]);
       }
       return comparison * order;
     });
