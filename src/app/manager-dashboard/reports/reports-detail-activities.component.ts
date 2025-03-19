@@ -63,7 +63,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     if (this.activityType === 'chat') {
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
-        createdDate: new Date(activity.createdDate),
+        createdDate: new Date(activity.createdDate).getTime(),
         hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
         assistant: activity.assistant ? 'True' : '',
         shared: activity.shared ? 'True' : '',

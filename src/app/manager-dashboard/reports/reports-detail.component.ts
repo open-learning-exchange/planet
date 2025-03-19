@@ -255,19 +255,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
             return {
               ...courseActivity,
               steps: course.steps.length,
-              exams: course.steps.filter(step => step.exam).length,
-              courseTitle: course.courseTitle,
-              // Initialize progress counts that will be updated in getCourseProgress
-              enrollments: 0,
-              completions: 0,
-              stepsCompleted: 0
+              exams: course.steps.filter(step => step.exam).length
             };
           });
-          this.setDocVisits(type, true);
         });
-      } else {
-        this.setDocVisits(type, true);
       }
+        this.setDocVisits(type, true);
     });
   }
 
