@@ -262,6 +262,9 @@
       <mat-tab i18n-label label="Health" #healthTab>
         <planet-reports-health [planetCode]="planetCode" [dateRange]="dateFilterForm?.value" [isActive]="healthTab.isActive" (changeDateRange)="resetDateFilter($event)"></planet-reports-health>
       </mat-tab>
+      <mat-tab i18n-label label="Chat">
+        <planet-reports-detail-activities [activitiesByDoc]="chatActivities.filteredData" activityType="chat"></planet-reports-detail-activities>
+      </mat-tab>
     </mat-tab-group>
   </div>
 </div>

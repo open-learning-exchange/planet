@@ -1,11 +1,10 @@
 import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
-import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../resources.service';
-import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -98,6 +97,13 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
     }
     if (this.mediaType === 'pdf' || this.mediaType === 'HTML') {
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+    }
+    if (
+      this.contentType === 'text/html' || this.contentType === 'text/markdown' ||
+      this.contentType === 'text/plain' || this.contentType === 'application/json'
+    ) {
+      this.mediaType = 'HTML';
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
     // Emit resource src so parent component can use for links
