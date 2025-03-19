@@ -58,8 +58,8 @@ jobs:
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
           docker images
           docker tag $repo $latestrepo
-          docker push $repo
-          docker push $latestrepo
+        # docker push $repo
+        # docker push $latestrepo
 
   deploy-single-language:
     name: Deploy single language build
