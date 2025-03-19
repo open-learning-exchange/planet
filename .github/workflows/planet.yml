@@ -39,7 +39,7 @@ jobs:
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
+    #if: ${{ github.event.inputs.buildtype == 'prebuild' }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -56,7 +56,7 @@ jobs:
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           mkdir -p ./ng-app/dist
-          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
+          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo .
           docker images
           docker tag $repo $latestrepo
           docker push $repo
@@ -66,7 +66,7 @@ jobs:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
     if: ${{ (github.event.inputs.buildtype == 'prebuild' || ((github.event.inputs.buildtype == 'single-language' || github.event_name != 'workflow_dispatch') && always())) }}
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
 
@@ -92,7 +92,7 @@ jobs:
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
           export NODE_OPTIONS=--max_old_space_size=4096
           mkdir -p ./ng-app/dist
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo . 
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo .
           docker images
           docker push $repo
           docker tag $repo $branchrepo
@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    
+
     strategy:
       matrix:
         arch: [ amd64, arm, arm64 ]
