@@ -226,10 +226,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    this.activityService.courseProgressReport().subscribe(({ enrollments, completions, steps}) => {
+    combineLatest([
+      this.activityService.courseProgressReport(),
+      this.couchService.findAll('courses')
+    ]).subscribe(([ { enrollments, completions, steps }, courses ]: [ any, any[] ]) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
       this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
+      this.courseActivities.total.data = this.courseActivities.total.data.map(courseActivity => {
+        const course: any = courses.find(c => c._id === courseActivity.courseId) || { steps: [] };
+        return {
+          ...courseActivity,
+          steps: course.steps?.length || 0,
+          exams: course.steps?.filter(step => step.exam)?.length || 0
+        };
+      });
       this.setStepCompletion();
       this.setDocVisits('courseActivities', false);
     });
@@ -245,22 +256,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         activity => (activity.resourceId || activity.courseId) && (activity.resourceId || activity.courseId).indexOf('_design') === -1
           && !activity.private
       );
-      if (type === 'courseActivities') {
-        this.couchService.findAll('courses').subscribe((allCourses: any[]) => {
-          this[type].total.data = this[type].total.data.map(courseActivity => {
-            const course = allCourses.find(c => c._id === courseActivity.courseId);
-            if (!course) {
-              return { ...courseActivity, steps: 0, exams: 0 };
-            }
-            return {
-              ...courseActivity,
-              steps: course.steps.length,
-              exams: course.steps.filter(step => step.exam).length
-            };
-          });
-        });
-      }
-        this.setDocVisits(type, true);
+      this.setDocVisits(type, true);
     });
   }
 
