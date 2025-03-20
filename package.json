@@ -56,7 +56,6 @@
     "@fullcalendar/core": "^5.10.1",
     "@fullcalendar/daygrid": "^5.10.1",
     "@fullcalendar/interaction": "^5.10.1",
-    "@fullcalendar/timegrid": "^5.10.1",
     "@types/cropperjs": "^1.3.0",
     "chart.js": "^2.9.3",
     "cropperjs": "^1.5.6",
