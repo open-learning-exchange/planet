@@ -76,6 +76,7 @@
     "rxjs": "6.5.4",
     "showdown": "1.9.1",
     "tslib": "^1.10.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
@@ -90,6 +91,7 @@
     "@types/node": "^12.11.1",
     "@types/pouchdb": "^6.4.0",
     "@types/pouchdb-find": "^6.3.4",
+    "@types/xlsx": "0.0.36",
     "codelyzer": "^5.1.2",
     "htmlhint-ng2": "0.0.13",
     "jasmine-core": "~3.5.0",
