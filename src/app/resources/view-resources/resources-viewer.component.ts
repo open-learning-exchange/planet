@@ -1,6 +1,9 @@
 import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -8,6 +11,7 @@ import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { CsvService } from '../../shared/csv.service';
 
 @Component({
   selector: 'planet-resources-viewer',
@@ -20,6 +24,10 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   @Input() fetchRating = true;
   @Input() isDialog = false;
   @Output() resourceUrl = new EventEmitter<any>();
+  @ViewChild('pdfViewer') pdfViewer: ElementRef;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  private onDestroy$ = new Subject<void>();
   mediaType: string;
   contentType: string;
   resourceSrc: string;
@@ -27,8 +35,10 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   resource: any;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
-  private onDestroy$ = new Subject<void>();
-  @ViewChild('pdfViewer') pdfViewer: ElementRef;
+  fileName: any;
+  csvData: any[][] = [];
+  dataSource: MatTableDataSource<any>;
+  displayedColumns: string[] = [];
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -37,7 +47,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
-    private router: Router
+    private router: Router,
+    private csvService: CsvService
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
@@ -105,6 +116,23 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     ) {
       this.mediaType = 'HTML';
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+    }
+    if (this.contentType === 'text/csv' || this.contentType === 'application/wps-office.xls' || this.contentType === 'application/wps-office.xlsx') {
+      this.mediaType = 'spreadsheet';
+      this.fileName = filename;
+
+      this.csvService.loadSpreadsheetResource(resource._id, filename).subscribe(result => {
+        this.displayedColumns = result.headers;
+        const tableData = result.rows.map(row =>
+          result.headers.reduce((obj, header, index) => ({
+            ...obj,
+            [header]: row[index] ?? ''
+          }), {})
+        );
+        this.dataSource = new MatTableDataSource(tableData);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
     }
     // Emit resource src so parent component can use for links
     this.resourceUrl.emit(this.resourceSrc);
