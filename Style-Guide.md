@@ -56,9 +56,34 @@ For more information, see the docs [here](https://angular.io/guide/i18n).
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
-## SCSS Style
+
+### Toolbar Layout Patterns
+When designing component toolbars, follow these patterns:
+
+- Primary (first) toolbar:
+  - Use filter lists and search inputs directly in the toolbar
+  - Example: Courses component's top toolbar with tag filters and title search
+- Secondary toolbars:
+  - Use kebab menu (three vertical dots) to contain actions
+  - Example: Courses component's action toolbar with "Manager Actions" in kebab menu
+- Exception: On desktop view, secondary toolbar actions can be displayed directly if space permits
+
+### SCSS Style
 ### Naming
 This is a work in progress.  Please keep names descriptive and concise.  Feature or the role of the class should be a prefix separated with a dash from the rest of the name.
+### Text Capitalization
+For consistency in our UI text, follow these capitalization and punctuation rules:
+
+- Buttons, Headers, and Titles: 
+  - Use Title Case (Capitalize Each Word)
+  - Do not use periods
+  - Example: "Submit Request", "User Profile", "Course Management"
+- Messages and regular content: 
+  - Use Sentence case (Only first letter capitalized)
+  - Include periods at the end of complete sentences
+  - Example: "Your request has been submitted.", "Please enter valid credentials."
+  - Exception: Short status or label text doesn't need periods ("No results found", "Required field")
+
 ### Reusability
 We would like to make our classes reusable across components when possible.  When creating a new class, make sure to consider if this can be used across current or in development components.  If so, please create the class in the `styles.scss` file.
 
