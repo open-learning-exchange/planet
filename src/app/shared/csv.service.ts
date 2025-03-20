@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { ExportToCsv } from 'export-to-csv/build';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import Papa from 'papaparse';
+import { environment } from '../../environments/environment';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
 import { markdownToPlainText } from './utils';
@@ -16,6 +21,7 @@ export class CsvService {
   };
 
   constructor(
+    private http: HttpClient,
     private reportsService: ReportsService,
     private planetMessageService: PlanetMessageService
   ) {}
@@ -122,6 +128,18 @@ export class CsvService {
 
   formatHealthConditions(conditions: any) {
     return Object.entries(conditions).filter(([ key, value ]) => value === true).map(([ key, value ]) => key).join(', ');
+  }
+
+  loadCSVSheet(docId: string, attachmentId: string): Observable<{ headers: string[], rows: any[][] }> {
+    const url = `${environment.couchAddress}/resources/${docId}/${attachmentId}`;
+    return this.http.get(url, { responseType: 'text', withCredentials: true }).pipe(
+      map((data: string) => {
+        const results = Papa.parse(data, { header: true });
+        const headers = results.meta.fields || [];
+        const rows = results.data.map((row: any) => headers.map(header => row[header]));
+        return { headers, rows };
+      })
+    );
   }
 
 }
