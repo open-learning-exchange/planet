@@ -117,11 +117,11 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       this.mediaType = 'HTML';
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
-    if (this.contentType === 'text/csv' || this.contentType === 'application/wps-office.xls' || this.contentType === 'application/wps-office.xlsx') {
+    if (this.contentType === 'text/csv') {
       this.mediaType = 'spreadsheet';
       this.fileName = filename;
 
-      this.csvService.loadSpreadsheetResource(resource._id, filename).subscribe(result => {
+      this.csvService.loadCSVSheet(resource._id, filename).subscribe(result => {
         this.displayedColumns = result.headers;
         const tableData = result.rows.map(row =>
           result.headers.reduce((obj, header, index) => ({
