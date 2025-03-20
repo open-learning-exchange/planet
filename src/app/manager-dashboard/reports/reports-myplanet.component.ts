@@ -83,7 +83,7 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   @HostListener('window:resize')
   OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
   }
 
   filterData(filterValue: string) {
