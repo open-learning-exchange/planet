@@ -143,7 +143,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
       switch (property) {
-        case 'name': return (item.parent.name || '').trim().toLowerCase();
+        case 'name': return item.parent.name.trim().toLowerCase();
         case 'courseTitle': return (item.courseTitle || '').trim().toLowerCase();
         case 'user': return item.submittedBy.toLowerCase();
         default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
