@@ -1,4 +1,4 @@
-<div [ngClass]="{'dialog-view': isDialog}" [ngSwitch]="mediaType">
+<div [ngClass]="{'dialog-view':isDialog}" [ngSwitch]="mediaType">
   <img [src]="resourceSrc" class="image-fit" *ngSwitchCase="'image'">
   <video controls *ngSwitchCase="'video'" [src]="resourceSrc" i18n>
     Browser not supported
