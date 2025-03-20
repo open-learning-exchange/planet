@@ -2,7 +2,6 @@ import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild }
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
@@ -48,7 +47,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() _events: any[] = [ {} ];
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
   events: any[] = [ {} ];
-  calendarPlugins = [ dayGridPlugin, timeGridPlugin, interactionPlugin ];
+  calendarPlugins = [ dayGridPlugin, interactionPlugin ];
   buttons = {};
   eventTimeFormat = {
     hour: '2-digit',
