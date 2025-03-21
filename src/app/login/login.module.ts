@@ -10,6 +10,7 @@ import { ConfigurationGuard } from '../configuration/configuration-guard.service
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
+import { LoginDialogComponent } from './login-dialog.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,7 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
     SharedComponentsModule
   ],
   declarations: [
-    LoginComponent, LoginFormComponent, DashboardNotificationsDialogComponent
+    LoginComponent, LoginFormComponent, DashboardNotificationsDialogComponent, LoginDialogComponent
   ],
   providers: [ ConfigurationGuard ]
 })

@@ -27,7 +27,7 @@
     <ng-container *ngIf="createMode; else signIn" i18n>Become a member</ng-container>
     <ng-template #signIn i18n>SIGN-IN</ng-template>
   </button>
-  <a class="addUser" [routerLink]="createMode ? ['/login'] : ['newmember']">
+  <a class="addUser cursor-pointer" (click)="toggleMode()">
     <ng-container *ngIf="createMode; else registerMember" i18n>Already have an account</ng-container>
     <ng-template #registerMember i18n>Become a member</ng-template>
   </a>
