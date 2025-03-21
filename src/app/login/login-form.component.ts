@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -51,6 +51,7 @@ export class LoginFormComponent {
   notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
   @Input() createMode: boolean;
   @Input() isDialog = false;
+  @Output() loginEvent = new EventEmitter<'loggedOut' | 'loggedIn'>();
 
   constructor(
     private couchService: CouchService,
@@ -174,7 +175,12 @@ export class LoginFormComponent {
         return;
       }
       this.pouchAuthService.login(name, password).pipe(
-        switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
+        switchMap((userCtx) => (this.isDialog ?
+          this.userService.setUserAndShelf(userCtx) :
+          isCreate ?
+          from(this.router.navigate([ 'users/update/' + name ])) :
+          from(this.reRoute())
+        )),
         switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
         switchMap(this.createSession(name, password)),
         switchMap((sessionData) => {
@@ -190,7 +196,9 @@ export class LoginFormComponent {
         }),
         switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
         catchError(error => error.status === 404 ? of({}) : throwError(error))
-      ).subscribe(() => {}, this.loginError.bind(this));
+      ).subscribe(() => {
+        this.loginEvent.emit('loggedIn');
+      }, this.loginError.bind(this));
     } catch (error) {
       console.error('Error during login:', error);
     }
