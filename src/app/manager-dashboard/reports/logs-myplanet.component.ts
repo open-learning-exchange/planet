@@ -95,7 +95,10 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   getUniqueVersions(logs: any[]) {
-    this.versions = Array.from(new Set(logs.map(log => log.version))).filter(version => version).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+    this.versions = Array.from(
+      new Set(logs.map(log => log.version)))
+      .filter(version => version)
+      .sort((a, b) => b.localeCompare(a));
   }
 
   getUniqueTypes(logs: any[]) {

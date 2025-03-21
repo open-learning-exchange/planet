@@ -6,6 +6,11 @@ export enum DeviceType {
   DESKTOP = 'DESKTOP'
 }
 
+export interface DeviceBreakpoints {
+  tablet?: number;
+  mobile?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,10 +26,13 @@ export class DeviceInfoService {
     this.screenWidth = window.innerWidth;
   }
 
-  public getDeviceType(): DeviceType {
-    if (this.screenWidth <= 780) {
+  public getDeviceType(breakpoints: DeviceBreakpoints = {}): DeviceType {
+    const mobileWidth = breakpoints.mobile || 780;
+    const tabletWidth = breakpoints.tablet || 1000;
+
+    if (this.screenWidth <= mobileWidth) {
       return DeviceType.MOBILE;
-    } else if (this.screenWidth <= 1000) {
+    } else if (this.screenWidth <= tabletWidth) {
       return DeviceType.TABLET;
     } else {
       return DeviceType.DESKTOP;

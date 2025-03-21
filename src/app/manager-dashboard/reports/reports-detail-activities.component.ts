@@ -60,7 +60,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     if (this.activityType === 'chat') {
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
-        createdDate: new Date(activity.createdDate),
+        createdDate: new Date(activity.createdDate).getTime(),
         hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
         assistant: activity.assistant ? 'True' : '',
         shared: activity.shared ? 'True' : '',
@@ -76,6 +76,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
           enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
           completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
           stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
+          steps: activity.max?.steps,
+          exams: activity.max?.exams,
           ...activity
         };
       });
