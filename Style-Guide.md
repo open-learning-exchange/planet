@@ -114,29 +114,7 @@ Use Angular Material's color system with these conventions for buttons:
 - Grey (default with no color attribute) for secondary actions
   - Use `mat-button` without color attribute
 - Disabled state automatically applies grey
-  - Use [disabled]=condition where condition is a boolean state or 
-
-Examples:
-- Submit button: `<button mat-raised-button color="primary">Submit</button>`
-- Delete button: `<button mat-button color="warn">Delete</button>`
-- Cancel button: `<button mat-button>Cancel</button>`
-- Disabled button: `<button [disabled]="!linkForm.valid">`
-
-### Disabled Button Patterns
-Use Angular's disabled binding to control button state based on form or data conditions:
-
-- Form validation:
-  - Disable Submit until form is valid
-  - Example: `[disabled]="!linkForm.valid"`
-- Selection required:
-  - Disable action buttons until items are selected
-  - Example: `[disabled]="!selection.selected.length"`
-- Empty data state:
-  - Disable actions when no data is available
-  - Example: `[disabled]="courses.filter.trim() === ''"`
-- Multiple conditions:
-  - Use boolean expressions to combine conditions
-  - Example: `[disabled]="!linkForm.valid || isLoading"`
+  - Use [disabled]= "condition"
 
 Common patterns from our components:
 - Dialog submit: `<button [disabled]="!linkForm.valid">`
@@ -150,13 +128,10 @@ When designing component toolbars, follow these patterns:
 - Primary (first) toolbar:
   - Use filter lists and search inputs directly in the toolbar
   - White background (default mat-toolbar)
-  - Example: Courses component's top toolbar with tag filters and title search
 - Secondary toolbars:
-  - Use kebab menu (three vertical dots) to contain actions
+  - Use kebab menu (three vertical dots) to contain actions on tablet and mobile views
   - Primary color background with white text (`primary-color` class)
-  - Example: Courses component's action toolbar with "Manager Actions" in kebab menu
   - Use white icons and text for buttons (`mat-icon`, `font-size-1` classes)
-- Exception: On desktop view, secondary toolbar actions can be displayed directly if space permits
 
 ### Dialog Button Standards
 When creating dialog boxes, follow these button placement rules:
@@ -168,8 +143,6 @@ When creating dialog boxes, follow these button placement rules:
   - Cancel button should be immediately left of primary action
   - Additional actions (if any) go to left of Cancel
   - Use mat-button without color
-- Example button order from left to right:
-  - [Additional Actions] [Cancel] [spacer] [Submit]
 - Labels:
   - Use "Cancel" and "Submit" for form dialogs
   - Use "Close" and "OK" for confirmation dialogs
@@ -185,4 +158,27 @@ For consistency in our UI text, follow these capitalization and punctuation rule
   - Use Sentence case (Only first letter capitalized)
   - Include periods at the end of complete sentences
   - Example: "Your request has been submitted.", "Please enter valid credentials."
-  - Exception: Short status or label text doesn't need periods ("No results found", "Required field")
+  - Exception: Short status, placeholder, or label text doesn't need periods ("No results found", "Required field")
+
+### Form Fields and Error Messages
+For consistency in forms across the application, follow these standards:
+
+- Form Field Labels:
+  - Use Title Case for field labels
+  - Do not use colons after labels
+- Placeholder Text:
+  - Use Sentence case
+  - Be concise and descriptive
+- Error Messages:
+  - Use Sentence case
+  - End with a period
+  - Be specific about the error
+
+### Form Validation Patterns
+For form validation, refer to these standard validator implementations:
+
+- Built-in validators: Angular's `Validators` class
+- Custom validators: Found in `/src/app/validators/custom-validators.ts`
+  - Common use cases: time, date, password matching, link validation
+- Async validators: Found in `/src/app/validators/validator.service.ts`
+  - Common use cases: unique field checking, password verification
