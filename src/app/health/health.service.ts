@@ -1,4 +1,4 @@
-import { Injectable, Input } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { of, forkJoin, BehaviorSubject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
@@ -153,7 +153,7 @@ export class HealthService {
 
   deleteExamination(eventId: string, eventRev: string) {
     return this.couchService.delete(`health/${eventId}?rev=${eventRev}`).pipe(
-      switchMap(() => this.getExaminations(this.stateService.configuration.code)), 
+      switchMap(() => this.getExaminations(this.stateService.configuration.code)),
       switchMap((exams: any[]) => {
         this.examinations.next(exams);
         return of(true);
