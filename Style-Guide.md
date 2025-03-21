@@ -57,20 +57,123 @@ Within the `src/app` directory, each feature should have its own directory.  Wit
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
 
-### Toolbar Layout Patterns
+### SCSS Style
+### Naming
+Component files should be named after their page/feature and follow Angular's standard naming pattern:
+```
+feature.component.ts      // Component logic
+feature.component.html    // Component template
+feature.component.scss    // Component styles
+```
+
+For CSS class names, keep them descriptive and concise. Feature or role of the class should be a prefix separated with a dash from the rest of the name.
+
+### Variables
+#### Color & Theme Variables
+All color variables should be defined in `/src/app/_variables.scss`:
+- Use Material's theme system (`$primary`, `$accent`, `$warn`)
+- Define semantic variables (e.g., `$light-grey` not `$color-1`)
+- Use Material's `mat-color()` function to access theme colors
+
+#### Screen Size Variables
+Default breakpoint variables in `_variables.scss`:
+```scss
+$screen-md: 1000px;  // Medium screen breakpoint
+$screen-sm: 780px;   // Small screen breakpoint
+```
+
+Components can override these for specific needs using the `screen-sizes` mixin:
+```scss
+@include screen-sizes($screen-md: 1200px, $screen-sm: 780px);
+```
+
+### Reusability
+We would like to make our classes reusable across components when possible.  When creating a new class, make sure to consider if this can be used across current or in development components.  If so, please create the class in the `styles.scss` file.
+
+If, in the future, the `styles.scss` file becomes so large it is difficult to manage, we will break it up into different files.
+### Test classes
+For unit tests it is easier to locate tags with a specific unit test class that has a prefix `km-`.  These __should not be used for any CSS styling__.  By limiting these to unit test use it allows people working on testing to remove unused `km-` classes knowing that they are not affecting the site in any way.
+
+### Variables
+Please put variables in the `/src/app/_variables.scss`.
+
+## Unit & End-to-end Testing
+### Classes
+Please use specific test classes to query the HTML elements when testing.  These can be added directly to the HTML template and should have the prefix `km-` to let people working on the SCSS know that this class is for testing only.  By using specific test classes we can ensure consistent testing even as the CSS changes.
+
+## UI Styles
+### Color Usage
+Use Angular Material's color system with these conventions for buttons:
+
+- Default: Primary color (blue) for standard actions
+  - Use `mat-button` or `mat-raised-button color="primary"`
+- Accent color (yellow) for attention-drawing actions
+  - Use `mat-button` or `mat-raised-button color="accent"`
+- Warning color (red) for destructive actions
+  - Use `mat-button` or `mat-raised-button color="warn"`
+- Grey (default with no color attribute) for secondary actions
+  - Use `mat-button` without color attribute
+- Disabled state automatically applies grey
+  - Use [disabled]=condition where condition is a boolean state or 
+
+Examples:
+- Submit button: `<button mat-raised-button color="primary">Submit</button>`
+- Delete button: `<button mat-button color="warn">Delete</button>`
+- Cancel button: `<button mat-button>Cancel</button>`
+- Disabled button: `<button [disabled]="!linkForm.valid">`
+
+### Disabled Button Patterns
+Use Angular's disabled binding to control button state based on form or data conditions:
+
+- Form validation:
+  - Disable Submit until form is valid
+  - Example: `[disabled]="!linkForm.valid"`
+- Selection required:
+  - Disable action buttons until items are selected
+  - Example: `[disabled]="!selection.selected.length"`
+- Empty data state:
+  - Disable actions when no data is available
+  - Example: `[disabled]="courses.filter.trim() === ''"`
+- Multiple conditions:
+  - Use boolean expressions to combine conditions
+  - Example: `[disabled]="!linkForm.valid || isLoading"`
+
+Common patterns from our components:
+- Dialog submit: `<button [disabled]="!linkForm.valid">`
+- Bulk actions: `<button [disabled]="!selection.selected.length">`
+- Clear filters: `<button [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0">`
+- Step progression: `<button [disabled]="stepNum > 0 && !step.isPreviousTestTaken">`
+
+### Toolbars
 When designing component toolbars, follow these patterns:
 
 - Primary (first) toolbar:
   - Use filter lists and search inputs directly in the toolbar
+  - White background (default mat-toolbar)
   - Example: Courses component's top toolbar with tag filters and title search
 - Secondary toolbars:
   - Use kebab menu (three vertical dots) to contain actions
+  - Primary color background with white text (`primary-color` class)
   - Example: Courses component's action toolbar with "Manager Actions" in kebab menu
+  - Use white icons and text for buttons (`mat-icon`, `font-size-1` classes)
 - Exception: On desktop view, secondary toolbar actions can be displayed directly if space permits
 
-### SCSS Style
-### Naming
-This is a work in progress.  Please keep names descriptive and concise.  Feature or the role of the class should be a prefix separated with a dash from the rest of the name.
+### Dialog Button Standards
+When creating dialog boxes, follow these button placement rules:
+
+- Primary action buttons (right side):
+  - Submit/OK button should be rightmost
+  - Use mat-raised-button with primary color
+- Secondary action buttons (left side):
+  - Cancel button should be immediately left of primary action
+  - Additional actions (if any) go to left of Cancel
+  - Use mat-button without color
+- Example button order from left to right:
+  - [Additional Actions] [Cancel] [spacer] [Submit]
+- Labels:
+  - Use "Cancel" and "Submit" for form dialogs
+  - Use "Close" and "OK" for confirmation dialogs
+
 ### Text Capitalization
 For consistency in our UI text, follow these capitalization and punctuation rules:
 
@@ -83,15 +186,3 @@ For consistency in our UI text, follow these capitalization and punctuation rule
   - Include periods at the end of complete sentences
   - Example: "Your request has been submitted.", "Please enter valid credentials."
   - Exception: Short status or label text doesn't need periods ("No results found", "Required field")
-
-### Reusability
-We would like to make our classes reusable across components when possible.  When creating a new class, make sure to consider if this can be used across current or in development components.  If so, please create the class in the `styles.scss` file.
-
-If, in the future, the `styles.scss` file becomes so large it is difficult to manage, we will break it up into different files.
-### Test classes
-For unit tests it is easier to locate tags with a specific unit test class that has a prefix `km-`.  These __should not be used for any CSS styling__.  By limiting these to unit test use it allows people working on testing to remove unused `km-` classes knowing that they are not affecting the site in any way.
-### Variables
-Please put variables in the `/src/app/variables.scss`.
-## Unit & End-to-end Testing
-### Classes
-Please use specific test classes to query the HTML elements when testing.  These can be added directly to the HTML template and should have the prefix `km-` to let people working on the SCSS know that this class is for testing only.  By using specific test classes we can ensure consistent testing even as the CSS changes.
