@@ -57,7 +57,6 @@ Within the `src/app` directory, each feature should have its own directory.  Wit
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
 
-### SCSS Style
 ### Naming
 Component files should be named after their page/feature and follow Angular's standard naming pattern:
 ```
@@ -66,6 +65,7 @@ feature.component.html    // Component template
 feature.component.scss    // Component styles
 ```
 
+### SCSS Style
 For CSS class names, keep them descriptive and concise. Feature or role of the class should be a prefix separated with a dash from the rest of the name.
 
 ### Variables
