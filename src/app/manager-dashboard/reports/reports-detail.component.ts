@@ -97,8 +97,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
       const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
       this.dateQueryParams = {
-        startDate: queryParams['startDate'] ? this.setParamsTimestamp(new Date(queryParams['startDate']), false) : null,
-        endDate: queryParams['endDate'] ? this.setParamsTimestamp(new Date(queryParams['endDate']), true) : null
+        startDate: new Date(queryParams['startDate']) || null,
+        endDate: new Date(queryParams['endDate']) || null
       };
       this.codeParam = params.get('code');
       this.planetCode = this.codeParam || this.stateService.configuration.code;
@@ -152,12 +152,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.reports.usersByGender = byGender;
   }
 
-  private setParamsTimestamp(date: Date, endDate: Boolean): Date {
-    const newDate = new Date(date);
-    endDate ? newDate.setHours(0, 0, 0, 0) : newDate.setHours(0, 0, 0);
-    return newDate;
-  }
-
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
       startDate: [ '' ],
@@ -165,8 +159,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       validators: [ CustomValidators.endDateValidator() ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const startDate = value.startDate ? new Date(value.startDate) : null;
-      const endDate = value.endDate ? new Date(value.endDate) : null;
+      const startDate = value.startDate || null;
+      const endDate = value.endDate || null;
 
       this.filter = { ...this.filter, startDate, endDate };
 
@@ -187,8 +181,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           replaceUrl: true
         });
 
-        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
-          endDate.getTime() === this.today.getTime();
+        this.disableShowAllTime = startDate.getDate() === this.minDate.getDate() &&
+          endDate.getDate() === this.today.getDate();
       }
       this.filterData();
     });
