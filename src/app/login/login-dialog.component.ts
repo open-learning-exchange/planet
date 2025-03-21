@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   template: `
-    <planet-login-form></planet-login-form>
+    <planet-login-form [isDialog]="true"></planet-login-form>
   `
 })
 export class LoginDialogComponent {
