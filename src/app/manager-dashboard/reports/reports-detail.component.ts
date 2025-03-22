@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Chart } from 'chart.js';
@@ -73,6 +74,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
@@ -159,8 +161,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       validators: [ CustomValidators.endDateValidator() ]
     });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const startDate = value.startDate || null;
-      const endDate = value.endDate || null;
+      const startDate = value.startDate ? new Date(value.startDate) : null;
+      const endDate = value.endDate ? new Date(value.endDate) : null;
 
       this.filter = { ...this.filter, startDate, endDate };
 
@@ -171,15 +173,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const formattedStartDate = formatDate(startDate);
         const formattedEndDate = formatDate(endDate);
 
-        this.router.navigate([], {
-          relativeTo: this.route,
+        const urlTree = this.router.createUrlTree([], {
           queryParams: {
             startDate: formattedStartDate,
             endDate: formattedEndDate
           },
-          queryParamsHandling: 'merge',
-          replaceUrl: true
+          queryParamsHandling: 'merge'
         });
+        this.location.replaceState(urlTree.toString());
 
         this.disableShowAllTime = startDate.getDate() === this.minDate.getDate() &&
           endDate.getDate() === this.today.getDate();
@@ -221,7 +222,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const adminName = this.stateService.configuration.adminName.split('@')[0];
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
-      this.dateFilterForm.controls.startDate.setValue(this.dateQueryParams.startDate || this.minDate);
+      this.dateFilterForm.controls.startDate.setValue(
+        !isNaN(this.dateQueryParams.startDate) ? this.dateQueryParams.startDate : this.minDate
+      );
       this.setLoginActivities();
     });
     this.usersService.requestUserData();
