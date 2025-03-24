@@ -91,28 +91,33 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
     this.dialogsLoadingService.start();
-    combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
-      if (planetState === undefined) {
-        return;
-      }
-      const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-      this.dateQueryParams = {
-        startDate: new Date(queryParams['startDate']) || null,
-        endDate: new Date(queryParams['endDate']) || null
-      };
-      this.codeParam = params.get('code');
-      this.planetCode = this.codeParam || this.stateService.configuration.code;
-      this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-      this.initializeData(!this.codeParam);
-    });
-    this.stateService.requestData(dbName, 'local');
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-      this.dateFilterForm.controls.endDate.setValue(this.dateQueryParams.endDate || this.today);
+
+      combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
+        if (planetState === undefined) {
+          return;
+        }
+        const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+        this.dateQueryParams = {
+          startDate: new Date(new Date(queryParams['startDate']).setHours(0,0,0,0)),
+          endDate: new Date(new Date(queryParams['endDate']).setHours(0,0,0))
+        };
+        this.dateFilterForm.controls.endDate.setValue(
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+          ? this.dateQueryParams.endDate : this.today
+        );
+        this.codeParam = params.get('code');
+        this.planetCode = this.codeParam || this.stateService.configuration.code;
+        this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
+        this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+        this.initializeData(!this.codeParam);
+      });
     });
+
+    this.stateService.requestData(dbName, 'local');
   }
 
   ngOnDestroy() {
@@ -182,8 +187,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         });
         this.location.replaceState(urlTree.toString());
 
-        this.disableShowAllTime = startDate.getDate() === this.minDate.getDate() &&
-          endDate.getDate() === this.today.getDate();
+        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
+          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -223,7 +228,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
-        !isNaN(this.dateQueryParams.startDate) ? this.dateQueryParams.startDate : this.minDate
+        this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
+        ? this.dateQueryParams.startDate : this.minDate
       );
       this.setLoginActivities();
     });
