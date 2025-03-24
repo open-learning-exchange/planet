@@ -102,8 +102,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
         this.dateQueryParams = {
-          startDate: new Date(new Date(queryParams['startDate']).setHours(0,0,0,0)),
-          endDate: new Date(new Date(queryParams['endDate']).setHours(0,0,0))
+          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
+          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
         };
         this.dateFilterForm.controls.endDate.setValue(
           this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
