@@ -194,7 +194,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         showLabels: invalidFields
       }
     });
-
     this.dialogPrompt.afterClosed().subscribe(result => {
       this.hasUnsavedChanges = !result;
       this.unsavedChangesService.setHasUnsavedChanges(!result);
