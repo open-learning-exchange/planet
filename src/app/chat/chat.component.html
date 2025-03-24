@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <button class="titlebar" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <button *ngIf="displayBtn" class="titlebar" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
   <mat-button-toggle-group *ngIf="displayToggle; else textDisplay" [(ngModel)]="activeService" (change)="toggleAIService()">

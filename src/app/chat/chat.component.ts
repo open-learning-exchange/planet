@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ChatService } from '../shared/chat.service';
@@ -13,6 +13,7 @@ export class ChatComponent implements OnInit {
   activeService: string;
   aiServices: AIProvider[] = [];
   displayToggle: boolean;
+  @Input() displayBtn = true;
 
   constructor(
     private chatService: ChatService,
