@@ -324,6 +324,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+  navigateToAIServices(): void {
+    this.router.navigate(['/manager/aiservices']);
+  } 
+
   @HostListener('window:resize')
   onResize() {
     this.isMobile = this.deviceInfoService.getDeviceType() === DeviceType.MOBILE;

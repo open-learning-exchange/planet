@@ -90,7 +90,7 @@
         <mat-icon>info_outline</mat-icon>
       </button>
       <span i18n>Chat streaming</span>
-      <mat-slide-toggle [(ngModel)]="streaming" (ngModelChange)="toggleStreaming()"></mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="streaming" (ngModelChange)="toggleStreaming(); navigateToAIServices()"></mat-slide-toggle>
       <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="overlayOpen">
         <span class="overlay-text" i18n>Quicker line by line chat responses, could be costlier</span>
       </ng-template>
