@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject } from 'rxjs';
-import { map, switchMap, filter } from 'rxjs/operators';
+import { map, switchMap, filter, catchError } from 'rxjs/operators';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,10 @@ export class StateService {
         this.stateUpdated.next({ newData, db, planetField, inProgress });
         this.inProgress[planetField].set(db, inProgress);
         return newData;
+      }),
+      catchError(() => {
+        this.inProgress[planetField].set(db, false);
+        return [];
       })
     );
   }
