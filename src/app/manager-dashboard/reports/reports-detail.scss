@@ -1,5 +1,11 @@
 @import '../../variables';
 
+$screen-md: 1200px;
+
+:host {
+  @include screen-sizes($screen-md, $screen-sm);
+}
+
 mat-toolbar mat-form-field {
   margin-top: 10px;
   &.mat-form-field-type-no-underline {
@@ -8,7 +14,7 @@ mat-toolbar mat-form-field {
 }
 
 .diagnosis-trend {
-  line-height: 3.7em
+  line-height: 3.7em;
 }
 
 .subheading {
@@ -38,13 +44,38 @@ mat-toolbar mat-form-field {
     color: $primary;
   }
 
-  @media(max-width:1000px) {
-    .reports-table-container {
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  canvas {
+    max-height: 30vh;
+  }
+}
+
+.mobile-view-styles {
+  display: none;
+}
+
+@media(max-width: #{$screen-md}) {
+  .mobile-view-styles {
+    display: block;
+  }
+
+  .mat-form-field {
+    width: 100%;
+  }
+
+  .date-form {
+    width: 100%;
+  }
+
+  mat-button-toggle-group {
+    width: 100%;
+    display: flex;
+    
+    .mat-button-toggle {
+      flex: 1;
     }
   }
 
-  canvas {
-    max-height: 30vh;
+  .reports-table-container {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   }
 }
