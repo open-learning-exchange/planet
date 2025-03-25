@@ -88,14 +88,22 @@
         </mat-form-field>
         <div class="file-upload inner-gaps full-width">
           <label class="header-label"><b i18n>File Upload:</b></label>
-          <planet-file-input (fileChange)="bindFile($event)"></planet-file-input>
+          <div class="existing-file-container">
+            <planet-file-input #fileInput (fileChange)="bindFile($event)"></planet-file-input>
+            <button mat-icon-button *ngIf="file" (click)="removeNewFile()" i18n-matTooltip matTooltip="Remove new attachment">
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+          </div>
           <label i18n class="warn-text-color" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
+          <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion && file" class="warn-text-color">
+            <p i18n>Warning: Existing Resource/file will be replaced</p>
+          </div>
         </div>
         <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion">
           <label class="header-label"><b i18n>Existing Resource/file:</b></label>
           <div class="existing-file-container">
             <span class="filename">{{resourceFilename}}</span>
-            <button mat-icon-button [disabled]="disableDelete || this.file" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove attachment">
+            <button mat-icon-button [disabled]="disableDelete" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove existing attachment">
               <mat-icon color ="warn">delete</mat-icon>
             </button>
           </div>
