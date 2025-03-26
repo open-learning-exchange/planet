@@ -160,8 +160,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
           this.conversations = conversations
             .filter((conversation) => {
               if (this.teamId) {
-                return conversation?.context?.type == this.chatMode &&
-                  conversation?.context?.doc?.id === this.teamId
+                return conversation?.context?.type === this.chatMode &&
+                  conversation?.context?.doc?.id === this.teamId;
               } else {
                 return !conversation?.context;
               }
