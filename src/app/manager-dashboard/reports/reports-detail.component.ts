@@ -423,9 +423,25 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
-    const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
+    const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
+    if (reportType === 'coursesOverview') {
+      const coursesFields = [
+        { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+        { placeholder: $localize`To`, name: 'endDate', ...commonProps }
+      ];
+      const coursesFormGroup = {
+        startDate: this.dateFilterForm.controls.startDate.value,
+        endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
+      };
+      this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, coursesFields, coursesFormGroup, {
+        onSubmit: (formValue: any) => {
+          this.exportCourseOverview(formValue.startDate, formValue.endDate);
+        }
+      });
+      return;
+    }
     const teamOptions = [
       { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
@@ -457,6 +473,79 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  exportCourseOverview(startDate: Date, endDate: Date) {
+    this.dialogsLoadingService.start();
+    const dateRange = { startDate, endDate };
+    const filteredCourseData = filterByDate(
+      this.courseActivities?.total?.data,
+      'time',
+      dateRange
+    ) as any[];
+    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: any }, activity: any) => {
+      if (!stats[activity.courseId]) {
+        stats[activity.courseId] = {
+          title: activity.courseTitle || activity.title || activity.max?.title || '',
+          steps: activity.steps || 0,
+          exams: activity.exams || 0,
+          enrollments: 0,
+          count: 0,
+          stepsCompleted: 0,
+          completions: 0,
+        };
+      }
+      stats[activity.courseId].count++;
+      return stats;
+    }, {});
+
+    console.log('Merged course activity data:', this.courseActivities.total.data);
+    const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
+    const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
+    const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
+
+    filteredEnrollments.forEach((enrollment: any) => {
+      if (courseStats[enrollment.courseId]) {
+        courseStats[enrollment.courseId].enrollments++;
+      }
+    });
+    filteredCompletions.forEach((completion: any) => {
+      if (courseStats[completion.courseId]) {
+        courseStats[completion.courseId].completions++;
+      }
+    });
+    filteredSteps.forEach((step: any) => {
+      if (courseStats[step.courseId]) {
+        courseStats[step.courseId].stepsCompleted++;
+      }
+    });
+    Object.keys(courseStats).forEach(courseId => {
+      const foundRating = (this.ratings.courses || []).find((rating: any) => rating.item === courseId);
+      courseStats[courseId].averageRating = foundRating ? foundRating.value : '';
+    });
+    const planetForLink = (this.stateService.configuration.planetName ||
+                            this.planetName ||
+                            'default').toLowerCase();
+    const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
+    const csvData = Object.entries(courseStats).map(([ courseId, course ]: [string, any]) => ({
+      'Title': course.title,
+      'Link': baseUrl + courseId,
+      'Steps': course.steps,
+      'Exams': course.exams,
+      'Enrollments': course.enrollments,
+      'Views': course.count,
+      'Steps Completed': course.stepsCompleted,
+      'Completions': course.completions,
+      'Average Rating': course.averageRating
+    }));
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: $localize`Courses Overview`
+    });
+
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
   }
 
   sortData(data: any[], sortBy: string): any[] {
