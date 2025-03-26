@@ -28,27 +28,23 @@
         <mat-panel-title>Share with Team/Enterprise</mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <mat-form-field class="full-width">
-          <mat-label i18n>Team or Entreprise</mat-label>
-          <mat-select [(ngModel)]="selectedLink">
-            <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()" *ngIf="selectedLink?.db === 'teams'">
-          <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
-            <mat-step i18n-label completed="false" label="Select">
-              <planet-teams [mode]="selectedLink?.selector?.type" [isDialog]="true" [excludeIds]="excludeIds" (rowClick)="teamSelect($event)"></planet-teams>
-            </mat-step>
-            <mat-step i18n-label label="Message" [stepControl]="teamForm">
-              <mat-form-field class="full-width">
-                <textarea matInput i18n-placeholder placeholder="Message" formControlName="message"></textarea>
-                <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
-              </mat-form-field>
-              <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
-                Share
-              </button>
-            </mat-step>
-          </mat-horizontal-stepper>
+        <div class="team-selection">
+          <button mat-raised-button color="primary" type="button" (click)="openTeamSelectionDialog('team')" i18n>
+            Select Team or Enterprise
+          </button>
+          <div *ngIf="selectedTeam?.name" class="selected-team">
+            <span><b>Selected:</b> {{ selectedTeam.name }}</span>
+          </div>
+        </div>
+
+        <form [formGroup]="teamForm" (ngSubmit)="shareWithTeam()">
+          <mat-form-field class="full-width" style="margin-top: 1rem;">
+            <textarea matInput i18n-placeholder placeholder="Message" formControlName="message"></textarea>
+          </mat-form-field>
+          
+          <button mat-raised-button color="primary" type="submit" mat-dialog-close [disabled]="!selectedTeam?.teamId" i18n>
+            Share
+          </button>
         </form>
       </ng-template>
     </mat-expansion-panel>

@@ -47,24 +47,37 @@ export class DialogsAddTableComponent implements AfterViewInit {
       this.dialogsLoadingService.start();
     }
     const tableData = this.component.tableData;
-    if (this.mode === 'teams') {
-      const items = tableData.data.filter((item: any) => this.teamsSelected.indexOf(item.doc._id) > -1);
-      this.data.okClick(items);
-    } else {
-      const selection = this.component.selection.selected;
-      const items = typeof selection[0] === 'string' ?
-        tableData.data.filter((item: any) => selection.indexOf(item._id) > -1) :
-        selection;
-      this.data.okClick(items);
+    try {
+      if (this.mode === 'teams') {
+        const items = tableData.data.filter((item: any) => this.teamsSelected.indexOf(item.doc._id) > -1);
+        this.data.okClick(items);
+      } else {
+        const selection = this.component.selection.selected;
+        const items = typeof selection[0] === 'string' ?
+          tableData.data.filter((item: any) => selection.indexOf(item._id) > -1) :
+          selection;
+        this.data.okClick(items);
+      }
+    } finally {
+      // Always stop the loading service, even if there's an error
+      if (!this.data.noSpinner) {
+        this.dialogsLoadingService.stop();
+      }
     }
   }
 
   teamSelect({ teamId }) {
-    const index = this.teamsSelected.indexOf(teamId);
-    if (index === -1) {
-      this.teamsSelected.push(teamId);
+    if (this.data.singleSelect) {
+      // For single selection, clear the array first
+      this.teamsSelected = [ teamId ];
     } else {
-      this.teamsSelected.splice(index, 1);
+      // For multiple selection, toggle the selection
+      const index = this.teamsSelected.indexOf(teamId);
+      if (index === -1) {
+        this.teamsSelected.push(teamId);
+      } else {
+        this.teamsSelected.splice(index, 1);
+      }
     }
     this.okDisabled = this.teamsSelected.length === 0;
   }
