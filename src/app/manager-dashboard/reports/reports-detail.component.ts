@@ -433,7 +433,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ];
       const formGroup = {
         startDate: this.dateFilterForm.controls.startDate.value,
-        endDate: [this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator()]
+        endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
       };
       this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, fields, formGroup, {
         onSubmit: (formValue: any) => {
@@ -474,7 +474,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   exportCourseOverview(startDate: Date, endDate: Date) {
     this.dialogsLoadingService.start();
     const dateRange = { startDate, endDate };
@@ -498,12 +498,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       stats[activity.courseId].count++;
       return stats;
     }, {});
-  
+
     console.log('Merged course activity data:', this.courseActivities.total.data);
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
     const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
-  
+
     filteredEnrollments.forEach((enrollment: any) => {
       if (courseStats[enrollment.courseId]) {
         courseStats[enrollment.courseId].enrollments++;
@@ -527,7 +527,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                             this.planetName ||
                             'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
-    const csvData = Object.entries(courseStats).map(([courseId, course]: [string, any]) => ({
+    const csvData = Object.entries(courseStats).map(([ courseId, course ]: [string, any]) => ({
       'Title': course.title,
       'Link': baseUrl + courseId,
       'Steps': course.steps,
@@ -538,12 +538,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'Completions': course.completions,
       'Average Rating': course.averageRating
     }));
-  
+
     this.csvService.exportCSV({
       data: csvData,
       title: $localize`Courses Overview`
     });
-  
+
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
