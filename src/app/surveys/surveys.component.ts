@@ -391,6 +391,44 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  archiveSurvey(survey) {
+    const archiveSurvey = this.couchService.updateDocument(this.dbName, {
+      ...survey,
+      isArchived: true,
+    }).pipe(
+      switchMap(() => {
+        this.planetMessageService.showMessage($localize`Survey archived: ${survey.name}`);
+        this.surveys.data = this.surveys.data.map((s) =>
+          s._id === survey._id ? { ...s, isArchived: true } : s
+        );
+
+        const submissionRequests = this.submissionDeleteReq([], survey).map((req) =>
+          req.pipe(
+            catchError((err) => throwError(err))
+          )
+        );
+
+        return forkJoin(submissionRequests);
+      }),
+      catchError((err) => {
+        this.planetMessageService.showAlert($localize`There was a problem archiving this survey or deleting submissions.`);
+        return throwError(err);
+      })
+    );
+
+    const archiveDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: archiveSurvey,
+          onNext: () => archiveDialog.close()
+        },
+        changeType: 'archive',
+        type: 'survey',
+        displayName: survey.name
+      }
+    });
+  }
+
   toggleSurveysView(): void {
     this.applyViewModeFilter();
     if (this.paginator) {

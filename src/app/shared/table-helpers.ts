@@ -133,7 +133,7 @@ export const sortNumberOrString = (item, property) => {
     case 'number':
       return item[property];
     case 'string':
-      return item[property].toLowerCase();
+      return item[property].trim().toLowerCase();
   }
 };
 
