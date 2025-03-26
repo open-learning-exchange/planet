@@ -41,14 +41,14 @@ export class AuthService {
         if (this.userService.isBetaEnabled()) {
           const dialogRef = this.dialog.open(LoginDialogComponent);
           return dialogRef.afterClosed().pipe(switchMap(() => {
-            return this.checkUser(url, roles)
+            return this.checkUser(url, roles);
           }));
         }
         const returnUrl = url === '/' ? null : url;
         this.router.navigate([ '/login' ], { queryParams: { returnUrl }, replaceUrl: true });
       }),
       map(isLoggedIn => {
-        return isLoggedIn
+        return isLoggedIn;
       })
     );
   }

@@ -294,7 +294,7 @@ export class LoginFormComponent {
       this.initUserForm();
       return;
     }
-    const newRoute = this.createMode ? ['/login'] : ['/login/newmember'];
+    const newRoute = this.createMode ? [ '/login' ] : [ '/login/newmember' ];
     this.router.navigate(newRoute);
   }
 

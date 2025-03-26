@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnInit, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
 import { UserService } from './user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 @Directive({
   selector: '[planetAuthorizedRoles]'
 })
-export class AuthorizedRolesDirective {
+export class AuthorizedRolesDirective implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject<void>();
   private rolesString: string;
@@ -21,7 +21,7 @@ export class AuthorizedRolesDirective {
   ngOnInit() {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((user) => {
-        this.isLoggedOut = user?._id === undefined
+        this.isLoggedOut = user?._id === undefined;
         this.checkRoles();
       });
   }
