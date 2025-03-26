@@ -1,22 +1,21 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { ReportsService } from './reports.service';
-import { filterSpecificFields } from '../../shared/table-helpers';
+import { CouchService } from '../../shared/couchdb.service';
 import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.utils';
-import { ActivatedRoute } from '@angular/router';
-import { switchMap, map } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { CsvService } from '../../shared/csv.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
-  styleUrls: ['./reports-myplanet.component.scss']
+  styleUrls: [ './reports-myplanet.component.scss' ]
 })
 export class ReportsMyPlanetComponent implements OnInit {
 
@@ -121,7 +120,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   getUniqueVersions(myPlanets: any[]) {
-    this.versions = Array.from(new Set(myPlanets.map(planet => 
+    this.versions = Array.from(new Set(myPlanets.map(planet =>
       planet.versionName || (planet.usages && planet.usages.length > 0 ? planet.usages[0].versionName : null)
     ))).filter(version => version).sort();
   }
@@ -129,8 +128,8 @@ export class ReportsMyPlanetComponent implements OnInit {
   getEarliestDate(myPlanets: any[]): Date {
     const earliest = Math.min(...myPlanets.flatMap(planet => {
       const dates = [];
-      if (planet.time) dates.push(Number(planet.time));
-      if (planet.last_synced) dates.push(Number(planet.last_synced));
+      if (planet.time) { dates.push(Number(planet.time)); }
+      if (planet.last_synced) { dates.push(Number(planet.last_synced)); }
       if (planet.usages) {
         dates.push(...planet.usages.map(usage => Number(usage.time || usage.last_synced)));
       }
