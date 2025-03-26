@@ -6,7 +6,7 @@
           <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
-        <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
+        <button class="icon-button" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
       </div>
       <mat-form-field class="font-size-1 margin-lr-3">
         <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
@@ -78,9 +78,9 @@
   </mat-drawer>
 
   <div class="window-box">
-    <div class="expand-button">
+    <div class="expand-button" *ngIf="!drawer.opened">
       <button mat-icon-button (click)="drawer.toggle()">
-        <i class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</i>
+        <i class="material-icons">{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</i>
       </button>
     </div>
     <planet-chat-window [isEditing]="isEditing" [context]="context"></planet-chat-window>
