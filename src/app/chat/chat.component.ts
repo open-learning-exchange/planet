@@ -13,7 +13,8 @@ export class ChatComponent implements OnInit {
   activeService: string;
   aiServices: AIProvider[] = [];
   displayToggle: boolean;
-  @Input() displayBtn = true;
+  @Input() displayHeaderRow = true;
+  @Input() context: any;
 
   constructor(
     private chatService: ChatService,
@@ -29,6 +30,7 @@ export class ChatComponent implements OnInit {
       this.chatService.toggleAIServiceSignal(this.activeService);
     });
     this.subscribeToAIService();
+    this.chatService.setChatMode(this.context.type);
   }
 
   subscribeToAIService() {

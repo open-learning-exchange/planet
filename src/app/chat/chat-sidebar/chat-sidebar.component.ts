@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -40,6 +41,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: { [key: string]: FormGroup } = {};
+  chatMode = null;
+  teamId = this.route.snapshot.params.teamId || null;
+  @Input() context: any;
 
   constructor(
     private chatService: ChatService,
@@ -48,7 +52,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private formBuilder: FormBuilder,
     private searchService: SearchService,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -151,8 +156,16 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       .findConversations([], [ this.userService.get().name ])
       .subscribe(
         (conversations: any) => {
+          this.chatMode = this.chatService.getChatMode();
           this.conversations = conversations
-            .filter((conversation) => !conversation?.context)
+            .filter((conversation) => {
+              if (this.teamId) {
+                return conversation?.context?.type == this.chatMode &&
+                  conversation?.context?.doc?.id === this.teamId
+              } else {
+                return !conversation?.context;
+              }
+            })
             .sort((a, b) => {
               const dateA = a.updatedDate || a.createdDate;
               const dateB = b.updatedDate || b.createdDate;

@@ -1,5 +1,5 @@
-<mat-toolbar>
-  <button *ngIf="displayBtn" class="titlebar" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+<mat-toolbar *ngIf="displayHeaderRow">
+  <button class="titlebar" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
   <mat-button-toggle-group *ngIf="displayToggle; else textDisplay" [(ngModel)]="activeService" (change)="toggleAIService()">
@@ -11,5 +11,5 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <planet-chat-sidebar></planet-chat-sidebar>
+  <planet-chat-sidebar [context]="context"></planet-chat-sidebar>
 </div>

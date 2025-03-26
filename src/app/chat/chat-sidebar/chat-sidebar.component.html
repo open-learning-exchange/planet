@@ -3,7 +3,7 @@
     <div class="header-container">
       <div class="header">
         <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
-          <mat-icon>add</mat-icon> 
+          <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
         <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
@@ -80,6 +80,6 @@
         <i class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</i>
       </button>
     </div>
-    <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
+    <planet-chat-window [isEditing]="isEditing" [context]="context"></planet-chat-window>
   </div>
 </mat-drawer-container>
