@@ -69,12 +69,12 @@
 
   <div class="view-container view-full-height">
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
-      <mat-tab i18n-label label="AI Chat">
-        <planet-chat [displayBtn]="false"></planet-chat>
-      </mat-tab>
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
+      </mat-tab>
+      <mat-tab i18n-label label="AI Chat">
+        <planet-chat [displayHeaderRow]="false" [context]="{type: 'team', data: localizedTeamInfo, doc: { id: team?._id }  }"></planet-chat>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label i18n>

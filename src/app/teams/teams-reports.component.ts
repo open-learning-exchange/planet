@@ -165,19 +165,7 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   exportReports() {
-    const exportData = this.reports.map(report => ({
-      'Start Date': report.startDate,
-      'End Date': report.endDate,
-      'Created Date': report.createdDate,
-      'Updated Date': report.updatedDate,
-      'Beginning Balance': report.beginningBalance,
-      'Sales': report.sales,
-      'Other Income': report.otherIncome,
-      'Wages': report.wages,
-      'Other Expenses': report.otherExpenses,
-      'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
-      'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
-    }));
+    const exportData = this.teamsService.exportReportsData(this.reports);
     const planetName = this.stateService.configuration.name || 'Unnamed';
     const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
