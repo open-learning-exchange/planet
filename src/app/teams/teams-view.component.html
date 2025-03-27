@@ -73,9 +73,11 @@
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
       </mat-tab>
-      <mat-tab i18n-label label="AI Chat">
-        <planet-chat [displayHeaderRow]="false" [context]="{type: 'team', data: localizedTeamInfo, doc: { id: team?._id }  }"></planet-chat>
-      </mat-tab>
+      <ng-container *ngIf="team?.public === true || userStatus === 'member'">
+        <mat-tab i18n-label label="AI Chat">
+          <planet-chat [displayHeaderRow]="false" [context]="{type: 'team', data: localizedTeamInfo, doc: { id: team?._id }  }"></planet-chat>
+        </mat-tab>
+      </ng-container>
       <mat-tab>
         <ng-template mat-tab-label i18n>
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
