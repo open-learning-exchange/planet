@@ -427,11 +427,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
-      const exportFields  = [
+      const exportFields = [
         { placeholder: $localize`From`, name: 'startDate', ...commonProps },
         { placeholder: $localize`To`, name: 'endDate', ...commonProps }
       ];
-      const exportFormGroup  = {
+      const exportFormGroup = {
         startDate: this.dateFilterForm.controls.startDate.value,
         endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
       };
