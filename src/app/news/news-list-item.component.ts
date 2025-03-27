@@ -127,10 +127,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     const label = this.formLabel(news);
     const editTimestamp = $localize`Edited on ${new Date().toLocaleString()}`;
     const sharedSourceInfo = this.item.sharedSourceInfo;
+    const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
-      initialValue: news.message,
+      initialValue,
       news: {
         ...news,
         editTimestamp,
