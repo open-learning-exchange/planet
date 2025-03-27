@@ -570,8 +570,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const formattedReports = this.teamsService.exportReportsData(this.reports).map(report => JSON.stringify(report)).join(', ');
 
     return $localize`The following information is about the ${type} "${this.team?.name}" with a description "${this.team?.description}".
-     ${this.team.services.trim() ? 'The enterprise has the following services ' + this.team.services + '. ' : ''}
-     ${this.team.rules.trim() ? 'The enterprise has the following rules ' + this.team.services + '. ' : ''}
+     ${this.team.services?.trim() ? 'The enterprise has the following services ' + this.team.services + '. ' : ''}
+     ${this.team.rules?.trim() ? 'The enterprise has the following rules ' + this.team.services + '. ' : ''}
      ${type === 'enterprise' ? 'and has the following financial transactions ' + formattedFinances + ' and financial reports ' + formattedReports + '. ' : ''}
      Be sure to assist the team member in the best way`;
   }
