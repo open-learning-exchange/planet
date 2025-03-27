@@ -114,7 +114,7 @@ export class NewsListComponent implements OnChanges {
         okClick: this.deleteNews(news),
         changeType: 'delete',
         type: 'news',
-        displayName: news.message
+        displayName: news.chat ? news.news.conversations[0].response : news.message
       }
     });
   }
