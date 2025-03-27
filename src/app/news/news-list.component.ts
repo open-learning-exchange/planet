@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -44,7 +43,7 @@ export class NewsListComponent implements OnInit, OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService,
-    private location: Location,
+    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -88,9 +87,9 @@ export class NewsListComponent implements OnInit, OnChanges {
     this.viewChange.emit(this.replyViewing);
 
     if (news._id !== 'root') {
-      this.location.replaceState(`/voices/${news._id}`);
+      this.router.navigate([ '/voices', news._id ]);
     } else {
-      this.location.replaceState('');
+      this.router.navigate([ '' ]);
     }
   }
 
