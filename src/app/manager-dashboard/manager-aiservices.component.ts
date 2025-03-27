@@ -49,7 +49,8 @@ export class ManagerAIServicesComponent implements OnInit {
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
       assistantName: [ this.configuration.assistant?.name || '' ],
-      assistantInstructions: [ this.configuration.assistant?.instructions || '' ]
+      assistantInstructions: [ this.configuration.assistant?.instructions || '' ],
+      streaming: [ this.configuration.streaming || false ]
     });
 
     if (this.configuration.keys) {
@@ -120,9 +121,9 @@ export class ManagerAIServicesComponent implements OnInit {
   toggleStreaming(): void {
     const configuration = this.configuration;
     this.configurationService.updateConfiguration({ ...configuration, streaming: this.streaming }).subscribe(null,
-      error => this.planetMessageService.showAlert($localize`An error occurred please try again.`),
+      error => this.configuration.showAlert($localize`An error occurred please try again.`),
       () => {
-        this.planetMessageService.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
+        this.configuration.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
       }
     );
   }
