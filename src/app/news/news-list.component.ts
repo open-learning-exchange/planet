@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -20,7 +21,7 @@ import { dedupeShelfReduce } from '../shared/utils';
     }
   ` ]
 })
-export class NewsListComponent implements OnChanges {
+export class NewsListComponent implements OnInit, OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`Message updated successfully.`;
@@ -43,8 +44,21 @@ export class NewsListComponent implements OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService,
-    private router: Router
+    private location: Location,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    const childRoute = this.route.firstChild;
+    if (childRoute) {
+      const voiceId = childRoute.snapshot.paramMap.get('id');
+      if (voiceId) {
+        this.newsService.requestNewsItem(voiceId).subscribe(news => {
+          this.showReplies(news);
+        });
+      }
+    }
+  }
 
   ngOnChanges() {
     let isLatest = true;
@@ -74,9 +88,9 @@ export class NewsListComponent implements OnChanges {
     this.viewChange.emit(this.replyViewing);
 
     if (news._id !== 'root') {
-      this.router.navigate([ '/voices', news._id ]);
+      this.location.replaceState(`/voices/${news._id}`);
     } else {
-      this.router.navigate([ '' ]);
+      this.location.replaceState('');
     }
   }
 
