@@ -60,14 +60,14 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[effectiveType];
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-    
+
     const inputData = this.showRawData ? this.rawActivities : this.activitiesByDoc;
     console.log(`${this.activityType} - Input activities count:`, inputData.length);
-    
+
     // Sample data for debugging
     if (inputData.length > 0) {
       console.log(`${this.activityType} - Sample data:`, inputData.slice(0, 3));
-      
+
       // Count distinct resource IDs to understand grouping
       if (this.activityType === 'resources' && this.showRawData) {
         const uniqueIds = new Set();
@@ -77,7 +77,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         console.log(`${this.activityType} - Unique resource IDs in raw data:`, uniqueIds.size);
       }
     }
-    
+
     if (this.activityType === 'chat') {
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
@@ -106,7 +106,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
           ...activity
         };
       });
-      
+
       console.log(`${this.activityType} - Processed activities:`, this.activities.data.length);
     }
 

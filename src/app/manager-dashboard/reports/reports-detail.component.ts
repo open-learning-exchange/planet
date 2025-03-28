@@ -306,19 +306,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
-      
+
       // Load all resource activities automatically for resources
       if (type === 'resourceActivities') {
         this.loadAllResourceActivities();
       }
     });
   }
-  
+
   setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
     console.log(`${type} - Raw data count:`, this[type].total.data.length);
     console.log(`${type} - Filtered data count:`, this[type].total.filteredData.length);
-    
+
     // Log unique IDs to better understand data
     const uniqueIds = new Set();
     this[type].total.filteredData.forEach(item => {
@@ -326,10 +326,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       uniqueIds.add(id);
     });
     console.log(`${type} - Unique IDs:`, Array.from(uniqueIds));
-    
+
     const { byDoc, byMonth } = this.activityService.groupDocVisits(this[type].total.filteredData, type.replace('Activities', 'Id'));
     console.log(`${type} - Grouped by doc count:`, byDoc.length);
-    
+
     this[type].byDoc = byDoc;
     this.reports[params.views] = byDoc.reduce((total, doc: any) => total + doc.count, 0);
     this.reports[params.record] = byDoc.sort((a, b) => b.count - a.count).slice(0, 5);
@@ -347,17 +347,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.couchService.findAll('resource_activities')
       .subscribe((activities: any[]) => {
         console.log('Total raw resource activities from DB:', activities.length);
-        
+
         // Filter out only valid resource activities with resourceId
         const validActivities = activities.filter(
           activity => activity.resourceId && activity.resourceId.indexOf('_design') === -1 && !activity.private
         );
-        
+
         // Group activities by resourceId to calculate view counts
         const resourceCounts = validActivities.reduce((counts, activity) => {
           const id = activity.resourceId;
           if (!counts[id]) {
-            counts[id] = { 
+            counts[id] = {
               count: 0,
               title: activity.title || 'No Title',
               resourceId: id
@@ -366,11 +366,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           counts[id].count++;
           return counts;
         }, {});
-        
+
         // Create consolidated view (unique resources with their stats)
-        this.consolidatedResourceActivities = Object.entries(resourceCounts).map(([resourceId, data]: [string, any]) => {
+        this.consolidatedResourceActivities = Object.entries(resourceCounts).map(([ resourceId, data ]: [string, any]) => {
           const rating = this.ratings.resources.find(r => r.item === resourceId);
-          
+
           return {
             resourceId,
             title: data.title,
@@ -379,7 +379,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
             // Removed user and time fields
           };
         });
-        
+
         console.log('Valid resource activities:', validActivities.length);
         console.log('Unique resources:', this.consolidatedResourceActivities.length);
         this.dialogsLoadingService.stop();
@@ -755,11 +755,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
-    console.log('Resetting date filter:', { 
-      start: newStartDate?.toISOString(), 
-      end: newEndDate?.toISOString() 
+    console.log('Resetting date filter:', {
+      start: newStartDate?.toISOString(),
+      end: newEndDate?.toISOString()
     });
-    
+
     // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
     setTimeout(() => {
       this.disableShowAllTime = true;
