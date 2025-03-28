@@ -255,7 +255,14 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <planet-reports-detail-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="ratings.resources" activityType="resources" (itemClick)="openResourceView($event)"></planet-reports-detail-activities>
+        <planet-reports-detail-activities 
+          [activitiesByDoc]="resourceActivities.byDoc" 
+          [rawActivities]="consolidatedResourceActivities"
+          [showRawData]="true"
+          [ratings]="ratings.resources" 
+          activityType="resources" 
+          (itemClick)="openResourceView($event)">
+        </planet-reports-detail-activities>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
         <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" [progress]="progress" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>

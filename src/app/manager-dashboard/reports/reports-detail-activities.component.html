@@ -1,7 +1,7 @@
 <mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.max?.title}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{showRawData ? element?.title : element?.max?.title}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="weekOf">
     <mat-header-cell *matHeaderCellDef mat-sort-header="weekOf" i18n>Week Starting</mat-header-cell>
@@ -13,6 +13,10 @@
       <ng-template #views i18n>Views</ng-template>
     </mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.count}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="viewCount">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="viewCount" i18n>Total Views</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.viewCount}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="unique">
     <mat-header-cell *matHeaderCellDef mat-sort-header="unique" i18n>Patients Seen</mat-header-cell>
@@ -49,6 +53,10 @@
   <ng-container matColumnDef="user">
     <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>User</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.user}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="time">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Time</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.time}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="createdDate">
     <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Timestamp</mat-header-cell>
