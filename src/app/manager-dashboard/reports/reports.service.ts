@@ -137,15 +137,55 @@ export class ReportsService {
   }
 
   getRatingInfo({ planetCode, tillDate, fromMyPlanet, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', fromMyPlanet })).pipe(
-      map((ratings: any) => this.filterAdmin(ratings, filterAdmin)));
+    console.log('Getting ratings with params:', { planetCode, tillDate, fromMyPlanet, filterAdmin });
+
+    // Get all ratings directly from the database without complex filtering
+    return this.couchService.findAll('ratings').pipe(
+      map((allRatings: any[]) => {
+        console.log(`Retrieved ${allRatings.length} total ratings from database`);
+
+        // Only filter by planet code if specified
+        const filteredRatings = planetCode ?
+          allRatings.filter(r => r.createdOn === planetCode || r.parentCode === planetCode) :
+          allRatings;
+
+        console.log(`After basic filtering: ${filteredRatings.length} ratings remain`);
+
+        return filteredRatings;
+      })
+    );
   }
 
   groupRatings(ratings) {
-    return this.groupBy(ratings, [ 'parentCode', 'createdOn', 'type', 'item', 'title' ], { sumField: 'rate' })
-      .filter(rating => rating.title !== '' && rating.title !== undefined)
-      .sort((a: any, b: any) => (b.sum / b.count) - (a.sum / a.count)).map((r: any) =>
-        ({ ...r, value: Math.round(10 * r.sum / r.count) / 10 }));
+    console.log(`Processing ${ratings.length} ratings`);
+
+    // Group ratings by item and calculate average
+    const ratingsByItem = ratings.reduce((byItem, rating) => {
+      const id = rating.item;
+      if (!byItem[id]) {
+        byItem[id] = {
+          item: id,
+          title: rating.title || '',
+          type: rating.type,
+          ratingCount: 0,
+          ratingSum: 0
+        };
+      }
+      byItem[id].ratingCount++;
+      byItem[id].ratingSum += rating.rate;
+      return byItem;
+    }, {});
+
+    // Convert to array and calculate averages
+    const result = Object.values(ratingsByItem).map((itemRating: any) => ({
+      ...itemRating,
+      value: itemRating.ratingCount > 0 ?
+        parseFloat((itemRating.ratingSum / itemRating.ratingCount).toFixed(1)) : 0
+    }));
+
+    console.log(`Processed ${result.length} unique rated items`);
+
+    return result;
   }
 
   groupDocVisits(activites, type: 'resourceId' | 'courseId') {

@@ -260,18 +260,40 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getRatingInfo() {
-    this.activityService.getRatingInfo(activityParams(this.planetCode)).subscribe((ratings: any[]) => {
-      this.ratings.total.data = ratings;
-      this.setRatingInfo();
+    console.log('Getting ratings for reports...');
+    this.activityService.getRatingInfo(activityParams(this.planetCode)).subscribe({
+      next: (ratings: any[]) => {
+        console.log(`Received ${ratings.length} ratings from service`);
+        this.ratings.total.data = ratings;
+        this.setRatingInfo();
+      },
+      error: error => {
+        console.error('Error fetching ratings:', error);
+      }
     });
   }
 
   setRatingInfo() {
-    const averageRatings = this.activityService.groupRatings(this.ratings.total.filteredData);
+    console.log('Setting rating info from', this.ratings.total.data.length, 'ratings');
+
+    // Always use full ratings data rather than filtered data
+    const averageRatings = this.activityService.groupRatings(this.ratings.total.data);
+
     this.ratings.resources = averageRatings.filter(item => item.type === 'resource');
     this.ratings.courses = averageRatings.filter(item => item.type === 'course');
-    this.reports.resourceRatings = this.ratings.resources.slice(0, 5);
-    this.reports.courseRatings = this.ratings.courses.slice(0, 5);
+
+    console.log(`Separated ${this.ratings.resources.length} resource ratings and ${this.ratings.courses.length} course ratings`);
+
+    // Sort by rating value descending before selecting top 5
+    this.reports.resourceRatings = this.ratings.resources
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+
+    this.reports.courseRatings = this.ratings.courses
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+
+    console.log('Top resource ratings:', this.reports.resourceRatings);
   }
 
   getCourseProgress() {
@@ -343,49 +365,77 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   loadAllResourceActivities() {
     this.dialogsLoadingService.start();
 
-    // Get activity data directly from the database without any filters
     this.couchService.findAll('resource_activities')
-      .subscribe((activities: any[]) => {
-        console.log('Total raw resource activities from DB:', activities.length);
+      .subscribe({
+        next: (activities: any[]) => {
+          console.log('Total raw resource activities:', activities.length);
 
-        // Filter out only valid resource activities with resourceId
-        const validActivities = activities.filter(
-          activity => activity.resourceId && activity.resourceId.indexOf('_design') === -1 && !activity.private
-        );
+          // Filter out only valid resource activities
+          const validActivities = activities.filter(
+            activity => activity.resourceId && activity.resourceId.indexOf('_design') === -1 && !activity.private
+          );
 
-        // Group activities by resourceId to calculate view counts
-        const resourceCounts = validActivities.reduce((counts, activity) => {
-          const id = activity.resourceId;
-          if (!counts[id]) {
-            counts[id] = {
-              count: 0,
-              title: activity.title || 'No Title',
-              resourceId: id
+          console.log('Valid resource activities:', validActivities.length);
+
+          // Group activities by resourceId to calculate view counts
+          const resourceCounts = validActivities.reduce((counts, activity) => {
+            const id = activity.resourceId;
+            if (!counts[id]) {
+              counts[id] = {
+                count: 0,
+                title: activity.title || 'No Title',
+                resourceId: id
+              };
+            }
+            counts[id].count++;
+            return counts;
+          }, {});
+
+          console.log('Unique resources:', Object.keys(resourceCounts).length);
+
+          // Create consolidated view with ratings included
+          this.consolidatedResourceActivities = Object.entries(resourceCounts).map(([ resourceId, data ]: [string, any]) => {
+            // Find matching rating if it exists
+            const rating = this.ratings.resources.find(r => r.item === resourceId);
+
+            if (rating) {
+              console.log(`Found rating for ${data.title}: ${rating.value}`);
+            }
+
+            return {
+              resourceId,
+              title: data.title,
+              viewCount: data.count,
+              averageRating: rating ? rating.value : '',
+              ratingCount: rating ? rating.ratingCount : 0
             };
+          });
+
+          // Add resources that have ratings but no activity records
+          const resourcesWithRatingsOnly = this.ratings.resources
+            .filter(rating => !this.consolidatedResourceActivities.some(res => res.resourceId === rating.item));
+
+          if (resourcesWithRatingsOnly.length > 0) {
+            console.log(`Adding ${resourcesWithRatingsOnly.length} resources with ratings but no views`);
+
+            const additionalResources = resourcesWithRatingsOnly.map(rating => ({
+              resourceId: rating.item,
+              title: rating.title || 'Unknown Resource',
+              viewCount: 0,
+              averageRating: rating.value,
+              ratingCount: rating.ratingCount
+            }));
+
+            this.consolidatedResourceActivities = [ ...this.consolidatedResourceActivities, ...additionalResources ];
           }
-          counts[id].count++;
-          return counts;
-        }, {});
 
-        // Create consolidated view (unique resources with their stats)
-        this.consolidatedResourceActivities = Object.entries(resourceCounts).map(([ resourceId, data ]: [string, any]) => {
-          const rating = this.ratings.resources.find(r => r.item === resourceId);
-
-          return {
-            resourceId,
-            title: data.title,
-            viewCount: data.count,
-            averageRating: rating?.value || ''
-            // Removed user and time fields
-          };
-        });
-
-        console.log('Valid resource activities:', validActivities.length);
-        console.log('Unique resources:', this.consolidatedResourceActivities.length);
-        this.dialogsLoadingService.stop();
-      }, error => {
-        console.error('Error fetching all resource activities:', error);
-        this.dialogsLoadingService.stop();
+          console.log('Final resource count with ratings:', this.consolidatedResourceActivities.length);
+          this.dialogsLoadingService.stop();
+        },
+        error: error => {
+          console.error('Error fetching resource activities:', error);
+          this.dialogsLoadingService.stop();
+        }
       });
   }
 

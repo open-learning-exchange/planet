@@ -24,7 +24,12 @@
   </ng-container>
   <ng-container matColumnDef="averageRating">
     <mat-header-cell *matHeaderCellDef mat-sort-header="averageRating" i18n>Average Rating</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.averageRating}}</mat-cell>
+    <mat-cell *matCellDef="let element">
+      <ng-container *ngIf="element?.averageRating; else noRating">
+        {{element?.averageRating}}
+      </ng-container>
+      <ng-template #noRating>-</ng-template>
+    </mat-cell>
   </ng-container>
   <ng-container matColumnDef="enrollments">
     <mat-header-cell *matHeaderCellDef mat-sort-header="enrollments" i18n>Enrolled</mat-header-cell>
