@@ -178,12 +178,13 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   }
 
   showWarning(invalidFields) {
+    this.hasUnsavedChanges = false;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
           request: this.saveEvent(),
           onNext: (data) => {
-            this.dialogPrompt.close();
+            this.dialogPrompt.close(true);
             this.goBack();
           }
         },
@@ -192,6 +193,10 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         extraMessage: $localize`The value(s) of the following are not in the normal range. Click <b>Cancel</b> to fix or click <b>OK</b> to submit.`,
         showLabels: invalidFields
       }
+    });
+    this.dialogPrompt.afterClosed().subscribe(result => {
+      this.hasUnsavedChanges = !result;
+      this.unsavedChangesService.setHasUnsavedChanges(!result);
     });
   }
 
