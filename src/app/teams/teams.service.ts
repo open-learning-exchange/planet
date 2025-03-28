@@ -392,4 +392,20 @@ export class TeamsService {
       map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
     );
   }
+
+  exportReportsData(reports) {
+    return reports.map(report => ({
+      'Start Date': report.startDate,
+      'End Date': report.endDate,
+      'Created Date': report.createdDate,
+      'Updated Date': report.updatedDate,
+      'Beginning Balance': report.beginningBalance,
+      'Sales': report.sales,
+      'Other Income': report.otherIncome,
+      'Wages': report.wages,
+      'Other Expenses': report.otherExpenses,
+      'Profit/Loss': report.sales + report.otherIncome - report.wages - report.otherExpenses,
+      'Ending Balance': report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
+    }));
+  }
 }

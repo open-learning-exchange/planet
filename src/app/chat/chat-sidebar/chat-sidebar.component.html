@@ -3,10 +3,10 @@
     <div class="header-container">
       <div class="header">
         <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
-          <mat-icon>add</mat-icon> 
+          <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
-        <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
+        <button class="icon-button" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
       </div>
       <mat-form-field class="font-size-1 margin-lr-3">
         <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
@@ -59,7 +59,10 @@
             <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()" matTooltip="Edit title">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)" matTooltip="Share conversation">
+            <button mat-icon-button class="sidebar-icon" matTooltip="Share conversation"
+              *ngIf="selectedConversation?._id === conversation?._id && !selectedConversation?.context"
+              (click)="openShareDialog(conversation)"
+            >
               <mat-icon>share</mat-icon>
             </button>
           </ng-template>
@@ -75,11 +78,11 @@
   </mat-drawer>
 
   <div class="window-box">
-    <div class="expand-button">
+    <div class="expand-button" *ngIf="!drawer.opened">
       <button mat-icon-button (click)="drawer.toggle()">
-        <i class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</i>
+        <i class="material-icons">{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</i>
       </button>
     </div>
-    <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
+    <planet-chat-window [isEditing]="isEditing" [context]="context"></planet-chat-window>
   </div>
 </mat-drawer-container>
