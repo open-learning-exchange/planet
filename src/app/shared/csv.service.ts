@@ -134,9 +134,18 @@ export class CsvService {
     const url = `${environment.couchAddress}/resources/${docId}/${attachmentId}`;
     return this.http.get(url, { responseType: 'text', withCredentials: true }).pipe(
       map((data: string) => {
-        const results = Papa.parse(data, { header: true });
-        const headers = results.meta.fields || [];
-        const rows = results.data.map((row: any) => headers.map(header => row[header]));
+        const rawData = Papa.parse(data, { header: false, skipEmptyLines: true }).data as any[][];
+        const maxCols = rawData.reduce((max, row) => Math.max(max, row.length), 0);
+        let headers: string[] = [];
+        let rows: any[][] = [];
+
+        if (rawData.length > 0 && rawData[0].length === maxCols) {
+          headers = rawData[0];
+          rows = rawData.slice(1);
+        } else {
+          headers = Array.from({ length: maxCols }, (_, i) => `Col ${i + 1}`);
+          rows = rawData;
+        }
         return { headers, rows };
       })
     );
