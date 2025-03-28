@@ -73,6 +73,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   allResourceActivities = [];
   showConsolidatedView = true;
   consolidatedResourceActivities = [];
+  consolidatedCourseActivities = [];
 
   constructor(
     private activityService: ReportsService,
@@ -332,6 +333,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       // Load all resource activities automatically for resources
       if (type === 'resourceActivities') {
         this.loadAllResourceActivities();
+      } else if (type === 'courseActivities') {
+        this.loadAllCourseActivities();
       }
     });
   }
@@ -437,6 +440,138 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           this.dialogsLoadingService.stop();
         }
       });
+  }
+
+  loadAllCourseActivities() {
+    this.dialogsLoadingService.start();
+
+    // Get all necessary data in parallel to populate course fields
+    combineLatest([
+      this.couchService.findAll('course_activities'),
+      this.couchService.findAll('courses'),
+      this.activityService.courseProgressReport()
+    ]).subscribe({
+      next: ([activities, courses, progress]: [any[], any[], any]) => {
+        console.log('Total raw course activities:', activities.length);
+        console.log('Total courses:', courses.length);
+        console.log('Progress data:', {
+          enrollments: progress.enrollments.length,
+          completions: progress.completions.length,
+          steps: progress.steps.length
+        });
+
+        // Filter out valid course activities
+        const validActivities = activities.filter(
+          activity => activity.courseId && activity.courseId.indexOf('_design') === -1 && !activity.private
+        );
+
+        // Group activities by courseId
+        const courseCounts = validActivities.reduce((counts, activity) => {
+          const id = activity.courseId;
+          if (!counts[id]) {
+            const course = courses.find(c => c._id === id);
+            counts[id] = {
+              count: 0,
+              title: activity.courseTitle || activity.title || (course ? course.courseTitle : 'No Title'),
+              courseId: id
+            };
+          }
+          counts[id].count++;
+          return counts;
+        }, {});
+
+        // Count enrollments and completions by course
+        const enrollmentsByCourse = progress.enrollments.reduce((acc, enrollment) => {
+          const courseId = enrollment.courseId;
+          if (!acc[courseId]) {
+            acc[courseId] = 0;
+          }
+          acc[courseId]++;
+          return acc;
+        }, {});
+
+        const completionsByCourse = progress.completions.reduce((acc, completion) => {
+          const courseId = completion.courseId;
+          if (!acc[courseId]) {
+            acc[courseId] = 0;
+          }
+          acc[courseId]++;
+          return acc;
+        }, {});
+
+        // Debug the completion counts
+        if (Object.keys(completionsByCourse).length > 0) {
+          console.log('Completion counts for first few courses:', 
+            Object.entries(completionsByCourse)
+              .slice(0, 3)
+              .map(([id, count]) => ({ 
+                courseId: id, 
+                count, 
+                title: courses.find(c => c._id === id)?.courseTitle || 'Unknown'
+              }))
+          );
+        }
+
+        // Create final consolidated view with all fields populated
+        this.consolidatedCourseActivities = Object.entries(courseCounts).map(([courseId, data]: [string, any]) => {
+          const rating = this.ratings.courses.find(r => r.item === courseId);
+          const course = courses.find(c => c._id === courseId) || { steps: [] };
+          
+          return {
+            courseId,
+            title: data.title,
+            viewCount: data.count,
+            steps: course.steps?.length || 0,
+            exams: course.steps?.filter(step => step.exam)?.length || 0,
+            averageRating: rating ? rating.value : '',
+            enrollments: enrollmentsByCourse[courseId] || 0,
+            completions: completionsByCourse[courseId] || 0
+          };
+        });
+
+        // Add courses with no activity records but have other data
+        const coursesWithNoActivity = courses
+          .filter(course => !this.consolidatedCourseActivities.some(activity => activity.courseId === course._id));
+
+        if (coursesWithNoActivity.length > 0) {
+          console.log(`Adding ${coursesWithNoActivity.length} courses with no activity records`);
+          
+          const additionalCourses = coursesWithNoActivity.map(course => {
+            const rating = this.ratings.courses.find(r => r.item === course._id);
+            return {
+              courseId: course._id,
+              title: course.courseTitle || 'Unknown Course',
+              viewCount: 0,
+              steps: course.steps?.length || 0,
+              exams: course.steps?.filter(step => step.exam)?.length || 0,
+              averageRating: rating ? rating.value : '',
+              enrollments: enrollmentsByCourse[course._id] || 0,
+              completions: completionsByCourse[course._id] || 0
+            };
+          });
+
+          this.consolidatedCourseActivities = [...this.consolidatedCourseActivities, ...additionalCourses];
+        }
+
+        console.log('Consolidated courses with all fields:', this.consolidatedCourseActivities.length);
+        if (this.consolidatedCourseActivities.length > 0) {
+          console.log('Sample course data with completions:', 
+            this.consolidatedCourseActivities
+              .slice(0, 3)
+              .map(course => ({
+                title: course.title,
+                completions: course.completions
+              }))
+          );
+        }
+        
+        this.dialogsLoadingService.stop();
+      },
+      error: error => {
+        console.error('Error loading course data:', error);
+        this.dialogsLoadingService.stop();
+      }
+    });
   }
 
   getPlanetCounts(local: boolean) {

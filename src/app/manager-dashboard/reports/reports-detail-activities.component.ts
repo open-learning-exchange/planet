@@ -9,6 +9,7 @@ const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
   resourcesRaw: [ 'title', 'viewCount', 'averageRating' ],
   courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
+  coursesRaw: [ 'title', 'viewCount', 'steps', 'exams', 'enrollments', 'completions', 'averageRating' ],
   health: [ 'weekOf', 'count', 'unique' ],
   chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'assistant', 'shared' ]
 };
@@ -56,26 +57,23 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   ngOnChanges() {
-    const effectiveType = this.showRawData && this.activityType === 'resources' ? 'resourcesRaw' : this.activityType;
+    // Determine the effective type based on whether we're showing raw data
+    const effectiveType = this.showRawData ? 
+      (this.activityType === 'resources' ? 'resourcesRaw' : 
+       this.activityType === 'courses' ? 'coursesRaw' : 
+       this.activityType) : 
+      this.activityType;
+      
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[effectiveType];
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
 
     const inputData = this.showRawData ? this.rawActivities : this.activitiesByDoc;
-    console.log(`${this.activityType} - Input activities count:`, inputData.length);
+    console.log(`${this.activityType} - Input activities count:`, inputData?.length || 0);
 
     // Sample data for debugging
-    if (inputData.length > 0) {
+    if (inputData?.length > 0) {
       console.log(`${this.activityType} - Sample data:`, inputData.slice(0, 3));
-
-      // Count distinct resource IDs to understand grouping
-      if (this.activityType === 'resources' && this.showRawData) {
-        const uniqueIds = new Set();
-        this.rawActivities.forEach(item => {
-          uniqueIds.add(item.resourceId);
-        });
-        console.log(`${this.activityType} - Unique resource IDs in raw data:`, uniqueIds.size);
-      }
     }
 
     if (this.activityType === 'chat') {
@@ -87,10 +85,20 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         shared: activity.shared ? 'True' : '',
         conversationLength: activity.conversations?.length || 0
       }));
-    } else if (this.showRawData && this.activityType === 'resources') {
-      // Map raw resource data - already processed with viewCount and averageRating
+    } else if (this.showRawData && (this.activityType === 'resources' || this.activityType === 'courses')) {
+      // For raw course data, ensure we preserve all fields as-is since they're already processed
       this.activities.data = this.rawActivities;
       console.log(`${this.activityType} - Raw data mode - showing ${this.activities.data.length} records`);
+      
+      // Debug completions data if present
+      if (this.activityType === 'courses' && this.rawActivities.length > 0) {
+        console.log('Course completions sample:', 
+          this.rawActivities.slice(0, 3).map(course => ({ 
+            title: course.title,
+            completions: course.completions 
+          }))
+        );
+      }
     } else {
       this.activities.data = this.activitiesByDoc.map(activity => {
         if (activity.max) {

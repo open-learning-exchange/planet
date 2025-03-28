@@ -41,11 +41,11 @@
   </ng-container>
   <ng-container matColumnDef="steps">
     <mat-header-cell *matHeaderCellDef mat-sort-header="steps" i18n>Steps</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.max?.steps}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{showRawData ? element?.steps : element?.max?.steps}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="exams">
     <mat-header-cell *matHeaderCellDef mat-sort-header="exams" i18n>Tests</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.max?.exams}}</mat-cell>
+    <mat-cell *matCellDef="let element">{{showRawData ? element?.exams : element?.max?.exams}}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="stepsCompleted">
     <mat-header-cell *matHeaderCellDef mat-sort-header="stepsCompleted" i18n>Steps Completed</mat-header-cell>

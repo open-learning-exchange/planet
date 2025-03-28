@@ -265,7 +265,15 @@
         </planet-reports-detail-activities>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" [progress]="progress" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
+        <planet-reports-detail-activities 
+          [activitiesByDoc]="courseActivities.byDoc" 
+          [rawActivities]="consolidatedCourseActivities"
+          [showRawData]="true"
+          [ratings]="ratings.courses" 
+          [progress]="progress" 
+          activityType="courses" 
+          (itemClick)="openCourseView($event)">
+        </planet-reports-detail-activities>
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
         <planet-reports-health [planetCode]="planetCode" [dateRange]="dateFilterForm?.value" [isActive]="healthTab.isActive" (changeDateRange)="resetDateFilter($event)"></planet-reports-health>
