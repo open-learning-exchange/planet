@@ -58,12 +58,12 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     // Determine the effective type based on whether we're showing raw data
-    const effectiveType = this.showRawData ? 
-      (this.activityType === 'resources' ? 'resourcesRaw' : 
-       this.activityType === 'courses' ? 'coursesRaw' : 
-       this.activityType) : 
+    const effectiveType = this.showRawData ?
+      (this.activityType === 'resources' ? 'resourcesRaw' :
+       this.activityType === 'courses' ? 'coursesRaw' :
+       this.activityType) :
       this.activityType;
-      
+
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[effectiveType];
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
@@ -89,13 +89,13 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       // For raw course data, ensure we preserve all fields as-is since they're already processed
       this.activities.data = this.rawActivities;
       console.log(`${this.activityType} - Raw data mode - showing ${this.activities.data.length} records`);
-      
+
       // Debug completions data if present
       if (this.activityType === 'courses' && this.rawActivities.length > 0) {
-        console.log('Course completions sample:', 
-          this.rawActivities.slice(0, 3).map(course => ({ 
+        console.log('Course completions sample:',
+          this.rawActivities.slice(0, 3).map(course => ({
             title: course.title,
-            completions: course.completions 
+            completions: course.completions
           }))
         );
       }

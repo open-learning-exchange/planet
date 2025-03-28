@@ -451,7 +451,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.couchService.findAll('courses'),
       this.activityService.courseProgressReport()
     ]).subscribe({
-      next: ([activities, courses, progress]: [any[], any[], any]) => {
+      next: ([ activities, courses, progress ]: [any[], any[], any]) => {
         console.log('Total raw course activities:', activities.length);
         console.log('Total courses:', courses.length);
         console.log('Progress data:', {
@@ -501,22 +501,22 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
         // Debug the completion counts
         if (Object.keys(completionsByCourse).length > 0) {
-          console.log('Completion counts for first few courses:', 
+          console.log('Completion counts for first few courses:',
             Object.entries(completionsByCourse)
               .slice(0, 3)
-              .map(([id, count]) => ({ 
-                courseId: id, 
-                count, 
+              .map(([ id, count ]) => ({
+                courseId: id,
+                count,
                 title: courses.find(c => c._id === id)?.courseTitle || 'Unknown'
               }))
           );
         }
 
         // Create final consolidated view with all fields populated
-        this.consolidatedCourseActivities = Object.entries(courseCounts).map(([courseId, data]: [string, any]) => {
+        this.consolidatedCourseActivities = Object.entries(courseCounts).map(([ courseId, data ]: [string, any]) => {
           const rating = this.ratings.courses.find(r => r.item === courseId);
           const course = courses.find(c => c._id === courseId) || { steps: [] };
-          
+
           return {
             courseId,
             title: data.title,
@@ -535,7 +535,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
         if (coursesWithNoActivity.length > 0) {
           console.log(`Adding ${coursesWithNoActivity.length} courses with no activity records`);
-          
+
           const additionalCourses = coursesWithNoActivity.map(course => {
             const rating = this.ratings.courses.find(r => r.item === course._id);
             return {
@@ -550,12 +550,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
             };
           });
 
-          this.consolidatedCourseActivities = [...this.consolidatedCourseActivities, ...additionalCourses];
+          this.consolidatedCourseActivities = [ ...this.consolidatedCourseActivities, ...additionalCourses ];
         }
 
         console.log('Consolidated courses with all fields:', this.consolidatedCourseActivities.length);
         if (this.consolidatedCourseActivities.length > 0) {
-          console.log('Sample course data with completions:', 
+          console.log('Sample course data with completions:',
             this.consolidatedCourseActivities
               .slice(0, 3)
               .map(course => ({
@@ -564,7 +564,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
               }))
           );
         }
-        
+
         this.dialogsLoadingService.stop();
       },
       error: error => {
