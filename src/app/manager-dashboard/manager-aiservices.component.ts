@@ -18,6 +18,8 @@ export class ManagerAIServicesComponent implements OnInit {
   configForm: FormGroup;
   hideKey: { [key: string]: boolean } = {};
   spinnerOn = true;
+  streaming: boolean = false;
+  overlayOpen = false;
 
   constructor(
     private fb: FormBuilder,
@@ -47,7 +49,8 @@ export class ManagerAIServicesComponent implements OnInit {
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
       assistantName: [ this.configuration.assistant?.name || '' ],
-      assistantInstructions: [ this.configuration.assistant?.instructions || '' ]
+      assistantInstructions: [ this.configuration.assistant?.instructions || '' ],
+      streaming: [ this.configuration.streaming || false ]
     });
 
     if (this.configuration.keys) {
@@ -109,6 +112,20 @@ export class ManagerAIServicesComponent implements OnInit {
 
   toggleHideKey(key: string) {
     this.hideKey[key] = !this.hideKey[key];
+  }
+
+  toggleOverlay(): void {
+    this.overlayOpen = !this.overlayOpen;
+  }
+
+  toggleStreaming(): void {
+    const configuration = this.configuration;
+    this.configurationService.updateConfiguration({ ...configuration, streaming: this.streaming }).subscribe(null,
+      error => this.configuration.showAlert($localize`An error occurred please try again.`),
+      () => {
+        this.configuration.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
+      }
+    );
   }
 
   copyKey(key: string) {
