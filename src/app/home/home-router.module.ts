@@ -10,7 +10,6 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
-import { LandingComponent } from '../landing/landing.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { BetaThenAuthService } from '../shared/beta-then-auth-guard-service';
 
@@ -80,9 +79,7 @@ const routes: Routes = [
   { path: '',
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]
-  },
-  { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
-  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
+  }
 ];
 
 @NgModule({
