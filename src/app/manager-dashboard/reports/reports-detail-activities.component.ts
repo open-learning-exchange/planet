@@ -54,11 +54,11 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     console.log(`[${this.activityType}] Activities passed to component:`, this.activitiesByDoc);
-    
+
     // Set appropriate columns based on activity type
-    this.displayedColumns = columns[this.activityType] || ['title', 'count'];
+    this.displayedColumns = columns[this.activityType] || [ 'title', 'count' ];
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : 'count';
-    
+
     if (this.activityType === 'chat') {
       // Chat activities processing
       this.activities.data = this.activitiesByDoc.map(activity => ({
@@ -84,7 +84,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     } else if (this.activityType === 'courses') {
       // For course activities
       const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-      
+
       this.activities.data = this.activitiesByDoc.map(activity => {
         return {
           ...activity,
@@ -105,7 +105,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         unique: activity.unique || []
       }));
     }
-    
+
     console.log(`[${this.activityType}] Data in table:`, this.activities.data);
   }
 

@@ -348,7 +348,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       // Store all activities
       this[type].total.data = filtered;
       this[type].total.filteredData = filtered;
-      
+
       // Group the filtered activities by resource/course ID
       const idField = type.replace('Activities', 'Id');
       const grouped = this.groupActivities(filtered, idField);
@@ -365,13 +365,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   groupActivities(activities, idField) {
     // Create a map to hold grouped activities
     const groupMap = {};
-    
+
     activities.forEach(activity => {
       const id = activity[idField];
       if (!id) {
         return;
       }
-      
+
       if (!groupMap[id]) {
         groupMap[id] = {
           [idField]: id,
@@ -386,19 +386,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           }
         };
       }
-      
+
       groupMap[id].count++;
-      
+
       if (activity.user && !groupMap[id].unique.includes(activity.user)) {
         groupMap[id].unique.push(activity.user);
       }
-      
+
       if (activity.time > groupMap[id].time) {
         groupMap[id].time = activity.time;
         groupMap[id].max.title = activity.title || activity.resourceTitle || activity.courseTitle || id;
       }
     });
-    
+
     return Object.values(groupMap);
   }
 
