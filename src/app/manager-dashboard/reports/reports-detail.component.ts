@@ -155,37 +155,27 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setDocVisits(type, isInit = false) {
+    // This method is now only used for initial data setup, not for filtering
     const params = reportsDetailParams(type);
-    this[type].total.filteredData = this[type].total.data.filter(item => {
-      const isCorrectApp = this.filter.app === '' ||
-        ((this.filter.app === 'myplanet') !== (item.androidId === undefined));
+    if (isInit) {
+      // Only if this is the initial setup, we'll set up the reports data
+      const idField = type.replace('Activities', 'Id');
+      const grouped = this.groupActivities(this[type].total.filteredData, idField);
+      this[type].byDoc = grouped;
+      this.reports[params.views] = this[type].total.filteredData.length;
+      this.reports[params.record] = grouped
+        .filter(item => item[idField])
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+      const byMonth = this.activityService.groupByMonth(
+        this.activityService.appendGender(this[type].total.filteredData),
+        'time'
+      );
+      this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
 
-      const isInDateRange = !this.filter.startDate || !this.filter.endDate ? true :
-        (item.time >= this.filter.startDate.getTime() && item.time <= this.filter.endDate.getTime());
-
-      const isSelectedMember = this.filter.members.length === 0 ||
-        this.filter.members.some(member => (
-          member.userId === item.userId || member.userId.split(':')[1] === item.user
-        ));
-
-      return isCorrectApp && isInDateRange && isSelectedMember;
-    });
-    const idField = type.replace('Activities', 'Id');
-    const grouped = this.groupActivities(this[type].total.filteredData, idField);
-    this[type].byDoc = grouped;
-    this.reports[params.views] = this[type].total.filteredData.length;
-    this.reports[params.record] = grouped
-      .filter(item => item[idField])
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-    const byMonth = this.activityService.groupByMonth(
-      this.activityService.appendGender(this[type].total.filteredData),
-      'time'
-    );
-    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-
-    if (isInit && type === 'courseActivities') {
-      this.getCourseProgress();
+      if (isInit && type === 'courseActivities') {
+        this.getCourseProgress();
+      }
     }
   }
 
@@ -234,28 +224,59 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
     this.setRatingInfo();
+
+    // Filter resource activities and properly update both the data and the UI
     this.resourceActivities.total.filter(this.filter);
-    this.resourceActivities.byDoc = this.resourceActivities.total.filteredData;
-    this.reports.totalResourceViews = this.resourceActivities.byDoc.length;
-    this.setDocVisits('resourceActivities');
+    // Generate proper groups after filtering
+    const resourceIdField = 'resourceId';
+    const resourceGrouped = this.groupActivities(this.resourceActivities.total.filteredData, resourceIdField);
+    this.resourceActivities.byDoc = resourceGrouped;
+    this.reports.totalResourceViews = this.resourceActivities.total.filteredData.length;
+    this.reports.resources = resourceGrouped
+      .filter(item => item[resourceIdField]) 
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    // Update resource charts
+    const resourceByMonth = this.activityService.groupByMonth(
+      this.activityService.appendGender(this.resourceActivities.total.filteredData),
+      'time'
+    );
+    this.setChart({ ...this.setGenderDatasets(resourceByMonth), chartName: 'resourceViewChart' });
 
+    // Filter course activities and properly update both the data and the UI
     this.courseActivities.total.filter(this.filter);
-    this.courseActivities.byDoc = this.courseActivities.total.filteredData;
-    this.reports.totalCourseViews = this.courseActivities.byDoc.length;
-    this.setDocVisits('courseActivities');
+    // Generate proper groups after filtering
+    const courseIdField = 'courseId';
+    const courseGrouped = this.groupActivities(this.courseActivities.total.filteredData, courseIdField);
+    this.courseActivities.byDoc = courseGrouped;
+    this.reports.totalCourseViews = this.courseActivities.total.filteredData.length;
+    this.reports.courses = courseGrouped
+      .filter(item => item[courseIdField])
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    // Update course charts
+    const courseByMonth = this.activityService.groupByMonth(
+      this.activityService.appendGender(this.courseActivities.total.filteredData),
+      'time'
+    );
+    this.setChart({ ...this.setGenderDatasets(courseByMonth), chartName: 'courseViewChart' });
 
+    // Progress data
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
     this.setStepCompletion();
 
+    // User data
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
           member => member.userId === user._id && member.userPlanetCode === user.doc.planetCode
         )
       )
-    ));
+     ));
+    
+    // Chat data
     this.chatActivities.filter(this.filter);
     this.setChatUsage();
   }
@@ -330,7 +351,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         };
       });
       this.setStepCompletion();
-      this.setDocVisits('courseActivities', false);
+      this.filterData();
     });
   }
 
