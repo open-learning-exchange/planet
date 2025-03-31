@@ -156,29 +156,44 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
-    console.log(`[${type}] Processing data for charts: ${this[type].total.filteredData.length} records`);
-
+    
+    // Filter the data based on user selections
+    this[type].total.filteredData = this[type].total.data.filter(item => {
+      const isCorrectApp = this.filter.app === '' || 
+        ((this.filter.app === 'myplanet') !== (item.androidId === undefined));
+      
+      const isInDateRange = !this.filter.startDate || !this.filter.endDate ? true : 
+        (item.time >= this.filter.startDate.getTime() && item.time <= this.filter.endDate.getTime());
+      
+      const isSelectedMember = this.filter.members.length === 0 ||
+        this.filter.members.some(member => (
+          member.userId === item.userId || member.userId.split(':')[1] === item.user
+        ));
+      
+      return isCorrectApp && isInDateRange && isSelectedMember;
+    });
+    
+    // Group the filtered activities by resource/course ID
+    const idField = type.replace('Activities', 'Id');
+    const grouped = this.groupActivities(this[type].total.filteredData, idField);
+    this[type].byDoc = grouped;
+    
+    // For the UI
+    this.reports[params.views] = this[type].total.filteredData.length;
+    
+    // Generate summary data with the properly grouped activities
+    this.reports[params.record] = grouped
+      .filter(item => item[idField]) // Make sure we have a valid ID
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    
     // For charts, we still need to group the data by month
     const byMonth = this.activityService.groupByMonth(
       this.activityService.appendGender(this[type].total.filteredData),
       'time'
     );
-
-    // Set chart data
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-
-    // For summary tab, group by resource/course ID to get top 5
-    const groupedForSummary = this.activityService.groupBy(
-      this[type].byDoc,
-      [ type.replace('Activities', 'Id') ],
-      { maxField: 'time' }
-    );
-
-    this.reports[params.record] = groupedForSummary
-      .filter(item => item[type.replace('Activities', 'Id')])
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
+    
     if (isInit && type === 'courseActivities') {
       this.getCourseProgress();
     }
@@ -277,13 +292,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   setStepCompletion() {
     const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData);
-    this.reports.totalStepCompleted = byMonth.reduce((total, doc: any) => total + doc.count, 0);
+    // Fix TypeScript error by adding type annotation to doc parameter
+    this.reports.totalStepCompleted = byMonth.reduce((total: number, doc: { count: number }) => total + doc.count, 0);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
 
   setLoginActivities() {
     const { byUser, byMonth } = this.activityService.groupLoginActivities(this.loginActivities.filteredData);
-    this.reports.totalMemberVisits = byUser.reduce((total, resource: any) => total + resource.count, 0);
+    // Fix TypeScript error by adding type annotation to resource parameter
+    this.reports.totalMemberVisits = byUser.reduce((total: number, resource: { count: number }) => total + resource.count, 0);
     const byUserWithProfile = byUser.map((activity) => ({
       ...activity,
       userDoc: this.users.find((user) => user.doc.name === activity.user && user.doc.planetCode === this.planetCode)
@@ -336,7 +353,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     // Direct raw query to CouchDB to see all documents
     this.couchService.findAll(params.db).subscribe((allActivities: any) => {
       console.log(`[${type}] TOTAL RAW RECORDS IN DATABASE: ${allActivities.length}`);
-      console.log('Sample of 5 records:', allActivities.slice(0, 5));
 
       // Filter out only design documents, nothing else
       const filtered = allActivities.filter(
@@ -348,30 +364,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       // Store all activities
       this[type].total.data = filtered;
       this[type].total.filteredData = filtered;
-
-      // Group the filtered activities by resource/course ID
-      const idField = type.replace('Activities', 'Id');
-      const grouped = this.groupActivities(filtered, idField);
-      this[type].byDoc = grouped;
-
-      // For the UI
-      this.reports[params.views] = filtered.length;
-
+      
       // Now call setDocVisits to set up charts and summary data
       this.setDocVisits(type, true);
     });
   }
 
   groupActivities(activities, idField) {
-    // Create a map to hold grouped activities
-    const groupMap = {};
-
+    // Create a map to hold grouped activities - use an object for faster lookups by ID
+    const groupMap: { [key: string]: any } = {};    
     activities.forEach(activity => {
       const id = activity[idField];
       if (!id) {
         return;
       }
-
+      
       if (!groupMap[id]) {
         groupMap[id] = {
           [idField]: id,
@@ -386,19 +393,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           }
         };
       }
-
+      
       groupMap[id].count++;
-
+      
       if (activity.user && !groupMap[id].unique.includes(activity.user)) {
         groupMap[id].unique.push(activity.user);
       }
-
+      
       if (activity.time > groupMap[id].time) {
         groupMap[id].time = activity.time;
-        groupMap[id].max.title = activity.title || activity.resourceTitle || activity.courseTitle || id;
+        // Only update the title if we have a better one
+        if (activity.title || activity.resourceTitle || activity.courseTitle) {
+          groupMap[id].max.title = activity.title || activity.resourceTitle || activity.courseTitle || id;
+        }
       }
     });
-
+    
+    // Convert the groupMap object back to an array
     return Object.values(groupMap);
   }
 
