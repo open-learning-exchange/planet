@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -131,7 +130,9 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   generatePDF() {
-    const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y');
+    const formattedBirthDate = this.user.birthDate
+      ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(this.user.birthDate))
+      : '';
     let contentArray = [
       {
         text: $localize`${`${this.user.firstName}'s achievements`}`,
@@ -183,9 +184,12 @@ export class UsersAchievementsComponent implements OnInit {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
+          const formattedDate = achievement.date
+            ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(achievement.date))
+            : '';
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.date ? format(new Date(achievement?.date), 'MMM d, y') : '', marginLeft: 40 },
+            { text: achievement.date ? formattedDate : '', marginLeft: 40 },
             { text: achievement.link, marginLeft: 40 },
             { text: achievement.description, marginLeft: 40 },
           ];
