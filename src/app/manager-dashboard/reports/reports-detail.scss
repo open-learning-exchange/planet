@@ -53,24 +53,6 @@ mat-toolbar mat-form-field {
   display: none;
 }
 
-.wrap-text {
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  max-width: 300px;
-}
-
-// Allow tooltip to display the full title without truncation
-::ng-deep .mat-tooltip {
-  white-space: normal !important;
-  max-width: 500px !important;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  text-align: left;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
-}
-
 @media(max-width: #{$screen-md}) {
   .mobile-view-styles {
     display: block;

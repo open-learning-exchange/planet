@@ -155,10 +155,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setDocVisits(type, isInit = false) {
-    // This method is now only used for initial data setup, not for filtering
     const params = reportsDetailParams(type);
     if (isInit) {
-      // Only if this is the initial setup, we'll set up the reports data
       const idField = type.replace('Activities', 'Id');
       const grouped = this.groupActivities(this[type].total.filteredData, idField);
       this[type].byDoc = grouped;
@@ -224,10 +222,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
     this.setRatingInfo();
-
-    // Filter resource activities and properly update both the data and the UI
     this.resourceActivities.total.filter(this.filter);
-    // Generate proper groups after filtering
     const resourceIdField = 'resourceId';
     const resourceGrouped = this.groupActivities(this.resourceActivities.total.filteredData, resourceIdField);
     this.resourceActivities.byDoc = resourceGrouped;
@@ -236,16 +231,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       .filter(item => item[resourceIdField])
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-    // Update resource charts
     const resourceByMonth = this.activityService.groupByMonth(
       this.activityService.appendGender(this.resourceActivities.total.filteredData),
       'time'
     );
     this.setChart({ ...this.setGenderDatasets(resourceByMonth), chartName: 'resourceViewChart' });
-
-    // Filter course activities and properly update both the data and the UI
     this.courseActivities.total.filter(this.filter);
-    // Generate proper groups after filtering
     const courseIdField = 'courseId';
     const courseGrouped = this.groupActivities(this.courseActivities.total.filteredData, courseIdField);
     this.courseActivities.byDoc = courseGrouped;
@@ -254,20 +245,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       .filter(item => item[courseIdField])
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-    // Update course charts
     const courseByMonth = this.activityService.groupByMonth(
       this.activityService.appendGender(this.courseActivities.total.filteredData),
       'time'
     );
     this.setChart({ ...this.setGenderDatasets(courseByMonth), chartName: 'courseViewChart' });
-
-    // Progress data
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
     this.setStepCompletion();
-
-    // User data
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -275,8 +261,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         )
       )
      ));
-
-    // Chat data
     this.chatActivities.filter(this.filter);
     this.setChatUsage();
   }
@@ -301,14 +285,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   setStepCompletion() {
     const { byMonth } = this.activityService.groupStepCompletion(this.progress.steps.filteredData);
-    // Fix TypeScript error by adding type annotation to doc parameter
     this.reports.totalStepCompleted = byMonth.reduce((total: number, doc: { count: number }) => total + doc.count, 0);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'stepCompletedChart' });
   }
 
   setLoginActivities() {
     const { byUser, byMonth } = this.activityService.groupLoginActivities(this.loginActivities.filteredData);
-    // Fix TypeScript error by adding type annotation to resource parameter
     this.reports.totalMemberVisits = byUser.reduce((total: number, resource: { count: number }) => total + resource.count, 0);
     const byUserWithProfile = byUser.map((activity) => ({
       ...activity,

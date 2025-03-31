@@ -46,8 +46,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   truncateTitle(title: string) {
-    if (title.length > 140) {
-      return title.slice(0, 140) + '…';
+    if (title?.length > 150) {
+      return title.slice(0, 150) + '...';
     }
     return title;
   }
@@ -63,7 +63,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
         assistant: activity.assistant ? 'True' : '',
         shared: activity.shared ? 'True' : '',
-        conversationLength: activity.conversations?.length || 0
+        conversationLength: activity.conversations.length
       }));
     } else if (this.activityType === 'resources') {
       this.activities.data = this.activitiesByDoc.map(activity => {
