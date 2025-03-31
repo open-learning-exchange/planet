@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'planet-file-input',
@@ -13,6 +13,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 export class FileInputComponent {
 
   @Output() fileChange = new EventEmitter<any>();
+  @ViewChild('fileInput') fileInput!: HTMLInputElement;
 
   selectedFile: any = null;
   onFileSelected(event: any): void {
@@ -27,6 +28,13 @@ export class FileInputComponent {
     }
     const fileName = this.selectedFile.name;
     return fileName.length > maxLength ? `${fileName.slice(0, maxLength)}...` : fileName;
+  }
+
+  clearFile() {
+    this.selectedFile = null;
+    if (this.fileInput) {
+      this.fileInput.value = '';
+    }
   }
 
 }
