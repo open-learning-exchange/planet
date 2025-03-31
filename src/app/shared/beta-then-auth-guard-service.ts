@@ -24,11 +24,11 @@ export class BetaThenAuthService {
       of(true),
       this.stateService.couchStateListener('configurations')
     ).pipe(switchMap((res) => {
-      console.log(`BetaThenAuth: ${res}`)
+      console.log(`BetaThenAuth: ${res}`);
       if (this.userService.isBetaEnabled() === true) {
         return of(true);
       }
-      return this.authService.canActivateChild(route, state);  
+      return this.authService.canActivateChild(route, state);
     }));
   }
 
