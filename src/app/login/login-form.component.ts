@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -41,6 +41,7 @@ const loginForm = {
 
 @Component({
   templateUrl: './login-form.component.html',
+  selector: 'planet-login-form',
   styleUrls: [ './login.scss' ]
 })
 export class LoginFormComponent {
@@ -48,6 +49,9 @@ export class LoginFormComponent {
   showPassword = false;
   showRepeatPassword = false;
   notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
+  @Input() createMode: boolean;
+  @Input() isDialog = false;
+  @Output() loginEvent = new EventEmitter<'loggedOut' | 'loggedIn'>();
 
   constructor(
     private couchService: CouchService,
@@ -65,21 +69,27 @@ export class LoginFormComponent {
     private healthService: HealthService,
     private submissionsService: SubmissionsService
   ) {
+    if (!this.isDialog) {
+      this.createMode = this.router.url.split('?')[0] === '/login/newmember';
+    }
     registerForm.name = [ '', [
       Validators.required,
       CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
       Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ],
       ac => this.validatorService.isUnique$('_users', 'name', ac, { errorType: 'duplicateUser' })
     ];
-    const formObj = this.createMode ? registerForm : loginForm;
-    this.userForm = this.formBuilder.group(formObj);
+    this.initUserForm();
   }
 
-  createMode: boolean = this.router.url.split('?')[0] === '/login/newmember';
   returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
     'myDashboard' :
     '/'
   );
+
+  initUserForm() {
+    const formObj = this.createMode ? registerForm : loginForm;
+    this.userForm = this.formBuilder.group(formObj);
+  }
 
   onSubmit() {
     if (!this.userForm.valid) {
@@ -165,7 +175,12 @@ export class LoginFormComponent {
         return;
       }
       this.pouchAuthService.login(name, password).pipe(
-        switchMap(() => isCreate ? from(this.router.navigate([ 'users/update/' + name ])) : from(this.reRoute())),
+        switchMap((userCtx) => (this.isDialog ?
+          this.userService.setUserAndShelf(userCtx) :
+          isCreate ?
+          from(this.router.navigate([ 'users/update/' + name ])) :
+          from(this.reRoute())
+        )),
         switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
         switchMap(this.createSession(name, password)),
         switchMap((sessionData) => {
@@ -181,7 +196,9 @@ export class LoginFormComponent {
         }),
         switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
         catchError(error => error.status === 404 ? of({}) : throwError(error))
-      ).subscribe(() => {}, this.loginError.bind(this));
+      ).subscribe(() => {
+        this.loginEvent.emit('loggedIn');
+      }, this.loginError.bind(this));
     } catch (error) {
       console.error('Error during login:', error);
     }
@@ -269,6 +286,16 @@ export class LoginFormComponent {
       maxHeight: '90vh',
       autoFocus: false
     });
+  }
+
+  toggleMode() {
+    if (this.isDialog) {
+      this.createMode = !this.createMode;
+      this.initUserForm();
+      return;
+    }
+    const newRoute = this.createMode ? [ '/login' ] : [ '/login/newmember' ];
+    this.router.navigate(newRoute);
   }
 
 }
