@@ -39,21 +39,6 @@ export class NewsService {
     });
   }
 
-  requestNewsItem(id: string) {
-    return forkJoin([
-      this.couchService.getDocumentByID(this.dbName, id),
-      this.couchService.findAll('attachments')
-    ]).pipe(
-      map(([ newsItem, avatars ]) => ({
-          doc: newsItem,
-          sharedDate: this.findShareDate(newsItem, this.currentOptions.viewId),
-          avatar: this.findAvatar(newsItem.user, avatars),
-          _id: newsItem._id
-        }
-      ))
-    );
-  }
-
   findAvatar(user: any, attachments: any[]) {
     const attachmentId = `${user._id}@${user.planetCode}`;
     const attachment = attachments.find(avatar => avatar._id === attachmentId);

@@ -52,9 +52,10 @@ export class NewsListComponent implements OnInit, OnChanges {
     if (childRoute) {
       const voiceId = childRoute.snapshot.paramMap.get('id');
       if (voiceId) {
-        this.newsService.requestNewsItem(voiceId).subscribe(news => {
+        const news = this.items.find(item => item._id === voiceId);
+        if (news) {
           this.showReplies(news);
-        });
+        }
       }
     }
   }
