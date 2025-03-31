@@ -233,7 +233,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.resourceActivities.byDoc = resourceGrouped;
     this.reports.totalResourceViews = this.resourceActivities.total.filteredData.length;
     this.reports.resources = resourceGrouped
-      .filter(item => item[resourceIdField]) 
+      .filter(item => item[resourceIdField])
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
     // Update resource charts
@@ -275,7 +275,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         )
       )
      ));
-    
+
     // Chat data
     this.chatActivities.filter(this.filter);
     this.setChatUsage();
