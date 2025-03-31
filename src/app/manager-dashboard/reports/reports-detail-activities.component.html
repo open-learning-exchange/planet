@@ -66,6 +66,26 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header="shared" i18n>Shared</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.shared}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="resourceId">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="resourceId" i18n>Resource ID</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.resourceId}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="courseId">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="courseId" i18n>Course ID</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.courseId}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="time">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Time</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.timeFormatted || (element?.time | date:'medium')}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="parentCode">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="parentCode" i18n>Parent Code</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.parentCode}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="createdOn">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="createdOn" i18n>Created On</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.createdOn}}</mat-cell>
+  </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>
 </mat-table>

@@ -53,34 +53,60 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   ngOnChanges() {
-    this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
-    this.displayedColumns = columns[this.activityType];
-    const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-
-    if (this.activityType === 'chat') {
-      this.activities.data = this.activitiesByDoc.map(activity => ({
-        ...activity,
-        createdDate: new Date(activity.createdDate).getTime(),
-        hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
-        assistant: activity.assistant ? 'True' : '',
-        shared: activity.shared ? 'True' : '',
-        conversationLength: activity.conversations.length
-      }));
-    } else {
+    // Set columns to include all useful fields for debugging
+    this.displayedColumns = this.activityType === 'resources' ? 
+      [ 'resourceId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] : 
+      this.activityType === 'courses' ?
+      [ 'courseId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] :
+      columns[this.activityType];
+      
+    this.matSortActive = 'time';
+    
+    // For debugging, log the raw data
+    console.log(`[${this.activityType}] Activities passed to component:`, this.activitiesByDoc.length);
+    
+    // Pass through all activities without transformation
+    if (this.activityType === 'resources' || this.activityType === 'courses') {
+      // Format the timestamp for display
       this.activities.data = this.activitiesByDoc.map(activity => {
-        if (activity.max) {
-          activity.max.title = this.truncateTitle(activity.max.title);
-        }
         return {
-          averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-          enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
-          completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
-          stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
-          steps: activity.max?.steps,
-          exams: activity.max?.exams,
-          ...activity
+          ...activity,
+          timeFormatted: activity.time ? new Date(activity.time).toLocaleString() : '',
+          title: activity.title || activity.courseTitle || activity.resourceTitle || '(no title)'
         };
       });
+      console.log(`[${this.activityType}] Data in table:`, this.activities.data.length);
+    } else {
+      // Use original code for other tabs
+      this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
+      this.displayedColumns = columns[this.activityType];
+      const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
+  
+      if (this.activityType === 'chat') {
+        this.activities.data = this.activitiesByDoc.map(activity => ({
+          ...activity,
+          createdDate: new Date(activity.createdDate).getTime(),
+          hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
+          assistant: activity.assistant ? 'True' : '',
+          shared: activity.shared ? 'True' : '',
+          conversationLength: activity.conversations.length
+        }));
+      } else {
+        this.activities.data = this.activitiesByDoc.map(activity => {
+          if (activity.max) {
+            activity.max.title = this.truncateTitle(activity.max.title);
+          }
+          return {
+            averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
+            enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+            completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+            stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
+            steps: activity.max?.steps,
+            exams: activity.max?.exams,
+            ...activity
+          };
+        });
+      }
     }
   }
 
