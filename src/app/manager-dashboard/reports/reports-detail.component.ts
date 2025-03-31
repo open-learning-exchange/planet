@@ -156,44 +156,34 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
-    
-    // Filter the data based on user selections
     this[type].total.filteredData = this[type].total.data.filter(item => {
-      const isCorrectApp = this.filter.app === '' || 
+      const isCorrectApp = this.filter.app === '' ||
         ((this.filter.app === 'myplanet') !== (item.androidId === undefined));
-      
-      const isInDateRange = !this.filter.startDate || !this.filter.endDate ? true : 
+
+      const isInDateRange = !this.filter.startDate || !this.filter.endDate ? true :
         (item.time >= this.filter.startDate.getTime() && item.time <= this.filter.endDate.getTime());
-      
+
       const isSelectedMember = this.filter.members.length === 0 ||
         this.filter.members.some(member => (
           member.userId === item.userId || member.userId.split(':')[1] === item.user
         ));
-      
+
       return isCorrectApp && isInDateRange && isSelectedMember;
     });
-    
-    // Group the filtered activities by resource/course ID
     const idField = type.replace('Activities', 'Id');
     const grouped = this.groupActivities(this[type].total.filteredData, idField);
     this[type].byDoc = grouped;
-    
-    // For the UI
     this.reports[params.views] = this[type].total.filteredData.length;
-    
-    // Generate summary data with the properly grouped activities
     this.reports[params.record] = grouped
-      .filter(item => item[idField]) // Make sure we have a valid ID
+      .filter(item => item[idField])
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-    
-    // For charts, we still need to group the data by month
     const byMonth = this.activityService.groupByMonth(
       this.activityService.appendGender(this[type].total.filteredData),
       'time'
     );
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-    
+
     if (isInit && type === 'courseActivities') {
       this.getCourseProgress();
     }
@@ -244,8 +234,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
     this.setRatingInfo();
-
-    // Update these lines to use the existing byDoc data rather than calling setDocVisits
     this.resourceActivities.total.filter(this.filter);
     this.resourceActivities.byDoc = this.resourceActivities.total.filteredData;
     this.reports.totalResourceViews = this.resourceActivities.byDoc.length;
@@ -348,37 +336,24 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getDocVisits(type) {
     const params = reportsDetailParams(type);
-    console.log(`Fetching data from ${params.db}...`);
-
-    // Direct raw query to CouchDB to see all documents
     this.couchService.findAll(params.db).subscribe((allActivities: any) => {
-      console.log(`[${type}] TOTAL RAW RECORDS IN DATABASE: ${allActivities.length}`);
-
-      // Filter out only design documents, nothing else
       const filtered = allActivities.filter(
         activity => (activity._id || '').indexOf('_design') === -1
       );
-
-      console.log(`[${type}] After removing design docs: ${filtered.length}`);
-
-      // Store all activities
       this[type].total.data = filtered;
       this[type].total.filteredData = filtered;
-      
-      // Now call setDocVisits to set up charts and summary data
       this.setDocVisits(type, true);
     });
   }
 
   groupActivities(activities, idField) {
-    // Create a map to hold grouped activities - use an object for faster lookups by ID
-    const groupMap: { [key: string]: any } = {};    
+    const groupMap: { [key: string]: any } = {};
     activities.forEach(activity => {
       const id = activity[idField];
       if (!id) {
         return;
       }
-      
+
       if (!groupMap[id]) {
         groupMap[id] = {
           [idField]: id,
@@ -393,23 +368,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           }
         };
       }
-      
+
       groupMap[id].count++;
-      
+
       if (activity.user && !groupMap[id].unique.includes(activity.user)) {
         groupMap[id].unique.push(activity.user);
       }
-      
+
       if (activity.time > groupMap[id].time) {
         groupMap[id].time = activity.time;
-        // Only update the title if we have a better one
         if (activity.title || activity.resourceTitle || activity.courseTitle) {
           groupMap[id].max.title = activity.title || activity.resourceTitle || activity.courseTitle || id;
         }
       }
     });
-    
-    // Convert the groupMap object back to an array
     return Object.values(groupMap);
   }
 
