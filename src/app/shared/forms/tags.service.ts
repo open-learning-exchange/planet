@@ -28,6 +28,7 @@ export class TagsService {
             {}
           );
         return tags
+          .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
           .map((tag: any) => ({ ...tag, count: tagCounts[tag._id] || 0 }))
           .filter((tag: any) => tag.db === db && tag.docType === 'definition')
           .map(this.fillSubTags);

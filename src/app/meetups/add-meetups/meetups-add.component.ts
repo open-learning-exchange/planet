@@ -130,7 +130,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     this.meetupForm = this.fb.group({
       title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
-      startDate: [ this.meetup?.startDate ? this.meetup.startDate : '', CustomValidators.startDateValidator() ],
+      startDate: [ this.meetup?.startDate ? this.meetup.startDate : '', Validators.required ],
       endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),

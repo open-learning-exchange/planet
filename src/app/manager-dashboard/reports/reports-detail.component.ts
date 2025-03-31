@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Chart } from 'chart.js';
@@ -73,6 +74,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private dialogsLoadingService: DialogsLoadingService,
     private csvService: CsvService,
     private dialogsFormService: DialogsFormService,
@@ -89,28 +91,33 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const dbName = 'communityregistrationrequests';
     this.dialogsLoadingService.start();
-    combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
-      if (planetState === undefined) {
-        return;
-      }
-      const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-      this.dateQueryParams = {
-        startDate: queryParams['startDate'] ? this.setParamsTimestamp(new Date(queryParams['startDate']), false) : null,
-        endDate: queryParams['endDate'] ? this.setParamsTimestamp(new Date(queryParams['endDate']), true) : null
-      };
-      this.codeParam = params.get('code');
-      this.planetCode = this.codeParam || this.stateService.configuration.code;
-      this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-      this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-      this.initializeData(!this.codeParam);
-    });
-    this.stateService.requestData(dbName, 'local');
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-      this.dateFilterForm.controls.endDate.setValue(this.dateQueryParams.endDate || this.today);
+
+      combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
+        if (planetState === undefined) {
+          return;
+        }
+        const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+        this.dateQueryParams = {
+          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
+          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
+        };
+        this.dateFilterForm.controls.endDate.setValue(
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+          ? this.dateQueryParams.endDate : this.today
+        );
+        this.codeParam = params.get('code');
+        this.planetCode = this.codeParam || this.stateService.configuration.code;
+        this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
+        this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+        this.initializeData(!this.codeParam);
+      });
     });
+
+    this.stateService.requestData(dbName, 'local');
   }
 
   ngOnDestroy() {
@@ -152,12 +159,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.reports.usersByGender = byGender;
   }
 
-  private setParamsTimestamp(date: Date, endDate: Boolean): Date {
-    const newDate = new Date(date);
-    endDate ? newDate.setHours(0, 0, 0, 0) : newDate.setHours(0, 0, 0);
-    return newDate;
-  }
-
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
       startDate: [ '' ],
@@ -177,15 +178,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         const formattedStartDate = formatDate(startDate);
         const formattedEndDate = formatDate(endDate);
 
-        this.router.navigate([], {
-          relativeTo: this.route,
+        const urlTree = this.router.createUrlTree([], {
           queryParams: {
             startDate: formattedStartDate,
             endDate: formattedEndDate
           },
-          queryParamsHandling: 'merge',
-          replaceUrl: true
+          queryParamsHandling: 'merge'
         });
+        this.location.replaceState(urlTree.toString());
 
         this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
           endDate.getTime() === this.today.getTime();
@@ -227,7 +227,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const adminName = this.stateService.configuration.adminName.split('@')[0];
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
-      this.dateFilterForm.controls.startDate.setValue(this.dateQueryParams.startDate || this.minDate);
+      this.dateFilterForm.controls.startDate.setValue(
+        this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
+        ? this.dateQueryParams.startDate : this.minDate
+      );
       this.setLoginActivities();
     });
     this.usersService.requestUserData();
@@ -420,9 +423,25 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
-    const commonProps = { 'type': 'date', 'required': true, 'min': new Date(minDate), 'max': new Date(this.today) };
+    const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
+    if (reportType === 'coursesOverview') {
+      const coursesFields = [
+        { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+        { placeholder: $localize`To`, name: 'endDate', ...commonProps }
+      ];
+      const coursesFormGroup = {
+        startDate: this.dateFilterForm.controls.startDate.value,
+        endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
+      };
+      this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, coursesFields, coursesFormGroup, {
+        onSubmit: (formValue: any) => {
+          this.exportCourseOverview(formValue.startDate, formValue.endDate);
+        }
+      });
+      return;
+    }
     const teamOptions = [
       { name: $localize`All Members`, value: 'All' },
       ...this.teams.team.map(t => ({ name: t.name, value: t })),
@@ -454,6 +473,79 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  exportCourseOverview(startDate: Date, endDate: Date) {
+    this.dialogsLoadingService.start();
+    const dateRange = { startDate, endDate };
+    const filteredCourseData = filterByDate(
+      this.courseActivities?.total?.data,
+      'time',
+      dateRange
+    ) as any[];
+    const courseStats = filteredCourseData.reduce((stats: { [courseId: string]: any }, activity: any) => {
+      if (!stats[activity.courseId]) {
+        stats[activity.courseId] = {
+          title: activity.courseTitle || activity.title || activity.max?.title || '',
+          steps: activity.steps || 0,
+          exams: activity.exams || 0,
+          enrollments: 0,
+          count: 0,
+          stepsCompleted: 0,
+          completions: 0,
+        };
+      }
+      stats[activity.courseId].count++;
+      return stats;
+    }, {});
+
+    console.log('Merged course activity data:', this.courseActivities.total.data);
+    const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
+    const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
+    const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
+
+    filteredEnrollments.forEach((enrollment: any) => {
+      if (courseStats[enrollment.courseId]) {
+        courseStats[enrollment.courseId].enrollments++;
+      }
+    });
+    filteredCompletions.forEach((completion: any) => {
+      if (courseStats[completion.courseId]) {
+        courseStats[completion.courseId].completions++;
+      }
+    });
+    filteredSteps.forEach((step: any) => {
+      if (courseStats[step.courseId]) {
+        courseStats[step.courseId].stepsCompleted++;
+      }
+    });
+    Object.keys(courseStats).forEach(courseId => {
+      const foundRating = (this.ratings.courses || []).find((rating: any) => rating.item === courseId);
+      courseStats[courseId].averageRating = foundRating ? foundRating.value : '';
+    });
+    const planetForLink = (this.stateService.configuration.planetName ||
+                            this.planetName ||
+                            'default').toLowerCase();
+    const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
+    const csvData = Object.entries(courseStats).map(([ courseId, course ]: [string, any]) => ({
+      'Title': course.title,
+      'Link': baseUrl + courseId,
+      'Steps': course.steps,
+      'Exams': course.exams,
+      'Enrollments': course.enrollments,
+      'Views': course.count,
+      'Steps Completed': course.stepsCompleted,
+      'Completions': course.completions,
+      'Average Rating': course.averageRating
+    }));
+
+    this.csvService.exportCSV({
+      data: csvData,
+      title: $localize`Courses Overview`
+    });
+
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
   }
 
   sortData(data: any[], sortBy: string): any[] {
