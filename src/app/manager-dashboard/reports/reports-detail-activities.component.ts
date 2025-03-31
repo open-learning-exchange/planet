@@ -41,7 +41,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnInit() {
     this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?
-      item.unique.length :
+      item.unique?.length || 0 :
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
@@ -49,65 +49,64 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     if (title?.length > 150) {
       return title.slice(0, 150) + '...';
     }
-    return title;
+    return title || '';
   }
 
   ngOnChanges() {
-    // Set columns to include all useful fields for debugging
-    this.displayedColumns = this.activityType === 'resources' ?
-      [ 'resourceId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] :
-      this.activityType === 'courses' ?
-      [ 'courseId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] :
-      columns[this.activityType];
-
-    this.matSortActive = 'time';
-
-    // For debugging, log the raw data
-    console.log(`[${this.activityType}] Activities passed to component:`, this.activitiesByDoc.length);
-
-    // Pass through all activities without transformation
-    if (this.activityType === 'resources' || this.activityType === 'courses') {
-      // Format the timestamp for display
+    console.log(`[${this.activityType}] Activities passed to component:`, this.activitiesByDoc);
+    
+    // Set appropriate columns based on activity type
+    this.displayedColumns = columns[this.activityType] || ['title', 'count'];
+    this.matSortActive = this.activityType === 'health' ? 'weekOf' : 'count';
+    
+    if (this.activityType === 'chat') {
+      // Chat activities processing
+      this.activities.data = this.activitiesByDoc.map(activity => ({
+        ...activity,
+        createdDate: activity.createdDate ? new Date(activity.createdDate).getTime() : '',
+        hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
+        assistant: activity.assistant ? 'True' : '',
+        shared: activity.shared ? 'True' : '',
+        conversationLength: activity.conversations?.length || 0
+      }));
+    } else if (this.activityType === 'resources') {
+      // Generate a proper display for resources
+      this.activities.data = this.activitiesByDoc.map(activity => {
+        // We need to make sure title is accessible at the top level
+        return {
+          ...activity,
+          // For direct display in the table
+          title: activity.title || activity.max?.title || '',
+          averageRating: (this.ratings.find((rating: any) => rating.item === activity.resourceId) || {}).value || ''
+        };
+      });
+      console.log('Resources data processed:', this.activities.data);
+    } else if (this.activityType === 'courses') {
+      // For course activities
+      const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
+      
       this.activities.data = this.activitiesByDoc.map(activity => {
         return {
           ...activity,
-          timeFormatted: activity.time ? new Date(activity.time).toLocaleString() : '',
-          title: activity.title || activity.courseTitle || activity.resourceTitle || '(no title)'
+          title: activity.title || activity.max?.title || '',
+          steps: activity.max?.steps || 0,
+          exams: activity.max?.exams || 0,
+          averageRating: (this.ratings.find((rating: any) => rating.item === activity.courseId) || {}).value || '',
+          enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+          completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+          stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length
         };
       });
-      console.log(`[${this.activityType}] Data in table:`, this.activities.data.length);
     } else {
-      // Use original code for other tabs
-      this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
-      this.displayedColumns = columns[this.activityType];
-      const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-
-      if (this.activityType === 'chat') {
-        this.activities.data = this.activitiesByDoc.map(activity => ({
-          ...activity,
-          createdDate: new Date(activity.createdDate).getTime(),
-          hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
-          assistant: activity.assistant ? 'True' : '',
-          shared: activity.shared ? 'True' : '',
-          conversationLength: activity.conversations.length
-        }));
-      } else {
-        this.activities.data = this.activitiesByDoc.map(activity => {
-          if (activity.max) {
-            activity.max.title = this.truncateTitle(activity.max.title);
-          }
-          return {
-            averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-            enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
-            completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
-            stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
-            steps: activity.max?.steps,
-            exams: activity.max?.exams,
-            ...activity
-          };
-        });
-      }
+      // Health activities
+      this.activities.data = this.activitiesByDoc.map(activity => ({
+        ...activity,
+        count: activity.count || 0,
+        unique: activity.unique || []
+      }));
     }
+    
+    console.log(`[${this.activityType}] Data in table:`, this.activities.data);
   }
 
   ngAfterViewInit() {
@@ -116,7 +115,10 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   sortingObject(item, property) {
-    return property === 'title' ? item.max : item;
+    if (property === 'title') {
+      return item.title || item.max?.title || '';
+    }
+    return item;
   }
 
   rowClick(element) {

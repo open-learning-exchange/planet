@@ -345,25 +345,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
       console.log(`[${type}] After removing design docs: ${filtered.length}`);
 
-      // Log all resourceIds to see if we have the expected ones
-      if (type === 'resourceActivities') {
-        const resourceIds = [ ...new Set(filtered.map(a => a.resourceId)) ];
-        console.log(`Total unique resourceIds: ${resourceIds.length}`);
-        console.log('Sample of resource IDs:', resourceIds.slice(0, 5));
-
-        // Check for the specific resourceId you mentioned
-        const specificResource = 'e739e2bae321d6eaff6fd50d4606589a';
-        const matchingActivities = filtered.filter(a => a.resourceId === specificResource);
-        console.log(`Activities for resource ${specificResource}: ${matchingActivities.length}`);
-        if (matchingActivities.length > 0) {
-          console.log('First matching activity:', matchingActivities[0]);
-        }
-      }
-
       // Store all activities
       this[type].total.data = filtered;
       this[type].total.filteredData = filtered;
-      this[type].byDoc = filtered;
+      
+      // Group the filtered activities by resource/course ID
+      const idField = type.replace('Activities', 'Id');
+      const grouped = this.groupActivities(filtered, idField);
+      this[type].byDoc = grouped;
 
       // For the UI
       this.reports[params.views] = filtered.length;
@@ -371,6 +360,46 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       // Now call setDocVisits to set up charts and summary data
       this.setDocVisits(type, true);
     });
+  }
+
+  groupActivities(activities, idField) {
+    // Create a map to hold grouped activities
+    const groupMap = {};
+    
+    activities.forEach(activity => {
+      const id = activity[idField];
+      if (!id) {
+        return;
+      }
+      
+      if (!groupMap[id]) {
+        groupMap[id] = {
+          [idField]: id,
+          title: activity.title || activity.resourceTitle || activity.courseTitle || '',
+          count: 0,
+          unique: [],
+          time: activity.time || 0,
+          max: {
+            title: activity.title || activity.resourceTitle || activity.courseTitle || id,
+            steps: activity.steps || 0,
+            exams: activity.exams || 0
+          }
+        };
+      }
+      
+      groupMap[id].count++;
+      
+      if (activity.user && !groupMap[id].unique.includes(activity.user)) {
+        groupMap[id].unique.push(activity.user);
+      }
+      
+      if (activity.time > groupMap[id].time) {
+        groupMap[id].time = activity.time;
+        groupMap[id].max.title = activity.title || activity.resourceTitle || activity.courseTitle || id;
+      }
+    });
+    
+    return Object.values(groupMap);
   }
 
   getPlanetCounts(local: boolean) {
