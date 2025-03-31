@@ -54,17 +54,17 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
 
   ngOnChanges() {
     // Set columns to include all useful fields for debugging
-    this.displayedColumns = this.activityType === 'resources' ? 
-      [ 'resourceId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] : 
+    this.displayedColumns = this.activityType === 'resources' ?
+      [ 'resourceId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] :
       this.activityType === 'courses' ?
       [ 'courseId', 'title', 'user', 'time', 'parentCode', 'createdOn' ] :
       columns[this.activityType];
-      
+
     this.matSortActive = 'time';
-    
+
     // For debugging, log the raw data
     console.log(`[${this.activityType}] Activities passed to component:`, this.activitiesByDoc.length);
-    
+
     // Pass through all activities without transformation
     if (this.activityType === 'resources' || this.activityType === 'courses') {
       // Format the timestamp for display
@@ -81,7 +81,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
       this.displayedColumns = columns[this.activityType];
       const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-  
+
       if (this.activityType === 'chat') {
         this.activities.data = this.activitiesByDoc.map(activity => ({
           ...activity,

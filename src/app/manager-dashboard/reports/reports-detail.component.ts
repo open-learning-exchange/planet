@@ -157,28 +157,28 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setDocVisits(type, isInit = false) {
     const params = reportsDetailParams(type);
     console.log(`[${type}] Processing data for charts: ${this[type].total.filteredData.length} records`);
-    
+
     // For charts, we still need to group the data by month
     const byMonth = this.activityService.groupByMonth(
-      this.activityService.appendGender(this[type].total.filteredData), 
+      this.activityService.appendGender(this[type].total.filteredData),
       'time'
     );
-    
+
     // Set chart data
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: params.chartName });
-    
+
     // For summary tab, group by resource/course ID to get top 5
     const groupedForSummary = this.activityService.groupBy(
-      this[type].byDoc, 
-      [type.replace('Activities', 'Id')], 
+      this[type].byDoc,
+      [ type.replace('Activities', 'Id') ],
       { maxField: 'time' }
     );
-    
+
     this.reports[params.record] = groupedForSummary
       .filter(item => item[type.replace('Activities', 'Id')])
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-    
+
     if (isInit && type === 'courseActivities') {
       this.getCourseProgress();
     }
@@ -229,23 +229,23 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
     this.setRatingInfo();
-    
+
     // Update these lines to use the existing byDoc data rather than calling setDocVisits
     this.resourceActivities.total.filter(this.filter);
     this.resourceActivities.byDoc = this.resourceActivities.total.filteredData;
     this.reports.totalResourceViews = this.resourceActivities.byDoc.length;
     this.setDocVisits('resourceActivities');
-    
+
     this.courseActivities.total.filter(this.filter);
     this.courseActivities.byDoc = this.courseActivities.total.filteredData;
     this.reports.totalCourseViews = this.courseActivities.byDoc.length;
     this.setDocVisits('courseActivities');
-    
+
     this.progress.enrollments.filter(this.filter);
     this.progress.completions.filter(this.filter);
     this.progress.steps.filter(this.filter);
     this.setStepCompletion();
-    
+
     this.setUserCounts(this.activityService.groupUsers(
       this.users.filter(
         user => this.filter.members.length === 0 || this.filter.members.some(
@@ -332,25 +332,25 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getDocVisits(type) {
     const params = reportsDetailParams(type);
     console.log(`Fetching data from ${params.db}...`);
-    
+
     // Direct raw query to CouchDB to see all documents
     this.couchService.findAll(params.db).subscribe((allActivities: any) => {
       console.log(`[${type}] TOTAL RAW RECORDS IN DATABASE: ${allActivities.length}`);
       console.log('Sample of 5 records:', allActivities.slice(0, 5));
-      
+
       // Filter out only design documents, nothing else
       const filtered = allActivities.filter(
         activity => (activity._id || '').indexOf('_design') === -1
       );
-      
+
       console.log(`[${type}] After removing design docs: ${filtered.length}`);
-      
+
       // Log all resourceIds to see if we have the expected ones
       if (type === 'resourceActivities') {
-        const resourceIds = [...new Set(filtered.map(a => a.resourceId))];
+        const resourceIds = [ ...new Set(filtered.map(a => a.resourceId)) ];
         console.log(`Total unique resourceIds: ${resourceIds.length}`);
         console.log('Sample of resource IDs:', resourceIds.slice(0, 5));
-        
+
         // Check for the specific resourceId you mentioned
         const specificResource = 'e739e2bae321d6eaff6fd50d4606589a';
         const matchingActivities = filtered.filter(a => a.resourceId === specificResource);
@@ -359,15 +359,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           console.log('First matching activity:', matchingActivities[0]);
         }
       }
-      
+
       // Store all activities
       this[type].total.data = filtered;
       this[type].total.filteredData = filtered;
       this[type].byDoc = filtered;
-      
+
       // For the UI
       this.reports[params.views] = filtered.length;
-      
+
       // Now call setDocVisits to set up charts and summary data
       this.setDocVisits(type, true);
     });
