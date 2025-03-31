@@ -1,7 +1,9 @@
 <mat-table #table [dataSource]="activities" [matSortDisableClear]="true" matSort [matSortActive]="matSortActive" matSortDirection="asc">
   <ng-container matColumnDef="title">
     <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.title || element.max?.title}}</mat-cell>
+    <mat-cell *matCellDef="let element">
+      <div class="wrap-text" [matTooltip]="element.title">{{element.title || element.max?.title}}</div>
+    </mat-cell>
   </ng-container>
   <ng-container matColumnDef="weekOf">
     <mat-header-cell *matHeaderCellDef mat-sort-header="weekOf" i18n>Week Starting</mat-header-cell>

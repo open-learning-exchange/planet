@@ -46,8 +46,8 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   truncateTitle(title: string) {
-    if (title?.length > 150) {
-      return title.slice(0, 150) + '...';
+    if (title.length > 140) {
+      return title.slice(0, 140) + '…';
     }
     return title;
   }
@@ -67,9 +67,10 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       }));
     } else if (this.activityType === 'resources') {
       this.activities.data = this.activitiesByDoc.map(activity => {
+        const rawTitle = activity.title || activity.max?.title || '';
         return {
           ...activity,
-          title: activity.title || activity.max?.title || '',
+          title: this.truncateTitle(rawTitle),
           averageRating: (this.ratings.find((rating: any) => rating.item === activity.resourceId) || {}).value || ''
         };
       });
@@ -77,9 +78,10 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     } else if (this.activityType === 'courses') {
       const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
       this.activities.data = this.activitiesByDoc.map(activity => {
+        const rawTitle = activity.title || activity.max?.title || '';
         return {
           ...activity,
-          title: activity.title || activity.max?.title || '',
+          title: this.truncateTitle(rawTitle),
           steps: activity.max?.steps || 0,
           exams: activity.max?.exams || 0,
           averageRating: (this.ratings.find((rating: any) => rating.item === activity.courseId) || {}).value || '',
