@@ -77,7 +77,9 @@ export class FeedbackDirective {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private authService: AuthService
-  ) {}
+  ) {
+    console.log('DialogsFormService:', this.dialogsFormService);
+  }
 
   addFeedback(post: any) {
     const date = new Date();
@@ -148,7 +150,7 @@ export class FeedbackDirective {
 
   @HostListener('click')
   checkAuthentication() {
-    this.authService.checkAuthenticationStatus().subscribe(this.openFeedback);
+    this.authService.checkAuthenticationStatus().subscribe(() => this.openFeedback());
   }
 
   openFeedback() {
