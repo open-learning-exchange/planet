@@ -15,11 +15,16 @@ export class UserGuard {
     private stateService: StateService
   ) { }
 
+  skipNewUserRequests(userCtx, user) {
+    return userCtx.name === undefined || userCtx.name === null ||
+      (userCtx.name && userCtx.name === user.name);
+  }
+
   canActivateChild() {
     return this.pouchAuthService.getSessionInfo().pipe(
       switchMap((sessionInfo) => {
         const user = this.userService.get();
-        if (sessionInfo.userCtx.name && sessionInfo.userCtx.name === user.name) {
+        if (this.skipNewUserRequests(sessionInfo.userCtx, user)) {
           return of(true);
         }
         this.stateService.requestBaseData();
