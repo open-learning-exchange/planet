@@ -77,9 +77,7 @@ export class FeedbackDirective {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private authService: AuthService
-  ) {
-    console.log('DialogsFormService:', this.dialogsFormService);
-  }
+  ) { }
 
   addFeedback(post: any) {
     const date = new Date();
