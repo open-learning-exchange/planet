@@ -18,8 +18,6 @@ export class ManagerAIServicesComponent implements OnInit {
   configForm: FormGroup;
   hideKey: { [key: string]: boolean } = {};
   spinnerOn = true;
-  streaming: boolean = false;
-  overlayOpen = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,7 +27,13 @@ export class ManagerAIServicesComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private stateService: StateService,
-  ) {}
+  ) {
+    this.configForm = this.fb.group({
+      streaming: [ false ],
+      assistantName: [ '' ],
+      assistantInstructions: [ '' ]
+    });
+  }
 
   ngOnInit() {
     const configurationId = this.stateService.configuration._id;
@@ -37,20 +41,17 @@ export class ManagerAIServicesComponent implements OnInit {
       (data: any) => {
         this.configuration = data;
         this.initForm();
-      },
-      (error) => {
-        console.log(error);
       }
     );
   }
 
   initForm() {
     this.configForm = this.fb.group({
+      streaming: [ !!this.configuration.streaming ],
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
       assistantName: [ this.configuration.assistant?.name || '' ],
-      assistantInstructions: [ this.configuration.assistant?.instructions || '' ],
-      streaming: [ this.configuration.streaming || false ]
+      assistantInstructions: [ this.configuration.assistant?.instructions || '' ]
     });
 
     if (this.configuration.keys) {
@@ -59,7 +60,6 @@ export class ManagerAIServicesComponent implements OnInit {
       }
     }
   }
-
 
   mapConfigToFormGroup(configObject: any, prefix: string) {
     const formGroupObj = {};
@@ -84,12 +84,13 @@ export class ManagerAIServicesComponent implements OnInit {
     this.spinnerOn = true;
     const updatedConfig = {
       ...this.configuration,
+      streaming: this.configForm.value.streaming,
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),
       assistant: {
         name: this.configForm.value.assistantName,
-        instructions: this.configForm.value.assistantInstructions,
-      },
+        instructions: this.configForm.value.assistantInstructions
+      }
     };
     this.configurationService.updateConfiguration(updatedConfig).pipe(finalize(spinnerOff)).subscribe(
       () => this.stateService.requestData('configurations', 'local'),
@@ -112,20 +113,6 @@ export class ManagerAIServicesComponent implements OnInit {
 
   toggleHideKey(key: string) {
     this.hideKey[key] = !this.hideKey[key];
-  }
-
-  toggleOverlay(): void {
-    this.overlayOpen = !this.overlayOpen;
-  }
-
-  toggleStreaming(): void {
-    const configuration = this.configuration;
-    this.configurationService.updateConfiguration({ ...configuration, streaming: this.streaming }).subscribe(null,
-      error => this.configuration.showAlert($localize`An error occurred please try again.`),
-      () => {
-        this.configuration.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
-      }
-    );
   }
 
   copyKey(key: string) {
