@@ -122,6 +122,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true; // Set loading to true at the start
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
     }
@@ -140,6 +141,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       );
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
+      this.isLoading = false; // Set loading to false when data is loaded
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
@@ -152,23 +154,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
-  }
-
-  getResources() {
-    this.isLoading = true; // Set loading to true when fetching starts
-    this.resourcesService.requestResourcesUpdate(this.parent);
-  
-    // Listen for resource updates
-    this.resourcesService.resourcesListener(this.parent).subscribe(
-      (resources) => {
-        this.resources.data = resources;
-        this.isLoading = this.resourcesService.isActiveResourceFetch; // Update loading state
-      },
-      (error) => {
-        console.error('Error fetching resources:', error);
-        this.isLoading = false; // Reset loading state on error
-      }
-    );
   }
 
   setupList(resourcesRes, myLibrarys) {
