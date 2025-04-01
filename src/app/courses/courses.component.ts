@@ -139,6 +139,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
+    this.isLoading = true; // Set loading to true
     this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
@@ -159,6 +160,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
       this.dialogsLoadingService.stop();
+      this.isLoading = false; // Set loading to false
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
@@ -193,17 +195,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   getCourses() {
-    this.isLoading = true;
-    this.coursesService.requestCourses(this.parent).subscribe(
-      (courses) => {
-        this.courses.data = courses;
-        this.isLoading = false; // Set loading to false when data is fetched
-      },
-      (error) => {
-        console.error('Error fetching courses:', error);
-        this.isLoading = false; // Set loading to false even if there's an error
-      }
-    );
+    this.coursesService.requestCourses(this.parent);
   }
 
   ngAfterViewInit() {
