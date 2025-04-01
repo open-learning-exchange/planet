@@ -42,6 +42,30 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header="stepsCompleted" i18n>Steps Completed</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.stepsCompleted}}</mat-cell>
   </ng-container>
+  <ng-container matColumnDef="aiProvider">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="aiProvider" i18n>AI Provider</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.aiProvider}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="user">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>User</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.user}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="createdDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Timestamp</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.createdDate | date:'medium'}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="conversationLength">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="conversationLength" i18n>Chat Responses</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.conversationLength}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="assistant">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="assistant" i18n>Assistant</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.assistant}}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="shared">
+    <mat-header-cell *matHeaderCellDef mat-sort-header="shared" i18n>Shared</mat-header-cell>
+    <mat-cell *matCellDef="let element">{{element?.shared}}</mat-cell>
+  </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)" class="cursor-pointer"></mat-row>
 </mat-table>
