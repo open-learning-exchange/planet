@@ -40,6 +40,7 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+  isLoading: boolean = true;
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
@@ -192,7 +193,17 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   getCourses() {
-    this.coursesService.requestCourses(this.parent);
+    this.isLoading = true;
+    this.coursesService.requestCourses(this.parent).subscribe(
+      (courses) => {
+        this.courses.data = courses;
+        this.isLoading = false; // Set loading to false when data is fetched
+      },
+      (error) => {
+        console.error('Error fetching courses:', error);
+        this.isLoading = false; // Set loading to false even if there's an error
+      }
+    );
   }
 
   ngAfterViewInit() {
