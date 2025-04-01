@@ -77,7 +77,7 @@ export class FeedbackDirective {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private authService: AuthService
-  ) { }
+  ) {}
 
   addFeedback(post: any) {
     const date = new Date();
