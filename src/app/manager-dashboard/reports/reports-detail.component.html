@@ -295,10 +295,10 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
-        <div *ngIf="!chatActivities || !chatActivities.filteredData.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="!chatActivities?.filteredData?.length" class="view-container view-full-height loading-message" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!chatActivities || !chatActivities.filteredData.length">
+        <div [hidden]="!chatActivities?.filteredData?.length">
           <planet-reports-detail-activities 
             [activitiesByDoc]="chatActivities.filteredData" 
             activityType="chat">
