@@ -11,6 +11,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
+import { Observable } from 'rxjs';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
@@ -69,11 +70,13 @@ export class CoursesService {
     this.stateService.couchStateListener(this.progressDb).subscribe((res: any) => handleStateRes(res, this.progressDb));
   }
 
-  requestCourses(parent = false) {
+  requestCourses(parent = false): Observable<any[]> {
     this.stateService.requestData(this.dbName, parent ? 'parent' : 'local');
     this.stateService.requestData(this.progressDb, parent ? 'parent' : 'local');
     this.stateService.requestData('tags', parent ? 'parent' : 'local');
     this.ratingService.newRatings(parent);
+
+    return this.coursesListener$(parent);
   }
 
   mergeData({ courses, courses_progress, ratings, tags }, planetField = 'local', parent = false) {
