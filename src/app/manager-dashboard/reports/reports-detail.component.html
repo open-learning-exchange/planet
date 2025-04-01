@@ -282,16 +282,16 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
-        <div *ngIf="!healthComponent?.examinations" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="healthTab.isActive && (!healthComponent?.examinations || !healthComponent?.headlineData?.total)" class="view-container view-full-height loading-message" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!healthComponent?.examinations">
+        <div [hidden]="!healthComponent?.examinations || !healthComponent?.headlineData?.total">
           <planet-reports-health 
-            [planetCode]="planetCode" 
-            [dateRange]="dateFilterForm?.value" 
-            [isActive]="healthTab.isActive" 
-            (changeDateRange)="resetDateFilter($event)">
-          </planet-reports-health>
+          [planetCode]="planetCode" 
+          [dateRange]="dateFilterForm?.value" 
+          [isActive]="healthTab.isActive" 
+          (changeDateRange)="resetDateFilter($event)">
+        </planet-reports-health>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
