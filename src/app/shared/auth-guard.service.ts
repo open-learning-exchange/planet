@@ -46,7 +46,7 @@ export class AuthService {
               // directly pasting in a link to a guarded route. Need to reroute to the community page
               // before closing the dialog.
               if (this.router.routerState.snapshot.url === '') {
-                this.router.navigate(['/']);
+                this.router.navigate([ '/' ]);
               }
               return of(false);
             }
