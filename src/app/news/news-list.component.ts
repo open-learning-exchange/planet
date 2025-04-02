@@ -131,12 +131,19 @@ export class NewsListComponent implements OnInit, OnChanges {
   }
 
   openDeleteDialog(news) {
+    let displayName = news.message;
+    if (news.chat) {
+      displayName = news.news.conversations[0].response;
+    } else if (news.message === '</br>') {
+      displayName = "(empty message)";
+    }
+    
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteNews(news),
         changeType: 'delete',
         type: 'news',
-        displayName: news.chat ? news.news.conversations[0].response : news.message
+        displayName
       }
     });
   }
