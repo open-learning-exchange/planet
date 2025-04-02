@@ -70,13 +70,11 @@ export class CoursesService {
     this.stateService.couchStateListener(this.progressDb).subscribe((res: any) => handleStateRes(res, this.progressDb));
   }
 
-  requestCourses(parent = false): Observable<any[]> {
+  requestCourses(parent = false) {
     this.stateService.requestData(this.dbName, parent ? 'parent' : 'local');
     this.stateService.requestData(this.progressDb, parent ? 'parent' : 'local');
     this.stateService.requestData('tags', parent ? 'parent' : 'local');
     this.ratingService.newRatings(parent);
-
-    return this.coursesListener$(parent);
   }
 
   mergeData({ courses, courses_progress, ratings, tags }, planetField = 'local', parent = false) {

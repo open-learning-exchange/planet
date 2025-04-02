@@ -40,7 +40,7 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
-  isLoading: boolean = true;
+  isLoading = true;
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
@@ -139,7 +139,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
-    this.isLoading = true; // Set loading to true
+    this.isLoading = true;
     this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
@@ -159,8 +159,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+      this.isLoading = false;
       this.dialogsLoadingService.stop();
-      this.isLoading = false; // Set loading to false
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
