@@ -37,7 +37,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   encapsulation: ViewEncapsulation.None
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
-  isLoading: boolean = true;
+  isLoading = true;
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -122,7 +122,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true; // Set loading to true at the start
+    this.isLoading = true;
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
     }
@@ -141,7 +141,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       );
       this.resources.paginator = this.paginator;
       this.dialogsLoadingService.stop();
-      this.isLoading = false; // Set loading to false when data is loaded
+      this.isLoading = false;
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
