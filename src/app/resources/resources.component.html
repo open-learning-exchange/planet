@@ -209,7 +209,7 @@
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td><div class="view-container" i18n>No Resource Found</div></td>
+        <td><div class="view-container" i18n>{{ isLoading ? 'Resources Loading...' : 'No Resource Found' }}</div></td>
       </tr>
     </mat-table>
     <mat-paginator #paginator
