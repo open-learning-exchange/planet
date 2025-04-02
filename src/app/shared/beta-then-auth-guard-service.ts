@@ -24,9 +24,6 @@ export class BetaThenAuthService {
       of(true),
       this.stateService.couchStateListener('configurations')
     ).pipe(switchMap((res) => {
-      console.log(`BetaThenAuth: ${res}`);
-      console.log(`configuration: ${JSON.stringify(this.stateService.configuration)}`);
-      console.log(`isBetaEnabled: ${this.userService.isBetaEnabled()}`);
       if (this.userService.isBetaEnabled() === true) {
         return of(true);
       }
