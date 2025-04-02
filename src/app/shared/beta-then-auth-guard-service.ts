@@ -20,11 +20,13 @@ export class BetaThenAuthService {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return iif(
-      () => this.stateService.configuration !== undefined,
+      () => this.stateService.configuration?._id !== undefined,
       of(true),
       this.stateService.couchStateListener('configurations')
     ).pipe(switchMap((res) => {
       console.log(`BetaThenAuth: ${res}`);
+      console.log(`configuration: ${JSON.stringify(this.stateService.configuration)}`);
+      console.log(`isBetaEnabled: ${this.userService.isBetaEnabled()}`);
       if (this.userService.isBetaEnabled() === true) {
         return of(true);
       }
