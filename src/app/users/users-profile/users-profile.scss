@@ -20,32 +20,12 @@
 
   .cards-container {
     display: flex;
-    flex-wrap: wrap; 
     gap: 16px; 
     margin-top: 10px;
   
     mat-card {
-      width: 100%; 
-      box-sizing: border-box; 
-    }
-  
-    .cards-list {
-      display: flex;
-      flex-wrap: wrap; 
-      gap: 12px; 
-  
-      mat-list-item {
-        flex: 1 1 calc(50% - 12px); 
-        box-sizing: border-box; 
-        word-wrap: break-word; 
-      white-space: normal; 
-    }
-
-    h4, p {
-      overflow-wrap: break-word; 
-      word-break: break-word; 
-      white-space: normal; 
-    }
+      flex: 1;
+      min-width: 300px; 
     }
   }
 
