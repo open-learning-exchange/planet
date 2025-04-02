@@ -139,7 +139,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
-    this.isLoading = true;
     this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
