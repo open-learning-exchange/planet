@@ -122,7 +122,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true;
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
     }
@@ -140,8 +139,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
-      this.dialogsLoadingService.stop();
       this.isLoading = false;
+      this.dialogsLoadingService.stop();
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
