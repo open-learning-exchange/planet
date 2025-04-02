@@ -11,7 +11,6 @@ import { TagsService } from '../shared/forms/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
-import { Observable } from 'rxjs';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
