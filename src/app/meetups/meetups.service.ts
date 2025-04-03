@@ -132,5 +132,5 @@ export class MeetupService {
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this meetup`)
     };
   }
-lk
+
 }
