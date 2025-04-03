@@ -38,7 +38,7 @@ export class LogsMyPlanetComponent implements OnInit {
   showFiltersRow = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  selectedTimeFilter: string = 'all';
+  selectedTimeFilter = 'all';
   showCustomDateFields = false;
   timeFilterOptions = [
     { value: '24h', label: $localize`Last 24 Hours` },
@@ -46,7 +46,7 @@ export class LogsMyPlanetComponent implements OnInit {
     { value: '30d', label: $localize`Last 30 Days` },
     { value: 'all', label: $localize`All Time` },
     { value: 'custom', label: $localize`Custom` },
-  ];  
+  ];
 
 
   constructor(
@@ -172,7 +172,7 @@ export class LogsMyPlanetComponent implements OnInit {
   }
   const now = new Date();
   let newStartDate: Date;
-  let newEndDate: Date = now;
+  const newEndDate: Date = now;
 
   switch (timeFilter) {
     case '24h':
