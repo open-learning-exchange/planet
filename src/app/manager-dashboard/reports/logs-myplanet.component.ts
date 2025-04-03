@@ -200,8 +200,6 @@ export class LogsMyPlanetComponent implements OnInit {
   });
   this.applyFilters();
 }
-
-
   applyFilters() {
     this.apklogs = this.allPlanets.map(planet => ({
       ...planet,
