@@ -19,6 +19,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { Router } from '@angular/router'
 import { FormBuilder } from '@angular/forms';
 import {
   DialogsAnnouncementComponent,
@@ -27,6 +28,7 @@ import {
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
+import { de } from 'date-fns/locale';
 
 @Component({
   selector: 'planet-community',
@@ -73,7 +75,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -429,6 +432,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.resizeCalendar = true;
     } else {
       this.resizeCalendar = false;
+    }
+
+    switch (index) {
+      case 0:
+        this.router.navigate(['/']);
+        break;
+      case 1:
+        this.router.navigate(['/']);
+        break;
+      default:
+        break;
     }
   }
 }
