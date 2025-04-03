@@ -407,13 +407,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setChart({ data, labels, chartName }) {
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
-      updateChart.data.labels = labels;
-      data.datasets.forEach((dataset, i) => {
-        if (i < updateChart.data.datasets.length) {
-          updateChart.data.datasets[i].data = dataset.data;
-        }
-      });
-
+      updateChart.data = { ...data, labels };
       updateChart.update();
       return;
     }
