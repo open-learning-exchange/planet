@@ -374,11 +374,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const dateRange = {
+    const months = setMonths({
       startDate: this.filter.startDate,
       endDate: this.filter.endDate
-    };
-    const months = setMonths(dateRange);
+    });
     const labels = months.map(month => monthDataLabels(month));
 
     const genderFilter = (gender: string) =>
