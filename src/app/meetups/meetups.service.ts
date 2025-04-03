@@ -124,10 +124,13 @@ export class MeetupService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted the ${displayName ? `${displayName} event` : 'selected events'}`);
+        const message = displayName ? 
+          $localize`Event deleted: ${displayName}` : 
+          $localize`You have deleted ${meetups.length} events`;
+        this.planetMessageService.showMessage(message);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this meetup`)
     };
   }
-
+lk
 }
