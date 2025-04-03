@@ -148,7 +148,7 @@ export class FeedbackDirective {
 
   @HostListener('click')
   checkAuthentication() {
-    this.authService.checkAuthenticationStatus().subscribe(this.openFeedback);
+    this.authService.checkAuthenticationStatus().subscribe(() => this.openFeedback());
   }
 
   openFeedback() {
