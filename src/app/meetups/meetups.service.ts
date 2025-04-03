@@ -124,8 +124,8 @@ export class MeetupService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        const message = displayName ? 
-          $localize`Event deleted: ${displayName}` : 
+        const message = displayName ?
+          $localize`Event deleted: ${displayName}` :
           $localize`You have deleted ${meetups.length} events`;
         this.planetMessageService.showMessage(message);
       },
