@@ -374,7 +374,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const months = setMonths();
+    const dateRange = {
+      startDate: this.filter.startDate,
+      endDate: this.filter.endDate
+    };
+    const months = setMonths(dateRange);
+    const labels = months.map(month => monthDataLabels(month));
+
     const genderFilter = (gender: string) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
@@ -394,14 +400,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => monthDataLabels(month))
+      labels
     });
   }
 
   setChart({ data, labels, chartName }) {
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
-      updateChart.data = { ...data, labels: [] };
+      updateChart.data.labels = labels;
+      data.datasets.forEach((dataset, i) => {
+        if (i < updateChart.data.datasets.length) {
+          updateChart.data.datasets[i].data = dataset.data;
+        }
+      });
+
       updateChart.update();
       return;
     }
@@ -413,7 +425,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { labels, type: 'category' } ],
+          xAxes: [ { type: 'category' } ],
           yAxes: [ {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
