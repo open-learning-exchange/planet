@@ -48,7 +48,6 @@ export class LogsMyPlanetComponent implements OnInit {
     { value: 'custom', label: $localize`Custom` },
   ];
 
-
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -245,7 +244,6 @@ export class LogsMyPlanetComponent implements OnInit {
 
   resetDateFilter() {
     this.onTimeFilterChange('all');
-
   }
 
   clearFilters() {
