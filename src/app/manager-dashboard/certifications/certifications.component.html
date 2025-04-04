@@ -19,16 +19,16 @@
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell i18n *matHeaderCellDef mat-sort-header="name">Certification Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span class="truncate-text">{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <a mat-raised-button color="primary" [routerLink]="[ 'update/' + element._id ]" (click)="$event.stopPropagation()" i18n>
+            <a mat-raised-button color="primary" class="margin-lr-3 action-button" [routerLink]="[ 'update/' + element._id ]" (click)="$event.stopPropagation()" i18n>
               <mat-icon>edit</mat-icon>Edit
             </a>
-          <button mat-raised-button color="warn" (click)="$event.stopPropagation(); deleteClick(element)" i18n>
-            <mat-icon>delete</mat-icon>Delete
+          <button mat-raised-button color="primary" class="margin-lr-3 action-button" (click)="$event.stopPropagation(); deleteClick(element)" i18n>
+            <mat-icon>delete_forever</mat-icon>Delete
           </button>
         </mat-cell>
       </ng-container>
