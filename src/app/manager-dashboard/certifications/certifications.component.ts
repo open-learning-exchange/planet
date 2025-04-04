@@ -7,7 +7,22 @@ import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/tab
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
-  templateUrl: './certifications.component.html'
+  templateUrl: './certifications.component.html',
+  styles: [`
+    .action-button {
+      min-width: 100px;
+      width: 100px;
+    }
+    .truncate-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      max-width: 100%;
+    }
+  `]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
 
