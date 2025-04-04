@@ -423,21 +423,29 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
-    if (reportType === 'coursesOverview') {
-      const coursesFields = [
+    if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
+      const exportFields = [
         { placeholder: $localize`From`, name: 'startDate', ...commonProps },
         { placeholder: $localize`To`, name: 'endDate', ...commonProps }
       ];
-      const coursesFormGroup = {
+      const exportFormGroup = {
         startDate: this.dateFilterForm.controls.startDate.value,
         endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
       };
-      this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, coursesFields, coursesFormGroup, {
+      const title = reportType === 'coursesOverview' ?
+        $localize`Select Date Range for Courses Overview` :
+        $localize`Select Date Range for Resources Overview`;
+
+      this.dialogsFormService.openDialogsForm(title, exportFields, exportFormGroup , {
         onSubmit: (formValue: any) => {
-          this.exportCourseOverview(formValue.startDate, formValue.endDate);
+          if (reportType === 'coursesOverview') {
+            this.exportCourseOverview(formValue.startDate, formValue.endDate);
+          } else {
+            this.exportResourceOverview(formValue.startDate, formValue.endDate);
+          }
         }
       });
       return;
@@ -499,7 +507,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return stats;
     }, {});
 
-    console.log('Merged course activity data:', this.courseActivities.total.data);
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
     const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
@@ -544,6 +551,48 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       title: $localize`Courses Overview`
     });
 
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
+  }
+
+  exportResourceOverview(startDate: Date, endDate: Date) {
+    this.dialogsLoadingService.start();
+    const dateRange = { startDate, endDate };
+    const filteredResourceData = filterByDate(
+      this.resourceActivities?.total?.data || [],
+      'time',
+      dateRange
+    ) as any[];
+    const resourceStats = filteredResourceData.reduce((stats: { [resourceId: string]: any }, activity: any) => {
+      if (activity.resourceId && !stats[activity.resourceId]) {
+        stats[activity.resourceId] = {
+          title: activity.resourceTitle || activity.title || activity.max?.title || '',
+          count: 0
+        };
+      }
+      if (activity.resourceId) {
+        stats[activity.resourceId].count++;
+      }
+      return stats;
+    }, {});
+    Object.keys(resourceStats).forEach(resourceId => {
+      const foundRating = (this.ratings.resources || []).find((rating: any) => rating.item === resourceId);
+      resourceStats[resourceId].averageRating = foundRating ? foundRating.value : '';
+    });
+    const planetForLink = (this.stateService.configuration.planetName ||
+                          this.planetName ||
+                          'default').toLowerCase();
+    const baseUrl = `https://planet.${planetForLink}.ole.org/resources/view/`;
+    const csvData = Object.entries(resourceStats).map(([ resourceId, resource ]: [string, any]) => ({
+      'Title': resource.title,
+      'Link': baseUrl + resourceId,
+      'Views': resource.count,
+      'Average Rating': resource.averageRating
+    }));
+    this.csvService.exportCSV({
+      data: csvData,
+      title: $localize`Resources Overview`
+    });
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
