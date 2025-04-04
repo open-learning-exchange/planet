@@ -165,8 +165,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     if (this.stepNum > this.maxStep) {
       return false;
     }
-    if (!this.parent && 
-        this.stepDetail?.exam?.questions?.length > 0 && 
+    if (!this.parent &&
+        this.stepDetail?.exam?.questions?.length > 0 &&
         !this.attempts && !this.examPassed) {
       return false;
     }
