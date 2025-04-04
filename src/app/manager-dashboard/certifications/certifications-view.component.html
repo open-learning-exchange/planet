@@ -16,11 +16,11 @@
     <mat-tab-group>
       <mat-tab i18n-label label="Course Requirements">
         <planet-courses *ngIf="certification.courseIds.length > 0" [displayedColumns] = "[ 'courseTitle', 'info', 'createdDate', 'rating' ]" [isForm]="true" [includeIds]="certification.courseIds"></planet-courses>
-        <span *ngIf="certification.courseIds.length === 0" i18n>No courses have been added. Click on <b>Edit</b> to add courses.</span>
+        <span *ngIf="certification.courseIds.length === 0" class="placeholder-message" i18n>No courses have been added. Click on <b>Edit</b> to add courses.</span>
       </mat-tab>
       <mat-tab i18n-label label="Certified Members">
         <planet-users-table *ngIf="certifiedMembers.length" [users]="certifiedMembers" [(tableState)]="certifiedTableState" [displayedColumns]="[ 'profile', 'name' ]" [shouldOpenProfileDialog]="true" containerClass="view-container view-table"></planet-users-table>
-        <span *ngIf="!certifiedMembers.length" i18n>No members have been certified.</span>
+        <span *ngIf="!certifiedMembers.length" class="placeholder-message" i18n>No members have been certified.</span>
       </mat-tab>
     </mat-tab-group>
   </div>
