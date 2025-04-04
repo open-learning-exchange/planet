@@ -57,6 +57,11 @@
         <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
       </ng-container>
 
+      <!-- Clear Button-->
+      <ng-container *planetAuthorizedRoles="field.authorizedRoles === undefined ? 'learner' : field.authorizedRoles">
+        <button type="button" mat-stroked-button *ngIf="field.type === 'clearButton'" (click)="clearRating()">{{field.text}}</button>
+      </ng-container>
+
       <!-- Date Select -->
       <mat-form-field *ngIf="field.type === 'date'" class="full-width">
         <input matInput [matDatepicker]="dp" placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
