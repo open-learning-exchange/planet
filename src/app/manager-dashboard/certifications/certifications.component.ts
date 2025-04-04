@@ -8,7 +8,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   templateUrl: './certifications.component.html',
-  styles: [`
+  styles: [ `
     .action-button {
       min-width: 100px;
       width: 100px;
@@ -22,7 +22,7 @@ import { SelectionModel } from '@angular/cdk/collections';
       word-break: break-word;
       max-width: 100%;
     }
-  `]
+  ` ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
 
