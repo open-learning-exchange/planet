@@ -24,6 +24,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
+  private chatMode = new BehaviorSubject<string>('');
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
@@ -31,6 +32,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   aiProviders$ = this.aiProvidersSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
+  chatMode$: Observable<string> = this.chatMode.asObservable();
 
   constructor(
     private httpClient: HttpClient,
@@ -144,4 +146,13 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   setSelectedConversationId(conversationId: object) {
     this.selectedConversationIdSubject.next(conversationId);
   }
+
+  setChatMode(mode: string) {
+    this.chatMode.next(mode);
+  }
+
+  getChatMode(): string {
+    return this.chatMode.getValue();
+  }
+
 }

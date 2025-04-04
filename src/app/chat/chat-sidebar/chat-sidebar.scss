@@ -1,7 +1,5 @@
 @import '../../variables';
 
-
-
 .header {
   padding: 10px;
 
@@ -35,8 +33,8 @@ li:hover {
 }
 
 .expand-button {
-  position: fixed;
-  top: 80px;
+  position: absolute;
+  top: 10px;
   left: 20px;
   border-radius: 50%;
   background-color: $accent;
@@ -54,6 +52,7 @@ li:hover {
 
 .window-box {
   height: 100%;
+  position: relative;
 }
 
 .sidebar-icon mat-icon {
@@ -83,10 +82,4 @@ li:hover {
 
 .mat-checkbox {
   margin-right: 4px;
-}
-
-@media only screen and (max-width: $screen-md) {
-  .expand-button {
-    top: 10px;
-  }
 }

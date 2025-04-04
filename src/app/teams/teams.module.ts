@@ -18,6 +18,7 @@ import { TeamsReportsComponent } from './teams-reports.component';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 import { SurveysModule } from '../surveys/surveys.module';
+import { ChatModule } from '../chat/chat.module';
 
 @NgModule({
   exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent ],
@@ -33,7 +34,8 @@ import { SurveysModule } from '../surveys/surveys.module';
     SharedComponentsModule,
     PlanetCalendarModule,
     FormsModule,
-    SurveysModule
+    SurveysModule,
+    ChatModule
   ],
   declarations: [
     TeamsComponent,
