@@ -53,34 +53,49 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   ngOnChanges() {
-    this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
-    this.displayedColumns = columns[this.activityType];
-    const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
+    this.displayedColumns = columns[this.activityType] || [ 'title', 'count' ];
+    this.matSortActive = this.activityType === 'health' ? 'weekOf' : 'count';
 
     if (this.activityType === 'chat') {
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
-        createdDate: new Date(activity.createdDate).getTime(),
+        createdDate: activity.createdDate ? new Date(activity.createdDate).getTime() : '',
         hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
         assistant: activity.assistant ? 'True' : '',
         shared: activity.shared ? 'True' : '',
         conversationLength: activity.conversations.length
       }));
-    } else {
+    } else if (this.activityType === 'resources') {
       this.activities.data = this.activitiesByDoc.map(activity => {
-        if (activity.max) {
-          activity.max.title = this.truncateTitle(activity.max.title);
-        }
+        const rawTitle = activity.title || activity.max?.title || '';
         return {
-          averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-          enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
-          completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
-          stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
-          steps: activity.max?.steps,
-          exams: activity.max?.exams,
-          ...activity
+          ...activity,
+          title: this.truncateTitle(rawTitle),
+          averageRating: (this.ratings.find((rating: any) => rating.item === activity.resourceId) || {}).value || ''
         };
       });
+      console.log('Resources data processed:', this.activities.data);
+    } else if (this.activityType === 'courses') {
+      const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
+      this.activities.data = this.activitiesByDoc.map(activity => {
+        const rawTitle = activity.title || activity.max?.title || '';
+        return {
+          ...activity,
+          title: this.truncateTitle(rawTitle),
+          steps: activity.max?.steps || 0,
+          exams: activity.max?.exams || 0,
+          averageRating: (this.ratings.find((rating: any) => rating.item === activity.courseId) || {}).value || '',
+          enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+          completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+          stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length
+        };
+      });
+    } else {
+      this.activities.data = this.activitiesByDoc.map(activity => ({
+        ...activity,
+        count: activity.count || 0,
+        unique: activity.unique || []
+      }));
     }
   }
 
@@ -90,7 +105,10 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   }
 
   sortingObject(item, property) {
-    return property === 'title' ? item.max : item;
+    if (property === 'title') {
+      return item.title || item.max?.title || '';
+    }
+    return item;
   }
 
   rowClick(element) {
