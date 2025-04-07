@@ -703,9 +703,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
     this.showCustomDateFields = timeFilter === 'custom';
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
     if (timeFilter === 'custom') {
-      const currentDate = new Date();
-      const currentStartDate = new Date(currentDate.setMonth(currentDate.getMonth() - 12));
+      const currentStartDate = new Date(now);
+      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -713,22 +716,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    const currentDate = new Date();
-    let newStartDate: Date;
-    const newEndDate: Date = currentDate;
-
     switch (timeFilter) {
       case '1m':
-        newStartDate = new Date(currentDate);
-        newStartDate.setMonth(currentDate.getMonth() - 1);
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 1);
         break;
       case '6m':
-        newStartDate = new Date(currentDate);
-        newStartDate.setMonth(currentDate.getMonth() - 6);
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 6);
         break;
       case '12m':
-        newStartDate = new Date(currentDate);
-        newStartDate.setMonth(currentDate.getMonth() - 12);
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 12);
         break;
       case 'all':
         newStartDate = this.minDate;
