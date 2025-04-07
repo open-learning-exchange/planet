@@ -175,20 +175,6 @@ export class CustomValidators {
     };
   }
 
-  static startDateValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const today = new Date();
-       // Reset to start of day for accurate comparison
-      today.setHours(0, 0, 0, 0);
-      const selectedDate = new Date(control.value);
-
-      if (control.value && selectedDate < today) {
-        return { dateInPast : true };
-      }
-      return null;
-    };
-  }
-
   // Set this on both password and confirmation fields so it runs when either changes
   // confirm should be true for the confirmation field validator
   // match is true by default, for unmatching passwords, match should be false

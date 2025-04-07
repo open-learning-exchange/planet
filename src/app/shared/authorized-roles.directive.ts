@@ -11,6 +11,7 @@ export class AuthorizedRolesDirective implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   private rolesString: string;
   private isLoggedOut = false;
+  private viewCreated = false;
 
   constructor(
     private templateRef: TemplateRef<any>,
@@ -38,14 +39,16 @@ export class AuthorizedRolesDirective implements OnInit, OnDestroy {
   }
 
   checkRoles() {
-    if (this.isLoggedOut) {
+    if (this.isLoggedOut || this.viewCreated) {
       return;
     }
     const authorizedRoles = (this.rolesString || '').split(',').map(val => val.trim());
     const allowedAdmins = authorizedRoles[0] === 'only' ? [] : [ '_admin', 'manager' ];
     if (this.rolesString === '_any' || this.userService.doesUserHaveRole([ ...allowedAdmins, ...authorizedRoles ])) {
       this.viewContainer.createEmbeddedView(this.templateRef);
+      this.viewCreated = true;
     } else {
+      this.viewCreated = false;
       this.viewContainer.clear();
     }
   }

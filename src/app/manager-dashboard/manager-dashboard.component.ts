@@ -310,20 +310,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleOverlay(): void {
-    this.overlayOpen = !this.overlayOpen;
-  }
-
-  toggleStreaming(): void {
-    const configuration = this.planetConfiguration;
-    this.configurationService.updateConfiguration({ ...configuration, streaming: this.streaming }).subscribe(null,
-      error => this.planetMessageService.showAlert($localize`An error occurred please try again.`),
-      () => {
-        this.planetMessageService.showMessage($localize`Streaming has been ${this.streaming ? 'enabled' : 'disabled'}.`);
-      }
-    );
-  }
-
   @HostListener('window:resize')
   onResize() {
     this.isMobile = this.deviceInfoService.getDeviceType() === DeviceType.MOBILE;
