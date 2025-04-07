@@ -397,12 +397,19 @@ export class SubmissionsService {
           header: function(currentPage) {
             if (currentPage === 1) {
               return [
-                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}${exam.description ? ': ' + exam.description : ''}</h1>`)),
+                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}</h1>`)),
               ];
             }
             return null;
           },
-          content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
+          content: [
+            htmlToPdfmake(converter.makeHtml(`
+              ${exam.description || ''}
+              <p style="text-align: center">Number of Responses: ${updatedSubmissions.length}</p>
+            `)),
+            { text: '', pageBreak: 'after' },
+            htmlToPdfmake(converter.makeHtml(markdown))
+          ],
           pageBreakBefore: (currentNode) =>
             currentNode.style && currentNode.style.indexOf('pdf-break') > -1
         }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
