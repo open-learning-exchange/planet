@@ -37,6 +37,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   encapsulation: ViewEncapsulation.None
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+  isLoading = true;
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -138,6 +139,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
+      this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
