@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
-import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
 
@@ -45,7 +46,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     private notificationsService: NotificationsService,
     private stateService: StateService,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private clipboard: Clipboard
   ) {}
 
   ngOnInit() {
@@ -129,10 +131,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     const label = this.formLabel(news);
     const editTimestamp = $localize`Edited on ${new Date().toLocaleString()}`;
     const sharedSourceInfo = this.item.sharedSourceInfo;
+    const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
-      initialValue: news.message,
+      initialValue,
       news: {
         ...news,
         editTimestamp,
@@ -174,5 +177,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
         maxHeight: '90vh'
       });
     });
+  }
+
+  copyLink(voice) {
+    const link = `${window.location.origin}/voices/${voice._id}`;
+    this.clipboard.copy(link);
   }
 }

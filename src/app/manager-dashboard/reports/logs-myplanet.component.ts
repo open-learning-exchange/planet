@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
 import { StateService } from '../../shared/state.service';
@@ -8,9 +8,11 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
 import { CsvService } from '../../shared/csv.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
-  templateUrl: './logs-myplanet.component.html'
+  templateUrl: './logs-myplanet.component.html',
+  styleUrls: [ './logs-myplanet.component.scss' ]
 })
 export class LogsMyPlanetComponent implements OnInit {
 
@@ -33,6 +35,9 @@ export class LogsMyPlanetComponent implements OnInit {
   types: string[] = [];
   selectedType = '';
   disableShowAllTime = true;
+  showFiltersRow = false;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     private csvService: CsvService,
@@ -40,8 +45,10 @@ export class LogsMyPlanetComponent implements OnInit {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private deviceInfoService: DeviceInfoService,
   ) {
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
     this.logsForm = this.fb.group({
       startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
       endDate: [ this.today, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ]
@@ -65,6 +72,11 @@ export class LogsMyPlanetComponent implements OnInit {
       }
       this.updateShowAllTimeButton();
     });
+  }
+
+  @HostListener('window:resize')
+  OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
   }
 
   updateShowAllTimeButton() {
@@ -187,6 +199,14 @@ export class LogsMyPlanetComponent implements OnInit {
       startDate: this.minDate,
       endDate: this.today
     });
+  }
+
+  clearFilters() {
+    this.searchValue = '';
+    this.selectedVersion = '';
+    this.selectedType = '';
+    this.resetDateFilter();
+    this.applyFilters();
   }
 
 }
