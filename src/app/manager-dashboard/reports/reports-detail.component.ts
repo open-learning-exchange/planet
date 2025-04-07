@@ -68,12 +68,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
-  selectedTimeFilter = 'all';
+  selectedTimeFilter = '12m';
   showCustomDateFields = false;
   timeFilterOptions = [
-    { value: '24h', label: 'Last 24 Hours' },
-    { value: '7d', label: 'Last 7 Days' },
-    { value: '30d', label: 'Last 30 Days' },
+    { value: '1m', label: 'Last 30 days' },
+    { value: '6m', label: 'Last 6 Months' },
+    { value: '12m', label: 'Last 12 Months' },
     { value: 'all', label: 'All Time' },
     { value: 'custom', label: 'Custom' },
   ];
@@ -118,7 +118,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ startDate: this.minDate, endDate: this.today });
+        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -704,7 +704,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.selectedTimeFilter = timeFilter;
     this.showCustomDateFields = timeFilter === 'custom';
     if (timeFilter === 'custom') {
-      const currentStartDate = this.filter.startDate || this.minDate;
+      const now = new Date();
+      const currentStartDate = new Date(now.setMonth(now.getMonth() - 12));
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
@@ -717,17 +718,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const newEndDate: Date = now;
 
     switch (timeFilter) {
-      case '24h':
+      case '1m':
         newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 1);
+        newStartDate.setMonth(now.getMonth() - 1);
         break;
-      case '7d':
+      case '6m':
         newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 7);
+        newStartDate.setMonth(now.getMonth() - 6);
         break;
-      case '30d':
+      case '12m':
         newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 30);
+        newStartDate.setMonth(now.getMonth() - 12);
         break;
       case 'all':
         newStartDate = this.minDate;

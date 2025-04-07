@@ -25,14 +25,14 @@
         <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field *ngIf="teams" class="font-size-1 margin-lr-5">
+    <mat-form-field class="font-size-1 margin-lr-5">
       <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" value="All">
         <mat-option i18n value="All">All Members</mat-option>
         <mat-optgroup label="Teams" i18n-label>
-          <mat-option *ngFor="let team of teams.team" [value]="team">{{team.name}}</mat-option>
+          <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
         </mat-optgroup>
         <mat-optgroup label="Enterprises" i18n-label>
-          <mat-option *ngFor="let team of teams.enterprise" [value]="team">{{team.name}}</mat-option>
+          <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
         </mat-optgroup>
       </mat-select>
     </mat-form-field>
@@ -93,15 +93,15 @@
         </mat-form-field>
       </form>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow && teams">
+    <mat-toolbar-row *ngIf="showFiltersRow">
       <mat-form-field class="font-size-1">
         <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" value="All">
           <mat-option i18n value="All">All Members</mat-option>
           <mat-optgroup label="Teams" i18n-label>
-            <mat-option *ngFor="let team of teams.team" [value]="team">{{team.name}}</mat-option>
+            <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
           </mat-optgroup>
           <mat-optgroup label="Enterprises" i18n-label>
-            <mat-option *ngFor="let team of teams.enterprise" [value]="team">{{team.name}}</mat-option>
+            <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
           </mat-optgroup>
         </mat-select>
       </mat-form-field>
