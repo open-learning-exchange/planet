@@ -19,7 +19,7 @@ export class LoginDialogComponent {
 
   login(loginState: 'loggedOut' | 'loggedIn') {
     if (loginState === 'loggedIn') {
-      this.dialogRef.close();
+      this.dialogRef.close(loginState);
     }
   }
 
