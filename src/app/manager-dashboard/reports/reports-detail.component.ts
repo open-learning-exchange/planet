@@ -68,6 +68,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
+  selectedTimeFilter = 'all';
+  showCustomDateFields = false;
+  timeFilterOptions = [
+    { value: '24h', label: 'Last 24 Hours' },
+    { value: '7d', label: 'Last 7 Days' },
+    { value: '30d', label: 'Last 30 Days' },
+    { value: 'all', label: 'All Time' },
+    { value: 'custom', label: 'Custom' },
+  ];
 
   constructor(
     private activityService: ReportsService,
@@ -105,14 +114,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
           endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
         };
-        this.dateFilterForm.controls.endDate.setValue(
-          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-          ? this.dateQueryParams.endDate : this.today
-        );
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+        this.resetDateFilter({ startDate: this.minDate, endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -151,6 +157,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
+      this.filterData();
     });
   }
 
@@ -690,6 +697,48 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
+    this.filterData();
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    this.showCustomDateFields = timeFilter === 'custom';
+    if (timeFilter === 'custom') {
+      const currentStartDate = this.filter.startDate || this.minDate;
+      const currentEndDate = this.filter.endDate || this.today;
+      this.dateFilterForm.patchValue({
+        startDate: currentStartDate,
+        endDate: currentEndDate
+      });
+      return;
+    }
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
+
+    switch (timeFilter) {
+      case '24h':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 30);
+        break;
+      case 'all':
+        newStartDate = this.minDate;
+        break;
+      default:
+        return;
+    }
+    this.resetDateFilter({ startDate: newStartDate, endDate: newEndDate });
+    this.filter.startDate = newStartDate;
+    this.filter.endDate = newEndDate;
+    this.filterData();
   }
 
 }
