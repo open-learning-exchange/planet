@@ -86,12 +86,12 @@
         <mat-divider></mat-divider>
       </mat-list>
     </div>
-    <div>
+    <div class="cards-container">
       <mat-card>
         <mat-card-title i18n class="primary-text-color">Teams</mat-card-title>
         <mat-card-content>
           <mat-list>
-            <mat-list-item *ngFor="let team of teams" [routerLink]="['/teams/view', team.doc._id]" class="cursor-pointer">
+            <mat-list-item *ngFor="let team of teams" [routerLink]="['/teams/view', team.doc._id]" mat-dialog-close class="cursor-pointer">
               <h4 matLine><b>{{team.doc.name}}</b></h4>
             </mat-list-item>
             <mat-list-item *ngIf="teams.length === 0">
@@ -100,11 +100,11 @@
           </mat-list>
         </mat-card-content>
       </mat-card>
-      <mat-card class="margin-t-10">
+      <mat-card>
         <mat-card-title i18n class="primary-text-color">Enterprises</mat-card-title>
         <mat-card-content>
           <mat-list>
-            <mat-list-item *ngFor="let enterprise of enterprises" [routerLink]="['/enterprises/view', enterprise.doc._id]" class="cursor-pointer">
+            <mat-list-item *ngFor="let enterprise of enterprises" [routerLink]="['/enterprises/view', enterprise.doc._id]" mat-dialog-close class="cursor-pointer">
               <h4 matLine><b>{{enterprise.doc.name}}</b></h4>
             </mat-list-item>
             <mat-list-item *ngIf="enterprises.length === 0">
