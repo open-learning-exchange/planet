@@ -134,8 +134,6 @@ export class NewsListComponent implements OnInit, OnChanges {
     let displayName = news.message;
     if (news.chat) {
       displayName = news.news.conversations[0].response;
-    } else if (news.message === '</br>') {
-      displayName = '(empty message)';
     }
 
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
