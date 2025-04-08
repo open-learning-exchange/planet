@@ -133,6 +133,7 @@
         <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
         <button mat-menu-item *ngIf="progress?.steps" (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
         <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
+        <button mat-menu-item (click)="openExportDialog('resourcesOverview')" i18n>Resources Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('coursesOverview')" i18n>Courses Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
@@ -255,16 +256,55 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <planet-reports-detail-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="ratings.resources" activityType="resources" (itemClick)="openResourceView($event)"></planet-reports-detail-activities>
+        <div *ngIf="!resourceActivities || !resourceActivities.byDoc.length" class="view-container view-full-height loading-message" i18n>
+          Reports loading...
+        </div>
+        <div [hidden]="!resourceActivities || !resourceActivities.byDoc.length">
+          <planet-reports-detail-activities 
+            [activitiesByDoc]="resourceActivities.byDoc" 
+            [ratings]="ratings.resources" 
+            activityType="resources" 
+            (itemClick)="openResourceView($event)">
+          </planet-reports-detail-activities>
+        </div>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" [progress]="progress" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
+        <div *ngIf="!courseActivities || !courseActivities.byDoc.length" class="view-container view-full-height loading-message" i18n>
+          Reports loading...
+        </div>
+        <div [hidden]="!courseActivities || !courseActivities.byDoc.length">
+          <planet-reports-detail-activities 
+            [activitiesByDoc]="courseActivities.byDoc" 
+            [ratings]="ratings.courses" 
+            [progress]="progress" 
+            activityType="courses" 
+            (itemClick)="openCourseView($event)">
+          </planet-reports-detail-activities>
+        </div>
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
-        <planet-reports-health [planetCode]="planetCode" [dateRange]="dateFilterForm?.value" [isActive]="healthTab.isActive" (changeDateRange)="resetDateFilter($event)"></planet-reports-health>
+        <div *ngIf="healthTab.isActive && (!healthComponent?.examinations || !healthComponent?.headlineData?.total)" class="view-container view-full-height loading-message" i18n>
+          Reports loading...
+        </div>
+        <div [hidden]="!healthComponent?.examinations || !healthComponent?.headlineData?.total">
+          <planet-reports-health 
+          [planetCode]="planetCode" 
+          [dateRange]="dateFilterForm?.value" 
+          [isActive]="healthTab.isActive" 
+          (changeDateRange)="resetDateFilter($event)">
+        </planet-reports-health>
+        </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
-        <planet-reports-detail-activities [activitiesByDoc]="chatActivities.filteredData" activityType="chat"></planet-reports-detail-activities>
+        <div *ngIf="!chatActivities?.filteredData?.length" class="view-container view-full-height loading-message" i18n>
+          Reports loading...
+        </div>
+        <div [hidden]="!chatActivities?.filteredData?.length">
+          <planet-reports-detail-activities 
+            [activitiesByDoc]="chatActivities.filteredData" 
+            activityType="chat">
+          </planet-reports-detail-activities>
+        </div>
       </mat-tab>
     </mat-tab-group>
   </div>
