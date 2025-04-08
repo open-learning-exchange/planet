@@ -403,10 +403,9 @@ export class SubmissionsService {
             return null;
           },
           content: [
-            htmlToPdfmake(converter.makeHtml(`
-              ${exam.description || ''}
-              <p style="text-align: center">Number of Responses: ${updatedSubmissions.length}</p>
-            `)),
+            { text: exam.description || '' },
+            { text: '\n' },
+            { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
             { text: '', pageBreak: 'after' },
             htmlToPdfmake(converter.makeHtml(markdown))
           ],
@@ -433,13 +432,15 @@ export class SubmissionsService {
         : submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
-      const teamName = submission.teamName;
+      const teamName = submission.teamName
+      ? submission.teamName.replace(/^(Team|Enterprise):/, (match) => `<strong>${match}</strong>`)
+      : '';
       return [
-        `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response ${index + 1}</h3>`,
+        `<h3${index === 0 ? '' : ' class="pdf-break"'}>Submission ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>Date:</strong> ${shortDate}</li>`,
-        teamName ? `<li><strong>Team:</strong> ${teamName}</li>` : '',
+        teamName ? `<li>${teamName}</li>` : '',
         userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
         userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
         `</ul>`,
