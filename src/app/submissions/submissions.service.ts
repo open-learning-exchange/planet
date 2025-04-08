@@ -428,13 +428,23 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = this.formatShortDate(submission.lastUpdateTime);
-      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${shortDate}</h3>`;
-      if (submission.teamName) {
-        const teamHeader = `<h5>${submission.teamName}</h5>`;
-        return `${mainHeader}\n${teamHeader}\n`;
-      } else {
-        return `${mainHeader}\n`;
-      }
+      const userAge = submission.user.birthDate
+        ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate)
+        : submission.user.age;
+      const userGender = submission.user.gender;
+      const communityOrNation = submission.planetName;
+      const teamName = submission.teamName;
+      return [
+        `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response ${index + 1}</h3>`,
+        `<ul>`,
+        `<li><strong>Planet ${communityOrNation}</strong></li>`,
+        `<li><strong>Date:</strong> ${shortDate}</li>`,
+        teamName ? `<li><strong>Team:</strong> ${teamName}</li>` : '',
+        userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
+        userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
+        `</ul>`,
+        `<hr>`
+      ].filter(Boolean).join('\n');
     } else {
       return `### ${exam.name} Questions\n`;
     }
