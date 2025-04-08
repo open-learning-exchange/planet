@@ -57,16 +57,15 @@ export class NewsService {
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
     const { configuration } = this.stateService;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
-    const processedMessage = message === '' ? '</br>' : message;
-    const images = this.createImagesArray(post, processedMessage);
+    const images = this.createImagesArray(post, message);
     const newPost = {
+      ...post,
       docType: 'message',
       time: this.couchService.datePlaceholder,
       createdOn: configuration.code,
       parentCode: configuration.parentCode,
       user: this.userService.get(),
-      ...post,
-      message: processedMessage,
+      message,
       images,
       updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate,
       viewIn: post.viewIn || []
