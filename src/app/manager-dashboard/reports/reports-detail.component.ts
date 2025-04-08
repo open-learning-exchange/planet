@@ -71,6 +71,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   selectedTimeFilter = '12m';
   showCustomDateFields = false;
   timeFilterOptions = [
+    { value: '7d', label: 'Last 7 days' },
     { value: '1m', label: 'Last 30 days' },
     { value: '6m', label: 'Last 6 Months' },
     { value: '12m', label: 'Last 12 Months' },
@@ -717,6 +718,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return;
     }
     switch (timeFilter) {
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
       case '1m':
         newStartDate = new Date(now);
         newStartDate.setMonth(now.getMonth() - 1);
