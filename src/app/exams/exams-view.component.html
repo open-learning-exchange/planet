@@ -9,7 +9,8 @@
     <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
     <span>
       <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
-      <span i18n *ngIf="mode === 'grade' || mode === 'view'"> by{{' ' + submittedBy}}</span><span i18n *ngIf="!submittedBy">(Preview)</span><span *ngIf="updatedOn" i18n> on {{updatedOn | date: 'short'}}</span>
+      <span i18n *ngIf="mode === 'grade' || mode === 'view'"> by{{' ' + submittedBy}}</span><span i18n *ngIf="!submittedBy">(Preview)</span>
+      <span *ngIf="updatedOn && (updatedOn | date: 'short')" i18n> on {{updatedOn | date: 'short'}}</span>
     </span>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
