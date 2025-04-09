@@ -108,7 +108,7 @@ export class NewsListComponent implements OnInit, OnChanges {
       'required': true,
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
-    const formGroup = { message: [ initialValue, CustomValidators.required ] };
+    const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
