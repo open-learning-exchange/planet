@@ -54,12 +54,18 @@ export class ReportsHealthComponent implements OnChanges {
   ngOnChanges(changes) {
     const weeks = generateWeeksArray(this.dateRange);
     if (this.planetCode && changes.planetCode && changes.planetCode.previousValue !== changes.planetCode.currentValue) {
+      this.headlineData = null;
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
         this.setHealthData(weeks);
       });
-    }
-    if (this.examinations) {
+    } else if (changes.isActive && changes.isActive.currentValue === true && !this.examinations) {
+      this.headlineData = null;
+      this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
+        this.examinations = examinations;
+        this.setHealthData(weeks);
+      });
+    } else if (this.examinations) {
       this.setHealthData(weeks);
     }
   }
