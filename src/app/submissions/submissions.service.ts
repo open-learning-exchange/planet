@@ -393,19 +393,23 @@ export class SubmissionsService {
           return;
         }
         const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const markdown = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const submissionContents = markdownSubmissions.map((markdown, index) => {
+          const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
+          return {
+            ...pageBreak,
+            stack: htmlToPdfmake(converter.makeHtml(markdown))
+          };
+        });
         const docContent = [
           { text: exam.description || '' },
           { text: '\n' },
           { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
           { text: '', pageBreak: 'after' },
-          htmlToPdfmake(converter.makeHtml(markdown))
+          ...submissionContents
         ];
         if (exportOptions.includeCharts) {
-          docContent.push({
-            canvas: [ { type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 } ],
-            margin: [ 0, 20, 0, 10 ]
-          });
+          docContent.push({ text: '', pageBreak: 'before' });
           docContent.push({
             text: $localize`Charts`,
             style: 'header',
@@ -419,7 +423,7 @@ export class SubmissionsService {
             question.index = i;
             const aggregated = this.aggregateQuestionResponses(question, updatedSubmissions);
             const chartImage = await this.generateChartImage(aggregated);
-            docContent.push({ text: question.body });
+            docContent.push({ text: `Q${i + 1}: ${question.body}` });
             docContent.push({
               image: chartImage,
               width: 200,
@@ -443,9 +447,7 @@ export class SubmissionsService {
               fontSize: 20,
               bold: true
             }
-          },
-          pageBreakBefore: (currentNode) =>
-            currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+          }
         }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
         this.dialogsLoadingService.stop();
       });
@@ -456,7 +458,7 @@ export class SubmissionsService {
       const answerIndexes = this.answerIndexes(questionTexts, submission);
       return this.surveyHeader(includeAnswers, exam, index, submission) +
         questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers)).join('  \n');
-    }).join('  \n');
+    });
   }
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
@@ -471,7 +473,7 @@ export class SubmissionsService {
       ? submission.teamName.replace(/^(Team|Enterprise):/, (match) => `<strong>${match}</strong>`)
       : '';
       return [
-        `<h3${index === 0 ? '' : ' class="pdf-break"'}>Submission ${index + 1}</h3>`,
+        `<h3>Submission ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>Date:</strong> ${shortDate}</li>`,
