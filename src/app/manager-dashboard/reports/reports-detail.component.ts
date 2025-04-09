@@ -68,6 +68,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
+  selectedTimeFilter = '12m';
+  showCustomDateFields = false;
+  timeFilterOptions = [
+    { value: '7d', label: 'Last 7 days' },
+    { value: '1m', label: 'Last 30 days' },
+    { value: '6m', label: 'Last 6 Months' },
+    { value: '12m', label: 'Last 12 Months' },
+    { value: 'all', label: 'All Time' },
+    { value: 'custom', label: 'Custom' },
+  ];
 
   constructor(
     private activityService: ReportsService,
@@ -105,14 +115,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
           endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
         };
-        this.dateFilterForm.controls.endDate.setValue(
-          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-          ? this.dateQueryParams.endDate : this.today
-        );
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -151,6 +158,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
+      this.filterData();
     });
   }
 
@@ -739,6 +747,52 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
+    this.filterData();
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    this.showCustomDateFields = timeFilter === 'custom';
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
+    if (timeFilter === 'custom') {
+      const currentStartDate = new Date(now);
+      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentEndDate = this.filter.endDate || this.today;
+      this.dateFilterForm.patchValue({
+        startDate: currentStartDate,
+        endDate: currentEndDate
+      });
+      return;
+    }
+    switch (timeFilter) {
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
+      case '1m':
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 1);
+        break;
+      case '6m':
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 6);
+        break;
+      case '12m':
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 12);
+        break;
+      case 'all':
+        newStartDate = this.minDate;
+        break;
+      default:
+        return;
+    }
+    this.resetDateFilter({ startDate: newStartDate, endDate: newEndDate });
+    this.filter.startDate = newStartDate;
+    this.filter.endDate = newEndDate;
+    this.filterData();
   }
 
 }
