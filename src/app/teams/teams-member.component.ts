@@ -23,6 +23,13 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
       font-size: 16px;
       font-weight: bold;
     }
+    .member-name {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+    }
   ` ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
