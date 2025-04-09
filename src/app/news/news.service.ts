@@ -59,12 +59,12 @@ export class NewsService {
     const message = typeof post.message === 'string' ? post.message : post.message.text;
     const images = this.createImagesArray(post, message);
     const newPost = {
-      ...post,
       docType: 'message',
       time: this.couchService.datePlaceholder,
       createdOn: configuration.code,
       parentCode: configuration.parentCode,
       user: this.userService.get(),
+      ...post,
       message,
       images,
       updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate,
