@@ -17,7 +17,7 @@
         <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <form [formGroup]="logsForm">
+    <form [formGroup]="logsForm" *ngIf="showCustomDateFields">
       <mat-form-field class="margin-lr-5 font-size-1">
         <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="logsForm.get('endDate').value">
         <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
@@ -30,9 +30,11 @@
         <mat-datepicker #endPicker></mat-datepicker>
       </mat-form-field>
     </form>
-    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime" class="margin-lr-5">
-      Show All Time
-    </button>
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+        <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
     <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
       Clear
     </button>
@@ -66,6 +68,13 @@
       </mat-form-field>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
+      <mat-form-field class="margin-lr-5 font-size-1">
+        <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+          <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
       <form [formGroup]="logsForm">
         <mat-form-field class="margin-lr-5 font-size-1">
           <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="logsForm.get('endDate').value">
@@ -75,7 +84,7 @@
         </mat-form-field>
       </form>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
+    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
       <form [formGroup]="logsForm">
         <mat-form-field class="margin-lr-5 font-size-1">
           <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="logsForm.get('startDate').value" [max]="today">
@@ -85,9 +94,6 @@
       </form>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
-      <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime" class="margin-lr-5">
-        Show All Time
-      </button>
       <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
         Clear
       </button>
