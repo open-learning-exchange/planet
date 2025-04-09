@@ -57,6 +57,11 @@ export class DialogsFormComponent {
       this.fields = this.data.fields;
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
+      this.fields.forEach(field => {
+        if (field.disabled) {
+          this.modalForm.get(field.name)?.disable({ emitEvent: false });
+        }
+      });
     }
   }
 

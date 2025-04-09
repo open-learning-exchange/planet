@@ -370,12 +370,16 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
+    const hasChartableData = survey.questions.some(
+      (question) => question.type === 'select' || question.type === 'selectMultiple'
+    );
+
     this.dialogsFormService.openDialogsForm(
       'Records to Export',
       [
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
         { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
-        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox' }
+        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData }
       ],
       { includeQuestions: true, includeAnswers: true, includeCharts: false },
       {
