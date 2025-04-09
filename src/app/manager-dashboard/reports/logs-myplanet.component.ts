@@ -38,6 +38,15 @@ export class LogsMyPlanetComponent implements OnInit {
   showFiltersRow = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  selectedTimeFilter = 'all';
+  showCustomDateFields = false;
+  timeFilterOptions = [
+    { value: '24h', label: $localize`Last 24 Hours` },
+    { value: '7d', label: $localize`Last 7 Days` },
+    { value: '30d', label: $localize`Last 30 Days` },
+    { value: 'all', label: $localize`All Time` },
+    { value: 'custom', label: $localize`Custom` },
+  ];
 
   constructor(
     private csvService: CsvService,
@@ -154,6 +163,44 @@ export class LogsMyPlanetComponent implements OnInit {
     this.applyFilters();
   }
 
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    this.showCustomDateFields = timeFilter === 'custom';
+    if (timeFilter === 'custom') {
+      return;
+    }
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
+
+    switch (timeFilter) {
+      case '24h':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 30);
+        break;
+      case 'all':
+        newStartDate = this.minDate;
+        break;
+      default:
+        return;
+    }
+    this.startDate = newStartDate;
+    this.endDate = newEndDate;
+    this.logsForm.patchValue({
+      startDate: newStartDate,
+      endDate: newEndDate,
+    });
+    this.applyFilters();
+  }
+
   applyFilters() {
     this.apklogs = this.allPlanets.map(planet => ({
       ...planet,
@@ -195,10 +242,7 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.logsForm.patchValue({
-      startDate: this.minDate,
-      endDate: this.today
-    });
+    this.onTimeFilterChange('all');
   }
 
   clearFilters() {
