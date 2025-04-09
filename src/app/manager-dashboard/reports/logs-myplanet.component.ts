@@ -164,42 +164,43 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   onTimeFilterChange(timeFilter: string) {
-  this.selectedTimeFilter = timeFilter;
-  this.showCustomDateFields = timeFilter === 'custom';
-  if (timeFilter === 'custom') {
-    return;
-  }
-  const now = new Date();
-  let newStartDate: Date;
-  const newEndDate: Date = now;
-
-  switch (timeFilter) {
-    case '24h':
-      newStartDate = new Date(now);
-      newStartDate.setDate(now.getDate() - 1);
-      break;
-    case '7d':
-      newStartDate = new Date(now);
-      newStartDate.setDate(now.getDate() - 7);
-      break;
-    case '30d':
-      newStartDate = new Date(now);
-      newStartDate.setDate(now.getDate() - 30);
-      break;
-    case 'all':
-      newStartDate = this.minDate;
-      break;
-    default:
+    this.selectedTimeFilter = timeFilter;
+    this.showCustomDateFields = timeFilter === 'custom';
+    if (timeFilter === 'custom') {
       return;
+    }
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
+
+    switch (timeFilter) {
+      case '24h':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 30);
+        break;
+      case 'all':
+        newStartDate = this.minDate;
+        break;
+      default:
+        return;
+    }
+    this.startDate = newStartDate;
+    this.endDate = newEndDate;
+    this.logsForm.patchValue({
+      startDate: newStartDate,
+      endDate: newEndDate,
+    });
+    this.applyFilters();
   }
-  this.startDate = newStartDate;
-  this.endDate = newEndDate;
-  this.logsForm.patchValue({
-    startDate: newStartDate,
-    endDate: newEndDate,
-  });
-  this.applyFilters();
-}
+
   applyFilters() {
     this.apklogs = this.allPlanets.map(planet => ({
       ...planet,
