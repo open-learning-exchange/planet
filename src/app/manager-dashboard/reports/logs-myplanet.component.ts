@@ -24,7 +24,7 @@ export class LogsMyPlanetComponent implements OnInit {
   get childType() {
     return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
-  startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1)); 
+  startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1));
   endDate: Date = new Date();
   selectedChildren: any[] = [];
   logsForm: FormGroup;
@@ -146,7 +146,7 @@ export class LogsMyPlanetComponent implements OnInit {
       );
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
-        this.onTimeFilterChange(this.selectedTimeFilter);
+      this.onTimeFilterChange(this.selectedTimeFilter);
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
   }
 
