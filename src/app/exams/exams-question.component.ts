@@ -46,6 +46,9 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     };
     this.questionForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
     this.questionForm.controls.choices.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
+    this.questionForm.controls.hasOtherOption.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      onFormChange();
+    });
   }
 
   ngOnChanges() {
