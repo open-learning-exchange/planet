@@ -13,7 +13,6 @@ import { CoursesProgressLearnerComponent } from '../courses/progress-courses/cou
 import { LandingComponent } from '../landing/landing.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
-import { BetaThenAuthService } from '../shared/beta-then-auth-guard-service';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -80,8 +79,7 @@ const routes: Routes = [
   {
     path: '',
     component: CommunityComponent,
-    children: [ { path: 'voices/:id', component: NewsListComponent } ],
-    canActivate: [ BetaThenAuthService ]
+    children: [ { path: 'voices/:id', component: NewsListComponent } ]
   },
   {
     path: '',
