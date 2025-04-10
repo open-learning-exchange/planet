@@ -42,6 +42,15 @@ export class ReportsMyPlanetComponent implements OnInit {
   versions: string[] = [];
   selectedVersion = '';
   disableShowAllTime = true;
+  selectedTimeFilter = 'all'; // Default to All Time
+  timeFilterOptions = [
+    { value: '24h', label: $localize`Last 24 Hours` },
+    { value: '7d', label: $localize`Last 7 Days` },
+    { value: '30d', label: $localize`Last 30 Days` },
+    { value: 'all', label: $localize`All Time` },
+    { value: 'custom', label: $localize`Custom` },
+  ];
+  showCustomDateFields = false;
 
   constructor(
     private csvService: CsvService,
@@ -69,6 +78,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.onTimeFilterChange('all'); // Apply All Time filter by default
     this.getMyPlanetList(this.route.snapshot.params.hubId);
     this.reportsForm.valueChanges.subscribe(() => {
       this.startDate = this.reportsForm.get('startDate').value;
@@ -93,6 +103,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   clearFilters() {
     this.searchValue = '';
     this.selectedVersion = '';
+    this.selectedTimeFilter = 'all';
     this.resetDateFilter();
     this.applyFilters();
   }
@@ -146,6 +157,44 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   onVersionChange(version: string) {
     this.selectedVersion = version;
+    this.applyFilters();
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    this.showCustomDateFields = timeFilter === 'custom';
+    if (timeFilter === 'custom') {
+      return;
+    }
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
+
+    switch (timeFilter) {
+      case '24h':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
+      case '30d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 30);
+        break;
+      case 'all':
+        newStartDate = this.minDate;
+        break;
+      default:
+        return;
+    }
+    this.startDate = newStartDate;
+    this.endDate = newEndDate;
+    this.reportsForm.patchValue({
+      startDate: newStartDate,
+      endDate: newEndDate,
+    });
     this.applyFilters();
   }
 
