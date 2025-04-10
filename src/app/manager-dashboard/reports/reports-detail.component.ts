@@ -115,11 +115,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
           endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
         };
+        if (
+          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+        ) {
+          this.selectedTimeFilter = 'custom';
+          this.showCustomDateFields = true;
+        }
         this.dateFilterForm.controls.endDate.setValue(
           this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
           ? this.dateQueryParams.endDate : this.today
         );
-        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
