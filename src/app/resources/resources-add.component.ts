@@ -42,7 +42,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   deleteAttachment = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
-  userDetail: any = {};
+  currentUsername = '';
   pageType: string | null = null;
   disableDownload = true;
   disableDelete = true;
@@ -85,6 +85,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
+    this.currentUsername = this.userService.get().name;
     this.createForm();
     this.resourceForm.setValidators(() => {
       if (this.file && this.file.size / 1024 / 1024 > 512) {
@@ -93,7 +94,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         return null;
       }
     });
-    this.userDetail = this.userService.get();
     this.resourcesService.requestResourcesUpdate(false, false);
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
@@ -137,7 +137,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       resourceFor: [],
       medium: '',
       resourceType: '',
-      addedBy: '',
+      addedBy: this.currentUsername,
       openWhichFile: [ { value: '', disabled: true }, (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles) ],
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
