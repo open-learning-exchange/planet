@@ -77,6 +77,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   overlayOpen = false;
   isMobile: boolean;
   gridRowHeight = '2rem';
+  isLoading = true;
 
   constructor(
     private userService: UserService,
@@ -93,6 +94,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.streaming = this.planetConfiguration.streaming;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     if (this.planetType !== 'center') {
@@ -104,7 +106,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.couchService.currentTime().pipe(switchMap((time: number) => {
       const tillDate = new Date(time);
       return this.managerService.getLogs(new Date(tillDate.getFullYear(), tillDate.getMonth(), tillDate.getDate() - 30).getTime());
-    })).subscribe(logs => this.activityLogs = logs);
+    })).subscribe(logs => {
+      this.activityLogs = logs;
+      this.isLoading = false;
+    });
     this.countFetchItemAvailable();
     forkJoin([
       this.couchService.findAll('send_items'),

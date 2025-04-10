@@ -69,6 +69,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isLoading = true;
 
   constructor(
     private couchService: CouchService,
@@ -136,6 +137,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initTeam(teamId: string) {
+    this.isLoading = true;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
@@ -163,6 +165,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.setStatus(teamId, this.leader, this.userService.get());
       this.requestTeamNews(teamId);
+      this.isLoading = false;
     });
   }
 

@@ -42,28 +42,30 @@
 
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog && !isForm">
-    <ng-container *ngIf="isAuthorized">
-      <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
-      <div class="column margin-lr-5">
-        <planet-filtered-amount [table]="courses" labelFor="courses"></planet-filtered-amount>
-        <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
-      </div>
-      <span class="toolbar-fill"></span>
-      <ng-container *ngIf="parent">
-        <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
-          <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
-        </button>
-      </ng-container>
-      <ng-container *ngIf="!parent && deviceType !== deviceTypes.DESKTOP">
-        <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
+    <ng-container *ngIf="!isLoading">
+      <ng-container *ngIf="isAuthorized">
+        <button *ngIf="!parent" mat-mini-fab routerLink="add" ><mat-icon>add</mat-icon></button>
+        <div class="column margin-lr-5">
+          <planet-filtered-amount [table]="courses" labelFor="courses"></planet-filtered-amount>
+          <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
+        </div>
+        <span class="toolbar-fill"></span>
+        <ng-container *ngIf="parent">
+          <button mat-button [disabled]="!selection.selected.length" (click)="shareCourse('pull', selection.selected)">
+            <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Course</span>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!parent && deviceType !== deviceTypes.DESKTOP">
+          <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
+            <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+          </mat-menu>
+        </ng-container>
+        <ng-container *ngIf="!parent && deviceType === deviceTypes.DESKTOP">
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-        </mat-menu>
-      </ng-container>
-      <ng-container *ngIf="!parent && deviceType === deviceTypes.DESKTOP">
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+        </ng-container>
       </ng-container>
     </ng-container>
   </mat-toolbar>
