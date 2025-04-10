@@ -115,11 +115,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
           endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
         };
+        this.dateFilterForm.controls.endDate.setValue(
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+          ? this.dateQueryParams.endDate : this.today
+        );
+        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -158,7 +162,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
-      this.filterData();
     });
   }
 
@@ -237,7 +240,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : this.minDate
+        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -752,7 +755,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
-    this.filterData();
   }
 
   onTimeFilterChange(timeFilter: string) {
