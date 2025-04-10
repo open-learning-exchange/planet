@@ -16,7 +16,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { findByIdInArray, filterById, itemsShown } from '../shared/utils';
+import { findByIdInArray, filterById } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -374,13 +374,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       'Records to Export',
       [
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
-        { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' }
+        { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
+        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox' }
       ],
-      { includeQuestions: true, includeAnswers: true },
+      { includeQuestions: true, includeAnswers: true, includeCharts: false },
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (options: { includeQuestions, includeAnswers}) => {
+        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts }) => {
           this.dialogsFormService.closeDialogsForm();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },

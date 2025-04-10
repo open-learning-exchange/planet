@@ -89,15 +89,8 @@ export class AuthService {
     );
   }
 
-  checkAuthenticationStatus(): Observable<void> {
-    return this.getSession$().pipe(
-      map(sessionInfo => {
-        const isLoggedIn = !!sessionInfo.userCtx.name;
-        if (!isLoggedIn) {
-          throw new Error('Not authorized');
-        }
-      })
-    );
+  checkAuthenticationStatus(): Observable<boolean> {
+    return this.checkUser('/', []);
   }
 
 }

@@ -68,6 +68,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
+  selectedTimeFilter = '12m';
+  showCustomDateFields = false;
+  timeFilterOptions = [
+    { value: '7d', label: 'Last 7 days' },
+    { value: '1m', label: 'Last 30 days' },
+    { value: '6m', label: 'Last 6 Months' },
+    { value: '12m', label: 'Last 12 Months' },
+    { value: 'all', label: 'All Time' },
+    { value: 'custom', label: 'Custom' },
+  ];
 
   constructor(
     private activityService: ReportsService,
@@ -105,14 +115,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
           endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
         };
-        this.dateFilterForm.controls.endDate.setValue(
-          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-          ? this.dateQueryParams.endDate : this.today
-        );
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -151,6 +158,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
+      this.filterData();
     });
   }
 
@@ -428,21 +436,29 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
-    if (reportType === 'coursesOverview') {
-      const coursesFields = [
+    if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
+      const exportFields = [
         { placeholder: $localize`From`, name: 'startDate', ...commonProps },
         { placeholder: $localize`To`, name: 'endDate', ...commonProps }
       ];
-      const coursesFormGroup = {
+      const exportFormGroup = {
         startDate: this.dateFilterForm.controls.startDate.value,
         endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
       };
-      this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, coursesFields, coursesFormGroup, {
+      const title = reportType === 'coursesOverview' ?
+        $localize`Select Date Range for Courses Overview` :
+        $localize`Select Date Range for Resources Overview`;
+
+      this.dialogsFormService.openDialogsForm(title, exportFields, exportFormGroup , {
         onSubmit: (formValue: any) => {
-          this.exportCourseOverview(formValue.startDate, formValue.endDate);
+          if (reportType === 'coursesOverview') {
+            this.exportCourseOverview(formValue.startDate, formValue.endDate);
+          } else {
+            this.exportResourceOverview(formValue.startDate, formValue.endDate);
+          }
         }
       });
       return;
@@ -504,7 +520,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return stats;
     }, {});
 
-    console.log('Merged course activity data:', this.courseActivities.total.data);
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
     const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
@@ -549,6 +564,48 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       title: $localize`Courses Overview`
     });
 
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
+  }
+
+  exportResourceOverview(startDate: Date, endDate: Date) {
+    this.dialogsLoadingService.start();
+    const dateRange = { startDate, endDate };
+    const filteredResourceData = filterByDate(
+      this.resourceActivities?.total?.data || [],
+      'time',
+      dateRange
+    ) as any[];
+    const resourceStats = filteredResourceData.reduce((stats: { [resourceId: string]: any }, activity: any) => {
+      if (activity.resourceId && !stats[activity.resourceId]) {
+        stats[activity.resourceId] = {
+          title: activity.resourceTitle || activity.title || activity.max?.title || '',
+          count: 0
+        };
+      }
+      if (activity.resourceId) {
+        stats[activity.resourceId].count++;
+      }
+      return stats;
+    }, {});
+    Object.keys(resourceStats).forEach(resourceId => {
+      const foundRating = (this.ratings.resources || []).find((rating: any) => rating.item === resourceId);
+      resourceStats[resourceId].averageRating = foundRating ? foundRating.value : '';
+    });
+    const planetForLink = (this.stateService.configuration.planetName ||
+                          this.planetName ||
+                          'default').toLowerCase();
+    const baseUrl = `https://planet.${planetForLink}.ole.org/resources/view/`;
+    const csvData = Object.entries(resourceStats).map(([ resourceId, resource ]: [string, any]) => ({
+      'Title': resource.title,
+      'Link': baseUrl + resourceId,
+      'Views': resource.count,
+      'Average Rating': resource.averageRating
+    }));
+    this.csvService.exportCSV({
+      data: csvData,
+      title: $localize`Resources Overview`
+    });
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
@@ -695,6 +752,52 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
+    this.filterData();
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    this.showCustomDateFields = timeFilter === 'custom';
+    const now = new Date();
+    let newStartDate: Date;
+    const newEndDate: Date = now;
+    if (timeFilter === 'custom') {
+      const currentStartDate = new Date(now);
+      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentEndDate = this.filter.endDate || this.today;
+      this.dateFilterForm.patchValue({
+        startDate: currentStartDate,
+        endDate: currentEndDate
+      });
+      return;
+    }
+    switch (timeFilter) {
+      case '7d':
+        newStartDate = new Date(now);
+        newStartDate.setDate(now.getDate() - 7);
+        break;
+      case '1m':
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 1);
+        break;
+      case '6m':
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 6);
+        break;
+      case '12m':
+        newStartDate = new Date(now);
+        newStartDate.setMonth(now.getMonth() - 12);
+        break;
+      case 'all':
+        newStartDate = this.minDate;
+        break;
+      default:
+        return;
+    }
+    this.resetDateFilter({ startDate: newStartDate, endDate: newEndDate });
+    this.filter.startDate = newStartDate;
+    this.filter.endDate = newEndDate;
+    this.filterData();
   }
 
 }
