@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { MatStepper } from '@angular/material/stepper';
+import { finalize } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { languages } from '../shared/languages';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
-import { MatStepper } from '@angular/material/stepper';
-import { Router, ActivatedRoute } from '@angular/router';
-import { environment } from '../../environments/environment';
-import { finalize } from 'rxjs/operators';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
 
@@ -49,6 +50,7 @@ export class ConfigurationComponent implements OnInit {
   spinnerOn = true;
   configuration: any = {};
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
+  languageNames = languages.map(list => list.name);
 
   constructor(
     private formBuilder: FormBuilder,
