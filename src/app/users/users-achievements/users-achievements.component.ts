@@ -31,6 +31,7 @@ export class UsersAchievementsComponent implements OnInit {
   openAchievementIndex = -1;
   certifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false;
+  isLoading = true;
 
   constructor(
     private couchService: CouchService,
@@ -46,6 +47,7 @@ export class UsersAchievementsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isLoading = true;
     this.route.paramMap.subscribe((params: ParamMap) => {
       let name = params.get('name'),
           id;
@@ -67,6 +69,7 @@ export class UsersAchievementsComponent implements OnInit {
       this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
     ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
       this.setCertifications(courses, progress, certifications);
+      this.isLoading = false;
     });
     this.coursesService.requestCourses();
   }
