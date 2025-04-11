@@ -21,6 +21,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   @Input() link;
   @Input() emptyLink;
   @Input() shelfName: string;
+  @Input() isLoading = false; 
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
