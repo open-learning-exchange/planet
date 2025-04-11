@@ -89,13 +89,13 @@ export class AuthService {
     );
   }
 
-  checkAuthenticationStatus(): Observable<void> {
-    return this.getSession$().pipe(
-      map(sessionInfo => {
-        const isLoggedIn = !!sessionInfo.userCtx.name;
+  checkAuthenticationStatus(): Observable<boolean> {
+    return this.checkUser('/', []).pipe(
+      map(isLoggedIn => {
         if (!isLoggedIn) {
           throw new Error('Not authorized');
         }
+        return isLoggedIn;
       })
     );
   }
