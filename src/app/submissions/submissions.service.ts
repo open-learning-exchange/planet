@@ -590,21 +590,33 @@ export class SubmissionsService {
   }
 
   async analyseResponses(exam: any, submissions: any) {
-    const payload = exam.questions.map((question, questionIndex) => {
-      const responses = submissions.map(submission => {
-        const userInfo = {
-          age: submission.user.age ? submission.user.age : ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
-          gender: submission.user.gender
-        };
-        const answer = submission.answers[questionIndex];
+    const userSubmissions = submissions.map(submission => ({
+      userInfo: {
+        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        gender: submission.user.gender
+      },
+      answers: submission.answers
+    }));
 
+    const getResponse = (answer, type) => {
+      if (type === 'select') {
+        return answer.value.text;
+      }
+      if (type === 'selectMultiple') {
+        return answer.value.map(item => item.text).join(', ');
+      }
+      return answer.value;
+    };
+
+    const payload = exam.questions.map((question, questionIndex) => {
+      const responses = userSubmissions.map(submission => {
+        const answer = submission.answers[questionIndex];
         return {
-          userInfo: userInfo,
-          response: question.type === 'select' ? answer.value.text :
-            question.type === 'selectMultiple' ? answer.value.map(item => item.text).join(', ') :
-            answer.value
+          userInfo: submission.userInfo,
+          response: getResponse(answer, question.type)
         };
       });
+
       return {
         question: `Question ${questionIndex + 1} - ${question.body}`,
         type: question.type,
