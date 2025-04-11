@@ -595,7 +595,7 @@ export class SubmissionsService {
         const userInfo = {
           age: submission.user.age ? submission.user.age : ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
           gender: submission.user.gender
-        }
+        };
         const answer = submission.answers[questionIndex];
 
         return {
@@ -603,7 +603,7 @@ export class SubmissionsService {
           response: question.type === 'select' ? answer.value.text :
             question.type === 'selectMultiple' ? answer.value.map(item => item.text).join(', ') :
             answer.value
-        }
+        };
       });
       return {
         question: `Question ${questionIndex + 1} - ${question.body}`,
@@ -618,7 +618,8 @@ export class SubmissionsService {
       const response = await this.chatService.getPrompt(
         {
           content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
-          Analyze survey questions, its responses and only respond with insights for each and every question individually. ${payloadString}`,
+            Analyze survey questions, its responses and only respond with insights for each and every question individually.
+            ${payloadString}`,
           aiProvider: { name: 'openai' },
           assistant: false
         },
