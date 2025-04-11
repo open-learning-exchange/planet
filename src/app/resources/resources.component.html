@@ -42,30 +42,32 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
-    <ng-container *ngIf="isAuthorized">
-      <button *ngIf="!parent && myView !== 'myPersonals'" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
-      <div class="column margin-lr-5">
-        <planet-filtered-amount [table]="resources"></planet-filtered-amount>
-        <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
-      </div>
-      <span class="toolbar-fill"></span>
-      <ng-container *ngIf="myView !== 'myPersonals'">
-        <span *ngIf="parent">
-          <button mat-button [disabled]="!selection.selected.length" (click)="shareResource('pull', selection.selected)">
-            <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
-          </button>
-        </span>
-        <span *ngIf="!parent && isTablet">
-          <button *ngIf="!isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
+    <ng-container *ngIf="!isLoading">
+      <ng-container *ngIf="isAuthorized">
+        <button *ngIf="!parent && myView !== 'myPersonals'" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
+        <div class="column margin-lr-5">
+          <planet-filtered-amount [table]="resources"></planet-filtered-amount>
+          <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
+        </div>
+        <span class="toolbar-fill"></span>
+        <ng-container *ngIf="myView !== 'myPersonals'">
+          <span *ngIf="parent">
+            <button mat-button [disabled]="!selection.selected.length" (click)="shareResource('pull', selection.selected)">
+              <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
+            </button>
+          </span>
+          <span *ngIf="!parent && isTablet">
+            <button *ngIf="!isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
+              <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+            </mat-menu>
+          </span>
+          <span *ngIf="!parent && !isTablet">
             <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-          </mat-menu>
-        </span>
-        <span *ngIf="!parent && !isTablet">
-          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-        </span>
+          </span>
+        </ng-container>
       </ng-container>
     </ng-container>
   </mat-toolbar>

@@ -32,7 +32,7 @@
   </mat-toolbar>
 
   <ng-template #editDetails>
-    <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
+    <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n *ngIf="!isLoading">
       {fullView, select, on {Show} off {Hide}} details
     </button>
     <button mat-stroked-button *ngIf="canManage" (click)="updateResource()">
