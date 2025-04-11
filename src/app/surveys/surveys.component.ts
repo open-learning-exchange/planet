@@ -379,13 +379,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       [
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
         { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
-        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData }
+        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData },
+        { name: 'includeAnalysis', placeholder: $localize`Include AI Analysis`, type: 'checkbox' }
       ],
-      { includeQuestions: true, includeAnswers: true, includeCharts: false },
+      { includeQuestions: true, includeAnswers: true, includeCharts: false, includeAnalysis: false },
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts }) => {
+        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }) => {
           this.dialogsFormService.closeDialogsForm();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
