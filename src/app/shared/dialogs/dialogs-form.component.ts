@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
+import { UserService } from '../user.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -47,14 +48,15 @@ export class DialogsFormComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogsLoadingService: DialogsLoadingService,
-    private dialogsListService: DialogsListService
+    private dialogsListService: DialogsListService,
+    private userService: UserService
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
         this.data.formGroup :
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
-      this.fields = this.data.fields;
+      this.fields = this.data.fields.filter(field => !field.planetBeta || this.userService.isBetaEnabled());
       this.isSpinnerOk = false;
       this.disableIfInvalid = this.data.disableIfInvalid || this.disableIfInvalid;
       this.fields.forEach(field => {
