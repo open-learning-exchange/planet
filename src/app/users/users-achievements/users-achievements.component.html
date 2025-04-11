@@ -4,7 +4,7 @@
   <span class="toolbar-fill"></span>
 </mat-toolbar>
 
-<div class="space-container" *ngIf="!isLoading">
+<div class="space-container">
   <mat-toolbar class="primary-color font-size-1 responsive-toolbar center-text">
     <div>
       <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
