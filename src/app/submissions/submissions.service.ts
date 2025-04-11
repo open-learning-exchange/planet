@@ -409,13 +409,16 @@ export class SubmissionsService {
           { text: '', pageBreak: 'after' },
           ...submissionContents
         ];
-        if (exportOptions.includeCharts) {
+        const setHeader = (name) => {
           docContent.push({ text: '', pageBreak: 'before' });
           docContent.push({
-            text: $localize`Charts`,
+            text: $localize`${name}`,
             style: 'header',
             margin: [ 0, 20, 0, 10 ]
           });
+        };
+        if (exportOptions.includeCharts) {
+          setHeader('Charts');
           for (let i = 0; i < exam.questions.length; i++) {
             if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
               continue;
@@ -435,11 +438,7 @@ export class SubmissionsService {
         }
         if (exportOptions.includeAnalysis) {
           const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
-          docContent.push({
-            text: $localize`AI Analysis`,
-            style: 'header',
-            margin: [ 0, 20, 0, 10 ]
-          });
+          setHeader('AI Analysis');
           docContent.push({
             text: analysisPayload.chat,
             margin: [ 0, 10, 0, 10 ]
@@ -608,7 +607,7 @@ export class SubmissionsService {
     try {
       const response = await this.chatService.getPrompt(
         {
-          content: JSON.stringify(`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
+          content: JSON.stringify($localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
           Analyze survey questions, its responses and only respond with insights for each and every question individually. ${payload}`),
           aiProvider: { name: 'openai' },
           assistant: false
