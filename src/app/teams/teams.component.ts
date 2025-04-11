@@ -41,6 +41,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
+  isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
@@ -104,6 +105,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
+    this.isLoading = true;
     const thirtyDaysAgo = time => {
       const date = new Date(time);
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
@@ -141,6 +143,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       console.log(error);
+      this.isLoading = false;
     });
   }
 
