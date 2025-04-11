@@ -48,6 +48,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
+  isLoading = true;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
@@ -93,6 +94,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadSurveys() {
+    this.isLoading = true;
     const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
     forkJoin([
       receiveData('exams', 'surveys'),
@@ -125,6 +127,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.applyViewModeFilter();
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
     });
   }
 
