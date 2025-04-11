@@ -5,7 +5,7 @@
   <span class="closebtn" (click)="closeBanner()">&times;</span>
 </div>
 <mat-card class="horizontal" style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
-  <div *ngIf="!isLoading" style="display: flex; align-items: flex-start;">
+  <div style="display: flex; align-items: flex-start;">
     <a [routerLink]="['/users/profile', user.name]" class="profile-link">
       <img [src]="profileImg" class="profile-avatar">
     </a>
@@ -22,7 +22,7 @@
       </h1>
     </div>
   </div>
-  <div *ngIf="!isLoading" style="display: flex; flex-direction: column; align-items: flex-end;">
+  <div style="display: flex; flex-direction: column; align-items: flex-end;">
     <div class="date" style="text-align: right;">
       <p>{{dateNow | date:'longDate'}}</p>
     </div>

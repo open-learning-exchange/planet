@@ -39,7 +39,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   leaderIds = [];
   onDestroy$ = new Subject<void>();
   showBanner = false;
-  isLoading = true;
 
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
@@ -77,7 +76,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true;
     this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
@@ -91,7 +89,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         })
       ).subscribe((res: any) => {
         this.visits = res.length;
-        this.isLoading = false;
       });
     this.reminderBanner();
   }
