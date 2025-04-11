@@ -592,23 +592,33 @@ export class SubmissionsService {
   async analyseResponses(exam: any, submissions: any) {
     const payload = exam.questions.map((question, questionIndex) => {
       const responses = submissions.map(submission => {
+        const userInfo = {
+          age: submission.user.age ? submission.user.age : ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+          gender: submission.user.gender
+        }
         const answer = submission.answers[questionIndex];
-        return (question.type === 'select' || question.type === 'selectMultiple') ?
-          answer.value.text :
-          answer.value;
+
+        return {
+          userInfo: userInfo,
+          response: question.type === 'select' ? answer.value.text :
+            question.type === 'selectMultiple' ? answer.value.map(item => item.text).join(', ') :
+            answer.value
+        }
       });
       return {
-        question: `Question ${questionIndex} - ${question.body}`,
+        question: `Question ${questionIndex + 1} - ${question.body}`,
         type: question.type,
-        responses,
+        choices: question.choices,
+        responses
       };
     });
 
     try {
+      const payloadString = JSON.stringify(payload, null, 2);
       const response = await this.chatService.getPrompt(
         {
-          content: JSON.stringify($localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
-          Analyze survey questions, its responses and only respond with insights for each and every question individually. ${payload}`),
+          content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
+          Analyze survey questions, its responses and only respond with insights for each and every question individually. ${payloadString}`,
           aiProvider: { name: 'openai' },
           assistant: false
         },
