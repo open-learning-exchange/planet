@@ -357,7 +357,6 @@ export class SubmissionsService {
       this.managerService.getChildPlanets(true)
     ])
       .pipe(
-        finalize(() => this.dialogsLoadingService.stop()),
         catchError((error) => {
           this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
           return throwError(error);
