@@ -67,6 +67,18 @@ $label-height: 1rem;
   display: inline-block;
 }
 
+.mat-row.expanded-row {
+  border: none;
+}
+
+.mat-row.expanded-row td {
+  padding: 0;
+}
+
+.content {
+  max-height: 13rem !important;
+}
+
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
