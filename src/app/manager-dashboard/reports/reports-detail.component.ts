@@ -111,18 +111,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           return;
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-        // Parse dates from query params without timezone issues
-        const parseDateWithoutTimezone = (dateStr: string): Date => {
-          if (!dateStr) {
-            return null;
-          }
-          const [ year, month, day ] = dateStr.split('-').map(n => parseInt(n, 10));
-          return new Date(year, month - 1, day, 0, 0, 0);
+        const parseDate = (dateStr) => {
+          if (!dateStr) return null;
+          const [y, m, d] = dateStr.split('-').map(Number);
+          return new Date(y, m - 1, d);
         };
+        
         this.dateQueryParams = {
-          startDate: parseDateWithoutTimezone(queryParams['startDate']),
-          endDate: parseDateWithoutTimezone(queryParams['endDate']) || this.today
+          startDate: parseDate(queryParams['startDate']),
+          endDate: parseDate(queryParams['endDate']) || this.today
         };
+        
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
