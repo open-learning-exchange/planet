@@ -127,11 +127,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ 
-          startDate: this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) 
-            ? this.dateQueryParams.startDate 
-            : new Date(new Date().setMonth(new Date().getMonth() - 12)), 
-          endDate: this.today 
+        this.resetDateFilter({
+          startDate: this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
+            ? this.dateQueryParams.startDate
+            : new Date(new Date().setMonth(new Date().getMonth() - 12)),
+          endDate: this.today
         });
         this.initializeData(!this.codeParam);
       });
