@@ -431,7 +431,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
@@ -651,9 +651,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'health':
         this.exportDocView(reportType, dateRange, members, null);
         break;
+      case 'chat':
+        this.exportChatData(dateRange, members, sortBy);
+        break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportChatData(dateRange: any, members: any[], sortBy: string) {
+    let data = filterByMember(filterByDate(this.chatActivities.data, 'createdDate', dateRange), members);
+    if (sortBy) {
+      data = this.sortData(data, sortBy);
+    }
+    const exportData = data.map(activity => ({
+      'User': activity.user || '',
+      'AI Provider': activity.aiProvider || '',
+      'Timestamp': new Date(activity.createdDate).toLocaleString(),
+      'Chat Responses': activity.conversations?.length || 0,
+      'Assistant': activity.assistant ? 'Yes' : 'No',
+      'Shared': activity.shared ? 'Yes' : 'No',
+      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+    }));
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Chat Usage`
+    });
   }
 
   exportSummary(dateRange: any, members: any[], sortBy: string) {
