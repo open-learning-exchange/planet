@@ -83,7 +83,14 @@ export class AuthService {
   }
 
   checkAuthenticationStatus(): Observable<boolean> {
-    return this.checkUser('/', []);
+    return this.checkUser('/', []).pipe(
+      map(isLoggedIn => {
+        if (!isLoggedIn) {
+          throw new Error('Not authorized');
+        }
+        return isLoggedIn;
+      })
+    );
   }
 
 }
