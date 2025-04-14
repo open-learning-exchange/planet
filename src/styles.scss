@@ -191,6 +191,14 @@ body {
 
   }
 
+  .mat-row.expanded-row {
+    border: none;
+  }
+
+  .mat-row.expanded-row td {
+    padding: 0;
+  }
+
   .list-content-menu-auto {
     grid-template-rows: auto 1fr min-content;
   }
