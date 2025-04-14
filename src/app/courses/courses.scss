@@ -75,19 +75,6 @@ $label-height: 1rem;
   padding: 0;
 }
 
-.expandable-container {
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.expandable-content {
-  position: relative;
-  padding: 16px;
-  width: 100%;
-}
-
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
