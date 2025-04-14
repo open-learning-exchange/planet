@@ -237,12 +237,14 @@
       </ng-container>
       <ng-container matColumnDef="expandedDetail">
         <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" *ngIf="isExpanded(element)">
-            <planet-markdown
-              class="img-resize"
-              [imageSource]="parent ? 'parent' : 'local'"
-              [content]="element.doc.description">
-            </planet-markdown>
+          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
+            <ng-container *ngIf="element.renderContent && isExpanded(element)">
+              <planet-markdown
+                class="img-resize"
+                [imageSource]="parent ? 'parent' : 'local'"
+                [content]="element.doc.description">
+              </planet-markdown>
+            </ng-container>
           </div>
         </mat-cell>
       </ng-container>

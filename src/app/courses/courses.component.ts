@@ -44,7 +44,7 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
-  ],
+  ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -487,6 +487,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   toggleRow(element: any) {
     this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  onExpansionDone(event: any, element: any) {
+    element.renderContent = (event.toState === 'expanded');
   }
 
   isExpanded(element: any): boolean {

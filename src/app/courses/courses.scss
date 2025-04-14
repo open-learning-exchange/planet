@@ -76,7 +76,20 @@ $label-height: 1rem;
 }
 
 .content {
-  max-height: 13rem !important;
+  max-height: 15rem !important;
+}
+
+.expandable-container {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.expandable-content {
+  position: relative;
+  padding: 16px;
+  width: 100%;
 }
 
 @media(max-width: $screen-md) {
