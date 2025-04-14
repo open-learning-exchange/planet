@@ -111,15 +111,28 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           return;
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+        // Parse dates from query params without timezone issues
+        const parseDateWithoutTimezone = (dateStr: string): Date => {
+          if (!dateStr) {
+            return null;
+          }
+          const [ year, month, day ] = dateStr.split('-').map(n => parseInt(n, 10));
+          return new Date(year, month - 1, day, 0, 0, 0);
+        };
         this.dateQueryParams = {
-          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
-          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
+          startDate: parseDateWithoutTimezone(queryParams['startDate']),
+          endDate: parseDateWithoutTimezone(queryParams['endDate']) || this.today
         };
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
+        this.resetDateFilter({ 
+          startDate: this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) 
+            ? this.dateQueryParams.startDate 
+            : new Date(new Date().setMonth(new Date().getMonth() - 12)), 
+          endDate: this.today 
+        });
         this.initializeData(!this.codeParam);
       });
     });
