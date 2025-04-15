@@ -96,6 +96,7 @@ export class DashboardTileComponent implements AfterViewChecked {
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );
+    this.userService.skipNextShelfRefresh = true;
     setTimeout(() => {
       this.recentlyDragged = false;
     }, 300);
