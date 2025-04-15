@@ -17,8 +17,8 @@
         <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
           <div
             class="dashboard-item"
-            [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link}"
-            [routerLink]="item.link"
+            [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link && !recentlyDragged}"
+            [routerLink]="recentlyDragged ? null : item.link"
             [matTooltip]="item.tooltip"
             cdkDrag
             [cdkDragDisabled]="cardType==='myLife'"
