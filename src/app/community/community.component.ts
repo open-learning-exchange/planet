@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@angular/forms';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -14,13 +16,10 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { Router } from '@angular/router';
-import { FormBuilder } from '@angular/forms';
 import {
   DialogsAnnouncementComponent,
   DialogsAnnouncementSuccessComponent,
@@ -62,6 +61,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
+    private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
     private newsService: NewsService,
@@ -74,8 +74,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: FormBuilder,
-    private router: Router
+    private formBuilder: FormBuilder
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -430,8 +429,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (index !== 0) {
       this.router.navigate([ '' ]);
     }
-
     this.resizeCalendar = index === 5;
   }
-
 }
