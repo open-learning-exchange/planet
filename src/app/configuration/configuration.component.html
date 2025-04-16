@@ -49,8 +49,12 @@
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
+        <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" [matAutocomplete]="auto" required>
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let language of languageNames" [value]="language">
+            {{ language }}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
       <div class="full-width" *ngIf="showAdvancedOptions">
         <span i18n>Advanced Options:</span>
