@@ -428,21 +428,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }) {
-    if (index === 5) {
-      this.resizeCalendar = true;
+    this.resizeCalendar = index === 5;
+    const currentUrl = this.router.url;
+  
+    if (index === 0) {
+      // Returning to "Our Voices" tab
+      if (currentUrl.includes('/voices/')) {
+        this.router.navigate(['/']);
+      }
     } else {
-      this.resizeCalendar = false;
-    }
-
-    switch (index) {
-      case 0:
-        this.router.navigate(['/']);
-        break;
-      case 1:
-        this.router.navigate(['/']);
-        break;
-      default:
-        break;
+      this.router.navigate(['/']);
     }
   }
+  
+  
 }
