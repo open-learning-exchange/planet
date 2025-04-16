@@ -8,6 +8,8 @@ RUN bash ./crosscompile_chatapi.sh armv7 install
 
 FROM treehouses/node-tags:arm-3.16
 
+RUN apk update
+
 COPY ./chatapi/package.json ./
 RUN npm install --production
 

@@ -1,5 +1,7 @@
 FROM treehouses/node:3.16
 
+RUN apk update
+
 # Install dependencies
 COPY ./chatapi/package.json ./
 RUN npm install --production
