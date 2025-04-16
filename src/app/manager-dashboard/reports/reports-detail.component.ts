@@ -103,7 +103,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
@@ -111,9 +110,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           return;
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+        const parseDate = (dateStr) => {
+          if (!dateStr) { return null; }
+          const [ y, m, d ] = dateStr.split('-').map(Number);
+          return new Date(y, m - 1, d);
+        };
         this.dateQueryParams = {
-          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
-          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
+          startDate: parseDate(queryParams['startDate']),
+          endDate: parseDate(queryParams['endDate']) || this.today
         };
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
