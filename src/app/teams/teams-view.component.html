@@ -98,25 +98,7 @@
         <ng-template mat-tab-label>
           <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
         </ng-template>
-        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
-        <ng-template #memberList>
-          <div class="card-grid member-cards">
-            <mat-card *ngFor="let member of members">
-              <planet-teams-member
-                [member]="member"
-                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
-                [actionMenu]="[]
-                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
-                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
-                [visits]="visits[member?.name]"
-                [userStatus]="userStatus"
-                [teamLeader]="leader"
-                (actionClick)="memberActionClick($event)">
-              </planet-teams-member>
-            </mat-card>
-          </div>
-        </ng-template>
+       
         <div *ngIf="requests.length > 0" class="join-requests-section" style="margin-top: 32px;">
           <h3>
             <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }</ng-container>
@@ -143,6 +125,25 @@
             </mat-card>
           </div>
         </div>
+        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
+        <ng-template #memberList>
+          <div class="card-grid member-cards">
+            <mat-card *ngFor="let member of members">
+              <planet-teams-member
+                [member]="member"
+                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
+                [actionMenu]="[]
+                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
+                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
+                [visits]="visits[member?.name]"
+                [userStatus]="userStatus"
+                [teamLeader]="leader"
+                (actionClick)="memberActionClick($event)">
+              </planet-teams-member>
+            </mat-card>
+          </div>
+        </ng-template>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab #taskTab>
