@@ -19,7 +19,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { Router } from '@angular/router'
+import { Router } from '@angular/router';
 import { FormBuilder } from '@angular/forms';
 import {
   DialogsAnnouncementComponent,
@@ -28,7 +28,6 @@ import {
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
-import { de } from 'date-fns/locale';
 
 @Component({
   selector: 'planet-community',
@@ -427,19 +426,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  tabChanged({ index }) {
-    this.resizeCalendar = index === 5;
-    const currentUrl = this.router.url;
-  
-    if (index === 0) {
-      // Returning to "Our Voices" tab
-      if (currentUrl.includes('/voices/')) {
-        this.router.navigate(['/']);
-      }
-    } else {
-      this.router.navigate(['/']);
+  tabChanged({ index }: { index: number }) {
+    if (index !== 0) {
+      this.router.navigate([ '' ]);
     }
+
+    this.resizeCalendar = index === 5;
   }
-  
-  
+
 }
