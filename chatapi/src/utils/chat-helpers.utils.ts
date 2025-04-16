@@ -1,8 +1,5 @@
-import { keys } from '../config/ai-providers.config';
 import { models } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
-import { Attachment } from '../models/db-doc.model';
-import { fetchFileFromCouchDB } from './db.utils';
 import {
   createAssistant,
   createThread,
@@ -11,8 +8,8 @@ import {
   waitForRunCompletion,
   retrieveResponse,
   createAndHandleRunWithStreaming,
+  processAttachments
 } from './chat-assistant.utils';
-import { extractTextFromDocument } from './text-extraction.utils';
 
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming enabled
@@ -68,7 +65,6 @@ export async function aiChatStream(
   return completionText;
 }
 
-
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming disabled
  * @param messages - Array of chat messages
@@ -87,20 +83,38 @@ export async function aiChatNonStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if (context.resource && context.resource.attachments) {
-    for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
-      const typedAttachment = attachment as Attachment;
-      const contentType = typedAttachment.content_type;
+  if (assistant) {
+    if (context.resource && context.resource.attachments) {
+      try {
+        const fsAsst = await createAssistant(model, [
+          { 'type': 'code_interpreter' },
+          { 'type': 'file_search' },
+        ]);
 
-      if (contentType === 'application/pdf') {
-        const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
-        const text = await extractTextFromDocument(file as Buffer, contentType);
-        context.data += text;
+        const attachments = await processAttachments(context, fsAsst.id);
+        const thread = await createThread();
+
+        if (messages.length > 0 && (attachments ?? []).length > 0) {
+          await addToThread(thread.id, messages[0].content, attachments);
+          for (let i = 1; i < messages.length; i++) {
+            await addToThread(thread.id, messages[i].content);
+          }
+        } else {
+          for (const message of messages) {
+            await addToThread(thread.id, message.content);
+          }
+        }
+
+        const run = await createRun(thread.id, fsAsst.id, context.data);
+        await waitForRunCompletion(thread.id, run.id);
+
+        return await retrieveResponse(thread.id);
+      } catch (error) {
+        throw new Error(`Error processing file attachments: ${error}`);
       }
     }
-  }
 
-  if (assistant) {
+
     try {
       const asst = await createAssistant(model);
       const thread = await createThread();

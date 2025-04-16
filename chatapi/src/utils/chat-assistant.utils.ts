@@ -1,16 +1,14 @@
+import fs from 'fs';
+import path from 'path';
 import { keys } from '../config/ai-providers.config';
 import { assistant } from '../config/ai-providers.config';
+import { fetchFileFromCouchDB } from './db.utils';
 
-/**
- * Creates an assistant with the specified model
- * @param model - Model to use for assistant
- * @returns Assistant object
- */
-export async function createAssistant(model: string) {
+export async function createAssistant(model: string, tools: any[] = [ { 'type': 'code_interpreter' } ]) {
   return await keys.openai.beta.assistants.create({
     'name': assistant?.name,
     'instructions': assistant?.instructions,
-    'tools': [ { 'type': 'code_interpreter' } ],
+    tools,
     model,
   });
 }
@@ -19,12 +17,13 @@ export async function createThread() {
   return await keys.openai.beta.threads.create();
 }
 
-export async function addToThread(threadId: any, message: string) {
+export async function addToThread(threadId: any, message: string, attachments?: any) {
   return await keys.openai.beta.threads.messages.create(
     threadId,
     {
       'role': 'user',
-      'content': message
+      'content': message,
+      attachments
     }
   );
 }
@@ -100,3 +99,67 @@ export async function createAndHandleRunWithStreaming(
       .on('error', reject);
   });
 }
+
+async function uploadFileToOpenAI(fileBuffer: Buffer, filename: string): Promise<any> {
+  const tempDir = path.join(process.cwd(), 'tmp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+  }
+  const tempPath = path.join(tempDir, filename);
+  fs.writeFileSync(tempPath, fileBuffer);
+  return await keys.openai.files.create({
+    'file': fs.createReadStream(tempPath),
+    'purpose': 'assistants'
+  });
+}
+
+export async function processAttachments(context: any, assistantId: string): Promise<any[]> {
+  if (!context.resource || !context.resource.attachments) return [];
+
+  let vectorStore;
+  const asst = await keys.openai.beta.assistants.retrieve(assistantId);
+  if (asst.tool_resources?.file_search?.vector_store_ids?.length > 0) {
+    vectorStore = asst.tool_resources.file_search.vector_store_ids[0];
+  } else {
+    vectorStore = await keys.openai.vectorStores.create({ 'name': assistantId });
+  }
+
+  const fileIds: string[] = [];
+  const attachments: any[] = [];
+
+  for (const attachmentName of Object.keys(context.resource.attachments)) {
+    try {
+      const couchFile = await fetchFileFromCouchDB(context.resource.id, attachmentName);
+      if (Buffer.isBuffer(couchFile)) {
+        const uploadedFile = await uploadFileToOpenAI(couchFile, attachmentName);
+        fileIds.push(uploadedFile.id);
+
+        attachments.push({
+          'file_id': uploadedFile.id,
+          'tools': [ { 'type': 'file_search' } ],
+        });
+      } else {
+        throw new Error(`Failed to fetch file for attachment ${attachmentName}: ${couchFile.error}`);
+      }
+    } catch (err) {
+      throw new Error(`Error processing attachment ${attachmentName}: ${err}`);
+    }
+  }
+
+  if (fileIds.length > 0) {
+    try {
+      await keys.openai.vectorStores.fileBatches.createAndPoll(
+        vectorStore.id,
+        { 'file_ids': fileIds }
+      );
+      await keys.openai.beta.assistants.update(assistantId, {
+        'tool_resources': { 'file_search': { 'vector_store_ids': [ vectorStore.id ] } },
+      });
+    } catch (error) {
+      throw new Error(`Error setting up vector store: ${error}`);
+    }
+  }
+
+  return attachments;
+}
+
