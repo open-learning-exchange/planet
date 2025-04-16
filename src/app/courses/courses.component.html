@@ -215,7 +215,7 @@
             <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
             <p *ngIf="element.doc.languageOfInstruction">
               <ng-container i18n>Language:</ng-container>{{ " " }}
-              <planet-language-label [options]="languages" [label]="element.doc.languageOfInstruction"></planet-language-label>
+              {{element.doc.languageOfInstruction}}
             </p>
           </div>
         </mat-cell>
