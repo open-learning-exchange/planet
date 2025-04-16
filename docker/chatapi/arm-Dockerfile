@@ -8,8 +8,6 @@ RUN bash ./crosscompile_chatapi.sh armv7 install
 
 FROM treehouses/node-tags:arm-3.16
 
-RUN apk update && apk add --no-cache poppler-utils
-
 COPY ./chatapi/package.json ./
 RUN npm install --production
 
