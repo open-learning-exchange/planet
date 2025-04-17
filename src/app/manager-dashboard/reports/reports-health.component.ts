@@ -36,6 +36,8 @@ export class ReportsHealthComponent implements OnChanges {
   @Input() isActive: boolean;
   @Output() changeDateRange = new EventEmitter<{ startDate: Date, endDate: Date }>();
   @Output() updateHealthData = new EventEmitter<any[]>();
+  @Output() healthLoadingChange = new EventEmitter<boolean>();
+  @Output() healthNoDataChange = new EventEmitter<boolean>();
   @ViewChild('diagnosesChart') diagnosesChart;
   charts: any[] = [];
   showChart: boolean;
@@ -44,6 +46,7 @@ export class ReportsHealthComponent implements OnChanges {
   headlineData: { total: number, unique: string[], conditions: any };
   conditions = conditions;
   selectedCondition = 'COVID-19';
+  isLoading = true;
 
   constructor(
     private reportsService: ReportsService,
@@ -55,15 +58,29 @@ export class ReportsHealthComponent implements OnChanges {
     const weeks = generateWeeksArray(this.dateRange);
     if (this.planetCode && changes.planetCode && changes.planetCode.previousValue !== changes.planetCode.currentValue) {
       this.headlineData = null;
+      this.isLoading = true;
+      this.healthLoadingChange.emit(true);
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
+        this.isLoading = false;
         this.setHealthData(weeks);
+      }, error => {
+        this.isLoading = false;
+        this.healthLoadingChange.emit(false);
+        this.healthNoDataChange.emit(true);
       });
     } else if (changes.isActive && changes.isActive.currentValue === true && !this.examinations) {
       this.headlineData = null;
+      this.isLoading = true;
+      this.healthLoadingChange.emit(true);
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
+        this.isLoading = false;
         this.setHealthData(weeks);
+      }, error => {
+        this.isLoading = false;
+        this.healthLoadingChange.emit(false);
+        this.healthNoDataChange.emit(true);
       });
     } else if (this.examinations) {
       this.setHealthData(weeks);
@@ -91,6 +108,10 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
+    
+    this.healthLoadingChange.emit(false);
+    this.healthNoDataChange.emit(filteredExaminations.length === 0);
+    
     this.setWeeklyChart(this.selectedCondition);
   }
 

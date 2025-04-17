@@ -82,6 +82,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   coursesLoading = true;
   chatLoading = true;
   healthLoading = true;
+  healthNoData = false;
 
   constructor(
     private activityService: ReportsService,
@@ -822,6 +823,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.selectedTeam = 'All';
     this.filter.members = [];
     this.onTimeFilterChange('12m');
+  }
+
+  onHealthLoadingChange(loading: boolean) {
+    this.healthLoading = loading;
+  }
+
+  onHealthNoDataChange(noData: boolean) {
+    this.healthNoData = noData;
   }
 
 }
