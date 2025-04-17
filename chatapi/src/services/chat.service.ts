@@ -3,8 +3,15 @@ import { DocumentInsertResponse } from 'nano';
 import { chatDB } from '../config/nano.config';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
-import { handleChatError } from '../utils/chat-error.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
+
+function handleChatError(error: any) {
+  if (error.response) {
+    throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
+  } else {
+    throw new Error(error.message);
+  }
+}
 
 /**
  * Create a chat conversation & save in couchdb
