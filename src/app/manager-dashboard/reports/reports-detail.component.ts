@@ -372,8 +372,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
       this.chatLoading = false;
-    }, error => {
-      this.chatLoading = false;
     });
   }
 
