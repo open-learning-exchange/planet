@@ -22,8 +22,6 @@ interface ActivityRequestObject {
 })
 export class ReportsService {
 
-  users: any[] = [];
-
   constructor(
     private couchService: CouchService,
     private usersService: UsersService,
@@ -31,6 +29,17 @@ export class ReportsService {
     private stateService: StateService,
     private coursesService: CoursesService
   ) {}
+
+  users: any[] = [];
+  readonly standardTimeFilters = [
+    { value: '24h', label: $localize`Last 24 Hours` },
+    { value: '7d', label: $localize`Last 7 Days` },
+    { value: '1m', label: $localize`Last 30 Days` },
+    { value: '6m', label: $localize`Last 6 Months` },
+    { value: '12m', label: $localize`Last 12 Months` },
+    { value: 'all', label: $localize`All Time` },
+    { value: 'custom', label: $localize`Custom` },
+  ];
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
     return array.reduce((group, item) => {
@@ -281,4 +290,44 @@ export class ReportsService {
     });
   }
 
+  getDateRange(timeFilter: string, minDate: Date): { startDate: Date, endDate: Date, showCustomDateFields: boolean } {
+    const now = new Date();
+    const endDate = now;
+    let startDate: Date;
+    const showCustomDateFields = timeFilter === 'custom';
+
+    if (timeFilter === 'custom') {
+      return { startDate: null, endDate: null, showCustomDateFields };
+    }
+
+    switch (timeFilter) {
+      case '24h':
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '1m':
+      case '30d':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case '6m':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 6);
+        break;
+      case '12m':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 12);
+        break;
+      case 'all':
+        startDate = minDate;
+        break;
+      default:
+        return { startDate: null, endDate: null, showCustomDateFields: false };
+    }
+    return { startDate, endDate, showCustomDateFields };
+  }
 }
