@@ -47,7 +47,6 @@ export class UsersAchievementsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.isLoading = true;
     this.route.paramMap.subscribe((params: ParamMap) => {
       let name = params.get('name'),
           id;
