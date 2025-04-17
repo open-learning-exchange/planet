@@ -310,12 +310,12 @@
         </div>
         <div [hidden]="healthLoading || healthNoData">
           <planet-reports-health 
-          [planetCode]="planetCode" 
-          [dateRange]="dateFilterForm?.value" 
-          [isActive]="healthTab.isActive" 
-          (changeDateRange)="resetDateFilter($event)"
-          (healthLoadingChange)="onHealthLoadingChange($event)"
-          (healthNoDataChange)="onHealthNoDataChange($event)">
+            [planetCode]="planetCode" 
+            [dateRange]="dateFilterForm?.value" 
+            [isActive]="healthTab.isActive" 
+            (changeDateRange)="resetDateFilter($event)"
+            (healthLoadingChange)="onHealthLoadingChange($event)"
+            (healthNoDataChange)="onHealthNoDataChange($event)">
         </planet-reports-health>
         </div>
       </mat-tab>

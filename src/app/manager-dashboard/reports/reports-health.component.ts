@@ -58,29 +58,17 @@ export class ReportsHealthComponent implements OnChanges {
     const weeks = generateWeeksArray(this.dateRange);
     if (this.planetCode && changes.planetCode && changes.planetCode.previousValue !== changes.planetCode.currentValue) {
       this.headlineData = null;
-      this.isLoading = true;
       this.healthLoadingChange.emit(true);
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
-        this.isLoading = false;
         this.setHealthData(weeks);
-      }, error => {
-        this.isLoading = false;
-        this.healthLoadingChange.emit(false);
-        this.healthNoDataChange.emit(true);
       });
     } else if (changes.isActive && changes.isActive.currentValue === true && !this.examinations) {
       this.headlineData = null;
-      this.isLoading = true;
       this.healthLoadingChange.emit(true);
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
-        this.isLoading = false;
         this.setHealthData(weeks);
-      }, error => {
-        this.isLoading = false;
-        this.healthLoadingChange.emit(false);
-        this.healthNoDataChange.emit(true);
       });
     } else if (this.examinations) {
       this.setHealthData(weeks);
