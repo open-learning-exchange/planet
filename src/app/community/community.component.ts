@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
-import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
@@ -81,7 +81,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.isLoading = true;
-    this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
       this.isLoading = false;
@@ -98,6 +97,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }
     });
     this.communityChallenge();
+    iif(
+      () => this.stateService.configuration?._id !== undefined,
+      of(this.stateService.configuration),
+      this.stateService.couchStateListener('configurations')
+    ).subscribe(() => {
+      this.getCommunityData();
+    });
   }
 
   @HostListener('window:resize') onResize() {
@@ -150,7 +156,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       switchMap(configurations => {
         // Configuration is for planet that is being viewed, not planet the user is on
         this.configuration = configurations[0];
-        this.team = this.teamObject(this.configuration);
+        this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
         return this.getLinks(this.planetCode);
@@ -241,9 +247,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     };
   }
 
-  teamObject(configuration) {
-    const code = configuration.code;
-    const parentCode = configuration.parentCode;
+  teamObject(planetCode?: string) {
+    const code = planetCode || this.stateService.configuration.code;
+    const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
     const teamId = `${code}@${parentCode}`;
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
