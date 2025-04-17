@@ -148,8 +148,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
           of([ this.stateService.configuration ]);
       }),
       switchMap(configurations => {
+        // Configuration is for planet that is being viewed, not planet the user is on
         this.configuration = configurations[0];
-        this.team = this.teamObject(this.configuration, this.planetCode);
+        this.team = this.teamObject(this.configuration);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
         return this.getLinks(this.planetCode);
@@ -240,9 +241,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     };
   }
 
-  teamObject(configuration, planetCode?: string) {
-    const code = planetCode || configuration.code;
-    const parentCode = planetCode ? configuration.code : configuration.parentCode;
+  teamObject(configuration) {
+    const code = configuration.code;
+    const parentCode = configuration.parentCode;
     const teamId = `${code}@${parentCode}`;
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
