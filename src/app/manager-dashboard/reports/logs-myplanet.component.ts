@@ -25,7 +25,7 @@ export class LogsMyPlanetComponent implements OnInit {
   get childType() {
     return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
-  startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1));
   endDate: Date = new Date();
   selectedChildren: any[] = [];
   logsForm: FormGroup;
@@ -132,10 +132,6 @@ export class LogsMyPlanetComponent implements OnInit {
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
     ]).subscribe(([ planets, apklogs ]) => {
-      this.minDate = this.getEarliestDate(apklogs);
-      this.logsForm.patchValue({
-        startDate: this.minDate
-      });
       this.getUniqueVersions(apklogs);
       this.getUniqueTypes(apklogs);
       this.setAllPlanets(

@@ -38,26 +38,19 @@ export class AuthService {
           }
         }
         this.userService.unset();
-        if (this.userService.isBetaEnabled()) {
-          const dialogRef = this.dialog.open(LoginDialogComponent);
-          return dialogRef.afterClosed().pipe(switchMap(loginState => {
-            if (loginState === undefined) {
-              // If the current routerState snapshot url is a blank string, the user got here via
-              // directly pasting in a link to a guarded route. Need to reroute to the community page
-              // before closing the dialog.
-              if (this.router.routerState.snapshot.url === '') {
-                this.router.navigate([ '/' ]);
-              }
-              return of(false);
+        const dialogRef = this.dialog.open(LoginDialogComponent);
+        return dialogRef.afterClosed().pipe(switchMap(loginState => {
+          if (loginState === undefined) {
+            // If the current routerState snapshot url is a blank string, the user got here via
+            // directly pasting in a link to a guarded route. Need to reroute to the community page
+            // before closing the dialog.
+            if (this.router.routerState.snapshot.url === '') {
+              this.router.navigate([ '/' ]);
             }
-            return this.checkUser(url, roles);
-          }));
-        }
-        const returnUrl = url === '/' ? null : url;
-        this.router.navigate([ '/login' ], { queryParams: { returnUrl }, replaceUrl: true });
-      }),
-      map(isLoggedIn => {
-        return isLoggedIn;
+            return of(false);
+          }
+          return this.checkUser(url, roles);
+        }));
       })
     );
   }
@@ -90,7 +83,14 @@ export class AuthService {
   }
 
   checkAuthenticationStatus(): Observable<boolean> {
-    return this.checkUser('/', []);
+    return this.checkUser('/', []).pipe(
+      map(isLoggedIn => {
+        if (!isLoggedIn) {
+          throw new Error('Not authorized');
+        }
+        return isLoggedIn;
+      })
+    );
   }
 
 }
