@@ -149,7 +149,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       switchMap(configurations => {
         this.configuration = configurations[0];
-        this.team = this.teamObject(this.planetCode);
+        this.team = this.teamObject(this.configuration, this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
         return this.getLinks(this.planetCode);
@@ -240,9 +240,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     };
   }
 
-  teamObject(planetCode?: string) {
-    const code = planetCode || this.stateService.configuration.code;
-    const parentCode = planetCode ? this.stateService.configuration.code : this.stateService.configuration.parentCode;
+  teamObject(configuration, planetCode?: string) {
+    const code = planetCode || configuration.code;
+    const parentCode = planetCode ? configuration.code : configuration.parentCode;
     const teamId = `${code}@${parentCode}`;
     return { _id: teamId, teamType: 'sync', teamPlanetCode: code, type: 'services' };
   }
