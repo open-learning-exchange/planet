@@ -78,6 +78,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     { value: 'all', label: 'All Time' },
     { value: 'custom', label: 'Custom' },
   ];
+  resourcesLoading = true;
+  coursesLoading = true;
+  chatLoading = true;
+  healthLoading = true;
 
   constructor(
     private activityService: ReportsService,
@@ -313,6 +317,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
+    }, error => {
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
     });
   }
 
@@ -355,6 +370,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
+      this.chatLoading = false;
+    }, error => {
+      this.chatLoading = false;
     });
   }
 

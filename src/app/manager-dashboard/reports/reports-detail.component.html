@@ -269,10 +269,13 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <div *ngIf="!resourceActivities || !resourceActivities.byDoc.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="resourcesLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!resourceActivities || !resourceActivities.byDoc.length">
+        <div *ngIf="!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0">
           <planet-reports-detail-activities 
             [activitiesByDoc]="resourceActivities.byDoc" 
             [ratings]="ratings.resources" 
@@ -282,10 +285,13 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <div *ngIf="!courseActivities || !courseActivities.byDoc.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="coursesLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!courseActivities || !courseActivities.byDoc.length">
+        <div *ngIf="!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0">
           <planet-reports-detail-activities 
             [activitiesByDoc]="courseActivities.byDoc" 
             [ratings]="ratings.courses" 
@@ -309,10 +315,13 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
-        <div *ngIf="!chatActivities?.filteredData?.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="chatLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!chatActivities?.filteredData?.length">
+        <div *ngIf="!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0">
           <planet-reports-detail-activities 
             [activitiesByDoc]="chatActivities.filteredData" 
             activityType="chat">
