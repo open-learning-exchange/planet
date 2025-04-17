@@ -108,10 +108,10 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
-    
+
     this.healthLoadingChange.emit(false);
     this.healthNoDataChange.emit(filteredExaminations.length === 0);
-    
+
     this.setWeeklyChart(this.selectedCondition);
   }
 
