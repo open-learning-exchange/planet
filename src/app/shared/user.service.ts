@@ -254,7 +254,7 @@ export class UserService {
   }
 
   doesUserHaveRole(searchRoles: string[]) {
-    return this.user.roles.findIndex(userRole => searchRoles.findIndex(searchRole => searchRole === userRole) > -1) > -1;
+    return this.user?.roles?.findIndex(userRole => searchRoles.findIndex(searchRole => searchRole === userRole) > -1) > -1;
   }
 
   isBetaEnabled(): boolean {

@@ -18,6 +18,17 @@
     -webkit-box-orient: vertical;
   }
 
+  .cards-container {
+    display: flex;
+    gap: 16px; 
+    margin-top: 10px;
+  
+    mat-card {
+      flex: 1;
+      min-width: 300px; 
+    }
+  }
+
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;
