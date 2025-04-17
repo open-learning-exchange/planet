@@ -22,14 +22,6 @@ interface ActivityRequestObject {
 })
 export class ReportsService {
 
-  constructor(
-    private couchService: CouchService,
-    private usersService: UsersService,
-    private dialog: MatDialog,
-    private stateService: StateService,
-    private coursesService: CoursesService
-  ) {}
-
   users: any[] = [];
   readonly standardTimeFilters = [
     { value: '24h', label: $localize`Last 24 Hours` },
@@ -40,6 +32,14 @@ export class ReportsService {
     { value: 'all', label: $localize`All Time` },
     { value: 'custom', label: $localize`Custom` },
   ];
+
+  constructor(
+    private couchService: CouchService,
+    private usersService: UsersService,
+    private dialog: MatDialog,
+    private stateService: StateService,
+    private coursesService: CoursesService
+  ) {}
 
   groupBy(array, fields, { sumField = '', maxField = '', uniqueField = '', includeDocs = false } = {}) {
     return array.reduce((group, item) => {
