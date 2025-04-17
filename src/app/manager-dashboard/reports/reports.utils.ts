@@ -158,4 +158,12 @@ export const sortingOptionsMap = {
     { name: $localize`Month/Year Ascending`, value: 'monthYearAsc' },
     { name: $localize`Month/Year Descending`, value: 'monthYearDesc' },
   ],
+  'chat': [
+    { name: $localize`User (A-Z)`, value: 'userAsc' },
+    { name: $localize`User (Z-A)`, value: 'userDesc' },
+    { name: $localize`Date (Oldest first)`, value: 'createdDateAsc' },
+    { name: $localize`Date (Newest first)`, value: 'createdDateDesc' },
+    { name: $localize`AI Provider (A-Z)`, value: 'aiProviderAsc' },
+    { name: $localize`AI Provider (Z-A)`, value: 'aiProviderDesc' }
+  ]
 };
