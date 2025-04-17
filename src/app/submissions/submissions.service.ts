@@ -436,7 +436,7 @@ export class SubmissionsService {
           header: function(currentPage) {
             if (currentPage === 1) {
               return [
-                { text: '', margin: [0, 20, 0, 0] },
+                { text: '', margin: [ 0, 20, 0, 0 ] },
                 htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}</h1>`)),
               ];
             }
