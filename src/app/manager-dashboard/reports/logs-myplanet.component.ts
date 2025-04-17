@@ -9,6 +9,7 @@ import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.uti
 import { CsvService } from '../../shared/csv.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { ReportsService } from './reports.service';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
@@ -40,13 +41,7 @@ export class LogsMyPlanetComponent implements OnInit {
   deviceTypes: typeof DeviceType = DeviceType;
   selectedTimeFilter = '24h';
   showCustomDateFields = false;
-  timeFilterOptions = [
-    { value: '24h', label: $localize`Last 24 Hours` },
-    { value: '7d', label: $localize`Last 7 Days` },
-    { value: '30d', label: $localize`Last 30 Days` },
-    { value: 'all', label: $localize`All Time` },
-    { value: 'custom', label: $localize`Custom` },
-  ];
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private csvService: CsvService,
@@ -56,6 +51,7 @@ export class LogsMyPlanetComponent implements OnInit {
     private managerService: ManagerService,
     private fb: FormBuilder,
     private deviceInfoService: DeviceInfoService,
+    private activityService: ReportsService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
     this.logsForm = this.fb.group({
@@ -146,7 +142,7 @@ export class LogsMyPlanetComponent implements OnInit {
       );
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
-      this.onTimeFilterChange(this.selectedTimeFilter);
+      this.onTimeFilterChange('24h');
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
   }
 
@@ -162,38 +158,16 @@ export class LogsMyPlanetComponent implements OnInit {
 
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
-    this.showCustomDateFields = timeFilter === 'custom';
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
     if (timeFilter === 'custom') {
       return;
     }
-    const now = new Date();
-    let newStartDate: Date;
-    const newEndDate: Date = now;
-
-    switch (timeFilter) {
-      case '24h':
-        newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 1);
-        break;
-      case '7d':
-        newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 7);
-        break;
-      case '30d':
-        newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 30);
-        break;
-      case 'all':
-        newStartDate = this.minDate;
-        break;
-      default:
-        return;
-    }
-    this.startDate = newStartDate;
-    this.endDate = newEndDate;
+    this.startDate = startDate;
+    this.endDate = endDate;
     this.logsForm.patchValue({
-      startDate: newStartDate,
-      endDate: newEndDate,
+      startDate,
+      endDate
     });
     this.applyFilters();
   }
@@ -239,7 +213,7 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.onTimeFilterChange('all');
+    this.onTimeFilterChange('24h');
   }
 
   clearFilters() {

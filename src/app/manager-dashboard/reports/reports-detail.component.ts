@@ -70,14 +70,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   };
   selectedTimeFilter = '12m';
   showCustomDateFields = false;
-  timeFilterOptions = [
-    { value: '7d', label: 'Last 7 days' },
-    { value: '1m', label: 'Last 30 days' },
-    { value: '6m', label: 'Last 6 Months' },
-    { value: '12m', label: 'Last 12 Months' },
-    { value: 'all', label: 'All Time' },
-    { value: 'custom', label: 'Custom' },
-  ];
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private activityService: ReportsService,
@@ -756,12 +749,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
-    this.showCustomDateFields = timeFilter === 'custom';
-    const now = new Date();
-    let newStartDate: Date;
-    const newEndDate: Date = now;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date(now);
+      const currentStartDate = new Date();
       currentStartDate.setMonth(currentStartDate.getMonth() - 12);
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
@@ -770,32 +762,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    switch (timeFilter) {
-      case '7d':
-        newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 7);
-        break;
-      case '1m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 1);
-        break;
-      case '6m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 6);
-        break;
-      case '12m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 12);
-        break;
-      case 'all':
-        newStartDate = this.minDate;
-        break;
-      default:
-        return;
-    }
-    this.resetDateFilter({ startDate: newStartDate, endDate: newEndDate });
-    this.filter.startDate = newStartDate;
-    this.filter.endDate = newEndDate;
+    this.resetDateFilter({ startDate, endDate });
+    this.filter.startDate = startDate;
+    this.filter.endDate = endDate;
     this.filterData();
   }
 
