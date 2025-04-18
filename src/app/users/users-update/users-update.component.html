@@ -128,10 +128,10 @@
         <img class="profile-image-update" [src]="previewSrc"><br>
         <button *ngIf="(uploadImage && currentImgKey) && !file; else Uploader" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
         <ng-template #Uploader>
-          <button mat-raised-button color="primary" class="upload-button">
-            <label for="fileInput" style="cursor: pointer; margin: 0;">Upload</label>
+          <button mat-raised-button color="secondary" class="upload-button" (click)="fileInput.click()">
+            Upload
           </button>
-          <input id="fileInput" type="file" (change)="fileChangeEvent($event)" style="display: none;" />
+          <input #fileInput id="fileInput" type="file" (change)="fileChangeEvent($event)" style="display: none;" />
         </ng-template>
       </div>
       <div class="profile-image-upload">
