@@ -32,6 +32,17 @@
               <mat-radio-button [value]="option" *ngFor="let option of question?.choices">
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-radio-button>
+              <ng-container *ngIf="question?.hasOtherOption">
+                <mat-radio-button [value]="otherOptionValue">
+                  <span class="multiple-choice-text" i18n>Other: </span>
+                  <mat-form-field>
+                    <input matInput
+                      [disabled]="!isOtherSelected()"
+                      [formControl]="otherText"
+                      (ngModelChange)="updateOtherOptionValue()">
+                  </mat-form-field>
+                </mat-radio-button>
+              </ng-container>
             </mat-radio-group>
             <div *ngSwitchCase="'selectMultiple'" class="question-list">
               <span class="mat-caption" i18n>
@@ -40,6 +51,19 @@
               <mat-checkbox *ngFor="let option of question?.choices" [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-checkbox>
+              <ng-container *ngIf="question?.hasOtherOption">
+                <mat-checkbox
+                  [checked]="checkboxState['other']"
+                  (change)="setOtherOptionMultiple($event)">
+                  <span class="multiple-choice-text" i18n>Other: </span>
+                  <mat-form-field>
+                    <input matInput
+                      [disabled]="!checkboxState['other']"
+                      [formControl]="otherTextMulti"
+                      (ngModelChange)="updateOtherOptionValueMultiple()">
+                  </mat-form-field>
+                </mat-checkbox>
+              </ng-container>
             </div>
           </ng-container>
         </ng-container>
