@@ -25,6 +25,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
+  recentlyDragged = false;
 
   constructor(
     private planetMessageService: PlanetMessageService,
@@ -84,6 +85,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    this.recentlyDragged = true;
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
     const ids = [ ...this.userService.shelf[this.shelfName] ];
     ids.splice(event.currentIndex, 0, ids.splice(event.previousIndex, 1)[0]);
@@ -94,6 +96,10 @@ export class DashboardTileComponent implements AfterViewChecked {
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );
+    this.userService.skipNextShelfRefresh = true;
+    setTimeout(() => {
+      this.recentlyDragged = false;
+    }, 300);
   }
 }
 
