@@ -5,7 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
-    <button *ngIf="isOpenai && stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+    <button *ngIf="isOpenai && resource.mediaType !== 'video'" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
     <span class="toolbar-fill"></span>
