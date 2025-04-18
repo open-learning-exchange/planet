@@ -70,6 +70,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return this.usersTable;
   }
   @Input() shouldOpenProfileDialog = false;
+  @Input() isLoading = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort) sort: MatSort;
