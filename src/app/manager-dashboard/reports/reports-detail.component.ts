@@ -58,7 +58,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
-  disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -200,9 +199,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge'
         });
         this.location.replaceState(urlTree.toString());
-
-        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
-          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -773,10 +769,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
-    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-    setTimeout(() => {
-      this.disableShowAllTime = true;
-    });
     this.dateFilterForm.patchValue({
       startDate: newStartDate,
       endDate: newEndDate
