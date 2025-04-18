@@ -130,7 +130,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     this.meetupForm = this.fb.group({
       title: [ '', CustomValidators.required ],
       description: [ '', CustomValidators.required ],
-      startDate: [ this.meetup?.startDate ? this.meetup.startDate : '', CustomValidators.startDateValidator() ],
+      startDate: [ this.meetup?.startDate ? this.meetup.startDate : '', Validators.required ],
       endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
       recurring: 'none',
       day: this.fb.array([]),
@@ -191,7 +191,7 @@ onSubmit() {
       })
     ).subscribe((res) => {
       this.goBack(res);
-      this.planetMessageService.showMessage($localize`${meetupInfo.title} Updated Successfully`);
+      this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
@@ -205,7 +205,7 @@ onSubmit() {
       'endDate': Date.parse(meetupInfo.endDate),
     }).subscribe((res) => {
       this.goBack(res);
-      this.planetMessageService.showMessage($localize`${meetupInfo.title} Added`);
+      this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
     }, (err) => console.log(err));
   }
 

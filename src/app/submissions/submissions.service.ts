@@ -1,24 +1,27 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { Chart } from 'chart.js';
+import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
+import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
-import htmlToPdfmake from 'html-to-pdfmake';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
+import { ChatService } from '../shared/chat.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const converter = new showdown.Converter();
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +47,8 @@ export class SubmissionsService {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private chatService: ChatService
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
@@ -342,10 +346,10 @@ export class SubmissionsService {
       answerText;
   }
 
-  exportSubmissionsPdf(
+  async exportSubmissionsPdf(
     exam,
     type: 'exam' | 'survey',
-    exportOptions: { includeQuestions, includeAnswers },
+    exportOptions: { includeQuestions, includeAnswers, includeCharts, includeAnalysis },
     team?: string
   ) {
     forkJoin([
@@ -353,7 +357,6 @@ export class SubmissionsService {
       this.managerService.getChildPlanets(true)
     ])
       .pipe(
-        finalize(() => this.dialogsLoadingService.stop()),
         catchError((error) => {
           this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
           return throwError(error);
@@ -386,25 +389,77 @@ export class SubmissionsService {
           );
         })
       )
-      .subscribe(tuple => {
+      .subscribe(async tuple => {
         if (!tuple) {
           return;
         }
         const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const markdown = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
-        const converter = new showdown.Converter();
+        const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const submissionContents = markdownSubmissions.map((markdown, index) => {
+          const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
+          return {
+            ...pageBreak,
+            stack: htmlToPdfmake(converter.makeHtml(markdown))
+          };
+        });
+        const docContent = [
+          { text: exam.description || '' },
+          { text: '\n' },
+          { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
+          { text: '', pageBreak: 'after' },
+          ...submissionContents
+        ];
+        const setHeader = (name) => {
+          docContent.push({ text: '', pageBreak: 'before' });
+          docContent.push({
+            text: $localize`${name}`,
+            style: 'header',
+            margin: [ 0, 20, 0, 10 ]
+          });
+        };
+        if (exportOptions.includeCharts) {
+          setHeader('Charts');
+          for (let i = 0; i < exam.questions.length; i++) {
+            if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
+              continue;
+            }
+            const question = exam.questions[i];
+            question.index = i;
+            const aggregated = this.aggregateQuestionResponses(question, updatedSubmissions);
+            const chartImage = await this.generateChartImage(aggregated);
+            docContent.push({ text: `Q${i + 1}: ${question.body}` });
+            docContent.push({
+              image: chartImage,
+              width: 200,
+              alignment: 'center',
+              margin: [ 0, 10, 0, 10 ]
+            });
+          }
+        }
+        if (exportOptions.includeAnalysis) {
+          const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
+          setHeader('AI Analysis');
+          docContent.push({
+            text: analysisPayload.chat,
+            margin: [ 0, 10, 0, 10 ]
+          });
+        }
         pdfMake.createPdf({
           header: function(currentPage) {
             if (currentPage === 1) {
               return [
-                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}${exam.description ? ': ' + exam.description : ''}</h1>`)),
+                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}</h1>`)),
               ];
             }
             return null;
           },
-          content: [ htmlToPdfmake(converter.makeHtml(markdown)) ],
-          pageBreakBefore: (currentNode) =>
-            currentNode.style && currentNode.style.indexOf('pdf-break') > -1
+          content: [ docContent ],
+          styles: {
+            header: {
+              fontSize: 20,
+              bold: true
+            }
+          }
         }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
         this.dialogsLoadingService.stop();
       });
@@ -415,29 +470,180 @@ export class SubmissionsService {
       const answerIndexes = this.answerIndexes(questionTexts, submission);
       return this.surveyHeader(includeAnswers, exam, index, submission) +
         questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers)).join('  \n');
-    }).join('  \n');
+    });
   }
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = this.formatShortDate(submission.lastUpdateTime);
-      const mainHeader = `<h3${index === 0 ? '' : ' class="pdf-break"'}>Response from ${submission.planetName} on ${shortDate}</h3>`;
-      if (submission.teamName) {
-        const teamHeader = `<h5>${submission.teamName}</h5>`;
-        return `${mainHeader}\n${teamHeader}\n`;
-      } else {
-        return `${mainHeader}\n`;
-      }
+      const userAge = submission.user.birthDate
+        ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate)
+        : submission.user.age;
+      const userGender = submission.user.gender;
+      const communityOrNation = submission.planetName;
+      const teamName = submission.teamName
+      ? submission.teamName.replace(/^(Team|Enterprise):/, (match) => `<strong>${match}</strong>`)
+      : '';
+      return [
+        `<h3>Submission ${index + 1}</h3>`,
+        `<ul>`,
+        `<li><strong>Planet ${communityOrNation}</strong></li>`,
+        `<li><strong>Date:</strong> ${shortDate}</li>`,
+        teamName ? `<li>${teamName}</li>` : '',
+        userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
+        userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
+        `</ul>`,
+        `<hr>`
+      ].filter(Boolean).join('\n');
     } else {
       return `### ${exam.name} Questions\n`;
     }
   }
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
-    const exportText = (text, index, label: 'Question' | 'Response') => `**${label} ${index + 1}:**  \n\n${text}  \n\n`;
+    const exportText = (text, index, label: 'Question' | 'Response') => {
+      const alignment = label === 'Response' ? 'right' : 'left';
+      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${text}</div>`;
+    };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
       (includeAnswers ? exportText(this.getPDFAnswerText(submission, questionIndex, answerIndexes), questionIndex, 'Response') : '');
+  }
+
+  async generateChartImage(data: any): Promise<string> {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 300;
+    const ctx = canvas.getContext('2d');
+
+    const chartRendered = new Promise<string>((resolve) => {
+      const chartConfig = {
+        type: 'pie',
+        data: {
+          labels: data.labels,
+          datasets: [ {
+            data: data.data,
+            backgroundColor: [
+              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
+            ]
+          } ]
+        },
+        options: {
+          animation: {
+            onComplete: function() {
+              this.ctx.font = '12px sans-serif';
+              this.ctx.fillStyle = '#fff';
+              this.ctx.textAlign = 'center';
+              this.ctx.textBaseline = 'middle';
+              this.getDatasetMeta(0).data.forEach((element, index) => {
+                const count = data.data[index];
+                const total = data.data.reduce((sum, val) => sum + val, 0);
+                const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
+                if (count > 0) {
+                  const pos = element.tooltipPosition();
+                  ctx.fillText(`${count.toString()}(${percentage}%)`, pos.x, pos.y);
+                }
+              });
+              resolve(this.toBase64Image());
+            }
+          },
+          responsive: false,
+          maintainAspectRatio: false
+        }
+      };
+      const chart = new Chart(ctx, chartConfig);
+    });
+
+    return chartRendered;
+  }
+
+  aggregateQuestionResponses(question: any, submissions: any[]): { labels: string[], data: number[] } {
+    const counts: { [choiceText: string]: number } = {};
+    question.choices.forEach((choice: any) => {
+      counts[choice.text] = 0;
+    });
+
+    submissions.forEach(submission => {
+      const answer = submission.answers[question.index];
+      if (!answer) { return; }
+
+      if (question.type === 'select') {
+        const choiceText = answer.value.text;
+        if (counts[choiceText] !== undefined) {
+          counts[choiceText]++;
+        }
+      } else if (question.type === 'selectMultiple') {
+        if (Array.isArray(answer.value)) {
+          answer.value.forEach((selected: any) => {
+            const choiceText = selected.text;
+            if (counts[choiceText] !== undefined) {
+              counts[choiceText]++;
+            }
+          });
+        }
+      }
+    });
+
+    const labels = Object.keys(counts);
+    const data = labels.map(label => counts[label]);
+    return { labels, data };
+  }
+
+  async analyseResponses(exam: any, submissions: any) {
+    const userSubmissions = submissions.map(submission => ({
+      userInfo: {
+        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        gender: submission.user.gender
+      },
+      answers: submission.answers
+    }));
+
+    const getResponse = (answer, type) => {
+      if (type === 'select') {
+        return answer.value.text;
+      }
+      if (type === 'selectMultiple') {
+        return answer.value.map(item => item.text).join(', ');
+      }
+      return answer.value;
+    };
+
+    const payload = exam.questions.map((question, questionIndex) => {
+      const responses = userSubmissions.map(submission => {
+        const answer = submission.answers[questionIndex];
+        return {
+          userInfo: submission.userInfo,
+          response: getResponse(answer, question.type)
+        };
+      });
+
+      return {
+        question: `Question ${questionIndex + 1} - ${question.body}`,
+        type: question.type,
+        choices: question.choices,
+        responses
+      };
+    });
+
+    try {
+      const payloadString = JSON.stringify(payload, null, 2);
+      const response = await this.chatService.getPrompt(
+        {
+          content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
+            Analyze survey questions, its responses and only respond with insights for each and every question individually.
+            ${payloadString}`,
+          aiProvider: { name: 'openai' },
+          assistant: false
+        },
+        false
+      ).toPromise();
+
+      this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);
+      return response;
+    } catch (error) {
+      this.planetMessageService.showAlert($localize`Error analyzing responses: ${error.message}`);
+      return $localize`Unable to analyze responses`;
+    }
   }
 
 }

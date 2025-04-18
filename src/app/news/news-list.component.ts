@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router, ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { forkJoin } from 'rxjs';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
 
@@ -19,7 +20,7 @@ import { dedupeShelfReduce } from '../shared/utils';
     }
   ` ]
 })
-export class NewsListComponent implements OnChanges {
+export class NewsListComponent implements OnInit, OnChanges {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`Message updated successfully.`;
@@ -41,8 +42,23 @@ export class NewsListComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    const childRoute = this.route.firstChild;
+    if (childRoute) {
+      const voiceId = childRoute.snapshot.paramMap.get('id');
+      if (voiceId) {
+        const news = this.items.find(item => item._id === voiceId);
+        if (news) {
+          this.showReplies(news);
+        }
+      }
+    }
+  }
 
   ngOnChanges() {
     let isLatest = true;
@@ -70,6 +86,12 @@ export class NewsListComponent implements OnChanges {
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
+
+    if (news._id !== 'root') {
+      this.router.navigate([ '/voices', news._id ]);
+    } else {
+      this.router.navigate([ '' ]);
+    }
   }
 
   showPreviousReplies() {
@@ -86,7 +108,7 @@ export class NewsListComponent implements OnChanges {
       'required': true,
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
-    const formGroup = { message: [ initialValue, CustomValidators.required ] };
+    const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
@@ -114,7 +136,7 @@ export class NewsListComponent implements OnChanges {
         okClick: this.deleteNews(news),
         changeType: 'delete',
         type: 'news',
-        displayName: news.message
+        displayName: news.chat ? news.news.conversations[0].response : news.message
       }
     });
   }
