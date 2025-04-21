@@ -401,25 +401,21 @@ export class SubmissionsService {
             stack: htmlToPdfmake(converter.makeHtml(markdown))
           };
         });
-
-        // Simple content structure with minimal margins
         const docContent = [
-          { text: exam.name, style: 'title', margin: [ 0, 0, 0, 15 ] }, // Title at the top with minimal margin
+          { text: exam.name, style: 'title', margin: [ 0, 0, 0, 15 ] },
           { text: exam.description || '' },
           { text: '\n' },
           { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
           { text: '', pageBreak: 'after' },
           ...submissionContents
         ];
-
         if (exportOptions.includeCharts) {
           docContent.push({ text: '', pageBreak: 'before' });
           docContent.push({
             text: $localize`Charts`,
             style: 'header',
-            margin: [ 0, 0, 0, 10 ]
+            margin: [ 0, 20, 0, 10 ]
           });
-
           for (let i = 0; i < exam.questions.length; i++) {
             if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
               continue;
@@ -437,9 +433,7 @@ export class SubmissionsService {
             });
           }
         }
-
         pdfMake.createPdf({
-          pageMargins: [ 40, 40, 40, 40 ],
           content: docContent,
           styles: {
             title: {
