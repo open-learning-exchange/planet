@@ -41,8 +41,8 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], 
-    planetName: string, chatActivities: any[] = []) {
+  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
+                   planetName: string, chatActivities: any[] = []) {
     const options = {
       title: $localize`Summary report for ${planetName}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
@@ -54,10 +54,10 @@ export class CsvService {
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
-    const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ? 
+    const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ?
       this.reportsService.groupChatUsage(chatActivities).byMonth : [];
     const allMonths = new Set<string>();
-    [...groupedLogins, ...groupedResourceViews, ...groupedCourseViews, ...groupedStepCompletions, ...groupedChatData]
+    [ ...groupedLogins, ...groupedResourceViews, ...groupedCourseViews, ...groupedStepCompletions, ...groupedChatData ]
       .forEach(item => allMonths.add(item.date));
     const sortedMonths = Array.from(allMonths).sort();
     const monthLabels = sortedMonths.map(month => monthDataLabels(month));
@@ -77,7 +77,7 @@ export class CsvService {
     }
     formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
     formattedData.push({ Section: $localize`Total Member Visits by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-    
+
     for (let i = 0; i < sortedMonths.length; i++) {
       const month = sortedMonths[i];
       const monthLabel = monthLabels[i];
@@ -148,7 +148,7 @@ export class CsvService {
     }
     this.generate(formattedData, options);
   }
-  
+
   private getMonthlyData(month: string, data: any[], countUnique: boolean): number {
     const monthData = data.filter(item => item.date === month);
     if (countUnique && monthData.length > 0) {
