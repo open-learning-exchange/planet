@@ -43,28 +43,48 @@ export class CsvService {
 
   exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
                    planetName: string, chatActivities: any[] = []) {
+    // Determine date range from the data
+    const allData = [...logins, ...resourceViews, ...courseViews, ...stepCompletions, ...chatActivities];
+    const startDate = allData.length > 0 ? 
+      new Date(Math.min(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) : 
+      new Date();
+    const endDate = allData.length > 0 ? 
+      new Date(Math.max(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) : 
+      new Date();
+    
+    // Format dates for display
+    const formatDate = (date) => {
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
     const options = {
-      title: $localize`Summary report for ${planetName}`,
+      title: $localize`Summary report for ${planetName}\nPeriod: ${formatDate(startDate)} to ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
       showTitle: true,
       showLabels: true,
       useKeysAsHeaders: true
     };
+    
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
     const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ?
       this.reportsService.groupChatUsage(chatActivities).byMonth : [];
+    
     const allMonths = new Set<string>();
     [ ...groupedLogins, ...groupedResourceViews, ...groupedCourseViews, ...groupedStepCompletions, ...groupedChatData ]
       .forEach(item => allMonths.add(item.date));
     const sortedMonths = Array.from(allMonths).sort();
     const monthLabels = sortedMonths.map(month => monthDataLabels(month));
+    
+    // Create data for each section
     const formattedData = [];
-    formattedData.push({ Section: $localize`Unique Member Visits by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-    for (let i = 0; i < sortedMonths.length; i++) {
-      const month = sortedMonths[i];
+    
+    // === Section: Unique Member Visits ===
+    formattedData.push({ Section: $localize`Unique Member Visits`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    
+    sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
         Section: '',
@@ -74,12 +94,10 @@ export class CsvService {
         Female: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === 'female'), true),
         Unspecified: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === undefined), true)
       });
-    }
+    });
     formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Total Member Visits by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-
-    for (let i = 0; i < sortedMonths.length; i++) {
-      const month = sortedMonths[i];
+    formattedData.push({ Section: $localize`Total Member Visits`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
         Section: '',
@@ -89,11 +107,10 @@ export class CsvService {
         Female: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === 'female'), false),
         Unspecified: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === undefined), false)
       });
-    }
+    });
     formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Resource Views by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-    for (let i = 0; i < sortedMonths.length; i++) {
-      const month = sortedMonths[i];
+    formattedData.push({ Section: $localize`Resource Views`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
         Section: '',
@@ -103,11 +120,10 @@ export class CsvService {
         Female: this.getMonthlyData(month, groupedResourceViews.filter(item => item.gender === 'female'), false),
         Unspecified: this.getMonthlyData(month, groupedResourceViews.filter(item => item.gender === undefined), false)
       });
-    }
+    });
     formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Course Views by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-    for (let i = 0; i < sortedMonths.length; i++) {
-      const month = sortedMonths[i];
+    formattedData.push({ Section: $localize`Course Views`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
         Section: '',
@@ -117,11 +133,10 @@ export class CsvService {
         Female: this.getMonthlyData(month, groupedCourseViews.filter(item => item.gender === 'female'), false),
         Unspecified: this.getMonthlyData(month, groupedCourseViews.filter(item => item.gender === undefined), false)
       });
-    }
+    });
     formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Steps Completed by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-    for (let i = 0; i < sortedMonths.length; i++) {
-      const month = sortedMonths[i];
+    formattedData.push({ Section: $localize`Steps Completed`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
         Section: '',
@@ -131,11 +146,10 @@ export class CsvService {
         Female: this.getMonthlyData(month, groupedStepCompletions.filter(item => item.gender === 'female'), false),
         Unspecified: this.getMonthlyData(month, groupedStepCompletions.filter(item => item.gender === undefined), false)
       });
-    }
+    });
     formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Chats Created by Month`, All: '', Male: '', Female: '', Unspecified: '' });
-    for (let i = 0; i < sortedMonths.length; i++) {
-      const month = sortedMonths[i];
+    formattedData.push({ Section: $localize`Chats Created`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
         Section: '',
@@ -145,7 +159,7 @@ export class CsvService {
         Female: this.getMonthlyData(month, groupedChatData.filter(item => item.gender === 'female'), false),
         Unspecified: this.getMonthlyData(month, groupedChatData.filter(item => item.gender === undefined), false)
       });
-    }
+    });
     this.generate(formattedData, options);
   }
 
@@ -175,19 +189,19 @@ export class CsvService {
     const blankRow = monthLabels(groupedLogins, false);
     const headerRow = monthLabels(groupedLogins, true);
     return [
-      { label: $localize`Unique Member Visits by Month`, ...headerRow },
+      { label: $localize`Unique Member Visits`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedLogins, true), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Total Member Visits by Month`, ...headerRow },
+      { label: $localize`Total Member Visits`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedLogins), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Resource Views by Month`, ...headerRow },
+      { label: $localize`Resource Views`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Course Views by Month`, ...headerRow },
+      { label: $localize`Course Views`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Steps Completed by Month`, ...headerRow },
+      { label: $localize`Steps Completed`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedStepCompletions), headerRow)
     ];
   }
