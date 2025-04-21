@@ -401,20 +401,25 @@ export class SubmissionsService {
             stack: htmlToPdfmake(converter.makeHtml(markdown))
           };
         });
+
+        // Simple content structure with minimal margins
         const docContent = [
+          { text: exam.name, style: 'title', margin: [0, 0, 0, 15] }, // Title at the top with minimal margin
           { text: exam.description || '' },
           { text: '\n' },
           { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
           { text: '', pageBreak: 'after' },
           ...submissionContents
         ];
+        
         if (exportOptions.includeCharts) {
           docContent.push({ text: '', pageBreak: 'before' });
           docContent.push({
             text: $localize`Charts`,
             style: 'header',
-            margin: [ 0, 20, 0, 10 ]
+            margin: [0, 0, 0, 10]
           });
+          
           for (let i = 0; i < exam.questions.length; i++) {
             if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
               continue;
@@ -428,23 +433,20 @@ export class SubmissionsService {
               image: chartImage,
               width: 200,
               alignment: 'center',
-              margin: [ 0, 10, 0, 10 ]
+              margin: [0, 10, 0, 10]
             });
           }
         }
+        
         pdfMake.createPdf({
-          header: function(currentPage) {
-            if (currentPage === 1) {
-              return [
-                { text: '', margin: [ 0, 20, 0, 0 ] },
-                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}</h1>`)),
-              ];
-            }
-            return null;
-          },
-          pageMargins: [ 40, 60, 40, 40 ],
-          content: [ docContent ],
+          pageMargins: [40, 40, 40, 40],
+          content: docContent,
           styles: {
+            title: {
+              fontSize: 24,
+              bold: true,
+              alignment: 'center',
+            },
             header: {
               fontSize: 20,
               bold: true
