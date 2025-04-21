@@ -43,16 +43,13 @@ export class CsvService {
 
   exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
                    planetName: string, chatActivities: any[] = []) {
-    // Determine date range from the data
-    const allData = [...logins, ...resourceViews, ...courseViews, ...stepCompletions, ...chatActivities];
-    const startDate = allData.length > 0 ? 
-      new Date(Math.min(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) : 
+    const allData = [ ...logins, ...resourceViews, ...courseViews, ...stepCompletions, ...chatActivities ];
+    const startDate = allData.length > 0 ?
+      new Date(Math.min(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) :
       new Date();
-    const endDate = allData.length > 0 ? 
-      new Date(Math.max(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) : 
+    const endDate = allData.length > 0 ?
+      new Date(Math.max(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) :
       new Date();
-    
-    // Format dates for display
     const formatDate = (date) => {
       return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     };
@@ -64,26 +61,22 @@ export class CsvService {
       showLabels: true,
       useKeysAsHeaders: true
     };
-    
+
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
     const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ?
       this.reportsService.groupChatUsage(chatActivities).byMonth : [];
-    
+
     const allMonths = new Set<string>();
     [ ...groupedLogins, ...groupedResourceViews, ...groupedCourseViews, ...groupedStepCompletions, ...groupedChatData ]
       .forEach(item => allMonths.add(item.date));
     const sortedMonths = Array.from(allMonths).sort();
     const monthLabels = sortedMonths.map(month => monthDataLabels(month));
-    
-    // Create data for each section
     const formattedData = [];
-    
-    // === Section: Unique Member Visits ===
     formattedData.push({ Section: $localize`Unique Member Visits`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    
+
     sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       formattedData.push({
