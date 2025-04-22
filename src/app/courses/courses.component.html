@@ -105,7 +105,7 @@
   </ng-template>
 
   <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
-    <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
+    <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -155,13 +155,12 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <planet-markdown
-              class="img-wrap"
-              [imageSource]="parent ? 'parent' : 'local'"
-              i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-              '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-              element.doc.description">
-            </planet-markdown>
+            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="350"></planet-markdown>
+            <div *ngIf="element.doc.description.length > 350"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+              <button mat-icon-button>
+                <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+              </button>
+            </div>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent && !isDialog && !isForm" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
@@ -217,6 +216,9 @@
               <ng-container i18n>Language:</ng-container>{{ " " }}
               {{element.doc.languageOfInstruction}}
             </p>
+            <p *ngIf="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet">
+              <ng-container i18n>Source: </ng-container>{{ element.doc.sourcePlanet }}
+            </p>
           </div>
         </mat-cell>
       </ng-container>
@@ -233,8 +235,22 @@
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="expandedDetail">
+        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
+            <ng-container *ngIf="element.renderContent && isExpanded(element)">
+              <planet-markdown
+                class="img-resize"
+                [imageSource]="parent ? 'parent' : 'local'"
+                [content]="element.doc.description">
+              </planet-markdown>
+            </ng-container>
+          </div>
+        </mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>{{ isLoading ? 'Courses Loading...' : 'No Course Found' }}</div></td>
       </tr>
