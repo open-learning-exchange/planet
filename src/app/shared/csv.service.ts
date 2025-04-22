@@ -51,11 +51,11 @@ export class CsvService {
       new Date(Math.max(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) :
       new Date();
     const formatDate = (date) => {
-      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }).replace(',', '');
     };
 
     const options = {
-      title: $localize`Summary report for ${planetName}\nPeriod: ${formatDate(startDate)} to ${formatDate(endDate)}`,
+      title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} to ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
       showTitle: true,
       showLabels: true,
@@ -75,84 +75,47 @@ export class CsvService {
     const sortedMonths = Array.from(allMonths).sort();
     const monthLabels = sortedMonths.map(month => monthDataLabels(month));
     const formattedData = [];
-    formattedData.push({ Section: $localize`Unique Member Visits`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-
-    sortedMonths.forEach((month, i) => {
-      const monthLabel = monthLabels[i];
+    const processSection = (title: string, groupedData: any[], countUnique: boolean) => {
+      formattedData.push({ Section: $localize`${title}`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+      let totalAll = 0;
+      let totalMale = 0;
+      let totalFemale = 0;
+      let totalUnspecified = 0;
+      sortedMonths.forEach((month, i) => {
+        const monthLabel = monthLabels[i];
+        const all = this.getMonthlyData(month, groupedData, countUnique);
+        const male = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'male'), countUnique);
+        const female = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'female'), countUnique);
+        const unspecified = this.getMonthlyData(month, groupedData.filter(item => item.gender === undefined), countUnique);
+        totalAll += all;
+        totalMale += male;
+        totalFemale += female;
+        totalUnspecified += unspecified;
+        formattedData.push({
+          Section: '',
+          Month: monthLabel,
+          All: all,
+          Male: male,
+          Female: female,
+          Unspecified: unspecified
+        });
+      });
+      
       formattedData.push({
         Section: '',
-        Month: monthLabel,
-        All: this.getMonthlyData(month, groupedLogins, true),
-        Male: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === 'male'), true),
-        Female: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === 'female'), true),
-        Unspecified: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === undefined), true)
+        Month: $localize`Total`,
+        All: totalAll,
+        Male: totalMale,
+        Female: totalFemale,
+        Unspecified: totalUnspecified
       });
-    });
-    formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Total Member Visits`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    sortedMonths.forEach((month, i) => {
-      const monthLabel = monthLabels[i];
-      formattedData.push({
-        Section: '',
-        Month: monthLabel,
-        All: this.getMonthlyData(month, groupedLogins, false),
-        Male: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === 'male'), false),
-        Female: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === 'female'), false),
-        Unspecified: this.getMonthlyData(month, groupedLogins.filter(item => item.gender === undefined), false)
-      });
-    });
-    formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Resource Views`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    sortedMonths.forEach((month, i) => {
-      const monthLabel = monthLabels[i];
-      formattedData.push({
-        Section: '',
-        Month: monthLabel,
-        All: this.getMonthlyData(month, groupedResourceViews, false),
-        Male: this.getMonthlyData(month, groupedResourceViews.filter(item => item.gender === 'male'), false),
-        Female: this.getMonthlyData(month, groupedResourceViews.filter(item => item.gender === 'female'), false),
-        Unspecified: this.getMonthlyData(month, groupedResourceViews.filter(item => item.gender === undefined), false)
-      });
-    });
-    formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Course Views`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    sortedMonths.forEach((month, i) => {
-      const monthLabel = monthLabels[i];
-      formattedData.push({
-        Section: '',
-        Month: monthLabel,
-        All: this.getMonthlyData(month, groupedCourseViews, false),
-        Male: this.getMonthlyData(month, groupedCourseViews.filter(item => item.gender === 'male'), false),
-        Female: this.getMonthlyData(month, groupedCourseViews.filter(item => item.gender === 'female'), false),
-        Unspecified: this.getMonthlyData(month, groupedCourseViews.filter(item => item.gender === undefined), false)
-      });
-    });
-    formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Steps Completed`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    sortedMonths.forEach((month, i) => {
-      const monthLabel = monthLabels[i];
-      formattedData.push({
-        Section: '',
-        Month: monthLabel,
-        All: this.getMonthlyData(month, groupedStepCompletions, false),
-        Male: this.getMonthlyData(month, groupedStepCompletions.filter(item => item.gender === 'male'), false),
-        Female: this.getMonthlyData(month, groupedStepCompletions.filter(item => item.gender === 'female'), false),
-        Unspecified: this.getMonthlyData(month, groupedStepCompletions.filter(item => item.gender === undefined), false)
-      });
-    });
-    formattedData.push({ Section: '', Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    formattedData.push({ Section: $localize`Chats Created`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
-    sortedMonths.forEach((month, i) => {
-      const monthLabel = monthLabels[i];
-      formattedData.push({
-        Section: '',
-        Month: monthLabel,
-        All: this.getMonthlyData(month, groupedChatData, false),
-        Male: this.getMonthlyData(month, groupedChatData.filter(item => item.gender === 'male'), false),
-        Female: this.getMonthlyData(month, groupedChatData.filter(item => item.gender === 'female'), false),
-        Unspecified: this.getMonthlyData(month, groupedChatData.filter(item => item.gender === undefined), false)
-      });
-    });
+    };
+    processSection('Unique Member Visits', groupedLogins, true);
+    processSection('Total Member Visits', groupedLogins, false);
+    processSection('Resource Views', groupedResourceViews, false);
+    processSection('Course Views', groupedCourseViews, false);
+    processSection('Steps Completed', groupedStepCompletions, false);
+    processSection('Chats Created', groupedChatData, false);
     this.generate(formattedData, options);
   }
 
