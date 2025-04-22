@@ -53,7 +53,6 @@ export class CsvService {
     const formatDate = (date) => {
       return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }).replace(',', '');
     };
-
     const options = {
       title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} to ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
@@ -61,14 +60,12 @@ export class CsvService {
       showLabels: true,
       useKeysAsHeaders: true
     };
-
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
     const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ?
       this.reportsService.groupChatUsage(chatActivities).byMonth : [];
-
     const allMonths = new Set<string>();
     [ ...groupedLogins, ...groupedResourceViews, ...groupedCourseViews, ...groupedStepCompletions, ...groupedChatData ]
       .forEach(item => allMonths.add(item.date));
@@ -100,7 +97,6 @@ export class CsvService {
           Unspecified: unspecified
         });
       });
-      
       formattedData.push({
         Section: '',
         Month: $localize`Total`,
