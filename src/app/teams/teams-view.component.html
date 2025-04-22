@@ -98,11 +98,8 @@
         <ng-template mat-tab-label>
           <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
         </ng-template>
-       
         <div *ngIf="requests.length > 0" class="join-requests-section" style="margin-top: 32px;">
-          <h3>
-            <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }</ng-container>
-          </h3>
+          <h4 i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }</h4>
           <div class="card-grid member-cards">
             <mat-card *ngFor="let request of requests">
               <mat-card-header>
@@ -127,6 +124,7 @@
         </div>
         <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
         <ng-template #memberList>
+          <h4 i18n>Members</h4>
           <div class="card-grid member-cards">
             <mat-card *ngFor="let member of members">
               <planet-teams-member
