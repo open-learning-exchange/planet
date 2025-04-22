@@ -141,19 +141,19 @@ export class CsvService {
     const blankRow = monthLabels(groupedLogins, false);
     const headerRow = monthLabels(groupedLogins, true);
     return [
-      { label: $localize`Unique Member Visits`, ...headerRow },
+      { label: $localize`Unique Member Visits by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedLogins, true), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Total Member Visits`, ...headerRow },
+      { label: $localize`Total Member Visits by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedLogins), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Resource Views`, ...headerRow },
+      { label: $localize`Resource Views by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Course Views`, ...headerRow },
+      { label: $localize`Course Views by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow),
       { label: '', ...blankRow },
-      { label: $localize`Steps Completed`, ...headerRow },
+      { label: $localize`Steps Completed by Month`, ...headerRow },
       ...this.fillRows(this.summaryDataToTable(groupedStepCompletions), headerRow)
     ];
   }

@@ -686,8 +686,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
       const sortFunction = (a, b) => {
-        const aDate = new Date(a.time || a.loginTime || a.createdDate);
-        const bDate = new Date(b.time || b.loginTime || b.createdDate);
+        const aDate = new Date(a.time || a.loginTime);
+        const bDate = new Date(b.time || b.loginTime);
         const comparison =
           (aDate.getFullYear() - bDate.getFullYear()) ||
           (aDate.getMonth() - bDate.getMonth());
