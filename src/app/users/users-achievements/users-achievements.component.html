@@ -86,7 +86,8 @@
               </p>
               <p mat-line *ngIf="openAchievementIndex === i">
                 {{achievement.description}}
-              <br><a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
+              <br>
+              <a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
               </p>
               <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
             </mat-list-item>
