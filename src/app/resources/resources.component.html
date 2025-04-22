@@ -210,7 +210,7 @@
       <ng-container matColumnDef="expandedDetail">
         <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
           <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
-            <ng-container *ngIf="isExpanded(element)">
+            <ng-container *ngIf="element.renderContent && isExpanded(element)">
               <td-markdown
                 [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
                 '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
