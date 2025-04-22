@@ -68,6 +68,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
+  selectedTimeFilter = '12m';
+  showCustomDateFields = false;
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private activityService: ReportsService,
@@ -93,7 +96,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
@@ -101,18 +103,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           return;
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-        this.dateQueryParams = {
-          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
-          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
+        const parseDate = (dateStr) => {
+          if (!dateStr) { return null; }
+          const [ y, m, d ] = dateStr.split('-').map(Number);
+          return new Date(y, m - 1, d);
         };
-        this.dateFilterForm.controls.endDate.setValue(
-          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-          ? this.dateQueryParams.endDate : this.today
-        );
+        this.dateQueryParams = {
+          startDate: parseDate(queryParams['startDate']),
+          endDate: parseDate(queryParams['endDate']) || this.today
+        };
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -151,6 +155,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
+      this.filterData();
     });
   }
 
@@ -423,7 +428,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
@@ -643,9 +648,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'health':
         this.exportDocView(reportType, dateRange, members, null);
         break;
+      case 'chat':
+        this.exportChatData(dateRange, members, sortBy);
+        break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportChatData(dateRange: any, members: any[], sortBy: string) {
+    let data = filterByMember(filterByDate(this.chatActivities.data, 'createdDate', dateRange), members);
+    if (sortBy) {
+      data = this.sortData(data, sortBy);
+    }
+    const exportData = data.map(activity => ({
+      'User': activity.user || '',
+      'AI Provider': activity.aiProvider || '',
+      'Timestamp': new Date(activity.createdDate).toLocaleString(),
+      'Chat Responses': activity.conversations?.length || 0,
+      'Assistant': activity.assistant ? 'Yes' : 'No',
+      'Shared': activity.shared ? 'Yes' : 'No',
+      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+    }));
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Chat Usage`
+    });
   }
 
   exportSummary(dateRange: any, members: any[], sortBy: string) {
@@ -739,6 +767,35 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
+    this.filterData();
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+
+    if (timeFilter === 'custom') {
+      const currentStartDate = new Date();
+      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentEndDate = this.filter.endDate || this.today;
+      this.dateFilterForm.patchValue({
+        startDate: currentStartDate,
+        endDate: currentEndDate
+      });
+      return;
+    }
+    this.resetDateFilter({ startDate, endDate });
+    this.filter.startDate = startDate;
+    this.filter.endDate = endDate;
+    this.filterData();
+  }
+
+  clearFilters() {
+    this.filter.app = '';
+    this.selectedTeam = 'All';
+    this.filter.members = [];
+    this.onTimeFilterChange('12m');
   }
 
 }
