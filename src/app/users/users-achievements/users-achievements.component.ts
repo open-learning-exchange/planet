@@ -106,9 +106,18 @@ export class UsersAchievementsComponent implements OnInit {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
-  isClickable(achievement) {
-    return achievement.description.length > 0;
+  isClickable(achievement): boolean {
+    return (!!achievement.description && achievement.description.length > 0)
+        || (!!achievement.link        && achievement.link.length > 0);
   }
+
+  onAchievementClick(achievement: any, index: number): void {
+    if (!this.isClickable(achievement)) {
+      return;
+    }
+    this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
+  }
+  
 
   get profileImg() {
     const attachments = this.userService.get()._attachments;
