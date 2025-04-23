@@ -27,7 +27,7 @@ export class CsvService {
   }
 
   exportCSV({ data, title }: { data: any[], title: string }) {
-    const options = { title, filename: $localize`Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
+    const options = { title, filename: title, showTitle: true };
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
       return Object.entries(dataToDisplay).reduce(
         (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
