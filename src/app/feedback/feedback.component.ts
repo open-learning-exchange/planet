@@ -34,7 +34,7 @@ import { truncateText } from '../shared/utils';
       -webkit-line-clamp: 2;
       white-space: normal;
     }
-  `]
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';

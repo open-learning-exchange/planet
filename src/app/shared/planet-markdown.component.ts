@@ -39,7 +39,7 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.couchAddress}/`;
 
     this.images = this.extractImageUrls(this.content);
-    const textOnly = this.content.replace(/!\[.*?\]\(.*?\)/g, '')
+    const textOnly = this.content.replace(/!\[.*?\]\(.*?\)/g, '');
     this.limitedContent = truncateText(textOnly, this.limit);
   }
 
