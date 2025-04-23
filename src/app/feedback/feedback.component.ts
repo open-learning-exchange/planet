@@ -22,8 +22,19 @@ import { truncateText } from '../shared/utils';
 
 @Component({
   templateUrl: './feedback.component.html',
-  styleUrls: [ './feedback.scss' ]
+  styles: [ `
+    .mat-column-type {
+      display: flex;
+      align-items: center;
+    }
 
+    .ellipsis-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal;
+    }
+  `]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
