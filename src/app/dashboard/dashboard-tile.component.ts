@@ -87,6 +87,15 @@ export class DashboardTileComponent implements AfterViewChecked {
   drop(event: CdkDragDrop<string[]>) {
     this.recentlyDragged = true;
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
+    const uniqueItems = [];
+    const seen = new Set();
+    for (const item of this.itemData) {
+      if (item && item._id && !seen.has(item._id)) {
+        seen.add(item._id);
+        uniqueItems.push(item);
+      }
+    }
+    this.itemData = uniqueItems;
     const ids = this.itemData
       .filter(item => item !== null && item !== undefined)
       .map(item => item._id || item);
