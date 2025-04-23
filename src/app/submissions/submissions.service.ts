@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, of, forkJoin, throwError, from } from 'rxjs';
+import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { Chart } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
@@ -15,6 +15,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
+import { ChatService } from '../shared/chat.service';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -46,7 +47,8 @@ export class SubmissionsService {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private chatService: ChatService
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
@@ -347,7 +349,7 @@ export class SubmissionsService {
   async exportSubmissionsPdf(
     exam,
     type: 'exam' | 'survey',
-    exportOptions: { includeQuestions, includeAnswers, includeCharts },
+    exportOptions: { includeQuestions, includeAnswers, includeCharts, includeAnalysis },
     team?: string
   ) {
     forkJoin([
@@ -355,7 +357,6 @@ export class SubmissionsService {
       this.managerService.getChildPlanets(true)
     ])
       .pipe(
-        finalize(() => this.dialogsLoadingService.stop()),
         catchError((error) => {
           this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
           return throwError(error);
@@ -402,19 +403,23 @@ export class SubmissionsService {
           };
         });
         const docContent = [
+          { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
           { text: exam.description || '' },
           { text: '\n' },
           { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
           { text: '', pageBreak: 'after' },
           ...submissionContents
         ];
-        if (exportOptions.includeCharts) {
+        const setHeader = (name) => {
           docContent.push({ text: '', pageBreak: 'before' });
           docContent.push({
-            text: $localize`Charts`,
+            text: $localize`${name}`,
             style: 'header',
-            margin: [ 0, 20, 0, 10 ]
+            margin: [ 0, 10, 0, 10 ]
           });
+        };
+        if (exportOptions.includeCharts) {
+          setHeader('Charts');
           for (let i = 0; i < exam.questions.length; i++) {
             if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
               continue;
@@ -432,17 +437,22 @@ export class SubmissionsService {
             });
           }
         }
+        if (exportOptions.includeAnalysis) {
+          const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
+          setHeader('AI Analysis');
+          docContent.push({
+            text: analysisPayload.chat,
+            margin: [ 0, 10, 0, 10 ]
+          });
+        }
         pdfMake.createPdf({
-          header: function(currentPage) {
-            if (currentPage === 1) {
-              return [
-                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}</h1>`)),
-              ];
-            }
-            return null;
-          },
-          content: [ docContent ],
+          content: docContent,
           styles: {
+            title: {
+              fontSize: 24,
+              bold: true,
+              alignment: 'center',
+            },
             header: {
               fontSize: 20,
               bold: true
@@ -575,6 +585,63 @@ export class SubmissionsService {
     const labels = Object.keys(counts);
     const data = labels.map(label => counts[label]);
     return { labels, data };
+  }
+
+  async analyseResponses(exam: any, submissions: any) {
+    const userSubmissions = submissions.map(submission => ({
+      userInfo: {
+        age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
+        gender: submission.user.gender
+      },
+      answers: submission.answers
+    }));
+
+    const getResponse = (answer, type) => {
+      if (type === 'select') {
+        return answer.value.text;
+      }
+      if (type === 'selectMultiple') {
+        return answer.value.map(item => item.text).join(', ');
+      }
+      return answer.value;
+    };
+
+    const payload = exam.questions.map((question, questionIndex) => {
+      const responses = userSubmissions.map(submission => {
+        const answer = submission.answers[questionIndex];
+        return {
+          userInfo: submission.userInfo,
+          response: getResponse(answer, question.type)
+        };
+      });
+
+      return {
+        question: `Question ${questionIndex + 1} - ${question.body}`,
+        type: question.type,
+        choices: question.choices,
+        responses
+      };
+    });
+
+    try {
+      const payloadString = JSON.stringify(payload, null, 2);
+      const response = await this.chatService.getPrompt(
+        {
+          content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
+            Analyze survey questions, its responses and only respond with insights for each and every question individually.
+            ${payloadString}`,
+          aiProvider: { name: 'openai' },
+          assistant: false
+        },
+        false
+      ).toPromise();
+
+      this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);
+      return response;
+    } catch (error) {
+      this.planetMessageService.showAlert($localize`Error analyzing responses: ${error.message}`);
+      return $localize`Unable to analyze responses`;
+    }
   }
 
 }
