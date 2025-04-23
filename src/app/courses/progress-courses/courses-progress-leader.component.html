@@ -7,9 +7,7 @@
 </mat-toolbar>
 
 <mat-toolbar class="primary-color font-size-1">
-  <h3 class="ellipsis-title margin-lr-3">
-    {{ headingStart | slice:0:140 }}
-  </h3>
+  <h3 class="ellipsis-title margin-lr-3">{{ headingStart | truncateText:140 }}</h3>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
     <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
