@@ -87,8 +87,9 @@ export class DashboardTileComponent implements AfterViewChecked {
   drop(event: CdkDragDrop<string[]>) {
     this.recentlyDragged = true;
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
-    const ids = [ ...this.userService.shelf[this.shelfName] ];
-    ids.splice(event.currentIndex, 0, ids.splice(event.previousIndex, 1)[0]);
+    const ids = this.itemData
+      .filter(item => item !== null && item !== undefined)
+      .map(item => item._id || item);
     this.userService.updateShelf(ids, this.shelfName).subscribe(
       () => {},
       () => {
