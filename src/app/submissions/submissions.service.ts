@@ -641,8 +641,14 @@ export class SubmissionsService {
       this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);
       return response;
     } catch (error) {
-      this.planetMessageService.showAlert($localize`Error analyzing responses: ${error.message}`);
-      return $localize`Unable to analyze responses`;
+      let message = '';
+      if (error && error.status === 0) {
+        message = $localize`Error analyzing responses: Chat API is not available.`;
+      } else {
+        message = $localize`Error analyzing responses: ${error.message || error}`;
+      }
+      this.planetMessageService.showAlert(message);
+      return { chat: message };
     }
   }
 
