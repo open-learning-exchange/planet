@@ -180,7 +180,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.onTimeFilterChange('24h');
+    this.onTimeFilterChange('all');
   }
 
   myPlanetGroups(planet: any, myPlanets: any[]) {
