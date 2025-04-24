@@ -433,8 +433,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
-    if (index !== 0) {
-      this.router.navigate([ '' ]);
+    if (index === 0) {
+      const activeReplyId = this.newsService.getActiveReplyId();
+      const targetUrl = activeReplyId ? `/voices/${activeReplyId}` : '';
+      this.router.navigate([targetUrl]);
+    } else {
+      this.router.navigate(['']);
     }
     this.resizeCalendar = index === 5;
   }

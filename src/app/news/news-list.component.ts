@@ -89,8 +89,10 @@ export class NewsListComponent implements OnInit, OnChanges {
 
     const isHomeRoute = this.router.url === '/';
     if (isHomeRoute && news._id !== 'root') {
+      this.newsService.setActiveReplyId(news._id);
       this.router.navigate([ '/voices', news._id ]);
     } else if (isHomeRoute || this.replyViewing._id === 'root') {
+      this.newsService.setActiveReplyId(null);
       this.router.navigate([ '' ]);
     }
   }
