@@ -436,9 +436,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (index === 0) {
       const activeReplyId = this.newsService.getActiveReplyId();
       const targetUrl = activeReplyId ? `/voices/${activeReplyId}` : '';
-      this.router.navigate([targetUrl]);
+      this.router.navigate([ targetUrl ]);
     } else {
-      this.router.navigate(['']);
+      this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
   }
