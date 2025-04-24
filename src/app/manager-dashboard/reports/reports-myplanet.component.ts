@@ -98,7 +98,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   clearFilters() {
     this.searchValue = '';
     this.selectedVersion = '';
-    this.selectedTimeFilter = '24h';
+    this.selectedTimeFilter = 'all';
     this.resetDateFilter();
     this.applyFilters();
   }
