@@ -194,7 +194,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return (data, filter) => composeFilterFunctions([
       filterDropdowns({ ...this.filter, 'doc.roles': this.filter['doc.roles'] === 'admin' ? '' : this.filter['doc.roles'] }),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFieldsByWord([ 'fullName' ]),
+      filterSpecificFieldsByWord([ 'fullName' , 'doc.name' ]),
       () => this.filter['doc.roles'] === 'admin' ? filterAdmin(data, filter) : true
     ])(data, filter);
   }
