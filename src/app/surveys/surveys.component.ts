@@ -48,6 +48,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   message = '';
   configuration = this.stateService.configuration;
   parentCount = 0;
+  isLoading = true;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
@@ -93,6 +94,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadSurveys() {
+    this.isLoading = true;
     const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
     forkJoin([
       receiveData('exams', 'surveys'),
@@ -125,6 +127,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       this.applyViewModeFilter();
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
     });
   }
 
@@ -370,18 +373,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
+    const hasChartableData = survey.questions.some(
+      (question) => question.type === 'select' || question.type === 'selectMultiple'
+    );
+
     this.dialogsFormService.openDialogsForm(
       'Records to Export',
       [
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
         { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
-        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox' }
+        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData },
+        { name: 'includeAnalysis', placeholder: $localize`Include AI Analysis`, type: 'checkbox', planetBeta: true }
       ],
-      { includeQuestions: true, includeAnswers: true, includeCharts: false },
+      { includeQuestions: true, includeAnswers: true, includeCharts: false, includeAnalysis: false },
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts }) => {
+        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }) => {
           this.dialogsFormService.closeDialogsForm();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },

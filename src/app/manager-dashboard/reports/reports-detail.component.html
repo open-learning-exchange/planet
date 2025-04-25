@@ -26,7 +26,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field class="font-size-1 margin-lr-5">
-      <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" value="All">
+      <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
         <mat-option i18n value="All">All Members</mat-option>
         <mat-optgroup label="Teams" i18n-label>
           <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
@@ -50,6 +50,9 @@
         Both
       </mat-button-toggle>
     </mat-button-toggle-group>
+    <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5">
+      <span i18n>Clear</span>
+    </button>
   </ng-container>
 
   <ng-template #mobileView>
@@ -95,7 +98,7 @@
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <mat-form-field class="font-size-1">
-        <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" value="All">
+        <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
           <mat-option i18n value="All">All Members</mat-option>
           <mat-optgroup label="Teams" i18n-label>
             <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
@@ -122,6 +125,10 @@
           Both
         </mat-button-toggle>
       </mat-button-toggle-group>
+      <span class="toolbar-fill"></span>
+      <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5">
+        <span i18n>Clear</span>
+      </button>
     </mat-toolbar-row>
   </ng-template>
 </mat-toolbar>
@@ -139,6 +146,7 @@
         <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
         <button mat-menu-item *ngIf="progress?.steps" (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
         <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
+        <button mat-menu-item *ngIf="chatActivities?.filteredData?.length" (click)="openExportDialog('chat')" i18n>Chat Report</button>
         <button mat-menu-item (click)="openExportDialog('resourcesOverview')" i18n>Resources Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('coursesOverview')" i18n>Courses Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>

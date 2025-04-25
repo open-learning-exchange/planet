@@ -42,6 +42,9 @@ export class ReportsMyPlanetComponent implements OnInit {
   versions: string[] = [];
   selectedVersion = '';
   disableShowAllTime = true;
+  selectedTimeFilter = 'all';
+  timeFilterOptions = this.activityService.standardTimeFilters;
+  showCustomDateFields = false;
 
   constructor(
     private csvService: CsvService,
@@ -50,6 +53,7 @@ export class ReportsMyPlanetComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
     private reportsService: ReportsService,
+    private activityService: ReportsService,
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService,
     private fb: FormBuilder
@@ -69,6 +73,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.onTimeFilterChange('all');
     this.getMyPlanetList(this.route.snapshot.params.hubId);
     this.reportsForm.valueChanges.subscribe(() => {
       this.startDate = this.reportsForm.get('startDate').value;
@@ -93,6 +98,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   clearFilters() {
     this.searchValue = '';
     this.selectedVersion = '';
+    this.selectedTimeFilter = '24h';
     this.resetDateFilter();
     this.applyFilters();
   }
@@ -149,6 +155,22 @@ export class ReportsMyPlanetComponent implements OnInit {
     this.applyFilters();
   }
 
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+    if (timeFilter === 'custom') {
+      return;
+    }
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.reportsForm.patchValue({
+      startDate,
+      endDate
+    });
+    this.applyFilters();
+  }
+
   applyFilters() {
     this.planets = this.allPlanets.map(planet => ({
       ...planet,
@@ -158,10 +180,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.reportsForm.patchValue({
-      startDate: this.minDate,
-      endDate: this.today
-    });
+    this.onTimeFilterChange('24h');
   }
 
   myPlanetGroups(planet: any, myPlanets: any[]) {
