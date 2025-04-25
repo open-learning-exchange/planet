@@ -5,9 +5,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { forkJoin, Observable, Subject, throwError } from 'rxjs';
+import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
+import { ChatService } from '../shared/chat.service';
 import {
   filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
 } from '../shared/table-helpers';
@@ -51,6 +52,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
+  availableAIProviders: any[] = [];
 
   constructor(
     private couchService: CouchService,
@@ -62,7 +64,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
-    private dialogsFormService: DialogsFormService
+    private dialogsFormService: DialogsFormService,
+    private chatService: ChatService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -75,6 +78,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.connect().subscribe(surveys => {
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
       this.surveyCount.emit(surveys.length);
+    });
+    this.chatService.listAIProviders().subscribe((providers) => {
+      this.availableAIProviders = providers;
     });
   }
 
@@ -373,6 +379,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const hasChartableData = survey.questions.some(
       (question) => question.type === 'select' || question.type === 'selectMultiple'
     );
+    const chatDisabled = this.availableAIProviders.length === 0;
 
     this.dialogsFormService.openDialogsForm(
       'Records to Export',
@@ -380,7 +387,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
         { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
         { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData },
-        { name: 'includeAnalysis', placeholder: $localize`Include AI Analysis`, type: 'checkbox', planetBeta: true }
+        { 
+          name: 'includeAnalysis',
+          placeholder: $localize`Include AI Analysis`,
+          type: 'checkbox',
+          planetBeta: true,
+          disabled: chatDisabled,
+          tooltip: chatDisabled && $localize`Chat is disabled, contact community admin`
+        }
       ],
       { includeQuestions: true, includeAnswers: true, includeCharts: false, includeAnalysis: false },
       {
