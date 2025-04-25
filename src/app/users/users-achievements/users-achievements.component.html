@@ -74,7 +74,7 @@
           <h3 i18n>My Achievements</h3>
           <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
           <mat-list>
-            <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="onAchievementClick(achievement, i)">
+            <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
               <p class="achievement-header" mat-line>
                 <span class="achievement-text">{{achievement.title || achievement}}
                   <ng-container *ngIf="isClickable(achievement)">
@@ -86,8 +86,7 @@
               </p>
               <p mat-line *ngIf="openAchievementIndex === i">
                 {{achievement.description}}
-              <br>
-              <a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
+              <br><a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
               </p>
               <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
             </mat-list-item>
