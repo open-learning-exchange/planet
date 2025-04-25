@@ -203,11 +203,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
+        const timestamp = Date.now();
         if (member.attachmentDoc) {
-          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
+          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}?${timestamp}`;
         }
         if (member.userDoc && member.userDoc.doc._attachments) {
-          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
+          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}?${timestamp}`;
         }
         return 'assets/image.png';
       };
@@ -225,6 +226,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
     }), map(resources => this.resources = resources));
   }
+
+refreshMemberData(){
+  this.getMembers().subscribe();
+}
 
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
