@@ -393,7 +393,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           type: 'checkbox',
           planetBeta: true,
           disabled: chatDisabled,
-          tooltip: chatDisabled && $localize`Chat is disabled, contact community admin`
+          tooltip: chatDisabled && $localize`AI analysis is disabled, contact community admin`
         }
       ],
       { includeQuestions: true, includeAnswers: true, includeCharts: false, includeAnalysis: false },
