@@ -387,7 +387,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
         { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
         { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData },
-        { 
+        {
           name: 'includeAnalysis',
           placeholder: $localize`Include AI Analysis`,
           type: 'checkbox',
