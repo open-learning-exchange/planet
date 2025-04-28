@@ -158,7 +158,7 @@
             <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="350"></planet-markdown>
             <div *ngIf="element.doc.description.length > 350"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
-                <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+                <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
               </button>
             </div>
           </div>

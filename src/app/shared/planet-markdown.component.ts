@@ -38,7 +38,18 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.couchAddress}/`;
 
     this.images = this.extractImageUrls(this.content);
-    this.limitedContent = this.applyCharacterLimit(this.content, this.limit);
+
+    // Scale down md headers and check for other styles
+    if (this.previewMode) {
+      const scaledContent = this.content.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+      const hasMdStyles = /#{1,6}\s+.+/g.test(this.content);
+
+      const adjustedLimit = hasMdStyles ? Math.floor(this.limit * 0.7) : this.limit;
+
+      this.limitedContent = this.applyCharacterLimit(scaledContent, adjustedLimit);
+    } else {
+      this.limitedContent = this.applyCharacterLimit(this.content, this.limit);
+    }
   }
 
   private extractImageUrls(content: string): string[] {
