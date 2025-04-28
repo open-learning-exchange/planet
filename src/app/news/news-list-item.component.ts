@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
@@ -37,6 +37,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
     private couchService: CouchService,
@@ -55,6 +56,9 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     }
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
+    }
+    if (this.route.firstChild?.snapshot.paramMap.get('id') || this.newsService.getActiveReplyId()) {
+      this.showLess = false;
     }
   }
 
