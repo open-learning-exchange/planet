@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import { AuthService } from '../shared/auth-guard.service';
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges {
 
   @Input() item;
   @Input() replyObject;
@@ -28,7 +28,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
-  @ViewChild('content') content;
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -42,7 +41,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     private userService: UserService,
     private couchService: CouchService,
     private newsService: NewsService,
-    private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService,
     private dialog: MatDialog,
@@ -54,6 +52,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     if (this.item.latestMessage) {
       this.showExpand = true;
       this.showLess = false;
+    }
+    if (this.item.doc.news?.conversations.length > 1) {
+      this.showExpand = true;
     }
   }
 
@@ -73,20 +74,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     } else {
       this.item.sharedSourceInfo = null;
     }
-  }
-
-  ngAfterViewChecked() {
-    const contentHeight = this.content && this.content.nativeElement.scrollHeight;
-    const containerHeight = this.content && this.content.nativeElement.offsetHeight;
-    const showExpand = contentHeight > containerHeight;
-    if (showExpand !== this.showExpand) {
-      this.showExpand = showExpand;
-      this.cdRef.detectChanges();
-    }
-  }
-
-  remToPx(rem) {
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
 
   addReply(news) {
