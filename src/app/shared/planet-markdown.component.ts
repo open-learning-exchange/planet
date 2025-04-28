@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
 
@@ -24,6 +24,7 @@ export class PlanetMarkdownComponent implements OnChanges {
   @Input() imageSource: 'parent' | 'local' = 'local';
   @Input() previewMode: boolean;
   @Input() limit: number;
+  @Output() previewed = new EventEmitter<boolean>();
   couchAddress: string;
   images: string[] = [];
   limitedContent: string;
@@ -38,7 +39,19 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.couchAddress}/`;
 
     this.images = this.extractImageUrls(this.content);
-    this.limitedContent = this.applyCharacterLimit(this.content, this.limit);
+
+    // Scale down md headers and check for other styles
+    if (this.previewMode) {
+      const scaledContent = this.content.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+      const hasMdStyles = /#{1,6}\s+.+/g.test(this.content);
+      const adjustedLimit = hasMdStyles ? Math.floor(this.limit * 0.7) : this.limit;
+
+      this.previewed.emit(this.content.length > adjustedLimit || this.images.length > 0);
+
+      this.limitedContent = this.applyCharacterLimit(scaledContent, adjustedLimit);
+    } else {
+      this.limitedContent = this.applyCharacterLimit(this.content, this.limit);
+    }
   }
 
   private extractImageUrls(content: string): string[] {
