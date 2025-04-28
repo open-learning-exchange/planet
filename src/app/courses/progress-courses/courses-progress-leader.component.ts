@@ -16,7 +16,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
   styleUrls: [ 'courses-progress.scss' ],
-  styles: [  `
+  styles: [ `
     mat-toolbar.primary-color {
       padding-top: 8px;
     }
