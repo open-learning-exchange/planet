@@ -12,13 +12,40 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
   grid-template-rows: $top-row-height repeat(4, minmax(90px, 1fr));
   grid-auto-flow: row;
   grid-row-gap: 0.5rem;
-  @media (max-width: $screen-md) {
-    grid-template-rows: auto repeat(4, minmax(70px, 1fr));
+  
+  @media (max-width: $screen-sm) {
+    grid-template-rows: auto auto;
+    height: auto;
+    overflow-y: auto;
+    
+    &.accordion-mode {
+      display: flex;
+      flex-direction: column;
+      grid-row-gap: 0;
+    }
+  }
+
+  @media (max-height: 600px) and (orientation: landscape) and (max-width: $screen-sm) {
+    height: 100vh;
+    overflow-y: auto;
+    grid-template-rows: auto repeat(4, minmax(70px, 80px));
   }
 
   planet-dashboard-tile {
     overflow: hidden;
     padding: 0 2px;
+    
+    @media (max-width: $screen-sm) {
+      &.accordion-collapsed .right-tile {
+        display: none;
+      }
+      
+      &.accordion-expanded .right-tile {
+        display: block;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    }
   }
 
   mat-card {
@@ -130,4 +157,24 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
 
 .closebtn:hover {
   color: rgb(0, 0, 0);
+}
+
+.accordion-toggle {
+  display: none;
+  cursor: pointer;
+  
+  @media (max-width: $screen-sm) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    
+    .toggle-icon {
+      transition: transform 0.3s ease;
+    }
+    
+    &.expanded .toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
 }

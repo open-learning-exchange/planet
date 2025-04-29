@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostBinding } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -26,7 +26,11 @@ export class DashboardTileComponent implements AfterViewChecked {
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
-
+  isExpanded = false;
+  
+  @HostBinding('class.accordion-collapsed') get isCollapsed() { return !this.isExpanded; }
+  @HostBinding('class.accordion-expanded') get isExpandedClass() { return this.isExpanded; }
+  
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
@@ -36,7 +40,10 @@ export class DashboardTileComponent implements AfterViewChecked {
   ) { }
 
   ngAfterViewChecked() {
-    const divHeight = this.itemDiv.nativeElement.offsetHeight;
+    const divHeight = this.itemDiv?.nativeElement.offsetHeight;
+    if (!divHeight) {
+      return;
+    }
     const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
@@ -47,6 +54,20 @@ export class DashboardTileComponent implements AfterViewChecked {
       this.tileLines = tileLines;
       this.cd.detectChanges();
     }
+  }
+
+  toggleAccordion(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isExpanded = !this.isExpanded;
+    if (this.isExpanded) {
+      setTimeout(() => {
+        this.cd.detectChanges();
+      }, 100);
+    }
+  }
+  get isAccordionMode(): boolean {
+    return window.innerWidth <= 780;
   }
 
   removeFromShelf(event, item: any) {

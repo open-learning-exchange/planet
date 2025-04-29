@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/';
   displayName: string;
-  roles: string[];
+  roles: string[] = [];
   planetName: string;
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
@@ -44,12 +44,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
     badge: this.examsCount },
+    { firstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
+    { firstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
     { firstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
     { firstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
     { firstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
     { firstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
   ];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
+
+  @HostBinding('class.accordion-mode') isAccordionMode = false;
+  
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
 
   constructor(
     private userService: UserService,
@@ -74,6 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
       this.setBadgesCourses(courses, certifications);
     });
+    this.checkScreenSize();
   }
 
   ngOnInit() {
@@ -98,6 +108,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  checkScreenSize() {
+    // Use screen-sm breakpoint (780px)
+    this.isAccordionMode = window.innerWidth <= 780; // $screen-sm is 780px
   }
 
   initDashboard() {
