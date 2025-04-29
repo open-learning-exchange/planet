@@ -403,6 +403,7 @@ export class SubmissionsService {
           };
         });
         const docContent = [
+          { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
           { text: exam.description || '' },
           { text: '\n' },
           { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
@@ -414,7 +415,7 @@ export class SubmissionsService {
           docContent.push({
             text: $localize`${name}`,
             style: 'header',
-            margin: [ 0, 20, 0, 10 ]
+            margin: [ 0, 10, 0, 10 ]
           });
         };
         if (exportOptions.includeCharts) {
@@ -445,16 +446,13 @@ export class SubmissionsService {
           });
         }
         pdfMake.createPdf({
-          header: function(currentPage) {
-            if (currentPage === 1) {
-              return [
-                htmlToPdfmake(converter.makeHtml(`<h1 style="text-align: center">${exam.name}</h1>`)),
-              ];
-            }
-            return null;
-          },
-          content: [ docContent ],
+          content: docContent,
           styles: {
+            title: {
+              fontSize: 24,
+              bold: true,
+              alignment: 'center',
+            },
             header: {
               fontSize: 20,
               bold: true
@@ -630,7 +628,18 @@ export class SubmissionsService {
       const response = await this.chatService.getPrompt(
         {
           content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
-            Analyze survey questions, its responses and only respond with insights for each and every question individually.
+            Please provide a comprehensive analysis of the survey responses in three sections, formatted neatly for a pdf export:
+
+            1. INDIVIDUAL QUESTION ANALYSIS: Insights for each question individually.
+
+            2. CORRELATIONS BETWEEN QUESTIONS: Look for specific patterns in how people answered different questions together.
+            Focus on finding the strongest correlations between specific answer choices across different questions.
+            Highlight at least 3-5 significant correlations if they exist, especially ones that reveal important insights about the survey purpose.
+
+            3. DEMOGRAPHIC BREAKDOWN: Group responses by demographic factors such as age ranges, gender, and other user inputted demographic information.
+            For each demographic group, identify which answer choices were most common for each question.
+            Only include demographic insights when there are clear differences between groups.
+
             ${payloadString}`,
           aiProvider: { name: 'openai' },
           assistant: false
@@ -641,8 +650,14 @@ export class SubmissionsService {
       this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);
       return response;
     } catch (error) {
-      this.planetMessageService.showAlert($localize`Error analyzing responses: ${error.message}`);
-      return $localize`Unable to analyze responses`;
+      let message = '';
+      if (error && error.status === 0) {
+        message = $localize`Error analyzing responses: Chat API is not available.`;
+      } else {
+        message = $localize`Error analyzing responses: ${error.message || error}`;
+      }
+      this.planetMessageService.showAlert(message);
+      return { chat: message };
     }
   }
 
