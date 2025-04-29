@@ -2,7 +2,6 @@
 @import '../variables';
 
 :host {
-
   @include left-right-grid-areas;
   // For Firefox.  Otherwise grid tile will expand to fit text.
   min-width: 0;
@@ -14,16 +13,6 @@
     grid-template-columns: $dashboard-tile-width 1fr;
     height: 100%;
     padding: 0;
-    
-    @media (max-width: $screen-sm) {
-      grid-template-areas: "lt" "rt";
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
-      
-      &.accordion-mode {
-        height: auto;
-      }
-    }
 
     .left-tile {
       border-radius: 2px 0 0 2px;
@@ -36,39 +25,12 @@
         font-size: 1.25rem;
       }
       color: #fff;
-      
-      @media (max-width: $screen-sm) {
-        border-radius: 2px 2px 0 0;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 0.75rem;
-        
-        &.accordion-toggle {
-          cursor: pointer;
-          
-          planet-dashboard-tile-title {
-            flex-direction: row;
-          }
-        }
-      }
     }
 
     .right-tile {
       display: grid;
       overflow-x: auto;
       overflow-y: hidden;
-      
-      @media (max-width: $screen-sm) {
-        max-height: 0;
-        transition: max-height 0.3s ease-in-out;
-        overflow-y: auto;
-        overflow-x: hidden;
-      }
-      
-      @media (max-height: 600px) and (orientation: landscape) and (max-width: $screen-sm) {
-        max-height: 150px;
-        overflow-y: auto;
-      }
 
       .dashboard-items.dashboard-empty {
         grid-auto-columns: auto;
@@ -78,14 +40,6 @@
         display: grid;
         grid-auto-columns: $dashboard-tile-width;
         transition: transform 0.5s;
-        
-        @media (max-width: $screen-sm) {
-          &.accordion-list {
-            display: flex;
-            flex-direction: column;
-            grid-auto-columns: unset;
-          }
-        }
 
         .dashboard-item {
           grid-column-end: span 1;
@@ -99,7 +53,78 @@
           position: relative;
           word-break: break-word;
           
-          @media (max-width: $screen-sm) {
+          .delete-item {
+            position: absolute;
+            top: -0.25rem;
+            right: -0.25rem;
+          }
+          
+          p {
+            margin: 0;
+          }
+
+          .dashboard-text {
+            display: -webkit-box;
+            width: calc(125px - 1rem);
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $grey;
+    border-radius: 0;
+    border: 0;
+  }
+}
+
+@media (max-width: $screen-sm) {
+  :host {
+    .dashboard-card {
+      grid-template-areas: "lt" "rt";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      
+      &.accordion-mode {
+        height: auto;
+      }
+      
+      .left-tile {
+        border-radius: 2px 2px 0 0;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.75rem;
+        
+        &.accordion-toggle {
+          cursor: pointer;
+          
+          planet-dashboard-tile-title {
+            flex-direction: row;
+          }
+        }
+      }
+      
+      .right-tile {
+        max-height: 0;
+        transition: max-height 0.3s ease-in-out;
+        overflow-y: auto;
+        overflow-x: hidden;
+        
+        .dashboard-items {
+          &.accordion-list {
+            display: flex;
+            flex-direction: column;
+            grid-auto-columns: unset;
+          }
+          
+          .dashboard-item {
             &.accordion-item {
               flex-direction: row;
               justify-content: flex-start;
@@ -115,51 +140,23 @@
                 flex: 1;
               }
             }
-          }
-          
-          .delete-item {
-            position: absolute;
-            top: -0.25rem;
-            right: -0.25rem;
             
-            @media (max-width: $screen-sm) {
+            .delete-item {
               position: relative;
               top: 0;
               right: 0;
             }
-          }
-          p {
-            margin: 0;
-          }
-
-          .dashboard-text {
-            display: -webkit-box;
-            width: calc(125px - 1rem);
-            -webkit-box-orient: vertical;
-            overflow: hidden;
             
-            @media (max-width: $screen-sm) {
+            .dashboard-text {
               width: auto;
             }
           }
         }
       }
     }
-  }
-
-  &.accordion-expanded .dashboard-card .right-tile {
-    @media (max-width: $screen-sm) {
+    
+    &.accordion-expanded .dashboard-card .right-tile {
       max-height: 500px;
     }
-  }
-
-  ::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: $grey;
-    border-radius: 0;
-    border: 0;
   }
 }
