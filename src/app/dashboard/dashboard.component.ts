@@ -54,7 +54,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   @HostBinding('class.accordion-mode') isAccordionMode = false;
-  
+
   @HostListener('window:resize')
   onResize() {
     this.checkScreenSize();

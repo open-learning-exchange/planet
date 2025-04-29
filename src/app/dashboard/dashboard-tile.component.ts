@@ -27,10 +27,10 @@ export class DashboardTileComponent implements AfterViewChecked {
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
   isExpanded = false;
-  
+
   @HostBinding('class.accordion-collapsed') get isCollapsed() { return !this.isExpanded; }
   @HostBinding('class.accordion-expanded') get isExpandedClass() { return this.isExpanded; }
-  
+
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
