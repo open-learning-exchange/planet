@@ -58,7 +58,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
-  disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -70,19 +69,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   };
   selectedTimeFilter = '12m';
   showCustomDateFields = false;
-  timeFilterOptions = [
-    { value: '7d', label: 'Last 7 days' },
-    { value: '1m', label: 'Last 30 days' },
-    { value: '6m', label: 'Last 6 Months' },
-    { value: '12m', label: 'Last 12 Months' },
-    { value: 'all', label: 'All Time' },
-    { value: 'custom', label: 'Custom' },
-  ];
   resourcesLoading = true;
   coursesLoading = true;
   chatLoading = true;
   healthLoading = true;
   healthNoData = false;
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private activityService: ReportsService,
@@ -124,11 +116,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: parseDate(queryParams['startDate']),
           endDate: parseDate(queryParams['endDate']) || this.today
         };
+        if (
+          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+        ) {
+          this.selectedTimeFilter = 'custom';
+          this.showCustomDateFields = true;
+        }
+        this.dateFilterForm.controls.endDate.setValue(
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+          ? this.dateQueryParams.endDate : this.today
+        );
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -167,7 +169,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
-      this.filterData();
     });
   }
 
@@ -203,9 +204,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge'
         });
         this.location.replaceState(urlTree.toString());
-
-        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
-          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -246,7 +244,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : this.minDate
+        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -403,7 +401,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const months = setMonths();
+    const months = setMonths({
+      startDate: this.filter.startDate,
+      endDate: this.filter.endDate
+    });
+    const labels = months.map(month => monthDataLabels(month));
+
     const genderFilter = (gender: string) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
@@ -423,14 +426,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => monthDataLabels(month))
+      labels
     });
   }
 
   setChart({ data, labels, chartName }) {
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
-      updateChart.data = { ...data, labels: [] };
+      updateChart.data = { ...data, labels };
       updateChart.update();
       return;
     }
@@ -442,7 +445,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { labels, type: 'category' } ],
+          xAxes: [ { type: 'category' } ],
           yAxes: [ {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
@@ -452,7 +455,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
@@ -672,9 +675,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'health':
         this.exportDocView(reportType, dateRange, members, null);
         break;
+      case 'chat':
+        this.exportChatData(dateRange, members, sortBy);
+        break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportChatData(dateRange: any, members: any[], sortBy: string) {
+    let data = filterByMember(filterByDate(this.chatActivities.data, 'createdDate', dateRange), members);
+    if (sortBy) {
+      data = this.sortData(data, sortBy);
+    }
+    const exportData = data.map(activity => ({
+      'User': activity.user || '',
+      'AI Provider': activity.aiProvider || '',
+      'Timestamp': new Date(activity.createdDate).toLocaleString(),
+      'Chat Responses': activity.conversations?.length || 0,
+      'Assistant': activity.assistant ? 'Yes' : 'No',
+      'Shared': activity.shared ? 'Yes' : 'No',
+      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+    }));
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Chat Usage`
+    });
   }
 
   exportSummary(dateRange: any, members: any[], sortBy: string) {
@@ -760,25 +786,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
-    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-    setTimeout(() => {
-      this.disableShowAllTime = true;
-    });
     this.dateFilterForm.patchValue({
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
-    this.filterData();
   }
 
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
-    this.showCustomDateFields = timeFilter === 'custom';
-    const now = new Date();
-    let newStartDate: Date;
-    const newEndDate: Date = now;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date(now);
+      const currentStartDate = new Date();
       currentStartDate.setMonth(currentStartDate.getMonth() - 12);
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
@@ -787,32 +807,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    switch (timeFilter) {
-      case '7d':
-        newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 7);
-        break;
-      case '1m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 1);
-        break;
-      case '6m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 6);
-        break;
-      case '12m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 12);
-        break;
-      case 'all':
-        newStartDate = this.minDate;
-        break;
-      default:
-        return;
-    }
-    this.resetDateFilter({ startDate: newStartDate, endDate: newEndDate });
-    this.filter.startDate = newStartDate;
-    this.filter.endDate = newEndDate;
+    this.resetDateFilter({ startDate, endDate });
+    this.filter.startDate = startDate;
+    this.filter.endDate = endDate;
     this.filterData();
   }
 
