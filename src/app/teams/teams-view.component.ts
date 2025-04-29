@@ -8,7 +8,7 @@ import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError, delay } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
@@ -203,15 +203,20 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
-        if (member.attachmentDoc) {
-          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${Object.keys(attachmentDoc._attachments)[0]}`;
+        // Use a combination of timestamp and user rev to ensure changes are reflected
+        const cacheBreaker = `?v=${Date.now()}_${userDoc?.doc?._rev || '0'}`;
+      
+        if (attachmentDoc) {
+          const attachmentName = Object.keys(attachmentDoc._attachments)[0];
+          return `${environment.couchAddress}/attachments/${userId}@${userPlanetCode}/${attachmentName}${cacheBreaker}`;
         }
-        if (member.userDoc && member.userDoc.doc._attachments) {
-          return `${environment.couchAddress}/_users/${userId}/${Object.keys(userDoc.doc._attachments)[0]}`;
+        if (userDoc && userDoc.doc._attachments) {
+          const attachmentName = Object.keys(userDoc.doc._attachments)[0];
+          return `${environment.couchAddress}/_users/${userId}/${attachmentName}${cacheBreaker}`;
         }
         return 'assets/image.png';
       };
-      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
+      const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem), userRev: mem.userDoc?.doc?._rev }));
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
@@ -226,13 +231,55 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }), map(resources => this.resources = resources));
   }
 
+  refreshMemberData() {
+    this.dialogsLoadingService.start();
+    // Clear existing tasks to force refresh
+    const currentTasks = [...this.tasks];
+    this.tasks = [];
+    
+    this.getMembers().pipe(
+      tap(() => {
+        // Re-run setTasks with fresh data
+        this.setTasks(currentTasks);
+      }),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
+      this.planetMessageService.showMessage('Member data updated');
+    });
+  }
+
   setTasks(tasks = []) {
+    const getAvatar = (userId, userPlanetCode) => {
+      const member = this.members.find(m => m.userId === userId);
+      // Always use fresh timestamp to prevent caching
+      const timestamp = Date.now();
+      if (member && member.avatar) {
+        // Remove any existing cache breaker and add fresh one
+        const baseUrl = member.avatar.split('?')[0];
+        return `${baseUrl}?v=${timestamp}`;
+      }
+      return 'assets/image.png';
+    };
+    
+    // Update tasks to include avatar URLs for assignees
+    const tasksWithAvatars = tasks.map(task => ({
+      ...task,
+      assignee: task.assignee ? {
+        ...task.assignee,
+        avatar: getAvatar(task.assignee.userId, task.assignee.userPlanetCode)
+      } : null
+    }));
+  
     this.members = this.members.map(member => ({
       ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+      tasks: this.tasksService.sortedTasks(
+        tasksWithAvatars.filter(({ assignee }) => assignee && assignee.userId === member.userId),
+        member.tasks
+      )
     }));
+  
     if (this.userStatus === 'member') {
-      const tasksForCount = this.isUserLeader ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      const tasksForCount = this.isUserLeader ? tasksWithAvatars : this.members.find(member => member.userId === this.user._id).tasks;
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
@@ -549,10 +596,28 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
+    const dialogRef = this.dialog.open(UserProfileDialogComponent, {
       data: { member },
       maxWidth: '90vw',
       maxHeight: '90vh'
+    });
+
+    dialogRef.afterClosed().pipe(
+      // Add a small delay to ensure backend updates are complete
+      delay(1000),
+      // Force a complete refresh of all data
+      switchMap(() => forkJoin([
+        this.getTeam(this.teamId),
+        this.getMembers()
+      ])),
+      tap(([team, members]) => {
+        this.team = team;
+        this.members = members;
+        // Refresh tasks with updated avatars
+        this.setTasks(this.tasks);
+      })
+    ).subscribe(() => {
+      this.planetMessageService.showMessage('Profile updated');
     });
   }
 
