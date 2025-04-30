@@ -15,6 +15,7 @@ import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -40,6 +41,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   showBanner = false;
   isLoading = true;
+  deviceType: DeviceType;
 
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
@@ -53,11 +55,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
-  @HostBinding('class.accordion-mode') isAccordionMode = false;
+  @HostBinding('class.accordion-mode') get isAccordionMode() {
+    return this.deviceType === DeviceType.MOBILE
+  }
 
   @HostListener('window:resize')
   onResize() {
-    this.checkScreenSize();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   constructor(
@@ -67,7 +71,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private stateService: StateService,
     private certificationsService: CertificationsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private deviceInfoService: DeviceInfoService
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
@@ -83,7 +88,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
       this.setBadgesCourses(courses, certifications);
     });
-    this.checkScreenSize();
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
@@ -108,11 +113,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  checkScreenSize() {
-    // Use screen-sm breakpoint (780px)
-    this.isAccordionMode = window.innerWidth <= 780; // $screen-sm is 780px
   }
 
   initDashboard() {

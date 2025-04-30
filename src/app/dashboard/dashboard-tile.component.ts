@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostBinding } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostBinding, HostListener } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -6,6 +6,7 @@ import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -27,17 +28,25 @@ export class DashboardTileComponent implements AfterViewChecked {
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
   isExpanded = false;
+  deviceType: DeviceType;
 
   @HostBinding('class.accordion-collapsed') get isCollapsed() { return !this.isExpanded; }
   @HostBinding('class.accordion-expanded') get isExpandedClass() { return this.isExpanded; }
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private cd: ChangeDetectorRef
-  ) { }
+    private cd: ChangeDetectorRef,
+    private deviceInfoService: DeviceInfoService
+  ) { 
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngAfterViewChecked() {
     const divHeight = this.itemDiv?.nativeElement.offsetHeight;
@@ -66,8 +75,9 @@ export class DashboardTileComponent implements AfterViewChecked {
       }, 100);
     }
   }
+  
   get isAccordionMode(): boolean {
-    return window.innerWidth <= 780;
+    return this.deviceType === DeviceType.MOBILE;
   }
 
   removeFromShelf(event, item: any) {
