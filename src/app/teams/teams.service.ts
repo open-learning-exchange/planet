@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
 import { of, empty, forkJoin, Observable } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
@@ -11,6 +11,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { toProperCase } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { truncateText } from '../shared/utils';
 
 const nameField = {
   'type': 'textbox',
@@ -258,10 +259,9 @@ export class TeamsService {
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
     const user = this.userService.get();
     const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
-    const truncatedFullName = fullName.length > 25 ? `${fullName.substring(0, 22)}...` : fullName;
+    const truncatedFullName = truncateText(fullName, 22);
     const teamType = team.type || 'team';
-    const truncatedTeamName = team.name.length > 25 ? `${team.name.substring(0, 22)}...` : team.name;
-    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${truncatedTeamName}"</b> ${teamType}.`;
+    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
     switch (type) {
       case 'message':
         return $localize`<b>${truncatedFullName}</b> has posted a message on ${teamMessage}`;

@@ -109,3 +109,10 @@ export const markdownToPlainText = (markdown: any) => {
   html.innerHTML = converter.makeHtml(markdown);
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };
+
+export const truncateText = (text, length) => {
+  if (text.length > length) {
+    return `${text.slice(0, length)}...`;
+  }
+  return text;
+};

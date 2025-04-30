@@ -19,7 +19,7 @@
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell i18n *matHeaderCellDef mat-sort-header="name">Certification Name</mat-header-cell>
-        <mat-cell *matCellDef="let element"><span class="truncate-text">{{element.name}}</span></mat-cell>
+        <mat-cell *matCellDef="let element"><span class="ellipsis-text">{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
