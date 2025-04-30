@@ -4,6 +4,7 @@
 :host {
 
   @include left-right-grid-areas;
+  // For Firefox. Otherwise grid tile will expand to fit text.
   min-width: 0;
 
   .dashboard-card {
@@ -67,6 +68,7 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
           }
+
         }
       }
     }
