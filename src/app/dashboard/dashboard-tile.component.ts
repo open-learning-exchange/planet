@@ -44,7 +44,7 @@ export class DashboardTileComponent implements AfterViewChecked {
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
-  ) { 
+  ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -75,7 +75,7 @@ export class DashboardTileComponent implements AfterViewChecked {
       }, 100);
     }
   }
-  
+
   get isAccordionMode(): boolean {
     return this.deviceType === DeviceType.MOBILE;
   }
