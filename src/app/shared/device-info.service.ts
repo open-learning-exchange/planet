@@ -29,7 +29,7 @@ export class DeviceInfoService {
   }
 
   public getDeviceType(breakpoints: DeviceBreakpoints = {}): DeviceType {
-    const smallMobileWidth = breakpoints.smallMobile || 450;
+    const smallMobileWidth = breakpoints.smallMobile || 480;
     const mobileWidth = breakpoints.mobile || 780;
     const tabletWidth = breakpoints.tablet || 1000;
 
