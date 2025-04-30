@@ -47,4 +47,5 @@ export class DeviceInfoService {
   public isAndroid(): boolean {
     return /Android/i.test(navigator.userAgent);
   }
+  
 }
