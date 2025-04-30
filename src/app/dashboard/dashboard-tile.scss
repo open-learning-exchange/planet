@@ -2,8 +2,8 @@
 @import '../variables';
 
 :host {
+
   @include left-right-grid-areas;
-  // For Firefox.  Otherwise grid tile will expand to fit text.
   min-width: 0;
 
   .dashboard-card {
@@ -52,13 +52,11 @@
           padding: 1rem 0.5rem;
           position: relative;
           word-break: break-word;
-          
           .delete-item {
             position: absolute;
             top: -0.25rem;
             right: -0.25rem;
           }
-          
           p {
             margin: 0;
           }
@@ -92,9 +90,6 @@
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr;
       
-      &.accordion-mode {
-        height: auto;
-      }
       
       .left-tile {
         border-radius: 2px 2px 0 0;
@@ -156,7 +151,7 @@
     }
     
     &.accordion-expanded .dashboard-card .right-tile {
-      max-height: 500px;
+      max-height: 300px;
     }
   }
 }

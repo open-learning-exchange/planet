@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   data = { resources: [], courses: [], meetups: [], myTeams: [] };
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.user.name + '/';
   displayName: string;
-  roles: string[] = [];
+  roles: string[];
   planetName: string;
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
