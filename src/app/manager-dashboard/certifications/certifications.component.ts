@@ -42,7 +42,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   constructor(
     private certificationsService: CertificationsService,
     private deviceInfoService: DeviceInfoService
-  ) { 
+  ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
