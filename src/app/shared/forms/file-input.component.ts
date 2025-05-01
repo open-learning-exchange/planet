@@ -1,4 +1,5 @@
 import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
+import { truncateText } from '../../shared/utils';
 
 @Component({
   selector: 'planet-file-input',
@@ -22,12 +23,10 @@ export class FileInputComponent {
   }
 
   getTruncatedFileName(): string {
-    const maxLength = 25;
     if (!this.selectedFile?.name) {
       return 'No file chosen';
     }
-    const fileName = this.selectedFile.name;
-    return fileName.length > maxLength ? `${fileName.slice(0, maxLength)}...` : fileName;
+    return truncateText(this.selectedFile.name, 25);
   }
 
   clearFile() {

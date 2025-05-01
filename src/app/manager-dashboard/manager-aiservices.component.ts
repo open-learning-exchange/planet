@@ -36,13 +36,9 @@ export class ManagerAIServicesComponent implements OnInit {
   }
 
   ngOnInit() {
-    const configurationId = this.stateService.configuration._id;
-    this.couchService.get('configurations/' + configurationId).subscribe(
-      (data: any) => {
-        this.configuration = data;
-        this.initForm();
-      }
-    );
+    this.configuration = this.stateService.configuration;
+    this.configuration.keys = this.stateService.keys;
+    this.initForm();
   }
 
   initForm() {
