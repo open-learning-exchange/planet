@@ -4,12 +4,12 @@
   </a>
   <span class="closebtn" (click)="closeBanner()">&times;</span>
 </div>
-<mat-card class="user-header">
-  <div class="user-info">
+<mat-card class="horizontal" style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
+  <div style="display: flex; align-items: flex-start;">
     <a [routerLink]="['/users/profile', user.name]" class="profile-link">
       <img [src]="profileImg" class="profile-avatar">
     </a>
-    <div class="dashboard-name">
+    <div class="dashboard-name" style="margin-left: 16px;">
       <a [routerLink]="['/users/profile', user.name]" class="profile-link">
         <h1 class="mat-title">{{displayName}} <span *ngIf="!isLoading">({{visits | number}})</span></h1>
       </a>
@@ -22,12 +22,12 @@
       </h1>
     </div>
   </div>
-  <div class="user-stats">
-    <div class="date">
+  <div style="display: flex; flex-direction: column; align-items: flex-end;">
+    <div class="date" style="text-align: right;">
       <p>{{dateNow | date:'longDate'}}</p>
     </div>
-    <div class="badges">
-      <div *ngFor="let badgeGroup of badgeGroups" class="badge-group">
+    <div class="badges" style="display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: 100%; margin-top: 8px;">
+      <div *ngFor="let badgeGroup of badgeGroups" style="margin-right: 4px;">
         <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
           <mat-icon
             [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
