@@ -117,7 +117,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
-      this.data.myTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ]
+      const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
+      this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
         .filter(team => team.status !== 'archived');
       this.isLoading = false;
     });
