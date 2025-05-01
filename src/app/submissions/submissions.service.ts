@@ -316,7 +316,7 @@ export class SubmissionsService {
         });
         this.csvService.exportCSV({
           data,
-          title: `${toProperCase(type)} -  ${exam.name}${exam.description ? '\n' + exam.description : ''}`,
+          title: `${toProperCase(type)}-${exam.name}`,
         });
       })
     );
