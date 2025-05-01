@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { combineLatest } from 'rxjs';
+import { Router } from '@angular/router';
+import { combineLatest, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { filterDropdowns, filterSpecificFields, composeFilterFunctions, sortNumberOrString, dropdownsFill } from '../shared/table-helpers';
@@ -12,19 +14,27 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { debug } from '../debug-operator';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { UsersService } from '../users/users.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-
+import { truncateText } from '../shared/utils';
 
 @Component({
   templateUrl: './feedback.component.html',
-  styleUrls: [ './feedback.scss' ]
+  styles: [ `
+    .mat-column-type {
+      display: flex;
+      align-items: center;
+    }
 
+    .ellipsis-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal;
+    }
+  ` ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
@@ -110,12 +120,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
     this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
       this.feedback.data = feedbackData.map(feedback => {
-        const truncatedTitle = feedback.title.length > 100
-          ? `${feedback.title.slice(0, 100)}...`
-          : feedback.title;
         return {
           ...feedback,
-          title: truncatedTitle,
+          title: truncateText(feedback.title, 100),
           user: this.users.find(u => u.doc.name === feedback.owner)
         };
       });

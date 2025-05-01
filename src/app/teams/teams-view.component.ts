@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab } from '@angular/material/tabs';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
@@ -554,11 +554,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
-  }
-
-  truncateText(text: string, maxLength: number): string {
-    if (!text) { return ''; }
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
   }
 
 }
