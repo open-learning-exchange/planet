@@ -90,15 +90,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   initializeData() {
     this.fetchMembers().subscribe(members => { this.members = members; });
     this.coursesService.requestCourses();
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [
-          { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
-          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
-        ]
-      },
-      viewId: this.teamId
-    });
+    this.newsService.requestNews('community', this.teamId);
     this.fetchCourseAndNews();
     this.fetchEnrolledMembers();
   }

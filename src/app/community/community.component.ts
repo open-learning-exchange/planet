@@ -174,15 +174,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   requestNewsAndUsers(planetCode?: string) {
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [
-          { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
-          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
-        ]
-      },
-      viewId: this.teamId
-    });
+    this.newsService.requestNews('community', this.teamId);
     if (planetCode) {
       this.stateService.requestData('child_users', 'local');
     } else {

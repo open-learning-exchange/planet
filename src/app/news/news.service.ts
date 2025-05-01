@@ -5,7 +5,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
@@ -18,7 +17,6 @@ export class NewsService {
   dbName = 'news';
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
-  currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
   private activeReplyId: string | null = null;
 
   constructor(
@@ -28,10 +26,17 @@ export class NewsService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  requestNews({ selectors, viewId } = this.currentOptions) {
-    this.currentOptions = { selectors, viewId };
+  requestNews(section = 'community', viewId = '' ) {
+    const limit = 1000;
+    const qs = [
+      `descending=true`,
+      `limit=${limit}`,
+      `startkey=${encodeURIComponent(JSON.stringify([ section, viewId, {} ]))}`,
+      `endkey=${encodeURIComponent(JSON.stringify([ section, viewId, null ]))}`
+    ].join('&');
+
     forkJoin([
-      this.couchService.get('news/_design/news/_view/by_updated_date'),
+      this.couchService.get(`news/_design/news/_view/by_section_and_id_and_date?${qs}`),
       this.couchService.findAll('attachments')
     ]).subscribe(([ newsItems, avatars ]) => {
       this.newsUpdated$.next(newsItems.rows.map((item: any) => (

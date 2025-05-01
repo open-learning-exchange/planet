@@ -181,19 +181,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   requestTeamNews(teamId) {
     const showAll = this.userStatus === 'member' || this.team.public === true;
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [
-          ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
-          {
-            viewIn: { '$elemMatch': {
-              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
-            } }
-          }
-        ],
-      },
-      viewId: teamId
-    });
+    if (showAll) {
+      this.newsService.requestNews('teams', teamId);
+    }
   }
 
   getMembers() {
