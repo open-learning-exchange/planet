@@ -29,8 +29,12 @@
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
             >
-              <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">{{item.firstLine}}</p>
-              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': isAccordionMode ? 'none' : tileLines,'word-wrap': 'break-word' }">{{item.title | slice:0:80}}</p>
+              <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
+                {{item.firstLine}}
+              </p>
+              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': isAccordionMode ? 'none' : tileLines,'word-wrap': 'break-word' }">
+                {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | slice:0:80)}}
+              </p>
               <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardType!=='myLife' && !item?.canRemove">
                 <mat-icon i18n-matTooltip [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
               </button>

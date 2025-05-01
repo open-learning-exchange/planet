@@ -42,17 +42,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
   showBanner = false;
   isLoading = true;
   deviceType: DeviceType;
+  isMobile = false;
 
-  myLifeItems: any[] = [
-    { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
-    badge: this.examsCount },
-    { firstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
-    { firstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
-    { firstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
-    { firstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
-    { firstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
-    { firstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
-  ];
+  get myLifeItems() {
+    const items = [
+      { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
+        badge: this.examsCount },
+      { baseFirstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
+      { baseFirstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
+      { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
+      { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
+      { baseFirstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
+      { baseFirstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
+    ];
+    
+    return items.map(item => ({
+      ...item,
+      firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
+    }));
+  }
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   @HostBinding('class.accordion-mode') get isAccordionMode() {
@@ -62,6 +70,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   constructor(
@@ -72,7 +81,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private certificationsService: CertificationsService,
     private dialog: MatDialog,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
@@ -89,6 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.setBadgesCourses(courses, certifications);
     });
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnInit() {
@@ -193,14 +203,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.user.name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
-      this.myLifeItems = this.myLifeItems.map(item => item.link === 'mySurveys' ? { ...item, badge: this.surveysCount } : item);
+      this.cd.detectChanges();
     });
   }
 
   getExams() {
     this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
       this.examsCount = exams.length;
-      this.myLifeItems = this.myLifeItems.map(item => item.link === 'submissions' ? { ...item, badge: this.examsCount } : item);
+      this.cd.detectChanges();
     });
   }
 
@@ -245,6 +255,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   closeBanner() {
     this.userService.profileBanner.next(false);
     this.showBanner = false;
+  }
+
+  formatMyLifeFirstLine(text: string, isMobile: boolean): string {
+    if (isMobile) {
+      return text.replace(/\s+/g, '');
+    }
+    return text;
   }
 
 }
