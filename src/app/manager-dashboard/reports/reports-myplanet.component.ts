@@ -98,7 +98,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   clearFilters() {
     this.searchValue = '';
     this.selectedVersion = '';
-    this.selectedTimeFilter = '24h';
+    this.selectedTimeFilter = 'all';
     this.resetDateFilter();
     this.applyFilters();
   }
@@ -180,7 +180,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.onTimeFilterChange('24h');
+    this.onTimeFilterChange('all');
   }
 
   myPlanetGroups(planet: any, myPlanets: any[]) {
