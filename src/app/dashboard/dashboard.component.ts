@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       { baseFirstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
       { baseFirstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
     ];
-    
+
     return items.map(item => ({
       ...item,
       firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
