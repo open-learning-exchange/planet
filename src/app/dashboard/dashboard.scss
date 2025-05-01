@@ -146,17 +146,37 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
       grid-template-rows: unset;
       
       &.horizontal {
-
+        flex-direction: column !important;
+        align-items: center;
+        div[style*="display: flex; align-items: flex-start;"] {
+          flex-direction: column;
+          align-items: center !important;
+          width: 100%;
+      
+          .dashboard-name {
+            margin-left: 0 !important;
+            margin-top: 8px;
+            text-align: center;
+            
+            h1 {
+              justify-content: center;
+            }
+          }
+        }
+        
         div[style*="flex-direction: column; align-items: flex-end;"] {
-          align-items: center;
+          order: 2;
+          width: 100%;
           margin-top: 12px;
+          align-items: center !important;
           
           .date {
             text-align: center;
+            margin-bottom: 8px;
           }
           
           .badges {
-            justify-content: center;
+            justify-content: center !important;
           }
         }
       }
