@@ -130,6 +130,10 @@
               
               p {
                 margin-right: 0.5rem;
+
+                &[matBadgePosition="before"] {
+                  margin-left: 10px;
+                }
               }
               
               .dashboard-text {
@@ -154,6 +158,15 @@
     
     &.accordion-expanded .dashboard-card .right-tile {
       max-height: 300px;
+    }
+  }
+  
+  // Add additional styling for badge content to ensure it's properly positioned
+  ::ng-deep .mat-badge-content {
+    &.mat-badge-active {
+      &.mat-badge-before {
+        left: -5px; /* Adjust left position to prevent edge cutting */
+      }
     }
   }
 }

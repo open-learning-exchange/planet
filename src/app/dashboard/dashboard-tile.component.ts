@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
-ChangeDetectorRef, HostBinding, HostListener } from '@angular/core';
+ChangeDetectorRef, HostBinding, HostListener, OnInit } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -15,9 +15,18 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   templateUrl: './dashboard-tile.component.html',
   styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileComponent implements AfterViewChecked {
+export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @Input() cardTitle: string;
-  @Input() cardType: string;
+  private _cardType: string;
+  @Input() set cardType(value: string) {
+    this._cardType = value;
+    if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
+      this.isExpanded = true;
+    }
+  }
+  get cardType(): string {
+    return this._cardType;
+  }
   @Input() color: string;
   @Input() itemData;
   @Input() link;
@@ -36,6 +45,9 @@ export class DashboardTileComponent implements AfterViewChecked {
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    if (this.cardType === 'myLife' && this.deviceType === DeviceType.MOBILE) {
+      this.isExpanded = true;
+    }
   }
 
   constructor(
@@ -47,6 +59,12 @@ export class DashboardTileComponent implements AfterViewChecked {
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  ngOnInit() {
+    if (this.cardType === 'myLife' && this.deviceType === DeviceType.MOBILE) {
+      this.isExpanded = true;
+    }
   }
 
   ngAfterViewChecked() {
