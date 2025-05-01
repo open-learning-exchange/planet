@@ -41,6 +41,6 @@
   <div class="errors" *ngFor="let set of sets">
     <div>{{set.total}}</div>
     <planet-avatar *ngIf="showAvatar" class="cursor-pointer" (click)="labelClick(set)" [username]="set.label" [planetCode]="set.planetCode" imgClass="profile-image-large"></planet-avatar>
-    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label && set.label.length > 3 ? (set.label.length > 180 ? (set.label | slice:0:180) + '...' : set.label) : null"><p>{{set.label}}</p></div>
+    <div class="wrap-content cursor-pointer" (click)="labelClick(set)" i18n-matTooltip [matTooltip]="set.label | truncateText:150"><p>{{set.label}}</p></div>
   </div>
 </div>
