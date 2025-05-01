@@ -26,5 +26,5 @@ check_packages() {
 should_install=$(check_packages);
 
 if [ "$should_install" = 1 ]; then
-  npm i
+  npm i --silent
 fi
