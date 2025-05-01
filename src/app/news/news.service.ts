@@ -31,23 +31,29 @@ export class NewsService {
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
     forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
+      this.couchService.get('news/_design/news/_view/by_updated_date'),
       this.couchService.findAll('attachments')
     ]).subscribe(([ newsItems, avatars ]) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatars), _id: item._id }
+      this.newsUpdated$.next(newsItems.rows.map((item: any) => (
+        {
+          doc: item.value,
+          sharedDate: this.findShareDate(item.value, viewId),
+          avatar: this.findAvatar(item.value.user, avatars),
+          _id: item.id
+        }
       )));
     });
   }
 
   findAvatar(user: any, attachments: any[]) {
-    const attachmentId = `${user._id}@${user.planetCode}`;
+    const userId = `org.couchdb.user:${user.name}`;
+    const attachmentId = `${userId}@${user.planetCode}`;
     const attachment = attachments.find(avatar => avatar._id === attachmentId);
     const extractFilename = (object) => Object.keys(object._attachments)[0];
     return attachment ?
       `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
       user._attachments ?
-      `${this.imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
+      `${this.imgUrlPrefix}/_users/${userId}/${extractFilename(user)}` :
       'assets/image.png';
   }
 
