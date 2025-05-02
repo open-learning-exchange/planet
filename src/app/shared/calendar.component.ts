@@ -283,20 +283,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
           onNext: () => {
             this.getTasks();
             this.planetMessageService.showMessage($localize`Task deleted successfully`);
-            this.dialogsLoadingService.stop();
+            dialogRef.close();
           },
           onError: () => {
             this.planetMessageService.showAlert($localize`There was an error deleting this task`);
-            this.dialogsLoadingService.stop();
+            dialogRef.close();
           }
         },
         changeType: 'delete',
         type: 'task',
         displayName: task.title
       }
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.dialogsLoadingService.stop();
     });
   }
 }
