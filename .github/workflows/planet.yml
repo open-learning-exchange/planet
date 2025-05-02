@@ -46,16 +46,19 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      
+      - name: Checkout Main Branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'master'
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Check Package Changes
-        uses: actions/checkout@v2.3.4
         run: echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
 
       - name: Test
-        uses: actions/checkout@v2.3.4
         run: |
           echo $SHOULD_UPDATE_PACKAGES
           git branch
