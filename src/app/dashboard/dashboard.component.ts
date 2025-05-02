@@ -45,27 +45,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isMobile = false;
 
   myLifeItems: any[] = [];
-
-  initMyLifeItems() {
-    this.myLifeItems = [
-      { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
-        badge: this.examsCount },
-      { baseFirstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
-      { baseFirstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
-      { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
-      { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
-      { baseFirstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
-      { baseFirstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
-    ];
-    this.updateMyLifeItemsFormat();
-  }
-
-  updateMyLifeItemsFormat() {
-    this.myLifeItems = this.myLifeItems.map(item => ({
-      ...item,
-      firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
-    }));
-  }
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
   @HostBinding('class.accordion-mode') get isAccordionMode() {
@@ -130,6 +109,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  initMyLifeItems() {
+    this.myLifeItems = [
+      { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
+        badge: this.examsCount },
+      { baseFirstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
+      { baseFirstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
+      { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
+      { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
+      { baseFirstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
+      { baseFirstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
+    ];
+    this.updateMyLifeItemsFormat();
+  }
+
+  updateMyLifeItemsFormat() {
+    this.myLifeItems = this.myLifeItems.map(item => ({
+      ...item,
+      firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
+    }));
   }
 
   initDashboard() {
@@ -210,7 +210,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.user.name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
-      this.myLifeItems = this.myLifeItems.map(item => 
+      this.myLifeItems = this.myLifeItems.map(item =>
         item.link === 'mySurveys' ? { ...item, badge: this.surveysCount } : item
       );
     });
@@ -219,7 +219,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getExams() {
     this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
       this.examsCount = exams.length;
-      this.myLifeItems = this.myLifeItems.map(item => 
+      this.myLifeItems = this.myLifeItems.map(item =>
         item.link === 'submissions' ? { ...item, badge: this.examsCount } : item
       );
     });
@@ -267,6 +267,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.userService.profileBanner.next(false);
     this.showBanner = false;
   }
-
 
 }
