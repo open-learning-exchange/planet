@@ -1,8 +1,12 @@
-FROM treehouses/planet-base
+FROM treehouses/node
 
 WORKDIR /ng-app
 
 COPY package.json ./
-COPY docker/planet/scripts/ ./
 
-RUN ./prebuild_planet.sh
+RUN apk add --update \
+    python3 \
+    build-base \
+    jq
+
+RUN npm i --silent
