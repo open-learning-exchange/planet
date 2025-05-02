@@ -12,6 +12,9 @@ import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
 import { addDateAndTime, styleVariables } from './utils';
 import { AuthService } from './auth-guard.service';
+import { TasksService } from '../tasks/tasks.service';
+import { DialogsFormService } from './dialogs/dialogs-form.service';
+import { PlanetMessageService } from './planet-message.service';
 
 @Component({
   selector: 'planet-calendar',
@@ -85,7 +88,10 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     @Inject(DOCUMENT) private document: Document,
     private dialog: MatDialog,
     private couchService: CouchService,
-    private authService: AuthService
+    private authService: AuthService,
+    private tasksService: TasksService,
+    private dialogsFormService: DialogsFormService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   ngOnInit() {
@@ -217,16 +223,50 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   eventClick({ event }) {
-    this.dialog.open(DialogsAddMeetupsComponent, {
-      data: {
-        meetup: event.extendedProps.meetup,
-        view: 'view',
-        link: this.link,
-        sync: this.sync,
-        editable: this.editable,
-        onMeetupsChange: this.onMeetupsChange.bind(this)
-      }
-    });
+    const eventData = event.extendedProps.meetup;
+    
+    if (eventData.isTask) {
+      this.openTaskDialog(eventData);
+    } else {
+      this.dialog.open(DialogsAddMeetupsComponent, {
+        data: {
+          meetup: eventData,
+          view: 'view',
+          link: this.link,
+          sync: this.sync,
+          editable: this.editable,
+          onMeetupsChange: this.onMeetupsChange.bind(this)
+        }
+      });
+    }
   }
 
+  openTaskDialog(task) {
+    if (!this.editable) {
+      this.dialog.open(DialogsAddMeetupsComponent, {
+        data: {
+          meetup: task,
+          view: 'view',
+          link: this.link,
+          sync: this.sync,
+          editable: false
+        }
+      });
+      return;
+    }
+
+    const { fields, formGroup } = this.tasksService.addDialogForm(task);
+    this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
+      onSubmit: (newTask) => {
+        if (newTask) {
+          this.tasksService.addDialogSubmit({ link: this.link, sync: this.sync }, task, newTask, () => {
+            this.getTasks();
+            this.planetMessageService.showMessage($localize`Task updated successfully`);
+            this.dialogsFormService.closeDialogsForm();
+          });
+        }
+      },
+      autoFocus: true
+    });
+  }
 }

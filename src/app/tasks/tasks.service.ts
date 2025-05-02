@@ -90,7 +90,12 @@ export class TasksService {
       ...task,
       completed: task.completed || false,
       completedTime: task.completed ? (task.completedTime || this.couchService.datePlaceholder) : undefined
-    });
+    }).pipe(
+      map(res => {
+        this.getTasks();
+        return res;
+      })
+    );
   }
 
   sortedTasks(tasks, tasksInOrder = []) {
