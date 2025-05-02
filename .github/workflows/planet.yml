@@ -50,7 +50,11 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
+      - name: Check Package Changes
+        run: echo "SHOULD_UPDATE_PACKAGES="$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
+
       - name: Pre-Build Planet
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           mkdir -p ./ng-app/dist
@@ -59,7 +63,7 @@ jobs:
           docker push $repo
       
       - name: Push latest pre-build
-        if: ${{ github.ref == 'refs/heads/master' }}
+        if: ${{ github.ref == 'refs/heads/master' && env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           echo "Master tagging"
