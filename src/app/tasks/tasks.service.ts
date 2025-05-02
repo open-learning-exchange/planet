@@ -104,7 +104,7 @@ export class TasksService {
       a < b ?
       -1 :
       false;
-    return tasks.sort((a, b) => 
+    return tasks.sort((a, b) =>
       compare(new Date(a.deadline), new Date(b.deadline)) ||
       compare(a.completed, b.completed) ||
       compare(tasksInOrder.findIndex(t => t._id === a._id), tasksInOrder.findIndex(t => t._id === b._id)) ||
