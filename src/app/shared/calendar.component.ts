@@ -227,7 +227,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
 
   eventClick({ event }) {
     const eventData = event.extendedProps.meetup;
-    
+
     if (eventData.isTask) {
       this.openTaskDialog(eventData);
     } else {

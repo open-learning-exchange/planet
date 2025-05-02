@@ -192,7 +192,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       this.data.onEditTask();
     }
   }
-  
+
   deleteTask() {
     // Close the dialog and call the delete task function from the parent component
     if (this.dialogRef && this.data && this.data.onDeleteTask) {
