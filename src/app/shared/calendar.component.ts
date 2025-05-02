@@ -176,7 +176,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   weeklyEvents(meetup) {
-    if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
+    if (meetup.day?.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
     const events = [];
