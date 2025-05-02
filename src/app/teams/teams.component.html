@@ -44,7 +44,7 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
-            {{element.doc.name.length > 200 ? element.doc.name.slice(0, 200) + '...': element.doc.name }}
+            {{element.doc.name | truncateText:150}}
             <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
           </h3>
         </mat-cell>
@@ -121,7 +121,14 @@
         [class.highlighted]="selectedIds.includes(row.doc._id)">
       </mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td><div class="view-container" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
+        <td>
+          <div class="view-container" *ngIf="isLoading" i18n>
+            { mode, select, team {Loading Teams...} enterprise {Loading Enterprises...} }
+          </div>
+          <div class="view-container" *ngIf="!isLoading" i18n>
+            No { mode, select, team {Teams} enterprise {Enterprises} } Found
+          </div>
+        </td>
       </tr>
     </mat-table>
     <div *ngIf="userNotInShelf" i18n style="text-align: center;">
