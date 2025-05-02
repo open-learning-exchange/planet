@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
 DEPENDENCIES=$(jq -r '.dependencies | keys[] as $key | "\($key) \(.[$key])"' package.json);
-OLD_DEPENDENCIES=$(git show master:package.json | jq -r '.dependencies');
+OLD_DEPENDENCIES=$(git show origin/master:package.json | jq -r '.dependencies');
 
 DEV_DEPENDENCIES=$(jq -r '.devDependencies | keys[] as $key | "\($key) \(.[$key])"' package.json);
-OLD_DEV_DEPENDENCIES=$(git show master:package.json | jq -r '.devDependencies');
+OLD_DEV_DEPENDENCIES=$(git show origin/master:package.json | jq -r '.devDependencies');
 
 check_dependencies() {
   echo "$1" | while read -r line; do
