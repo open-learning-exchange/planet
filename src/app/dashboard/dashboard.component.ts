@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
@@ -82,6 +82,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private certificationsService: CertificationsService,
     private dialog: MatDialog,
     private deviceInfoService: DeviceInfoService,
+    private cd: ChangeDetectorRef
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
