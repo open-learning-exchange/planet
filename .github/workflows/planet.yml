@@ -60,10 +60,10 @@ jobs:
           echo $SHOULD_UPDATE_PACKAGES
           git branch
 
-      # - name: Pre-Build Planet
-      #   if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
-      #   run: |
-      #     repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+      - name: Pre-Build Planet
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
+        run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
       #     mkdir -p ./ng-app/dist
       #     docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
       #     docker images
