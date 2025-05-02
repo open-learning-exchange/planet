@@ -51,7 +51,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Check Package Changes
-        run: echo "SHOULD_UPDATE_PACKAGES="$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
+        run: echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
 
       - name: Pre-Build Planet
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
