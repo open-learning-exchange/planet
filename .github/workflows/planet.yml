@@ -39,7 +39,6 @@ jobs:
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -54,13 +53,19 @@ jobs:
       - name: Pre-Build Planet
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
           docker images
-          docker tag $repo $latestrepo
           docker push $repo
-          docker push $latestrepo
+      
+      - name: Push latest pre-build
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: |
+          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          echo "Master tagging"
+        # uncomment when tested   
+          #docker tag $repo $latestrepo
+          #docker push $latestrepo
 
   deploy-single-language:
     name: Deploy single language build
