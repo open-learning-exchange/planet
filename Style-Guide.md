@@ -80,6 +80,7 @@ Default breakpoint variables in `_variables.scss`:
 ```scss
 $screen-md: 1000px;  // Medium screen breakpoint
 $screen-sm: 780px;   // Small screen breakpoint
+$screen-xs: 480px;   // Extra small screen breakpoint
 ```
 
 Components can override these for specific needs using the `screen-sizes` mixin:
@@ -159,6 +160,13 @@ For consistency in our UI text, follow these capitalization and punctuation rule
   - Include periods at the end of complete sentences
   - Example: "Your request has been submitted.", "Please enter valid credentials."
   - Exception: Short status, placeholder, or label text doesn't need periods ("No results found", "Required field")
+
+### Text Truncation
+To maintain clean UI layouts and improve readability, follow these guidelines for truncating text:
+
+- Use `TruncateTextPipe` in templates to truncate text dynamically.
+- Use the `truncateText` utility function in TypeScript for programmatic truncation.
+- Avoid hardcoded or redundant truncation logic.
 
 ### Form Fields and Error Messages
 For consistency in forms across the application, follow these standards:
