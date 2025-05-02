@@ -160,13 +160,5 @@
       max-height: 300px;
     }
   }
-  
-  // Add additional styling for badge content to ensure it's properly positioned
-  ::ng-deep .mat-badge-content {
-    &.mat-badge-active {
-      &.mat-badge-before {
-        left: -5px; /* Adjust left position to prevent edge cutting */
-      }
-    }
-  }
+
 }
