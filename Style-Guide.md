@@ -65,6 +65,15 @@ feature.component.html    // Component template
 feature.component.scss    // Component styles
 ```
 
+### Code Comments
+We follow a minimalist approach to code comments:
+
+- Keep comments sparse and meaningful
+- Only add comments when logic is complex and not immediately obvious from the code itself
+- Use clear, descriptive method and variable names instead of comments when possible
+- For complex algorithms or business rules that may not be intuitive, include a brief explanation
+- Avoid redundant comments
+
 ### SCSS Style
 For CSS class names, keep them descriptive and concise. Feature or role of the class should be a prefix separated with a dash from the rest of the name.
 
@@ -74,6 +83,7 @@ All color variables should be defined in `/src/app/_variables.scss`:
 - Use Material's theme system (`$primary`, `$accent`, `$warn`)
 - Define semantic variables (e.g., `$light-grey` not `$color-1`)
 - Use Material's `mat-color()` function to access theme colors
+- Never hardcode color values
 
 #### Screen Size Variables
 Default breakpoint variables in `_variables.scss`:
@@ -133,6 +143,33 @@ When designing component toolbars, follow these patterns:
   - Use kebab menu (three vertical dots) to contain actions on tablet and mobile views
   - Primary color background with white text (`primary-color` class)
   - Use white icons and text for buttons (`mat-icon`, `font-size-1` classes)
+
+### Loading Indicators
+For consistent loading states across the application, follow these standards:
+
+- For page-level or component-level loading:
+  - Use simple text indicators with "Loading [resource]..." format
+  - Example: `<span i18n>Loading courses...</span>`
+  - Always include an `*ngIf="isLoading"` condition with an `else` template for loaded content
+
+- For action-based loading (form submissions, data operations):
+  - Use `DialogsLoadingService` to show a loading wheel
+  - Start loading with `dialogsLoadingService.start()`
+  - Stop loading with `dialogsLoadingService.stop()` in both success and error cases
+  - Always use within a `finalize()` operator in RxJS pipes to ensure loading stops
+
+- Loading state variables:
+  - Initialize as `isLoading = true` when data fetching begins
+  - Set to `false` when data loading completes
+
+### Icons
+When using icons in the application, follow these guidelines:
+
+- Use Material icons (`mat-icon`) whenever possible
+- Prefer opaque icons over transparent ones for better visibility
+- Keep icon sizes consistent within similar UI elements
+- Use icon colors that maintain sufficient contrast with the background
+- For custom icons, ensure they match Material Design style guidelines
 
 ### Dialog Button Standards
 When creating dialog boxes, follow these button placement rules:
