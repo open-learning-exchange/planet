@@ -1,0 +1,12 @@
+FROM treehouses/node
+
+WORKDIR /ng-app
+
+COPY package.json ./
+
+RUN apk add --update \
+    python3 \
+    build-base \
+    jq
+
+RUN npm i --silent
