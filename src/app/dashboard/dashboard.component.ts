@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
@@ -44,8 +44,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   isMobile = false;
 
-  get myLifeItems() {
-    const items = [
+  myLifeItems: any[] = [];
+
+  initMyLifeItems() {
+    this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
       { baseFirstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
@@ -55,8 +57,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       { baseFirstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
       { baseFirstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
     ];
+    this.updateMyLifeItemsFormat();
+  }
 
-    return items.map(item => ({
+  updateMyLifeItemsFormat() {
+    this.myLifeItems = this.myLifeItems.map(item => ({
       ...item,
       firstLine: this.isMobile ? item.baseFirstLine + item.title : item.baseFirstLine
     }));
@@ -71,6 +76,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.updateMyLifeItemsFormat();
   }
 
   constructor(
@@ -81,8 +87,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private certificationsService: CertificationsService,
     private dialog: MatDialog,
-    private deviceInfoService: DeviceInfoService,
-    private cd: ChangeDetectorRef
+    private deviceInfoService: DeviceInfoService
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
@@ -100,6 +105,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.initMyLifeItems();
   }
 
   ngOnInit() {
@@ -204,14 +210,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getSurveys() {
     this.getSubmissions('survey', 'pending', this.user.name).subscribe((surveys) => {
       this.surveysCount = dedupeObjectArray(surveys, [ 'parentId' ]).length;
-      this.cd.detectChanges();
+      this.myLifeItems = this.myLifeItems.map(item => 
+        item.link === 'mySurveys' ? { ...item, badge: this.surveysCount } : item
+      );
     });
   }
 
   getExams() {
     this.getSubmissions('exam', 'requires grading').subscribe((exams) => {
       this.examsCount = exams.length;
-      this.cd.detectChanges();
+      this.myLifeItems = this.myLifeItems.map(item => 
+        item.link === 'submissions' ? { ...item, badge: this.examsCount } : item
+      );
     });
   }
 
@@ -258,11 +268,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.showBanner = false;
   }
 
-  formatMyLifeFirstLine(text: string, isMobile: boolean): string {
-    if (isMobile) {
-      return text.replace(/\s+/g, '');
-    }
-    return text;
-  }
 
 }
