@@ -6,10 +6,14 @@
   <mat-toolbar class="primary-color font-size-1 action-buttons">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
     <ng-container *ngIf="editable === true">
-      <button mat-stroked-button *ngIf="canManage && !meetupDetail.isTask" (click)="routeToEdit()">
+      <!-- Consolidated edit button for both meetups and tasks -->
+      <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask" 
+              (click)="meetupDetail.isTask ? editTask() : routeToEdit()">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-stroked-button *ngIf="canManage && !meetupDetail.isTask" (click)="deleteMeetup()">
+      <!-- Consolidated delete button for both meetups and tasks -->
+      <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask" 
+              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()">
         <mat-icon>delete</mat-icon>
       </button>
     </ng-container>
