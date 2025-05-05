@@ -300,7 +300,7 @@ export class SubmissionsService {
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
         const responseCount = updatedSubmissions.length;
-        const title = `${exam.name} (${responseCount})`;
+        const title = `${toProperCase(type)} ${exam.name} (${responseCount})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
