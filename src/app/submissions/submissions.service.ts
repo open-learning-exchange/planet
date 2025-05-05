@@ -299,8 +299,7 @@ export class SubmissionsService {
         );
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
-        const responseCount = updatedSubmissions.length;
-        const title = `${toProperCase(type)} ${exam.name} (${responseCount})`;
+        const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
@@ -318,7 +317,7 @@ export class SubmissionsService {
         });
         this.csvService.exportCSV({
           data,
-          title,
+          title
         });
       })
     );
