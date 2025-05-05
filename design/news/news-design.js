@@ -17,6 +17,7 @@ module.exports = {
             lastName: doc.user.lastName,
             planetCode: doc.user.planetCode
           } : null,
+          replyTo: doc.replyTo,
           viewIn: doc.viewIn,
           chat: doc.chat,
           news: doc.chat && doc.news ? {

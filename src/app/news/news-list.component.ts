@@ -64,8 +64,8 @@ export class NewsListComponent implements OnInit, OnChanges {
     let isLatest = true;
     this.replyObject = {};
     this.items.forEach(item => {
-      this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
-      if (!item.doc.replyTo && isLatest) {
+      this.replyObject[item.doc?.replyTo || 'root'] = [ ...(this.replyObject[item.doc?.replyTo || 'root'] || []), item ];
+      if (!item.doc?.replyTo && isLatest) {
         item.latestMessage = true;
         isLatest = false;
       }
