@@ -39,6 +39,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   hasUnsavedChanges = false;
   private initialState = '';
   private _steps = [];
+  isFormExpanded = true;
   get steps() {
     return this._steps;
   }
@@ -112,8 +113,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
         this.pageType = 'Edit';
+        if (saved.steps && saved.steps.length > 0) {
+          this.isFormExpanded = false;
+        }
       } else {
         this.pageType = 'Add';
+        this.isFormExpanded = true;
       }
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
