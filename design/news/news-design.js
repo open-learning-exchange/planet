@@ -4,7 +4,7 @@ module.exports = {
       map: function (doc) {
         if (doc.docType !== 'message' || !Array.isArray(doc.viewIn)) { return; }
 
-        const payload = {
+        payload = {
           message: doc.message,
           time: doc.time,
           updatedDate: doc.updatedDate,

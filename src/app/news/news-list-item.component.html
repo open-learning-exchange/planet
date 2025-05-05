@@ -45,11 +45,11 @@
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
-    <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
-      <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
+    <button mat-button type="button" *ngIf="replyObject[item._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
+      <ng-container i18n>Show Replies</ng-container> ({{replyObject[item._id]?.length}})
     </button>
     <span class="toolbar-fill"></span>
-    <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
+    <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item)">
       <mat-icon>link</mat-icon>
     </button>
     <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
