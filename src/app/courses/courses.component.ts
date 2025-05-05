@@ -404,9 +404,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
-    if (this.isForm) {
-      return;
-    }
+    if (this.isForm) { return; }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
@@ -467,6 +465,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openCourseViewDialog(courseId) {
+    if (!this.isDialog && !this.isForm) { return; }
     const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId },
       minWidth: '600px',
