@@ -18,6 +18,9 @@ export class NewsService {
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   private activeReplyId: string | null = null;
+  private lastKey: any[] | null = null;
+  private lastDocId: string | null = null;
+  private _allNewsLoaded = true;
 
   constructor(
     private couchService: CouchService,
@@ -26,20 +29,37 @@ export class NewsService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  requestNews(section = 'community', viewId = '' ) {
-    const limit = 1000;
+  requestNews(section = 'community', viewId = '', pageSize = 1000) {
+    if (!this._allNewsLoaded) { return of([]); }
+
+    const startkey = this.lastKey ? this.lastKey : [ section, viewId, {} ];
+    const lastKey = [ section, viewId, null ];
+
     const qs = [
       `descending=true`,
-      `limit=${limit}`,
-      `startkey=${encodeURIComponent(JSON.stringify([ section, viewId, {} ]))}`,
-      `endkey=${encodeURIComponent(JSON.stringify([ section, viewId, null ]))}`
+      `limit=${pageSize + 1}`,
+      `startkey=${encodeURIComponent(JSON.stringify(startkey))}`,
+      `endkey=${encodeURIComponent(JSON.stringify(lastKey))}`,
+      ...(this.lastDocId
+        ? [ `startkey_docid=${encodeURIComponent(this.lastDocId)}` ]
+        : []
+      )
     ].join('&');
 
     forkJoin([
       this.couchService.get(`news/_design/news/_view/by_section_and_id_and_date?${qs}`),
       this.couchService.findAll('attachments')
     ]).subscribe(([ newsItems, avatars ]) => {
-      this.newsUpdated$.next(newsItems.rows.map((item: any) => (
+      const news = newsItems.rows;
+      this._allNewsLoaded = news.length > pageSize;
+      const pageNews = this._allNewsLoaded ? news.slice(0, pageSize) : news;
+
+      const last = news[news.length - 1];
+      if (last) {
+        this.lastKey = last.key;
+        this.lastDocId = last.id;
+      }
+      this.newsUpdated$.next(pageNews.map((item: any) => (
         {
           doc: item.value,
           sharedDate: this.findShareDate(item.value, viewId),
@@ -64,6 +84,16 @@ export class NewsService {
 
   findShareDate(item, viewId) {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
+  }
+
+  resetPagination() {
+    this.lastKey = null;
+    this.lastDocId = null;
+    this._allNewsLoaded = true;
+  }
+
+  get allNewsLoaded(): boolean {
+    return this._allNewsLoaded;
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {

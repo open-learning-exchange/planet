@@ -57,7 +57,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading: boolean;
+  isLoading = true;
+  loadingMore = false;
 
   constructor(
     private dialog: MatDialog,
@@ -81,9 +82,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoading = true;
-    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
-      this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+    this.newsService.resetPagination();
+    this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(pageNews => {
+      if (this.loadingMore) {
+        this.news = [ ...this.news, ...pageNews ];
+      } else {
+        this.news = pageNews.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      }
+      this.loadingMore = false;
       this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
@@ -174,7 +180,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   requestNewsAndUsers(planetCode?: string) {
-    this.newsService.requestNews('community', this.teamId);
+    this.newsService.requestNews('community', this.teamId, 10);
     if (planetCode) {
       this.stateService.requestData('child_users', 'local');
     } else {
@@ -433,5 +439,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
+  }
+
+  loadMoreNews() {
+    if (this.newsService.allNewsLoaded && !this.loadingMore) {
+      this.loadingMore = true;
+      this.newsService.requestNews('community', this.teamId, 10);
+    }
   }
 }

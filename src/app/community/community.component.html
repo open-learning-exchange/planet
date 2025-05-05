@@ -15,12 +15,18 @@
             <ng-container *ngIf="news?.length > 0; else noVoices">
               <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
             </ng-container>
+            <div class="full-width" style="text-align: center;" *ngIf="!isLoading && news?.length > 0 && !newsService.getActiveReplyId()">
+              <button mat-raised-button color="primary" (click)="loadMoreNews()" [disabled]="loadingMore">
+                <mat-spinner *ngIf="loadingMore"></mat-spinner>
+                <span *ngIf="!loadingMore" i18n>Show More</span>
+              </button>
+            </div>
           </ng-template>
           <ng-template #noVoices>
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab 
+        <mat-tab
           [label]="configuration.planetType === 'nation' ? 'Nation Leaders' : 'Community Leaders'"
           i18n-label
           *ngIf="isLoggedIn">
