@@ -2,7 +2,6 @@
 
 :host {
   .view-container {
-
     display: grid;
     grid-template-columns: 1.5fr 1fr;
     grid-template-rows: auto 42px;
@@ -15,10 +14,6 @@
       
       .course-details-panel {
         margin-bottom: 1rem;
-        
-        ::ng-deep .mat-expansion-panel-body {
-          padding: 0 24px 16px;
-        }
       }
       
       .steps-container {
@@ -29,6 +24,7 @@
       
       .actions-container {
         flex: 0 0 auto;
+        align-self: flex-start;
       }
     }
     
@@ -65,7 +61,8 @@
   }
 
   .actions-container {
-    align-self: center;
+    grid-column: 1;
+    align-self: flex-start;
   }
 
   .form-container {
@@ -111,8 +108,9 @@
       grid-area: form-area;
     }
 
-    .actions-container{
+    .actions-container {
       grid-area: actions-area;
+      align-self: flex-start;
     }
   }
 }
