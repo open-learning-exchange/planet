@@ -36,8 +36,22 @@
   .course-details-panel {
     margin-bottom: 1rem;
     
+    &:not(.mat-expanded) {
+      overflow: hidden;
+      
+      ::ng-deep .mat-expansion-panel-content {
+        display: none;
+      }
+    }
+    
     ::ng-deep .mat-expansion-panel-body {
       padding: 0 24px 16px;
+    }
+    
+    ::ng-deep .mat-expansion-panel-header {
+      height: 64px;
+      padding: 0 24px;
+      overflow: hidden;
     }
   }
 
