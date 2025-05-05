@@ -2,39 +2,25 @@
 
 :host {
   .view-container {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    grid-template-rows: auto 42px;
-    grid-column-gap: 0.25rem;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 10px;
+    min-height: 70vh;
+    
+    > * {
+      overflow-y: visible;
+    }
     
     &.edit-mode {
       display: flex;
       flex-direction: column;
-      
-      .course-details-panel {
-        margin-bottom: 1rem;
-      }
-      
-      .steps-container {
-        flex: 1 1 auto;
-        overflow-y: auto;
-        min-height: 200px;
-      }
-      
-      .actions-container {
-        flex: 0 0 auto;
-        align-self: flex-start;
-      }
-    }
-    
-    > * {
-      overflow-y: auto;
     }
   }
 
   .course-details-panel {
     margin-bottom: 1rem;
+    flex: 0 0 auto;
     
     &:not(.mat-expanded) {
       overflow: hidden;
@@ -71,20 +57,31 @@
   }
 
   .steps-container {
-    grid-row: span 2;
+    flex: 0 1 auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-y: visible;
+    min-height: auto;
+    max-height: none;
   }
 
   .actions-container {
-    grid-column: 1;
+    flex: 0 0 auto;
     align-self: flex-start;
+    margin-top: auto;
+    margin-bottom: 1rem;
+    padding: 10px 0;
   }
 
   .form-container {
     width: auto;
+    overflow: visible;
   }
 
   .form-spacing {
     width: auto;
+    height: auto;
+    overflow: visible;
   }
 
   @media (max-width: $screen-md) {
