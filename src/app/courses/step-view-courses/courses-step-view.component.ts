@@ -67,7 +67,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.stepNum = currentStepNum;
         this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
       } else if (currentStepNum !== initialStepNum) {
-        this.router.navigate([`/courses/view/${this.courseId}/step/${initialStepNum}`]);
+        this.router.navigate([ `/courses/view/${this.courseId}/step/${initialStepNum}` ]);
       }
     });
 
