@@ -52,7 +52,7 @@
         </form>
       </div>
     </mat-expansion-panel>
-    <div class="steps-container">
+    <div class="steps-container" [ngClass]="{'has-steps': steps.length > 0}" *ngIf="steps.length > 0">
       <planet-courses-step [(steps)]="steps" (addStepEvent)="addStep()"></planet-courses-step>
     </div>
     <div class="actions-container">

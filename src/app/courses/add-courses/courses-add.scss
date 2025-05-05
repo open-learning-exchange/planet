@@ -36,9 +36,7 @@
     }
   }
 
-
   .steps-container {
-    flex: 0 1 auto;
     margin-top: 1rem;
     margin-bottom: 1rem;
     overflow-y: visible;
@@ -70,7 +68,6 @@
       'form-area form-area'
       'steps-area steps-area'
       'actions-area actions-area';
-      
       > * {
         overflow-y: visible;
       }
@@ -87,7 +84,7 @@
       grid-area: form-area;
     }
 
-    .actions-container {
+    .actions-container{
       grid-area: actions-area;
     }
   }
