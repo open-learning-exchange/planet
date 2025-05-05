@@ -19,7 +19,6 @@ import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challen
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
-
   onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
@@ -56,6 +55,22 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    let initialStepNum = 0;
+
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
+      const currentStepNum = +params.get('stepNum');
+      this.parent = this.route.snapshot.data.parent;
+      this.courseId = params.get('id');
+
+      if (initialStepNum === 0) {
+        initialStepNum = currentStepNum;
+        this.stepNum = currentStepNum;
+        this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
+      } else if (currentStepNum !== initialStepNum) {
+        this.router.navigate([`/courses/view/${this.courseId}/step/${initialStepNum}`]);
+      }
+    });
+
     combineLatest(
       this.coursesService.courseUpdated$,
       this.resourcesService.resourcesListener(this.parent),
@@ -71,14 +86,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         course.creator !== undefined &&
         (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
     });
+
     this.getSubmission();
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
-      this.parent = this.route.snapshot.data.parent;
-      this.stepNum = +params.get('stepNum'); // Leading + forces string to number
-      this.courseId = params.get('id');
-      this.attempts = 0;
-      this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
-    });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.chatService.listAIProviders().subscribe((providers) => {
       this.isOpenai = providers.some(provider => provider.model === 'openai');
@@ -107,10 +116,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   initCourse(course, progress, resources, exams) {
-    // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.initResources(resources);
-    // Fix for multiple progress docs created.  If there are more than one for a step, then we need to call updateProgress to fix.
     const stepProgressDocs = progress.filter(p => p.stepNum === this.stepNum);
     this.progress = stepProgressDocs.find(p => p.passed) || stepProgressDocs[0] || { passed: false };
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
@@ -136,7 +143,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
   }
 
-  // direction = -1 for previous, 1 for next
   changeStep(direction) {
     this.isLoading = true;
     this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
@@ -153,7 +159,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    // Challenge option only
     if (includedCodes.includes(this.stateService.configuration.code) && challengePeriod && this.courseId === challengeCourseId) {
       this.dialog.open(DialogsAnnouncementComponent, {
         width: '50vw',
@@ -216,7 +221,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   get localizedStepInfo(): string {
-    return $localize`The following information is a course step from the "${this.stepDetail?.stepTitle}" course with a description "${this.stepDetail?.description}". Be sure to assist the learner in the best way you can. `;
+    return $localize`The following information is a course step from the "${this.stepDetail?.stepTitle}" course with a description "${this.stepDetail?.description}". Be sure to assist the learner in the best way you can.`;
   }
-
 }
