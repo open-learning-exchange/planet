@@ -103,10 +103,8 @@ jobs:
         run: |
           prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
-          pulloutput=$(docker pull $prerepo)
-          if [ -n "$pulloutput" ]; then
-            docker tag $prerepo $latestprerepo
-          fi
+          docker pull $prerepo
+          docker tag $prerepo $latestprerepo
 
 
       - name: Build single language build
