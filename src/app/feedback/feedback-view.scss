@@ -34,14 +34,6 @@
   }
 }
 
-.ellipsis-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  display: inline-block;
-}
-
 .no-shrink-button {
   flex-shrink: 0;
   margin-left: auto;
