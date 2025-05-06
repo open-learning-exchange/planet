@@ -19,6 +19,7 @@ export class NewsService {
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
+  private activeReplyId: string | null = null;
 
   constructor(
     private couchService: CouchService,
@@ -57,8 +58,7 @@ export class NewsService {
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
     const { configuration } = this.stateService;
     const message = typeof post.message === 'string' ? post.message : post.message.text;
-    const processedMessage = message === '' ? '</br>' : message;
-    const images = this.createImagesArray(post, processedMessage);
+    const images = this.createImagesArray(post, message);
     const newPost = {
       docType: 'message',
       time: this.couchService.datePlaceholder,
@@ -66,7 +66,7 @@ export class NewsService {
       parentCode: configuration.parentCode,
       user: this.userService.get(),
       ...post,
-      message: processedMessage,
+      message,
       images,
       updatedDate: isMessageEdit ? this.couchService.datePlaceholder : post.updatedDate,
       viewIn: post.viewIn || []
@@ -128,6 +128,14 @@ export class NewsService {
 
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
+  }
+
+  setActiveReplyId(replyId: string | null) {
+    this.activeReplyId = replyId;
+  }
+
+  getActiveReplyId(): string | null {
+    return this.activeReplyId;
   }
 
 }

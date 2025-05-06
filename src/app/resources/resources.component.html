@@ -104,7 +104,7 @@
   </ng-template>
 
   <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}">
-    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
+    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -130,8 +130,9 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
-              <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
+              <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">
+                {{ element.doc.title | truncateText:180 }}
+              </a>
               <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
@@ -149,11 +150,12 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <td-markdown
-              i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-                element.doc.description">
-            </td-markdown>
+            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="450"></planet-markdown>
+            <div *ngIf="element.doc.description.length > 450"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+              <button mat-icon-button>
+                <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+              </button>
+            </div>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
@@ -206,8 +208,22 @@
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="expandedDetail">
+        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
+            <ng-container *ngIf="element.renderContent && isExpanded(element)">
+              <td-markdown
+                [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
+                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                element.doc.description">
+              </td-markdown>
+            </ng-container>
+          </div>
+        </mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>{{ isLoading ? 'Resources Loading...' : 'No Resource Found' }}</div></td>
       </tr>

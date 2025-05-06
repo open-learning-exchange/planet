@@ -58,7 +58,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
-  disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -68,6 +67,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     startDate: null,
     endDate: null
   };
+  selectedTimeFilter = '12m';
+  showCustomDateFields = false;
+  resourcesLoading = true;
+  coursesLoading = true;
+  chatLoading = true;
+  healthLoading = true;
+  healthNoData = false;
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private activityService: ReportsService,
@@ -93,7 +100,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
@@ -101,10 +107,22 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           return;
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-        this.dateQueryParams = {
-          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
-          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
+        const parseDate = (dateStr) => {
+          if (!dateStr) { return null; }
+          const [ y, m, d ] = dateStr.split('-').map(Number);
+          return new Date(y, m - 1, d);
         };
+        this.dateQueryParams = {
+          startDate: parseDate(queryParams['startDate']),
+          endDate: parseDate(queryParams['endDate']) || this.today
+        };
+        if (
+          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+        ) {
+          this.selectedTimeFilter = 'custom';
+          this.showCustomDateFields = true;
+        }
         this.dateFilterForm.controls.endDate.setValue(
           this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
           ? this.dateQueryParams.endDate : this.today
@@ -186,9 +204,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge'
         });
         this.location.replaceState(urlTree.toString());
-
-        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
-          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -229,7 +244,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : this.minDate
+        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -301,6 +316,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
+    }, error => {
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
     });
   }
 
@@ -343,6 +369,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
+      this.chatLoading = false;
     });
   }
 
@@ -374,7 +401,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const months = setMonths();
+    const months = setMonths({
+      startDate: this.filter.startDate,
+      endDate: this.filter.endDate
+    });
+    const labels = months.map(month => monthDataLabels(month));
+
     const genderFilter = (gender: string) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
@@ -394,14 +426,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => monthDataLabels(month))
+      labels
     });
   }
 
   setChart({ data, labels, chartName }) {
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
-      updateChart.data = { ...data, labels: [] };
+      updateChart.data = { ...data, labels };
       updateChart.update();
       return;
     }
@@ -413,7 +445,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { labels, type: 'category' } ],
+          xAxes: [ { type: 'category' } ],
           yAxes: [ {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
@@ -423,21 +455,29 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
-    if (reportType === 'coursesOverview') {
-      const coursesFields = [
+    if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
+      const exportFields = [
         { placeholder: $localize`From`, name: 'startDate', ...commonProps },
         { placeholder: $localize`To`, name: 'endDate', ...commonProps }
       ];
-      const coursesFormGroup = {
+      const exportFormGroup = {
         startDate: this.dateFilterForm.controls.startDate.value,
         endDate: [ this.dateFilterForm.controls.endDate.value, CustomValidators.endDateValidator() ]
       };
-      this.dialogsFormService.openDialogsForm($localize`Select Date Range for Courses Overview`, coursesFields, coursesFormGroup, {
+      const title = reportType === 'coursesOverview' ?
+        $localize`Select Date Range for Courses Overview` :
+        $localize`Select Date Range for Resources Overview`;
+
+      this.dialogsFormService.openDialogsForm(title, exportFields, exportFormGroup , {
         onSubmit: (formValue: any) => {
-          this.exportCourseOverview(formValue.startDate, formValue.endDate);
+          if (reportType === 'coursesOverview') {
+            this.exportCourseOverview(formValue.startDate, formValue.endDate);
+          } else {
+            this.exportResourceOverview(formValue.startDate, formValue.endDate);
+          }
         }
       });
       return;
@@ -499,7 +539,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return stats;
     }, {});
 
-    console.log('Merged course activity data:', this.courseActivities.total.data);
     const filteredEnrollments = filterByDate(this.progress.enrollments.data, 'time', dateRange) as any[];
     const filteredCompletions = filterByDate(this.progress.completions.data, 'time', dateRange) as any[];
     const filteredSteps = filterByDate(this.progress.steps.data, 'time', dateRange) as any[];
@@ -544,6 +583,48 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       title: $localize`Courses Overview`
     });
 
+    this.dialogsFormService.closeDialogsForm();
+    this.dialogsLoadingService.stop();
+  }
+
+  exportResourceOverview(startDate: Date, endDate: Date) {
+    this.dialogsLoadingService.start();
+    const dateRange = { startDate, endDate };
+    const filteredResourceData = filterByDate(
+      this.resourceActivities?.total?.data || [],
+      'time',
+      dateRange
+    ) as any[];
+    const resourceStats = filteredResourceData.reduce((stats: { [resourceId: string]: any }, activity: any) => {
+      if (activity.resourceId && !stats[activity.resourceId]) {
+        stats[activity.resourceId] = {
+          title: activity.resourceTitle || activity.title || activity.max?.title || '',
+          count: 0
+        };
+      }
+      if (activity.resourceId) {
+        stats[activity.resourceId].count++;
+      }
+      return stats;
+    }, {});
+    Object.keys(resourceStats).forEach(resourceId => {
+      const foundRating = (this.ratings.resources || []).find((rating: any) => rating.item === resourceId);
+      resourceStats[resourceId].averageRating = foundRating ? foundRating.value : '';
+    });
+    const planetForLink = (this.stateService.configuration.planetName ||
+                          this.planetName ||
+                          'default').toLowerCase();
+    const baseUrl = `https://planet.${planetForLink}.ole.org/resources/view/`;
+    const csvData = Object.entries(resourceStats).map(([ resourceId, resource ]: [string, any]) => ({
+      'Title': resource.title,
+      'Link': baseUrl + resourceId,
+      'Views': resource.count,
+      'Average Rating': resource.averageRating
+    }));
+    this.csvService.exportCSV({
+      data: csvData,
+      title: $localize`Resources Overview`
+    });
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
   }
@@ -594,9 +675,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'health':
         this.exportDocView(reportType, dateRange, members, null);
         break;
+      case 'chat':
+        this.exportChatData(dateRange, members, sortBy);
+        break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportChatData(dateRange: any, members: any[], sortBy: string) {
+    let data = filterByMember(filterByDate(this.chatActivities.data, 'createdDate', dateRange), members);
+    if (sortBy) {
+      data = this.sortData(data, sortBy);
+    }
+    const exportData = data.map(activity => ({
+      'User': activity.user || '',
+      'AI Provider': activity.aiProvider || '',
+      'Timestamp': new Date(activity.createdDate).toLocaleString(),
+      'Chat Responses': activity.conversations?.length || 0,
+      'Assistant': activity.assistant ? 'Yes' : 'No',
+      'Shared': activity.shared ? 'Yes' : 'No',
+      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+    }));
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Chat Usage`
+    });
   }
 
   exportSummary(dateRange: any, members: any[], sortBy: string) {
@@ -682,14 +786,46 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
-    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-    setTimeout(() => {
-      this.disableShowAllTime = true;
-    });
     this.dateFilterForm.patchValue({
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+
+    if (timeFilter === 'custom') {
+      const currentStartDate = new Date();
+      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      const currentEndDate = this.filter.endDate || this.today;
+      this.dateFilterForm.patchValue({
+        startDate: currentStartDate,
+        endDate: currentEndDate
+      });
+      return;
+    }
+    this.resetDateFilter({ startDate, endDate });
+    this.filter.startDate = startDate;
+    this.filter.endDate = endDate;
+    this.filterData();
+  }
+
+  clearFilters() {
+    this.filter.app = '';
+    this.selectedTeam = 'All';
+    this.filter.members = [];
+    this.onTimeFilterChange('12m');
+  }
+
+  onHealthLoadingChange(loading: boolean) {
+    this.healthLoading = loading;
+  }
+
+  onHealthNoDataChange(noData: boolean) {
+    this.healthNoData = noData;
   }
 
 }

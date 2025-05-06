@@ -4,11 +4,28 @@
   </button>
   <span i18n>Certifications</span>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1 margin-lr-3">
-    <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter" i18n-placeholder placeholder="Type certification name to search">
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+
+  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter" i18n-placeholder placeholder="Type certification name to search">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+  </ng-container>
+
+  <ng-template #mobileView>
+    <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow"><mat-icon>filter_list</mat-icon></button>
+  </ng-template>
+</mat-toolbar>
+
+<mat-toolbar *ngIf="showFiltersRow && deviceType !== deviceTypes.DESKTOP">
+  <mat-toolbar-row>
+    <mat-icon>search</mat-icon>
+    <mat-form-field class="font-size-1 margin-lr-3">
+      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter" i18n-placeholder placeholder="Type certification name to search">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+  </mat-toolbar-row>
 </mat-toolbar>
 
 <div class="space-container">
@@ -19,16 +36,16 @@
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell i18n *matHeaderCellDef mat-sort-header="name">Certification Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+        <mat-cell *matCellDef="let element"><span class="ellipsis-text">{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <a mat-raised-button color="primary" [routerLink]="[ 'update/' + element._id ]" (click)="$event.stopPropagation()" i18n>
+            <a mat-raised-button color="primary" class="margin-lr-3 action-button" [routerLink]="[ 'update/' + element._id ]" (click)="$event.stopPropagation()" i18n>
               <mat-icon>edit</mat-icon>Edit
             </a>
-          <button mat-raised-button color="warn" (click)="$event.stopPropagation(); deleteClick(element)" i18n>
-            <mat-icon>delete</mat-icon>Delete
+          <button mat-raised-button color="primary" class="margin-lr-3 action-button" (click)="$event.stopPropagation(); deleteClick(element)" i18n>
+            <mat-icon>delete_forever</mat-icon>Delete
           </button>
         </mat-cell>
       </ng-container>

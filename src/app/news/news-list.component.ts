@@ -87,9 +87,12 @@ export class NewsListComponent implements OnInit, OnChanges {
       );
     this.viewChange.emit(this.replyViewing);
 
-    if (news._id !== 'root') {
+    const isHomeRoute = this.router.url === '/';
+    if (isHomeRoute && news._id !== 'root') {
+      this.newsService.setActiveReplyId(news._id);
       this.router.navigate([ '/voices', news._id ]);
-    } else {
+    } else if (isHomeRoute || this.replyViewing._id === 'root') {
+      this.newsService.setActiveReplyId(null);
       this.router.navigate([ '' ]);
     }
   }
@@ -108,7 +111,7 @@ export class NewsListComponent implements OnInit, OnChanges {
       'required': true,
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
-    const formGroup = { message: [ initialValue, CustomValidators.required ] };
+    const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
