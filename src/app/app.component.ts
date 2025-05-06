@@ -7,9 +7,12 @@ declare let gtag: Function;
 
 @Component({
   selector: 'planet-app',
-  template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>'
+  template: '<div i18n-dir dir="ltr" [ngClass]="mainAppTheme"><router-outlet></router-outlet></div>'
 })
 export class AppComponent {
+
+  mainAppTheme: string;
+
   constructor(
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
@@ -59,6 +62,14 @@ export class AppComponent {
       }
       if (event instanceof NavigationEnd) {
         gtag('config', 'UA-118745384-1', { 'page_path': event.urlAfterRedirects });
+      }
+    });
+  }
+
+  ngOnInit() {
+    this.stateService.couchStateListener('configurations').subscribe((res) => {
+      if (res !== undefined) {
+        this.mainAppTheme = this.stateService.configuration?.customization?.colorTheme === 'purple' ? 'uplanet-theme' : '';
       }
     });
   }
