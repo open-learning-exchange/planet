@@ -64,19 +64,17 @@ jobs:
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-      #     mkdir -p ./ng-app/dist
-      #     docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
-      #     docker images
-      #     docker push $repo
+          mkdir -p ./ng-app/dist
+          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
+          docker images
+          docker push $repo
       
       - name: Push latest pre-build
         if: ${{ github.ref == 'refs/heads/master' && env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
-          echo "Master tagging"
-        # uncomment when tested   
-          #docker tag $repo $latestrepo
-          #docker push $latestrepo
+          docker tag $repo $latestrepo
+          docker push $latestrepo
 
   deploy-single-language:
     name: Deploy single language build
