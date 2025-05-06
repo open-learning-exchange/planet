@@ -297,5 +297,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
   }
+  sortMyTeamsFirst() {
+    if (!this.teams?.data) return;
+    this.teams.data = [...this.teams.data].sort((a, b) => {
+      const aIsMine = a.userStatus === 'member' ? 1 : 0;
+      const bIsMine = b.userStatus === 'member' ? 1 : 0;
+      return bIsMine - aIsMine;
+    });
+  }
+  
 
 }
