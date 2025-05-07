@@ -26,6 +26,7 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { postsPagination } from '../shared/utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -69,6 +70,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isLoadingMore = false;
+  hasMoreNews = false;
+  paginatedNews = [];
+  pageSize = 10;
+  nextStartIndex = 0;
 
   constructor(
     private couchService: CouchService,
@@ -103,9 +109,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
-    if (this.mode === 'services') {
-
-    }
   }
 
   ngAfterViewChecked() {
@@ -135,11 +138,30 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.couchService.get(`${this.dbName}/${teamId}`).pipe(tap((data) => this.team = data));
   }
 
+  loadPagedNews(initial = true) {
+    const { items, endIndex, hasMore } = postsPagination(this.news, this.nextStartIndex, this.pageSize);
+
+    this.paginatedNews = initial ? items : [ ...this.paginatedNews, ...items ];
+
+    this.nextStartIndex = endIndex;
+    this.hasMoreNews = hasMore;
+    this.isLoadingMore = false;
+  }
+
+  loadMoreNews() {
+    this.isLoadingMore = true;
+    this.loadPagedNews(false);
+  }
+
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => this.news = news.map(post => ({
+      .subscribe(news => {
+        this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      })));
+      }));
+        this.nextStartIndex = 0;
+        this.loadPagedNews();
+    });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;

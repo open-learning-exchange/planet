@@ -27,6 +27,7 @@ import {
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
+import { postsPagination } from '../shared/utils';
 
 @Component({
   selector: 'planet-community',
@@ -449,33 +450,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.resizeCalendar = index === 5;
   }
 
-  getTopLevelPosts(news: any[], startIndex: number, pageSize: number) {
-    let topLevelPosts = 0;
-    let endIndex = startIndex;
-
-    for (let i = startIndex; i < news.length; i++) {
-      if (!news[i].doc.replyTo) {
-        topLevelPosts++;
-      }
-      if (topLevelPosts >= pageSize) {
-        endIndex = i + 1;
-        break;
-      }
-    }
-
-    if (topLevelPosts < pageSize) {
-      endIndex = news.length;
-    }
-
-    return {
-      endIndex: endIndex,
-      items: news.slice(startIndex, endIndex),
-      hasMore: endIndex < news.length
-    };
-  }
-
   loadPagedNews(initial = true) {
-    const { items, endIndex, hasMore } = this.getTopLevelPosts(this.news, this.nextStartIndex, this.pageSize);
+    const { items, endIndex, hasMore } = postsPagination(this.news, this.nextStartIndex, this.pageSize);
 
     this.paginatedNews = initial ? items : [ ...this.paginatedNews, ...items ];
 
