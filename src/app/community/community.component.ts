@@ -57,7 +57,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading: boolean;
+  isLoadingInit = false;
+  isLoadingMore = false;
+  hasMoreNews = false;
+  paginatedNews = [];
+  pageSize = 10;
+  nextStartIndex = 0;
 
   constructor(
     private dialog: MatDialog,
@@ -81,10 +86,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoading = true;
+    this.isLoadingInit = true;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
-      this.isLoading = false;
+      this.nextStartIndex = 0;
+      this.loadPagedNews();
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -441,5 +447,46 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
+  }
+
+  getTopLevelPosts(news: any[], startIndex: number, pageSize: number) {
+    let topLevelPosts = 0;
+    let endIndex = startIndex;
+
+    for (let i = startIndex; i < news.length; i++) {
+      if (!news[i].doc.replyTo) {
+        topLevelPosts++;
+      }
+      if (topLevelPosts >= pageSize) {
+        endIndex = i + 1;
+        break;
+      }
+    }
+
+    if (topLevelPosts < pageSize) {
+      endIndex = news.length;
+    }
+
+    return {
+      endIndex: endIndex,
+      items: news.slice(startIndex, endIndex),
+      hasMore: endIndex < news.length
+    };
+  }
+
+  loadPagedNews(initial = true) {
+    const { items, endIndex, hasMore } = this.getTopLevelPosts(this.news, this.nextStartIndex, this.pageSize);
+
+    this.paginatedNews = initial ? items : [ ...this.paginatedNews, ...items ];
+
+    this.nextStartIndex = endIndex;
+    this.hasMoreNews = hasMore;
+    this.isLoadingInit = false;
+    this.isLoadingMore = false;
+  }
+
+  loadMoreNews() {
+    this.isLoadingMore = true;
+    this.loadPagedNews(false);
   }
 }
