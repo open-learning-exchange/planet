@@ -52,6 +52,7 @@ export class NewsListComponent implements OnInit, OnChanges {
     if (childRoute) {
       const voiceId = childRoute.snapshot.paramMap.get('id');
       if (voiceId) {
+        this.newsService.setActiveReplyId(voiceId);
         const news = this.items.find(item => item._id === voiceId);
         if (news) {
           this.showReplies(news);
@@ -87,11 +88,12 @@ export class NewsListComponent implements OnInit, OnChanges {
       );
     this.viewChange.emit(this.replyViewing);
 
-    const isVoicesRoute = this.router.url.includes('/voices/');
-    if (!isVoicesRoute && news._id !== 'root') {
+    const isHomeRoute = this.router.url === '/';
+    const activeReply = this.newsService.getActiveReplyId();
+    if (isHomeRoute && news._id !== 'root') {
       this.newsService.setActiveReplyId(news._id);
       this.router.navigate([ '/voices', news._id ]);
-    } else if (isVoicesRoute && this.replyViewing._id === 'root') {
+    } else if (activeReply && this.replyViewing._id === 'root') {
       this.newsService.setActiveReplyId(null);
       this.router.navigate([ '' ]);
     }
