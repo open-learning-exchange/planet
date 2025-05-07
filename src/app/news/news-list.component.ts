@@ -87,11 +87,11 @@ export class NewsListComponent implements OnInit, OnChanges {
       );
     this.viewChange.emit(this.replyViewing);
 
-    const isHomeRoute = this.router.url === '/';
-    if (isHomeRoute && news._id !== 'root') {
+    const isVoicesRoute = this.router.url.includes('/voices/');
+    if (!isVoicesRoute && news._id !== 'root') {
       this.newsService.setActiveReplyId(news._id);
       this.router.navigate([ '/voices', news._id ]);
-    } else if (isHomeRoute && this.replyViewing._id === 'root') {
+    } else if (isVoicesRoute && this.replyViewing._id === 'root') {
       this.newsService.setActiveReplyId(null);
       this.router.navigate([ '' ]);
     }
