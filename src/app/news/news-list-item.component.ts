@@ -86,7 +86,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   }
 
   remToPx(rem) {
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const computedStyle = getComputedStyle(document.documentElement).fontSize;
+    if (!computedStyle) { return; }
+    return rem * parseFloat(computedStyle);
   }
 
   addReply(news) {
