@@ -16,7 +16,7 @@
               <div class="news-container">
                 <planet-news-list [items]="paginatedNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
               </div>
-              <div class="full-width" style="text-align: center;" *ngIf="!isLoadingInit && !isLoadingMore && hasMoreNews && !this.newsService.getActiveReplyId()">
+              <div class="full-width" style="text-align: center;" *ngIf="!isLoadingInit && !isLoadingMore && hasMoreNews && !isActiveReplyThread">
                 <button mat-raised-button color="primary" (click)="loadMoreNews()">
                   <span i18n>Load More</span>
                 </button>

@@ -138,21 +138,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.couchService.get(`${this.dbName}/${teamId}`).pipe(tap((data) => this.team = data));
   }
 
-  loadPagedNews(initial = true) {
-    const { items, endIndex, hasMore } = postsPagination(this.news, this.nextStartIndex, this.pageSize);
-
-    this.paginatedNews = initial ? items : [ ...this.paginatedNews, ...items ];
-
-    this.nextStartIndex = endIndex;
-    this.hasMoreNews = hasMore;
-    this.isLoadingMore = false;
-  }
-
-  loadMoreNews() {
-    this.isLoadingMore = true;
-    this.loadPagedNews(false);
-  }
-
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe(news => {
@@ -576,6 +561,25 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
+  }
+
+  loadPagedNews(initial = true) {
+    const { items, endIndex, hasMore } = postsPagination(this.news, this.nextStartIndex, this.pageSize);
+
+    this.paginatedNews = initial ? items : [ ...this.paginatedNews, ...items ];
+
+    this.nextStartIndex = endIndex;
+    this.hasMoreNews = hasMore;
+    this.isLoadingMore = false;
+  }
+
+  loadMoreNews() {
+    this.isLoadingMore = true;
+    this.loadPagedNews(false);
+  }
+
+  isActiveReplyThread() {
+    return this.newsService.getActiveReplyId() !== null;
   }
 
 }

@@ -465,4 +465,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.isLoadingMore = true;
     this.loadPagedNews(false);
   }
+
+  isActiveReplyThread() {
+    return this.newsService.getActiveReplyId() !== null;
+  }
 }
