@@ -1,7 +1,7 @@
-import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
-import { truncateText } from './utils';
+import { truncateText, calculateMdAdjustedLimit } from './utils';
 
 @Component({
   selector: 'planet-markdown',
@@ -40,10 +40,18 @@ export class PlanetMarkdownComponent implements OnChanges {
 
     this.images = this.extractImageUrls(this.content);
     const textOnly = this.content.replace(/!\[.*?\]\(.*?\)/g, '');
-    this.limitedContent = truncateText(textOnly, this.limit);
+
+    if (this.previewMode) {
+      const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+      const adjustedLimit = calculateMdAdjustedLimit(scaledContent, this.limit);
+
+      this.limitedContent = truncateText(scaledContent, adjustedLimit);
+    } else {
+      this.limitedContent = truncateText(textOnly, this.limit);
+    }
   }
 
-  private extractImageUrls(content: string): string[] {
+  extractImageUrls(content: string): string[] {
     const imageRegex = /!\[.*?\]\((.*?)\)/g;
     const matches: string[] = [];
     let match: RegExpExecArray | null;
