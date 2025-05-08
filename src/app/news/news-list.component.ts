@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -43,7 +43,6 @@ export class NewsListComponent implements OnInit, OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService,
-    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -52,7 +51,6 @@ export class NewsListComponent implements OnInit, OnChanges {
     if (childRoute) {
       const voiceId = childRoute.snapshot.paramMap.get('id');
       if (voiceId) {
-        this.newsService.setActiveReplyId(voiceId);
         const news = this.items.find(item => item._id === voiceId);
         if (news) {
           this.showReplies(news);
@@ -87,16 +85,6 @@ export class NewsListComponent implements OnInit, OnChanges {
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
-
-    const isHomeRoute = this.router.url === '/';
-    const activeReply = this.newsService.getActiveReplyId();
-    if (isHomeRoute && news._id !== 'root') {
-      this.newsService.setActiveReplyId(news._id);
-      this.router.navigate([ '/voices', news._id ]);
-    } else if (activeReply && this.replyViewing._id === 'root') {
-      this.newsService.setActiveReplyId(null);
-      this.router.navigate([ '' ]);
-    }
   }
 
   showPreviousReplies() {

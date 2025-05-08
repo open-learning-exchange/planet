@@ -578,8 +578,4 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.loadPagedNews(false);
   }
 
-  isActiveReplyThread() {
-    return this.newsService.getActiveReplyId() !== null;
-  }
-
 }

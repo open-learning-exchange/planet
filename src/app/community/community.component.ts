@@ -64,6 +64,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   paginatedNews = [];
   pageSize = 10;
   nextStartIndex = 0;
+  activeReplyId: string | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -356,7 +357,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
+    this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
+    if(data._id !== 'root') {
+      this.router.navigate([ '/voices', data._id ]);
+    } else {
+      this.router.navigate([ '' ]);
+    }
   }
 
   toggleDeleteMode() {
@@ -441,9 +448,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   tabChanged({ index }: { index: number }) {
     if (index === 0) {
-      const activeReplyId = this.newsService.getActiveReplyId();
-      const targetUrl = activeReplyId ? `/voices/${activeReplyId}` : '';
-      this.router.navigate([ targetUrl ]);
+      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
     } else {
       this.router.navigate([ '' ]);
     }
@@ -466,7 +471,4 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.loadPagedNews(false);
   }
 
-  isActiveReplyThread() {
-    return this.newsService.getActiveReplyId() !== null;
-  }
 }
