@@ -14,15 +14,7 @@
           <ng-template #loaded>
             <ng-container *ngIf="news?.length > 0; else noVoices">
               <div class="news-container">
-                <planet-news-list [items]="paginatedNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
-              </div>
-              <div class="full-width" style="text-align: center;" *ngIf="!isLoadingInit && !isLoadingMore && hasMoreNews">
-                <button mat-raised-button color="primary" (click)="loadMoreNews()">
-                  <span i18n>Load More</span>
-                </button>
-              </div>
-              <div class="full-width" style="text-align: center;" *ngIf="isLoadingMore">
-                <mat-spinner></mat-spinner>
+                <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
               </div>
             </ng-container>
           </ng-template>

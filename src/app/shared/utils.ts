@@ -116,28 +116,3 @@ export const truncateText = (text, length) => {
   }
   return text;
 };
-
-export const postsPagination = (news: any[], startIndex: number, pageSize: number) => {
-  let topLevelPosts = 0;
-  let endIndex = startIndex;
-
-  for (let i = startIndex; i < news.length; i++) {
-    if (!news[i].doc.replyTo) {
-      topLevelPosts++;
-    }
-    if (topLevelPosts >= pageSize) {
-      endIndex = i + 1;
-      break;
-    }
-  }
-
-  if (topLevelPosts < pageSize) {
-    endIndex = news.length;
-  }
-
-  return {
-    endIndex: endIndex,
-    items: news.slice(startIndex, endIndex),
-    hasMore: endIndex < news.length
-  };
-};

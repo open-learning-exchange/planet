@@ -71,15 +71,7 @@
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
-        <planet-news-list [items]="paginatedNews" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
-        <div class="full-width" style="text-align: center;" *ngIf="!isLoadingMore && hasMoreNews">
-          <button mat-raised-button color="primary" (click)="loadMoreNews()">
-            <span i18n>Load More</span>
-          </button>
-        </div>
-        <div class="full-width" style="text-align: center;" *ngIf="isLoadingMore">
-          <mat-spinner></mat-spinner>
-        </div>
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label i18n>

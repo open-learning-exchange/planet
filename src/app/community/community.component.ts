@@ -27,7 +27,6 @@ import {
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
-import { postsPagination } from '../shared/utils';
 
 @Component({
   selector: 'planet-community',
@@ -58,12 +57,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoadingInit = false;
-  isLoadingMore = false;
-  hasMoreNews = false;
-  paginatedNews = [];
-  pageSize = 10;
-  nextStartIndex = 0;
+  isLoadingInit = true;
   activeReplyId: string | null = null;
 
   constructor(
@@ -88,11 +82,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoadingInit = true;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
-      this.nextStartIndex = 0;
-      this.loadPagedNews();
+      this.isLoadingInit = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -359,7 +351,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   toggleShowButton(data) {
     this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
-    if(data._id !== 'root') {
+    if (data._id !== 'root') {
       this.router.navigate([ '/voices', data._id ]);
     } else {
       this.router.navigate([ '' ]);
@@ -453,22 +445,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
-  }
-
-  loadPagedNews(initial = true) {
-    const { items, endIndex, hasMore } = postsPagination(this.news, this.nextStartIndex, this.pageSize);
-
-    this.paginatedNews = initial ? items : [ ...this.paginatedNews, ...items ];
-
-    this.nextStartIndex = endIndex;
-    this.hasMoreNews = hasMore;
-    this.isLoadingInit = false;
-    this.isLoadingMore = false;
-  }
-
-  loadMoreNews() {
-    this.isLoadingMore = true;
-    this.loadPagedNews(false);
   }
 
 }
