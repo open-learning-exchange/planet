@@ -155,8 +155,8 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="450" (previewed)="expandedElement = expandedElement || $event"></planet-markdown>
-            <div *ngIf="expandedElement"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
+            <div *ngIf="showPreviewExpand(element.doc)" style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
                 <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
               </button>
