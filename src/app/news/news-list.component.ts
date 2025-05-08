@@ -195,7 +195,7 @@ export class NewsListComponent implements OnInit, OnChanges {
     return item._id;
   }
 
-  getCurrentList(): any[] {
+  getCurrentItems(): any[] {
     if (this.replyViewing._id === 'root') {
       return this.items.filter(item => !item.doc.replyTo);
     }
@@ -213,11 +213,10 @@ export class NewsListComponent implements OnInit, OnChanges {
   }
 
   loadPagedItems(initial = true) {
-    const list = this.getCurrentList();
-    const { items, endIndex, hasMore } = this.paginateItems(list, this.nextStartIndex, this.pageSize);
+    const news = this.getCurrentItems();
+    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, this.pageSize);
 
-    this.displayedItems = initial ? items : this.displayedItems.concat(items);
-
+    this.displayedItems = initial ? items : [ ...this.displayedItems, ...items ];
     this.nextStartIndex = endIndex;
     this.hasMoreNews = hasMore;
     this.isLoadingMore = false;
