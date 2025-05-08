@@ -35,6 +35,13 @@ export class CustomValidators {
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
+  static nonNegativeNumberValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    return (ac.value >= 0) ? null : { invalidPositive: true };
+  }
+
   static choiceSelected(requireCorrect: boolean) {
     return (ac: AbstractControl): ValidationErrors => {
       if (!ac.parent || !requireCorrect) {
@@ -175,20 +182,6 @@ export class CustomValidators {
     };
   }
 
-  static startDateValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const today = new Date();
-       // Reset to start of day for accurate comparison
-      today.setHours(0, 0, 0, 0);
-      const selectedDate = new Date(control.value);
-
-      if (control.value && selectedDate < today) {
-        return { dateInPast : true };
-      }
-      return null;
-    };
-  }
-
   // Set this on both password and confirmation fields so it runs when either changes
   // confirm should be true for the confirmation field validator
   // match is true by default, for unmatching passwords, match should be false
@@ -246,13 +239,38 @@ export class CustomValidators {
 
   static validLink(ac: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
     return new Promise((resolve, reject) => {
-      try {
-        const url = new URL(ac.value);
+      if (!ac.value) {
         resolve(null);
-      } catch (_) {
-        resolve({ 'invalidLink': true });
+      } else {
+        const trimmedValue = ac.value.trim();
+        if (/\s/.test(trimmedValue)) {
+          resolve({ 'invalidLink': true });
+        } else {
+          const domainRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*(\/.*)?$/;
+          if (!domainRegex.test(trimmedValue)) {
+            resolve({ 'invalidLink': true });
+          } else {
+            try {
+              const url = new URL(trimmedValue);
+              resolve(null);
+            } catch (_) {
+              resolve({ 'invalidLink': true });
+            }
+          }
+        }
       }
     });
   }
 
+  static atLeastOneDaySelected(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        if (!control.parent) { return null; }
+        const recurringControl = control.parent.get('recurring');
+        if (!recurringControl || recurringControl.value !== 'weekly') {
+            return null;
+        }
+        const selectedDays = control.value;
+        return selectedDays && selectedDays.length > 0 ? null : { noDaysSelected: true };
+    };
+  }
 }

@@ -34,7 +34,8 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   emptyTable = true;
   showBalanceWarning = false;
   curCode = this.stateService.configuration.currency || {};
-
+  configuration: any = {};
+  planetName: any;
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -125,7 +126,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
           description: [ transaction.description || '', CustomValidators.required ],
-          amount: [ transaction.amount || '', [ CustomValidators.positiveNumberValidator ] ],
+          amount: [ transaction.amount || '', [ CustomValidators.nonNegativeNumberValidator ] ],
           date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
         },
         {
@@ -198,10 +199,12 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       debit: row.debit,
       balance: row.balance
     }));
-
+    const planetName = this.stateService.configuration.name || 'Unnamed';
+    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const titleName = this.team.name || `${entityLabel} ${planetName}`;
     this.csvService.exportCSV({
       data: updatedData,
-      title: $localize`Financial Transactions for ${this.team.name} Enterprise`
+      title: $localize`Financial Transactions for ${titleName}`
     });
   }
 

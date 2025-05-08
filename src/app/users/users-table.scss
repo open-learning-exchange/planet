@@ -9,6 +9,14 @@
   max-width: 100px;
 }
 
+.mat-cell.mat-column-name span {
+  padding-right:5px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
 mat-cell p {
   margin: 0;
 }
@@ -23,6 +31,15 @@ button-container {
   justify-content: center;
 }
 
+.mat-cell button, .mat-cell div button[mat-raised-button] {
+  width: 150px;
+  text-align: center;
+  padding: 8px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media(max-width: $screen-md) {
   .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
     max-width: 70px;
@@ -30,8 +47,7 @@ button-container {
 }
 
 @media (max-width: $screen-sm) {
-  mat-cell button, .visibility-cell {
-    min-width: 0;
-    padding: 0 3px;
+  .mat-cell button, .mat-cell div button[mat-raised-button] {
+    width: 50px;
   }
 }

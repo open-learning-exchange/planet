@@ -1,51 +1,136 @@
-<mat-toolbar class="action-buttons">
-  <button class="btnBack" mat-icon-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span i18n>Reports</span>
-  <span class="toolbar-fill"></span>
-  <mat-form-field *ngIf="teams" class="font-size-1 margin-lr-5">
-    <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" value="All">
-      <mat-option i18n value="All">All Members</mat-option>
-      <mat-optgroup label="Teams" i18n-label>
-        <mat-option *ngFor="let team of teams.team" [value]="team">{{team.name}}</mat-option>
-      </mat-optgroup>
-      <mat-optgroup label="Enterprises" i18n-label>
-        <mat-option *ngFor="let team of teams.enterprise" [value]="team">{{team.name}}</mat-option>
-      </mat-optgroup>
-    </mat-select>
-  </mat-form-field>
-  <ng-container *ngIf="minDate">
-    <form [formGroup]="dateFilterForm" class="font-size-1 action-buttons">
-      <mat-form-field>
+<mat-toolbar>
+  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
+    <button class="btnBack" mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>Reports</span>
+    <span class="toolbar-fill"></span>
+    <form [formGroup]="dateFilterForm" *ngIf="showCustomDateFields">
+      <mat-form-field class="margin-lr-5 font-size-1">
         <mat-label i18n>Start Date</mat-label>
-        <input matInput formControlName="startDate" [matDatepicker]="startDate" [min]="minDate" [max]="today">
-        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-        <mat-datepicker #startDate></mat-datepicker>
+        <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+        <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field class="margin-lr-5 font-size-1">
         <mat-label i18n>End Date</mat-label>
-        <input matInput formControlName="endDate" [matDatepicker]="endDate" [min]="minDate" [max]="today">
-        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
-        <mat-datepicker #endDate></mat-datepicker>
+        <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
       </mat-form-field>
     </form>
-    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="disableShowAllTime">Show All Time</button>
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+        <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="font-size-1 margin-lr-5">
+      <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
+        <mat-option i18n value="All">All Members</mat-option>
+        <mat-optgroup label="Teams" i18n-label>
+          <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
+        </mat-optgroup>
+        <mat-optgroup label="Enterprises" i18n-label>
+          <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <mat-button-toggle-group
+      class="font-size-1 margin-lr-5"
+      (change)="onFilterChange($event.value)"
+      #filterGroup="matButtonToggleGroup">
+      <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
+        Planet
+      </mat-button-toggle>
+      <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>
+        myPlanet
+      </mat-button-toggle>
+      <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>
+        Both
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5">
+      <span i18n>Clear</span>
+    </button>
   </ng-container>
-  <mat-button-toggle-group
-    class="font-size-1"
-    (change)="onFilterChange($event.value)"
-    #filterGroup="matButtonToggleGroup">
-    <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
-      Planet
-    </mat-button-toggle>
-    <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>
-      myPlanet
-    </mat-button-toggle>
-    <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>
-      Both
-    </mat-button-toggle>
-  </mat-button-toggle-group>
+
+  <ng-template #mobileView>
+    <mat-toolbar-row>
+      <button class="btnBack" mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span i18n>Reports</span>
+      <span class="toolbar-fill"></span>
+      <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
+        <mat-icon>filter_list</mat-icon>
+      </button>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
+      <mat-form-field class="margin-lr-5 font-size-1">
+        <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+          <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-toolbar-row>
+    <!-- Start date row -->
+    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
+      <form [formGroup]="dateFilterForm" class="date-form">
+        <mat-form-field class="start-date full-width">
+          <mat-label i18n>Start Date</mat-label>
+          <input matInput formControlName="startDate" [matDatepicker]="startDateMobile" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
+          <mat-datepicker-toggle matSuffix [for]="startDateMobile"></mat-datepicker-toggle>
+          <mat-datepicker #startDateMobile></mat-datepicker>
+          <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
+        </mat-form-field>
+      </form>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
+      <form [formGroup]="dateFilterForm" class="date-form">
+        <mat-form-field class="end-date full-width">
+    <!-- End date row -->
+        <mat-label i18n>End Date</mat-label>
+          <input matInput formControlName="endDate" [matDatepicker]="endDateMobile" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
+          <mat-datepicker-toggle matSuffix [for]="endDateMobile"></mat-datepicker-toggle>
+          <mat-datepicker #endDateMobile></mat-datepicker>
+        </mat-form-field>
+      </form>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow">
+      <mat-form-field class="font-size-1">
+        <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
+          <mat-option i18n value="All">All Members</mat-option>
+          <mat-optgroup label="Teams" i18n-label>
+            <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
+          </mat-optgroup>
+          <mat-optgroup label="Enterprises" i18n-label>
+            <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
+    </mat-toolbar-row>
+    <!-- App filter toggle group row -->
+    <mat-toolbar-row *ngIf="showFiltersRow">
+      <mat-button-toggle-group
+        class="font-size-1"
+        (change)="onFilterChange($event.value)"
+        #filterGroup="matButtonToggleGroup">
+        <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
+          Planet
+        </mat-button-toggle>
+        <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>
+          myPlanet
+        </mat-button-toggle>
+        <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>
+          Both
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <span class="toolbar-fill"></span>
+      <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5">
+        <span i18n>Clear</span>
+      </button>
+    </mat-toolbar-row>
+  </ng-template>
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar>
@@ -61,6 +146,9 @@
         <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
         <button mat-menu-item *ngIf="progress?.steps" (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
         <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
+        <button mat-menu-item *ngIf="chatActivities?.filteredData?.length" (click)="openExportDialog('chat')" i18n>Chat Report</button>
+        <button mat-menu-item (click)="openExportDialog('resourcesOverview')" i18n>Resources Overview Report</button>
+        <button mat-menu-item (click)="openExportDialog('coursesOverview')" i18n>Courses Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
       </mat-menu>
     </mat-toolbar-row>
@@ -73,11 +161,12 @@
         <canvas id="resourceViewChart"></canvas>
         <canvas id="courseViewChart"></canvas>
         <canvas id="stepCompletedChart"></canvas>
+        <canvas id="chatUsageChart"></canvas>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-title" i18n>Members</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="label" i18n>Total Members</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Total Members</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
               <mat-grid-tile class="label">
                 <mat-icon>subdirectory_arrow_right</mat-icon>
@@ -94,10 +183,10 @@
                 <span i18n>Did not specify</span>
               </mat-grid-tile>
               <mat-grid-tile>{{reports?.usersByGender?.didNotSpecify || 0}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Total Visits</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Total Visits</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Members by Visits</mat-grid-tile>
-              <mat-grid-tile i18n>Total Visits by Member</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Members by Visits</mat-grid-tile>
+              <mat-grid-tile i18n class="subheading">Total Visits by Member</mat-grid-tile>
               <ng-container *ngIf="!reports?.visits || reports?.visits.length === 0">
                 <mat-grid-tile colspan="2" i18n>There are no visits</mat-grid-tile>
               </ng-container>
@@ -113,12 +202,12 @@
           <div>
             <h1 class="mat-title" i18n>Resources</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="label" i18n>Total Resources</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Total Resources</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Total Views</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Total Views</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalResourceViews}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Most Visited</mat-grid-tile>
-              <mat-grid-tile i18n>Total Visits by Resource</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Most Visited</mat-grid-tile>
+              <mat-grid-tile class="subheading" i18n>Total Visits by Resource</mat-grid-tile>
               <ng-container *ngIf="!reports?.resources || reports?.resources.length === 0">
                 <mat-grid-tile colspan="2" i18n>No resources have been visited</mat-grid-tile>
               </ng-container>
@@ -129,8 +218,8 @@
                 </mat-grid-tile>
                 <mat-grid-tile>{{resource.count}}</mat-grid-tile>
               </ng-container>
-              <mat-grid-tile class="label" i18n>Highest Rated</mat-grid-tile>
-              <mat-grid-tile i18n>Average Rating</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Highest Rated</mat-grid-tile>
+              <mat-grid-tile class="subheading" i18n>Average Rating</mat-grid-tile>
               <ng-container *ngIf="!reports?.resourceRatings || reports?.resourceRatings.length === 0">
                 <mat-grid-tile colspan="2" i18n>There are no resource ratings</mat-grid-tile>
               </ng-container>
@@ -146,14 +235,14 @@
           <div>
             <h1 class="mat-title" i18n>Courses</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
-              <mat-grid-tile class="label" i18n>Total Courses</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Total Courses</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Total Views</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Total Views</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalCourseViews}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Steps Completed</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Steps Completed</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalStepCompleted}}</mat-grid-tile>
-              <mat-grid-tile class="label" i18n>Most Visited</mat-grid-tile>
-              <mat-grid-tile i18n>Total Visits by Course</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Most Visited</mat-grid-tile>
+              <mat-grid-tile class="subheading" i18n>Total Visits by Course</mat-grid-tile>
               <ng-container *ngIf="!reports?.courses || reports?.courses.length === 0">
                 <mat-grid-tile colspan="2" i18n>No courses have been visited</mat-grid-tile>
               </ng-container>
@@ -164,8 +253,8 @@
                 </mat-grid-tile>
                 <mat-grid-tile>{{course.count}}</mat-grid-tile>
               </ng-container>
-              <mat-grid-tile class="label" i18n>Highest Rated</mat-grid-tile>
-              <mat-grid-tile i18n>Average Rating</mat-grid-tile>
+              <mat-grid-tile class="subheading label" i18n>Highest Rated</mat-grid-tile>
+              <mat-grid-tile class="subheading" i18n>Average Rating</mat-grid-tile>
               <ng-container *ngIf="!reports?.courseRatings || reports?.courseRatings.length === 0">
                 <mat-grid-tile colspan="2" i18n>There are no course ratings</mat-grid-tile>
               </ng-container>
@@ -181,13 +270,69 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <planet-reports-detail-activities [activitiesByDoc]="resourceActivities.byDoc" [ratings]="ratings.resources" activityType="resources" (itemClick)="openResourceView($event)"></planet-reports-detail-activities>
+        <div *ngIf="resourcesLoading" class="view-container view-full-height" i18n>
+          Reports loading...
+        </div>
+        <div *ngIf="!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0">
+          <planet-reports-detail-activities 
+            [activitiesByDoc]="resourceActivities.byDoc" 
+            [ratings]="ratings.resources" 
+            activityType="resources" 
+            (itemClick)="openResourceView($event)">
+          </planet-reports-detail-activities>
+        </div>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-reports-detail-activities [activitiesByDoc]="courseActivities.byDoc" [ratings]="ratings.courses" [progress]="progress" activityType="courses" (itemClick)="openCourseView($event)"></planet-reports-detail-activities>
+        <div *ngIf="coursesLoading" class="view-container view-full-height" i18n>
+          Reports loading...
+        </div>
+        <div *ngIf="!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0">
+          <planet-reports-detail-activities 
+            [activitiesByDoc]="courseActivities.byDoc" 
+            [ratings]="ratings.courses" 
+            [progress]="progress" 
+            activityType="courses" 
+            (itemClick)="openCourseView($event)">
+          </planet-reports-detail-activities>
+        </div>
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
-        <planet-reports-health [planetCode]="planetCode" [dateRange]="dateFilterForm?.value" [isActive]="healthTab.isActive" (changeDateRange)="resetDateFilter($event)"></planet-reports-health>
+        <div *ngIf="healthTab.isActive && healthLoading" class="view-container view-full-height" i18n>
+          Reports loading...
+        </div>
+        <div *ngIf="healthTab.isActive && !healthLoading && healthNoData" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div [hidden]="healthLoading || healthNoData">
+          <planet-reports-health 
+            [planetCode]="planetCode" 
+            [dateRange]="dateFilterForm?.value" 
+            [isActive]="healthTab.isActive" 
+            (changeDateRange)="resetDateFilter($event)"
+            (healthLoadingChange)="onHealthLoadingChange($event)"
+            (healthNoDataChange)="onHealthNoDataChange($event)">
+        </planet-reports-health>
+        </div>
+      </mat-tab>
+      <mat-tab i18n-label label="Chat">
+        <div *ngIf="chatLoading" class="view-container view-full-height" i18n>
+          Reports loading...
+        </div>
+        <div *ngIf="!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0">
+          <planet-reports-detail-activities 
+            [activitiesByDoc]="chatActivities.filteredData" 
+            activityType="chat">
+          </planet-reports-detail-activities>
+        </div>
       </mat-tab>
     </mat-tab-group>
   </div>

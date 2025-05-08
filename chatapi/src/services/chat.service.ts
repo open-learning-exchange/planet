@@ -1,11 +1,17 @@
 import { DocumentInsertResponse } from 'nano';
 
 import { chatDB } from '../config/nano.config';
-import { aiChat } from '../utils/chat.utils';
 import { retrieveChatHistory } from '../utils/db.utils';
-import { handleChatError } from '../utils/chat-error.utils';
-import { AIProvider } from '../models/ai-providers.model';
-import { ChatMessage } from '../models/chat-message.model';
+import { aiChat } from '../utils/chat.utils';
+import { AIProvider, ChatMessage } from '../models/chat.model';
+
+function handleChatError(error: any) {
+  if (error.response) {
+    throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
+  } else {
+    throw new Error(error.message);
+  }
+}
 
 /**
  * Create a chat conversation & save in couchdb
@@ -24,10 +30,6 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');
-  }
-
-  if (stream && aiProvider.name === 'gemini') {
-    throw new Error('Streaming not supported on Gemini');
   }
 
   if (dbData._id) {

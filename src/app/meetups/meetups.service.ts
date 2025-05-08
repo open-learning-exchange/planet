@@ -96,13 +96,24 @@ export class MeetupService {
   openDeleteDialog(meetups: any[] | any, callback) {
     const isMany = meetups.length > 1;
     const displayName = isMany ? '' : (meetups[0] || meetups).title;
+    const recurringInfo =
+      (meetups[0] || meetups).recurring &&
+      (meetups[0] || meetups).recurring !== 'none' &&
+      (meetups[0] || meetups).recurringNumber
+        ? `(Recurs ${(meetups[0] || meetups).recurring} for ${
+            (meetups[0] || meetups).recurringNumber
+          } ${
+            (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks'
+          })`
+        : '';
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteMeetups([ meetups ].flat(), displayName, callback),
         changeType: 'delete',
         type: 'event',
         amount: isMany ? 'many' : 'single',
-        displayName
+        displayName,
+        extraMessage: recurringInfo
       }
     });
   }
@@ -113,7 +124,10 @@ export class MeetupService {
       onNext: (data) => {
         callback(data.res);
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted the ${displayName ? `${displayName} event` : 'selected events'}`);
+        const message = displayName ?
+          $localize`Event deleted: ${displayName}` :
+          $localize`You have deleted ${meetups.length} events`;
+        this.planetMessageService.showMessage(message);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this meetup`)
     };

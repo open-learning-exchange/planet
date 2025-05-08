@@ -11,6 +11,7 @@
   .course-detail {
     grid-area: detail;
     padding: 1rem;
+    margin-right: 40px;
   }
 
   .course-view {
@@ -32,6 +33,10 @@
 
   .mat-expansion-panel-header-description planet-course-icon {
     margin-left: 8px;
+  }
+
+  .view-step-button{
+    flex-shrink: 0;
   }
 
   @media (max-width: $screen-sm) {

@@ -46,13 +46,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   filteredRole: string;
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
-  emptyData = false;
   private searchChange = new Subject<string>();
   configuration = this.stateService.configuration;
   tableState = new TableState();
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
+  isLoading = true;
 
   constructor(
     private userService: UserService,
@@ -74,6 +74,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.planetType = this.stateService.configuration.planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.route.paramMap.pipe(
@@ -89,6 +90,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       this.dialogsLoadingService.stop();
       this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
+      this.isLoading = false;
     });
     this.searchChange.pipe(debounceTime(500), takeUntil(this.onDestroy$)).subscribe((searchText) => {
       if (this.isDialog) {

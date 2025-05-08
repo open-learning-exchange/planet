@@ -4,11 +4,13 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
+import { truncateText } from '../../shared/utils';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
   courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
-  health: [ 'weekOf', 'count', 'unique' ]
+  health: [ 'weekOf', 'count', 'unique' ],
+  chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'assistant', 'shared' ]
 };
 
 @Component({
@@ -24,7 +26,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     completions: new ReportsDetailData('time'),
     steps: new ReportsDetailData('time')
   };
-  @Input() activityType: 'resources' | 'courses' | 'health' = 'resources';
+  @Input() activityType: 'resources' | 'courses' | 'health' | 'chat' = 'resources';
   @Output() itemClick = new EventEmitter<any>();
   matSortActive = '';
   activities = new MatTableDataSource();
@@ -48,13 +50,32 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[this.activityType];
     const filterCourse = (activity: any) => (progress: any) => progress.courseId === activity.courseId;
-    this.activities.data = this.activitiesByDoc.map(activity => ({
-      averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
-      enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
-      completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
-      stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
-      ...activity
-    }));
+
+    if (this.activityType === 'chat') {
+      this.activities.data = this.activitiesByDoc.map(activity => ({
+        ...activity,
+        createdDate: new Date(activity.createdDate).getTime(),
+        hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
+        assistant: activity.assistant ? 'True' : '',
+        shared: activity.shared ? 'True' : '',
+        conversationLength: activity.conversations.length
+      }));
+    } else {
+      this.activities.data = this.activitiesByDoc.map(activity => {
+        if (activity.max) {
+          activity.max.title = truncateText(activity.max.title, 150);
+        }
+        return {
+          averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
+          enrollments: this.progress.enrollments.filteredData.filter(filterCourse(activity)).length,
+          completions: this.progress.completions.filteredData.filter(filterCourse(activity)).length,
+          stepsCompleted: this.progress.steps.filteredData.filter(filterCourse(activity)).length,
+          steps: activity.max?.steps,
+          exams: activity.max?.exams,
+          ...activity
+        };
+      });
+    }
   }
 
   ngAfterViewInit() {

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -8,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
-import { Subject, of, combineLatest } from 'rxjs';
+import { CouchService } from '../shared/couchdb.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
@@ -34,9 +34,17 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
   styleUrls: [ './resources.scss' ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+  isLoading = true;
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -71,7 +79,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.removeFilteredFromSelection();
   }
   myView = this.route.snapshot.data.view;
-  emptyData = false;
   selectedNotAdded = 0;
   selectedAdded = 0;
   selectedSync = [];
@@ -92,6 +99,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   isTablet: boolean;
   showFiltersRow = false;
+  expandedElement: any = null;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -123,7 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     if (this.myView !== 'myPersonals') {
-      this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
+      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
@@ -138,8 +146,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             (resource.doc.private === true && (resource.doc.privateFor || {}).users === this.userService.get()._id) :
             resource.doc.private !== true)
       );
-      this.emptyData = !this.resources.data.length;
       this.resources.paginator = this.paginator;
+      this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
@@ -168,7 +176,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   removeFilteredFromSelection() {
     this.selection.deselect(...selectedOutOfFilter(this.resources.filteredData, this.selection, this.paginator));
-    this.emptyData = this.resources.filteredData.length === 0;
   }
 
 
@@ -384,6 +391,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  toggleRow(element: any) {
+    this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  onExpansionDone(event: any, element: any) {
+    element.renderContent = (event.toState === 'expanded');
+  }
+
+  isExpanded(element: any): boolean {
+    return this.expandedElement === element;
   }
 
 }

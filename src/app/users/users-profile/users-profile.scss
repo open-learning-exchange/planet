@@ -9,6 +9,26 @@
     grid-column-gap: 2rem;
   }
 
+  .mat-list-item p{
+    overflow-wrap: break-word;
+    white-space: normal;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .cards-container {
+    display: flex;
+    gap: 16px; 
+    margin-top: 10px;
+  
+    mat-card {
+      flex: 1;
+      min-width: 300px; 
+    }
+  }
+
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;

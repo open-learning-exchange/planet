@@ -36,6 +36,6 @@ services:
       - DB_HOST=127.0.0.1
       - DB_PORT=2200
       - CENTER_ADDRESS=planet.earth.ole.org/db
+      - DEFAULT_LANGUAGE=eng
     depends_on:
       - couchdb
-version: "2"

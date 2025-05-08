@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  overflow: hidden;
+}
+
+:host mat-dialog-content {
+  overflow-y: auto;
+  max-height: calc(100vh - 156px);
+  box-sizing: border-box;
+  padding-bottom: 16px;
+}
+
+:host .mat-list-option span {
+  font-weight: inherit;
+}
+
+:host p[matLine] *, :host .mat-nav-list .mat-list-item * {
+  margin-right: 0.25rem;
+}
+
+:host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
+  margin-right: 0;
+}
+
+:host .mat-nav-list {
+  margin-bottom: 16px;
+}
+
+.mat-list-item:last-of-type {
+  margin-bottom: 8px;
+}
+
+:host mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 16px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  background-color: #fff;
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+:host mat-dialog-actions button {
+  margin: 0;
+  padding: 4px;
+}
+
+.icon-spacing,
+.checkbox-spacing {
+  margin-right: 4px;
+}
+
+.button-spacing {
+  margin-right: 4px;
+  margin-left: 8px;
+}
+
+.count {
+  white-space: nowrap;
+}
+
+.mat-action-list .count {
+  margin-left: 2px;
+}

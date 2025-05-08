@@ -55,8 +55,9 @@
   background-color: $primary;
   transition: width 0.5s;
   display: flex;
-  justify-content: center;
   align-items: center;
+  white-space: nowrap;
+  padding: 0 10px;
 }
 
 .thermometer-label {

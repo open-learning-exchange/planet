@@ -23,6 +23,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   onDestroy$ = new Subject<void>();
   stepNum = 0;
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
+  conversations: any[] = [];
   courseId: string;
   maxStep = 1;
   resourceUrl = '';
@@ -137,16 +138,39 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   // direction = -1 for previous, 1 for next
   changeStep(direction) {
+    const targetStep = this.stepNum + direction;
+    if (targetStep < 1 || targetStep > this.maxStep) {
+      return;
+    }
+    if (this.isLoading) {
+      return;
+    }
+    if (direction > 0 && !this.canProceedToNextStep()) {
+      return;
+    }
     this.isLoading = true;
-    this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
+    this.conversations = [];
     this.resetCourseStep();
     this.countActivity = true;
+    this.router.navigate([ '../' + targetStep ], { relativeTo: this.route });
   }
 
   resetCourseStep() {
     this.resource = undefined;
     this.stepDetail = { stepTitle: '', description: '', resources: [] };
     this.attempts = 0;
+  }
+
+  canProceedToNextStep(): boolean {
+    if (this.stepNum > this.maxStep) {
+      return false;
+    }
+    if (!this.parent &&
+        this.stepDetail?.exam?.questions?.length > 0 &&
+        !this.attempts && !this.examPassed) {
+      return false;
+    }
+    return true;
   }
 
   backToCourseDetail() {

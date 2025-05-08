@@ -33,3 +33,8 @@
     width: 100%;
   }
 }
+
+.no-shrink-button {
+  flex-shrink: 0;
+  margin-left: auto;
+}

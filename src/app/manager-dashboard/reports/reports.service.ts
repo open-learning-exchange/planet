@@ -23,6 +23,15 @@ interface ActivityRequestObject {
 export class ReportsService {
 
   users: any[] = [];
+  readonly standardTimeFilters = [
+    { value: '24h', label: $localize`Last 24 Hours` },
+    { value: '7d', label: $localize`Last 7 Days` },
+    { value: '1m', label: $localize`Last Month` },
+    { value: '6m', label: $localize`Last 6 Months` },
+    { value: '12m', label: $localize`Last 12 Months` },
+    { value: 'all', label: $localize`All Time` },
+    { value: 'custom', label: $localize`Custom` },
+  ];
 
   constructor(
     private couchService: CouchService,
@@ -262,10 +271,62 @@ export class ReportsService {
     }));
   }
 
+  getChatHistory() {
+    return this.couchService.get('chat_history/_all_docs', { params: { include_docs: 'true' } })
+    .pipe(
+      map((data: any) => data.rows.map((row: any) => row.doc))
+    );
+  }
+
+  groupChatUsage(chats: any) {
+    return ({
+      byMonth: this.groupByMonth(this.appendGender(chats), 'createdDate', '_id')
+    });
+  }
+
   groupStepCompletion(steps: any[]) {
     return ({
       byMonth: this.groupByMonth(this.appendGender(steps), 'time', 'userId')
     });
   }
 
+  getDateRange(timeFilter: string, minDate: Date): { startDate: Date, endDate: Date, showCustomDateFields: boolean } {
+    const now = new Date();
+    const endDate = now;
+    let startDate: Date;
+    const showCustomDateFields = timeFilter === 'custom';
+
+    if (timeFilter === 'custom') {
+      return { startDate: null, endDate: null, showCustomDateFields };
+    }
+
+    switch (timeFilter) {
+      case '24h':
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 1);
+        break;
+      case '7d':
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '1m':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case '6m':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 6);
+        break;
+      case '12m':
+        startDate = new Date(now);
+        startDate.setMonth(now.getMonth() - 12);
+        break;
+      case 'all':
+        startDate = minDate;
+        break;
+      default:
+        return { startDate: null, endDate: null, showCustomDateFields: false };
+    }
+    return { startDate, endDate, showCustomDateFields };
+  }
 }

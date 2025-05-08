@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab } from '@angular/material/tabs';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
@@ -376,17 +376,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'removed':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
-          message: $localize`{memberName} removed from team`
+          message: $localize`Removed: {memberName}`
         });
       case 'added':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, false, { ...memberDoc, docType: 'membership' }),
-          message: $localize`${memberName} accepted`
+          message: $localize`Accepted: ${memberName}`
         });
       case 'rejected':
         return ({
           obs: this.teamsService.removeFromRequests(this.team, memberDoc),
-          message: $localize`${memberName} rejected`
+          message: $localize`Rejected: ${memberName}`
         });
     }
   }
@@ -473,10 +473,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member' } ],
+      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
-      ...message
+      ...message,
+      sharedDate: null,
+      sharedTeam: null
     }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
@@ -553,4 +555,5 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxHeight: '90vh'
     });
   }
+
 }

@@ -11,11 +11,21 @@ import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
 import { addDateAndTime, styleVariables } from './utils';
+import { AuthService } from './auth-guard.service';
 
 @Component({
   selector: 'planet-calendar',
+  styleUrls: [ './calendar.component.scss' ],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    <div class="calendar-legend" *ngIf="showLegend">
+      <div *ngFor="let legend of eventLegend">
+        <div class="legend-item" *ngIf="!legend.type || legend.type === type">
+          <div class="legend-color" [style.backgroundColor]="legend.color"></div>
+          <span>{{ legend.label }}</span>
+        </div>
+      </div>
+    </div>
   `
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
@@ -25,6 +35,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
+  @Input() type = '';
 
   @Input() header?: any = {
     left: 'title',
@@ -47,6 +58,12 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   dbName = 'meetups';
   meetups: any[] = [];
   tasks: any[] = [];
+  showLegend = true;
+  eventLegend = [
+    { color: styleVariables.primary, label: 'Event' },
+    { color: 'orange', label: 'Uncompleted Task', type: 'team' },
+    { color: 'grey', label: 'Completed Task', type: 'team' }
+  ];
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
@@ -58,14 +75,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     firstDay: 6,
     dayMaxEventRows: 2,
     selectable: true,
-    select: this.openAddEventDialog.bind(this),
+    select: (arg) => {
+      this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
+    },
     eventClick: this.eventClick.bind(this)
   };
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -75,7 +95,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       {
         addEventButton: {
           text: $localize`Add Event`,
-          click: this.openAddEventDialog.bind(this)
+          click: (arg) => {
+            this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
+          }
         }
       } :
       {};
@@ -154,7 +176,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   weeklyEvents(meetup) {
-    if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
+    if (!Array.isArray(meetup.day) || meetup.day.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
     const events = [];
@@ -162,7 +184,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     while (events.length < meetup.recurringNumber) {
       const startDay = meetup.startDate + (i * millisecondsToDay);
       const date = new Date(startDay);
-      if (meetup.day.indexOf(days[date.getDay()]) !== -1) {
+      if (meetup.day.includes(days[date.getDay()])) {
         events.push(this.eventObject(meetup, startDay, meetup.endDate + (i * millisecondsToDay)));
       }
       i++;
@@ -171,13 +193,16 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openAddEventDialog(event) {
-    let meetup;
-    if (event?.start) {
-      meetup = {
-        startDate: event?.start,
-        endDate: this.adjustEndDate(event?.end)
-      };
+    const today = new Date();
+    const meetup = event?.start
+    ? {
+      startDate: event.start,
+      endDate: this.adjustEndDate(event.end),
     }
+  : {
+      startDate: today,
+      endDate: today,
+    };
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
     });

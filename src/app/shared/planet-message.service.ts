@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { truncateText } from './utils';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ export class PlanetMessageService {
   ) { }
 
   showMessage(message: string) {
-    this.snackBar.open(message, undefined, {
+    const truncatedMessage = truncateText(message, 47);
+    this.snackBar.open(truncatedMessage, undefined, {
       duration: 3000,
     });
   }
@@ -20,4 +22,5 @@ export class PlanetMessageService {
       duration: 10000
     });
   }
+
 }

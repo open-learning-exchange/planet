@@ -46,7 +46,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     { text: $localize`Completed`, value: 'complete' }
   ];
   mode = 'grade';
-  emptyData = false;
   filter = {
     type: 'exam',
     status: 'requires grading'
@@ -96,7 +95,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
-      this.emptyData = !this.submissions.filteredData.length;
     });
     this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
     this.setupTable();
@@ -145,7 +143,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     ]);
     this.submissions.sortingDataAccessor = (item: any, property) => {
       switch (property) {
-        case 'name': return item.parent.name.toLowerCase();
+        case 'name': return item.parent.name.trim().toLowerCase();
+        case 'courseTitle': return (item.courseTitle || '').trim().toLowerCase();
         case 'user': return item.submittedBy.toLowerCase();
         default: return typeof item[property] === 'string' ? item[property].toLowerCase() : item[property];
       }
@@ -163,7 +162,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
     this.submissions.filter = this.submissions.filter || ' ';
-    this.emptyData = !this.submissions.filteredData.length;
     this.displayedColumns = columnsByFilterAndMode[this.filter.type][this.mode] || this.displayedColumns;
     this.submissions.paginator = undefined;
     this.submissions.sort = undefined;

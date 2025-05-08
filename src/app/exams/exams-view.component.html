@@ -6,14 +6,15 @@
 
 <div [ngClass]="{ 'space-container': !isDialog }">
   <mat-toolbar class="primary-color font-size-1">
-    <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
-    <span>
+    <span class="ellipsis-title" *ngIf="!isLoading">{{title ? title + ': ' : ''}}</span>
+    <span *ngIf="!isLoading">
       <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
-      <span i18n *ngIf="mode === 'grade' || mode === 'view'"> By{{' ' + submittedBy}}</span><span i18n *ngIf="!submittedBy">Unknown</span><span i18n> on {{(updatedOn | date: 'short') || '--'}}</span>
+      <span i18n *ngIf="mode === 'grade' || mode === 'view'"> by{{' ' + submittedBy}}</span><span i18n *ngIf="!submittedBy && previewMode">(Preview)</span>
+      <span *ngIf="updatedOn && (updatedOn | date: 'short')" i18n> on {{updatedOn | date: 'short'}}</span>
     </span>
     <span class="toolbar-fill"></span>
-    <button mat-icon-button [disabled]="questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
+    <button mat-icon-button [disabled]="isLoading || questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
+    <button mat-icon-button [disabled]="isLoading || questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     <ng-container *ngIf="!isLoading; else LoadingContent">
@@ -74,7 +75,7 @@
           color="primary"
           (click)="nextQuestion()"
           [planetSubmit]="spinnerOn"
-          [disabled]="!answer.valid || grade === undefined || grade === null">
+          [disabled]="!answer.valid || grade === undefined || grade === null || questionNum === maxQuestions">
           <ng-container i18n>Submit Answer</ng-container>
         </button>
         <button

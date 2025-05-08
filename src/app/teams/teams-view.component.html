@@ -43,26 +43,27 @@
   <ng-template #actionButtons>
     <ng-container [ngSwitch]="userStatus" *ngIf="user.isUserAdmin || user.roles.length">
       <ng-container *ngSwitchCase="'member'">
-        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class="margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
+        <a class="toolbar-button margin-lr-3" [routerLink]="['surveys']" mat-stroked-button mat-button i18n>Manage Surveys</a>
+        <button *ngIf="mode!=='services'" mat-stroked-button mat-button class=" toolbar-button margin-lr-3" (click)="openInviteMemberDialog()" i18n [disabled]="disableAddingMembers">
           Add Members
         </button>
-        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openResourcesDialog()" i18n>
+        <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openResourcesDialog()" i18n>
           { mode, select, team {Add Resources} enterprise {Add Documents} services {Add Documents} }
         </button>
-        <button mat-raised-button color="accent" class="margin-lr-3" (click)="openCourseDialog()" i18n>
+        <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openCourseDialog()" i18n>
           Add Courses
         </button>
         <ng-container *ngIf="!isUserLeader && mode !== 'services'">
-          <button mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
+          <button mat-raised-button color="accent" class="toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'leave', { changeType: 'leave', type: 'team' })" i18n>Leave</button>
         </ng-container>
       </ng-container>
-      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="margin-lr-3" (click)="changeMembership('request')">
+      <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="toolbar-button margin-lr-3" (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
       <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
-      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class="margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+      <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
     </ng-container>
   </ng-template>
 
@@ -97,8 +98,31 @@
         <ng-template mat-tab-label>
           <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
         </ng-template>
+        <div *ngIf="requests.length > 0" class="join-requests-section" style="margin-top: 32px;">
+          <h4 i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }</h4>
+          <div class="card-grid member-cards">
+            <mat-card *ngFor="let request of requests">
+              <mat-card-header>
+                <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
+                <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">
+                  {{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name | truncateText:20}}
+                </a>
+                <mat-card-subtitle>
+                  <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode">
+                    <ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}
+                  </p>
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-actions *ngIf="userStatus === 'member'">
+                <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
+                <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
         <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
         <ng-template #memberList>
+          <h4 i18n>Members</h4>
           <div class="card-grid member-cards">
             <mat-card *ngFor="let member of members">
               <planet-teams-member
@@ -131,7 +155,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Calendar</ng-container>
           </ng-template>
-          <planet-calendar *ngIf="calendarTab.isActive" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar *ngIf="calendarTab.isActive" [resizeCalendar]="resizeCalendar" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         </mat-tab>
         <mat-tab *ngIf="mode!=='team'">
           <ng-template mat-tab-label>
@@ -157,15 +181,15 @@
               <mat-card *ngFor="let resource of resources" (click)="resource.resource._attachments ? openResource(resource.resource._id) : false" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments" [ngClass]="{'cursor-pointer': resource.resource._attachments}">
                 <div class="mat-subheading-2">
                   <span *ngIf="resource.resource!==undefined">
-                    <b>{{resource.resource.title?.length > 75 ? resource.resource.title.slice(0,75) + '...' : resource.resource.title}}</b>
+                    <b>{{resource.resource.title | truncateText:75}}</b>
                   </span>
                   <span *ngIf="resource.resource===undefined" i18n-matTooltip
                     matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
-                    {{resource.linkDoc.title?.length > 75 ? resource.linkDoc.title.slice(0,75) + '...' : resource.linkDoc.title}}
+                    {{resource.linkDoc.title | truncateText:75}}
                   </span>
                 </div>
                 <mat-card-content>
-                  <planet-markdown [content]="(resource.resource.description | slice:0:120) + (resource.resource.description.length > 120 ? '...' : '')"></planet-markdown>
+                  <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>
                 </mat-card-content>
                 <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button [matMenuTriggerFor]="resourceMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
@@ -184,7 +208,7 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Courses">
+        <mat-tab i18n-label label="Courses">
           <ng-template mat-tab-label>
             <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
           </ng-template>
@@ -193,10 +217,10 @@
             <div class="card-grid">
               <mat-card *ngFor="let course of team?.courses" (click)="openCourseView(course._id)" class="cursor-pointer">
                 <div class="mat-subheading-2">
-                  <b>{{course.courseTitle?.length > 75 ? course.courseTitle.slice(0,75) + '...' : course.courseTitle }}</b>
+                  <b>{{course.courseTitle | truncateText:75}}</b>
                 </div>
                 <mat-card-content>
-                  <planet-markdown [content]="(course.description | slice:0:120) + (course.description.length > 120 ? '...' : '')"></planet-markdown>
+                  <planet-markdown [content]="course.description | truncateText:120"></planet-markdown>
                 </mat-card-content>
                 <button class="top-right-icon" *ngIf="userStatus === 'member'" mat-icon-button [matMenuTriggerFor]="courseMenu" (click)="$event.stopPropagation()">
                   <mat-icon>more_vert</mat-icon>
@@ -211,28 +235,11 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab *ngIf="mode!=='services'" #applicantTab>
+        <mat-tab i18n-label label="Surveys">
           <ng-template mat-tab-label>
-            <ng-container i18n>{ mode, select, team {Join Requests} enterprise {Applicants} }</ng-container> ({{requests.length}})
+            <ng-container i18n>Surveys</ng-container> ({{surveysCount}})
           </ng-template>
-          <p *ngIf="requests.length === 0; else requestedList" i18n>There are no { mode, select, team {requests} enterprise {applications} } to join this { mode, select, team {team} enterprise {enterprise} }.</p>
-          <ng-template #requestedList>
-            <div class="card-grid">
-              <mat-card *ngFor="let request of requests">
-                <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
-                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">{{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name}}</a>
-                  <mat-card-subtitle>
-                    <p class="primary-text-color" *ngIf="request.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}</p>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-actions *ngIf="userStatus === 'member'">
-                  <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-                  <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </ng-template>
+          <planet-surveys [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
         </mat-tab>
       </ng-container>
     </mat-tab-group>

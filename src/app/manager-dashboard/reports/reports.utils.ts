@@ -27,10 +27,16 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
 });
 
 export const itemInDateRange = (item, dateField, startDate, endDate) => {
+  if (!startDate || !endDate || startDate > endDate) {
+    return false;
+  }
   return item[dateField] >= startDate.getTime() && item[dateField] <= endDate.getTime();
 };
 
 export const filterByDate = (array, dateField, { startDate, endDate, isEndInclusive = true, additionalFilterFunction = (i?) => true }) => {
+  if (!startDate || !endDate || new Date(startDate).getTime() > new Date(endDate).getTime()) {
+    return [];
+  }
   const endTime = isEndInclusive ? new Date(new Date(endDate).setHours(24)) : endDate;
   return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
 };
@@ -46,13 +52,24 @@ export const getDomainParams = (configuration, isHub) => isHub ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :
   { planetCode: undefined, domain: undefined };
 
-export const setMonths = () => {
+export const setMonths = (dateRange) => {
   // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
   const planetLaunchDate = new Date(2018, 6, 1).valueOf();
-  const now = new Date();
-  return Array(12).fill(1)
-    .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
-    .filter((month: number) => month > planetLaunchDate);
+  const startDate = new Date(dateRange.startDate);
+  const endDate = new Date(dateRange.endDate);
+  const startMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  const endMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+  const months = [];
+  let currentMonth = new Date(startMonth);
+
+  while (currentMonth <= endMonth) {
+    const monthValue = currentMonth.valueOf();
+    if (monthValue > planetLaunchDate) {
+      months.push(monthValue);
+    }
+    currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+  }
+  return months;
 };
 
 export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => {
@@ -83,7 +100,8 @@ export const titleOfChartName = (chartName: string) => {
     courseViewChart: $localize`Course Views by Month`,
     visitChart: $localize`Total Member Visits by Month`,
     uniqueVisitChart: $localize`Unique Member Visits by Month`,
-    stepCompletedChart: $localize`Steps Completed by Month`
+    stepCompletedChart: $localize`Steps Completed by Month`,
+    chatUsageChart: $localize`Chats Created by Month`
   };
   return chartNames[chartName];
 };
@@ -140,4 +158,12 @@ export const sortingOptionsMap = {
     { name: $localize`Month/Year Ascending`, value: 'monthYearAsc' },
     { name: $localize`Month/Year Descending`, value: 'monthYearDesc' },
   ],
+  'chat': [
+    { name: $localize`User (A-Z)`, value: 'userAsc' },
+    { name: $localize`User (Z-A)`, value: 'userDesc' },
+    { name: $localize`Date (Oldest first)`, value: 'createdDateAsc' },
+    { name: $localize`Date (Newest first)`, value: 'createdDateDesc' },
+    { name: $localize`AI Provider (A-Z)`, value: 'aiProviderAsc' },
+    { name: $localize`AI Provider (Z-A)`, value: 'aiProviderDesc' }
+  ]
 };

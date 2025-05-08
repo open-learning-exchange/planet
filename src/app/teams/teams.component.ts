@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
+import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -33,7 +34,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   userMembership: any[] = [];
   teamActivities: any[] = [];
   dbName = 'teams';
-  emptyData = false;
   user = this.userService.get();
   isAuthorized = false;
   planetType = this.stateService.configuration.planetType;
@@ -41,6 +41,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
+  isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
@@ -63,6 +64,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   isMobile: boolean;
   userNotInShelf = false;
   showFiltersRow = false;
+  selection = new SelectionModel(true, []);
+  selectedIds: string[] = [];
+  get tableData() {
+    return this.teams;
+  }
 
   constructor(
     private userService: UserService,
@@ -99,6 +105,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   getTeams() {
+    this.isLoading = true;
     const thirtyDaysAgo = time => {
       const date = new Date(time);
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
@@ -123,8 +130,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       )) {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
-      this.emptyData = !this.teams.data.length;
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
@@ -137,6 +144,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       console.log(error);
+      this.isLoading = false;
     });
   }
 
@@ -186,6 +194,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   teamClick(teamId, teamType) {
     if (this.isDialog) {
+      // Toggle selection
+      const index = this.selectedIds.indexOf(teamId);
+      index === -1 ? this.selectedIds.push(teamId) : this.selectedIds.splice(index, 1);
+
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }
@@ -197,7 +209,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
       const action = $localize`${team._id ? 'updated' : 'created'}`;
-      const msg = $localize`${toProperCase(this.mode)} ${action} successfully`;
+      const entityType = this.mode === 'enterprise' ? 'Enterprise' : 'Team';
+      const msg = $localize`${entityType} ${action} successfully`;
       this.planetMessageService.showMessage(msg);
     });
   }
@@ -222,12 +235,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           onNext: () => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
-            const msg = 'left';
-            this.planetMessageService.showMessage($localize`You have ${msg} ${team.name}`);
+            const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
+            const msg = $localize`You have left ${entityType} ${team.name}`;
+            this.planetMessageService.showMessage(msg);
           },
         },
         changeType: 'leave',
-        type: 'team',
+        type: this.mode === 'enterprise' ? 'enterprise' : 'team',
         displayName: team.name
       }
     });
@@ -238,14 +252,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
-        if (this.mode === 'enterprise') {
-          this.planetMessageService.showMessage($localize`You have deleted an ${toProperCase(this.mode)}.`);
-        } else {
-          this.planetMessageService.showMessage($localize`You have deleted a ${toProperCase(this.mode)}.`);
-        }
+        const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
+        this.planetMessageService.showMessage($localize`You have deleted ${entityType} ${team.name}.`);
         this.removeTeamFromTable(team);
       },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this team.`)
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this ${this.mode === 'enterprise' ? 'enterprise' : 'team'}.`)
     };
   }
 
@@ -254,7 +265,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       data: {
         okClick: this.archiveTeam(team),
         changeType: 'delete',
-        type: 'team',
+        type: this.mode === 'enterprise' ? 'enterprise' : 'team',
         displayName: team.name
       }
     });
@@ -273,7 +284,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      this.planetMessageService.showMessage($localize`Request to join ${team.name} sent`);
+      const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
+      this.planetMessageService.showMessage($localize`Sent request to join ${entityType} ${team.name}`);
     });
   }
 

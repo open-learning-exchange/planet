@@ -103,8 +103,8 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}" *ngIf="!emptyData; else notFoundMessage">
-    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
+  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}">
+    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -130,8 +130,9 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
-              <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
+              <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">
+                {{ element.doc.title | truncateText:180 }}
+              </a>
               <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
@@ -149,11 +150,12 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <td-markdown
-              i18n-content [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-                element.doc.description">
-            </td-markdown>
+            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="450"></planet-markdown>
+            <div *ngIf="element.doc.description.length > 450"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+              <button mat-icon-button>
+                <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+              </button>
+            </div>
           </div>
           <planet-local-status [status]="element.localStatus"></planet-local-status>
           <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
@@ -167,15 +169,15 @@
               <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
                 <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
               </a>
-              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id}" i18n-title title="Feedback">
+              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id, name: element.doc.title}" i18n-title title="Feedback">
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>
             </ng-container>
             <ng-container *ngIf="element.canManage && myView !== 'myPersonals'">
               <a mat-menu-item (click)="updateResource(element)">
-                <mat-icon>folder</mat-icon>
-                <span i18n>Manage</span>
+                <mat-icon>edit</mat-icon>
+                <span i18n>Edit Resource</span>
               </a>
               <button mat-menu-item (click)="deleteClick(element)">
                 <mat-icon>delete_forever</mat-icon>
@@ -200,14 +202,42 @@
           {{element.doc.createdDate | date}}
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="info">
+        <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <div>
+            <p *ngIf="element.doc.medium"><ng-container i18n>Medium:</ng-container>{{ " " }}{{element.doc.medium}}</p>
+            <p *ngIf="element.doc.language"><ng-container i18n>Language:</ng-container>{{ " " }}{{element.doc.language}}</p>
+            <p *ngIf="element.doc.level"><ng-container i18n>Level:</ng-container>{{ " " }}{{element.doc.level}}</p>
+            <p *ngIf="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet"><ng-container i18n>Source: </ng-container>{{ element.doc.sourcePlanet }}</p>
+          </div>
+        </mat-cell>
+      </ng-container>
       <ng-container matColumnDef="rating">
         <mat-header-cell *matHeaderCellDef class="rating-header" mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
         <mat-cell *matCellDef="let element" class="rating-cell">
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="expandedDetail">
+        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
+            <ng-container *ngIf="element.renderContent && isExpanded(element)">
+              <td-markdown
+                [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
+                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
+                element.doc.description">
+              </td-markdown>
+            </ng-container>
+          </div>
+        </mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td><div class="view-container" i18n>{{ isLoading ? 'Resources Loading...' : 'No Resource Found' }}</div></td>
+      </tr>
     </mat-table>
     <mat-paginator #paginator
       [pageSize]="50"
@@ -215,7 +245,4 @@
       (page)="onPaginateChange($event)">
     </mat-paginator>
   </div>
-  <ng-template #notFoundMessage>
-    <div class="view-container" i18n>No Resource Found</div>
-  </ng-template>
 </div>

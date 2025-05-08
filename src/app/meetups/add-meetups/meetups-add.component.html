@@ -20,6 +20,12 @@
           <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
         </mat-error>
       </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Link" formControlName="meetupLink">
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.meetupLink"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
@@ -53,8 +59,11 @@
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
         </mat-radio-group>
       </div>
-      <div *ngIf="meetupForm.controls.recurring.value==='weekly'" class="full-width">
-        <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days" class="margin-lr" [checked]="isClassDay(day)">{{day}}</mat-checkbox>
+      <div *ngIf="meetupForm.controls.recurring.value === 'weekly'" class="full-width">
+          <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"  class="margin-lr" [checked]="meetupForm.controls.day.value.includes(day)"> {{ day }}</mat-checkbox>
+          <mat-error *ngIf="meetupForm.controls.day.hasError('noDaysSelected')">
+            <span i18n>Please select at least one day.</span>
+          </mat-error>
       </div>
       <ng-container *ngIf="meetupForm.controls.recurring.value==='weekly' || meetupForm.controls.recurring.value==='daily'">
         <mat-form-field>

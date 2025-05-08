@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
@@ -16,11 +16,13 @@ export class DialogsAddResourcesComponent implements AfterViewInit {
   okDisabled = true;
   updateResource = false;
   existingResource: any = {};
+  isSubmitting = false;
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAddResourcesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private cdr: ChangeDetectorRef
   ) {
     this.linkInfo = this.data.db ? { [this.data.db]: this.data.linkId } : undefined;
     if (this.data.resource) {
@@ -32,9 +34,14 @@ export class DialogsAddResourcesComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.initOkDisableChange();
+    this.cdr.detectChanges();
   }
 
   ok() {
+    if (this.isSubmitting) {
+      return;
+    }
+    this.isSubmitting = true;
     this.dialogsLoadingService.start();
     switch (this.view) {
       case 'resources':

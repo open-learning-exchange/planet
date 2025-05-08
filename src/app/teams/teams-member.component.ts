@@ -1,8 +1,8 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
@@ -12,12 +12,23 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-list-item-disabled {
       background-color: white;
     }
+    .mat-card-subtitle p.role-text {
+      min-height: 35px;
+    }
     .mat-card-tasks {
-      padding-top: 20px;
+      max-height: 70px;
+      overflow: hidden;
     }
     .mat-caption {
       font-size: 16px;
       font-weight: bold;
+    }
+    .member-name {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
     }
   ` ]
 })
