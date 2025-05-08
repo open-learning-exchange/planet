@@ -123,7 +123,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       let filteredTeams;
-if (this.myTeamsFilter === 'on') {
+      if (this.myTeamsFilter === 'on') {
   filteredTeams = teams.filter(team => {
     return (
       (team.type === 'team' || team.type === 'enterprise' || team.type === undefined) &&
@@ -138,7 +138,7 @@ if (this.myTeamsFilter === 'on') {
     );
   });
 }
-this.teams.data = this.teamList(filteredTeams);
+      this.teams.data = this.teamList(filteredTeams);
 
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
