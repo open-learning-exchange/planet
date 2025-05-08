@@ -122,9 +122,24 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.childPlanets = attachNamesToPlanets(planets);
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
-      this.teams.data = this.teamList(teams.filter(team => {
-        return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
-      }));
+      let filteredTeams;
+if (this.myTeamsFilter === 'on') {
+  filteredTeams = teams.filter(team => {
+    return (
+      (team.type === 'team' || team.type === 'enterprise' || team.type === undefined) &&
+      this.userMembership.some(m => m.teamId === team._id)
+    );
+  });
+} else {
+  filteredTeams = teams.filter(team => {
+    return (
+      (team.type === this.mode || (team.type === undefined && this.mode === 'team')) &&
+      this.excludeIds.indexOf(team._id) === -1
+    );
+  });
+}
+this.teams.data = this.teamList(filteredTeams);
+
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
       )) {
