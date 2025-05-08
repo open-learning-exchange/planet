@@ -8,14 +8,12 @@
               <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
             </ng-container>
           </h3>
-          <ng-container *ngIf="isLoadingInit; else loaded">
+          <ng-container *ngIf="isLoading; else loaded">
             <span i18n>Loading voices...</span>
           </ng-container>
           <ng-template #loaded>
             <ng-container *ngIf="news?.length > 0; else noVoices">
-              <div class="news-container">
-                <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
-              </div>
+              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
             </ng-container>
           </ng-template>
           <ng-template #noVoices>

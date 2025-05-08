@@ -57,7 +57,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoadingInit = true;
+  isLoading = true;
   activeReplyId: string | null = null;
 
   constructor(
@@ -84,7 +84,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
-      this.isLoadingInit = false;
+      this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -349,12 +349,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
-    this.activeReplyId = data._id;
-    this.showNewsButton = data._id === 'root';
-    if (data._id !== 'root') {
-      this.router.navigate([ '/voices', data._id ]);
-    } else {
+    if (data._id === 'root') {
+      this.showNewsButton = true;
       this.router.navigate([ '' ]);
+    } else {
+      this.activeReplyId = data._id;
+      this.router.navigate([ '/voices', data._id ]);
     }
   }
 
@@ -446,5 +446,4 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     this.resizeCalendar = index === 5;
   }
-
 }

@@ -134,11 +134,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => {
-        this.news = news.map(post => ({
+      .subscribe(news => this.news = news.map(post => ({
         ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      }));
-    });
+      })));
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
