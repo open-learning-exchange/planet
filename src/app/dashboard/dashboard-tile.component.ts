@@ -38,7 +38,9 @@ export class DashboardTileComponent implements AfterViewChecked {
 
   ngAfterViewChecked() {
     const divHeight = this.itemDiv.nativeElement.offsetHeight;
-    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+    const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
+    if (!dashboardItem) { return; }
+    const itemStyle = window.getComputedStyle(dashboardItem);
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
     const tileHeight = divHeight - tilePadding;
