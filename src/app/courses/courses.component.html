@@ -1,5 +1,5 @@
 <mat-toolbar *ngIf="!isForm">
-  <ng-container *ngIf="deviceType !== deviceTypes.MOBILE; else mobileView">
+  <ng-container *ngIf="deviceType === deviceTypes.TABLET || deviceType === deviceTypes.DESKTOP; else mobileView">
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>

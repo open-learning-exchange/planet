@@ -46,7 +46,8 @@
     </div>
   </div>
 </div>
-<div style="width: 100%" *ngIf="deviceType === deviceTypes.MOBILE">
+<div style="width: 100%" *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
+  >
   <div class="tabs-container">
     <mat-tab-group class="tabs-group" [color]="secondary" (selectedTabChange)="tabChanged($event)">
       <mat-tab>

@@ -40,10 +40,12 @@ $font-family: Roboto, sans-serif;
 // Our default screen sizes
 $screen-md: 1000px;
 $screen-sm: 780px;
+$screen-xs: 480px;
 
-@mixin screen-sizes($md: 1000px, $sm: 780px) {
+@mixin screen-sizes($md: 1000px, $sm: 780px, $xs: 480px) {
   --screen-md: #{$md};
   --screen-sm: #{$sm};
+  --screen-xs: #{$xs};
 }
 
 // Maximum full height of view container (avoiding vertical overflow)
