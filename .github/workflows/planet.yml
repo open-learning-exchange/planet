@@ -39,7 +39,6 @@ jobs:
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -59,8 +58,8 @@ jobs:
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
           docker images
           docker tag $repo $latestrepo
-          docker push $repo
-          docker push $latestrepo
+        # docker push $repo
+        # docker push $latestrepo
 
   deploy-single-language:
     name: Deploy single language build
