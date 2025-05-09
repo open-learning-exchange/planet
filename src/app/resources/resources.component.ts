@@ -406,6 +406,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.expandedElement === element;
   }
 
+  formatLevels(levelString: any): string {
+    if (!levelString) {
+      return '';
+    }
+    if (Array.isArray(levelString)) {
+      return levelString.join(', ');
+    }
+    if (typeof levelString === 'string') {
+      return levelString.split(',').join(', ');
+    }
+    return String(levelString);
+  }
+
   showPreviewExpand(element: any): boolean {
     if (!element.description || !element.images) {
       return false;
