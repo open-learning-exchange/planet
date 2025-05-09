@@ -1,16 +1,3 @@
-planet-markdown.img-wrap td-markdown.td-markdown {
-  & > div {
-    overflow: auto;
-  }
-
-  img {
-    max-width: 50%;
-    float: left;
-    margin-right: 0.5rem;
-    padding: 0.25rem;
-  }
-}
-
 planet-markdown.img-resize td-markdown.td-markdown {
   & > div {
     overflow: auto;

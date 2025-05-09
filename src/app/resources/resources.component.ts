@@ -412,10 +412,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showPreviewExpand(element: any): boolean {
-    if (!element.description || !element.images) {
-      return false;
-    }
-    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
+    if (!element.description) { return false; }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
   }
 
 }
