@@ -29,7 +29,7 @@
   </mat-card-header>
   <mat-card-content>
     <div>
-      <planet-markdown class="img-resize" [content]="item.doc.message" [previewMode]="showLess" [limit]="500" (previewed)="showExpand = showExpand || $event"></planet-markdown>
+      <planet-markdown class="img-resize" [content]="item.doc.message" [previewMode]="showLess" [limit]="previewLimit"></planet-markdown>
       <ng-container *ngIf="item.doc.chat">
         <div class="chat-container">
           <div *ngFor="let conversation of (showLess ? (item.doc.news.conversations | slice:0:1) : item.doc.news.conversations)">

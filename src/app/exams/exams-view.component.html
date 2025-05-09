@@ -75,7 +75,7 @@
           color="primary"
           (click)="nextQuestion()"
           [planetSubmit]="spinnerOn"
-          [disabled]="!answer.valid || grade === undefined || grade === null">
+          [disabled]="!answer.valid || grade === undefined || grade === null || (mode !== 'grade' && questionNum === maxQuestions)">
           <ng-container i18n>Submit Answer</ng-container>
         </button>
         <button

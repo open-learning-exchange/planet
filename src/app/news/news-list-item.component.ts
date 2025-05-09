@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
@@ -9,6 +9,7 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
+import { calculateMdAdjustedLimit } from '../shared/utils';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -35,9 +36,9 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  previewLimit = 500;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
     private couchService: CouchService,
@@ -56,9 +57,6 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     }
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
-    }
-    if (this.route.firstChild?.snapshot.paramMap.get('id') || this.newsService.getActiveReplyId()) {
-      this.showLess = false;
     }
   }
 
@@ -173,5 +171,12 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   copyLink(voice) {
     const link = `${window.location.origin}/voices/${voice._id}`;
     this.clipboard.copy(link);
+  }
+
+  showPreviewExpand(element: any): boolean {
+    if (!element.description || !element.images) {
+      return false;
+    }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
   }
 }

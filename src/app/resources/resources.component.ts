@@ -23,7 +23,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray } from '../shared/utils';
+import { findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -100,6 +100,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
+  previewLimit = 450;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -131,7 +132,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     if (this.myView !== 'myPersonals') {
-      this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
+      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
@@ -403,6 +404,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
+  }
+
+  showPreviewExpand(element: any): boolean {
+    if (!element.description || !element.images) {
+      return false;
+    }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
   }
 
 }
