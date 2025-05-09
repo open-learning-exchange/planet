@@ -39,7 +39,7 @@
         </div>
       </ng-container>
     </div>
-    <div *ngIf="showExpand" class="full-width" style="text-align: center;" (click)="showLess = !showLess" matTooltip="Toggle View" i18n-matTooltip>
+    <div *ngIf="showExpand" class="full-width" style="text-align: center;" (click)="showLess = !showLess">
       <button mat-icon-button>
         <mat-icon>{{ showLess ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</mat-icon>
       </button>

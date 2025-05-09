@@ -57,6 +57,9 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     }
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
+    } else {
+      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
+        || this.item.doc.images.length > 0;
     }
   }
 
@@ -171,12 +174,5 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   copyLink(voice) {
     const link = `${window.location.origin}/voices/${voice._id}`;
     this.clipboard.copy(link);
-  }
-
-  showPreviewExpand(element: any): boolean {
-    if (!element.description || !element.images) {
-      return false;
-    }
-    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
   }
 }
