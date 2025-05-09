@@ -74,7 +74,7 @@
     "pouchdb-find": "^7.1.1",
     "ramda": "^0.30.1",
     "rxjs": "6.5.4",
-    "showdown": "1.9.1",
+    "showdown": "2.0.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
   },
