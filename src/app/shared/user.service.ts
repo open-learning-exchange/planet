@@ -220,7 +220,11 @@ export class UserService {
       roles: userInfo.roles.filter(role => role.indexOf('_') === -1)
     };
     // ...is the rest syntax for object destructuring
-    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, { ...newUserInfo, type: 'user' }).pipe(
+    return this.couchService.put(this.usersDb + '/org.couchdb.user:' + userInfo.name, {
+      ...newUserInfo,
+      type: 'user',
+      name: userInfo.isArchived ? userInfo.name + '_archived_' + Date.now() : userInfo.name
+    }).pipe(
       switchMap(() => userInfo._id === this.user._id ? this.resetUserData(userInfo._id) : of({})),
       switchMap(() => {
         const profile = this.getUserProperties(newUserInfo);
