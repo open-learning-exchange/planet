@@ -67,7 +67,6 @@ jobs:
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
           docker images
-<<<<<<< HEAD
           docker push $repo
       
       - name: Push latest pre-build
@@ -76,11 +75,6 @@ jobs:
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker tag $repo $latestrepo
           docker push $latestrepo
-=======
-          docker tag $repo $latestrepo
-        # docker push $repo
-        # docker push $latestrepo
->>>>>>> angular12
 
   deploy-single-language:
     name: Deploy single language build
