@@ -215,7 +215,14 @@
           <p *ngIf="team?.courses?.length < 1; else courseList" i18n>There are no courses associated with this team.</p>
           <ng-template #courseList>
             <div class="card-grid">
-              <mat-card *ngFor="let course of team?.courses" (click)="openCourseView(course._id)" class="cursor-pointer">
+              <mat-card
+                        *ngFor="let course of team?.courses"
+                        (click)="course._id ? openCourseView(course._id) : false"
+                        [ngClass]="{ 'cursor-pointer': !!course._id }"
+                        i18n-matTooltip
+                        matTooltip="Course data unavailable"
+                        [matTooltipDisabled]="!!course._id"
+                      >
                 <div class="mat-subheading-2">
                   <b>{{course.courseTitle | truncateText:75}}</b>
                 </div>
