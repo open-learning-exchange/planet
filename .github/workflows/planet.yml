@@ -100,6 +100,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Tag prebuild as latest
+        continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
         run: |
           prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
