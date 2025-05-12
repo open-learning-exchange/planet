@@ -61,10 +61,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
-    if (this.item.sharedSource && this.item.sharedDate && this.item.sharedSource.name) {
-      const sourceType = this.item.sharedSource.mode === 'enterprise' ? 'enterprise' : 'team';
-      this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${this.item.sharedSource.name}`;
-    } else if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate) {
+    if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
       const viewIn = this.item.doc.viewIn[0];
       if (viewIn.name) {
         const sourceType = viewIn.mode === 'enterprise' ? 'enterprise' : 'team';
@@ -131,18 +128,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   editNews(news) {
     const label = this.formLabel(news);
-    const editTimestamp = $localize`Edited on ${new Date().toLocaleString()}`;
-    const sharedSourceInfo = this.item.sharedSourceInfo;
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
       initialValue,
-      news: {
-        ...news,
-        editTimestamp,
-        sharedSourceInfo
-      }
+      news
     });
   }
 
