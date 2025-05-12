@@ -204,11 +204,11 @@
       </ng-container>
       <ng-container matColumnDef="info">
         <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <div>
+        <mat-cell *matCellDef="let element" class="info-cell">
+          <div class="resource-info">
             <p *ngIf="element.doc.medium"><ng-container i18n>Medium:</ng-container>{{ " " }}{{element.doc.medium}}</p>
             <p *ngIf="element.doc.language"><ng-container i18n>Language:</ng-container>{{ " " }}{{element.doc.language}}</p>
-            <p *ngIf="element.doc.level"><ng-container i18n>Level:</ng-container>{{ " " }}{{element.doc.level}}</p>
+            <p *ngIf="element.doc.level" class="resource-level"><ng-container i18n>Level:</ng-container>{{ " " }}{{formatLevels(element.doc.level)}}</p>
             <p *ngIf="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet"><ng-container i18n>Source: </ng-container>{{ element.doc.sourcePlanet }}</p>
           </div>
         </mat-cell>
