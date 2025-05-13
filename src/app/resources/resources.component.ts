@@ -23,7 +23,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray } from '../shared/utils';
+import { findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -100,6 +100,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
+  previewLimit = 450;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -403,6 +404,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
+  }
+
+  formatLevels(levels: string | string[] = []): string {
+    const arr = Array.isArray(levels) ? levels : String(levels).split(',');
+    return arr.map(s => s.trim()).filter(Boolean).join(', ');
+  }
+
+  showPreviewExpand(element: any): boolean {
+    if (!element.description) { return false; }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
   }
 
 }
