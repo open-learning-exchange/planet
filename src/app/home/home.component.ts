@@ -188,26 +188,38 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   logoutClick() {
     const configuration = this.stateService.configuration;
+  
     const errorCatch = error => {
-      console.log(error);
+      console.log('Logout error:', error);
       return of({});
     };
-    this.userService.endSessionLog().pipe(
-      catchError(errorCatch),
-      switchMap(() => this.pouchAuthService.logout()),
-      switchMap(() => {
-        const localAdminName = configuration.adminName.split('@')[0];
-        if (localAdminName === this.userService.get().name) {
-          return this.couchService.delete('_session', { withCredentials: true, domain: configuration.parentDomain });
-        }
-        return of({});
-      }),
-      catchError(errorCatch)
-    ).subscribe((response: any) => {
-      this.userService.unset();
-      this.router.navigate([ '/login' ], {});
-    });
+  
+    this.userService.endSessionLog()
+      .pipe(
+        catchError(errorCatch),
+        switchMap(() => this.pouchAuthService.logout()),
+        switchMap(() => {
+          const localAdminName = configuration.adminName.split('@')[0];
+          if (localAdminName === this.userService.get().name) {
+            return this.couchService.delete('_session', {
+              withCredentials: true,
+              domain: configuration.parentDomain
+            });
+          }
+          return of({});
+        }),
+        catchError(errorCatch)
+      )
+      .subscribe(() => {
+    
+        this.userService.unset();
+  
+        
+        this.router.navigate(['/community/voices']);
+      });
   }
+  
+  
 
   getNotification() {
     const userFilter = [ {
