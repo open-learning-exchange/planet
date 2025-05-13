@@ -188,12 +188,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   logoutClick() {
     const configuration = this.stateService.configuration;
-  
+
     const errorCatch = error => {
       console.log('Logout error:', error);
       return of({});
     };
-  
+
     this.userService.endSessionLog()
       .pipe(
         catchError(errorCatch),
@@ -211,15 +211,15 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         catchError(errorCatch)
       )
       .subscribe(() => {
-    
+
         this.userService.unset();
-  
-        
-        this.router.navigate(['/community/voices']);
+
+
+        this.router.navigate([ '/community/voices' ]);
       });
   }
-  
-  
+
+
 
   getNotification() {
     const userFilter = [ {
