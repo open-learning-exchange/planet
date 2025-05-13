@@ -1,6 +1,7 @@
 import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
+import { truncateText, calculateMdAdjustedLimit } from './utils';
 
 @Component({
   selector: 'planet-markdown',
@@ -38,10 +39,20 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.couchAddress}/`;
 
     this.images = this.extractImageUrls(this.content);
-    this.limitedContent = this.applyCharacterLimit(this.content, this.limit);
+
+    const textOnly = this.content.replace(/!\[.*?\]\(.*?\)/g, '');
+
+    if (this.previewMode) {
+      const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+      const adjustedLimit = calculateMdAdjustedLimit(scaledContent, this.limit);
+
+      this.limitedContent = truncateText(scaledContent, adjustedLimit);
+    } else {
+      this.limitedContent = truncateText(textOnly, this.limit);
+    }
   }
 
-  private extractImageUrls(content: string): string[] {
+  extractImageUrls(content: string): string[] {
     const imageRegex = /!\[.*?\]\((.*?)\)/g;
     const matches: string[] = [];
     let match: RegExpExecArray | null;
@@ -50,14 +61,5 @@ export class PlanetMarkdownComponent implements OnChanges {
       matches.push(url.startsWith('http') ? url : `${this.couchAddress}${url}`);
     }
     return matches;
-  }
-
-  private applyCharacterLimit(content: string, limit: number): string {
-    if (!limit) {
-      return content;
-    }
-    const textOnly = content.replace(/!\[.*?\]\(.*?\)/g, '');
-
-    return textOnly.length > limit ? textOnly.slice(0, limit) + '...' : textOnly;
   }
 }

@@ -119,6 +119,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   ngAfterViewChecked() {
     const toolbarElement = this.toolbar.nativeElement;
+    if (!toolbarElement) { return; }
     const toolbarStyle = window.getComputedStyle(toolbarElement);
     const navbarCenter = toolbarElement.querySelector('.navbar-center');
     if (navbarCenter !== null) {

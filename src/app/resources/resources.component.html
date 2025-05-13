@@ -130,8 +130,9 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a *ngIf="!isDialog; else dialog" [routerLink]="['view', element._id]">{{ element.doc.title.length > 200 ? element.doc.title.slice(0, 200) + '...' : element.doc.title }}</a>
-              <ng-template #dialog><a [routerLink]="['resources/view', element._id]" target="_blank">{{ element.doc.title.length > 180 ? element.doc.title.slice(0, 180) + '...' : element.doc.title }}</a></ng-template>
+              <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">
+                {{ element.doc.title | truncateText:180 }}
+              </a>
               <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
@@ -149,8 +150,8 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="450"></planet-markdown>
-            <div *ngIf="element.doc.description.length > 450"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
+            <div *ngIf="showPreviewExpand(element.doc)"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
                 <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
               </button>
@@ -199,6 +200,17 @@
         <mat-cell *matCellDef="let element">
           <span class="created-label" i18n>Created: </span>
           {{element.doc.createdDate | date}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="info">
+        <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-cell">
+          <div class="resource-info">
+            <p *ngIf="element.doc.medium"><ng-container i18n>Medium:</ng-container>{{ " " }}{{element.doc.medium}}</p>
+            <p *ngIf="element.doc.language"><ng-container i18n>Language:</ng-container>{{ " " }}{{element.doc.language}}</p>
+            <p *ngIf="element.doc.level" class="resource-level"><ng-container i18n>Level:</ng-container>{{ " " }}{{formatLevels(element.doc.level)}}</p>
+            <p *ngIf="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet"><ng-container i18n>Source: </ng-container>{{ element.doc.sourcePlanet }}</p>
+          </div>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">

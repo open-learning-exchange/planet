@@ -131,6 +131,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
