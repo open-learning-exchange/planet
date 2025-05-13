@@ -18,7 +18,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { toProperCase } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
@@ -123,7 +122,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
-        return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
+        const teamMode = this.myTeamsFilter === 'on' ? (team.type === 'team' || team.type === 'enterprise') : team.type === this.mode;
+        return (teamMode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
       }));
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
