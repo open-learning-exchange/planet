@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
 import { truncateText, calculateMdAdjustedLimit } from './utils';
@@ -39,6 +39,7 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.couchAddress}/`;
 
     this.images = this.extractImageUrls(this.content);
+
     const textOnly = this.content.replace(/!\[.*?\]\(.*?\)/g, '');
 
     if (this.previewMode) {
