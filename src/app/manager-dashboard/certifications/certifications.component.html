@@ -39,15 +39,22 @@
         <mat-cell *matCellDef="let element"><span class="ellipsis-text">{{element.name}}</span></mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>
+          <div style="display: flex; justify-content: flex-end; width: 100%;">Actions</div>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <a mat-raised-button color="primary" class="margin-lr-3 action-button" [routerLink]="[ 'update/' + element._id ]" (click)="$event.stopPropagation()" i18n>
+          <div style="width: 100%; display: flex; justify-content: flex-end; align-items: center;">
+            <a mat-raised-button color="primary" class="margin-lr-3 action-button"
+               [routerLink]="['update/' + element._id]" (click)="$event.stopPropagation()" i18n>
               <mat-icon>edit</mat-icon>Edit
             </a>
-          <button mat-raised-button color="primary" class="margin-lr-3 action-button" (click)="$event.stopPropagation(); deleteClick(element)" i18n>
-            <mat-icon>delete_forever</mat-icon>Delete
-          </button>
+            <button mat-raised-button color="primary" class="margin-lr-3 action-button"
+                    (click)="$event.stopPropagation(); deleteClick(element)" i18n>
+              <mat-icon>delete_forever</mat-icon>Delete
+            </button>
+          </div>
         </mat-cell>
+        
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row class="cursor-pointer" *matRowDef="let row; columns: displayedColumns;" [routerLink]="[ 'view/' + row._id ]"></mat-row>
