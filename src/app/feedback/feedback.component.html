@@ -21,7 +21,7 @@
         <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
       </mat-toolbar-row>
     </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
       <mat-toolbar-row *ngIf="showFiltersRow">
         <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
       </mat-toolbar-row>

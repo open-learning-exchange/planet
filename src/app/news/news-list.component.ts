@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -36,6 +36,10 @@ export class NewsListComponent implements OnInit, OnChanges {
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   @Output() viewChange = new EventEmitter<any>();
+  isLoadingMore = false;
+  hasMoreNews = false;
+  pageSize = 10;
+  nextStartIndex = 0;
 
   constructor(
     private dialog: MatDialog,
@@ -43,7 +47,6 @@ export class NewsListComponent implements OnInit, OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService,
-    private router: Router,
     private route: ActivatedRoute
   ) {}
 
@@ -71,6 +74,8 @@ export class NewsListComponent implements OnInit, OnChanges {
       }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
+    this.nextStartIndex = 0;
+    this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
@@ -79,6 +84,8 @@ export class NewsListComponent implements OnInit, OnChanges {
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
+    this.nextStartIndex = 0;
+    this.loadPagedItems(true);
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
       (
@@ -86,15 +93,6 @@ export class NewsListComponent implements OnInit, OnChanges {
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
-
-    const isHomeRoute = this.router.url === '/';
-    if (isHomeRoute && news._id !== 'root') {
-      this.newsService.setActiveReplyId(news._id);
-      this.router.navigate([ '/voices', news._id ]);
-    } else if (isHomeRoute || this.replyViewing._id === 'root') {
-      this.newsService.setActiveReplyId(null);
-      this.router.navigate([ '' ]);
-    }
   }
 
   showPreviousReplies() {
@@ -199,4 +197,35 @@ export class NewsListComponent implements OnInit, OnChanges {
     return item._id;
   }
 
+  getCurrentItems(): any[] {
+    if (this.replyViewing._id === 'root') {
+      return this.items.filter(item => !item.doc.replyTo);
+    }
+    return this.replyObject[this.replyViewing._id] || [];
+  }
+
+  paginateItems(list: any[], start: number, size: number) {
+    const end = start + size;
+    const page = list.slice(start, end);
+    return {
+      items: page,
+      endIndex: start + page.length,
+      hasMore: end < list.length
+    };
+  }
+
+  loadPagedItems(initial = true) {
+    const news = this.getCurrentItems();
+    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, this.pageSize);
+
+    this.displayedItems = initial ? items : [ ...this.displayedItems, ...items ];
+    this.nextStartIndex = endIndex;
+    this.hasMoreNews = hasMore;
+    this.isLoadingMore = false;
+  }
+
+  loadMoreItems() {
+    this.isLoadingMore = true;
+    this.loadPagedItems(false);
+  }
 }

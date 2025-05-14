@@ -31,3 +31,8 @@
   (shareNews)="shareNews($event)"
   (changeLabels)="changeLabels($event)">
 </planet-news-list-item>
+<div class="full-width" style="text-align: center;" *ngIf="!isLoadingMore && hasMoreNews">
+  <button mat-raised-button color="primary" (click)="loadMoreItems()">
+    <span i18n>Load More</span>
+  </button>
+</div>

@@ -19,7 +19,7 @@
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </mat-menu>
     </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
       <span class="toolbar-fill"></span>
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
