@@ -115,8 +115,10 @@ export class NewsListComponent implements OnInit, OnChanges {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          const updatedNews = { ...news, ...newNews, viewIn: news.viewIn };
-          this.postNews(updatedNews, newNews);
+          this.postNews(
+            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+            newNews
+          );
         }
       },
       autoFocus: true
