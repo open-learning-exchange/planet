@@ -473,9 +473,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
-      ...message,
-      sharedDate: null,
-      sharedTeam: null
+      ...message
     }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())

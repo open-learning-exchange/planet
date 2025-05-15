@@ -40,6 +40,8 @@ export class NewsListComponent implements OnInit, OnChanges {
   hasMoreNews = false;
   pageSize = 10;
   nextStartIndex = 0;
+  // Key value store for max number of posts viewed per conversation
+  pageEnd = { root: 10 };
 
   constructor(
     private dialog: MatDialog,
@@ -74,7 +76,6 @@ export class NewsListComponent implements OnInit, OnChanges {
       }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
-    this.nextStartIndex = 0;
     this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
@@ -84,7 +85,6 @@ export class NewsListComponent implements OnInit, OnChanges {
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
-    this.nextStartIndex = 0;
     this.loadPagedItems(true);
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
@@ -113,8 +113,10 @@ export class NewsListComponent implements OnInit, OnChanges {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          const updatedNews = { ...news, ...newNews, viewIn: news.viewIn };
-          this.postNews(updatedNews, newNews);
+          this.postNews(
+            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+            newNews
+          );
         }
       },
       autoFocus: true
@@ -213,10 +215,18 @@ export class NewsListComponent implements OnInit, OnChanges {
   }
 
   loadPagedItems(initial = true) {
+    let pageSize = this.pageSize;
+    if (initial) {
+      this.displayedItems = [];
+      this.nextStartIndex = 0;
+      // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
+      pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
+    }
     const news = this.getCurrentItems();
-    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, this.pageSize);
+    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
 
-    this.displayedItems = initial ? items : [ ...this.displayedItems, ...items ];
+    this.displayedItems = [ ...this.displayedItems, ...items ];
+    this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
     this.nextStartIndex = endIndex;
     this.hasMoreNews = hasMore;
     this.isLoadingMore = false;
