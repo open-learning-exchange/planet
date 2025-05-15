@@ -14,6 +14,10 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
       min-width: 100px;
       width: 100px;
     }
+    .mat-column-action {
+      max-width: 300px;
+      align-self: end;
+    }
   ` ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
