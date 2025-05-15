@@ -55,11 +55,6 @@ jobs:
           git fetch origin master --depth 1
           echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
 
-      - name: Test
-        run: |
-          echo $SHOULD_UPDATE_PACKAGES
-          git branch
-
       - name: Pre-Build Planet
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
