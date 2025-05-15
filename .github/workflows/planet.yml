@@ -47,13 +47,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
-
       - name: Check Package Changes
         run: |
           git fetch origin master --depth 1
           echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
+
+      - name: Docker login
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Pre-Build Planet
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
