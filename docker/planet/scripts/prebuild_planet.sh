@@ -33,4 +33,3 @@ if [ -z "$output" ]; then
 fi
 
 echo $output;
-echo "1";
