@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -18,9 +18,15 @@ import { dedupeShelfReduce } from '../shared/utils';
     mat-divider {
       margin: 1rem 0;
     }
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
   ` ]
 })
-export class NewsListComponent implements OnInit, OnChanges {
+export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`Message updated successfully.`;
@@ -28,6 +34,8 @@ export class NewsListComponent implements OnInit, OnChanges {
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @ViewChild('anchor', { static: true }) anchor: any;
+  observer: IntersectionObserver;
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
@@ -79,6 +87,23 @@ export class NewsListComponent implements OnInit, OnChanges {
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
+  }
+
+  ngAfterViewInit() {
+    this.observer = new IntersectionObserver(
+      ([ entry ]) => {
+        if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore) {
+          this.loadMoreItems();
+        }
+      },
+      { root: null, rootMargin: '0px', threshold: 1.0 }
+    );
+
+    this.observer.observe(this.anchor.nativeElement);
+  }
+
+  ngOnDestroy() {
+    this.observer.disconnect();
   }
 
   showReplies(news) {
