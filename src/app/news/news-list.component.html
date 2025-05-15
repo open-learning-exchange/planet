@@ -30,11 +30,9 @@
   (deleteNews)="openDeleteDialog($event)"
   (shareNews)="shareNews($event)"
   (changeLabels)="changeLabels($event)">
-  <p>posted on {{ item.doc.createdAt | date }}</p>
-  <ng-container *ngIf="item.sharedSourceInfo">
-    <p>{{ item.sharedSourceInfo }}</p>
-  </ng-container>
-  <ng-container *ngIf="item.editTimestamp">
-    <p>{{ item.editTimestamp }}</p>
-  </ng-container>
 </planet-news-list-item>
+<div class="full-width" style="text-align: center;" *ngIf="!isLoadingMore && hasMoreNews">
+  <button mat-raised-button color="primary" (click)="loadMoreItems()">
+    <span i18n>Load More</span>
+  </button>
+</div>

@@ -26,6 +26,7 @@ export class DashboardTileComponent implements AfterViewChecked {
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
+  recentlyDragged = false;
 
   constructor(
     private planetMessageService: PlanetMessageService,
@@ -37,7 +38,9 @@ export class DashboardTileComponent implements AfterViewChecked {
 
   ngAfterViewChecked() {
     const divHeight = this.itemDiv.nativeElement.offsetHeight;
-    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+    const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
+    if (!dashboardItem) { return; }
+    const itemStyle = window.getComputedStyle(dashboardItem);
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
     const tileHeight = divHeight - tilePadding;
@@ -85,9 +88,20 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    this.recentlyDragged = true;
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
-    const ids = [ ...this.userService.shelf[this.shelfName] ];
-    ids.splice(event.currentIndex, 0, ids.splice(event.previousIndex, 1)[0]);
+    const uniqueItems = [];
+    const seen = new Set();
+    for (const item of this.itemData) {
+      if (item && item._id && !seen.has(item._id)) {
+        seen.add(item._id);
+        uniqueItems.push(item);
+      }
+    }
+    this.itemData = uniqueItems;
+    const ids = this.itemData
+      .filter(item => item !== null && item !== undefined)
+      .map(item => item._id || item);
     this.userService.updateShelf(ids, this.shelfName).subscribe(
       () => {},
       () => {
@@ -95,6 +109,10 @@ export class DashboardTileComponent implements AfterViewChecked {
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );
+    this.userService.skipNextShelfRefresh = true;
+    setTimeout(() => {
+      this.recentlyDragged = false;
+    }, 300);
   }
 }
 
