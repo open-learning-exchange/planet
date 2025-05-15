@@ -39,7 +39,6 @@ jobs:
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -51,15 +50,30 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
+      - name: Check Package Changes
+        run: |
+          git fetch origin master --depth 1
+          echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
+
+      - name: Test
+        run: |
+          echo $SHOULD_UPDATE_PACKAGES
+          git branch
+
       - name: Pre-Build Planet
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
           docker images
-          docker tag $repo $latestrepo
           docker push $repo
+      
+      - name: Push latest pre-build
+        if: ${{ github.ref == 'refs/heads/master' && env.SHOULD_UPDATE_PACKAGES == 1 }}
+        run: |
+          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          docker tag $repo $latestrepo
           docker push $latestrepo
 
   deploy-single-language:
@@ -84,6 +98,14 @@ jobs:
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Tag prebuild as latest
+        run: |
+          prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          docker pull $prerepo
+          docker tag $prerepo $latestprerepo
+
 
       - name: Build single language build
         # if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
