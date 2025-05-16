@@ -1,7 +1,15 @@
-<div
-  *ngFor="let step of steps; index as i"
-  i18n-matTooltip
-  [matTooltip]="step.stepTitle || 'Step ' + (i+1)"
-  [ngClass]="{ 'completed': step.status === 'completed', 'not-started': step.status === 'not started', 'cursor-pointer': step.status !== 'not started' }"
-  (click)="routing(step.status,i)">
+<div class="progress-bar-wrapper">
+  <div
+    *ngFor="let step of steps; index as i"
+    class="progress-block"
+    i18n-matTooltip
+    [matTooltip]="step.stepTitle || 'Step ' + (i+1)"
+    [ngClass]="{
+      'completed': step.status === 'completed',
+      'not-started': step.status === 'not started',
+      'pending': step.status === 'pending',
+      'cursor-pointer': step.status !== 'not started'
+    }"
+    (click)="routing(step.status, i)">
+  </div>
 </div>
