@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
+import { StateService } from '../shared/state.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
 import { environment } from '../../environments/environment';
 import { takeUntil, switchMap } from 'rxjs/operators';
@@ -38,7 +39,8 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private stateService: StateService
   ) {}
 
   ngOnInit() {
@@ -49,6 +51,9 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     })).subscribe((user) => {
       this.userDetail = user;
       this.initData();
+    });
+    this.healthService.examinationsUpdated.subscribe(() => {
+      this.refreshExaminations();
     });
   }
 
@@ -104,6 +109,13 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
         });
       });
     }
+  }
+
+  refreshExaminations() {
+    this.healthService.getExaminations(this.stateService.configuration.code).subscribe(events => {
+      this.events = events;
+      this.setEventData();
+    });
   }
 
   setEventData() {
