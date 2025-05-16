@@ -11,15 +11,15 @@
     <mat-card-subtitle>
       <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
       <ng-container i18n>posted on</ng-container> {{item.doc.time | date: 'medium' }}
-      <ng-container *ngIf="item.sharedSourceInfo; else sharedDateOnly"> | {{item.sharedSourceInfo}}</ng-container>
+      <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
       <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
-      <ng-template #sharedDateOnly>
-        <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
-      </ng-template>
       <mat-chip-list>
         <mat-chip color="primary" selected class="planet-chip-label chip-no-style" *ngFor="let label of item.doc.labels">
           <planet-label i18n-label [label]="label"></planet-label>
           <mat-icon *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable && !item.doc.chat" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
+        </mat-chip>
+        <mat-chip color="accent" selected class="planet-chip-label chip-no-style" *ngFor="let teamLabel of teamLabels">
+          {{ teamLabel }}
         </mat-chip>
         <mat-chip class="planet-chip-label chip-no-style chat-chip" *ngIf="item.doc.chat">
           <planet-label i18n-label [label]="'shared chat'"></planet-label>

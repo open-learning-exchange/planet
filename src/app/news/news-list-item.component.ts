@@ -36,6 +36,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  teamLabels = [];
   previewLimit = 500;
 
   constructor(
@@ -55,6 +56,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
       this.showExpand = true;
       this.showLess = false;
     }
+    this.addTeamLabelsFromViewIn();
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
     } else {
@@ -159,6 +161,14 @@ export class NewsListItemComponent implements OnInit, OnChanges {
         maxWidth: '90vw',
         maxHeight: '90vh'
       });
+    });
+  }
+
+  addTeamLabelsFromViewIn() {
+    this.item.doc.viewIn.forEach(view => {
+      if (view.section === 'teams' && view.name) {
+        this.teamLabels.push(`${view.name}`);
+      }
     });
   }
 
