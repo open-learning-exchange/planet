@@ -10,6 +10,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../user-constants';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { TeamsService } from '../../teams/teams.service';
 
 @Component({
   selector: 'planet-users-profile',
@@ -30,6 +31,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   educationLevel = educationLevel;
   deviceType: DeviceType;
   isMobile: boolean;
+  teams: any[] = [];
+  enterprises: any[] = [];
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
@@ -42,7 +45,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private teamsService: TeamsService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
@@ -55,6 +59,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.planetCode = this.planetCode || params.get('planet');
       this.profileView();
       this.getLoginInfo(this.urlName);
+      this.getTeamsAndEnterprises();
     });
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe((user) => {
       if (user._id === this.userDetail._id && user.planetCode === this.userDetail.planetCode) {
@@ -142,5 +147,12 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.userDetail.roles.forEach(role => rolesSet.add(role));
     }
     return Array.from(rolesSet);
+  }
+
+  getTeamsAndEnterprises() {
+    this.teamsService.getTeamsByUser(this.urlName, this.planetCode).subscribe(teams => {
+      this.teams = teams.filter((team: any) => !team.doc.type || team.doc.type === 'team');
+      this.enterprises = teams.filter((team: any) => team.doc.type === 'enterprise');
+    });
   }
 }

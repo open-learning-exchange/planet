@@ -7,8 +7,8 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 responsive-toolbar center-text">
     <div>
-      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
-      <ng-template #elseBlock>{{ user.name }}</ng-template>
+      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
+      <ng-template #elseBlock>{{ user.name | truncateText:40 }}</ng-template>
     </div>
     <span class="toolbar-fill"></span>
     <div class="auto-adjust-buttons">
@@ -25,85 +25,90 @@
     </div>
   </mat-toolbar>
   <div class="view-container">
-    <div *ngIf="achievements !== undefined" class="achievements-container">
-      <div class="user-info">
-        <img class="profile-image" [src]="profileImg">
-        <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
-        <div class="birth-info" *ngIf="!publicView">
-          <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
-          <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
+    <div *ngIf="isLoading" class="loading-message">
+      <p i18n>Loading Achievements...</p>
+    </div>
+    <div *ngIf="!isLoading">
+      <div *ngIf="achievements !== undefined" class="achievements-container">
+        <div class="user-info">
+          <img class="profile-image" [src]="profileImg">
+          <h2>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</h2>
+          <div class="birth-info" *ngIf="!publicView">
+            <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
+            <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
+          </div>
         </div>
-      </div>
-      <div *ngIf="achievements.purpose">
-        <mat-divider></mat-divider>
-        <h3 i18n>My Purpose</h3>
-        <td-markdown [content]="achievements.purpose"></td-markdown>
-      </div>
-      <div *ngIf="achievements.goals">
-        <mat-divider></mat-divider>
-        <h3 i18n>My Goals</h3>
-        <td-markdown [content]="achievements.goals"></td-markdown>
-      </div>
-      <ng-container *planetBeta>
-        <div *ngIf="certifications.length > 0">
+        <div *ngIf="achievements.purpose">
           <mat-divider></mat-divider>
-          <h3 i18n>My Certifications</h3>
-          <mat-list class="certs-list">
-            <mat-list-item *ngFor="let certification of certifications">
-              <span class="cert-item">{{certification.name}}</span>
+          <h3 i18n>My Purpose</h3>
+          <td-markdown [content]="achievements.purpose"></td-markdown>
+        </div>
+        <div *ngIf="achievements.goals">
+          <mat-divider></mat-divider>
+          <h3 i18n>My Goals</h3>
+          <td-markdown [content]="achievements.goals"></td-markdown>
+        </div>
+        <ng-container *planetBeta>
+          <div *ngIf="certifications.length > 0">
+            <mat-divider></mat-divider>
+            <h3 i18n>My Certifications</h3>
+            <mat-list class="certs-list">
+              <mat-list-item *ngFor="let certification of certifications">
+                <span class="cert-item">{{certification.name}}</span>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </ng-container>
+        <div *ngIf="achievements?.links?.length > 0">
+          <mat-divider></mat-divider>
+          <h3 i18n>My Links</h3>
+          <mat-list>
+            <mat-list-item class="mat-list-item-word-wrap" *ngFor="let link of achievements.links">
+              <h4 class="link-title" mat-line>{{link.title}}:</h4>
+              <a href="{{link.url}}" target="_blank" class="styled-link"> {{link.url}} </a>
             </mat-list-item>
           </mat-list>
         </div>
-      </ng-container>
-      <div *ngIf="achievements?.links?.length > 0">
-        <mat-divider></mat-divider>
-        <h3 i18n>My Links</h3>
-        <mat-list>
-          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let link of achievements.links">
-            <h4 class="link-title" mat-line>{{link.title}}:</h4>
-            <a href="{{link.url}}" target="_blank" class="styled-link"> {{link.url}} </a>
-          </mat-list-item>
-        </mat-list>
+        <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
+          <mat-divider></mat-divider>
+          <h3 i18n>My Achievements</h3>
+          <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
+          <mat-list>
+            <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="onAchievementClick(achievement, i)">
+              <p class="achievement-header" mat-line>
+                <span class="achievement-text">{{achievement.title || achievement}}
+                  <ng-container *ngIf="isClickable(achievement)">
+                    <mat-icon *ngIf="openAchievementIndex !== i" color="primary">expand_more</mat-icon>
+                    <mat-icon *ngIf="openAchievementIndex === i" color="primary">expand_less</mat-icon>
+                  </ng-container>
+                </span>
+                <span class="achievement-date">{{achievement.date | date: medium}}</span>
+              </p>
+              <p mat-line *ngIf="openAchievementIndex === i">
+                {{achievement.description}}
+              <br><a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
+              </p>
+              <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+        <div *ngIf="achievements.references.length > 0">
+          <mat-divider></mat-divider>
+          <h3 i18n>My References</h3>
+          <mat-list class="references-list">
+            <mat-list-item class="mat-list-item-word-wrap" *ngFor="let reference of achievements.references">
+              <h4 mat-line>{{reference.name}}</h4>
+              <p mat-line *ngIf="reference?.relationship"><ng-container i18n>Relationship:</ng-container> {{reference.relationship}}</p>
+              <p mat-line *ngIf="reference?.phone"><ng-container i18n>Phone Number:</ng-container> {{reference.phone}}</p>
+              <p mat-line *ngIf="reference?.email"><ng-container i18n>Email:</ng-container> {{reference.email}}</p>
+            </mat-list-item>
+          </mat-list>
+        </div>
       </div>
-      <div *ngIf="achievements.achievementsHeader || achievements.achievements.length > 0">
-        <mat-divider></mat-divider>
-        <h3 i18n>My Achievements</h3>
-        <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
-        <mat-list>
-          <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
-            <p class="achievement-header" mat-line>
-              <span class="achievement-text">{{achievement.title || achievement}}
-                <ng-container *ngIf="isClickable(achievement)">
-                  <mat-icon *ngIf="openAchievementIndex !== i" color="primary">expand_more</mat-icon>
-                  <mat-icon *ngIf="openAchievementIndex === i" color="primary">expand_less</mat-icon>
-                </ng-container>
-              </span>
-              <span class="achievement-date">{{achievement.date | date: medium}}</span>
-            </p>
-            <p mat-line *ngIf="openAchievementIndex === i">
-              {{achievement.description}}
-            <br><a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
-            </p>
-            <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
-          </mat-list-item>
-        </mat-list>
+      <div *ngIf="achievementNotFound">
+        <ng-container *ngIf="ownAchievements"><span i18n>You haven't entered any achievements yet. Click </span><a routerLink="update" i18n>Add Achievements</a><span i18n> to add your achievements!</span></ng-container>
+        <ng-container *ngIf="!ownAchievements" i18n>No achievements found.</ng-container>
       </div>
-      <div *ngIf="achievements.references.length > 0">
-        <mat-divider></mat-divider>
-        <h3 i18n>My References</h3>
-        <mat-list class="references-list">
-          <mat-list-item class="mat-list-item-word-wrap" *ngFor="let reference of achievements.references">
-            <h4 mat-line>{{reference.name}}</h4>
-            <p mat-line *ngIf="reference?.relationship"><ng-container i18n>Relationship:</ng-container> {{reference.relationship}}</p>
-            <p mat-line *ngIf="reference?.phone"><ng-container i18n>Phone Number:</ng-container> {{reference.phone}}</p>
-            <p mat-line *ngIf="reference?.email"><ng-container i18n>Email:</ng-container> {{reference.email}}</p>
-          </mat-list-item>
-        </mat-list>
-      </div>
-    </div>
-    <div *ngIf="achievementNotFound">
-      <ng-container *ngIf="ownAchievements"><span i18n>You haven't entered any achievements yet. Click </span><a routerLink="update" i18n>Add Achievements</a><span i18n> to add your achievements!</span></ng-container>
-      <ng-container *ngIf="!ownAchievements" i18n>No achievements found.</ng-container>
     </div>
   </div>
 </div>

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { UserService } from '../shared/user.service';
 import { of, empty, forkJoin, Observable } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
@@ -11,6 +11,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { toProperCase } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
+import { truncateText } from '../shared/utils';
 
 const nameField = {
   'type': 'textbox',
@@ -258,13 +259,14 @@ export class TeamsService {
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
     const user = this.userService.get();
     const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
+    const truncatedFullName = truncateText(fullName, 22);
     const teamType = team.type || 'team';
-    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${team.name}"</b> ${teamType}.`;
+    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
     switch (type) {
       case 'message':
-        return $localize`<b>${fullName}</b> has posted a message on ${teamMessage}`;
+        return $localize`<b>${truncatedFullName}</b> has posted a message on ${teamMessage}`;
       case 'request':
-        return $localize`<b>${fullName}</b> has requested to join ${teamMessage}`;
+        return $localize`<b>${truncatedFullName}</b> has requested to join ${teamMessage}`;
       case 'added':
         return $localize`You have been added to ${teamMessage}`;
       case 'rejected':
@@ -373,6 +375,23 @@ export class TeamsService {
         }
         return teamId;
       }),
+    );
+  }
+
+  getTeamsByUser(userName: string, userPlanetCode: string) {
+    const selector = {
+      '$or': [
+        { 'userId': `org.couchdb.user:${userName}` },
+        { 'userId': `org.couchdb.user:${userName}@${userPlanetCode}` }
+      ],
+      'docType': 'membership'
+    };
+    return this.couchService.findAll('teams', findDocuments(selector)).pipe(
+      switchMap(memberships => {
+        const teamIds = memberships.map((doc: any) => doc.teamId);
+        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } }));
+      }),
+      map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
     );
   }
 }

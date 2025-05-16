@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
 
 export enum DeviceType {
+  SMALL_MOBILE = 'SMALL_MOBILE',
   MOBILE = 'MOBILE',
   TABLET = 'TABLET',
   DESKTOP = 'DESKTOP'
+}
+
+export interface DeviceBreakpoints {
+  tablet?: number;
+  mobile?: number;
+  smallMobile?: number;
 }
 
 @Injectable({
@@ -21,10 +28,16 @@ export class DeviceInfoService {
     this.screenWidth = window.innerWidth;
   }
 
-  public getDeviceType(): DeviceType {
-    if (this.screenWidth <= 780) {
+  public getDeviceType(breakpoints: DeviceBreakpoints = {}): DeviceType {
+    const smallMobileWidth = breakpoints.smallMobile || 480;
+    const mobileWidth = breakpoints.mobile || 780;
+    const tabletWidth = breakpoints.tablet || 1000;
+
+    if (this.screenWidth <= smallMobileWidth) {
+      return DeviceType.SMALL_MOBILE;
+    } else if (this.screenWidth <= mobileWidth) {
       return DeviceType.MOBILE;
-    } else if (this.screenWidth <= 1000) {
+    } else if (this.screenWidth <= tabletWidth) {
       return DeviceType.TABLET;
     } else {
       return DeviceType.DESKTOP;

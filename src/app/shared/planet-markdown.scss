@@ -1,22 +1,28 @@
-planet-markdown.img-wrap td-markdown.td-markdown {
-  & > div {
-    overflow: auto;
-  }
-
-  img {
-    max-width: 50%;
-    float: left;
-    margin-right: 0.5rem;
-    padding: 0.25rem;
-  }
-}
-
 planet-markdown.img-resize td-markdown.td-markdown {
   & > div {
     overflow: auto;
   }
 
   img {
-    max-width: 50%;
+    max-width: 25%;
   }
+}
+
+.image-gallery {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.minified-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.minified-image:hover {
+  transform: scale(1.1);
 }

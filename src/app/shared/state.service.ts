@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject } from 'rxjs';
-import { map, switchMap, filter } from 'rxjs/operators';
+import { map, switchMap, filter, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,13 @@ export class StateService {
   private inProgress = { local: new Map(), parent: new Map() };
 
   get configuration(): any {
-    return this.state.local.configurations.docs[0] || {};
+    const config = this.state.local.configurations.docs[0] || {};
+    const { keys, ...safeConfig } = config;
+    return safeConfig;
+  }
+
+  get keys(): any {
+    return this.state.local.configurations.docs[0]?.keys || {};
   }
 
   constructor(
@@ -52,6 +58,10 @@ export class StateService {
         this.stateUpdated.next({ newData, db, planetField, inProgress });
         this.inProgress[planetField].set(db, inProgress);
         return newData;
+      }),
+      catchError(() => {
+        this.inProgress[planetField].set(db, false);
+        return [];
       })
     );
   }

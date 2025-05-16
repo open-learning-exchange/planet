@@ -20,6 +20,12 @@
           <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
         </mat-error>
       </mat-form-field>
+      <mat-form-field>
+        <input matInput i18n-placeholder placeholder="Link" formControlName="meetupLink">
+        <mat-error>
+          <planet-form-error-messages [control]="meetupForm.controls.meetupLink"></planet-form-error-messages>
+        </mat-error>
+      </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
         <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>

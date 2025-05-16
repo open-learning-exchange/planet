@@ -1,20 +1,22 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
-import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
+import { calculateMdAdjustedLimit } from '../shared/utils';
 
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges {
 
   @Input() item;
   @Input() replyObject;
@@ -27,7 +29,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
-  @ViewChild('content') content;
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -36,17 +37,18 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
   teamLabels = [];
+  previewLimit = 500;
 
   constructor(
     private router: Router,
     private userService: UserService,
     private couchService: CouchService,
     private newsService: NewsService,
-    private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private clipboard: Clipboard
   ) {}
 
   ngOnInit() {
@@ -55,26 +57,27 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
       this.showLess = false;
     }
     this.addTeamLabelsFromViewIn();
+    if (this.item.doc.news?.conversations.length > 1) {
+      this.showExpand = true;
+    } else {
+      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
+        || this.item.doc.images.length > 0;
+    }
   }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
-  }
-
-  ngAfterViewChecked() {
-    const contentHeight = this.content && this.content.nativeElement.scrollHeight;
-    const containerHeight = this.content && this.content.nativeElement.offsetHeight;
-    const showExpand = contentHeight > containerHeight;
-    if (showExpand !== this.showExpand) {
-      this.showExpand = showExpand;
-      this.cdRef.detectChanges();
+    if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
+      const viewIn = this.item.doc.viewIn[0];
+      if (viewIn.name) {
+        const sourceType = viewIn.mode === 'enterprise' ? 'enterprise' : 'team';
+        this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${viewIn.name}`;
+      }
+    } else {
+      this.item.sharedSourceInfo = null;
     }
-  }
-
-  remToPx(rem) {
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
 
   addReply(news) {
@@ -117,13 +120,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   editNews(news) {
     const label = this.formLabel(news);
+    const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
-      initialValue: news.message,
-      news: {
-        ...news,
-      }
+      initialValue,
+      news
     });
   }
 
@@ -170,4 +172,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     });
   }
 
+  copyLink(voice) {
+    const link = `${window.location.origin}/voices/${voice._id}`;
+    this.clipboard.copy(link);
+  }
 }
