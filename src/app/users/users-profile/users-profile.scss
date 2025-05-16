@@ -60,5 +60,28 @@
       word-break: break-word;
     }
   }
+  .view-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .profile-list-lt, .profile-list-rt {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  mat-list-item {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mat-list-item p {
+    overflow-wrap: break-word;
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
 }
