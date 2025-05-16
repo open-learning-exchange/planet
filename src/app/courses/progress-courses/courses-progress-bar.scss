@@ -1,21 +1,35 @@
 @import '../../variables';
 
 :host {
-  display: grid;
-  grid-auto-columns: 1fr;
-  grid-column-gap: 3px;
-  grid-auto-flow: column;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 
-  div {
+  .progress-bar-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 3px;
+  }
+
+  .progress-block {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
     background-color: $accent;
   }
 
-  div.completed {
+  .progress-block.completed {
     background-color: $planet-green;
   }
 
-  div.not-started {
+  .progress-block.not-started {
     background-color: $grey;
   }
 
+  .progress-block.pending {
+    background-color: orange;
+  }
 }
+
