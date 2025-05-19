@@ -125,19 +125,9 @@ body {
     margin: 0 3px;
   }
 
-  .mini-icon-button {
-    height: 1.5em;
-    width: 1.5em;
-    vertical-align: baseline;
-    font: inherit;
-
-    .mat-icon {
-      font-size: inherit;
-      height: 1.125em;
-      line-height: 1.125;
-      width: 1em;
-      vertical-align: top;
-    }
+  .small-icon {
+    font-size: 16px;
+    vertical-align: sub;
   }
 
   $list-title-height: 36px;
@@ -504,7 +494,6 @@ body {
     min-height: 24px;
   }
 
-
   .form-container {
     width: calc(#{$form-width-3} + 20px);
   }
@@ -625,13 +614,13 @@ body {
   }
 
   .chip-no-style {
-      pointer-events: none;
-      &:focus::after {
-        opacity: 0;
-      }
-      &> mat-icon {
-        pointer-events: auto;
-      }
+    pointer-events: none;
+    &:focus::after {
+      opacity: 0;
+    }
+    &> mat-icon {
+      pointer-events: auto;
+    }
   }
 
   // For the members page roles

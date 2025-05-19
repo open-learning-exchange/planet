@@ -4,35 +4,40 @@ mat-card {
   margin: 0.25rem;
 }
 
-:host(.main-message) {
-  mat-card {
-    border: 4px solid $grey;
-  }
+mat-card-header {
+  width: 100%;
+  display: block;
+}
+
+.subtitle-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
 }
 
 mat-card-content {
   margin-bottom: 0;
 }
 
-.chat-chip {
-  color: white;
-  background-color: #2c3e50;
-}
-
 .chat-container {
   border: dashed 1px #2c3e50;
   border-radius: 5px;
-  padding: 40px;
+  padding: 5%;
 }
 
-@media (max-width: $screen-md) {
-  .chat-container {
-    padding: 20px;
-  }
+.profile-outline {
+  border: 2px solid $primary;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
 }
 
-@media (max-width: $screen-sm) {
-  .chat-container {
-    padding: 10px;
-  }
+.chip-outline-accent {
+  background-color: $accent-lighter;
+  color: black;
+}
+
+.chip-outline-primary {
+  background-color: $primary-lighter;
+  color: black;
 }

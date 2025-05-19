@@ -56,28 +56,19 @@ export class NewsListItemComponent implements OnInit, OnChanges {
       this.showExpand = true;
       this.showLess = false;
     }
-    this.addTeamLabelsFromViewIn();
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
     } else {
       this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
         || this.item.doc.images.length > 0;
     }
+    this.addTeamLabelsFromViewIn();
   }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
-    if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
-      const viewIn = this.item.doc.viewIn[0];
-      if (viewIn.name) {
-        const sourceType = viewIn.mode === 'enterprise' ? 'enterprise' : 'team';
-        this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${viewIn.name}`;
-      }
-    } else {
-      this.item.sharedSourceInfo = null;
-    }
   }
 
   addReply(news) {
@@ -165,6 +156,10 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   }
 
   addTeamLabelsFromViewIn() {
+    if (this.router.url.includes('/teams')) {
+      this.teamLabels = [];
+      return;
+    }
     this.item.doc.viewIn.forEach(view => {
       if (view.section === 'teams' && view.name) {
         this.teamLabels.push(`${view.name}`);
