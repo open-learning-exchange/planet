@@ -126,7 +126,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.showReplies(this.items.find(item => item._id === this.replyViewing.doc.replyTo));
   }
 
-  openUpdateDialog({ title, placeholder, initialValue = '', news = {} }: { title: string, placeholder: string, initialValue?: string, news?: any }) {
+  openUpdateDialog({ title, placeholder, initialValue = '', news = {} }: 
+    { title: string, placeholder: string, initialValue?: string, news?: any }) {
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
