@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
-import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@angular/forms';
+import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { MatDialog } from '@angular/material/dialog';
 import { CommunityLinkDialogComponent } from './community-link-dialog.component';
 import { TeamsService } from '../teams/teams.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -14,12 +16,10 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from '../users/users.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { FormBuilder } from '@angular/forms';
 import {
   DialogsAnnouncementComponent,
   DialogsAnnouncementSuccessComponent,
@@ -57,10 +57,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading: boolean;
+  isLoading = true;
+  activeReplyId: string | null = null;
 
   constructor(
     private dialog: MatDialog,
+    private router: Router,
     private route: ActivatedRoute,
     private stateService: StateService,
     private newsService: NewsService,
@@ -80,8 +82,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoading = true;
-    this.getCommunityData();
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
       this.isLoading = false;
@@ -98,6 +98,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }
     });
     this.communityChallenge();
+    iif(
+      () => this.stateService.configuration?._id !== undefined,
+      of(this.stateService.configuration),
+      this.stateService.couchStateListener('configurations')
+    ).subscribe(() => {
+      this.getCommunityData();
+    });
   }
 
   @HostListener('window:resize') onResize() {
@@ -148,6 +155,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
           of([ this.stateService.configuration ]);
       }),
       switchMap(configurations => {
+        // Configuration is for planet that is being viewed, not planet the user is on
         this.configuration = configurations[0];
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
@@ -341,7 +349,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
+    this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
+    if (data._id !== 'root') {
+      this.router.navigate([ '/voices', data._id ]);
+    } else {
+      this.router.navigate([ '' ]);
+    }
   }
 
   toggleDeleteMode() {
@@ -424,11 +438,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  tabChanged({ index }) {
-    if (index === 5) {
-      this.resizeCalendar = true;
+  tabChanged({ index }: { index: number }) {
+    if (index === 0) {
+      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
     } else {
-      this.resizeCalendar = false;
+      this.router.navigate([ '' ]);
     }
+    this.resizeCalendar = index === 5;
   }
 }

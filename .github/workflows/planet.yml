@@ -34,12 +34,11 @@ jobs:
         id: step1
         run: |
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -48,18 +47,29 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Check Package Changes
+        run: |
+          git fetch origin master --depth 1
+          echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
+
       - name: Docker login
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Pre-Build Planet
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
           docker images
-          docker tag $repo $latestrepo
           docker push $repo
+      
+      - name: Push latest pre-build
+        if: ${{ github.ref == 'refs/heads/master' && env.SHOULD_UPDATE_PACKAGES == 1 }}
+        run: |
+          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          docker tag $repo $latestrepo
           docker push $latestrepo
 
   deploy-single-language:
@@ -69,10 +79,6 @@ jobs:
     runs-on: ubuntu-latest 
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-
-    #strategy:
-    #  matrix:
-    #    lang: [ eng, ara, fra, spa, nep, som ]
 
     steps:
       - name: Checkout Code
@@ -85,8 +91,15 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
+      - name: Tag prebuild as latest
+        continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
+        run: |
+          prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+          latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          docker pull $prerepo
+          docker tag $prerepo $latestprerepo
+
       - name: Build single language build
-        # if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
@@ -153,7 +166,6 @@ jobs:
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
     if: ${{ always() }}
-    #if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
     runs-on: ubuntu-latest
 
     steps:
