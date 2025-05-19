@@ -38,6 +38,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   hasMoreNews = false;
   pageSize = 10;
   nextStartIndex = 0;
+  totalReplies = 0;
   // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
 
@@ -245,6 +246,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.nextStartIndex = endIndex;
     this.hasMoreNews = hasMore;
     this.isLoadingMore = false;
+    this.totalReplies = news.length;
   }
 
   loadMoreItems() {

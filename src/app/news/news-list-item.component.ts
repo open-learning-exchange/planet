@@ -20,6 +20,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
 
   @Input() item;
   @Input() replyObject;
+  @Input() replyView;
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
@@ -58,6 +59,9 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     }
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
+    } else if (this.replyView) {
+      this.showExpand = false;
+      this.showLess = false;
     } else {
       this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
         || this.item.doc.images.length > 0;
@@ -156,7 +160,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   }
 
   addTeamLabelsFromViewIn() {
-    if (this.router.url.includes('/teams')) {
+    if (['teams', 'enterprises'].some(route => this.router.url.includes(route))) {
       this.teamLabels = [];
       return;
     }
