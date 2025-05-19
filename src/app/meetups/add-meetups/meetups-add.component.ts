@@ -159,10 +159,23 @@ onSubmit() {
   this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
   const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
   if (this.pageType === 'Update') {
-      this.updateMeetup(meetup);
-    } else {
-      this.addMeetup(meetup);
+    
+    this.couchService.get(`${this.dbName}/${this.id}`).subscribe(originalDoc => {
+      this.couchService.deleteDocument(this.dbName, originalDoc).subscribe(() => {
+        
+        this.addMeetup(meetup);
+      }, err => {
+        this.planetMessageService.showMessage('Failed to delete original event');
+        console.error('Failed to delete original event:', err);
+      });
+    }, err => {
+      this.planetMessageService.showMessage('Original event not found');
+      console.error('Failed to fetch original document:', err);
+    });
+  } else {
+    this.addMeetup(meetup);
   }
+  
   this.hasUnsavedChanges = false;
   this.unsavedChangesService.setHasUnsavedChanges(false);
 }
