@@ -209,11 +209,11 @@ export class CouchService {
   deleteDocument(db: string, doc: any) {
     const id = doc._id;
     const rev = doc._rev;
-  
+
     if (!id || !rev) {
       return throwError(() => new Error('Document _id and _rev are required to delete'));
     }
-  
+
     const url = `${this.baseUrl}/${db}/${id}?rev=${rev}`;
     return this.http.delete(url, this.defaultOpts).pipe(
       catchError(err => {
@@ -222,6 +222,6 @@ export class CouchService {
       })
     );
   }
-  
+
 
 }
