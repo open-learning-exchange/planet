@@ -14,17 +14,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styles: [ `
-    mat-divider {
-      margin: 1rem 0;
-    }
-    .spinner-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
-  ` ]
+  styleUrls: [ './news-list.component.scss' ],
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
