@@ -160,7 +160,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   }
 
   addTeamLabelsFromViewIn() {
-    if (['teams', 'enterprises'].some(route => this.router.url.includes(route))) {
+    if ([ 'teams', 'enterprises' ].some(route => this.router.url.includes(route))) {
       this.teamLabels = [];
       return;
     }
