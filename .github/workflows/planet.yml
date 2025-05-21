@@ -50,7 +50,7 @@ jobs:
       - name: Check Package Changes
         run: |
           git fetch origin master --depth 1
-          echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
+          echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/check_dependencies.sh)" >> $GITHUB_ENV
 
       - name: Docker login
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
