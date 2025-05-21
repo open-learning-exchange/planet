@@ -53,11 +53,11 @@ jobs:
           echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/prebuild_planet.sh)" >> $GITHUB_ENV
 
       - name: Docker login
-        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Pre-Build Planet
-        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 }}
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           mkdir -p ./ng-app/dist
@@ -66,7 +66,7 @@ jobs:
           docker push $repo
       
       - name: Push latest pre-build
-        if: ${{ github.ref == 'refs/heads/master' && env.SHOULD_UPDATE_PACKAGES == 1 }}
+        if: ${{ github.ref == 'refs/heads/master' && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
         run: |
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker tag $repo $latestrepo
