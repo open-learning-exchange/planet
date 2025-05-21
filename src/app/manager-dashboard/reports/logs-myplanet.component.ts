@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { forkJoin } from 'rxjs';
 import { StateService } from '../../shared/state.service';
@@ -8,9 +8,12 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
 import { CsvService } from '../../shared/csv.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { ReportsService } from './reports.service';
 
 @Component({
-  templateUrl: './logs-myplanet.component.html'
+  templateUrl: './logs-myplanet.component.html',
+  styleUrls: [ './logs-myplanet.component.scss' ]
 })
 export class LogsMyPlanetComponent implements OnInit {
 
@@ -22,7 +25,7 @@ export class LogsMyPlanetComponent implements OnInit {
   get childType() {
     return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
-  startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1));
   endDate: Date = new Date();
   selectedChildren: any[] = [];
   logsForm: FormGroup;
@@ -33,6 +36,12 @@ export class LogsMyPlanetComponent implements OnInit {
   types: string[] = [];
   selectedType = '';
   disableShowAllTime = true;
+  showFiltersRow = false;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  selectedTimeFilter = '24h';
+  showCustomDateFields = false;
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private csvService: CsvService,
@@ -40,8 +49,11 @@ export class LogsMyPlanetComponent implements OnInit {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private deviceInfoService: DeviceInfoService,
+    private activityService: ReportsService,
   ) {
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
     this.logsForm = this.fb.group({
       startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
       endDate: [ this.today, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ]
@@ -65,6 +77,11 @@ export class LogsMyPlanetComponent implements OnInit {
       }
       this.updateShowAllTimeButton();
     });
+  }
+
+  @HostListener('window:resize')
+  OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
   }
 
   updateShowAllTimeButton() {
@@ -96,8 +113,9 @@ export class LogsMyPlanetComponent implements OnInit {
 
   getUniqueVersions(logs: any[]) {
     this.versions = Array.from(
-      new Set(logs.map(log => log.version))).filter(version => version).sort((a, b) => b.localeCompare(a, undefined, { numeric: true })
-    );
+      new Set(logs.map(log => log.version)))
+      .filter(version => version)
+      .sort((a, b) => b.localeCompare(a));
   }
 
   getUniqueTypes(logs: any[]) {
@@ -114,10 +132,6 @@ export class LogsMyPlanetComponent implements OnInit {
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
     ]).subscribe(([ planets, apklogs ]) => {
-      this.minDate = this.getEarliestDate(apklogs);
-      this.logsForm.patchValue({
-        startDate: this.minDate
-      });
       this.getUniqueVersions(apklogs);
       this.getUniqueTypes(apklogs);
       this.setAllPlanets(
@@ -128,6 +142,7 @@ export class LogsMyPlanetComponent implements OnInit {
       );
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
+      this.onTimeFilterChange('24h');
     }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
   }
 
@@ -138,6 +153,22 @@ export class LogsMyPlanetComponent implements OnInit {
 
   onTypeChange(type: string) {
     this.selectedType = type;
+    this.applyFilters();
+  }
+
+  onTimeFilterChange(timeFilter: string) {
+    this.selectedTimeFilter = timeFilter;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+    if (timeFilter === 'custom') {
+      return;
+    }
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.logsForm.patchValue({
+      startDate,
+      endDate
+    });
     this.applyFilters();
   }
 
@@ -182,10 +213,15 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.logsForm.patchValue({
-      startDate: this.minDate,
-      endDate: this.today
-    });
+    this.onTimeFilterChange('24h');
+  }
+
+  clearFilters() {
+    this.searchValue = '';
+    this.selectedVersion = '';
+    this.selectedType = '';
+    this.resetDateFilter();
+    this.applyFilters();
   }
 
 }

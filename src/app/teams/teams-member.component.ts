@@ -1,8 +1,8 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 
 @Component({
@@ -22,6 +22,13 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .mat-caption {
       font-size: 16px;
       font-weight: bold;
+    }
+    .member-name {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
     }
   ` ]
 })
@@ -73,11 +80,6 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
     });
-  }
-
-  truncateText(text: string, maxLength: number = 70): string {
-    if (!text) { return ''; }
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
   }
 
 }

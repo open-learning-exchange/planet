@@ -3,8 +3,8 @@
   "license": "AGPL-3.0",
   "version": "0.18.90",
   "myplanet": {
-    "latest": "v0.23.93",
-    "min": "v0.22.93"
+    "latest": "v0.25.42",
+    "min": "v0.24.42"
   },
   "scripts": {
     "ng": "ng",
@@ -72,7 +72,7 @@
     "pouchdb": "^7.1.1",
     "pouchdb-authentication": "^1.1.3",
     "pouchdb-find": "^7.1.1",
-    "ramda": "^0.28.0",
+    "ramda": "^0.29.0",
     "rxjs": "6.5.4",
     "showdown": "1.9.1",
     "tslib": "^1.10.0",

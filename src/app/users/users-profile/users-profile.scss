@@ -18,6 +18,17 @@
     -webkit-box-orient: vertical;
   }
 
+  .cards-container {
+    display: flex;
+    gap: 16px; 
+    margin-top: 10px;
+  
+    mat-card {
+      flex: 1;
+      min-width: 300px; 
+    }
+  }
+
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;
@@ -48,6 +59,29 @@
       white-space: normal;
       word-break: break-word;
     }
+  }
+  .view-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .profile-list-lt, .profile-list-rt {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  mat-list-item {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mat-list-item p {
+    overflow-wrap: break-word;
+    white-space: normal;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
 }
