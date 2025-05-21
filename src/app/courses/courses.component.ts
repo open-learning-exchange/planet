@@ -24,7 +24,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
+import { dedupeShelfReduce, findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
@@ -114,6 +114,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   showFilters = false;
   showFiltersRow = false;
   expandedElement: any = null;
+  previewLimit = 450;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -494,6 +495,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
+  }
+
+  showPreviewExpand(element: any): boolean {
+    if (!element.description || !element.images) {
+      return false;
+    }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
   }
 
 }

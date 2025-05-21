@@ -185,7 +185,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   weeklyEvents(meetup) {
-    if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
+    if (!Array.isArray(meetup.day) || meetup.day.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
     const events = [];
@@ -193,7 +193,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     while (events.length < meetup.recurringNumber) {
       const startDay = meetup.startDate + (i * millisecondsToDay);
       const date = new Date(startDay);
-      if (meetup.day.indexOf(days[date.getDay()]) !== -1) {
+      if (meetup.day.includes(days[date.getDay()])) {
         events.push(this.eventObject(meetup, startDay, meetup.endDate + (i * millisecondsToDay)));
       }
       i++;
