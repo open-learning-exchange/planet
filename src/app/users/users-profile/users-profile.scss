@@ -20,7 +20,11 @@
 
   .cards-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; 
+
+  @media (max-width: 576px) { 
+    flex-direction: column; 
+  }
     gap: 16px; 
     margin-top: 10px;
   
