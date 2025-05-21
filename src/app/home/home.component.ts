@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
+import { Router, NavigationStart } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { Subject, interval, of, Subscription } from 'rxjs';
+import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { Router, NavigationStart } from '@angular/router';
-import { Subject, interval, of, Subscription } from 'rxjs';
-import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
@@ -14,7 +15,7 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LoginDialogComponent } from '../login/login-dialog.component';
 
 @Component({
   templateUrl: './home.component.html',
@@ -256,6 +257,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     if (this.animDisp) {
       this.animDisp.unsubscribe();
     }
+  }
+
+  openLoginDialog() {
+    this.dialog.open(LoginDialogComponent);
   }
 
   openAnnouncementDialog(notification) {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -18,9 +18,15 @@ import { dedupeShelfReduce } from '../shared/utils';
     mat-divider {
       margin: 1rem 0;
     }
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
   ` ]
 })
-export class NewsListComponent implements OnInit, OnChanges {
+export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`Message updated successfully.`;
@@ -28,6 +34,8 @@ export class NewsListComponent implements OnInit, OnChanges {
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @ViewChild('anchor', { static: true }) anchor: any;
+  observer: IntersectionObserver;
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
@@ -40,6 +48,8 @@ export class NewsListComponent implements OnInit, OnChanges {
   hasMoreNews = false;
   pageSize = 10;
   nextStartIndex = 0;
+  // Key value store for max number of posts viewed per conversation
+  pageEnd = { root: 10 };
 
   constructor(
     private dialog: MatDialog,
@@ -74,17 +84,32 @@ export class NewsListComponent implements OnInit, OnChanges {
       }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
-    this.nextStartIndex = 0;
     this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
   }
 
+  ngAfterViewInit() {
+    this.observer = new IntersectionObserver(
+      ([ entry ]) => {
+        if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore) {
+          this.loadMoreItems();
+        }
+      },
+      { root: null, rootMargin: '0px', threshold: 1.0 }
+    );
+
+    this.observer.observe(this.anchor.nativeElement);
+  }
+
+  ngOnDestroy() {
+    this.observer.disconnect();
+  }
+
   showReplies(news) {
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
-    this.nextStartIndex = 0;
     this.loadPagedItems(true);
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
@@ -113,8 +138,10 @@ export class NewsListComponent implements OnInit, OnChanges {
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          const updatedNews = { ...news, ...newNews, viewIn: news.viewIn };
-          this.postNews(updatedNews, newNews);
+          this.postNews(
+            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+            newNews
+          );
         }
       },
       autoFocus: true
@@ -213,10 +240,18 @@ export class NewsListComponent implements OnInit, OnChanges {
   }
 
   loadPagedItems(initial = true) {
+    let pageSize = this.pageSize;
+    if (initial) {
+      this.displayedItems = [];
+      this.nextStartIndex = 0;
+      // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
+      pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
+    }
     const news = this.getCurrentItems();
-    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, this.pageSize);
+    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
 
-    this.displayedItems = initial ? items : [ ...this.displayedItems, ...items ];
+    this.displayedItems = [ ...this.displayedItems, ...items ];
+    this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
     this.nextStartIndex = endIndex;
     this.hasMoreNews = hasMore;
     this.isLoadingMore = false;
