@@ -29,6 +29,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
       -webkit-box-orient: vertical;
       overflow: hidden;
       word-break: break-word;
+      max-width: 200px;
     }
   ` ]
 })
