@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -34,6 +34,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() useReplyRoutes = false;
   @ViewChild('anchor', { static: true }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
@@ -57,20 +58,17 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService,
+    private router: Router,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    const childRoute = this.route.firstChild;
-    if (childRoute) {
-      const voiceId = childRoute.snapshot.paramMap.get('id');
-      if (voiceId) {
-        const news = this.items.find(item => item._id === voiceId);
-        if (news) {
-          this.showReplies(news);
-        }
-      }
-    }
+
+    this.router.events.subscribe(() => {
+      this.initNews()
+    });
+
+    this.initNews();
   }
 
   ngOnChanges() {
@@ -107,7 +105,32 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.observer.disconnect();
   }
 
+  initNews() {
+    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    this.filterNewsToShow(newVoiceId);
+  }
+
   showReplies(news) {
+    if (this.useReplyRoutes) {
+      this.navigateToReply(news._id);
+      return;
+    }
+    this.filterNewsToShow(news._id);
+  }
+
+  navigateToReply(newsId) {
+    if (newsId !== 'root') {
+      this.router.navigate([ '/voices', newsId ]);
+    } else {
+      this.router.navigate([ '' ]);
+    }
+  }
+
+  filterNewsToShow(newsId) {
+    if (newsId === this.replyViewing._id) {
+      return;
+    }
+    const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
     this.loadPagedItems(true);
