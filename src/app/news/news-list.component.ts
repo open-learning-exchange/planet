@@ -65,7 +65,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ngOnInit() {
 
     this.router.events.subscribe(() => {
-      this.initNews()
+      this.initNews();
     });
 
     this.initNews();
