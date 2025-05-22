@@ -48,8 +48,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   hasMoreNews = false;
   pageSize = 10;
   nextStartIndex = 0;
-  // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
+
+
+  readonly allLabels: string[] = [ 'Help Wanted', 'Offer', 'Request for Advice' ];
 
   constructor(
     private dialog: MatDialog,
@@ -124,9 +126,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.showReplies(this.items.find(item => item._id === this.replyViewing.doc.replyTo));
   }
 
-  openUpdateDialog(
-    { title, placeholder, initialValue = '', news = {} }: { title: string, placeholder: string, initialValue?: string, news?: any }
-  ) {
+  openUpdateDialog({ title, placeholder, initialValue = '', news = {} }:
+    { title: string, placeholder: string, initialValue?: string, news?: any }) {
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
@@ -175,20 +176,16 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const deleteFromAllViews = this.viewableBy === 'teams';
     return {
       request: forkJoin([
-        this.newsService.deleteNews(
-          news,
-          this.viewableId,
-          deleteFromAllViews),
-          this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId
-        )
+        this.newsService.deleteNews(news, this.viewableId, deleteFromAllViews),
+        this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
       ]),
-      onNext: (data) => {
+      onNext: () => {
         if (isMainStory) {
           this.showReplies({ _id: parentId });
         }
         this.deleteDialog.close();
       },
-      onError: (error) => {
+      onError: () => {
         this.planetMessageService.showAlert($localize`There was a problem deleting this message.`);
       }
     };
@@ -212,10 +209,18 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
-    const labels = action === 'remove' ?
-      news.labels.filter(existingLabel => existingLabel !== label) :
-      [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
+    const labels = action === 'remove'
+      ? news.labels.filter(existingLabel => existingLabel !== label)
+      : [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
+  }
+
+
+  onAddLabel(news: any) {
+    const unusedLabel = this.allLabels.find(label => !(news.labels || []).includes(label));
+    if (unusedLabel) {
+      this.changeLabels({ news, label: unusedLabel, action: 'add' });
+    }
   }
 
   trackById(index, item) {
@@ -244,12 +249,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (initial) {
       this.displayedItems = [];
       this.nextStartIndex = 0;
-      // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
       pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
     }
     const news = this.getCurrentItems();
     const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
-
     this.displayedItems = [ ...this.displayedItems, ...items ];
     this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
     this.nextStartIndex = endIndex;
