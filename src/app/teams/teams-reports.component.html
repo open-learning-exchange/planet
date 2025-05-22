@@ -3,6 +3,9 @@
   <button mat-raised-button color="accent" i18n *ngIf="reports && reports.length > 0" (click)="exportReports()">
     Export as CSV
   </button>
+  <button mat-raised-button color="warn" i18n *ngIf="reports && reports.length > 0" (click)="exportReportsAsPdf()">
+    Export as PDF
+  </button>
 </div>
 <div *ngIf="!reports || reports?.length == 0">
   <p i18n>No reports available at the moment.</p>

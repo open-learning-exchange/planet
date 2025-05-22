@@ -13,10 +13,13 @@ import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'planet-teams-reports',
-  styleUrls: [ './teams-reports.scss' ],
+  styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html'
 })
 export class TeamsReportsComponent implements DoCheck {
@@ -56,7 +59,6 @@ export class TeamsReportsComponent implements DoCheck {
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
     const actionType = isEdit ? 'Edit' : 'Add';
     const dialogTitle = $localize`${actionType} Report`;
-
     this.couchService.currentTime().subscribe((time: number) => {
       const currentDate = new Date(time);
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
@@ -100,7 +102,6 @@ export class TeamsReportsComponent implements DoCheck {
             deleteDialog.close();
           },
           onError: () => {
-            this.planetMessageService.showAlert('There was a problem deleting the report.');
             this.dialogsLoadingService.stop();
           }
         },
@@ -131,25 +132,21 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   addFormValidator(fieldName) {
-    return fieldName === 'endDate' ?
-      CustomValidators.endDateValidator() :
-      [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
-      Validators.min(0) :
-      () => {};
+    return fieldName === 'endDate'
+      ? CustomValidators.endDateValidator()
+      : [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1
+        ? Validators.min(0)
+        : () => {};
   }
 
   updateReport(oldReport, newReport: any = {}) {
     const dateFields = [ 'startDate', 'endDate' ];
     const numberFields = [ 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
-    const transformFields = (key: string, value: Date | string) => dateFields.indexOf(key) > -1 ?
-      (<Date>value).getTime() :
-      numberFields.indexOf(key) > -1 ?
-      +value :
+    const transformFields = (key: string, value: Date | string) =>
+      dateFields.indexOf(key) > -1 ? (<Date>value).getTime() :
+      numberFields.indexOf(key) > -1 ? +value :
       value;
-    const { _id, _rev, ...newDoc } = <any>Object.entries(newReport).reduce(
-      (obj, [ key, value ]: [ string, Date | string ]) => ({ ...obj, [key]: transformFields(key, value) }),
-      {}
-    );
+    const { _id, _rev, ...newDoc } = newReport;
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
     return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(tap(() => {
       this.reportsChanged.emit();
@@ -187,4 +184,40 @@ export class TeamsReportsComponent implements DoCheck {
     });
   }
 
+  exportReportsAsPdf() {
+    if (!this.reports?.length) { return; }
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const title = this.team.name || 'Reports';
+    doc.text(title, 40, 50);
+  
+    const head = [
+      'Start Date',
+      'End Date',
+      'Beginning Balance',
+      'Sales',
+      'Other Income',
+      'Personnel',
+      'Non-Personnel',
+      'Profit/Loss',
+      'Ending Balance'
+    ];
+  
+    const body = this.reports.map(r => {
+      const start = new Date(r.startDate).toLocaleDateString();
+      const end = new Date(r.endDate).toLocaleDateString();
+      const profit = r.sales + r.otherIncome - r.wages - r.otherExpenses;
+      const ending = r.beginningBalance + r.sales + r.otherIncome - r.wages - r.otherExpenses;
+      return [ start, end, r.beginningBalance, r.sales, r.otherIncome, r.wages, r.otherExpenses, profit, ending ];
+    });
+  
+    autoTable(doc, {
+      startY: 70,
+      head: [ head ],
+      body: body,
+      styles: { fontSize: 10, cellPadding: 4 },
+      headStyles: { fillColor: [22, 160, 133] }
+    });
+  
+    doc.save(`${title}.pdf`);
+  }  
 }
