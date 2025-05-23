@@ -22,17 +22,6 @@
       top: -0.25rem;
       right: -0.25rem;
     }
-
-    mat-card {
-      display: flex;
-      flex-direction: column;
-
-      mat-card-actions {
-        margin-top: auto;
-        display: flex;
-        justify-content: center;
-      }
-    }
   }
 
   mat-toolbar mat-chip-list {
