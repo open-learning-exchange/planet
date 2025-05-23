@@ -18,7 +18,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { toProperCase } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
@@ -92,7 +91,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item: any, property) => deepSortingDataAccessor(item, property);
+    this.teams.sortingDataAccessor = (item, property) => {
+      if (property === 'membership') {
+        return item.userStatus === 'member' ? 1 : 0;
+      }
+      return deepSortingDataAccessor(item, property);
+    };
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
@@ -297,14 +301,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
   }
-  sortMyTeamsFirst() {
-    if (!this.teams?.data) { return; }
-    this.teams.data = [ ...this.teams.data ].sort((a, b) => {
-      const aIsMine = a.userStatus === 'member' ? 1 : 0;
-      const bIsMine = b.userStatus === 'member' ? 1 : 0;
-      return bIsMine - aIsMine;
+
+  sortbyUserTeams() {
+    this.sort.active = 'membership';
+    this.sort.direction = 'desc';
+    this.sort.sortChange.emit({
+      active: this.sort.active,
+      direction: this.sort.direction
     });
   }
-
 
 }
