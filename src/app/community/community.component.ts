@@ -105,6 +105,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.getCommunityData();
     });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.user = this.userService.get();
+      this.isLoggedIn = this.user._id !== undefined;
+      this.getCommunityData();
+    });
   }
 
   @HostListener('window:resize') onResize() {
