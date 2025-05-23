@@ -319,5 +319,15 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       direction: this.sort.direction
     });
   }
+  convertToEnterprise(team: any) {
+    const updatedTeam = { ...team, type: 'enterprise', teamType: 'sync' }; // 'sync' usually implies enterprise-like
+    this.teamsService.updateTeam(updatedTeam).subscribe(() => {
+      this.planetMessageService.showMessage($localize`Team ${team.name} converted to Enterprise.`);
+      this.getTeams(); // refresh
+    }, () => {
+      this.planetMessageService.showAlert($localize`Failed to convert team to enterprise.`);
+    });
+  }
+  
 
 }
