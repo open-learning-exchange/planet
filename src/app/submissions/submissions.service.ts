@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
-import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Chart } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
@@ -299,6 +299,7 @@ export class SubmissionsService {
         );
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
+        const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
@@ -316,7 +317,7 @@ export class SubmissionsService {
         });
         this.csvService.exportCSV({
           data,
-          title: `${toProperCase(type)}-${exam.name}`,
+          title
         });
       })
     );
@@ -363,9 +364,14 @@ export class SubmissionsService {
         }),
         switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
           const [ submissions, time, questionTexts ] = submissionsTuple;
-          const filteredSubmissions = team
-            ? submissions.filter(s => s.team === team)
-            : submissions;
+          const normalizedSubmissions = submissions.map(sub => ({
+            ...sub,
+            parent: {
+              ...sub.parent,
+              questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+            }
+          }));
+          const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
           if (!filteredSubmissions.length) {
             this.dialogsLoadingService.stop();
             this.planetMessageService.showMessage($localize`There is no survey response`);
@@ -379,17 +385,14 @@ export class SubmissionsService {
           return forkJoin(
             submissionsWithPlanetName.map(submission => {
               if (submission.team) {
-                return this.teamsService.getTeamName(submission.team).pipe(
-                  map(teamName => ({ ...submission, teamName }))
-                );
+                return this.teamsService.getTeamName(submission.team).pipe(map(teamName => ({ ...submission, teamName })));
               }
               return of(submission);
             })
           ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
           );
         })
-      )
-      .subscribe(async tuple => {
+      ).subscribe(async tuple => {
         if (!tuple) {
           return;
         }

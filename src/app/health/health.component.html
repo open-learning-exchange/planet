@@ -25,7 +25,7 @@
         <div>
           <div>
             <h4 class="primary-text-color" i18n>Full Name</h4>
-            <p><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
+            <p><b>{{userDetail.firstName ? ((userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName) | truncateText:40) : 'N/A'}}</b></p>
           </div>
           <mat-divider></mat-divider>
         </div>
@@ -60,7 +60,7 @@
         <div class="full-width">
           <div>
             <h4 class="primary-text-color" i18n>Emergency Contact</h4>
-            <p><b i18n>Name: </b>{{healthDetail?.emergencyContactName || 'N/A'}}</p>
+            <p><b i18n>Name: </b>{{(healthDetail?.emergencyContactName || 'N/A') | truncateText:40}}</p>
             <p><b i18n>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
             <p><b i18n>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
           </div>

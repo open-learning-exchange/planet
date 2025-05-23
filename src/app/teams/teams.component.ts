@@ -83,7 +83,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   ngOnInit() {
@@ -110,7 +110,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   getTeams() {
@@ -132,7 +132,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
-        return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
+        const teamMode = this.myTeamsFilter === 'on' ? (team.type === 'team' || team.type === 'enterprise') : team.type === this.mode;
+        return (teamMode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
       }));
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
