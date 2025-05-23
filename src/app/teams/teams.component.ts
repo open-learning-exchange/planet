@@ -303,6 +303,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   sortbyUserTeams() {
+    if (!this.teams.data.some(e => e.userStatus === 'member')) { return; }
+
     this.sort.active = 'membership';
     this.sort.direction = 'desc';
     this.sort.sortChange.emit({

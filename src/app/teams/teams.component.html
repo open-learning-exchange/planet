@@ -84,7 +84,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>
           <span>Action</span>
-          <button mat-button *ngIf="myTeamsFilter==='off'" (click)="sortbyUserTeams()" i18n-title title="Toggle myTeams">
+          <button mat-button *ngIf="this.myTeamsFilter === 'off'" (click)="sortbyUserTeams()" i18n-title title="Toggle myTeams">
             <mat-icon>check</mat-icon>
           </button>
         </mat-header-cell>
