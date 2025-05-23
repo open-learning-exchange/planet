@@ -68,6 +68,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   get tableData() {
     return this.teams;
   }
+  showUserTeamsFilter = false;
 
   constructor(
     private userService: UserService,
@@ -93,7 +94,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ]);
     this.teams.sortingDataAccessor = (item, property) => {
       if (property === 'membership') {
-        return item.userStatus === 'member' ? 1 : 0;
+        switch (item.userStatus) {
+          case 'member': return 2;
+          case 'requesting': return 1;
+          default: return 0;
+        }
       }
       return deepSortingDataAccessor(item, property);
     };
@@ -136,6 +141,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       this.isLoading = false;
+      this.showUserTeamsFilter = this.myTeamsFilter === 'off' && this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting');
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
@@ -303,7 +309,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   sortbyUserTeams() {
-    if (!this.teams.data.some(e => e.userStatus === 'member')) { return; }
+    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) { return; }
 
     this.sort.active = 'membership';
     this.sort.direction = 'desc';
