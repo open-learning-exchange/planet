@@ -57,25 +57,36 @@
       {{item.doc.user.firstName ?
         item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
         item.doc.user.name}}
-      </button>
+    </button>
     <span class="toolbar-fill"></span>
-    <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
-    <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
-      <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
-    </button>
-    <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
-      <mat-icon>link</mat-icon>
-    </button>
-    <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
-      <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
-      <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
-      <mat-menu #labelMenu="matMenu">
-        <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE; else actionItems">
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="actionItems"></ng-container>
       </mat-menu>
-      <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
-        shareTarget, select, community {Community} nation {Nation} center {Earth}
-      }</button>
     </ng-container>
   </mat-card-actions>
 </mat-card>
+
+<ng-template #actionItems>
+  <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
+  <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
+    <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+  </button>
+  <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
+    <mat-icon>link</mat-icon>
+  </button>
+  <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
+    <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
+    <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
+    <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
+    <mat-menu #labelMenu="matMenu">
+      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
+    </mat-menu>
+    <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
+      shareTarget, select, community {Community} nation {Nation} center {Earth}
+    }</button>
+  </ng-container>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { calculateMdAdjustedLimit } from '../shared/utils';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -39,6 +40,8 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
   teamLabels = [];
   previewLimit = 500;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     private router: Router,
@@ -49,8 +52,11 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     private stateService: StateService,
     private dialog: MatDialog,
     private authService: AuthService,
-    private clipboard: Clipboard
-  ) {}
+    private clipboard: Clipboard,
+    private deviceInfoService: DeviceInfoService,
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     if (this.item.latestMessage) {
@@ -73,6 +79,10 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   addReply(news) {

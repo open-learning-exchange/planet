@@ -48,3 +48,12 @@ mat-card-content {
   background-color: $primary-lighter;
   color: black;
 }
+
+@media (max-width: $screen-xs) {
+  .subtitle-row .label-panel .mat-chip {
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
