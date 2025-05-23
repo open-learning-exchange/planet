@@ -328,6 +328,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.planetMessageService.showAlert($localize`Failed to convert team to enterprise.`);
     });
   }
-  
+
 
 }
