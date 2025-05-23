@@ -14,17 +14,7 @@ import { dedupeShelfReduce } from '../shared/utils';
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styles: [ `
-    mat-divider {
-      margin: 1rem 0;
-    }
-    .spinner-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
-  ` ]
+  styleUrls: [ './news-list.component.scss' ],
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
@@ -49,6 +39,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   hasMoreNews = false;
   pageSize = 10;
   nextStartIndex = 0;
+  totalReplies = 0;
   // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
 
@@ -278,6 +269,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.nextStartIndex = endIndex;
     this.hasMoreNews = hasMore;
     this.isLoadingMore = false;
+    this.totalReplies = news.length;
   }
 
   loadMoreItems() {
