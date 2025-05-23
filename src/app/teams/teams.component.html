@@ -43,10 +43,20 @@
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <h3 class="team-name">
-            {{element.doc.name | truncateText:150}}
-            <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
-          </h3>
+          <div>
+            <h3 class="team-name">
+              {{element.doc.name | truncateText:150}}
+              <mat-icon class="margin-lr-3"
+                        i18n-title
+                        title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}"
+                        [inline]="true"
+                        *ngIf="element.userStatus=='member'">check</mat-icon>
+            </h3>
+            <div class="team-type-label" i18n>
+              ({{ element.doc.type === 'enterprise' ? 'enterprise' : 'team' }})
+            </div>
+          </div>
+        
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.lastVisit">
