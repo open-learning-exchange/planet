@@ -1,10 +1,16 @@
 #!/usr/bin/env sh
 
+PREVIOUS_REF="origin/master:package.json"
+
+if [ $(git branch --show-current) = "master" ]; then
+  PREVIOUS_REF="origin/master~1:package.json"
+fi
+
 DEPENDENCIES=$(jq -r '.dependencies | keys[] as $key | "\($key) \(.[$key])"' package.json);
-OLD_DEPENDENCIES=$(git show origin/master:package.json | jq -r '.dependencies');
+OLD_DEPENDENCIES=$(git show $PREVIOUS_REF | jq -r '.dependencies');
 
 DEV_DEPENDENCIES=$(jq -r '.devDependencies | keys[] as $key | "\($key) \(.[$key])"' package.json);
-OLD_DEV_DEPENDENCIES=$(git show origin/master:package.json | jq -r '.devDependencies');
+OLD_DEV_DEPENDENCIES=$(git show $PREVIOUS_REF | jq -r '.devDependencies');
 
 check_dependencies() {
   echo "$1" | while read -r line; do

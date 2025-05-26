@@ -351,11 +351,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   toggleShowButton(data) {
     this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
-    if (data._id !== 'root') {
-      this.router.navigate([ '/voices', data._id ]);
-    } else {
-      this.router.navigate([ '' ]);
-    }
   }
 
   toggleDeleteMode() {
