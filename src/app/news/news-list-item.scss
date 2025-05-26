@@ -16,6 +16,10 @@ mat-card-header {
   display: block;
 }
 
+::ng-deep .mat-card-header-text {
+  margin: 0 !important;
+}
+
 .subtitle-row {
   display: grid;
   grid-template-columns: 1fr auto;
