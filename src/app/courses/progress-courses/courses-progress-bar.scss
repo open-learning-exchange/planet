@@ -8,13 +8,12 @@
 
   .progress-bar-wrapper {
     display: flex;
-    flex-wrap: nowrap;
+    width: 100%;
     gap: 3px;
   }
 
   .progress-block {
-    flex: 0 0 auto;
-    width: 12px;
+    flex: 1 1 0;
     height: 12px;
     border-radius: 2px;
     background-color: $accent;
@@ -31,5 +30,8 @@
   .progress-block.pending {
     background-color: orange;
   }
-}
 
+  .progress-block:last-child {
+    margin-right: 0;
+  }
+}
