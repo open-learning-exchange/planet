@@ -103,6 +103,18 @@ To run the chatapi locally, you need to use node v18. You can use nvm(linux) or 
 * To work on an issue, create a new branch with a descriptive title.
 * Please wait for at least two positive reviews before merging a PR into the master branch
 
+## Locale Configuration
+
+To run planet in development with a different locale, you can set the `CONF` environment variable. For example, to run in Spanish, use:
+```
+  npm run start -- --configuration=spa 
+
+  or 
+
+  ng serve --configuration=spa
+```
+*You can use the short-hard `-c` in place of `--configuration`*
+
 ## Unit & End-to-End Tests
 
 You can run tests directly from the host or within the development container.
