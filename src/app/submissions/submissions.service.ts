@@ -282,10 +282,17 @@ export class SubmissionsService {
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
-        const filteredSubmissions = team
-          ? submissions.filter(s => s.team === team)
-          : submissions;
-        return forkJoin(
+      const normalizedSubmissions = submissions.map(sub => ({
+        ...sub,
+        parent: {
+          ...sub.parent,
+          questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+        }
+      }));
+      const filteredSubmissions = team
+          ? normalizedSubmissions.filter(s => s.team === team)
+          : normalizedSubmissions;
+      return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
               return this.teamsService.getTeamName(submission.team).pipe(
