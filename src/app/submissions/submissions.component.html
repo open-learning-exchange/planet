@@ -102,7 +102,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'cursor-pointer': row.status!=='pending' || mode === 'survey'}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'cursor-pointer': row.status==='complete' || mode === 'survey'}"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>No Record Found</div></td>
       </tr>

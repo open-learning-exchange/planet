@@ -247,10 +247,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-      const questions = Array.isArray(submission.parent.questions) ? submission.parent.questions : (this.exam?.questions);
-      console.log('sub exam questions', this.exam?.questions);
-      console.log('sub questions', questions);
-
+      const questions = submission.parent.questions || [];
       this.unansweredQuestions = questions.reduce((unanswered, q, index) => [
         ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
       ], []);
