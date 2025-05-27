@@ -292,7 +292,7 @@ export class SubmissionsService {
       const filteredSubmissions = team
           ? normalizedSubmissions.filter(s => s.team === team)
           : normalizedSubmissions;
-        return forkJoin(
+      return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
               return this.teamsService.getTeamName(submission.team).pipe(
