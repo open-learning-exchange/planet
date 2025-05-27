@@ -73,7 +73,8 @@
         <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
           <mat-chip-list *ngSwitchCase="'pending'"><mat-chip  class="chip-no-style" i18n>pending</mat-chip></mat-chip-list>
           <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip class="chip-no-style" selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
-          <mat-chip-list *ngSwitchDefault><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="'complete"><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchDefault><mat-chip class="chip-no-style" selected color="warn" i18n>incomplete</mat-chip></mat-chip-list>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="grade">
