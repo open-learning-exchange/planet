@@ -5,7 +5,7 @@
         <mat-tab i18n-label label="Our Voices">
           <h3 style="text-align: right; margin-right: 0.5rem;">
             <ng-container *planetAuthorizedRoles="'learner'">
-              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton" i18n>New Voice</button>
+              <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
             </ng-container>
           </h3>
           <ng-container *ngIf="isLoading; else loaded">
@@ -13,7 +13,7 @@
           </ng-container>
           <ng-template #loaded>
             <ng-container *ngIf="news?.length > 0; else noVoices">
-              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"></planet-news-list>
+              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true"></planet-news-list>
             </ng-container>
           </ng-template>
           <ng-template #noVoices>

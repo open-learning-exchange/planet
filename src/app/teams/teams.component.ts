@@ -68,6 +68,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   get tableData() {
     return this.teams;
   }
+  showUserTeamsFilter = false;
 
   constructor(
     private userService: UserService,
@@ -91,7 +92,16 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item: any, property) => deepSortingDataAccessor(item, property);
+    this.teams.sortingDataAccessor = (item, property) => {
+      if (property === 'membership') {
+        switch (item.userStatus) {
+          case 'member': return 2;
+          case 'requesting': return 1;
+          default: return 0;
+        }
+      }
+      return deepSortingDataAccessor(item, property);
+    };
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
@@ -132,6 +142,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       this.isLoading = false;
+      this.showUserTeamsFilter = this.myTeamsFilter === 'off' && this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting');
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
@@ -296,6 +307,17 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
+  }
+
+  sortbyUserTeams() {
+    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) { return; }
+
+    this.sort.active = 'membership';
+    this.sort.direction = 'desc';
+    this.sort.sortChange.emit({
+      active: this.sort.active,
+      direction: this.sort.direction
+    });
   }
 
 }

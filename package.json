@@ -3,15 +3,15 @@
   "license": "AGPL-3.0",
   "version": "0.19.0",
   "myplanet": {
-    "latest": "v0.25.42",
-    "min": "v0.24.42"
+    "latest": "v0.25.55",
+    "min": "v0.24.55"
   },
   "scripts": {
     "ng": "ng",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
-    "start": "LNG=${LNG:-en};ng serve --aot --i18n-file=src/i18n/messages.$LNG.xlf --locale=$LNG --i18n-format=xlf",
+    "start": "ng serve --aot --configuration=$CONF",
     "v-serve": "vagrant ssh dev -- -t 'cd /vagrant;ng serve'",
-    "build": "LNG=${LNG:-en};npm run ng-high-memory -- build --prod --i18n-file=src/i18n/messages.$LNG.xlf --i18n-locale=$LNG --i18n-format=xlf",
+    "build": "npm run ng-high-memory -- build --prod --configuration=$CONF",
     "v-build": "vagrant ssh dev -- -t 'cd /vagrant;ng build --prod'",
     "test": "ng test",
     "v-test": "vagrant ssh dev -- -t 'cd /vagrant;ng test'",
@@ -72,7 +72,7 @@
     "pouchdb": "^7.1.1",
     "pouchdb-authentication": "^1.1.3",
     "pouchdb-find": "^7.1.1",
-    "ramda": "^0.29.0",
+    "ramda": "^0.28.0",
     "rxjs": "6.5.4",
     "showdown": "1.9.1",
     "tslib": "^1.10.0",
