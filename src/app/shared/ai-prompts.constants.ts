@@ -1,16 +1,34 @@
-export const surveyAnalysisPrompt = (examType, examName, examDescription, payloadString) => $localize`The following is a ${examType} with the name ${examName} and description ${examDescription}.
-  Please provide a comprehensive analysis of the survey responses in three sections, formatted neatly for a pdf export:
+export const surveyAnalysisPrompt = (examType, examName, examDescription, payloadString) => $localize`The following is a ${examType} named “${examName}” with description “${examDescription}”.
+  ${payloadString}
 
-  1. INDIVIDUAL QUESTION ANALYSIS: Insights for each question individually.
+  Please generate a detailed AI Analysis for PDF export, organized into three sections:
 
-  2. CORRELATIONS BETWEEN QUESTIONS: Look for specific patterns in how people answered different questions together.
-  Focus on finding the strongest correlations between specific answer choices across different questions.
-  Highlight at least 3-5 significant correlations if they exist, especially ones that reveal important insights about the survey purpose.
+  1. INDIVIDUAL QUESTION ANALYSIS
+    a. **Closed-ended questions:**
+        - List the top three answer choices with absolute counts and percentages.
+        - Call out any low-frequency responses (<10%) that reveal surprising insights.
+    b. **Open-ended question(s):**
+        - Require direct quotes with respondent demographics if available.
+        - Perform sentiment and keyword analysis
+        - Highlight any singular but high-impact outlier suggestions.
+        - Highlight the actionability of the suggestions.
+        - Force thematic categorization with absolute counts and percentage breakdowns i.e for each theme, provide:
+          1. Number and percentage of respondents mentioning it.
+          2. One anonymized verbatim quote illustrating the theme.
 
-  3. DEMOGRAPHIC BREAKDOWN: Group responses by demographic factors such as age ranges, gender, and other user inputted demographic information.
-  For each demographic group, identify which answer choices were most common for each question.
-  Only include demographic insights when there are clear differences between groups.
+  2. CORRELATIONS BETWEEN QUESTIONS
+    - Compute pairwise co-occurrence rates for all multi-choice questions.
+    - Identify the four strongest correlations by conditional probability and count.
+    - Present each as:
+      “X% of respondents who chose ‘A’ in Qn also chose ‘B’ in Qm (Y/Z).”
 
-  ${payloadString}`;
+  3. DEMOGRAPHIC BREAKDOWN
+    - Define cohorts based on demographic factors such as:
+      - **Age groups:**
+      - **Gender** (if available)
+    - For each cohort, list their top two choices per closed-ended question (counts + percentages).
+    - Report only differences from the overall sample exceeding 20 percentage points.
+
+  Ensure every numeric insight shows both count and percentage. Use clear headings, subheadings, bullet points, and simple tables where helpful for a clean PDF layout.`;
 
 export const coursesStepPrompt = (stepTitle, stepDescription) => $localize`The following information is a course step from the "${stepTitle}" course with a description "${stepDescription}". Be sure to assist the learner in the best way you can. `;
