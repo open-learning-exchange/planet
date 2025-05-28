@@ -1,5 +1,5 @@
 <div class="app-bar-container">
-  <mat-toolbar class="toolbar-container" *ngIf="deviceType != deviceTypes.MOBILE">
+  <mat-toolbar class="toolbar-container" *ngIf="deviceType != deviceTypes.MOBILE && deviceType != deviceTypes.SMALL_MOBILE">
     <div class="menu-container">
       <img src="assets/landing-page/logos/uplanet.png" class="img-logo" alt="Logo" width="180" height="30" />
       <div class="menu-row">
@@ -26,7 +26,8 @@
       </div>
     </div>
   </mat-toolbar>
-  <mat-toolbar *ngIf="deviceType === deviceTypes.MOBILE" style="color: #ffffff;">
+  <mat-toolbar *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE" style="color: #ffffff;">
+
     <button mat-icon-button class="hamburger-button"
       (click)="toggleNav()" i18n-title title="Menu">
       <mat-icon>menu</mat-icon>

@@ -109,3 +109,19 @@ export const markdownToPlainText = (markdown: any) => {
   html.innerHTML = converter.makeHtml(markdown);
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };
+
+export const truncateText = (text, length) => {
+  if (text.length > length) {
+    return `${text.slice(0, length)}...`;
+  }
+  return text;
+};
+
+export const calculateMdAdjustedLimit = (content, limit) => {
+  const hasMdStyles = /#{1,6}\s+.+/g.test(content);
+  const hasLists = /^(\*|-|\d+\.)\s+/gm.test(content);
+  const hasTables = /^\|(.+)\|/gm.test(content);
+  const scaleFactor = hasLists ? 0.2 : hasTables ? 0.55 : hasMdStyles ? 0.8 : 1;
+
+  return Math.floor(limit * scaleFactor);
+};

@@ -39,6 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   leaderIds = [];
   onDestroy$ = new Subject<void>();
   showBanner = false;
+  isLoading = true;
 
   myLifeItems: any[] = [
     { firstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
@@ -76,6 +77,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
@@ -115,8 +117,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
-      this.data.myTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ]
+      const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
+      this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
         .filter(team => team.status !== 'archived');
+      this.isLoading = false;
     });
   }
 

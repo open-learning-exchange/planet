@@ -58,7 +58,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
-  disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -70,6 +69,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   };
   selectedTimeFilter = '12m';
   showCustomDateFields = false;
+  resourcesLoading = true;
+  coursesLoading = true;
+  chatLoading = true;
+  healthLoading = true;
+  healthNoData = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
@@ -112,11 +116,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           startDate: parseDate(queryParams['startDate']),
           endDate: parseDate(queryParams['endDate']) || this.today
         };
+        if (
+          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+        ) {
+          this.selectedTimeFilter = 'custom';
+          this.showCustomDateFields = true;
+        }
+        this.dateFilterForm.controls.endDate.setValue(
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+          ? this.dateQueryParams.endDate : this.today
+        );
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -155,7 +169,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.dialogsLoadingService.stop();
-      this.filterData();
     });
   }
 
@@ -191,9 +204,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge'
         });
         this.location.replaceState(urlTree.toString());
-
-        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
-          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -234,7 +244,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : this.minDate
+        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -306,6 +316,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
+    }, error => {
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
     });
   }
 
@@ -348,6 +369,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
+      this.chatLoading = false;
     });
   }
 
@@ -379,7 +401,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const months = setMonths();
+    const months = setMonths({
+      startDate: this.filter.startDate,
+      endDate: this.filter.endDate
+    });
+    const labels = months.map(month => monthDataLabels(month));
+
     const genderFilter = (gender: string) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
@@ -399,14 +426,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => monthDataLabels(month))
+      labels
     });
   }
 
   setChart({ data, labels, chartName }) {
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
-      updateChart.data = { ...data, labels: [] };
+      updateChart.data = { ...data, labels };
       updateChart.update();
       return;
     }
@@ -418,7 +445,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         legend: { position: 'bottom' },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { labels, type: 'category' } ],
+          xAxes: [ { type: 'category' } ],
           yAxes: [ {
             type: 'linear',
             ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
@@ -759,15 +786,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
-    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-    setTimeout(() => {
-      this.disableShowAllTime = true;
-    });
     this.dateFilterForm.patchValue({
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
-    this.filterData();
   }
 
   onTimeFilterChange(timeFilter: string) {
@@ -796,6 +818,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.selectedTeam = 'All';
     this.filter.members = [];
     this.onTimeFilterChange('12m');
+  }
+
+  onHealthLoadingChange(loading: boolean) {
+    this.healthLoading = loading;
+  }
+
+  onHealthNoDataChange(noData: boolean) {
+    this.healthNoData = noData;
   }
 
 }

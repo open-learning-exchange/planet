@@ -57,7 +57,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading: boolean;
+  isLoading = true;
+  activeReplyId: string | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -81,7 +82,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoading = true;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
       this.isLoading = false;
@@ -103,6 +103,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       of(this.stateService.configuration),
       this.stateService.couchStateListener('configurations')
     ).subscribe(() => {
+      this.getCommunityData();
+    });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.user = this.userService.get();
+      this.isLoggedIn = this.user._id !== undefined;
       this.getCommunityData();
     });
   }
@@ -349,6 +354,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
+    this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
   }
 
@@ -433,7 +439,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
-    if (index !== 0) {
+    if (index === 0) {
+      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
+    } else {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
