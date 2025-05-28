@@ -113,7 +113,7 @@ To run planet in development with a different locale, you can set the `CONF` env
 
   ng serve --configuration=spa
 ```
-*You can use the short-hard `-c` in place of `--configuration`*
+*You can use the short-hand `-c` in place of `--configuration`*
 
 ## Unit & End-to-End Tests
 
