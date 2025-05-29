@@ -86,12 +86,12 @@
             <div [matTooltip]="element.teamId && isManagerRoute ? 'This is a team created survey' :
                               element.isArchived ? 'Survey is archived and cannot be sent' : ''"
                 i18n-matTooltip>
-              <button mat-raised-button color="primary"
-                *ngIf="!teamId && !routeTeamId"
+                <button mat-raised-button color="primary"
                 [matMenuTriggerFor]="sendMenu"
                 [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
-                i18n><mat-icon>arrow_drop_down</mat-icon> Send
-              </button>
+                i18n>
+                <mat-icon>send</mat-icon> Send
+              </button>              
             </div>
             <mat-menu #sendMenu="matMenu">
               <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User <mat-icon>send</mat-icon></button>
