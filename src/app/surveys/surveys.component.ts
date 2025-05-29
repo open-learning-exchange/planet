@@ -123,9 +123,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
             taken: this.teamId || this.routeTeamId
               ? relatedSubmissions.filter(
-                (data) => data.status !== 'pending' &&
+                (data) => data.status === 'complete' &&
                 (data.team === this.teamId || data.team === this.routeTeamId)).length
-              : relatedSubmissions.filter(data => data.status !== 'pending').length
+              : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
         ...this.createParentSurveys(submissions)

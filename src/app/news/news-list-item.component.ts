@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef, OnInit, OnChanges, AfterViewChecked } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,13 +9,14 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
+import { calculateMdAdjustedLimit } from '../shared/utils';
 
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecked {
+export class NewsListItemComponent implements OnInit, OnChanges {
 
   @Input() item;
   @Input() replyObject;
@@ -28,7 +29,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
-  @ViewChild('content') content;
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -36,13 +36,13 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  previewLimit = 500;
 
   constructor(
     private router: Router,
     private userService: UserService,
     private couchService: CouchService,
     private newsService: NewsService,
-    private cdRef: ChangeDetectorRef,
     private notificationsService: NotificationsService,
     private stateService: StateService,
     private dialog: MatDialog,
@@ -55,16 +55,19 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
       this.showExpand = true;
       this.showLess = false;
     }
+    if (this.item.doc.news?.conversations.length > 1) {
+      this.showExpand = true;
+    } else {
+      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
+        || this.item.doc.images.length > 0;
+    }
   }
 
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
-    if (this.item.sharedSource && this.item.sharedDate && this.item.sharedSource.name) {
-      const sourceType = this.item.sharedSource.mode === 'enterprise' ? 'enterprise' : 'team';
-      this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${this.item.sharedSource.name}`;
-    } else if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate) {
+    if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
       const viewIn = this.item.doc.viewIn[0];
       if (viewIn.name) {
         const sourceType = viewIn.mode === 'enterprise' ? 'enterprise' : 'team';
@@ -73,22 +76,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
     } else {
       this.item.sharedSourceInfo = null;
     }
-  }
-
-  ngAfterViewChecked() {
-    const contentHeight = this.content && this.content.nativeElement.scrollHeight;
-    const containerHeight = this.content && this.content.nativeElement.offsetHeight;
-    const showExpand = contentHeight > containerHeight;
-    if (showExpand !== this.showExpand) {
-      this.showExpand = showExpand;
-      this.cdRef.detectChanges();
-    }
-  }
-
-  remToPx(rem) {
-    const computedStyle = getComputedStyle(document.documentElement).fontSize;
-    if (!computedStyle) { return; }
-    return rem * parseFloat(computedStyle);
   }
 
   addReply(news) {
@@ -131,18 +118,12 @@ export class NewsListItemComponent implements OnInit, OnChanges, AfterViewChecke
 
   editNews(news) {
     const label = this.formLabel(news);
-    const editTimestamp = $localize`Edited on ${new Date().toLocaleString()}`;
-    const sharedSourceInfo = this.item.sharedSourceInfo;
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
       initialValue,
-      news: {
-        ...news,
-        editTimestamp,
-        sharedSourceInfo
-      }
+      news
     });
   }
 

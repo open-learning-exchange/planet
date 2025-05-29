@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
-import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Chart } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
@@ -16,6 +16,7 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
+import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -282,10 +283,17 @@ export class SubmissionsService {
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
-        const filteredSubmissions = team
-          ? submissions.filter(s => s.team === team)
-          : submissions;
-        return forkJoin(
+      const normalizedSubmissions = submissions.map(sub => ({
+        ...sub,
+        parent: {
+          ...sub.parent,
+          questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+        }
+      }));
+      const filteredSubmissions = team
+          ? normalizedSubmissions.filter(s => s.team === team)
+          : normalizedSubmissions;
+      return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
               return this.teamsService.getTeamName(submission.team).pipe(
@@ -364,9 +372,14 @@ export class SubmissionsService {
         }),
         switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
           const [ submissions, time, questionTexts ] = submissionsTuple;
-          const filteredSubmissions = team
-            ? submissions.filter(s => s.team === team)
-            : submissions;
+          const normalizedSubmissions = submissions.map(sub => ({
+            ...sub,
+            parent: {
+              ...sub.parent,
+              questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+            }
+          }));
+          const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
           if (!filteredSubmissions.length) {
             this.dialogsLoadingService.stop();
             this.planetMessageService.showMessage($localize`There is no survey response`);
@@ -380,17 +393,14 @@ export class SubmissionsService {
           return forkJoin(
             submissionsWithPlanetName.map(submission => {
               if (submission.team) {
-                return this.teamsService.getTeamName(submission.team).pipe(
-                  map(teamName => ({ ...submission, teamName }))
-                );
+                return this.teamsService.getTeamName(submission.team).pipe(map(teamName => ({ ...submission, teamName })));
               }
               return of(submission);
             })
           ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
           );
         })
-      )
-      .subscribe(async tuple => {
+      ).subscribe(async tuple => {
         if (!tuple) {
           return;
         }
@@ -442,7 +452,7 @@ export class SubmissionsService {
           const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
           setHeader('AI Analysis');
           docContent.push({
-            text: analysisPayload.chat,
+            stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
             margin: [ 0, 10, 0, 10 ]
           });
         }
@@ -628,20 +638,7 @@ export class SubmissionsService {
       const payloadString = JSON.stringify(payload, null, 2);
       const response = await this.chatService.getPrompt(
         {
-          content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
-            Please provide a comprehensive analysis of the survey responses in three sections, formatted neatly for a pdf export:
-
-            1. INDIVIDUAL QUESTION ANALYSIS: Insights for each question individually.
-
-            2. CORRELATIONS BETWEEN QUESTIONS: Look for specific patterns in how people answered different questions together.
-            Focus on finding the strongest correlations between specific answer choices across different questions.
-            Highlight at least 3-5 significant correlations if they exist, especially ones that reveal important insights about the survey purpose.
-
-            3. DEMOGRAPHIC BREAKDOWN: Group responses by demographic factors such as age ranges, gender, and other user inputted demographic information.
-            For each demographic group, identify which answer choices were most common for each question.
-            Only include demographic insights when there are clear differences between groups.
-
-            ${payloadString}`,
+          content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
           aiProvider: { name: 'openai' },
           assistant: false
         },
