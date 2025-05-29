@@ -87,6 +87,7 @@
                               element.isArchived ? 'Survey is archived and cannot be sent' : ''"
                 i18n-matTooltip>
                 <button mat-raised-button color="primary"
+                *ngIf="!teamId && !routeTeamId"
                 [matMenuTriggerFor]="sendMenu"
                 [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
                 i18n>
