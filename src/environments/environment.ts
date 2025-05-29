@@ -9,11 +9,8 @@ export const environment = {
   chatAddress: window.location.protocol + '//' + window.location.hostname + ':5000',
   couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
   centerAddress: 'planet.earth.ole.org/db',
-  uplanetAddress: 'https://planet.gt',
   centerProtocol: 'https',
   parentProtocol: 'https',
-  uPlanetCode: 'guatemala',
-  uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: window.location.protocol + '//localhost:5984'
 };
